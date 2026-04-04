@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth bg-blk text-gray-200 antialiased selection:bg-gold selection:text-blk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sean Sooch | AI-Augmented Development Portfolio</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@100;400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        blk: '#050510',
+                        charcoal: '#0C0C1E',
+                        surface: '#15152A',
+                        gold: '#C9A84C',
+                        goldglow: 'rgba(201, 168, 76, 0.15)',
+                        blue: '#4A9EFF',
+                        dim: '#73738A'
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Inter"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root { --scroll-width: 8px; }
+        ::-webkit-scrollbar { width: var(--scroll-width); background: #050510; }
+        ::-webkit-scrollbar-thumb { background: #15152A; border-radius: 4px; border: 1px solid #C9A84C; }
+        ::-webkit-scrollbar-thumb:hover { background: #C9A84C; }
+        body {
+            background-color: #050510;
+            background-image: linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .ambient-glow {
+            position: fixed; top: -20vh; left: -20vw;
+            width: 50vw; height: 50vh;
+            background: radial-gradient(circle, rgba(201,168,76,0.05) 0%, rgba(5,5,16,0) 70%);
+            z-index: -1; pointer-events: none;
+        }
+        .editorial-text { column-count: 2; column-gap: 3rem; }
+        @media (max-width: 768px) { .editorial-text { column-count: 1; } }
+        .glass-panel {
+            background: rgba(12, 12, 30, 0.65);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .bento-hover:hover {
+            border-color: rgba(74, 158, 255, 0.4);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px -10px rgba(74, 158, 255, 0.1);
+        }
+        .btn-tactical {
+            position: relative; overflow: hidden;
+            border: 1px solid #C9A84C; background: transparent;
+            z-index: 1; transition: color 0.3s ease;
+        }
+        .btn-tactical::before {
+            content: ''; position: absolute; top: 0; left: -100%;
+            width: 100%; height: 100%; background: #C9A84C;
+            z-index: -1; transition: left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn-tactical:hover { color: #050510 !important; }
+        .btn-tactical:hover::before { left: 0; }
+        @keyframes radar-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(201,168,76, 0.6); }
+            70% { box-shadow: 0 0 0 10px rgba(201,168,76, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(201,168,76, 0); }
+        }
+        .status-dot { animation: radar-pulse 2s infinite ease-out; }
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        .axis-line {
+            position: fixed; left: 2rem; top: 0; bottom: 0; width: 1px;
+            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.1) 10%, rgba(255,255,255,0.1) 90%, transparent);
+            z-index: 0;
+        }
+        @media (max-width: 1024px) { .axis-line { left: 1rem; } }
+        .img-overlay { position: relative; }
+        .img-overlay::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(to top, #0C0C1E 0%, transparent 50%), linear-gradient(to bottom, rgba(5,5,16,0.3) 0%, transparent 100%);
+            mix-blend-mode: multiply;
+        }
+        ul.tactical-list li { position: relative; padding-left: 1.5rem; }
+        ul.tactical-list li::before {
+            content: '\203A'; position: absolute; left: 0; top: -2px;
+            color: #C9A84C; font-family: monospace; font-size: 1.25rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col relative font-sans text-dim overflow-x-hidden">
+
+    <div class="ambient-glow"></div>
+    <div class="axis-line hidden md:block"></div>
+
+    <main class="w-full max-w-7xl mx-auto px-6 md:px-16 lg:px-24 pt-32 pb-24 relative z-10">
+
+        <!-- HERO -->
+        <section class="min-h-[70vh] flex flex-col justify-center reveal">
+            <div class="inline-flex items-center gap-3 mb-8 px-4 py-1.5 rounded-full border border-gold/30 bg-goldglow w-fit">
+                <div class="w-2 h-2 rounded-full bg-gold status-dot"></div>
+                <span class="font-mono text-[10px] md:text-xs text-gold uppercase tracking-[0.2em] font-semibold">All Projects Live</span>
+            </div>
+            <h1 class="font-serif text-5xl md:text-7xl lg:text-[5rem] leading-[1.05] tracking-tight text-white mb-6 w-full lg:w-[90%]">
+                Three Projects.<br>
+                <span class="text-white">50,000+ Lines of Code.</span><br>
+                <span class="italic text-gray-400">One Developer.</span>
+            </h1>
+            <h2 class="font-mono text-sm md:text-base text-gold tracking-widest uppercase mb-10 w-full md:w-3/4">
+                Sean Sooch &mdash; Medical Student | Military Officer | Software Developer
+            </h2>
+            <p class="font-sans text-lg md:text-xl text-dim font-light leading-relaxed max-w-3xl">
+                A portfolio of AI-augmented applications built at the intersection of medicine, sports, and computational technology.
+            </p>
+        </section>
+
+        <!-- THESIS -->
+        <section class="py-20 reveal">
+            <div class="glass-panel p-8 md:p-12 relative border-l-4 border-l-gold">
+                <div class="absolute top-4 right-4 font-mono text-[10px] text-white/20">THESIS.01</div>
+                <h3 class="font-serif text-3xl text-white mb-8">The Case for AI-Augmented Development</h3>
+                <div class="editorial-text text-base md:text-lg text-gray-300 font-light leading-loose">
+                    <p class="mb-6 indent-8">
+                        These three projects were built by a single developer, a medical student and military officer with no formal CS degree, using AI as a force multiplier. Claude Code's autonomous agents researched APIs, generated components, debugged edge cases, and iterated on designs in real-time. The result is a collection of production-grade applications that would traditionally require a team of specialists. All three were started after March 15th, 2026, built in free time after clinical rotations and in between study sessions. That alone says more about where the tools are heading than anything about me individually.
+                    </p>
+                    <p class="mb-6 indent-8">
+                        The motivation behind each project is personal. The NCAAT Bracket and Masters Tournament Hub exist because I love sports. March Madness and the Masters are events I follow every year with genuine passion, and building interactive tools around them was a natural way to test what AI-augmented development could produce. The Step 2 CK Study Engine exists because I needed it. No commercial platform offered the adaptive, data-dense study architecture I wanted for my medical education, so I built one. Claude Code's <span class="text-gold font-mono text-sm">/teach-me</span> skill became a built-in tutor, letting me learn new patterns in context as I developed the study platform itself.
+                    </p>
+                    <p class="mb-6 indent-8">
+                        Beyond writing code, the AI ecosystem extends into thinking and decision-making. I use <span class="text-gold font-mono text-sm">/council</span> to pressure-test ideas from multiple angles before committing to an architecture. <span class="text-gold font-mono text-sm">/brainstorm</span> for structured ideation when I am stuck. Auto-agents to delegate research, refactoring, and testing to parallel workers while I focus on design. These are not gimmicks. They are workflows that change how a solo builder operates.
+                    </p>
+                    <p class="mb-6 indent-8">
+                        As a military officer, I also care about understanding how emerging technology reshapes the cyber landscape. I have started incorporating tools like <span class="text-gold font-mono text-sm">/threat-model</span>, <span class="text-gold font-mono text-sm">/security-review</span>, and <span class="text-gold font-mono text-sm">/after-action</span> into that learning process. Knowing how AI systems work, how they can be directed, and where they are vulnerable is no longer optional for anyone responsible for operational security. Building with these tools is one of the best ways to develop that intuition firsthand.
+                    </p>
+                    <p class="mb-6 indent-8">
+                        But the deeper thesis is about what comes next. We are approaching a point where AI capabilities compound faster than any individual can fully track. GitHub Copilot normalized AI in the editor. OpenAI's Codex proved that natural language could generate working code. Model Context Protocol plugins are connecting AI to every tool and API imaginable. These capabilities will not stay behind developer consoles forever. They will leak into every profession, every workflow, every industry. The professionals who thrive in that environment will not be the ones who resist AI or passively consume it. They will be the ones who learned to operate fluently in a dual ecosystem, human and machine working in concert. The bottleneck is no longer technical skill. It is imagination, domain knowledge, and the willingness to build.
+                    </p>
+                    <p class="indent-8">
+                        These projects are my small proof of that alignment. Evidence that someone who understands the problem space and has learned to work alongside AI can ship real software that solves real problems, in days rather than months. I am still learning, still building, and still a long way from where I want to be. But I believe this is the direction the world is heading, and I would rather be early than late.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- AGGREGATE STATS -->
+        <section class="py-12 border-y border-white/10 my-12 reveal">
+            <div class="font-mono text-xs text-white/40 mb-6 uppercase tracking-widest">[ Global Metrics ]</div>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-8">
+                <div class="flex flex-col gap-2">
+                    <span class="font-sans text-[10px] text-white/40 uppercase tracking-[0.15em]">Lines of Code</span>
+                    <span class="font-mono text-3xl md:text-4xl text-gold font-light counter" data-target="50591">0</span>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <span class="font-sans text-[10px] text-white/40 uppercase tracking-[0.15em]">Functions</span>
+                    <span class="font-mono text-3xl md:text-4xl text-gold font-light counter" data-target="401">0</span>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <span class="font-sans text-[10px] text-white/40 uppercase tracking-[0.15em]">Medical Q's</span>
+                    <span class="font-mono text-3xl md:text-4xl text-gold font-light counter" data-target="2245">0</span>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <span class="font-sans text-[10px] text-white/40 uppercase tracking-[0.15em]">Players/Teams</span>
+                    <span class="font-mono text-3xl md:text-4xl text-gold font-light counter" data-target="156">0</span>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <span class="font-sans text-[10px] text-white/40 uppercase tracking-[0.15em]">Live Deploys</span>
+                    <span class="font-mono text-3xl md:text-4xl text-gold font-light counter" data-target="3">0</span>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <span class="font-sans text-[10px] text-white/40 uppercase tracking-[0.15em]">Ext. Depend.</span>
+                    <span class="font-mono text-3xl md:text-4xl text-white font-light counter" data-target="0">0</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROJECT DEEP DIVES -->
+        <div class="font-mono text-xs text-white/40 mb-12 uppercase tracking-widest mt-24 reveal">[ Project Case Studies ]</div>
+
+        <!-- PROJECT 1: NCAAT -->
+        <section class="mb-32 reveal group">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+                <div class="col-span-1 lg:col-span-7 flex flex-col gap-6">
+                    <div class="inline-flex py-1 px-3 border border-white/20 rounded text-[10px] uppercase tracking-widest text-white/60 font-mono w-fit bg-surface">
+                        Sports Analytics &amp; Predictive Modeling
+                    </div>
+                    <h2 class="font-serif text-4xl md:text-5xl text-white">NCAAT Interactive Bracket</h2>
+                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2">
+                        A 64-team interactive NCAA Tournament bracket integrating four independent analytics models, including KenPom efficiency ratings, adjusted net ratings, and advanced projections. Features three composable X-factor modes (Injury Adjustment, Guard Factor, 3-Point Shooting) that modify predictions in real-time. Built as an offline-capable Progressive Web App with ESPN CDN integration and intelligent fallback SVG generation.
+                    </p>
+                    <div class="mt-8">
+                        <div class="font-mono text-[10px] text-white/40 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Core Features</div>
+                        <ul class="tactical-list grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-sm text-gray-300 font-light">
+                            <li>KenPom rankings integration</li>
+                            <li>Advanced projection overlays</li>
+                            <li>Injury adjustment mode (11 teams)</li>
+                            <li>Guard X-Factor mode</li>
+                            <li>3PT X-Factor mode</li>
+                            <li>Cascade prediction engine</li>
+                            <li>Desktop horizontal bracket view</li>
+                            <li>Mobile tab navigation</li>
+                            <li>Offline-first caching (PWA)</li>
+                            <li>Fallback SVG logo generation</li>
+                            <li>Dark theme with gold accents</li>
+                            <li>Zero external JS dependencies</li>
+                        </ul>
+                    </div>
+                    <div class="mt-8 flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Vanilla JS</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">CSS3</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">PWA</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Service Workers</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">ESPN CDN</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">weserv.nl Proxy</span>
+                    </div>
+                    <div class="mt-10">
+                        <a href="https://ncaa-bracket-2026.tiiny.site" target="_blank" rel="noopener noreferrer" class="btn-tactical inline-flex items-center gap-3 px-8 py-4 text-gold font-mono text-xs uppercase tracking-widest">
+                            <span>View Live</span>
+                            <i class="ph-bold ph-arrow-up-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-span-1 lg:col-span-5 flex flex-col gap-6 lg:pl-10 lg:border-l border-white/10">
+                    <div class="grid grid-cols-2 gap-px bg-white/10 border border-white/10">
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">9,631</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Lines of Code</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">148</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Functions</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">64</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Teams Simulated</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">4</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Analytics Models</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">3</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">X-Factor Modes</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">11</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Injury Profiles</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-32 reveal"></div>
+
+        <!-- PROJECT 2: Step 2 CK -->
+        <section class="mb-32 reveal group">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+                <div class="col-span-1 lg:col-span-7 flex flex-col gap-6 lg:order-2">
+                    <div class="inline-flex py-1 px-3 border border-white/20 rounded text-[10px] uppercase tracking-widest text-white/60 font-mono w-fit bg-surface">
+                        Medical Education Tech &amp; Adaptive Learning
+                    </div>
+                    <h2 class="font-serif text-4xl md:text-5xl text-white">Step 2 CK Study Engine</h2>
+                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2">
+                        A comprehensive medical study platform built to augment clinical education, housing 2,245 practice questions and 1,211 flashcards across 351 medical topics and 5+ clinical subjects. Features an SM-2 spaced repetition algorithm, a diagnostic surgery game, performance heatmap visualization, and an integrated study guide with diagnostic criteria and treatment protocols. Includes a custom content pipeline with OCR and keyword-based topic classification.
+                    </p>
+                    <div class="mt-8">
+                        <div class="font-mono text-[10px] text-white/40 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Core Features</div>
+                        <ul class="tactical-list grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-sm text-gray-300 font-light">
+                            <li>Adaptive quiz engine with shuffle/filter</li>
+                            <li>Flashcard engine with self-grading</li>
+                            <li>SM-2 spaced repetition algorithm</li>
+                            <li>"Quick 20" rapid drill mode</li>
+                            <li>"Drill Missed" mastery cycles</li>
+                            <li>Diagnostic surgery game</li>
+                            <li>Performance heatmap visualization</li>
+                            <li>Comprehensive study guide</li>
+                            <li>Wrong-answer explanations per option</li>
+                            <li>Topic &amp; source filtering</li>
+                            <li>Content ingest pipeline (7 scripts)</li>
+                            <li>OCR text extraction engine</li>
+                            <li>localStorage persistence</li>
+                            <li>Dashboard with mastery analytics</li>
+                        </ul>
+                    </div>
+                    <div class="mt-8 flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">JavaScript</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">HTML5/CSS3</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">SM-2 Algorithm</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">localStorage</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">JSON Architecture</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">OCR Pipeline</span>
+                    </div>
+                    <div class="mt-10">
+                        <a href="https://teal-davine-21.tiiny.site" target="_blank" rel="noopener noreferrer" class="btn-tactical inline-flex items-center gap-3 px-8 py-4 text-gold font-mono text-xs uppercase tracking-widest">
+                            <span>View Live</span>
+                            <i class="ph-bold ph-arrow-up-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-span-1 lg:col-span-5 flex flex-col gap-6 lg:pr-10 lg:border-r border-white/10 lg:order-1">
+                    <div class="grid grid-cols-2 gap-px bg-white/10 border border-white/10 text-left">
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">38,334</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Lines of Code</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">227</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Functions</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">2,245</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">MCQs</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">1,211</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Flashcards</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">351</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Topics</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">5+</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Clinical Subjects</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-32 reveal"></div>
+
+        <!-- PROJECT 3: Masters 2026 -->
+        <section class="mb-32 reveal group">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+                <div class="col-span-1 lg:col-span-7 flex flex-col gap-6">
+                    <div class="inline-flex py-1 px-3 border border-white/20 rounded text-[10px] uppercase tracking-widest text-white/60 font-mono w-fit bg-surface">
+                        Interactive Web Experience &amp; Programmatic Video
+                    </div>
+                    <h2 class="font-serif text-4xl md:text-5xl text-white">Masters 2026 Tournament Hub</h2>
+                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2">
+                        A premium digital experience for the 2026 Masters Tournament, consisting of two interconnected systems: (1) an interactive web application with live leaderboard tracking, an 18-hole course guide with difficulty ratings, a searchable 92-player field, and historical champions gallery with cinematic Ken Burns animations; and (2) a companion Remotion video renderer that programmatically generates broadcast-quality animated walkthroughs using React components, spring physics, and frame-perfect timing at 30fps.
+                    </p>
+                    <div class="mt-8">
+                        <div class="font-mono text-[10px] text-white/40 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Core Features</div>
+                        <ul class="tactical-list grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-sm text-gray-300 font-light">
+                            <li>Interactive leaderboard with filters</li>
+                            <li>18-hole course guide &amp; difficulty ratings</li>
+                            <li>Amen Corner deep-dive section</li>
+                            <li>92-player searchable field</li>
+                            <li>Historical champions gallery (15+ yrs)</li>
+                            <li>Real-time countdown timer</li>
+                            <li>Ken Burns cinematic animations</li>
+                            <li>Falling azalea petal effects</li>
+                            <li>Remotion: 6-scene video composition</li>
+                            <li>Spring physics player animations</li>
+                            <li>Frame-interpolated transitions</li>
+                            <li>1080x1920 broadcast-ready output</li>
+                            <li>Intersection Observer scroll effects</li>
+                            <li>Responsive grid layouts</li>
+                        </ul>
+                    </div>
+                    <div class="mt-8 flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">React 19 / TS 6</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Remotion 4.0</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">HTML5/CSS3/JS</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">PWA</span>
+                    </div>
+                    <div class="mt-10">
+                        <a href="https://salmon-jsandye-40.tiiny.site" target="_blank" rel="noopener noreferrer" class="btn-tactical inline-flex items-center gap-3 px-8 py-4 text-gold font-mono text-xs uppercase tracking-widest">
+                            <span>View Live</span>
+                            <i class="ph-bold ph-arrow-up-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-span-1 lg:col-span-5 flex flex-col gap-6 lg:pl-10 lg:border-l border-white/10">
+                    <div class="grid grid-cols-2 gap-px bg-white/10 border border-white/10">
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">2,626</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Lines of Code</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">26</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Functions</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">92</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Players</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">18</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Holes Mapped</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">600</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Frames Rendered</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">20s</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Video Output</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SIDE PROJECTS / EXPLORABLES -->
+        <section class="py-20 reveal border-t border-white/10 relative">
+            <div class="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div>
+                    <div class="font-mono text-xs text-white/40 mb-4 uppercase tracking-widest">[ Also Built Since March ]</div>
+                    <h3 class="font-serif text-3xl md:text-4xl text-white">Explorables</h3>
+                    <p class="font-sans text-base text-dim font-light mt-3 max-w-2xl">Smaller experiments and side projects from the same period. Each one started as a curiosity and turned into a working prototype.</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="explorables-grid">
+                <div class="glass-panel p-6 rounded-lg bento-hover cursor-default flex flex-col">
+                    <div class="flex justify-between items-center mb-4">
+                        <i class="ph-fill ph-robot text-2xl text-white/80"></i>
+                        <span class="font-mono text-[10px] text-blue uppercase tracking-widest">AI Agents</span>
+                    </div>
+                    <h4 class="font-mono text-lg text-white mb-3">Pika: AI Meeting Agent</h4>
+                    <p class="font-sans text-sm text-dim leading-relaxed mb-4">An exploration of Pika, a tool that deploys autonomous AI agents into live Google Meet sessions. The agent joins a call, listens, and participates in real-time. This demo captures the experience of testing that boundary between human and AI presence in collaborative environments.</p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">AI Agents</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Google Meet</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Video Demo</span>
+                    </div>
+                    <div class="mt-auto pt-4 border-t border-white/10">
+                        <a href="https://youtube.com/shorts/cqneyyuSem0" target="_blank" rel="noopener noreferrer" class="btn-tactical inline-flex items-center gap-3 px-6 py-3 text-gold font-mono text-xs uppercase tracking-widest w-full justify-center">
+                            <i class="ph-fill ph-play"></i>
+                            <span>Watch Demo</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="glass-panel p-6 rounded-lg bento-hover cursor-default flex flex-col">
+                    <div class="flex justify-between items-center mb-4">
+                        <i class="ph-fill ph-film-strip text-2xl text-white/80"></i>
+                        <span class="font-mono text-[10px] text-blue uppercase tracking-widest">Remotion</span>
+                    </div>
+                    <h4 class="font-mono text-lg text-white mb-3">Skubal Hype Video</h4>
+                    <p class="font-sans text-sm text-dim leading-relaxed mb-4">A programmatic hype video for Tarik Skubal built with Remotion, demonstrating how React components and frame-based animation can produce sports media content entirely through code.</p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Remotion</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">React</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Sports Media</span>
+                    </div>
+                    <div class="mt-auto pt-4 border-t border-white/10">
+                        <a href="https://youtu.be/bRezTz-l5cI" target="_blank" rel="noopener noreferrer" class="btn-tactical inline-flex items-center gap-3 px-6 py-3 text-gold font-mono text-xs uppercase tracking-widest w-full justify-center">
+                            <i class="ph-fill ph-play"></i>
+                            <span>Watch Video</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TOOLCHAIN ECOSYSTEM -->
+        <section class="py-20 reveal border-t border-white/10 relative">
+            <h3 class="font-serif text-3xl md:text-4xl text-white mb-2">The Development Ecosystem</h3>
+            <p class="font-mono text-xs text-gold tracking-widest uppercase mb-12">How a single developer ships production software</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
+                <div class="glass-panel p-6 rounded-lg bento-hover cursor-default flex flex-col">
+                    <div class="flex justify-between items-center mb-6">
+                        <i class="ph-fill ph-code text-2xl text-white/80"></i>
+                        <span class="font-mono text-[10px] text-blue uppercase tracking-widest">Autonomous</span>
+                    </div>
+                    <h4 class="font-mono text-lg text-white mb-3">Claude Code</h4>
+                    <p class="font-sans text-sm text-dim leading-relaxed mt-auto">AI pair programmer with sub-agent orchestration, custom skills (/council, /brainstorm, /teach-me, /after-action), and parallel auto-agents for research, refactoring, and testing.</p>
+                </div>
+                <div class="glass-panel p-6 rounded-lg bento-hover cursor-default flex flex-col">
+                    <div class="flex justify-between items-center mb-6">
+                        <i class="ph-fill ph-video-camera text-2xl text-white/80"></i>
+                        <span class="font-mono text-[10px] text-blue uppercase tracking-widest">Renderer</span>
+                    </div>
+                    <h4 class="font-mono text-lg text-white mb-3">Remotion</h4>
+                    <p class="font-sans text-sm text-dim leading-relaxed mt-auto">React-based programmatic video engine. Converts component trees into frame-perfect broadcast video with spring physics and interpolation.</p>
+                </div>
+                <div class="glass-panel p-6 rounded-lg bento-hover cursor-default flex flex-col">
+                    <div class="flex justify-between items-center mb-6">
+                        <i class="ph-fill ph-tree-structure text-2xl text-white/80"></i>
+                        <span class="font-mono text-[10px] text-blue uppercase tracking-widest">Architecture</span>
+                    </div>
+                    <h4 class="font-mono text-lg text-white mb-3">Draw.io</h4>
+                    <p class="font-sans text-sm text-dim leading-relaxed mt-auto">Architectural diagramming for system design, data flow visualization, and component relationship mapping.</p>
+                </div>
+                <div class="glass-panel p-6 rounded-lg bento-hover cursor-default flex flex-col">
+                    <div class="flex justify-between items-center mb-6">
+                        <i class="ph-fill ph-brain text-2xl text-white/80"></i>
+                        <span class="font-mono text-[10px] text-blue uppercase tracking-widest">Intelligence</span>
+                    </div>
+                    <h4 class="font-mono text-lg text-white mb-3">Claude API</h4>
+                    <p class="font-sans text-sm text-dim leading-relaxed mt-auto">LLM integration for adaptive learning features, content generation, and intelligent tutoring capabilities.</p>
+                </div>
+                <div class="glass-panel p-6 rounded-lg bento-hover cursor-default flex flex-col">
+                    <div class="flex justify-between items-center mb-6">
+                        <i class="ph-fill ph-cell-signal-high text-2xl text-white/80"></i>
+                        <span class="font-mono text-[10px] text-blue uppercase tracking-widest">Offline</span>
+                    </div>
+                    <h4 class="font-mono text-lg text-white mb-3">PWA Stack</h4>
+                    <p class="font-sans text-sm text-dim leading-relaxed mt-auto">Service Workers, Web App Manifests, and Cache API for offline-first, installable applications.</p>
+                </div>
+                <div class="glass-panel p-6 rounded-lg bento-hover cursor-default flex flex-col">
+                    <div class="flex justify-between items-center mb-6">
+                        <i class="ph-fill ph-file-text text-2xl text-white/80"></i>
+                        <span class="font-mono text-[10px] text-blue uppercase tracking-widest">Pipeline</span>
+                    </div>
+                    <h4 class="font-mono text-lg text-white mb-3">Content Pipeline</h4>
+                    <p class="font-sans text-sm text-dim leading-relaxed mt-auto">Custom OCR + PDF extraction pipeline (pdftotext, Tesseract, Node.js) for converting study materials into structured JSON.</p>
+                </div>
+                <div class="glass-panel p-6 rounded-lg bento-hover cursor-default flex flex-col">
+                    <div class="flex justify-between items-center mb-6">
+                        <i class="ph-fill ph-paint-brush text-2xl text-white/80"></i>
+                        <span class="font-mono text-[10px] text-blue uppercase tracking-widest">Design</span>
+                    </div>
+                    <h4 class="font-mono text-lg text-white mb-3">AI Designer</h4>
+                    <p class="font-sans text-sm text-dim leading-relaxed mt-auto">AI-powered design generation used to architect the layout, typography, and visual system of this portfolio. Generates production HTML from natural language prompts.</p>
+                </div>
+                <div class="glass-panel p-6 rounded-lg bento-hover cursor-default flex flex-col">
+                    <div class="flex justify-between items-center mb-6">
+                        <i class="ph-fill ph-github-logo text-2xl text-white/80"></i>
+                        <span class="font-mono text-[10px] text-blue uppercase tracking-widest">Co-pilot</span>
+                    </div>
+                    <h4 class="font-mono text-lg text-white mb-3">GitHub Copilot</h4>
+                    <p class="font-sans text-sm text-dim leading-relaxed mt-auto">Inline code completion and suggestion engine integrated into the editor. Accelerates routine coding patterns and reduces context-switching overhead.</p>
+                </div>
+                <div class="glass-panel p-6 rounded-lg bento-hover cursor-default flex flex-col">
+                    <div class="flex justify-between items-center mb-6">
+                        <i class="ph-fill ph-plugs-connected text-2xl text-white/80"></i>
+                        <span class="font-mono text-[10px] text-blue uppercase tracking-widest">Connectors</span>
+                    </div>
+                    <h4 class="font-mono text-lg text-white mb-3">MCP Plugins</h4>
+                    <p class="font-sans text-sm text-dim leading-relaxed mt-auto">Model Context Protocol servers connecting AI to external tools: Figma for design, Draw.io for diagrams, browser automation for testing, and custom integrations.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="w-full py-12 border-t border-white/5 relative z-10">
+        <div class="text-center">
+            <span class="font-mono text-[10px] md:text-xs text-white/30 uppercase tracking-[0.3em]">
+                &copy; 2026 Sean Sooch // AI-Augmented Developer
+            </span>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const reveals = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add('active');
+                    const counters = entry.target.querySelectorAll('.counter');
+                    if (counters.length) animateCounters(counters);
+                    counters.forEach(c => c.classList.remove('counter'));
+                    obs.unobserve(entry.target);
+                });
+            }, { threshold: 0.15, rootMargin: "0px 0px -50px 0px" });
+            reveals.forEach(r => observer.observe(r));
+
+            function animateCounters(counters) {
+                counters.forEach(counter => {
+                    const target = +counter.dataset.target;
+                    const speed = 200;
+                    const tick = () => {
+                        const current = +counter.innerText.replace(/,/g, '');
+                        const inc = target / speed;
+                        if (current < target) {
+                            counter.innerText = Math.ceil(current + inc).toLocaleString();
+                            setTimeout(tick, 15);
+                        } else {
+                            counter.innerText = target.toLocaleString();
+                        }
+                    };
+                    tick();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
