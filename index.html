@@ -117,8 +117,8 @@
                 <span class="font-mono text-[10px] md:text-xs text-gold uppercase tracking-[0.2em] font-semibold">All Projects Live</span>
             </div>
             <h1 class="font-serif text-5xl md:text-7xl lg:text-[5rem] leading-[1.05] tracking-tight text-white mb-6 w-full lg:w-[90%]">
-                Three Projects.<br>
-                <span class="text-white">50,000+ Lines of Code.</span><br>
+                Four Projects.<br>
+                <span class="text-white">55,000+ Lines of Code.</span><br>
                 <span class="italic text-gray-400">One Developer.</span>
             </h1>
             <h2 class="font-mono text-sm md:text-base text-gold tracking-widest uppercase mb-10 w-full md:w-3/4">
@@ -163,11 +163,11 @@
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-8">
                 <div class="flex flex-col gap-2">
                     <span class="font-sans text-[10px] text-white/40 uppercase tracking-[0.15em]">Lines of Code</span>
-                    <span class="font-mono text-3xl md:text-4xl text-gold font-light counter" data-target="50591">0</span>
+                    <span class="font-mono text-3xl md:text-4xl text-gold font-light counter" data-target="55055">0</span>
                 </div>
                 <div class="flex flex-col gap-2">
                     <span class="font-sans text-[10px] text-white/40 uppercase tracking-[0.15em]">Functions</span>
-                    <span class="font-mono text-3xl md:text-4xl text-gold font-light counter" data-target="401">0</span>
+                    <span class="font-mono text-3xl md:text-4xl text-gold font-light counter" data-target="463">0</span>
                 </div>
                 <div class="flex flex-col gap-2">
                     <span class="font-sans text-[10px] text-white/40 uppercase tracking-[0.15em]">Medical Q's</span>
@@ -182,8 +182,8 @@
                     <span class="font-mono text-3xl md:text-4xl text-gold font-light counter" data-target="3">0</span>
                 </div>
                 <div class="flex flex-col gap-2">
-                    <span class="font-sans text-[10px] text-white/40 uppercase tracking-[0.15em]">Ext. Depend.</span>
-                    <span class="font-mono text-3xl md:text-4xl text-white font-light counter" data-target="0">0</span>
+                    <span class="font-sans text-[10px] text-white/40 uppercase tracking-[0.15em]">DB Tables</span>
+                    <span class="font-mono text-3xl md:text-4xl text-gold font-light counter" data-target="7">0</span>
                 </div>
             </div>
         </section>
@@ -360,6 +360,66 @@
                         <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">18</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Holes Mapped</span></div>
                         <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">600</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Frames Rendered</span></div>
                         <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">20s</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Video Output</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-32 reveal"></div>
+
+        <!-- PROJECT 4: Handoff Tracker -->
+        <section class="mb-32 reveal group">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+                <div class="col-span-1 lg:col-span-7 flex flex-col gap-6 lg:order-2">
+                    <div class="inline-flex py-1 px-3 border border-white/20 rounded text-[10px] uppercase tracking-widest text-white/60 font-mono w-fit bg-surface">
+                        Clinical QI &amp; Patient Safety
+                    </div>
+                    <h2 class="font-serif text-4xl md:text-5xl text-white">Patient Handoff Tracker</h2>
+                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2">
+                        A full-stack I-PASS/SBAR digital handoff system for Emergency Medicine, built as a Quality Improvement project for a real clinical site. Implements the evidence-based I-PASS framework (validated in NEJM, 30% reduction in preventable adverse events) with built-in Joint Commission compliance metrics, HIPAA-conscious audit logging, and a QI dashboard for publication-ready data. The first multi-file, database-backed, authenticated application in this portfolio.
+                    </p>
+                    <div class="mt-8">
+                        <div class="font-mono text-[10px] text-white/40 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Core Features</div>
+                        <ul class="tactical-list grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-sm text-gray-300 font-light">
+                            <li>I-PASS structured handoff workflow</li>
+                            <li>SBAR quick mode for urgent handoffs</li>
+                            <li>Patient board with ESI acuity badges</li>
+                            <li>Verification read-back (receiver synthesis)</li>
+                            <li>Action item tracking (stat/urgent/routine)</li>
+                            <li>QI metrics dashboard with Chart.js</li>
+                            <li>Joint Commission compliance indicators</li>
+                            <li>Session-based auth (Flask-Login)</li>
+                            <li>HIPAA-conscious audit logging</li>
+                            <li>Role-based access (attending/resident/nurse)</li>
+                            <li>Print-friendly handoff sheets</li>
+                            <li>CSV export for statistical analysis</li>
+                            <li>Mobile-first responsive design</li>
+                            <li>SQLite with WAL mode concurrency</li>
+                        </ul>
+                    </div>
+                    <div class="mt-8 flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Python / Flask</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">SQLite</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Vanilla JS</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Chart.js</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Jinja2</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">I-PASS / SBAR</span>
+                    </div>
+                    <div class="mt-10">
+                        <span class="inline-flex items-center gap-3 px-8 py-4 text-dim font-mono text-xs uppercase tracking-widest border border-white/10 rounded cursor-default">
+                            <i class="ph-bold ph-desktop-tower"></i>
+                            <span>Offline Build &mdash; Deployed Locally</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-span-1 lg:col-span-5 flex flex-col gap-6 lg:pr-10 lg:border-r border-white/10 lg:order-1">
+                    <div class="grid grid-cols-2 gap-px bg-white/10 border border-white/10 text-left">
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">4,464</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Lines of Code</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">62</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Functions</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">7</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">DB Tables</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">35</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Source Files</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">20+</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">API Endpoints</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">4</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">JC Indicators</span></div>
                     </div>
                 </div>
             </div>
