@@ -103,7 +103,7 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col relative font-sans text-dim overflow-x-hidden">
+<body id="top" class="min-h-screen flex flex-col relative font-sans text-dim overflow-x-hidden">
 
     <div class="ambient-glow"></div>
     <div class="axis-line hidden md:block"></div>
@@ -127,6 +127,18 @@
             <p class="font-sans text-lg md:text-xl text-dim font-light leading-relaxed max-w-3xl">
                 A portfolio of AI-augmented applications built at the intersection of medicine, sports, and computational technology.
             </p>
+
+            <div class="mt-10 glass-panel rounded-xl p-6 md:p-8 w-full lg:w-[90%] border border-gold/20">
+                <div class="font-mono text-[10px] md:text-xs text-gold uppercase tracking-[0.2em] mb-4">View All Projects</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <a href="#project-ncaat" class="btn-tactical px-4 py-3 text-center text-xs font-mono uppercase tracking-widest text-gold rounded">NCAAT Bracket</a>
+                    <a href="#project-step2" class="btn-tactical px-4 py-3 text-center text-xs font-mono uppercase tracking-widest text-gold rounded">Step 2 CK Engine</a>
+                    <a href="#project-masters" class="btn-tactical px-4 py-3 text-center text-xs font-mono uppercase tracking-widest text-gold rounded">Masters Hub</a>
+                    <a href="#project-handoff" class="btn-tactical px-4 py-3 text-center text-xs font-mono uppercase tracking-widest text-gold rounded">Handoff Tracker</a>
+                    <a href="#explorables" class="btn-tactical px-4 py-3 text-center text-xs font-mono uppercase tracking-widest text-gold rounded">Detroit Sports Hub</a>
+                    <a href="#top" class="btn-tactical px-4 py-3 text-center text-xs font-mono uppercase tracking-widest text-gold rounded">Back to Top</a>
+                </div>
+            </div>
         </section>
 
         <!-- THESIS -->
@@ -192,7 +204,7 @@
         <div class="font-mono text-xs text-white/40 mb-12 uppercase tracking-widest mt-24 reveal">[ Project Case Studies ]</div>
 
         <!-- PROJECT 1: NCAAT -->
-        <section class="mb-32 reveal group">
+        <section id="project-ncaat" class="mb-32 reveal group scroll-mt-24">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
                 <div class="col-span-1 lg:col-span-7 flex flex-col gap-6">
                     <div class="inline-flex py-1 px-3 border border-white/20 rounded text-[10px] uppercase tracking-widest text-white/60 font-mono w-fit bg-surface">
@@ -250,7 +262,7 @@
         <div class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-32 reveal"></div>
 
         <!-- PROJECT 2: Step 2 CK -->
-        <section class="mb-32 reveal group">
+        <section id="project-step2" class="mb-32 reveal group scroll-mt-24">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
                 <div class="col-span-1 lg:col-span-7 flex flex-col gap-6 lg:order-2">
                     <div class="inline-flex py-1 px-3 border border-white/20 rounded text-[10px] uppercase tracking-widest text-white/60 font-mono w-fit bg-surface">
@@ -310,7 +322,7 @@
         <div class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-32 reveal"></div>
 
         <!-- PROJECT 3: Masters 2026 -->
-        <section class="mb-32 reveal group">
+        <section id="project-masters" class="mb-32 reveal group scroll-mt-24">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
                 <div class="col-span-1 lg:col-span-7 flex flex-col gap-6">
                     <div class="inline-flex py-1 px-3 border border-white/20 rounded text-[10px] uppercase tracking-widest text-white/60 font-mono w-fit bg-surface">
@@ -368,7 +380,7 @@
         <div class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-32 reveal"></div>
 
         <!-- PROJECT 4: Handoff Tracker -->
-        <section class="mb-32 reveal group">
+        <section id="project-handoff" class="mb-32 reveal group scroll-mt-24">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
                 <div class="col-span-1 lg:col-span-7 flex flex-col gap-6 lg:order-2">
                     <div class="inline-flex py-1 px-3 border border-white/20 rounded text-[10px] uppercase tracking-widest text-white/60 font-mono w-fit bg-surface">
@@ -426,7 +438,7 @@
         </section>
 
         <!-- SIDE PROJECTS / EXPLORABLES -->
-        <section class="py-20 reveal border-t border-white/10 relative">
+        <section id="explorables" class="py-20 reveal border-t border-white/10 relative scroll-mt-24">
             <div class="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
                     <div class="font-mono text-xs text-white/40 mb-4 uppercase tracking-widest">[ Also Built Since March ]</div>
