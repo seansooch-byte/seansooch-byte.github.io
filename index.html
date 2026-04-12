@@ -998,6 +998,23 @@
             }, { threshold: 0.05, rootMargin: "0px 0px -50px 0px" });
             reveals.forEach(r => observer.observe(r));
 
+            // Scroll fallback — mobile Safari/Chrome can break IO when body has overflow-x-hidden
+            function revealFallback() {
+                reveals.forEach(r => {
+                    if (r.classList.contains('active')) return;
+                    const rect = r.getBoundingClientRect();
+                    if (rect.top < window.innerHeight - 50) {
+                        r.classList.add('active');
+                        const counters = r.querySelectorAll('.counter');
+                        if (counters.length) animateCounters(counters);
+                        counters.forEach(c => c.classList.remove('counter'));
+                        observer.unobserve(r);
+                    }
+                });
+            }
+            window.addEventListener('scroll', revealFallback, { passive: true });
+            revealFallback(); // run once on load for anything already in view
+
             function animateCounters(counters) {
                 counters.forEach(counter => {
                     const target = +counter.dataset.target;
