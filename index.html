@@ -139,6 +139,15 @@
         }
         .back-to-top.visible { opacity: 1; pointer-events: auto; }
         .back-to-top:hover { background: #C9A84C; color: #050510; }
+        /* Simple/Technical Mode */
+        [data-simple] { display: none; }
+        [data-technical] { display: inline; }
+        body.simple [data-simple] { display: inline; }
+        body.simple [data-technical] { display: none; }
+        [data-simple-block] { display: none; }
+        [data-technical-block] { display: block; }
+        body.simple [data-simple-block] { display: block; }
+        body.simple [data-technical-block] { display: none; }
     </style>
 </head>
 <body id="top" class="min-h-screen flex flex-col relative font-sans text-dim overflow-x-hidden">
@@ -149,13 +158,14 @@
     <nav class="side-nav" aria-label="Section navigation">
         <a href="#top" data-section="hero"><span class="side-nav-dot"></span><span class="side-nav-label">Top</span></a>
         <a href="#thesis" data-section="thesis"><span class="side-nav-dot"></span><span class="side-nav-label">Thesis</span></a>
+        <a href="#research" data-section="research"><span class="side-nav-dot"></span><span class="side-nav-label">Research</span></a>
         <a href="#project-ncaat" data-section="project-ncaat"><span class="side-nav-dot"></span><span class="side-nav-label">NCAAT</span></a>
         <a href="#project-step2" data-section="project-step2"><span class="side-nav-dot"></span><span class="side-nav-label">Step 2 CK</span></a>
         <a href="#project-masters" data-section="project-masters"><span class="side-nav-dot"></span><span class="side-nav-label">Masters</span></a>
         <a href="#project-handoff" data-section="project-handoff"><span class="side-nav-dot"></span><span class="side-nav-label">Handoff</span></a>
         <a href="#project-detroit" data-section="project-detroit"><span class="side-nav-dot"></span><span class="side-nav-label">Detroit</span></a>
         <a href="#project-warrior" data-section="project-warrior"><span class="side-nav-dot"></span><span class="side-nav-label">Warrior Ready</span></a>
-        <a href="#research" data-section="research"><span class="side-nav-dot"></span><span class="side-nav-label">Research</span></a>
+        <a href="#project-agi" data-section="project-agi"><span class="side-nav-dot"></span><span class="side-nav-label">AGI Tracker</span></a>
         <a href="#explorables" data-section="explorables"><span class="side-nav-dot"></span><span class="side-nav-label">Explorables</span></a>
     </nav>
 
@@ -168,15 +178,18 @@
                 <span class="font-mono text-[10px] md:text-xs text-gold uppercase tracking-[0.2em] font-semibold">All Projects Live</span>
             </div>
             <h1 class="font-serif text-5xl md:text-7xl lg:text-[5rem] leading-[1.05] tracking-tight text-white mb-6 w-full lg:w-[90%]">
-                Six Projects.<br>
-                <span class="text-white">68,710 Lines of Code.</span><br>
+                Seven Projects.<br>
+                <span class="text-white">70,566 Lines of Code.</span><br>
                 <span class="italic text-gray-400">One Developer.</span>
             </h1>
             <h2 class="font-mono text-sm md:text-base text-gold tracking-widest uppercase mb-10 w-full md:w-3/4">
-                Sean Sooch &mdash; Medical Student | Military Officer | Software Developer
+                Sean Sooch // Medical Student | Military Officer | Software Developer
             </h2>
-            <p class="font-sans text-lg md:text-xl text-dim font-light leading-relaxed max-w-3xl">
+            <p class="font-sans text-lg md:text-xl text-dim font-light leading-relaxed max-w-3xl" data-technical-block>
                 A portfolio of AI-augmented applications built at the intersection of medicine, sports, and computational technology.
+            </p>
+            <p class="font-sans text-lg md:text-xl text-dim font-light leading-relaxed max-w-3xl" data-simple-block>
+                Seven apps built by one person using AI as a coding partner. Medical tools, sports dashboards, military fitness, and AI research, all built in 23 days.
             </p>
 
             <nav aria-label="Project quick navigation" class="mt-10 glass-panel rounded-xl p-6 md:p-8 w-full lg:w-[90%] border border-gold/20">
@@ -188,6 +201,7 @@
                     <a href="#project-handoff" class="btn-tactical px-4 py-3 text-center text-xs font-mono uppercase tracking-widest text-gold rounded">Handoff Tracker</a>
                     <a href="#project-detroit" class="btn-tactical px-4 py-3 text-center text-xs font-mono uppercase tracking-widest text-gold rounded">Detroit Sports</a>
                     <a href="#project-warrior" class="btn-tactical px-4 py-3 text-center text-xs font-mono uppercase tracking-widest text-gold rounded">Warrior Ready</a>
+                    <a href="#project-agi" class="btn-tactical px-4 py-3 text-center text-xs font-mono uppercase tracking-widest text-gold rounded">AGI Tracker</a>
                     <a href="#explorables" class="btn-tactical px-4 py-3 text-center text-xs font-mono uppercase tracking-widest text-gold rounded">Explorables</a>
                 </div>
             </nav>
@@ -198,7 +212,7 @@
             <div class="glass-panel p-8 md:p-12 relative border-l-4 border-l-gold">
                 <div class="absolute top-4 right-4 font-mono text-[10px] text-white/20">THESIS.01</div>
                 <h3 class="font-serif text-3xl text-white mb-8">The Case for AI-Augmented Development</h3>
-                <div class="editorial-text text-base md:text-lg text-gray-300 font-light leading-loose">
+                <div class="editorial-text text-base md:text-lg text-gray-300 font-light leading-loose" data-technical-block>
                     <p class="mb-6 indent-8">
                         These projects were built by a single developer, a medical student and military officer with no formal CS degree, using AI as a force multiplier. Claude Code's autonomous agents researched APIs, generated components, debugged edge cases, and iterated on designs in real-time. The result is a collection of production-grade applications that would traditionally require a team of specialists. All were started after March 15th, 2026, built in free time after clinical rotations and in between study sessions. That alone says more about where the tools are heading than anything about me individually.
                     </p>
@@ -212,10 +226,18 @@
                         As a military officer, I also care about understanding how emerging technology reshapes the cyber landscape. I have started incorporating tools like <span class="text-gold font-mono text-sm">/threat-model</span>, <span class="text-gold font-mono text-sm">/security-review</span>, and <span class="text-gold font-mono text-sm">/after-action</span> into that learning process. Knowing how AI systems work, how they can be directed, and where they are vulnerable is no longer optional for anyone responsible for operational security. Building with these tools is one of the best ways to develop that intuition firsthand.
                     </p>
                     <p class="mb-6 indent-8">
-                        But the deeper thesis is about what comes next. We are approaching a point where AI capabilities compound faster than any individual can fully track. GitHub Copilot normalized AI in the editor. OpenAI's Codex proved that natural language could generate working code. Model Context Protocol plugins are connecting AI to every tool and API imaginable. These capabilities will not stay behind developer consoles forever. They will leak into every profession, every workflow, every industry. The professionals who thrive in that environment will not be the ones who resist AI or passively consume it. They will be the ones who learned to operate fluently in a dual ecosystem, human and machine working in concert. The bottleneck is no longer technical skill. It is imagination, domain knowledge, and the willingness to build.
+                        But the deeper thesis is about what comes next. We are approaching a point where AI capabilities compound faster than any individual can fully track, which is exactly why I built the <a href="https://differential-c57.pages.dev" target="_blank" rel="noopener noreferrer" class="text-gold hover:underline">AGI Capability Tracker</a>. It monitors progress across 8 domains, 25+ frontier models, and dozens of benchmarks in real time. The data tells the story plainly: competition math went from unsolvable to perfect scores in 14 months. Coding benchmarks that stumped every model a year ago are now cleared at 94%. Reasoning tests designed to be AGI-proof are already being matched on their second iteration. A restricted model that fewer than 40 organizations can access surpasses human baselines on autonomous computer operation. GitHub Copilot normalized AI in the editor. OpenAI's Codex proved that natural language could generate working code. Model Context Protocol plugins are connecting AI to every tool and API imaginable. These capabilities will not stay behind developer consoles forever. They will leak into every profession, every workflow, every industry. The professionals who thrive in that environment will not be the ones who resist AI or passively consume it. They will be the ones who learned to operate fluently in a dual ecosystem, human and machine working in concert. The bottleneck is no longer technical skill. It is imagination, domain knowledge, and the willingness to build.
                     </p>
                     <p class="indent-8">
                         These projects are my small proof of that alignment. Evidence that someone who understands the problem space and has learned to work alongside AI can ship real software that solves real problems, in days rather than months. I am still learning, still building, and still a long way from where I want to be. But I believe this is the direction the world is heading, and I would rather be early than late.
+                    </p>
+                </div>
+                <div class="text-base md:text-lg text-gray-300 font-light leading-loose" data-simple-block>
+                    <p class="mb-6 indent-8">
+                        I am a medical student and military officer with no computer science degree. Every project in this portfolio was built in my free time, after clinical rotations and between study sessions, using AI as a coding partner. I told the AI what I wanted to build, and it helped me write the code, fix bugs, and learn new skills along the way. Everything here was started after March 15th, 2026. The sports apps exist because I love March Madness, the Masters, and Detroit sports. The medical apps exist because I saw problems in my own education and in patient care that no existing tool solved well enough. The military fitness app exists because every service member needs a reliable PT calculator.
+                    </p>
+                    <p class="mb-6 indent-8">
+                        The bigger point is about what is coming next. AI tools are getting powerful enough that anyone with domain knowledge and a clear idea can build real software: not just developers. Doctors, officers, teachers, analysts. I built an <a href="https://differential-c57.pages.dev" target="_blank" rel="noopener noreferrer" class="text-gold hover:underline">AGI Capability Tracker</a> to watch how fast this is happening. The numbers are striking: AI now scores perfectly on math competitions that were impossible a year ago, fixes 94 out of 100 real software bugs, and one restricted model operates a computer better than most humans. The people who will thrive are not the ones resisting AI or passively watching it. They are the ones learning to work alongside it. These projects are my proof that one person, with the right tools and enough motivation, can ship working software that solves real problems in days instead of months.
                     </p>
                 </div>
             </div>
@@ -227,7 +249,7 @@
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-8">
                 <div class="flex flex-col gap-2">
                     <span class="font-sans text-[10px] text-white/40 uppercase tracking-[0.15em]">Lines of Code</span>
-                    <span class="font-mono text-3xl md:text-4xl text-gold font-light counter" data-target="68710">0</span>
+                    <span class="font-mono text-3xl md:text-4xl text-gold font-light counter" data-target="70566">0</span>
                 </div>
                 <div class="flex flex-col gap-2">
                     <span class="font-sans text-[10px] text-white/40 uppercase tracking-[0.15em]">Functions</span>
@@ -243,11 +265,11 @@
                 </div>
                 <div class="flex flex-col gap-2">
                     <span class="font-sans text-[10px] text-white/40 uppercase tracking-[0.15em]">Live Deploys</span>
-                    <span class="font-mono text-3xl md:text-4xl text-gold font-light counter" data-target="6">0</span>
+                    <span class="font-mono text-3xl md:text-4xl text-gold font-light counter" data-target="7">0</span>
                 </div>
                 <div class="flex flex-col gap-2">
                     <span class="font-sans text-[10px] text-white/40 uppercase tracking-[0.15em]">Days to Build</span>
-                    <span class="font-mono text-3xl md:text-4xl text-gold font-light counter" data-target="22">0</span>
+                    <span class="font-mono text-3xl md:text-4xl text-gold font-light counter" data-target="23">0</span>
                 </div>
             </div>
         </section>
@@ -272,7 +294,7 @@
                         </div>
                     </div>
                     <p class="font-sans text-sm text-dim font-light leading-relaxed mb-6">
-                        This paper argues that frontier AI risk is best understood not as a single category but as a stack of six interacting risk layers: Model Risk, System Risk, Deployment Risk, Access Risk, Governance Risk, and Civilizational Risk. The most serious dangers arise not from any single layer but from the way failures compound across layers. The framework provides a structured analytical tool for policymakers, developers, and civil society.
+                        <span data-technical>This paper argues that frontier AI risk is best understood not as a single category but as a stack of six interacting risk layers: Model Risk, System Risk, Deployment Risk, Access Risk, Governance Risk, and Civilizational Risk. The most serious dangers arise not from any single layer but from the way failures compound across layers. The framework provides a structured analytical tool for policymakers, developers, and civil society.</span><span data-simple>AI risk is not one problem. It is six problems stacked on top of each other: how dangerous the AI itself is, what happens when you give it tools, what happens when you deploy it in the real world, who gets access to it, whether governments can keep up, and what it all means for society long-term. The biggest dangers come from these layers making each other worse.</span>
                     </p>
                     <div class="flex flex-wrap gap-2 mb-6">
                         <span class="px-2 py-1 bg-charcoal border border-gold/20 text-gold font-mono text-[10px] uppercase rounded">AI Governance</span>
@@ -287,7 +309,11 @@
                         </a>
                         <a href="https://differential-c57.pages.dev/frontier-risk-stack.pdf" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-3 border border-white/10 rounded text-dim font-mono text-xs uppercase tracking-widest hover:border-gold/40 hover:text-gold transition-all">
                             <i class="ph-bold ph-download-simple"></i>
-                            <span>PDF</span>
+                            <span>Technical PDF</span>
+                        </a>
+                        <a href="frontier-risk-stack-simple.pdf" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-3 border border-white/10 rounded text-dim font-mono text-xs uppercase tracking-widest hover:border-gold/40 hover:text-gold transition-all">
+                            <i class="ph-bold ph-download-simple"></i>
+                            <span>Plain Language PDF</span>
                         </a>
                     </div>
                 </div>
@@ -327,7 +353,7 @@
                             <span class="font-mono text-[9px] text-dim hidden md:inline">Compounding failures across all layers</span>
                         </div>
                     </div>
-                    <p class="font-mono text-[9px] text-dim mt-4 opacity-60">Central claim: risks compound across layers — no single layer fully explains the danger.</p>
+                    <p class="font-mono text-[9px] text-dim mt-4 opacity-60">Central claim: risks compound across layers. No single layer fully explains the danger.</p>
                 </div>
             </div>
         </section>
@@ -343,8 +369,11 @@
                         Sports Analytics &amp; Predictive Modeling
                     </div>
                     <h2 class="font-serif text-4xl md:text-5xl text-white">NCAAT Interactive Bracket</h2>
-                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2">
+                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-technical-block>
                         A 64-team interactive NCAA Tournament bracket integrating four independent analytics models, including KenPom efficiency ratings, adjusted net ratings, and advanced projections. Features three composable X-factor modes (Injury Adjustment, Guard Factor, 3-Point Shooting) that modify predictions in real-time. Built as an offline-capable Progressive Web App with ESPN CDN integration and intelligent fallback SVG generation.
+                    </p>
+                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-simple-block>
+                        A full March Madness bracket that predicts every game using four different ranking systems. You can turn on special filters (like adjusting for injuries or hot three-point shooting) to see how predictions change in real time. Works offline on your phone.
                     </p>
                     <div class="mt-8">
                         <div class="font-mono text-[10px] text-white/40 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Core Features</div>
@@ -401,8 +430,11 @@
                         Medical Education Tech &amp; Adaptive Learning
                     </div>
                     <h2 class="font-serif text-4xl md:text-5xl text-white">Step 2 CK Study Engine</h2>
-                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2">
+                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-technical-block>
                         A comprehensive medical study platform built to augment clinical education, housing 2,245 practice questions and 1,211 flashcards across 351 medical topics and 5+ clinical subjects. Features an SM-2 spaced repetition algorithm, a diagnostic surgery game, performance heatmap visualization, and an integrated study guide with diagnostic criteria and treatment protocols. Includes a custom content pipeline with OCR and keyword-based topic classification.
+                    </p>
+                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-simple-block>
+                        A medical study app with over 2,200 practice questions and 1,200 flashcards covering 5+ clinical subjects. It tracks what you get wrong and shows those topics more often so you learn faster. Includes a surgery game, visual progress maps, and a built-in study guide. I built it because no existing study tool worked the way I wanted it to.
                     </p>
                     <div class="mt-8">
                         <div class="font-mono text-[10px] text-white/40 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Core Features</div>
@@ -445,7 +477,7 @@
                         <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">2,245</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">MCQs</span></div>
                         <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">1,211</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Flashcards</span></div>
                         <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">351</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Topics</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">5+</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Clinical Subjects</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">5</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Clinical Subjects</span></div>
                     </div>
                 </div>
             </div>
@@ -461,8 +493,11 @@
                         Interactive Web Experience &amp; Programmatic Video
                     </div>
                     <h2 class="font-serif text-4xl md:text-5xl text-white">Masters 2026 Tournament Hub</h2>
-                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2">
+                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-technical-block>
                         A premium digital experience for the 2026 Masters Tournament, consisting of two interconnected systems: (1) an interactive web application with live leaderboard tracking, an 18-hole course guide with difficulty ratings, a searchable 92-player field, and historical champions gallery with cinematic Ken Burns animations; and (2) a companion Remotion video renderer that programmatically generates broadcast-quality animated walkthroughs using React components, spring physics, and frame-perfect timing at 30fps.
+                    </p>
+                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-simple-block>
+                        A digital companion for the 2026 Masters Tournament. Browse the live leaderboard, explore all 18 holes at Augusta National with difficulty ratings, search the full 92-player field, and view a gallery of past champions with cinematic animations. Also includes a code-generated video walkthrough of the course with broadcast-quality graphics.
                     </p>
                     <div class="mt-8">
                         <div class="font-mono text-[10px] text-white/40 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Core Features</div>
@@ -519,8 +554,11 @@
                         Clinical QI &amp; Patient Safety
                     </div>
                     <h2 class="font-serif text-4xl md:text-5xl text-white">Patient Handoff Tracker</h2>
-                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2">
+                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-technical-block>
                         A full-stack I-PASS/SBAR digital handoff system for Emergency Medicine, built as a Quality Improvement project for a real clinical site. Implements the evidence-based I-PASS framework (validated in NEJM, 30% reduction in preventable adverse events) with built-in Joint Commission compliance metrics, HIPAA-conscious audit logging, and a QI dashboard for publication-ready data. The first multi-file, database-backed, authenticated application in this portfolio.
+                    </p>
+                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-simple-block>
+                        A digital system for doctors handing off patients between shifts, the moment where the most preventable medical errors happen. It walks doctors through a structured checklist proven to reduce mistakes by 30%, tracks compliance for hospital inspectors, and generates data for quality improvement research. Built for a real emergency department as a clinical project.
                     </p>
                     <div class="mt-8">
                         <div class="font-mono text-[10px] text-white/40 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Core Features</div>
@@ -554,6 +592,7 @@
                             <span>View Live</span>
                             <i class="ph-bold ph-arrow-up-right"></i>
                         </a>
+                        <span class="font-mono text-[9px] text-white/30 mt-2 block">First load may take ~30s (free-tier cold start)</span>
                     </div>
                 </div>
                 <div class="col-span-1 lg:col-span-5 flex flex-col gap-6 lg:pr-10 lg:border-r border-white/10 lg:order-1">
@@ -562,7 +601,7 @@
                         <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">62</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Functions</span></div>
                         <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">7</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">DB Tables</span></div>
                         <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">35</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Source Files</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">20+</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">API Endpoints</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">20</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">API Endpoints</span></div>
                         <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">4</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">JC Indicators</span></div>
                     </div>
                 </div>
@@ -579,8 +618,11 @@
                         Sports Analytics &amp; Real-Time Data
                     </div>
                     <h2 class="font-serif text-4xl md:text-5xl text-white">Detroit Sports Hub</h2>
-                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2">
-                        A broadcast-quality sports hub combining two full-scale trackers for the 2026 Detroit Tigers season and the Detroit Pistons playoff run. The <strong class="text-gray-300">Tigers tracker</strong> features live pitch-by-pitch game tracking, win probability graphs, spray charts, Baseball Savant Statcast integration, a 30-prospect farm system, and a Skubalverse shrine. The <strong class="text-gray-300">Pistons tracker</strong> covers the franchise's historic rise from 14-68 to #1 seed with a live playoff countdown, Cade Cunningham injury watch, MVP case analysis, full bracket visualization, play-in scenarios, a 2004 "Going to Work" championship tribute, and 22 features across 10 tabs. Both apps run in complete isolation via iframe architecture &mdash; zero namespace conflicts, zero dependencies, zero frameworks.
+                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-technical-block>
+                        A broadcast-quality sports hub combining two full-scale trackers for the 2026 Detroit Tigers season and the Detroit Pistons playoff run. The <strong class="text-gray-300">Tigers tracker</strong> features live pitch-by-pitch game tracking, win probability graphs, spray charts, Baseball Savant Statcast integration, a 30-prospect farm system, and a Skubalverse shrine. The <strong class="text-gray-300">Pistons tracker</strong> covers the franchise's historic rise from 14-68 to #1 seed with a live playoff countdown, Cade Cunningham injury watch, MVP case analysis, full bracket visualization, play-in scenarios, a 2004 "Going to Work" championship tribute, and 22 features across 10 tabs. Both apps run in complete isolation via iframe architecture: zero namespace conflicts, zero dependencies, zero frameworks.
+                    </p>
+                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-simple-block>
+                        Two full sports apps in one hub. The <strong class="text-gray-300">Tigers tracker</strong> follows the 2026 season with live game updates, pitch-by-pitch tracking, win probability, prospect rankings, and a Tarik Skubal fan zone. The <strong class="text-gray-300">Pistons tracker</strong> covers the team's incredible turnaround from worst in the league to #1 seed, with a playoff countdown, Cade Cunningham injury updates, MVP stats, bracket visualization, and a tribute to the 2004 championship team. 60 features combined across 19 tabs.
                     </p>
                     <div class="mt-8">
                         <div class="font-mono text-[10px] text-white/40 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Tigers Tracker</div>
@@ -647,8 +689,11 @@
                         Military &amp; Fitness Technology
                     </div>
                     <h2 class="font-serif text-4xl md:text-5xl text-white">WARRIOR READY</h2>
-                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2">
-                        An all-branch military fitness command center covering every U.S. service branch's physical fitness test. PT score calculators for the Air Force PFA, Army AFT, Navy PRT, Marines PFT/CFT, Coast Guard PFT, and Space Force HPA &mdash; all updated to 2026 standards. Includes body composition calculator (DoD tape test, WHtR, BMI), run pacer with per-lap splits and SVG track visualization, HAMR shuttle conversion table, interval training programs, ruck march planner with terrain-adjusted pacing, score goal planner, test day countdown with periodization guidance, and localStorage-backed history with trend charts. Every scoring claim was fact-checked by 5 autonomous research agents against official branch publications. Built as a single HTML file &mdash; works offline, no account needed, no dependencies.
+                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-technical-block>
+                        An all-branch military fitness command center covering every U.S. service branch's physical fitness test. PT score calculators for the Air Force PFA, Army AFT, Navy PRT, Marines PFT/CFT, Coast Guard PFT, and Space Force HPA, all updated to 2026 standards. Includes body composition calculator (DoD tape test, WHtR, BMI), run pacer with per-lap splits and SVG track visualization, HAMR shuttle conversion table, interval training programs, ruck march planner with terrain-adjusted pacing, score goal planner, test day countdown with periodization guidance, and localStorage-backed history with trend charts. Every scoring claim was fact-checked by 5 autonomous research agents against official branch publications. Built as a single HTML file. Works offline, no account needed, no dependencies.
+                    </p>
+                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-simple-block>
+                        A fitness test calculator for every U.S. military branch (Army, Air Force, Navy, Marines, Coast Guard, and Space Force), all updated to 2026 scoring standards. Enter your push-ups, sit-ups, and run time to see your score and rating instantly. Also includes a body fat calculator, run pacer with lap splits, training programs, ruck march planner, test countdown timer, and score history tracking. Works offline on your phone, no account needed. Every scoring table was verified against official military publications.
                     </p>
                     <div class="mt-8">
                         <div class="font-mono text-[10px] text-white/40 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Core Features</div>
@@ -683,12 +728,72 @@
                 </div>
                 <div class="col-span-1 lg:col-span-5 flex flex-col gap-6 lg:pl-10 lg:border-l border-white/10">
                     <div class="grid grid-cols-2 gap-px bg-white/10 border border-white/10">
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">2,200+</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Lines of Code</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">2,200</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Lines of Code</span></div>
                         <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">6</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Military Branches</span></div>
                         <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">30</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Views (6x5 tabs)</span></div>
                         <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">5</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Fact-Check Agents</span></div>
                         <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">52</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Claims Verified</span></div>
                         <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">0</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Dependencies</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-32 reveal"></div>
+
+        <!-- PROJECT 7: AGI Capability Tracker -->
+        <section id="project-agi" class="mb-32 reveal group scroll-mt-24">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+                <div class="col-span-1 lg:col-span-7 flex flex-col gap-6">
+                    <div class="inline-flex py-1 px-3 border border-white/20 rounded text-[10px] uppercase tracking-widest text-white/60 font-mono w-fit bg-surface">
+                        AI Research &amp; Data Visualization
+                    </div>
+                    <h2 class="font-serif text-4xl md:text-5xl text-white">AGI Capability Tracker</h2>
+                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-technical-block>
+                        A real-time dashboard tracking AI progress across 8 capability domains, 25+ frontier models, and dozens of benchmarks. Features a composite AGI progress score, interactive radar chart, benchmark comparison table with sparklines, frontier model comparison cards, an AI safety section with a capability-vs-control scatter plot, and a full analysis section with an embedded research paper. Includes a <strong class="text-gray-300">Mythos Mode</strong> toggle that reveals restricted-model data (Anthropic's Mythos Preview) in a Terminator-red theme. Data is ingested from three external sources (HuggingFace, SWE-bench, Epoch AI) via automated scripts with editorial safeguards. Protected sections are hash-verified to prevent accidental overwrites during data imports.
+                    </p>
+                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-simple-block>
+                        A dashboard that tracks how close AI is to human-level intelligence across 8 skill areas: language, math, coding, science, reasoning, and more. Compares 25+ AI models from OpenAI, Google, Anthropic, Meta, and xAI side by side. Includes a safety section analyzing whether AI controls are keeping up with capabilities, and an embedded research paper on AI risk. A secret <strong class="text-gray-300">Mythos Mode</strong> reveals data from the most powerful AI model ever built, one too dangerous to release publicly.
+                    </p>
+                    <div class="mt-8">
+                        <div class="font-mono text-[10px] text-white/40 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Core Features</div>
+                        <ul class="tactical-list grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-sm text-gray-300 font-light">
+                            <li>8 capability domain gauges with progress bars</li>
+                            <li>Interactive radar chart (SVG)</li>
+                            <li>Benchmark comparison table with sparklines</li>
+                            <li>ARC-AGI timeline visualization</li>
+                            <li>Frontier model comparison cards (5 labs)</li>
+                            <li>Safety capability-vs-control scatter plot</li>
+                            <li>Mythos Mode (restricted model overlay)</li>
+                            <li>Simple/Technical mode toggle</li>
+                            <li>Automated data pipeline (3 sources)</li>
+                            <li>Embedded research paper with interactive stack</li>
+                        </ul>
+                    </div>
+                    <div class="mt-8 flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Vanilla JS</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">SVG Visualization</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">HuggingFace API</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Epoch AI</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">SWE-bench</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Cloudflare Pages</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Node.js Pipeline</span>
+                    </div>
+                    <div class="mt-10">
+                        <a href="https://differential-c57.pages.dev" target="_blank" rel="noopener noreferrer" class="btn-tactical inline-flex items-center gap-3 px-8 py-4 text-gold font-mono text-xs uppercase tracking-widest">
+                            <span>View Live</span>
+                            <i class="ph-bold ph-arrow-up-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-span-1 lg:col-span-5 flex flex-col gap-6 lg:pl-10 lg:border-l border-white/10">
+                    <div class="grid grid-cols-2 gap-px bg-white/10 border border-white/10">
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">1,850</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Lines of Code</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">25</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Models Tracked</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">8</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Capability Domains</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">3</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Data Sources</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">9</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Dashboard Sections</span></div>
+                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">1</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Research Paper</span></div>
                     </div>
                 </div>
             </div>
@@ -710,7 +815,8 @@
                         <span class="font-mono text-[10px] text-blue uppercase tracking-widest">AI Agents</span>
                     </div>
                     <h4 class="font-mono text-lg text-white mb-3">Pika: AI Meeting Agent</h4>
-                    <p class="font-sans text-sm text-dim leading-relaxed mb-4">An exploration of Pika, a tool that deploys autonomous AI agents into live Google Meet sessions. The agent joins a call, listens, and participates in real-time. This demo captures the experience of testing that boundary between human and AI presence in collaborative environments.</p>
+                    <p class="font-sans text-sm text-dim leading-relaxed mb-4" data-technical-block>An exploration of Pika, a tool that deploys autonomous AI agents into live Google Meet sessions. The agent joins a call, listens, and participates in real-time. This demo captures the experience of testing that boundary between human and AI presence in collaborative environments.</p>
+                    <p class="font-sans text-sm text-dim leading-relaxed mb-4" data-simple-block>A demo of an AI that joins live video calls on Google Meet. It listens to the conversation and talks back in real time. The video captures what it is like when an AI sits in on a meeting alongside real people.</p>
                     <div class="flex flex-wrap gap-2 mb-6">
                         <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">AI Agents</span>
                         <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Google Meet</span>
@@ -729,7 +835,8 @@
                         <span class="font-mono text-[10px] text-blue uppercase tracking-widest">Remotion</span>
                     </div>
                     <h4 class="font-mono text-lg text-white mb-3">Skubal Hype Video</h4>
-                    <p class="font-sans text-sm text-dim leading-relaxed mb-4">A programmatic hype video for Tarik Skubal built with Remotion, demonstrating how React components and frame-based animation can produce sports media content entirely through code.</p>
+                    <p class="font-sans text-sm text-dim leading-relaxed mb-4" data-technical-block>A programmatic hype video for Tarik Skubal built with Remotion, demonstrating how React components and frame-based animation can produce sports media content entirely through code.</p>
+                    <p class="font-sans text-sm text-dim leading-relaxed mb-4" data-simple-block>A highlight video for Tigers pitcher Tarik Skubal, generated entirely by code instead of video editing software. Stats, animations, and transitions are all programmed, no manual editing involved.</p>
                     <div class="flex flex-wrap gap-2 mb-6">
                         <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Remotion</span>
                         <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">React</span>
@@ -739,6 +846,46 @@
                         <a href="https://youtu.be/bRezTz-l5cI" target="_blank" rel="noopener noreferrer" class="btn-tactical inline-flex items-center gap-3 px-6 py-3 text-gold font-mono text-xs uppercase tracking-widest w-full justify-center">
                             <i class="ph-fill ph-play"></i>
                             <span>Watch Video</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="glass-panel p-6 rounded-lg bento-hover cursor-default flex flex-col">
+                    <div class="flex justify-between items-center mb-4">
+                        <i class="ph-fill ph-planet text-2xl text-white/80"></i>
+                        <span class="font-mono text-[10px] text-blue uppercase tracking-widest">NASA APIs</span>
+                    </div>
+                    <h4 class="font-mono text-lg text-white mb-3">Space Explorer</h4>
+                    <p class="font-sans text-sm text-dim leading-relaxed mb-4" data-technical-block>A live dashboard pulling from 20+ NASA and space APIs — APOD, EPIC Blue Marble imagery, EONET natural event tracking, Helioviewer solar observations, DONKI space weather, ISS orbital telemetry, NeoWs asteroid proximity data, and Spaceflight News. Single-file HTML, vanilla JS, zero dependencies.</p>
+                    <p class="font-sans text-sm text-dim leading-relaxed mb-4" data-simple-block>A space dashboard that shows what NASA sees right now — today's astronomy photo, live Earth images from a million miles away, active wildfires and storms tracked by satellites, the Sun in multiple wavelengths, where the ISS is, and how many asteroids are near Earth today. All data is live.</p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">NASA</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Live APIs</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Space</span>
+                    </div>
+                    <div class="mt-auto pt-4 border-t border-white/10">
+                        <a href="https://cic-dashboard.pages.dev" target="_blank" rel="noopener noreferrer" class="btn-tactical inline-flex items-center gap-3 px-6 py-3 text-gold font-mono text-xs uppercase tracking-widest w-full justify-center">
+                            <i class="ph-fill ph-rocket-launch"></i>
+                            <span>Explore</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="glass-panel p-6 rounded-lg bento-hover cursor-default flex flex-col">
+                    <div class="flex justify-between items-center mb-4">
+                        <i class="ph-fill ph-hammer text-2xl text-white/80"></i>
+                        <span class="font-mono text-[10px] text-blue uppercase tracking-widest">AI Tool</span>
+                    </div>
+                    <h4 class="font-mono text-lg text-white mb-3">Forge</h4>
+                    <p class="font-sans text-sm text-dim leading-relaxed mb-4" data-technical-block>A prompt-to-HTML template generator using the Anthropic streaming API with Claude vision. Features clone mode (screenshot-to-code via headless capture APIs), a 22-section component injector, multi-page project support with ZIP export, live image swap via iframe postMessage, and real-time CSS theme controls that inject custom properties without regeneration.</p>
+                    <p class="font-sans text-sm text-dim leading-relaxed mb-4" data-simple-block>A personal website builder — describe what you want, and it generates a production-quality HTML template with live preview. Clone existing sites from screenshots, add sections from a component library, swap images by clicking them, and adjust colors and fonts with instant theme controls. Your own v0.dev with no paywall.</p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Claude API</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Streaming</span>
+                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Vision</span>
+                    </div>
+                    <div class="mt-auto pt-4 border-t border-white/10">
+                        <a href="https://forge-8ce.pages.dev" target="_blank" rel="noopener noreferrer" class="btn-tactical inline-flex items-center gap-3 px-6 py-3 text-gold font-mono text-xs uppercase tracking-widest w-full justify-center">
+                            <i class="ph-fill ph-hammer"></i>
+                            <span>Open Forge</span>
                         </a>
                     </div>
                 </div>
@@ -848,7 +995,7 @@
                     counters.forEach(c => c.classList.remove('counter'));
                     obs.unobserve(entry.target);
                 });
-            }, { threshold: 0.15, rootMargin: "0px 0px -50px 0px" });
+            }, { threshold: 0.05, rootMargin: "0px 0px -50px 0px" });
             reveals.forEach(r => observer.observe(r));
 
             function animateCounters(counters) {
@@ -872,19 +1019,23 @@
             // Side nav scroll tracking
             const sideNavLinks = document.querySelectorAll('.side-nav a');
             const sectionIds = Array.from(sideNavLinks).map(a => a.dataset.section);
-            const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+            const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean)
+                .sort((a, b) => a.offsetTop - b.offsetTop);
             const backToTop = document.querySelector('.back-to-top');
 
             function updateActiveNav() {
-                const scrollY = window.scrollY + window.innerHeight * 0.3;
+                const scrollY = window.scrollY;
+                const vh = window.innerHeight;
+                // Find the section whose top is closest to (but above) 30% of the viewport
                 let current = sections[0];
                 for (const section of sections) {
-                    if (section.offsetTop <= scrollY) current = section;
+                    const rect = section.getBoundingClientRect();
+                    if (rect.top <= vh * 0.3) current = section;
                 }
                 sideNavLinks.forEach(link => {
                     link.classList.toggle('active', link.dataset.section === current.id);
                 });
-                backToTop.classList.toggle('visible', window.scrollY > window.innerHeight * 0.8);
+                backToTop.classList.toggle('visible', scrollY > vh * 0.8);
             }
             window.addEventListener('scroll', updateActiveNav, { passive: true });
             updateActiveNav();
@@ -900,8 +1051,31 @@
         });
     </script>
 
+    <button id="simple-toggle" onclick="toggleSimpleMode()" class="fixed bottom-6 right-20 z-50 px-4 py-2 rounded-md text-[10px] font-mono uppercase tracking-widest border border-white/15 bg-surface/90 backdrop-filter backdrop-blur-sm hover:border-gold/50 hover:text-gold transition-all shadow-lg shadow-black/30" title="Toggle between technical and plain-language descriptions" style="background: rgba(21,21,42,0.92);">
+        <span id="simple-label">Simple Mode</span>
+    </button>
+
     <a href="#top" class="back-to-top" aria-label="Back to top">
         <i class="ph-bold ph-arrow-up"></i>
     </a>
+
+    <script>
+    let simpleMode = false;
+    function toggleSimpleMode() {
+        simpleMode = !simpleMode;
+        document.body.classList.toggle('simple', simpleMode);
+        const btn = document.getElementById('simple-toggle');
+        const label = document.getElementById('simple-label');
+        if (simpleMode) {
+            btn.classList.add('border-gold/60', 'text-gold');
+            btn.classList.remove('border-white/15');
+            label.textContent = 'Technical Mode';
+        } else {
+            btn.classList.remove('border-gold/60', 'text-gold');
+            btn.classList.add('border-white/15');
+            label.textContent = 'Simple Mode';
+        }
+    }
+    </script>
 </body>
 </html>
