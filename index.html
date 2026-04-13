@@ -1038,26 +1038,25 @@
         .glow-orb {
             position: fixed; border-radius: 50%;
             pointer-events: none; z-index: 0;
-            filter: blur(80px);
             animation: glowPulse var(--dur, 5s) ease-in-out infinite;
             animation-delay: var(--delay, 0s);
         }
         .glow-orb-cyan {
-            width: 60vw; height: 60vw; max-width: 700px; max-height: 700px;
-            top: -15vh; right: -10vw;
-            background: radial-gradient(circle, rgba(0,255,255,0.07) 0%, transparent 70%);
+            width: 700px; height: 700px;
+            top: -200px; right: -150px;
+            background: radial-gradient(circle, rgba(0,255,255,0.18) 0%, rgba(0,255,255,0.06) 40%, transparent 70%);
             --dur: 6s;
         }
         .glow-orb-pink {
-            width: 50vw; height: 50vw; max-width: 600px; max-height: 600px;
-            bottom: -10vh; left: -8vw;
-            background: radial-gradient(circle, rgba(255,0,128,0.055) 0%, transparent 70%);
+            width: 600px; height: 600px;
+            bottom: -150px; left: -100px;
+            background: radial-gradient(circle, rgba(255,0,128,0.14) 0%, rgba(255,0,128,0.05) 40%, transparent 70%);
             --dur: 7s; --delay: 2s;
         }
         .glow-orb-purple {
-            width: 40vw; height: 40vw; max-width: 500px; max-height: 500px;
-            top: 40vh; right: 10vw;
-            background: radial-gradient(circle, rgba(124,58,237,0.05) 0%, transparent 70%);
+            width: 500px; height: 500px;
+            top: 45vh; right: 5vw;
+            background: radial-gradient(circle, rgba(124,58,237,0.12) 0%, rgba(124,58,237,0.04) 40%, transparent 70%);
             --dur: 9s; --delay: 4s;
         }
     </style>
