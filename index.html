@@ -1,144 +1,1020 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth bg-blk text-gray-200 antialiased selection:bg-gold selection:text-blk">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sean Sooch | AI-Augmented Development Portfolio</title>
 
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@100;400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        blk: '#050510',
-                        charcoal: '#0C0C1E',
-                        surface: '#15152A',
-                        gold: '#C9A84C',
-                        goldglow: 'rgba(201, 168, 76, 0.15)',
-                        blue: '#4A9EFF',
-                        dim: '#73738A'
-                    },
-                    fontFamily: {
-                        serif: ['"Playfair Display"', 'serif'],
-                        sans: ['"Inter"', 'sans-serif'],
-                        mono: ['"JetBrains Mono"', 'monospace'],
-                    },
-                }
-            }
-        }
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@100;400;600;700&display=swap" rel="stylesheet">
 
     <style>
-        :root { --scroll-width: 8px; }
-        ::-webkit-scrollbar { width: var(--scroll-width); background: #050510; }
-        ::-webkit-scrollbar-thumb { background: #15152A; border-radius: 4px; border: 1px solid #C9A84C; }
-        ::-webkit-scrollbar-thumb:hover { background: #C9A84C; }
-        body {
-            background-color: #050510;
-            background-image: linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
-            background-size: 40px 40px;
+        :root {
+            --primary: #00ffff;
+            --secondary: #ff0080;
+            --accent: #7c3aed;
+            --bg-dark: #0a0a0f;
+            --bg-card: #0d0d1a;
+            --text: #e0e0e0;
+            --text-dim: #6b7280;
+            --scroll-width: 8px;
         }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        ::selection { background: #00ffff; color: #000; }
+
+        ::-webkit-scrollbar { width: var(--scroll-width); background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: #1a1a2e; border-radius: 4px; border: 1px solid var(--primary); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image:
+                linear-gradient(to right, rgba(0,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            color: var(--text-dim);
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Ambient glow */
         .ambient-glow {
             position: fixed; top: -20vh; left: -20vw;
             width: 50vw; height: 50vh;
-            background: radial-gradient(circle, rgba(201,168,76,0.05) 0%, rgba(5,5,16,0) 70%);
+            background: radial-gradient(circle, rgba(0,255,255,0.04) 0%, rgba(10,10,15,0) 70%);
             z-index: -1; pointer-events: none;
         }
-        .editorial-text { column-count: 2; column-gap: 3rem; }
-        @media (max-width: 768px) { .editorial-text { column-count: 1; } }
-        .glass-panel {
-            background: rgba(12, 12, 30, 0.65);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .bento-hover:hover {
-            border-color: rgba(74, 158, 255, 0.4);
-            transform: translateY(-4px);
-            box-shadow: 0 10px 30px -10px rgba(74, 158, 255, 0.1);
-        }
-        .btn-tactical {
-            position: relative; overflow: hidden;
-            border: 1px solid #C9A84C; background: transparent;
-            z-index: 1; transition: color 0.3s ease;
-        }
-        .btn-tactical::before {
-            content: ''; position: absolute; top: 0; left: -100%;
-            width: 100%; height: 100%; background: #C9A84C;
-            z-index: -1; transition: left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .btn-tactical:hover { color: #050510 !important; }
-        .btn-tactical:hover::before { left: 0; }
-        @keyframes radar-pulse {
-            0% { box-shadow: 0 0 0 0 rgba(201,168,76, 0.6); }
-            70% { box-shadow: 0 0 0 10px rgba(201,168,76, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(201,168,76, 0); }
-        }
-        .status-dot { animation: radar-pulse 2s infinite ease-out; }
-        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* Axis line */
         .axis-line {
             position: fixed; left: 2rem; top: 0; bottom: 0; width: 1px;
-            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.1) 10%, rgba(255,255,255,0.1) 90%, transparent);
+            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.08) 10%, rgba(255,255,255,0.08) 90%, transparent);
             z-index: 0;
         }
-        @media (max-width: 1024px) { .axis-line { left: 1rem; } }
-        .img-overlay { position: relative; }
-        .img-overlay::after {
-            content: ''; position: absolute; inset: 0;
-            background: linear-gradient(to top, #0C0C1E 0%, transparent 50%), linear-gradient(to bottom, rgba(5,5,16,0.3) 0%, transparent 100%);
-            mix-blend-mode: multiply;
+        @media (max-width: 1024px) { .axis-line { display: none; } }
+
+        /* Layout */
+        main {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 8rem 6rem 6rem;
+            position: relative;
+            z-index: 10;
         }
-        ul.tactical-list li { position: relative; padding-left: 1.5rem; }
-        ul.tactical-list li::before {
-            content: '\203A'; position: absolute; left: 0; top: -2px;
-            color: #C9A84C; font-family: monospace; font-size: 1.25rem;
+        @media (max-width: 1024px) { main { padding: 6rem 3rem 4rem; } }
+        @media (max-width: 640px) { main { padding: 5rem 1.5rem 3rem; } }
+
+        /* Typography */
+        h1, h2, h3, h4 { font-family: 'Orbitron', sans-serif; color: var(--text); line-height: 1.1; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .font-sans { font-family: 'Inter', sans-serif; }
+
+        /* Hero Section */
+        #hero {
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
         }
+
+        .hero-grid {
+            position: absolute; inset: 0;
+            background-image:
+                linear-gradient(rgba(0,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,255,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridMove 20s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 60px 60px; }
+        }
+
+        .hero-content { position: relative; z-index: 1; }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+            padding: 0.375rem 1rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(0,255,255,0.3);
+            background: rgba(0,255,255,0.05);
+            width: fit-content;
+        }
+
+        .status-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--primary);
+            animation: cyanPulse 2s infinite ease-out;
+        }
+
+        @keyframes cyanPulse {
+            0% { box-shadow: 0 0 0 0 rgba(0,255,255,0.6); }
+            70% { box-shadow: 0 0 0 10px rgba(0,255,255,0); }
+            100% { box-shadow: 0 0 0 0 rgba(0,255,255,0); }
+        }
+
+        .status-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Hero Title */
+        .hero-title {
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            width: 90%;
+            text-shadow: 0 0 40px rgba(0,255,255,0.15);
+        }
+
+        .hero-title .cyan-line {
+            color: var(--primary);
+            text-shadow: 0 0 30px rgba(0,255,255,0.5);
+        }
+
+        .hero-title .dim-line {
+            color: var(--text-dim);
+        }
+
+        .hero-byline {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            color: var(--primary);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 2.5rem;
+        }
+        @media (max-width: 768px) { .hero-byline { font-size: 0.75rem; } }
+
+        .hero-desc {
+            font-size: 1.125rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            line-height: 1.7;
+            max-width: 48rem;
+        }
+
+        /* Glass Panel */
+        .glass-panel {
+            background: rgba(13,13,26,0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0,255,255,0.1);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .bento-hover:hover {
+            border-color: rgba(0,255,255,0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px -10px rgba(0,255,255,0.1);
+        }
+
+        /* Quick Nav */
+        .quick-nav {
+            margin-top: 2.5rem;
+            padding: 1.5rem 2rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(0,255,255,0.15);
+            width: 90%;
+        }
+        @media (max-width: 1024px) { .quick-nav { width: 100%; } }
+
+        .quick-nav-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .quick-nav-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+        }
+        @media (max-width: 768px) { .quick-nav-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 480px) { .quick-nav-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        /* Tactical Button */
+        .btn-tactical {
+            position: relative; overflow: hidden;
+            border: 1px solid var(--primary); background: transparent;
+            color: var(--primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            z-index: 1;
+            transition: color 0.3s ease;
+        }
+
+        .btn-tactical::before {
+            content: ''; position: absolute; top: 0; left: -100%;
+            width: 100%; height: 100%; background: var(--primary);
+            z-index: -1; transition: left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .btn-tactical:hover { color: #0a0a0f !important; }
+        .btn-tactical:hover::before { left: 0; }
+
+        .btn-tactical-lg {
+            padding: 1rem 2rem;
+            font-size: 0.75rem;
+            gap: 0.75rem;
+        }
+
+        /* Side Nav */
         .side-nav {
             position: fixed; left: 2rem; top: 50%; transform: translateY(-50%);
             z-index: 50; display: flex; flex-direction: column; gap: 1.25rem;
         }
+        @media (max-width: 1024px) { .side-nav { display: none; } }
+
         .side-nav a {
             display: flex; align-items: center; gap: 0.75rem;
             text-decoration: none; position: relative;
         }
+
         .side-nav-dot {
             width: 8px; height: 8px; border-radius: 50%;
-            border: 1px solid rgba(255,255,255,0.25); background: transparent;
+            border: 1px solid rgba(255,255,255,0.2); background: transparent;
             transition: all 0.3s ease; flex-shrink: 0;
         }
+
         .side-nav a:hover .side-nav-dot,
         .side-nav a.active .side-nav-dot {
-            border-color: #C9A84C; background: #C9A84C;
-            box-shadow: 0 0 8px rgba(201,168,76,0.4);
+            border-color: var(--primary); background: var(--primary);
+            box-shadow: 0 0 8px rgba(0,255,255,0.5);
         }
+
         .side-nav-label {
             font-family: 'JetBrains Mono', monospace; font-size: 9px;
             text-transform: uppercase; letter-spacing: 0.15em;
-            color: #C9A84C; white-space: nowrap;
+            color: var(--primary); white-space: nowrap;
             opacity: 0; transform: translateX(-4px);
             transition: all 0.25s ease; pointer-events: none;
         }
+
         .side-nav a:hover .side-nav-label { opacity: 1; transform: translateX(0); }
-        @media (max-width: 1024px) { .side-nav { display: none; } }
+
+        /* Reveal animations */
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* Section labels */
+        .section-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: rgba(255,255,255,0.3);
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: clamp(1.75rem, 3vw, 2.5rem);
+            margin-bottom: 0.75rem;
+        }
+
+        .section-desc {
+            font-size: 1rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            max-width: 48rem;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Thesis */
+        #thesis {
+            padding: 5rem 0;
+            scroll-margin-top: 6rem;
+        }
+
+        .thesis-card {
+            padding: 3rem;
+            position: relative;
+            border-left: 4px solid var(--primary);
+            border-radius: 0.5rem;
+        }
+        @media (max-width: 640px) { .thesis-card { padding: 2rem 1.5rem; } }
+
+        .thesis-watermark {
+            position: absolute; top: 1rem; right: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: rgba(255,255,255,0.15);
+        }
+
+        .thesis-title {
+            font-size: clamp(1.5rem, 2.5vw, 1.875rem);
+            margin-bottom: 2rem;
+        }
+
+        .editorial-text { column-count: 2; column-gap: 3rem; }
+        @media (max-width: 768px) { .editorial-text { column-count: 1; } }
+
+        .editorial-text p, .thesis-simple p {
+            font-size: 1rem;
+            color: #d1d5db;
+            font-weight: 300;
+            line-height: 1.9;
+            margin-bottom: 1.5rem;
+        }
+
+        .editorial-text p:last-child, .thesis-simple p:last-child { margin-bottom: 0; }
+
+        .inline-code {
+            color: var(--primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+        }
+
+        .thesis-link {
+            color: var(--primary);
+        }
+
+        .thesis-link:hover { text-decoration: underline; }
+
+        /* Global Metrics */
+        .metrics-section {
+            padding: 3rem 0;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin: 3rem 0;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 2rem;
+        }
+        @media (max-width: 1024px) { .metrics-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 480px) { .metrics-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        .metric-item { display: flex; flex-direction: column; gap: 0.5rem; }
+
+        .metric-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+            color: rgba(255,255,255,0.35);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+
+        .metric-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(1.75rem, 3vw, 2.25rem);
+            color: var(--primary);
+            font-weight: 300;
+        }
+
+        /* Research */
+        #research {
+            padding: 5rem 0;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            margin-top: 3rem;
+            scroll-margin-top: 6rem;
+        }
+
+        .research-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        @media (max-width: 1024px) { .research-grid { grid-template-columns: 1fr; } }
+
+        .paper-card {
+            padding: 2rem;
+            border-radius: 0.5rem;
+            border-left: 4px solid var(--primary);
+            position: relative;
+        }
+
+        .paper-watermark {
+            position: absolute; top: 1rem; right: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: rgba(255,255,255,0.15);
+        }
+
+        .paper-author-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .paper-icon {
+            width: 40px; height: 40px;
+            border-radius: 0.5rem;
+            background: rgba(0,255,255,0.08);
+            border: 1px solid rgba(0,255,255,0.15);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--primary);
+            font-size: 1.125rem;
+            flex-shrink: 0;
+        }
+
+        .paper-author-name {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.875rem;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .paper-author-meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--text-dim);
+        }
+
+        .paper-desc {
+            font-size: 0.875rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .tags-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tag {
+            padding: 0.25rem 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid rgba(0,255,255,0.2);
+            color: var(--primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            border-radius: 3px;
+        }
+
+        .paper-links {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-pdf {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 4px;
+            color: var(--text-dim);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-pdf:hover { border-color: rgba(0,255,255,0.4); color: var(--primary); }
+
+        /* Risk Stack */
+        .risk-stack-card {
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        .risk-stack-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .risk-layers { display: flex; flex-direction: column; gap: 0.375rem; }
+
+        .risk-layer {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+        }
+
+        .risk-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            width: 1rem;
+            flex-shrink: 0;
+        }
+
+        .risk-name {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.875rem;
+            color: var(--text);
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .risk-desc {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            color: var(--text-dim);
+        }
+        @media (max-width: 768px) { .risk-desc { display: none; } }
+
+        .risk-stack-note {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            color: var(--text-dim);
+            margin-top: 1rem;
+            opacity: 0.6;
+        }
+
+        /* Literature */
+        #literature {
+            padding: 5rem 0;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            margin-top: 3rem;
+            scroll-margin-top: 6rem;
+        }
+
+        .reading-room-card {
+            display: block;
+            max-width: 640px;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            border-left: 4px solid var(--primary);
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reading-room-card:hover { border-color: rgba(0,255,255,0.5); transform: translateY(-2px); }
+
+        .reading-room-inner {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .reading-room-icon {
+            width: 48px; height: 48px;
+            border-radius: 0.5rem;
+            background: rgba(0,255,255,0.08);
+            border: 1px solid rgba(0,255,255,0.15);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--primary);
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .reading-room-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.25rem;
+            color: var(--text);
+            transition: color 0.3s;
+        }
+
+        .reading-room-card:hover .reading-room-title { color: var(--primary); }
+
+        .reading-room-meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--text-dim);
+            margin-top: 0.25rem;
+        }
+
+        .reading-room-arrow {
+            color: var(--primary);
+            font-size: 1.125rem;
+            opacity: 0.5;
+            transition: all 0.3s;
+            margin-left: auto;
+        }
+
+        .reading-room-card:hover .reading-room-arrow { opacity: 1; transform: translateX(4px); }
+
+        .reading-room-desc {
+            font-size: 0.875rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            line-height: 1.6;
+        }
+
+        /* Project Case Studies */
+        .projects-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: rgba(255,255,255,0.3);
+            margin-bottom: 3rem;
+            margin-top: 6rem;
+        }
+
+        .project-section {
+            margin-bottom: 8rem;
+            scroll-margin-top: 6rem;
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: 7fr 5fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        .project-grid.reverse { }
+
+        @media (max-width: 1024px) {
+            .project-grid { grid-template-columns: 1fr; }
+            .project-grid.reverse .project-content { order: 1; }
+            .project-grid.reverse .project-stats { order: 2; }
+        }
+
+        .project-content { display: flex; flex-direction: column; gap: 1.5rem; }
+        .project-content.order-2 { order: 2; }
+        .project-stats.order-1 {
+            order: 1;
+            padding-right: 2.5rem;
+            border-right: 1px solid rgba(255,255,255,0.08);
+        }
+
+        @media (max-width: 1024px) {
+            .project-content.order-2 { order: 1; }
+            .project-stats.order-1 { order: 2; padding-right: 0; border-right: none; }
+        }
+
+        .project-category {
+            display: inline-flex;
+            padding: 0.25rem 0.75rem;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 3px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: rgba(255,255,255,0.5);
+            background: rgba(13,13,26,0.6);
+            width: fit-content;
+        }
+
+        .project-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+        }
+
+        .project-desc {
+            font-size: 1rem;
+            color: #9ca3af;
+            line-height: 1.7;
+            font-weight: 300;
+        }
+
+        .features-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: rgba(255,255,255,0.35);
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 1rem;
+        }
+
+        .features-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.25rem 2rem;
+        }
+        @media (max-width: 640px) { .features-list { grid-template-columns: 1fr; } }
+
+        .features-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            font-size: 0.875rem;
+            color: #d1d5db;
+            font-weight: 300;
+            padding-top: 0.375rem;
+            padding-bottom: 0.375rem;
+        }
+
+        .features-list li::before {
+            content: '\203A';
+            position: absolute; left: 0; top: 0.25rem;
+            color: var(--primary);
+            font-family: monospace;
+            font-size: 1.25rem;
+        }
+
+        .tech-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+        .tech-tag {
+            padding: 0.25rem 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid rgba(0,255,255,0.15);
+            color: var(--primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            border-radius: 3px;
+        }
+
+        .project-cta { margin-top: 1rem; }
+
+        .project-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            padding-left: 2.5rem;
+            border-left: 1px solid rgba(255,255,255,0.08);
+        }
+        @media (max-width: 1024px) {
+            .project-stats { padding-left: 0; border-left: none; }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .stat-cell {
+            background: var(--bg-card);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            color: var(--text);
+        }
+
+        .stat-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 0.25rem;
+        }
+
+        .cold-start-note {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            color: rgba(255,255,255,0.25);
+            margin-top: 0.5rem;
+            display: block;
+        }
+
+        /* Dividers */
+        .project-divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.08), transparent);
+            margin-bottom: 8rem;
+        }
+
+        /* Explorables */
+        #explorables {
+            padding: 5rem 0;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            scroll-margin-top: 6rem;
+        }
+
+        .explorables-header {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 4rem;
+        }
+
+        .explorables-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+        @media (max-width: 1024px) { .explorables-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 640px) { .explorables-grid { grid-template-columns: 1fr; } }
+
+        .explorable-card {
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .explorable-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .explorable-icon {
+            font-size: 1.5rem;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .explorable-type {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--primary);
+        }
+
+        .explorable-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.125rem;
+            color: var(--text);
+            margin-bottom: 0.75rem;
+            font-weight: 400;
+        }
+
+        .explorable-desc {
+            font-size: 0.875rem;
+            color: var(--text-dim);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            flex: 1;
+        }
+
+        .explorable-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .explorable-footer {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        /* Toolchain */
+        .toolchain-section {
+            padding: 5rem 0;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .toolchain-title {
+            font-size: clamp(1.5rem, 2.5vw, 2rem);
+            margin-bottom: 0.5rem;
+        }
+
+        .toolchain-subtitle {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--primary);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 3rem;
+        }
+
+        .toolchain-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+        @media (max-width: 1024px) { .toolchain-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 640px) { .toolchain-grid { grid-template-columns: 1fr; } }
+
+        .tool-card {
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tool-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .tool-icon {
+            font-size: 1.5rem;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .tool-type {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--primary);
+        }
+
+        .tool-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.125rem;
+            color: var(--text);
+            margin-bottom: 0.75rem;
+            font-weight: 400;
+        }
+
+        .tool-desc {
+            font-size: 0.875rem;
+            color: var(--text-dim);
+            line-height: 1.6;
+            margin-top: auto;
+        }
+
+        /* Footer */
+        footer {
+            width: 100%;
+            padding: 3rem 0;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+
+        .footer-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            color: rgba(255,255,255,0.25);
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+        }
+
+        /* Back to Top */
         .back-to-top {
             position: fixed; bottom: 2rem; right: 2rem; z-index: 50;
             width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
-            border: 1px solid #C9A84C; background: rgba(12,12,30,0.8);
+            border: 1px solid var(--primary); background: rgba(13,13,26,0.85);
             backdrop-filter: blur(8px); border-radius: 6px;
-            color: #C9A84C; font-size: 1rem; cursor: pointer;
+            color: var(--primary); font-size: 1rem; cursor: pointer;
             opacity: 0; pointer-events: none;
             transition: all 0.3s ease;
+            text-decoration: none;
         }
+
         .back-to-top.visible { opacity: 1; pointer-events: auto; }
-        .back-to-top:hover { background: #C9A84C; color: #050510; }
+        .back-to-top:hover { background: var(--primary); color: #0a0a0f; }
+
+        /* Simple Mode Toggle */
+        #simple-toggle {
+            position: fixed; bottom: 1.5rem; right: 5rem; z-index: 50;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(13,13,26,0.92);
+            backdrop-filter: blur(8px);
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        #simple-toggle:hover { border-color: rgba(0,255,255,0.4); color: var(--primary); }
+        #simple-toggle.active { border-color: rgba(0,255,255,0.5); color: var(--primary); }
+
         /* Simple/Technical Mode */
         [data-simple] { display: none; }
         [data-technical] { display: inline; }
@@ -148,17 +1024,32 @@
         [data-technical-block] { display: block; }
         body.simple [data-simple-block] { display: block; }
         body.simple [data-technical-block] { display: none; }
+
+        /* Sub-feature labels in Detroit project */
+        .sub-features-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: rgba(255,255,255,0.35);
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 1rem;
+            margin-top: 1.5rem;
+        }
     </style>
 </head>
-<body id="top" class="min-h-screen flex flex-col relative font-sans text-dim overflow-x-hidden">
+<body id="top">
 
     <div class="ambient-glow"></div>
-    <div class="axis-line hidden md:block"></div>
+    <div class="axis-line"></div>
 
+    <!-- Side Navigation -->
     <nav class="side-nav" aria-label="Section navigation">
         <a href="#top" data-section="hero"><span class="side-nav-dot"></span><span class="side-nav-label">Top</span></a>
         <a href="#thesis" data-section="thesis"><span class="side-nav-dot"></span><span class="side-nav-label">Thesis</span></a>
         <a href="#research" data-section="research"><span class="side-nav-dot"></span><span class="side-nav-label">Research</span></a>
+        <a href="#literature" data-section="literature"><span class="side-nav-dot"></span><span class="side-nav-label">Literature</span></a>
         <a href="#project-ncaat" data-section="project-ncaat"><span class="side-nav-dot"></span><span class="side-nav-label">NCAAT</span></a>
         <a href="#project-step2" data-section="project-step2"><span class="side-nav-dot"></span><span class="side-nav-label">Step 2 CK</span></a>
         <a href="#project-masters" data-section="project-masters"><span class="side-nav-dot"></span><span class="side-nav-label">Masters</span></a>
@@ -169,149 +1060,152 @@
         <a href="#explorables" data-section="explorables"><span class="side-nav-dot"></span><span class="side-nav-label">Explorables</span></a>
     </nav>
 
-    <main class="w-full max-w-7xl mx-auto px-6 md:px-16 lg:px-24 pt-32 pb-24 relative z-10">
+    <main>
 
         <!-- HERO -->
-        <section id="hero" class="min-h-[70vh] flex flex-col justify-center reveal">
-            <div class="inline-flex items-center gap-3 mb-8 px-4 py-1.5 rounded-full border border-gold/30 bg-goldglow w-fit">
-                <div class="w-2 h-2 rounded-full bg-gold status-dot"></div>
-                <span class="font-mono text-[10px] md:text-xs text-gold uppercase tracking-[0.2em] font-semibold">All Projects Live</span>
-            </div>
-            <h1 class="font-serif text-5xl md:text-7xl lg:text-[5rem] leading-[1.05] tracking-tight text-white mb-6 w-full lg:w-[90%]">
-                Seven Projects.<br>
-                <span class="text-white">70,566 Lines of Code.</span><br>
-                <span class="italic text-gray-400">One Developer.</span>
-            </h1>
-            <h2 class="font-mono text-sm md:text-base text-gold tracking-widest uppercase mb-10 w-full md:w-3/4">
-                Sean Sooch // Medical Student | Military Officer | Software Developer
-            </h2>
-            <p class="font-sans text-lg md:text-xl text-dim font-light leading-relaxed max-w-3xl" data-technical-block>
-                A portfolio of AI-augmented applications built at the intersection of medicine, sports, and computational technology.
-            </p>
-            <p class="font-sans text-lg md:text-xl text-dim font-light leading-relaxed max-w-3xl" data-simple-block>
-                Seven apps built by one person using AI as a coding partner. Medical tools, sports dashboards, military fitness, and AI research, all built in 23 days.
-            </p>
-
-            <nav aria-label="Project quick navigation" class="mt-10 glass-panel rounded-xl p-6 md:p-8 w-full lg:w-[90%] border border-gold/20">
-                <div class="font-mono text-[10px] md:text-xs text-gold uppercase tracking-[0.2em] mb-4">View All Projects</div>
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                    <a href="#project-ncaat" class="btn-tactical px-4 py-3 text-center text-xs font-mono uppercase tracking-widest text-gold rounded">NCAAT Bracket</a>
-                    <a href="#project-step2" class="btn-tactical px-4 py-3 text-center text-xs font-mono uppercase tracking-widest text-gold rounded">Step 2 CK</a>
-                    <a href="#project-masters" class="btn-tactical px-4 py-3 text-center text-xs font-mono uppercase tracking-widest text-gold rounded">Masters Hub</a>
-                    <a href="#project-handoff" class="btn-tactical px-4 py-3 text-center text-xs font-mono uppercase tracking-widest text-gold rounded">Handoff Tracker</a>
-                    <a href="#project-detroit" class="btn-tactical px-4 py-3 text-center text-xs font-mono uppercase tracking-widest text-gold rounded">Detroit Sports</a>
-                    <a href="#project-warrior" class="btn-tactical px-4 py-3 text-center text-xs font-mono uppercase tracking-widest text-gold rounded">Warrior Ready</a>
-                    <a href="#project-agi" class="btn-tactical px-4 py-3 text-center text-xs font-mono uppercase tracking-widest text-gold rounded">AGI Tracker</a>
-                    <a href="#explorables" class="btn-tactical px-4 py-3 text-center text-xs font-mono uppercase tracking-widest text-gold rounded">Explorables</a>
+        <section id="hero" class="reveal">
+            <div class="hero-grid"></div>
+            <div class="hero-content">
+                <div class="status-badge">
+                    <div class="status-dot"></div>
+                    <span class="status-label">All Projects Live</span>
                 </div>
-            </nav>
+                <h1 class="hero-title">
+                    Seven Projects.<br>
+                    <span class="cyan-line">72,797 Lines of Code.</span><br>
+                    <span class="dim-line">One Developer.</span>
+                </h1>
+                <h2 class="hero-byline">
+                    Sean Sooch // Medical Student | Military Officer | Software Developer
+                </h2>
+                <p class="hero-desc" data-technical-block>
+                    A portfolio of AI-augmented applications built at the intersection of medicine, sports, and computational technology.
+                </p>
+                <p class="hero-desc" data-simple-block>
+                    Seven apps built by one person using AI as a coding partner. Medical tools, sports dashboards, military fitness, and AI research, all built in 23 days.
+                </p>
+
+                <nav aria-label="Project quick navigation" class="quick-nav glass-panel">
+                    <div class="quick-nav-label">View All Projects</div>
+                    <div class="quick-nav-grid">
+                        <a href="#project-ncaat" class="btn-tactical">NCAAT Bracket</a>
+                        <a href="#project-step2" class="btn-tactical">Step 2 CK</a>
+                        <a href="#project-masters" class="btn-tactical">Masters Hub</a>
+                        <a href="#project-handoff" class="btn-tactical">Handoff Tracker</a>
+                        <a href="#project-detroit" class="btn-tactical">Detroit Sports</a>
+                        <a href="#project-warrior" class="btn-tactical">Warrior Ready</a>
+                        <a href="#project-agi" class="btn-tactical">AGI Tracker</a>
+                        <a href="#explorables" class="btn-tactical">Explorables</a>
+                    </div>
+                </nav>
+            </div>
         </section>
 
         <!-- THESIS -->
-        <section id="thesis" class="py-20 reveal scroll-mt-24">
-            <div class="glass-panel p-8 md:p-12 relative border-l-4 border-l-gold">
-                <div class="absolute top-4 right-4 font-mono text-[10px] text-white/20">THESIS.01</div>
-                <h3 class="font-serif text-3xl text-white mb-8">The Case for AI-Augmented Development</h3>
-                <div class="editorial-text text-base md:text-lg text-gray-300 font-light leading-loose" data-technical-block>
-                    <p class="mb-6 indent-8">
+        <section id="thesis" class="reveal">
+            <div class="thesis-card glass-panel">
+                <div class="thesis-watermark">PAPER.01</div>
+                <h3 class="thesis-title">The Case for AI-Augmented Development</h3>
+                <div class="editorial-text" data-technical-block>
+                    <p style="text-indent:2rem;">
                         These projects were built by a single developer, a medical student and military officer with no formal CS degree, using AI as a force multiplier. Claude Code's autonomous agents researched APIs, generated components, debugged edge cases, and iterated on designs in real-time. The result is a collection of production-grade applications that would traditionally require a team of specialists. All were started after March 15th, 2026, built in free time after clinical rotations and in between study sessions. That alone says more about where the tools are heading than anything about me individually.
                     </p>
-                    <p class="mb-6 indent-8">
-                        The motivation behind each project is personal. The NCAAT Bracket, Masters Tournament Hub, and Detroit Sports Hub exist because I love sports. March Madness, the Masters, and Detroit baseball and basketball are things I follow every year with genuine passion, and building interactive tools around them was a natural way to test what AI-augmented development could produce. The Detroit Sports Hub pushed the boundary furthest: 9,500 lines across two broadcast-quality trackers, one for the Tigers season and one for the Pistons' historic playoff run from 14-68 to #1 seed. The Tigers tracker pulls from four public APIs with a news curator that cross-references headlines against actual game results. The Pistons tracker features a live playoff countdown, Cade Cunningham injury watch with recovery progress bar, a 2004 championship tribute comparing that squad to this year's roster, and fact-checked data validated by four autonomous research agents. Together they form a unified Detroit Sports hub with iframe isolation to keep both apps running independently with zero conflicts. The Step 2 CK Study Engine exists because I needed it. No commercial platform offered the adaptive, data-dense study architecture I wanted for my medical education, so I built one. The Patient Handoff Tracker exists because patient handoff is where the majority of preventable medical errors originate, and I wanted to build a system that enforces the evidence-based I-PASS framework at the point of care. Claude Code's <span class="text-gold font-mono text-sm">/teach-me</span> skill became a built-in tutor, letting me learn new patterns in context as I developed each platform.
+                    <p style="text-indent:2rem;">
+                        The motivation behind each project is personal. The NCAAT Bracket, Masters Tournament Hub, and Detroit Sports Hub exist because I love sports. March Madness, the Masters, and Detroit baseball and basketball are things I follow every year with genuine passion, and building interactive tools around them was a natural way to test what AI-augmented development could produce. The Detroit Sports Hub pushed the boundary furthest: 9,500 lines across two broadcast-quality trackers, one for the Tigers season and one for the Pistons' historic playoff run from 14-68 to #1 seed. The Tigers tracker pulls from four public APIs with a news curator that cross-references headlines against actual game results. The Pistons tracker features a live playoff countdown, Cade Cunningham injury watch with recovery progress bar, a 2004 championship tribute comparing that squad to this year's roster, and fact-checked data validated by four autonomous research agents. Together they form a unified Detroit Sports hub with iframe isolation to keep both apps running independently with zero conflicts. The Step 2 CK Study Engine exists because I needed it. No commercial platform offered the adaptive, data-dense study architecture I wanted for my medical education, so I built one. The Patient Handoff Tracker exists because patient handoff is where the majority of preventable medical errors originate, and I wanted to build a system that enforces the evidence-based I-PASS framework at the point of care. Claude Code's <span class="inline-code">/teach-me</span> skill became a built-in tutor, letting me learn new patterns in context as I developed each platform.
                     </p>
-                    <p class="mb-6 indent-8">
-                        Beyond writing code, the AI ecosystem extends into thinking and decision-making. I use <span class="text-gold font-mono text-sm">/council</span> to pressure-test ideas from multiple angles before committing to an architecture. <span class="text-gold font-mono text-sm">/brainstorm</span> for structured ideation when I am stuck. Auto-agents to delegate research, refactoring, and testing to parallel workers while I focus on design. These are not gimmicks. They are workflows that change how a solo builder operates.
+                    <p style="text-indent:2rem;">
+                        Beyond writing code, the AI ecosystem extends into thinking and decision-making. I use <span class="inline-code">/council</span> to pressure-test ideas from multiple angles before committing to an architecture. <span class="inline-code">/brainstorm</span> for structured ideation when I am stuck. Auto-agents to delegate research, refactoring, and testing to parallel workers while I focus on design. These are not gimmicks. They are workflows that change how a solo builder operates.
                     </p>
-                    <p class="mb-6 indent-8">
-                        As a military officer, I also care about understanding how emerging technology reshapes the cyber landscape. I have started incorporating tools like <span class="text-gold font-mono text-sm">/threat-model</span>, <span class="text-gold font-mono text-sm">/security-review</span>, and <span class="text-gold font-mono text-sm">/after-action</span> into that learning process. Knowing how AI systems work, how they can be directed, and where they are vulnerable is no longer optional for anyone responsible for operational security. Building with these tools is one of the best ways to develop that intuition firsthand.
+                    <p style="text-indent:2rem;">
+                        As a military officer, I also care about understanding how emerging technology reshapes the cyber landscape. I have started incorporating tools like <span class="inline-code">/threat-model</span>, <span class="inline-code">/security-review</span>, and <span class="inline-code">/after-action</span> into that learning process. Knowing how AI systems work, how they can be directed, and where they are vulnerable is no longer optional for anyone responsible for operational security. Building with these tools is one of the best ways to develop that intuition firsthand.
                     </p>
-                    <p class="mb-6 indent-8">
-                        But the deeper thesis is about what comes next. We are approaching a point where AI capabilities compound faster than any individual can fully track, which is exactly why I built the <a href="https://differential-c57.pages.dev" target="_blank" rel="noopener noreferrer" class="text-gold hover:underline">AGI Capability Tracker</a>. It monitors progress across 8 domains, 25+ frontier models, and dozens of benchmarks in real time. The data tells the story plainly: competition math went from unsolvable to perfect scores in 14 months. Coding benchmarks that stumped every model a year ago are now cleared at 94%. Reasoning tests designed to be AGI-proof are already being matched on their second iteration. A restricted model that fewer than 40 organizations can access surpasses human baselines on autonomous computer operation. GitHub Copilot normalized AI in the editor. OpenAI's Codex proved that natural language could generate working code. Model Context Protocol plugins are connecting AI to every tool and API imaginable. These capabilities will not stay behind developer consoles forever. They will leak into every profession, every workflow, every industry. The professionals who thrive in that environment will not be the ones who resist AI or passively consume it. They will be the ones who learned to operate fluently in a dual ecosystem, human and machine working in concert. The bottleneck is no longer technical skill. It is imagination, domain knowledge, and the willingness to build.
+                    <p style="text-indent:2rem;">
+                        But the deeper thesis is about what comes next. We are approaching a point where AI capabilities compound faster than any individual can fully track, which is exactly why I built the <a href="https://differential-c57.pages.dev" target="_blank" rel="noopener noreferrer" class="thesis-link">AGI Capability Tracker</a>. It monitors progress across 8 domains, 25+ frontier models, and dozens of benchmarks in real time. The data tells the story plainly: competition math went from unsolvable to perfect scores in 14 months. Coding benchmarks that stumped every model a year ago are now cleared at 94%. Reasoning tests designed to be AGI-proof are already being matched on their second iteration. A restricted model that fewer than 40 organizations can access surpasses human baselines on autonomous computer operation. GitHub Copilot normalized AI in the editor. OpenAI's Codex proved that natural language could generate working code. Model Context Protocol plugins are connecting AI to every tool and API imaginable. These capabilities will not stay behind developer consoles forever. They will leak into every profession, every workflow, every industry. The professionals who thrive in that environment will not be the ones who resist AI or passively consume it. They will be the ones who learned to operate fluently in a dual ecosystem, human and machine working in concert. The bottleneck is no longer technical skill. It is imagination, domain knowledge, and the willingness to build.
                     </p>
-                    <p class="indent-8">
+                    <p style="text-indent:2rem;">
                         These projects are my small proof of that alignment. Evidence that someone who understands the problem space and has learned to work alongside AI can ship real software that solves real problems, in days rather than months. I am still learning, still building, and still a long way from where I want to be. But I believe this is the direction the world is heading, and I would rather be early than late.
                     </p>
                 </div>
-                <div class="text-base md:text-lg text-gray-300 font-light leading-loose" data-simple-block>
-                    <p class="mb-6 indent-8">
+                <div class="thesis-simple" data-simple-block>
+                    <p style="text-indent:2rem;">
                         I am a medical student and military officer with no computer science degree. Every project in this portfolio was built in my free time, after clinical rotations and between study sessions, using AI as a coding partner. I told the AI what I wanted to build, and it helped me write the code, fix bugs, and learn new skills along the way. Everything here was started after March 15th, 2026. The sports apps exist because I love March Madness, the Masters, and Detroit sports. The medical apps exist because I saw problems in my own education and in patient care that no existing tool solved well enough. The military fitness app exists because every service member needs a reliable PT calculator.
                     </p>
-                    <p class="mb-6 indent-8">
-                        The bigger point is about what is coming next. AI tools are getting powerful enough that anyone with domain knowledge and a clear idea can build real software: not just developers. Doctors, officers, teachers, analysts. I built an <a href="https://differential-c57.pages.dev" target="_blank" rel="noopener noreferrer" class="text-gold hover:underline">AGI Capability Tracker</a> to watch how fast this is happening. The numbers are striking: AI now scores perfectly on math competitions that were impossible a year ago, fixes 94 out of 100 real software bugs, and one restricted model operates a computer better than most humans. The people who will thrive are not the ones resisting AI or passively watching it. They are the ones learning to work alongside it. These projects are my proof that one person, with the right tools and enough motivation, can ship working software that solves real problems in days instead of months.
+                    <p style="text-indent:2rem;">
+                        The bigger point is about what is coming next. AI tools are getting powerful enough that anyone with domain knowledge and a clear idea can build real software: not just developers. Doctors, officers, teachers, analysts. I built an <a href="https://differential-c57.pages.dev" target="_blank" rel="noopener noreferrer" class="thesis-link">AGI Capability Tracker</a> to watch how fast this is happening. The numbers are striking: AI now scores perfectly on math competitions that were impossible a year ago, fixes 94 out of 100 real software bugs, and one restricted model operates a computer better than most humans. The people who will thrive are not the ones resisting AI or passively watching it. They are the ones learning to work alongside it. These projects are my proof that one person, with the right tools and enough motivation, can ship working software that solves real problems in days instead of months.
                     </p>
                 </div>
             </div>
         </section>
 
-        <!-- AGGREGATE STATS -->
-        <section class="py-12 border-y border-white/10 my-12 reveal">
-            <div class="font-mono text-xs text-white/40 mb-6 uppercase tracking-widest">[ Global Metrics ]</div>
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-8">
-                <div class="flex flex-col gap-2">
-                    <span class="font-sans text-[10px] text-white/40 uppercase tracking-[0.15em]">Lines of Code</span>
-                    <span class="font-mono text-3xl md:text-4xl text-gold font-light counter" data-target="70566">0</span>
+        <!-- GLOBAL METRICS -->
+        <section class="metrics-section reveal">
+            <div class="section-label">[ Global Metrics ]</div>
+            <div class="metrics-grid">
+                <div class="metric-item">
+                    <span class="metric-label">Lines of Code</span>
+                    <span class="metric-value counter" data-target="72797">0</span>
                 </div>
-                <div class="flex flex-col gap-2">
-                    <span class="font-sans text-[10px] text-white/40 uppercase tracking-[0.15em]">Functions</span>
-                    <span class="font-mono text-3xl md:text-4xl text-gold font-light counter" data-target="620">0</span>
+                <div class="metric-item">
+                    <span class="metric-label">Functions</span>
+                    <span class="metric-value counter" data-target="620">0</span>
                 </div>
-                <div class="flex flex-col gap-2">
-                    <span class="font-sans text-[10px] text-white/40 uppercase tracking-[0.15em]">Medical Q's</span>
-                    <span class="font-mono text-3xl md:text-4xl text-gold font-light counter" data-target="2245">0</span>
+                <div class="metric-item">
+                    <span class="metric-label">Medical Q's</span>
+                    <span class="metric-value counter" data-target="2245">0</span>
                 </div>
-                <div class="flex flex-col gap-2">
-                    <span class="font-sans text-[10px] text-white/40 uppercase tracking-[0.15em]">Players/Teams</span>
-                    <span class="font-mono text-3xl md:text-4xl text-gold font-light counter" data-target="244">0</span>
+                <div class="metric-item">
+                    <span class="metric-label">Players/Teams</span>
+                    <span class="metric-value counter" data-target="244">0</span>
                 </div>
-                <div class="flex flex-col gap-2">
-                    <span class="font-sans text-[10px] text-white/40 uppercase tracking-[0.15em]">Live Deploys</span>
-                    <span class="font-mono text-3xl md:text-4xl text-gold font-light counter" data-target="7">0</span>
+                <div class="metric-item">
+                    <span class="metric-label">Live Deploys</span>
+                    <span class="metric-value counter" data-target="7">0</span>
                 </div>
-                <div class="flex flex-col gap-2">
-                    <span class="font-sans text-[10px] text-white/40 uppercase tracking-[0.15em]">Days to Build</span>
-                    <span class="font-mono text-3xl md:text-4xl text-gold font-light counter" data-target="23">0</span>
+                <div class="metric-item">
+                    <span class="metric-label">Days to Build</span>
+                    <span class="metric-value counter" data-target="23">0</span>
                 </div>
             </div>
         </section>
 
         <!-- RESEARCH -->
-        <section id="research" class="py-20 border-t border-white/10 mt-12 scroll-mt-24">
-            <div class="font-mono text-xs text-white/40 mb-4 uppercase tracking-widest">[ Research ]</div>
-            <h3 class="font-serif text-3xl md:text-4xl text-white mb-3">The Frontier AI Risk Stack</h3>
-            <p class="font-sans text-base text-dim font-light max-w-3xl mb-10">A six-layer framework for understanding systemic risk in advanced AI systems. Published as an independent research paper, April 2026.</p>
+        <section id="research" class="reveal">
+            <div class="section-label">[ Research ]</div>
+            <h3 class="section-title">The Frontier AI Risk Stack</h3>
+            <p class="section-desc">A six-layer framework for understanding systemic risk in advanced AI systems. Published as an independent research paper, April 2026.</p>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="research-grid">
                 <!-- Paper Card -->
-                <div class="glass-panel p-8 rounded-lg border-l-4 border-l-gold relative">
-                    <div class="absolute top-4 right-4 font-mono text-[10px] text-white/20">PAPER.01</div>
-                    <div class="flex items-center gap-4 mb-6">
-                        <div class="w-10 h-10 rounded-lg bg-gold/10 border border-gold/20 flex items-center justify-center">
-                            <i class="ph-bold ph-file-text text-gold text-lg"></i>
+                <div class="paper-card glass-panel">
+                    <div class="paper-watermark">PAPER.01</div>
+                    <div class="paper-author-row">
+                        <div class="paper-icon">
+                            <i class="ph-bold ph-file-text"></i>
                         </div>
                         <div>
-                            <p class="font-sans text-sm text-white font-medium">Sean Sooch</p>
-                            <p class="font-mono text-[10px] text-dim">Independent Researcher &bull; April 2026</p>
+                            <p class="paper-author-name">Sean Sooch</p>
+                            <p class="paper-author-meta">Independent Researcher &bull; April 2026</p>
                         </div>
                     </div>
-                    <p class="font-sans text-sm text-dim font-light leading-relaxed mb-6">
+                    <p class="paper-desc">
                         <span data-technical>This paper argues that frontier AI risk is best understood not as a single category but as a stack of six interacting risk layers: Model Risk, System Risk, Deployment Risk, Access Risk, Governance Risk, and Civilizational Risk. The most serious dangers arise not from any single layer but from the way failures compound across layers. The framework provides a structured analytical tool for policymakers, developers, and civil society.</span><span data-simple>AI risk is not one problem. It is six problems stacked on top of each other: how dangerous the AI itself is, what happens when you give it tools, what happens when you deploy it in the real world, who gets access to it, whether governments can keep up, and what it all means for society long-term. The biggest dangers come from these layers making each other worse.</span>
                     </p>
-                    <div class="flex flex-wrap gap-2 mb-6">
-                        <span class="px-2 py-1 bg-charcoal border border-gold/20 text-gold font-mono text-[10px] uppercase rounded">AI Governance</span>
-                        <span class="px-2 py-1 bg-charcoal border border-gold/20 text-gold font-mono text-[10px] uppercase rounded">Risk Taxonomy</span>
-                        <span class="px-2 py-1 bg-charcoal border border-gold/20 text-gold font-mono text-[10px] uppercase rounded">Agentic Systems</span>
-                        <span class="px-2 py-1 bg-charcoal border border-gold/20 text-gold font-mono text-[10px] uppercase rounded">AI Safety</span>
+                    <div class="tags-row">
+                        <span class="tag">AI Governance</span>
+                        <span class="tag">Risk Taxonomy</span>
+                        <span class="tag">Agentic Systems</span>
+                        <span class="tag">AI Safety</span>
                     </div>
-                    <div class="flex gap-3">
-                        <a href="https://differential-c57.pages.dev/#analysis-section" target="_blank" rel="noopener noreferrer" class="btn-tactical inline-flex items-center gap-3 px-6 py-3 text-gold font-mono text-xs uppercase tracking-widest">
+                    <div class="paper-links">
+                        <a href="https://differential-c57.pages.dev/#analysis-section" target="_blank" rel="noopener noreferrer" class="btn-tactical btn-tactical-lg">
                             <i class="ph-bold ph-arrow-square-out"></i>
                             <span>Read on AGI Tracker</span>
                         </a>
-                        <a href="https://differential-c57.pages.dev/frontier-risk-stack.pdf" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-3 border border-white/10 rounded text-dim font-mono text-xs uppercase tracking-widest hover:border-gold/40 hover:text-gold transition-all">
+                        <a href="https://differential-c57.pages.dev/frontier-risk-stack.pdf" target="_blank" rel="noopener noreferrer" class="btn-pdf">
                             <i class="ph-bold ph-download-simple"></i>
                             <span>Technical PDF</span>
                         </a>
-                        <a href="frontier-risk-stack-simple.pdf" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-3 border border-white/10 rounded text-dim font-mono text-xs uppercase tracking-widest hover:border-gold/40 hover:text-gold transition-all">
+                        <a href="frontier-risk-stack-simple.pdf" target="_blank" rel="noopener noreferrer" class="btn-pdf">
                             <i class="ph-bold ph-download-simple"></i>
                             <span>Plain Language PDF</span>
                         </a>
@@ -319,65 +1213,84 @@
                 </div>
 
                 <!-- Interactive 6-Layer Stack -->
-                <div class="glass-panel p-8 rounded-lg">
-                    <p class="font-mono text-[10px] text-gold uppercase tracking-widest mb-6">The Six Risk Layers</p>
-                    <div class="flex flex-col gap-1.5">
-                        <div class="flex items-center gap-3 px-4 py-3 rounded bg-[#ff4444]/5 border-l-2 border-[#ff4444]/60">
-                            <span class="font-mono text-[9px] text-[#ff4444]/60 w-4">01</span>
-                            <span class="font-sans text-sm text-white font-medium flex-1">Model Risk</span>
-                            <span class="font-mono text-[9px] text-dim hidden md:inline">Deception, unsafe knowledge, concealment</span>
+                <div class="risk-stack-card glass-panel">
+                    <p class="risk-stack-label">The Six Risk Layers</p>
+                    <div class="risk-layers">
+                        <div class="risk-layer" style="background: rgba(255,68,68,0.05); border-left: 2px solid rgba(255,68,68,0.6);">
+                            <span class="risk-num" style="color: rgba(255,68,68,0.6);">01</span>
+                            <span class="risk-name">Model Risk</span>
+                            <span class="risk-desc">Deception, unsafe knowledge, concealment</span>
                         </div>
-                        <div class="flex items-center gap-3 px-4 py-3 rounded bg-[#ff7744]/5 border-l-2 border-[#ff7744]/60">
-                            <span class="font-mono text-[9px] text-[#ff7744]/60 w-4">02</span>
-                            <span class="font-sans text-sm text-white font-medium flex-1">System Risk</span>
-                            <span class="font-mono text-[9px] text-dim hidden md:inline">Orchestration, tool use, parallel execution</span>
+                        <div class="risk-layer" style="background: rgba(255,119,68,0.05); border-left: 2px solid rgba(255,119,68,0.6);">
+                            <span class="risk-num" style="color: rgba(255,119,68,0.6);">02</span>
+                            <span class="risk-name">System Risk</span>
+                            <span class="risk-desc">Orchestration, tool use, parallel execution</span>
                         </div>
-                        <div class="flex items-center gap-3 px-4 py-3 rounded bg-[#ffaa00]/5 border-l-2 border-[#ffaa00]/60">
-                            <span class="font-mono text-[9px] text-[#ffaa00]/60 w-4">03</span>
-                            <span class="font-sans text-sm text-white font-medium flex-1">Deployment Risk</span>
-                            <span class="font-mono text-[9px] text-dim hidden md:inline">Real permissions, production access, API control</span>
+                        <div class="risk-layer" style="background: rgba(255,170,0,0.05); border-left: 2px solid rgba(255,170,0,0.6);">
+                            <span class="risk-num" style="color: rgba(255,170,0,0.6);">03</span>
+                            <span class="risk-name">Deployment Risk</span>
+                            <span class="risk-desc">Real permissions, production access, API control</span>
                         </div>
-                        <div class="flex items-center gap-3 px-4 py-3 rounded bg-[#44aaff]/5 border-l-2 border-[#44aaff]/60">
-                            <span class="font-mono text-[9px] text-[#44aaff]/60 w-4">04</span>
-                            <span class="font-sans text-sm text-white font-medium flex-1">Access Risk</span>
-                            <span class="font-mono text-[9px] text-dim hidden md:inline">Concentration, cognitive inequality</span>
+                        <div class="risk-layer" style="background: rgba(68,170,255,0.05); border-left: 2px solid rgba(68,170,255,0.6);">
+                            <span class="risk-num" style="color: rgba(68,170,255,0.6);">04</span>
+                            <span class="risk-name">Access Risk</span>
+                            <span class="risk-desc">Concentration, cognitive inequality</span>
                         </div>
-                        <div class="flex items-center gap-3 px-4 py-3 rounded bg-[#7c4dff]/5 border-l-2 border-[#7c4dff]/60">
-                            <span class="font-mono text-[9px] text-[#7c4dff]/60 w-4">05</span>
-                            <span class="font-sans text-sm text-white font-medium flex-1">Governance Risk</span>
-                            <span class="font-mono text-[9px] text-dim hidden md:inline">Weak audits, regulatory capture</span>
+                        <div class="risk-layer" style="background: rgba(124,77,255,0.05); border-left: 2px solid rgba(124,77,255,0.6);">
+                            <span class="risk-num" style="color: rgba(124,77,255,0.6);">05</span>
+                            <span class="risk-name">Governance Risk</span>
+                            <span class="risk-desc">Weak audits, regulatory capture</span>
                         </div>
-                        <div class="flex items-center gap-3 px-4 py-3 rounded bg-[#aa44ff]/5 border-l-2 border-[#aa44ff]/60">
-                            <span class="font-mono text-[9px] text-[#aa44ff]/60 w-4">06</span>
-                            <span class="font-sans text-sm text-white font-medium flex-1">Civilizational Risk</span>
-                            <span class="font-mono text-[9px] text-dim hidden md:inline">Compounding failures across all layers</span>
+                        <div class="risk-layer" style="background: rgba(170,68,255,0.05); border-left: 2px solid rgba(170,68,255,0.6);">
+                            <span class="risk-num" style="color: rgba(170,68,255,0.6);">06</span>
+                            <span class="risk-name">Civilizational Risk</span>
+                            <span class="risk-desc">Compounding failures across all layers</span>
                         </div>
                     </div>
-                    <p class="font-mono text-[9px] text-dim mt-4 opacity-60">Central claim: risks compound across layers. No single layer fully explains the danger.</p>
+                    <p class="risk-stack-note">Central claim: risks compound across layers. No single layer fully explains the danger.</p>
                 </div>
             </div>
         </section>
 
-        <!-- PROJECT DEEP DIVES -->
-        <div class="font-mono text-xs text-white/40 mb-12 uppercase tracking-widest mt-24 reveal">[ Project Case Studies ]</div>
+        <!-- LITERATURE -->
+        <section id="literature" class="reveal">
+            <div class="section-label">[ Literature &amp; Commentary ]</div>
+            <h3 class="section-title">Reading Room</h3>
+            <p class="section-desc">External research I'm actively engaging with. Annotated with context on why each paper matters.</p>
+
+            <a href="https://reading-room.pages.dev" target="_blank" rel="noopener noreferrer" class="reading-room-card glass-panel">
+                <div class="reading-room-inner">
+                    <div class="reading-room-icon">
+                        <i class="ph-bold ph-book-open-text"></i>
+                    </div>
+                    <div style="flex:1;">
+                        <p class="reading-room-title">Enter the Reading Room</p>
+                        <p class="reading-room-meta">Papers &bull; Tweets &bull; Annotated Commentary</p>
+                    </div>
+                    <i class="ph-bold ph-arrow-right reading-room-arrow"></i>
+                </div>
+                <p class="reading-room-desc">Curated research papers and X threads with technical summaries, key mechanisms, and personal commentary on why each piece matters.</p>
+            </a>
+        </section>
+
+        <!-- PROJECT CASE STUDIES LABEL -->
+        <div class="projects-label reveal">[ Project Case Studies ]</div>
 
         <!-- PROJECT 1: NCAAT -->
-        <section id="project-ncaat" class="mb-32 reveal group scroll-mt-24">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-                <div class="col-span-1 lg:col-span-7 flex flex-col gap-6">
-                    <div class="inline-flex py-1 px-3 border border-white/20 rounded text-[10px] uppercase tracking-widest text-white/60 font-mono w-fit bg-surface">
-                        Sports Analytics &amp; Predictive Modeling
-                    </div>
-                    <h2 class="font-serif text-4xl md:text-5xl text-white">NCAAT Interactive Bracket</h2>
-                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-technical-block>
+        <section id="project-ncaat" class="project-section reveal">
+            <div class="project-grid">
+                <div class="project-content">
+                    <span class="project-category">Sports Analytics &amp; Predictive Modeling</span>
+                    <h2 class="project-title">NCAAT Interactive Bracket</h2>
+                    <p class="project-desc" data-technical-block>
                         A 64-team interactive NCAA Tournament bracket integrating four independent analytics models, including KenPom efficiency ratings, adjusted net ratings, and advanced projections. Features three composable X-factor modes (Injury Adjustment, Guard Factor, 3-Point Shooting) that modify predictions in real-time. Built as an offline-capable Progressive Web App with ESPN CDN integration and intelligent fallback SVG generation.
                     </p>
-                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-simple-block>
+                    <p class="project-desc" data-simple-block>
                         A full March Madness bracket that predicts every game using four different ranking systems. You can turn on special filters (like adjusting for injuries or hot three-point shooting) to see how predictions change in real time. Works offline on your phone.
                     </p>
-                    <div class="mt-8">
-                        <div class="font-mono text-[10px] text-white/40 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Core Features</div>
-                        <ul class="tactical-list grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-sm text-gray-300 font-light">
+                    <div>
+                        <div class="features-label">Core Features</div>
+                        <ul class="features-list">
                             <li>KenPom rankings integration</li>
                             <li>Advanced projection overlays</li>
                             <li>Injury adjustment mode (11 teams)</li>
@@ -388,57 +1301,55 @@
                             <li>Mobile tab navigation</li>
                             <li>Offline-first caching (PWA)</li>
                             <li>Fallback SVG logo generation</li>
-                            <li>Dark theme with gold accents</li>
+                            <li>Dark theme with cyan accents</li>
                             <li>Zero external JS dependencies</li>
                         </ul>
                     </div>
-                    <div class="mt-8 flex flex-wrap gap-2">
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Vanilla JS</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">CSS3</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">PWA</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Service Workers</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">ESPN CDN</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">weserv.nl Proxy</span>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Vanilla JS</span>
+                        <span class="tech-tag">CSS3</span>
+                        <span class="tech-tag">PWA</span>
+                        <span class="tech-tag">Service Workers</span>
+                        <span class="tech-tag">ESPN CDN</span>
+                        <span class="tech-tag">weserv.nl Proxy</span>
                     </div>
-                    <div class="mt-10">
-                        <a href="https://ncaat-bracket-2026.pages.dev" target="_blank" rel="noopener noreferrer" class="btn-tactical inline-flex items-center gap-3 px-8 py-4 text-gold font-mono text-xs uppercase tracking-widest">
+                    <div class="project-cta">
+                        <a href="https://ncaat-bracket-2026.pages.dev" target="_blank" rel="noopener noreferrer" class="btn-tactical btn-tactical-lg">
                             <span>View Live</span>
                             <i class="ph-bold ph-arrow-up-right"></i>
                         </a>
                     </div>
                 </div>
-                <div class="col-span-1 lg:col-span-5 flex flex-col gap-6 lg:pl-10 lg:border-l border-white/10">
-                    <div class="grid grid-cols-2 gap-px bg-white/10 border border-white/10">
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">9,631</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Lines of Code</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">148</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Functions</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">64</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Teams Simulated</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">4</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Analytics Models</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">3</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">X-Factor Modes</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">11</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Injury Profiles</span></div>
+                <div class="project-stats">
+                    <div class="stats-grid">
+                        <div class="stat-cell"><span class="stat-value">9,631</span><span class="stat-label">Lines of Code</span></div>
+                        <div class="stat-cell"><span class="stat-value">148</span><span class="stat-label">Functions</span></div>
+                        <div class="stat-cell"><span class="stat-value">64</span><span class="stat-label">Teams Simulated</span></div>
+                        <div class="stat-cell"><span class="stat-value">4</span><span class="stat-label">Analytics Models</span></div>
+                        <div class="stat-cell"><span class="stat-value">3</span><span class="stat-label">X-Factor Modes</span></div>
+                        <div class="stat-cell"><span class="stat-value">11</span><span class="stat-label">Injury Profiles</span></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <div class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-32 reveal"></div>
+        <div class="project-divider reveal"></div>
 
-        <!-- PROJECT 2: Step 2 CK -->
-        <section id="project-step2" class="mb-32 reveal group scroll-mt-24">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-                <div class="col-span-1 lg:col-span-7 flex flex-col gap-6 lg:order-2">
-                    <div class="inline-flex py-1 px-3 border border-white/20 rounded text-[10px] uppercase tracking-widest text-white/60 font-mono w-fit bg-surface">
-                        Medical Education Tech &amp; Adaptive Learning
-                    </div>
-                    <h2 class="font-serif text-4xl md:text-5xl text-white">Step 2 CK Study Engine</h2>
-                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-technical-block>
+        <!-- PROJECT 2: Step 2 CK (reverse layout) -->
+        <section id="project-step2" class="project-section reveal">
+            <div class="project-grid">
+                <div class="project-content order-2">
+                    <span class="project-category">Medical Education Tech &amp; Adaptive Learning</span>
+                    <h2 class="project-title">Step 2 CK Study Engine</h2>
+                    <p class="project-desc" data-technical-block>
                         A comprehensive medical study platform built to augment clinical education, housing 2,245 practice questions and 1,211 flashcards across 351 medical topics and 5+ clinical subjects. Features an SM-2 spaced repetition algorithm, a diagnostic surgery game, performance heatmap visualization, and an integrated study guide with diagnostic criteria and treatment protocols. Includes a custom content pipeline with OCR and keyword-based topic classification.
                     </p>
-                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-simple-block>
+                    <p class="project-desc" data-simple-block>
                         A medical study app with over 2,200 practice questions and 1,200 flashcards covering 5+ clinical subjects. It tracks what you get wrong and shows those topics more often so you learn faster. Includes a surgery game, visual progress maps, and a built-in study guide. I built it because no existing study tool worked the way I wanted it to.
                     </p>
-                    <div class="mt-8">
-                        <div class="font-mono text-[10px] text-white/40 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Core Features</div>
-                        <ul class="tactical-list grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-sm text-gray-300 font-light">
+                    <div>
+                        <div class="features-label">Core Features</div>
+                        <ul class="features-list">
                             <li>Adaptive quiz engine with shuffle/filter</li>
                             <li>Flashcard engine with self-grading</li>
                             <li>SM-2 spaced repetition algorithm</li>
@@ -455,114 +1366,110 @@
                             <li>Dashboard with mastery analytics</li>
                         </ul>
                     </div>
-                    <div class="mt-8 flex flex-wrap gap-2">
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">JavaScript</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">HTML5/CSS3</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">SM-2 Algorithm</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">localStorage</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">JSON Architecture</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">OCR Pipeline</span>
+                    <div class="tech-tags">
+                        <span class="tech-tag">JavaScript</span>
+                        <span class="tech-tag">HTML5/CSS3</span>
+                        <span class="tech-tag">SM-2 Algorithm</span>
+                        <span class="tech-tag">localStorage</span>
+                        <span class="tech-tag">JSON Architecture</span>
+                        <span class="tech-tag">OCR Pipeline</span>
                     </div>
-                    <div class="mt-10">
-                        <a href="https://teal-davine-21.tiiny.site" target="_blank" rel="noopener noreferrer" class="btn-tactical inline-flex items-center gap-3 px-8 py-4 text-gold font-mono text-xs uppercase tracking-widest">
+                    <div class="project-cta">
+                        <a href="https://teal-davine-21.tiiny.site" target="_blank" rel="noopener noreferrer" class="btn-tactical btn-tactical-lg">
                             <span>View Live</span>
                             <i class="ph-bold ph-arrow-up-right"></i>
                         </a>
                     </div>
                 </div>
-                <div class="col-span-1 lg:col-span-5 flex flex-col gap-6 lg:pr-10 lg:border-r border-white/10 lg:order-1">
-                    <div class="grid grid-cols-2 gap-px bg-white/10 border border-white/10 text-left">
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">38,334</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Lines of Code</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">227</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Functions</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">2,245</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">MCQs</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">1,211</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Flashcards</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">351</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Topics</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">5</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Clinical Subjects</span></div>
+                <div class="project-stats order-1">
+                    <div class="stats-grid">
+                        <div class="stat-cell"><span class="stat-value">38,334</span><span class="stat-label">Lines of Code</span></div>
+                        <div class="stat-cell"><span class="stat-value">227</span><span class="stat-label">Functions</span></div>
+                        <div class="stat-cell"><span class="stat-value">2,245</span><span class="stat-label">MCQs</span></div>
+                        <div class="stat-cell"><span class="stat-value">1,211</span><span class="stat-label">Flashcards</span></div>
+                        <div class="stat-cell"><span class="stat-value">351</span><span class="stat-label">Topics</span></div>
+                        <div class="stat-cell"><span class="stat-value">5</span><span class="stat-label">Clinical Subjects</span></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <div class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-32 reveal"></div>
+        <div class="project-divider reveal"></div>
 
         <!-- PROJECT 3: Masters 2026 -->
-        <section id="project-masters" class="mb-32 reveal group scroll-mt-24">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-                <div class="col-span-1 lg:col-span-7 flex flex-col gap-6">
-                    <div class="inline-flex py-1 px-3 border border-white/20 rounded text-[10px] uppercase tracking-widest text-white/60 font-mono w-fit bg-surface">
-                        Interactive Web Experience &amp; Programmatic Video
-                    </div>
-                    <h2 class="font-serif text-4xl md:text-5xl text-white">Masters 2026 Tournament Hub</h2>
-                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-technical-block>
+        <section id="project-masters" class="project-section reveal">
+            <div class="project-grid">
+                <div class="project-content">
+                    <span class="project-category">Interactive Web Experience &amp; Programmatic Video</span>
+                    <h2 class="project-title">Masters 2026 Tournament Hub</h2>
+                    <p class="project-desc" data-technical-block>
                         A premium digital experience for the 2026 Masters Tournament, consisting of two interconnected systems: (1) an interactive web application with live leaderboard tracking, an 18-hole course guide with difficulty ratings, a searchable 92-player field, and historical champions gallery with cinematic Ken Burns animations; and (2) a companion Remotion video renderer that programmatically generates broadcast-quality animated walkthroughs using React components, spring physics, and frame-perfect timing at 30fps.
                     </p>
-                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-simple-block>
+                    <p class="project-desc" data-simple-block>
                         A digital companion for the 2026 Masters Tournament. Browse the live leaderboard, explore all 18 holes at Augusta National with difficulty ratings, search the full 92-player field, and view a gallery of past champions with cinematic animations. Also includes a code-generated video walkthrough of the course with broadcast-quality graphics.
                     </p>
-                    <div class="mt-8">
-                        <div class="font-mono text-[10px] text-white/40 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Core Features</div>
-                        <ul class="tactical-list grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-sm text-gray-300 font-light">
-                            <li>Interactive leaderboard with filters</li>
+                    <div>
+                        <div class="features-label">Core Features</div>
+                        <ul class="features-list">
+                            <li>Interactive leaderboard with round filters</li>
+                            <li>"Caddie Mode" course strategy cards</li>
+                            <li>"My Card" personal player tracker</li>
+                            <li>Sunday Storylines narrative section</li>
                             <li>18-hole course guide &amp; difficulty ratings</li>
                             <li>Amen Corner deep-dive section</li>
                             <li>92-player searchable field</li>
                             <li>Historical champions gallery (15+ yrs)</li>
-                            <li>Real-time countdown timer</li>
                             <li>Ken Burns cinematic animations</li>
                             <li>Falling azalea petal effects</li>
                             <li>Remotion: 6-scene video composition</li>
                             <li>Spring physics player animations</li>
                             <li>Frame-interpolated transitions</li>
                             <li>1080x1920 broadcast-ready output</li>
-                            <li>Intersection Observer scroll effects</li>
-                            <li>Responsive grid layouts</li>
                         </ul>
                     </div>
-                    <div class="mt-8 flex flex-wrap gap-2">
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">React 19 / TS 6</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Remotion 4.0</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">HTML5/CSS3/JS</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">PWA</span>
+                    <div class="tech-tags">
+                        <span class="tech-tag">React 19 / TS 6</span>
+                        <span class="tech-tag">Remotion 4.0</span>
+                        <span class="tech-tag">HTML5/CSS3/JS</span>
+                        <span class="tech-tag">PWA</span>
                     </div>
-                    <div class="mt-10">
-                        <a href="https://masters-2026.pages.dev" target="_blank" rel="noopener noreferrer" class="btn-tactical inline-flex items-center gap-3 px-8 py-4 text-gold font-mono text-xs uppercase tracking-widest">
+                    <div class="project-cta">
+                        <a href="https://masters-2026.pages.dev" target="_blank" rel="noopener noreferrer" class="btn-tactical btn-tactical-lg">
                             <span>View Live</span>
                             <i class="ph-bold ph-arrow-up-right"></i>
                         </a>
                     </div>
                 </div>
-                <div class="col-span-1 lg:col-span-5 flex flex-col gap-6 lg:pl-10 lg:border-l border-white/10">
-                    <div class="grid grid-cols-2 gap-px bg-white/10 border border-white/10">
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">1,673</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Lines of Code</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">26</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Functions</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">92</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Players</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">18</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Holes Mapped</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">600</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Frames Rendered</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">20s</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Video Output</span></div>
+                <div class="project-stats">
+                    <div class="stats-grid">
+                        <div class="stat-cell"><span class="stat-value">2,839</span><span class="stat-label">Lines of Code</span></div>
+                        <div class="stat-cell"><span class="stat-value">32</span><span class="stat-label">Functions</span></div>
+                        <div class="stat-cell"><span class="stat-value">92</span><span class="stat-label">Players</span></div>
+                        <div class="stat-cell"><span class="stat-value">18</span><span class="stat-label">Holes Mapped</span></div>
+                        <div class="stat-cell"><span class="stat-value">600</span><span class="stat-label">Frames Rendered</span></div>
+                        <div class="stat-cell"><span class="stat-value">20s</span><span class="stat-label">Video Output</span></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <div class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-32 reveal"></div>
+        <div class="project-divider reveal"></div>
 
-        <!-- PROJECT 4: Handoff Tracker -->
-        <section id="project-handoff" class="mb-32 reveal group scroll-mt-24">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-                <div class="col-span-1 lg:col-span-7 flex flex-col gap-6 lg:order-2">
-                    <div class="inline-flex py-1 px-3 border border-white/20 rounded text-[10px] uppercase tracking-widest text-white/60 font-mono w-fit bg-surface">
-                        Clinical QI &amp; Patient Safety
-                    </div>
-                    <h2 class="font-serif text-4xl md:text-5xl text-white">Patient Handoff Tracker</h2>
-                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-technical-block>
+        <!-- PROJECT 4: Handoff Tracker (reverse layout) -->
+        <section id="project-handoff" class="project-section reveal">
+            <div class="project-grid">
+                <div class="project-content order-2">
+                    <span class="project-category">Clinical QI &amp; Patient Safety</span>
+                    <h2 class="project-title">Patient Handoff Tracker</h2>
+                    <p class="project-desc" data-technical-block>
                         A full-stack I-PASS/SBAR digital handoff system for Emergency Medicine, built as a Quality Improvement project for a real clinical site. Implements the evidence-based I-PASS framework (validated in NEJM, 30% reduction in preventable adverse events) with built-in Joint Commission compliance metrics, HIPAA-conscious audit logging, and a QI dashboard for publication-ready data. The first multi-file, database-backed, authenticated application in this portfolio.
                     </p>
-                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-simple-block>
+                    <p class="project-desc" data-simple-block>
                         A digital system for doctors handing off patients between shifts, the moment where the most preventable medical errors happen. It walks doctors through a structured checklist proven to reduce mistakes by 30%, tracks compliance for hospital inspectors, and generates data for quality improvement research. Built for a real emergency department as a clinical project.
                     </p>
-                    <div class="mt-8">
-                        <div class="font-mono text-[10px] text-white/40 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Core Features</div>
-                        <ul class="tactical-list grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-sm text-gray-300 font-light">
+                    <div>
+                        <div class="features-label">Core Features</div>
+                        <ul class="features-list">
                             <li>I-PASS structured handoff workflow</li>
                             <li>SBAR quick mode for urgent handoffs</li>
                             <li>Patient board with ESI acuity badges</li>
@@ -579,125 +1486,121 @@
                             <li>SQLite with WAL mode concurrency</li>
                         </ul>
                     </div>
-                    <div class="mt-8 flex flex-wrap gap-2">
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Python / Flask</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">SQLite</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Vanilla JS</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Chart.js</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Jinja2</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">I-PASS / SBAR</span>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Python / Flask</span>
+                        <span class="tech-tag">SQLite</span>
+                        <span class="tech-tag">Vanilla JS</span>
+                        <span class="tech-tag">Chart.js</span>
+                        <span class="tech-tag">Jinja2</span>
+                        <span class="tech-tag">I-PASS / SBAR</span>
                     </div>
-                    <div class="mt-10">
-                        <a href="https://patient-handoff-tracker.onrender.com" target="_blank" rel="noopener noreferrer" class="btn-tactical inline-flex items-center gap-3 px-8 py-4 text-gold font-mono text-xs uppercase tracking-widest">
+                    <div class="project-cta">
+                        <a href="https://patient-handoff-tracker.onrender.com" target="_blank" rel="noopener noreferrer" class="btn-tactical btn-tactical-lg">
                             <span>View Live</span>
                             <i class="ph-bold ph-arrow-up-right"></i>
                         </a>
-                        <span class="font-mono text-[9px] text-white/30 mt-2 block">First load may take ~30s (free-tier cold start)</span>
+                        <span class="cold-start-note">First load may take ~30s (free-tier cold start)</span>
                     </div>
                 </div>
-                <div class="col-span-1 lg:col-span-5 flex flex-col gap-6 lg:pr-10 lg:border-r border-white/10 lg:order-1">
-                    <div class="grid grid-cols-2 gap-px bg-white/10 border border-white/10 text-left">
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">4,464</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Lines of Code</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">62</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Functions</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">7</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">DB Tables</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">35</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Source Files</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">20</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">API Endpoints</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">4</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">JC Indicators</span></div>
+                <div class="project-stats order-1">
+                    <div class="stats-grid">
+                        <div class="stat-cell"><span class="stat-value">4,464</span><span class="stat-label">Lines of Code</span></div>
+                        <div class="stat-cell"><span class="stat-value">62</span><span class="stat-label">Functions</span></div>
+                        <div class="stat-cell"><span class="stat-value">7</span><span class="stat-label">DB Tables</span></div>
+                        <div class="stat-cell"><span class="stat-value">35</span><span class="stat-label">Source Files</span></div>
+                        <div class="stat-cell"><span class="stat-value">20</span><span class="stat-label">API Endpoints</span></div>
+                        <div class="stat-cell"><span class="stat-value">4</span><span class="stat-label">JC Indicators</span></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <div class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-32 reveal"></div>
+        <div class="project-divider reveal"></div>
 
         <!-- PROJECT 5: Detroit Sports Hub -->
-        <section id="project-detroit" class="mb-32 reveal group scroll-mt-24">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-                <div class="col-span-1 lg:col-span-7 flex flex-col gap-6">
-                    <div class="inline-flex py-1 px-3 border border-white/20 rounded text-[10px] uppercase tracking-widest text-white/60 font-mono w-fit bg-surface">
-                        Sports Analytics &amp; Real-Time Data
-                    </div>
-                    <h2 class="font-serif text-4xl md:text-5xl text-white">Detroit Sports Hub</h2>
-                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-technical-block>
-                        A broadcast-quality sports hub combining two full-scale trackers for the 2026 Detroit Tigers season and the Detroit Pistons playoff run. The <strong class="text-gray-300">Tigers tracker</strong> features live pitch-by-pitch game tracking, win probability graphs, spray charts, Baseball Savant Statcast integration, a 30-prospect farm system, and a Skubalverse shrine. The <strong class="text-gray-300">Pistons tracker</strong> covers the franchise's historic rise from 14-68 to #1 seed with a live playoff countdown, Cade Cunningham injury watch, MVP case analysis, full bracket visualization, play-in scenarios, a 2004 "Going to Work" championship tribute, and 22 features across 10 tabs. Both apps run in complete isolation via iframe architecture: zero namespace conflicts, zero dependencies, zero frameworks.
+        <section id="project-detroit" class="project-section reveal">
+            <div class="project-grid">
+                <div class="project-content">
+                    <span class="project-category">Sports Analytics &amp; Real-Time Data</span>
+                    <h2 class="project-title">Detroit Sports Hub</h2>
+                    <p class="project-desc" data-technical-block>
+                        A broadcast-quality sports hub combining two full-scale trackers for the 2026 Detroit Tigers season and the Detroit Pistons playoff run. The <strong style="color:#d1d5db;">Tigers tracker</strong> features live pitch-by-pitch game tracking, win probability graphs, spray charts, Baseball Savant Statcast integration, a 30-prospect farm system, and a Skubalverse shrine. The <strong style="color:#d1d5db;">Pistons tracker</strong> covers the franchise's historic rise from 14-68 to #1 seed with a live playoff countdown, Cade Cunningham injury watch, MVP case analysis, full bracket visualization, play-in scenarios, a 2004 "Going to Work" championship tribute, and 22 features across 10 tabs. Both apps run in complete isolation via iframe architecture: zero namespace conflicts, zero dependencies, zero frameworks.
                     </p>
-                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-simple-block>
-                        Two full sports apps in one hub. The <strong class="text-gray-300">Tigers tracker</strong> follows the 2026 season with live game updates, pitch-by-pitch tracking, win probability, prospect rankings, and a Tarik Skubal fan zone. The <strong class="text-gray-300">Pistons tracker</strong> covers the team's incredible turnaround from worst in the league to #1 seed, with a playoff countdown, Cade Cunningham injury updates, MVP stats, bracket visualization, and a tribute to the 2004 championship team. 60 features combined across 19 tabs.
+                    <p class="project-desc" data-simple-block>
+                        Two full sports apps in one hub with a live "Motor City Pulse" dashboard. The <strong style="color:#d1d5db;">Tigers tracker</strong> follows the 2026 season with live game updates, pitch-by-pitch tracking, adaptive auto-refresh, Statcast integration, prospect rankings, storyline narratives, and a Tarik Skubal fan zone. The <strong style="color:#d1d5db;">Pistons tracker</strong> covers the franchise's turnaround from worst in the league to #1 seed, with live NBA API data, storyline narratives, Cade Cunningham injury watch, MVP stats, bracket visualization, and a tribute to the 2004 championship team. 66 features combined across 21 tabs.
                     </p>
-                    <div class="mt-8">
-                        <div class="font-mono text-[10px] text-white/40 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Tigers Tracker</div>
-                        <ul class="tactical-list grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-sm text-gray-300 font-light">
+                    <div>
+                        <div class="sub-features-label">Tigers Tracker</div>
+                        <ul class="features-list">
                             <li>Live pitch-by-pitch game tracking</li>
-                            <li>Win probability &amp; spray charts</li>
+                            <li>Adaptive auto-refresh polling (15s/30s/60s)</li>
                             <li>Baseball Savant Statcast integration</li>
-                            <li>Multi-source news feed with AI curator</li>
+                            <li>Storylines narrative tab with freshness</li>
                             <li>30-prospect farm system with MiLB stats</li>
                             <li>Skubalverse &amp; Bump Day flame mode</li>
-                            <li>162-game calendar heatmap</li>
+                            <li>Win probability &amp; spray charts</li>
                             <li>Player comparison radar charts</li>
                         </ul>
                     </div>
-                    <div class="mt-8">
-                        <div class="font-mono text-[10px] text-white/40 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Pistons Tracker</div>
-                        <ul class="tactical-list grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-sm text-gray-300 font-light">
-                            <li>Live playoff countdown timer</li>
-                            <li>Cade injury watch with recovery bar</li>
+                    <div>
+                        <div class="sub-features-label">Pistons Tracker</div>
+                        <ul class="features-list">
+                            <li>Live NBA API integration with boxscores</li>
+                            <li>Storylines narrative tab with freshness</li>
                             <li>Full NBA playoff bracket visualization</li>
-                            <li>Play-in matchup scenarios &amp; threat levels</li>
+                            <li>Cade injury watch with recovery timeline</li>
                             <li>MVP case with comparison table</li>
                             <li>2004 "Going to Work" championship tribute</li>
                             <li>14-68 to 57-21 turnaround visualization</li>
-                            <li>Championship odds tracker SVG</li>
+                            <li>Adaptive auto-refresh polling</li>
                         </ul>
                     </div>
-                    <div class="mt-8 flex flex-wrap gap-2">
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Vanilla JS</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">MLB Stats API</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">NBA API</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Baseball Savant</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">ESPN API</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">SVG Visualization</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Iframe Isolation</span>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Vanilla JS</span>
+                        <span class="tech-tag">MLB Stats API</span>
+                        <span class="tech-tag">NBA API</span>
+                        <span class="tech-tag">Baseball Savant</span>
+                        <span class="tech-tag">ESPN API</span>
+                        <span class="tech-tag">SVG Visualization</span>
+                        <span class="tech-tag">Iframe Isolation</span>
                     </div>
-                    <div class="mt-10">
-                        <a href="https://detroit-sports.pages.dev" target="_blank" rel="noopener noreferrer" class="btn-tactical inline-flex items-center gap-3 px-8 py-4 text-gold font-mono text-xs uppercase tracking-widest">
+                    <div class="project-cta">
+                        <a href="https://detroit-sports.pages.dev" target="_blank" rel="noopener noreferrer" class="btn-tactical btn-tactical-lg">
                             <span>View Live</span>
                             <i class="ph-bold ph-arrow-up-right"></i>
                         </a>
                     </div>
                 </div>
-                <div class="col-span-1 lg:col-span-5 flex flex-col gap-6 lg:pl-10 lg:border-l border-white/10">
-                    <div class="grid grid-cols-2 gap-px bg-white/10 border border-white/10">
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">9,829</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Lines of Code</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">60</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Combined Features</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">19</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Tabs (9 + 10)</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">5</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Data Sources</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">2</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Full Sport Apps</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">0</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Dependencies</span></div>
+                <div class="project-stats">
+                    <div class="stats-grid">
+                        <div class="stat-cell"><span class="stat-value">10,895</span><span class="stat-label">Lines of Code</span></div>
+                        <div class="stat-cell"><span class="stat-value">66</span><span class="stat-label">Combined Features</span></div>
+                        <div class="stat-cell"><span class="stat-value">21</span><span class="stat-label">Tabs (10 + 11)</span></div>
+                        <div class="stat-cell"><span class="stat-value">5</span><span class="stat-label">Data Sources</span></div>
+                        <div class="stat-cell"><span class="stat-value">2</span><span class="stat-label">Full Sport Apps</span></div>
+                        <div class="stat-cell"><span class="stat-value">0</span><span class="stat-label">Dependencies</span></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <div class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-32 reveal"></div>
+        <div class="project-divider reveal"></div>
 
-        <!-- PROJECT 6: Warrior Ready -->
-        <section id="project-warrior" class="mb-32 reveal group scroll-mt-24">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-                <div class="col-span-1 lg:col-span-7 flex flex-col gap-6">
-                    <div class="inline-flex py-1 px-3 border border-white/20 rounded text-[10px] uppercase tracking-widest text-white/60 font-mono w-fit bg-surface">
-                        Military &amp; Fitness Technology
-                    </div>
-                    <h2 class="font-serif text-4xl md:text-5xl text-white">WARRIOR READY</h2>
-                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-technical-block>
+        <!-- PROJECT 6: Warrior Ready (reverse layout) -->
+        <section id="project-warrior" class="project-section reveal">
+            <div class="project-grid">
+                <div class="project-content order-2">
+                    <span class="project-category">Military &amp; Fitness Technology</span>
+                    <h2 class="project-title">WARRIOR READY</h2>
+                    <p class="project-desc" data-technical-block>
                         An all-branch military fitness command center covering every U.S. service branch's physical fitness test. PT score calculators for the Air Force PFA, Army AFT, Navy PRT, Marines PFT/CFT, Coast Guard PFT, and Space Force HPA, all updated to 2026 standards. Includes body composition calculator (DoD tape test, WHtR, BMI), run pacer with per-lap splits and SVG track visualization, HAMR shuttle conversion table, interval training programs, ruck march planner with terrain-adjusted pacing, score goal planner, test day countdown with periodization guidance, and localStorage-backed history with trend charts. Every scoring claim was fact-checked by 5 autonomous research agents against official branch publications. Built as a single HTML file. Works offline, no account needed, no dependencies.
                     </p>
-                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-simple-block>
+                    <p class="project-desc" data-simple-block>
                         A fitness test calculator for every U.S. military branch (Army, Air Force, Navy, Marines, Coast Guard, and Space Force), all updated to 2026 scoring standards. Enter your push-ups, sit-ups, and run time to see your score and rating instantly. Also includes a body fat calculator, run pacer with lap splits, training programs, ruck march planner, test countdown timer, and score history tracking. Works offline on your phone, no account needed. Every scoring table was verified against official military publications.
                     </p>
-                    <div class="mt-8">
-                        <div class="font-mono text-[10px] text-white/40 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Core Features</div>
-                        <ul class="tactical-list grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-sm text-gray-300 font-light">
+                    <div>
+                        <div class="features-label">Core Features</div>
+                        <ul class="features-list">
                             <li>6-branch PT score calculators</li>
                             <li>Animated SVG score ring with tier classification</li>
                             <li>Body composition (tape test, WHtR, BMI)</li>
@@ -712,52 +1615,50 @@
                             <li>2026 changes summary across all branches</li>
                         </ul>
                     </div>
-                    <div class="mt-8 flex flex-wrap gap-2">
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Vanilla JS</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">SVG Visualization</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">localStorage</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Offline-Ready</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Agent Fact-Checked</span>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Vanilla JS</span>
+                        <span class="tech-tag">SVG Visualization</span>
+                        <span class="tech-tag">localStorage</span>
+                        <span class="tech-tag">Offline-Ready</span>
+                        <span class="tech-tag">Agent Fact-Checked</span>
                     </div>
-                    <div class="mt-10">
-                        <a href="https://warrior-ready.pages.dev" target="_blank" rel="noopener noreferrer" class="btn-tactical inline-flex items-center gap-3 px-8 py-4 text-gold font-mono text-xs uppercase tracking-widest">
+                    <div class="project-cta">
+                        <a href="https://warrior-ready.pages.dev" target="_blank" rel="noopener noreferrer" class="btn-tactical btn-tactical-lg">
                             <span>View Live</span>
                             <i class="ph-bold ph-arrow-up-right"></i>
                         </a>
                     </div>
                 </div>
-                <div class="col-span-1 lg:col-span-5 flex flex-col gap-6 lg:pl-10 lg:border-l border-white/10">
-                    <div class="grid grid-cols-2 gap-px bg-white/10 border border-white/10">
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">2,200</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Lines of Code</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">6</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Military Branches</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">30</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Views (6x5 tabs)</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">5</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Fact-Check Agents</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">52</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Claims Verified</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">0</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Dependencies</span></div>
+                <div class="project-stats order-1">
+                    <div class="stats-grid">
+                        <div class="stat-cell"><span class="stat-value">2,200</span><span class="stat-label">Lines of Code</span></div>
+                        <div class="stat-cell"><span class="stat-value">6</span><span class="stat-label">Military Branches</span></div>
+                        <div class="stat-cell"><span class="stat-value">30</span><span class="stat-label">Views (6x5 tabs)</span></div>
+                        <div class="stat-cell"><span class="stat-value">5</span><span class="stat-label">Fact-Check Agents</span></div>
+                        <div class="stat-cell"><span class="stat-value">52</span><span class="stat-label">Claims Verified</span></div>
+                        <div class="stat-cell"><span class="stat-value">0</span><span class="stat-label">Dependencies</span></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <div class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-32 reveal"></div>
+        <div class="project-divider reveal"></div>
 
         <!-- PROJECT 7: AGI Capability Tracker -->
-        <section id="project-agi" class="mb-32 reveal group scroll-mt-24">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-                <div class="col-span-1 lg:col-span-7 flex flex-col gap-6">
-                    <div class="inline-flex py-1 px-3 border border-white/20 rounded text-[10px] uppercase tracking-widest text-white/60 font-mono w-fit bg-surface">
-                        AI Research &amp; Data Visualization
-                    </div>
-                    <h2 class="font-serif text-4xl md:text-5xl text-white">AGI Capability Tracker</h2>
-                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-technical-block>
-                        A real-time dashboard tracking AI progress across 8 capability domains, 25+ frontier models, and dozens of benchmarks. Features a composite AGI progress score, interactive radar chart, benchmark comparison table with sparklines, frontier model comparison cards, an AI safety section with a capability-vs-control scatter plot, and a full analysis section with an embedded research paper. Includes a <strong class="text-gray-300">Mythos Mode</strong> toggle that reveals restricted-model data (Anthropic's Mythos Preview) in a Terminator-red theme. Data is ingested from three external sources (HuggingFace, SWE-bench, Epoch AI) via automated scripts with editorial safeguards. Protected sections are hash-verified to prevent accidental overwrites during data imports.
+        <section id="project-agi" class="project-section reveal">
+            <div class="project-grid">
+                <div class="project-content">
+                    <span class="project-category">AI Research &amp; Data Visualization</span>
+                    <h2 class="project-title">AGI Capability Tracker</h2>
+                    <p class="project-desc" data-technical-block>
+                        A real-time dashboard tracking AI progress across 8 capability domains, 25+ frontier models, and dozens of benchmarks. Features a composite AGI progress score, interactive radar chart, benchmark comparison table with sparklines, frontier model comparison cards, an AI safety section with a capability-vs-control scatter plot, and a full analysis section with an embedded research paper. Includes a <strong style="color:#d1d5db;">Mythos Mode</strong> toggle that reveals restricted-model data (Anthropic's Mythos Preview) in a Terminator-red theme. Data is ingested from three external sources (HuggingFace, SWE-bench, Epoch AI) via automated scripts with editorial safeguards. Protected sections are hash-verified to prevent accidental overwrites during data imports.
                     </p>
-                    <p class="font-sans text-base text-gray-400 leading-relaxed font-light mt-2" data-simple-block>
-                        A dashboard that tracks how close AI is to human-level intelligence across 8 skill areas: language, math, coding, science, reasoning, and more. Compares 25+ AI models from OpenAI, Google, Anthropic, Meta, and xAI side by side. Includes a safety section analyzing whether AI controls are keeping up with capabilities, and an embedded research paper on AI risk. A secret <strong class="text-gray-300">Mythos Mode</strong> reveals data from the most powerful AI model ever built, one too dangerous to release publicly.
+                    <p class="project-desc" data-simple-block>
+                        A dashboard that tracks how close AI is to human-level intelligence across 8 skill areas: language, math, coding, science, reasoning, and more. Compares 25+ AI models from OpenAI, Google, Anthropic, Meta, and xAI side by side. Includes a safety section analyzing whether AI controls are keeping up with capabilities, and an embedded research paper on AI risk. A secret <strong style="color:#d1d5db;">Mythos Mode</strong> reveals data from the most powerful AI model ever built, one too dangerous to release publicly.
                     </p>
-                    <div class="mt-8">
-                        <div class="font-mono text-[10px] text-white/40 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Core Features</div>
-                        <ul class="tactical-list grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-sm text-gray-300 font-light">
+                    <div>
+                        <div class="features-label">Core Features</div>
+                        <ul class="features-list">
                             <li>8 capability domain gauges with progress bars</li>
                             <li>Interactive radar chart (SVG)</li>
                             <li>Benchmark comparison table with sparklines</li>
@@ -770,120 +1671,118 @@
                             <li>Embedded research paper with interactive stack</li>
                         </ul>
                     </div>
-                    <div class="mt-8 flex flex-wrap gap-2">
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Vanilla JS</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">SVG Visualization</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">HuggingFace API</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Epoch AI</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">SWE-bench</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Cloudflare Pages</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Node.js Pipeline</span>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Vanilla JS</span>
+                        <span class="tech-tag">SVG Visualization</span>
+                        <span class="tech-tag">HuggingFace API</span>
+                        <span class="tech-tag">Epoch AI</span>
+                        <span class="tech-tag">SWE-bench</span>
+                        <span class="tech-tag">Cloudflare Pages</span>
+                        <span class="tech-tag">Node.js Pipeline</span>
                     </div>
-                    <div class="mt-10">
-                        <a href="https://differential-c57.pages.dev" target="_blank" rel="noopener noreferrer" class="btn-tactical inline-flex items-center gap-3 px-8 py-4 text-gold font-mono text-xs uppercase tracking-widest">
+                    <div class="project-cta">
+                        <a href="https://differential-c57.pages.dev" target="_blank" rel="noopener noreferrer" class="btn-tactical btn-tactical-lg">
                             <span>View Live</span>
                             <i class="ph-bold ph-arrow-up-right"></i>
                         </a>
                     </div>
                 </div>
-                <div class="col-span-1 lg:col-span-5 flex flex-col gap-6 lg:pl-10 lg:border-l border-white/10">
-                    <div class="grid grid-cols-2 gap-px bg-white/10 border border-white/10">
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">1,850</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Lines of Code</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">25</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Models Tracked</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">8</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Capability Domains</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">3</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Data Sources</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">9</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Dashboard Sections</span></div>
-                        <div class="bg-charcoal p-4 flex flex-col"><span class="font-mono text-2xl text-white">1</span><span class="font-sans text-[10px] text-gray-500 uppercase tracking-wider">Research Paper</span></div>
+                <div class="project-stats">
+                    <div class="stats-grid">
+                        <div class="stat-cell"><span class="stat-value">1,850</span><span class="stat-label">Lines of Code</span></div>
+                        <div class="stat-cell"><span class="stat-value">25</span><span class="stat-label">Models Tracked</span></div>
+                        <div class="stat-cell"><span class="stat-value">8</span><span class="stat-label">Capability Domains</span></div>
+                        <div class="stat-cell"><span class="stat-value">3</span><span class="stat-label">Data Sources</span></div>
+                        <div class="stat-cell"><span class="stat-value">9</span><span class="stat-label">Dashboard Sections</span></div>
+                        <div class="stat-cell"><span class="stat-value">1</span><span class="stat-label">Research Paper</span></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- SIDE PROJECTS / EXPLORABLES -->
-        <section id="explorables" class="py-20 reveal border-t border-white/10 relative scroll-mt-24">
-            <div class="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div>
-                    <div class="font-mono text-xs text-white/40 mb-4 uppercase tracking-widest">[ Also Built Since March ]</div>
-                    <h3 class="font-serif text-3xl md:text-4xl text-white">Explorables</h3>
-                    <p class="font-sans text-base text-dim font-light mt-3 max-w-2xl">Smaller experiments and side projects from the same period. Each one started as a curiosity and turned into a working prototype.</p>
-                </div>
+        <!-- EXPLORABLES -->
+        <section id="explorables" class="reveal">
+            <div class="explorables-header">
+                <div class="section-label">[ Also Built Since March ]</div>
+                <h3 class="section-title">Explorables</h3>
+                <p class="section-desc" style="margin-bottom:0;">Smaller experiments and side projects from the same period. Each one started as a curiosity and turned into a working prototype.</p>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="explorables-grid">
-                <div class="glass-panel p-6 rounded-lg bento-hover cursor-default flex flex-col">
-                    <div class="flex justify-between items-center mb-4">
-                        <i class="ph-fill ph-robot text-2xl text-white/80"></i>
-                        <span class="font-mono text-[10px] text-blue uppercase tracking-widest">AI Agents</span>
+            <div class="explorables-grid">
+                <div class="explorable-card glass-panel bento-hover">
+                    <div class="explorable-card-header">
+                        <i class="ph-fill ph-robot explorable-icon"></i>
+                        <span class="explorable-type">AI Agents</span>
                     </div>
-                    <h4 class="font-mono text-lg text-white mb-3">Pika: AI Meeting Agent</h4>
-                    <p class="font-sans text-sm text-dim leading-relaxed mb-4" data-technical-block>An exploration of Pika, a tool that deploys autonomous AI agents into live Google Meet sessions. The agent joins a call, listens, and participates in real-time. This demo captures the experience of testing that boundary between human and AI presence in collaborative environments.</p>
-                    <p class="font-sans text-sm text-dim leading-relaxed mb-4" data-simple-block>A demo of an AI that joins live video calls on Google Meet. It listens to the conversation and talks back in real time. The video captures what it is like when an AI sits in on a meeting alongside real people.</p>
-                    <div class="flex flex-wrap gap-2 mb-6">
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">AI Agents</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Google Meet</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Video Demo</span>
+                    <h4 class="explorable-title">Pika: AI Meeting Agent</h4>
+                    <p class="explorable-desc" data-technical-block>An exploration of Pika, a tool that deploys autonomous AI agents into live Google Meet sessions. The agent joins a call, listens, and participates in real-time. This demo captures the experience of testing that boundary between human and AI presence in collaborative environments.</p>
+                    <p class="explorable-desc" data-simple-block>A demo of an AI that joins live video calls on Google Meet. It listens to the conversation and talks back in real time. The video captures what it is like when an AI sits in on a meeting alongside real people.</p>
+                    <div class="explorable-tags">
+                        <span class="tag">AI Agents</span>
+                        <span class="tag">Google Meet</span>
+                        <span class="tag">Video Demo</span>
                     </div>
-                    <div class="mt-auto pt-4 border-t border-white/10">
-                        <a href="https://youtube.com/shorts/cqneyyuSem0" target="_blank" rel="noopener noreferrer" class="btn-tactical inline-flex items-center gap-3 px-6 py-3 text-gold font-mono text-xs uppercase tracking-widest w-full justify-center">
+                    <div class="explorable-footer">
+                        <a href="https://youtube.com/shorts/cqneyyuSem0" target="_blank" rel="noopener noreferrer" class="btn-tactical btn-tactical-lg" style="width:100%; justify-content:center;">
                             <i class="ph-fill ph-play"></i>
                             <span>Watch Demo</span>
                         </a>
                     </div>
                 </div>
-                <div class="glass-panel p-6 rounded-lg bento-hover cursor-default flex flex-col">
-                    <div class="flex justify-between items-center mb-4">
-                        <i class="ph-fill ph-film-strip text-2xl text-white/80"></i>
-                        <span class="font-mono text-[10px] text-blue uppercase tracking-widest">Remotion</span>
+                <div class="explorable-card glass-panel bento-hover">
+                    <div class="explorable-card-header">
+                        <i class="ph-fill ph-film-strip explorable-icon"></i>
+                        <span class="explorable-type">Remotion</span>
                     </div>
-                    <h4 class="font-mono text-lg text-white mb-3">Skubal Hype Video</h4>
-                    <p class="font-sans text-sm text-dim leading-relaxed mb-4" data-technical-block>A programmatic hype video for Tarik Skubal built with Remotion, demonstrating how React components and frame-based animation can produce sports media content entirely through code.</p>
-                    <p class="font-sans text-sm text-dim leading-relaxed mb-4" data-simple-block>A highlight video for Tigers pitcher Tarik Skubal, generated entirely by code instead of video editing software. Stats, animations, and transitions are all programmed, no manual editing involved.</p>
-                    <div class="flex flex-wrap gap-2 mb-6">
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Remotion</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">React</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Sports Media</span>
+                    <h4 class="explorable-title">Skubal Hype Video</h4>
+                    <p class="explorable-desc" data-technical-block>A programmatic hype video for Tarik Skubal built with Remotion, demonstrating how React components and frame-based animation can produce sports media content entirely through code.</p>
+                    <p class="explorable-desc" data-simple-block>A highlight video for Tigers pitcher Tarik Skubal, generated entirely by code instead of video editing software. Stats, animations, and transitions are all programmed, no manual editing involved.</p>
+                    <div class="explorable-tags">
+                        <span class="tag">Remotion</span>
+                        <span class="tag">React</span>
+                        <span class="tag">Sports Media</span>
                     </div>
-                    <div class="mt-auto pt-4 border-t border-white/10">
-                        <a href="https://youtu.be/bRezTz-l5cI" target="_blank" rel="noopener noreferrer" class="btn-tactical inline-flex items-center gap-3 px-6 py-3 text-gold font-mono text-xs uppercase tracking-widest w-full justify-center">
+                    <div class="explorable-footer">
+                        <a href="https://youtu.be/bRezTz-l5cI" target="_blank" rel="noopener noreferrer" class="btn-tactical btn-tactical-lg" style="width:100%; justify-content:center;">
                             <i class="ph-fill ph-play"></i>
                             <span>Watch Video</span>
                         </a>
                     </div>
                 </div>
-                <div class="glass-panel p-6 rounded-lg bento-hover cursor-default flex flex-col">
-                    <div class="flex justify-between items-center mb-4">
-                        <i class="ph-fill ph-planet text-2xl text-white/80"></i>
-                        <span class="font-mono text-[10px] text-blue uppercase tracking-widest">NASA APIs</span>
+                <div class="explorable-card glass-panel bento-hover">
+                    <div class="explorable-card-header">
+                        <i class="ph-fill ph-planet explorable-icon"></i>
+                        <span class="explorable-type">NASA APIs</span>
                     </div>
-                    <h4 class="font-mono text-lg text-white mb-3">Space Explorer</h4>
-                    <p class="font-sans text-sm text-dim leading-relaxed mb-4" data-technical-block>A live dashboard pulling from 20+ NASA and space APIs — APOD, EPIC Blue Marble imagery, EONET natural event tracking, Helioviewer solar observations, DONKI space weather, ISS orbital telemetry, NeoWs asteroid proximity data, and Spaceflight News. Single-file HTML, vanilla JS, zero dependencies.</p>
-                    <p class="font-sans text-sm text-dim leading-relaxed mb-4" data-simple-block>A space dashboard that shows what NASA sees right now — today's astronomy photo, live Earth images from a million miles away, active wildfires and storms tracked by satellites, the Sun in multiple wavelengths, where the ISS is, and how many asteroids are near Earth today. All data is live.</p>
-                    <div class="flex flex-wrap gap-2 mb-6">
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">NASA</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Live APIs</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Space</span>
+                    <h4 class="explorable-title">Space Explorer</h4>
+                    <p class="explorable-desc" data-technical-block>A live dashboard pulling from 20+ NASA and space APIs: APOD, EPIC Blue Marble imagery, EONET natural event tracking, Helioviewer solar observations, DONKI space weather, ISS orbital telemetry, NeoWs asteroid proximity data, and Spaceflight News. Single-file HTML, vanilla JS, zero dependencies.</p>
+                    <p class="explorable-desc" data-simple-block>A space dashboard that shows what NASA sees right now: today's astronomy photo, live Earth images from a million miles away, active wildfires and storms tracked by satellites, the Sun in multiple wavelengths, where the ISS is, and how many asteroids are near Earth today. All data is live.</p>
+                    <div class="explorable-tags">
+                        <span class="tag">NASA</span>
+                        <span class="tag">Live APIs</span>
+                        <span class="tag">Space</span>
                     </div>
-                    <div class="mt-auto pt-4 border-t border-white/10">
-                        <a href="https://cic-dashboard.pages.dev" target="_blank" rel="noopener noreferrer" class="btn-tactical inline-flex items-center gap-3 px-6 py-3 text-gold font-mono text-xs uppercase tracking-widest w-full justify-center">
+                    <div class="explorable-footer">
+                        <a href="https://cic-dashboard.pages.dev" target="_blank" rel="noopener noreferrer" class="btn-tactical btn-tactical-lg" style="width:100%; justify-content:center;">
                             <i class="ph-fill ph-rocket-launch"></i>
                             <span>Explore</span>
                         </a>
                     </div>
                 </div>
-                <div class="glass-panel p-6 rounded-lg bento-hover cursor-default flex flex-col">
-                    <div class="flex justify-between items-center mb-4">
-                        <i class="ph-fill ph-hammer text-2xl text-white/80"></i>
-                        <span class="font-mono text-[10px] text-blue uppercase tracking-widest">AI Tool</span>
+                <div class="explorable-card glass-panel bento-hover">
+                    <div class="explorable-card-header">
+                        <i class="ph-fill ph-hammer explorable-icon"></i>
+                        <span class="explorable-type">AI Tool</span>
                     </div>
-                    <h4 class="font-mono text-lg text-white mb-3">Forge</h4>
-                    <p class="font-sans text-sm text-dim leading-relaxed mb-4" data-technical-block>A prompt-to-HTML template generator using the Anthropic streaming API with Claude vision. Features clone mode (screenshot-to-code via headless capture APIs), a 22-section component injector, multi-page project support with ZIP export, live image swap via iframe postMessage, and real-time CSS theme controls that inject custom properties without regeneration.</p>
-                    <p class="font-sans text-sm text-dim leading-relaxed mb-4" data-simple-block>A personal website builder — describe what you want, and it generates a production-quality HTML template with live preview. Clone existing sites from screenshots, add sections from a component library, swap images by clicking them, and adjust colors and fonts with instant theme controls. Your own v0.dev with no paywall.</p>
-                    <div class="flex flex-wrap gap-2 mb-6">
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Claude API</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Streaming</span>
-                        <span class="px-2 py-1 bg-charcoal border border-blue/20 text-blue font-mono text-[10px] uppercase rounded">Vision</span>
+                    <h4 class="explorable-title">Forge</h4>
+                    <p class="explorable-desc" data-technical-block>A prompt-to-HTML template generator using the Anthropic streaming API with Claude vision. Features clone mode (screenshot-to-code via headless capture APIs), a 22-section component injector, multi-page project support with ZIP export, live image swap via iframe postMessage, and real-time CSS theme controls that inject custom properties without regeneration.</p>
+                    <p class="explorable-desc" data-simple-block>A personal website builder: describe what you want, and it generates a production-quality HTML template with live preview. Clone existing sites from screenshots, add sections from a component library, swap images by clicking them, and adjust colors and fonts with instant theme controls. Your own v0.dev with no paywall.</p>
+                    <div class="explorable-tags">
+                        <span class="tag">Claude API</span>
+                        <span class="tag">Streaming</span>
+                        <span class="tag">Vision</span>
                     </div>
-                    <div class="mt-auto pt-4 border-t border-white/10">
-                        <a href="https://forge-8ce.pages.dev" target="_blank" rel="noopener noreferrer" class="btn-tactical inline-flex items-center gap-3 px-6 py-3 text-gold font-mono text-xs uppercase tracking-widest w-full justify-center">
+                    <div class="explorable-footer">
+                        <a href="https://forge-8ce.pages.dev" target="_blank" rel="noopener noreferrer" class="btn-tactical btn-tactical-lg" style="width:100%; justify-content:center;">
                             <i class="ph-fill ph-hammer"></i>
                             <span>Open Forge</span>
                         </a>
@@ -893,81 +1792,81 @@
         </section>
 
         <!-- TOOLCHAIN ECOSYSTEM -->
-        <section class="py-20 reveal border-t border-white/10 relative">
-            <h3 class="font-serif text-3xl md:text-4xl text-white mb-2">The Development Ecosystem</h3>
-            <p class="font-mono text-xs text-gold tracking-widest uppercase mb-12">How a single developer ships production software</p>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
-                <div class="glass-panel p-6 rounded-lg bento-hover cursor-default flex flex-col">
-                    <div class="flex justify-between items-center mb-6">
-                        <i class="ph-fill ph-code text-2xl text-white/80"></i>
-                        <span class="font-mono text-[10px] text-blue uppercase tracking-widest">Autonomous</span>
+        <section class="toolchain-section reveal">
+            <h3 class="toolchain-title">The Development Ecosystem</h3>
+            <p class="toolchain-subtitle">How a single developer ships production software</p>
+            <div class="toolchain-grid">
+                <div class="tool-card glass-panel bento-hover">
+                    <div class="tool-card-header">
+                        <i class="ph-fill ph-code tool-icon"></i>
+                        <span class="tool-type">Autonomous</span>
                     </div>
-                    <h4 class="font-mono text-lg text-white mb-3">Claude Code</h4>
-                    <p class="font-sans text-sm text-dim leading-relaxed mt-auto">AI pair programmer with sub-agent orchestration, custom skills (/council, /brainstorm, /teach-me, /after-action), and parallel auto-agents for research, refactoring, and testing.</p>
+                    <h4 class="tool-name">Claude Code</h4>
+                    <p class="tool-desc">AI pair programmer with sub-agent orchestration, custom skills (/council, /brainstorm, /teach-me, /after-action), and parallel auto-agents for research, refactoring, and testing.</p>
                 </div>
-                <div class="glass-panel p-6 rounded-lg bento-hover cursor-default flex flex-col">
-                    <div class="flex justify-between items-center mb-6">
-                        <i class="ph-fill ph-video-camera text-2xl text-white/80"></i>
-                        <span class="font-mono text-[10px] text-blue uppercase tracking-widest">Renderer</span>
+                <div class="tool-card glass-panel bento-hover">
+                    <div class="tool-card-header">
+                        <i class="ph-fill ph-video-camera tool-icon"></i>
+                        <span class="tool-type">Renderer</span>
                     </div>
-                    <h4 class="font-mono text-lg text-white mb-3">Remotion</h4>
-                    <p class="font-sans text-sm text-dim leading-relaxed mt-auto">React-based programmatic video engine. Converts component trees into frame-perfect broadcast video with spring physics and interpolation.</p>
+                    <h4 class="tool-name">Remotion</h4>
+                    <p class="tool-desc">React-based programmatic video engine. Converts component trees into frame-perfect broadcast video with spring physics and interpolation.</p>
                 </div>
-                <div class="glass-panel p-6 rounded-lg bento-hover cursor-default flex flex-col">
-                    <div class="flex justify-between items-center mb-6">
-                        <i class="ph-fill ph-tree-structure text-2xl text-white/80"></i>
-                        <span class="font-mono text-[10px] text-blue uppercase tracking-widest">Architecture</span>
+                <div class="tool-card glass-panel bento-hover">
+                    <div class="tool-card-header">
+                        <i class="ph-fill ph-tree-structure tool-icon"></i>
+                        <span class="tool-type">Architecture</span>
                     </div>
-                    <h4 class="font-mono text-lg text-white mb-3">Draw.io</h4>
-                    <p class="font-sans text-sm text-dim leading-relaxed mt-auto">Architectural diagramming for system design, data flow visualization, and component relationship mapping.</p>
+                    <h4 class="tool-name">Draw.io</h4>
+                    <p class="tool-desc">Architectural diagramming for system design, data flow visualization, and component relationship mapping.</p>
                 </div>
-                <div class="glass-panel p-6 rounded-lg bento-hover cursor-default flex flex-col">
-                    <div class="flex justify-between items-center mb-6">
-                        <i class="ph-fill ph-brain text-2xl text-white/80"></i>
-                        <span class="font-mono text-[10px] text-blue uppercase tracking-widest">Intelligence</span>
+                <div class="tool-card glass-panel bento-hover">
+                    <div class="tool-card-header">
+                        <i class="ph-fill ph-brain tool-icon"></i>
+                        <span class="tool-type">Intelligence</span>
                     </div>
-                    <h4 class="font-mono text-lg text-white mb-3">Claude API</h4>
-                    <p class="font-sans text-sm text-dim leading-relaxed mt-auto">LLM integration for adaptive learning features, content generation, and intelligent tutoring capabilities.</p>
+                    <h4 class="tool-name">Claude API</h4>
+                    <p class="tool-desc">LLM integration for adaptive learning features, content generation, and intelligent tutoring capabilities.</p>
                 </div>
-                <div class="glass-panel p-6 rounded-lg bento-hover cursor-default flex flex-col">
-                    <div class="flex justify-between items-center mb-6">
-                        <i class="ph-fill ph-cell-signal-high text-2xl text-white/80"></i>
-                        <span class="font-mono text-[10px] text-blue uppercase tracking-widest">Offline</span>
+                <div class="tool-card glass-panel bento-hover">
+                    <div class="tool-card-header">
+                        <i class="ph-fill ph-cell-signal-high tool-icon"></i>
+                        <span class="tool-type">Offline</span>
                     </div>
-                    <h4 class="font-mono text-lg text-white mb-3">PWA Stack</h4>
-                    <p class="font-sans text-sm text-dim leading-relaxed mt-auto">Service Workers, Web App Manifests, and Cache API for offline-first, installable applications.</p>
+                    <h4 class="tool-name">PWA Stack</h4>
+                    <p class="tool-desc">Service Workers, Web App Manifests, and Cache API for offline-first, installable applications.</p>
                 </div>
-                <div class="glass-panel p-6 rounded-lg bento-hover cursor-default flex flex-col">
-                    <div class="flex justify-between items-center mb-6">
-                        <i class="ph-fill ph-file-text text-2xl text-white/80"></i>
-                        <span class="font-mono text-[10px] text-blue uppercase tracking-widest">Pipeline</span>
+                <div class="tool-card glass-panel bento-hover">
+                    <div class="tool-card-header">
+                        <i class="ph-fill ph-file-text tool-icon"></i>
+                        <span class="tool-type">Pipeline</span>
                     </div>
-                    <h4 class="font-mono text-lg text-white mb-3">Content Pipeline</h4>
-                    <p class="font-sans text-sm text-dim leading-relaxed mt-auto">Custom OCR + PDF extraction pipeline (pdftotext, Tesseract, Node.js) for converting study materials into structured JSON.</p>
+                    <h4 class="tool-name">Content Pipeline</h4>
+                    <p class="tool-desc">Custom OCR + PDF extraction pipeline (pdftotext, Tesseract, Node.js) for converting study materials into structured JSON.</p>
                 </div>
-                <div class="glass-panel p-6 rounded-lg bento-hover cursor-default flex flex-col">
-                    <div class="flex justify-between items-center mb-6">
-                        <i class="ph-fill ph-paint-brush text-2xl text-white/80"></i>
-                        <span class="font-mono text-[10px] text-blue uppercase tracking-widest">Design</span>
+                <div class="tool-card glass-panel bento-hover">
+                    <div class="tool-card-header">
+                        <i class="ph-fill ph-paint-brush tool-icon"></i>
+                        <span class="tool-type">Design</span>
                     </div>
-                    <h4 class="font-mono text-lg text-white mb-3">AI Designer</h4>
-                    <p class="font-sans text-sm text-dim leading-relaxed mt-auto">AI-powered design generation used to architect the layout, typography, and visual system of this portfolio. Generates production HTML from natural language prompts.</p>
+                    <h4 class="tool-name">AI Designer</h4>
+                    <p class="tool-desc">AI-powered design generation used to architect the layout, typography, and visual system of this portfolio. Generates production HTML from natural language prompts.</p>
                 </div>
-                <div class="glass-panel p-6 rounded-lg bento-hover cursor-default flex flex-col">
-                    <div class="flex justify-between items-center mb-6">
-                        <i class="ph-fill ph-github-logo text-2xl text-white/80"></i>
-                        <span class="font-mono text-[10px] text-blue uppercase tracking-widest">Co-pilot</span>
+                <div class="tool-card glass-panel bento-hover">
+                    <div class="tool-card-header">
+                        <i class="ph-fill ph-github-logo tool-icon"></i>
+                        <span class="tool-type">Co-pilot</span>
                     </div>
-                    <h4 class="font-mono text-lg text-white mb-3">GitHub Copilot</h4>
-                    <p class="font-sans text-sm text-dim leading-relaxed mt-auto">Inline code completion and suggestion engine integrated into the editor. Accelerates routine coding patterns and reduces context-switching overhead.</p>
+                    <h4 class="tool-name">GitHub Copilot</h4>
+                    <p class="tool-desc">Inline code completion and suggestion engine integrated into the editor. Accelerates routine coding patterns and reduces context-switching overhead.</p>
                 </div>
-                <div class="glass-panel p-6 rounded-lg bento-hover cursor-default flex flex-col">
-                    <div class="flex justify-between items-center mb-6">
-                        <i class="ph-fill ph-plugs-connected text-2xl text-white/80"></i>
-                        <span class="font-mono text-[10px] text-blue uppercase tracking-widest">Connectors</span>
+                <div class="tool-card glass-panel bento-hover">
+                    <div class="tool-card-header">
+                        <i class="ph-fill ph-plugs-connected tool-icon"></i>
+                        <span class="tool-type">Connectors</span>
                     </div>
-                    <h4 class="font-mono text-lg text-white mb-3">MCP Plugins</h4>
-                    <p class="font-sans text-sm text-dim leading-relaxed mt-auto">Model Context Protocol servers connecting AI to external tools: Figma for design, Draw.io for diagrams, browser automation for testing, and custom integrations.</p>
+                    <h4 class="tool-name">MCP Plugins</h4>
+                    <p class="tool-desc">Model Context Protocol servers connecting AI to external tools: Figma for design, Draw.io for diagrams, browser automation for testing, and custom integrations.</p>
                 </div>
             </div>
         </section>
@@ -975,13 +1874,19 @@
     </main>
 
     <!-- FOOTER -->
-    <footer class="w-full py-12 border-t border-white/5 relative z-10">
-        <div class="text-center">
-            <span class="font-mono text-[10px] md:text-xs text-white/30 uppercase tracking-[0.3em]">
-                &copy; 2026 Sean Sooch // AI-Augmented Developer
-            </span>
-        </div>
+    <footer>
+        <span class="footer-text">&copy; 2026 Sean Sooch // AI-Augmented Developer</span>
     </footer>
+
+    <!-- Simple Mode Toggle -->
+    <button id="simple-toggle" onclick="toggleSimpleMode()" title="Toggle between technical and plain-language descriptions">
+        <span id="simple-label">Simple Mode</span>
+    </button>
+
+    <!-- Back to Top -->
+    <a href="#top" class="back-to-top" aria-label="Back to top">
+        <i class="ph-bold ph-arrow-up"></i>
+    </a>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
@@ -998,7 +1903,7 @@
             }, { threshold: 0.05, rootMargin: "0px 0px -50px 0px" });
             reveals.forEach(r => observer.observe(r));
 
-            // Scroll fallback — mobile Safari/Chrome can break IO when body has overflow-x-hidden
+            // Scroll fallback for mobile Safari
             function revealFallback() {
                 reveals.forEach(r => {
                     if (r.classList.contains('active')) return;
@@ -1013,7 +1918,7 @@
                 });
             }
             window.addEventListener('scroll', revealFallback, { passive: true });
-            revealFallback(); // run once on load for anything already in view
+            revealFallback();
 
             function animateCounters(counters) {
                 counters.forEach(counter => {
@@ -1043,7 +1948,6 @@
             function updateActiveNav() {
                 const scrollY = window.scrollY;
                 const vh = window.innerHeight;
-                // Find the section whose top is closest to (but above) 30% of the viewport
                 let current = sections[0];
                 for (const section of sections) {
                     const rect = section.getBoundingClientRect();
@@ -1057,7 +1961,7 @@
             window.addEventListener('scroll', updateActiveNav, { passive: true });
             updateActiveNav();
 
-            // Smooth scroll to top for #top links
+            // Smooth scroll to top
             document.querySelectorAll('a[href="#top"]').forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -1066,33 +1970,21 @@
                 });
             });
         });
-    </script>
 
-    <button id="simple-toggle" onclick="toggleSimpleMode()" class="fixed bottom-6 right-20 z-50 px-4 py-2 rounded-md text-[10px] font-mono uppercase tracking-widest border border-white/15 bg-surface/90 backdrop-filter backdrop-blur-sm hover:border-gold/50 hover:text-gold transition-all shadow-lg shadow-black/30" title="Toggle between technical and plain-language descriptions" style="background: rgba(21,21,42,0.92);">
-        <span id="simple-label">Simple Mode</span>
-    </button>
-
-    <a href="#top" class="back-to-top" aria-label="Back to top">
-        <i class="ph-bold ph-arrow-up"></i>
-    </a>
-
-    <script>
-    let simpleMode = false;
-    function toggleSimpleMode() {
-        simpleMode = !simpleMode;
-        document.body.classList.toggle('simple', simpleMode);
-        const btn = document.getElementById('simple-toggle');
-        const label = document.getElementById('simple-label');
-        if (simpleMode) {
-            btn.classList.add('border-gold/60', 'text-gold');
-            btn.classList.remove('border-white/15');
-            label.textContent = 'Technical Mode';
-        } else {
-            btn.classList.remove('border-gold/60', 'text-gold');
-            btn.classList.add('border-white/15');
-            label.textContent = 'Simple Mode';
+        let simpleMode = false;
+        function toggleSimpleMode() {
+            simpleMode = !simpleMode;
+            document.body.classList.toggle('simple', simpleMode);
+            const btn = document.getElementById('simple-toggle');
+            const label = document.getElementById('simple-label');
+            if (simpleMode) {
+                btn.classList.add('active');
+                label.textContent = 'Technical Mode';
+            } else {
+                btn.classList.remove('active');
+                label.textContent = 'Simple Mode';
+            }
         }
-    }
     </script>
 </body>
 </html>
