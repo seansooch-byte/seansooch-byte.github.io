@@ -196,11 +196,11 @@
       <div class="inputs" id="chads-inputs">
         <label class="check"><input type="checkbox" data-pts="1"> Congestive heart failure <span class="pts">+1</span></label>
         <label class="check"><input type="checkbox" data-pts="1"> Hypertension <span class="pts">+1</span></label>
-        <label class="check"><input type="checkbox" data-pts="2"> Age ≥ 75 <span class="pts">+2</span></label>
+        <label class="check"><input type="checkbox" data-pts="2" data-age="75"> Age ≥ 75 <span class="pts">+2</span></label>
         <label class="check"><input type="checkbox" data-pts="1"> Diabetes mellitus <span class="pts">+1</span></label>
         <label class="check"><input type="checkbox" data-pts="2"> Prior stroke / TIA / TE <span class="pts">+2</span></label>
         <label class="check"><input type="checkbox" data-pts="1"> Vascular disease (MI, PAD, aortic plaque) <span class="pts">+1</span></label>
-        <label class="check"><input type="checkbox" data-pts="1"> Age 65–74 <span class="pts">+1</span></label>
+        <label class="check"><input type="checkbox" data-pts="1" data-age="65"> Age 65–74 <span class="pts">+1</span></label>
         <label class="check"><input type="checkbox" data-pts="1"> Sex category (female) <span class="pts">+1</span></label>
       </div>
       <button class="calc" onclick="calcChads()">Calculate</button>
@@ -286,6 +286,16 @@
       '<div class="score">' + score + '</div>' +
       '<div class="interp">' + interp + '</div>';
   }
+
+  // Age brackets for CHA2DS2-VASc are mutually exclusive — checking one clears the other.
+  document.querySelectorAll('#chads-inputs input[data-age]').forEach(box => {
+    box.addEventListener('change', () => {
+      if (!box.checked) return;
+      document.querySelectorAll('#chads-inputs input[data-age]').forEach(other => {
+        if (other !== box) other.checked = false;
+      });
+    });
+  });
 
   function calcChads() {
     const s = sumChecks('chads-inputs');
