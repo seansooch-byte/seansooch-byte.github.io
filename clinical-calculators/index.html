@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clinical Calculators | Sean Sooch</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --panel: #161b22;
+    --panel-hi: #1c2230;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-dim: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --amber: #d29922;
+    --red: #f85149;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.5;
+    min-height: 100vh;
+    padding: 2.5rem 1.25rem 4rem;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  header p {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+    font-style: italic;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  @media (max-width: 760px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+  }
+  .card h2 {
+    font-size: 1.15rem;
+    margin-bottom: 0.25rem;
+    color: var(--text);
+  }
+  .card .sub {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+  }
+  .inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    margin-bottom: 1rem;
+  }
+  .check {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.5rem 0.65rem;
+    background: var(--panel-hi);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    transition: border-color 0.15s;
+  }
+  .check:hover { border-color: var(--accent); }
+  .check input {
+    accent-color: var(--accent);
+    margin-top: 2px;
+    cursor: pointer;
+  }
+  .check span.pts {
+    margin-left: auto;
+    color: var(--text-dim);
+    font-size: 0.78rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .num-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.5rem 0.65rem;
+    background: var(--panel-hi);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.88rem;
+  }
+  .num-row label { flex: 1; }
+  .num-row input {
+    width: 90px;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.35rem 0.5rem;
+    font-family: inherit;
+    font-size: 0.88rem;
+    text-align: right;
+  }
+  .num-row input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  button.calc {
+    background: var(--accent);
+    color: #0d1117;
+    border: none;
+    border-radius: 6px;
+    padding: 0.65rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: filter 0.15s;
+  }
+  button.calc:hover { filter: brightness(1.1); }
+  .result {
+    margin-top: 1rem;
+    padding: 0.9rem 1rem;
+    background: var(--panel-hi);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--border);
+    border-radius: 6px;
+    min-height: 60px;
+    font-size: 0.88rem;
+  }
+  .result.empty { color: var(--text-dim); font-style: italic; }
+  .result .score {
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 0.25rem;
+  }
+  .result .label {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .result .interp { margin-top: 0.5rem; color: var(--text); }
+  .result.low    { border-left-color: var(--green); }
+  .result.low    .score { color: var(--green); }
+  .result.mod    { border-left-color: var(--amber); }
+  .result.mod    .score { color: var(--amber); }
+  .result.high   { border-left-color: var(--red); }
+  .result.high   .score { color: var(--red); }
+  footer {
+    text-align: center;
+    margin-top: 3rem;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Clinical Calculators</h1>
+    <p>Built for rotations.</p>
+  </header>
+
+  <div class="grid">
+
+    <!-- CHA2DS2-VASc -->
+    <div class="card">
+      <h2>CHA₂DS₂-VASc</h2>
+      <div class="sub">Stroke risk in non-valvular atrial fibrillation.</div>
+      <div class="inputs" id="chads-inputs">
+        <label class="check"><input type="checkbox" data-pts="1"> Congestive heart failure <span class="pts">+1</span></label>
+        <label class="check"><input type="checkbox" data-pts="1"> Hypertension <span class="pts">+1</span></label>
+        <label class="check"><input type="checkbox" data-pts="2"> Age ≥ 75 <span class="pts">+2</span></label>
+        <label class="check"><input type="checkbox" data-pts="1"> Diabetes mellitus <span class="pts">+1</span></label>
+        <label class="check"><input type="checkbox" data-pts="2"> Prior stroke / TIA / TE <span class="pts">+2</span></label>
+        <label class="check"><input type="checkbox" data-pts="1"> Vascular disease (MI, PAD, aortic plaque) <span class="pts">+1</span></label>
+        <label class="check"><input type="checkbox" data-pts="1"> Age 65–74 <span class="pts">+1</span></label>
+        <label class="check"><input type="checkbox" data-pts="1"> Sex category (female) <span class="pts">+1</span></label>
+      </div>
+      <button class="calc" onclick="calcChads()">Calculate</button>
+      <div class="result empty" id="chads-result">Select criteria and press calculate.</div>
+    </div>
+
+    <!-- Wells PE -->
+    <div class="card">
+      <h2>Wells Criteria (PE)</h2>
+      <div class="sub">Pretest probability of pulmonary embolism.</div>
+      <div class="inputs" id="wells-inputs">
+        <label class="check"><input type="checkbox" data-pts="3"> Clinical signs of DVT <span class="pts">+3</span></label>
+        <label class="check"><input type="checkbox" data-pts="3"> PE is #1 diagnosis, or equally likely <span class="pts">+3</span></label>
+        <label class="check"><input type="checkbox" data-pts="1.5"> Heart rate &gt; 100 bpm <span class="pts">+1.5</span></label>
+        <label class="check"><input type="checkbox" data-pts="1.5"> Immobilization ≥3d or surgery in past 4 wk <span class="pts">+1.5</span></label>
+        <label class="check"><input type="checkbox" data-pts="1.5"> Previous PE or DVT <span class="pts">+1.5</span></label>
+        <label class="check"><input type="checkbox" data-pts="1"> Hemoptysis <span class="pts">+1</span></label>
+        <label class="check"><input type="checkbox" data-pts="1"> Malignancy (treated within 6 mo / palliative) <span class="pts">+1</span></label>
+      </div>
+      <button class="calc" onclick="calcWells()">Calculate</button>
+      <div class="result empty" id="wells-result">Select criteria and press calculate.</div>
+    </div>
+
+    <!-- CURB-65 -->
+    <div class="card">
+      <h2>CURB-65</h2>
+      <div class="sub">Community-acquired pneumonia severity.</div>
+      <div class="inputs" id="curb-inputs">
+        <label class="check"><input type="checkbox" data-pts="1"> Confusion (new disorientation) <span class="pts">+1</span></label>
+        <label class="check"><input type="checkbox" data-pts="1"> BUN &gt; 19 mg/dL (urea &gt; 7 mmol/L) <span class="pts">+1</span></label>
+        <label class="check"><input type="checkbox" data-pts="1"> Respiratory rate ≥ 30 <span class="pts">+1</span></label>
+        <label class="check"><input type="checkbox" data-pts="1"> SBP &lt; 90 or DBP ≤ 60 mmHg <span class="pts">+1</span></label>
+        <label class="check"><input type="checkbox" data-pts="1"> Age ≥ 65 <span class="pts">+1</span></label>
+      </div>
+      <button class="calc" onclick="calcCurb()">Calculate</button>
+      <div class="result empty" id="curb-result">Select criteria and press calculate.</div>
+    </div>
+
+    <!-- MELD -->
+    <div class="card">
+      <h2>MELD Score</h2>
+      <div class="sub">End-stage liver disease severity (original MELD).</div>
+      <div class="inputs">
+        <div class="num-row">
+          <label for="meld-bili">Total bilirubin (mg/dL)</label>
+          <input type="number" id="meld-bili" step="0.1" min="0" placeholder="1.0">
+        </div>
+        <div class="num-row">
+          <label for="meld-inr">INR</label>
+          <input type="number" id="meld-inr" step="0.1" min="0" placeholder="1.0">
+        </div>
+        <div class="num-row">
+          <label for="meld-cr">Creatinine (mg/dL)</label>
+          <input type="number" id="meld-cr" step="0.1" min="0" placeholder="1.0">
+        </div>
+        <label class="check"><input type="checkbox" id="meld-dialysis"> Dialysis ≥2× in past week <span class="pts">Cr=4.0</span></label>
+      </div>
+      <button class="calc" onclick="calcMeld()">Calculate</button>
+      <div class="result empty" id="meld-result">Enter labs and press calculate.</div>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>Educational use only. Not a substitute for clinical judgment.</p>
+    <p style="margin-top:0.4rem;"><a href="../">← Back to seansooch.dev</a></p>
+  </footer>
+</div>
+
+<script>
+  function sumChecks(containerId) {
+    const boxes = document.querySelectorAll('#' + containerId + ' input[type=checkbox][data-pts]');
+    let total = 0;
+    boxes.forEach(b => { if (b.checked) total += parseFloat(b.dataset.pts); });
+    return total;
+  }
+
+  function render(id, score, tier, interp) {
+    const el = document.getElementById(id);
+    el.className = 'result ' + tier;
+    el.innerHTML =
+      '<div class="label">Score</div>' +
+      '<div class="score">' + score + '</div>' +
+      '<div class="interp">' + interp + '</div>';
+  }
+
+  function calcChads() {
+    const s = sumChecks('chads-inputs');
+    let tier, interp;
+    if (s === 0)       { tier = 'low';  interp = 'Low risk. No anticoagulation recommended.'; }
+    else if (s === 1)  { tier = 'mod';  interp = 'Low-moderate risk. Consider anticoagulation (men) / no anticoag (women, sex-only point).'; }
+    else               { tier = 'high'; interp = 'Moderate-high risk. Oral anticoagulation recommended.'; }
+    render('chads-result', s, tier, interp);
+  }
+
+  function calcWells() {
+    const s = sumChecks('wells-inputs');
+    let tier, interp;
+    if (s < 2)         { tier = 'low';  interp = 'Low probability (~2%). Consider PERC / D-dimer.'; }
+    else if (s <= 6)   { tier = 'mod';  interp = 'Moderate probability (~17%). D-dimer or imaging.'; }
+    else               { tier = 'high'; interp = 'High probability (~54%). CT pulmonary angiography.'; }
+    // Dichotomized shortcut
+    const dichot = s > 4 ? 'PE likely' : 'PE unlikely';
+    render('wells-result', s.toFixed(1), tier, interp + ' <br><em style="color:var(--text-dim)">Dichotomized: ' + dichot + '.</em>');
+  }
+
+  function calcCurb() {
+    const s = sumChecks('curb-inputs');
+    let tier, interp;
+    if (s <= 1)        { tier = 'low';  interp = '30-day mortality ~1.5%. Outpatient treatment likely appropriate.'; }
+    else if (s === 2)  { tier = 'mod';  interp = '30-day mortality ~9%. Consider short inpatient admission.'; }
+    else               { tier = 'high'; interp = '30-day mortality 15–40%. Inpatient; consider ICU if ≥4.'; }
+    render('curb-result', s, tier, interp);
+  }
+
+  function calcMeld() {
+    let bili = parseFloat(document.getElementById('meld-bili').value);
+    let inr  = parseFloat(document.getElementById('meld-inr').value);
+    let cr   = parseFloat(document.getElementById('meld-cr').value);
+    const dialysis = document.getElementById('meld-dialysis').checked;
+
+    if (isNaN(bili) || isNaN(inr) || isNaN(cr)) {
+      const el = document.getElementById('meld-result');
+      el.className = 'result empty';
+      el.textContent = 'Enter bilirubin, INR, and creatinine.';
+      return;
+    }
+    // MELD flooring rules
+    bili = Math.max(bili, 1);
+    inr  = Math.max(inr, 1);
+    cr   = Math.max(cr, 1);
+    if (dialysis || cr > 4) cr = 4;
+
+    const meld = Math.round(
+      3.78 * Math.log(bili) +
+      11.2 * Math.log(inr) +
+      9.57 * Math.log(cr) +
+      6.43
+    );
+    const clamped = Math.max(6, Math.min(40, meld));
+
+    let tier, interp;
+    if (clamped < 10)       { tier = 'low';  interp = '3-mo mortality ~2%. Mild liver dysfunction.'; }
+    else if (clamped < 20)  { tier = 'mod';  interp = '3-mo mortality ~6–20%. Moderate dysfunction.'; }
+    else if (clamped < 30)  { tier = 'high'; interp = '3-mo mortality ~20–50%. Severe; evaluate for transplant.'; }
+    else                    { tier = 'high'; interp = '3-mo mortality &gt; 50%. Critical; high transplant priority.'; }
+    render('meld-result', clamped, tier, interp);
+  }
+</script>
+</body>
+</html>
