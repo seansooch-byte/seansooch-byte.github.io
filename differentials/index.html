@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Differentials | Sean Sooch</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --panel: #161b22;
+    --panel-hi: #1c2230;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-dim: #8b949e;
+    --accent: #58a6ff;
+    --red: #f85149;
+    --red-bg: rgba(248,81,73,0.12);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.5;
+    min-height: 100vh;
+    padding: 2.5rem 1.25rem 4rem;
+  }
+  .wrap { max-width: 1200px; margin: 0 auto; }
+
+  header {
+    text-align: center;
+    margin-bottom: 1.75rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  header p {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+    font-style: italic;
+  }
+
+  /* Search */
+  .search-row {
+    margin-bottom: 1.25rem;
+  }
+  .search {
+    width: 100%;
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    font-family: inherit;
+  }
+  .search:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .search::placeholder { color: var(--text-dim); }
+
+  /* Layout */
+  .layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 1.25rem;
+    align-items: start;
+  }
+  @media (max-width: 820px) {
+    .layout { grid-template-columns: 1fr; }
+  }
+
+  /* Sidebar */
+  .sidebar {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.5rem;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  @media (max-width: 820px) {
+    .sidebar { max-height: 280px; }
+  }
+  .complaint-btn {
+    display: block;
+    width: 100%;
+    background: transparent;
+    color: var(--text-dim);
+    border: none;
+    border-radius: 6px;
+    padding: 0.65rem 0.85rem;
+    font-size: 0.88rem;
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+  .complaint-btn:hover {
+    background: var(--panel-hi);
+    color: var(--text);
+  }
+  .complaint-btn.active {
+    background: rgba(88,166,255,0.12);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .complaint-btn.hidden { display: none; }
+
+  .no-complaints {
+    padding: 1rem;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    font-style: italic;
+    text-align: center;
+  }
+
+  /* Panel */
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.75rem;
+  }
+  .panel h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+  }
+  .panel .panel-sub {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .tier { margin-bottom: 1.75rem; }
+  .tier:last-child { margin-bottom: 0; }
+
+  .tier-header {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 0.85rem;
+  }
+  .tier-title {
+    font-size: 0.74rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text);
+  }
+  .tier-badge {
+    font-size: 0.64rem;
+    font-weight: 700;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .badge-red {
+    background: var(--red-bg);
+    color: var(--red);
+    border: 1px solid rgba(248,81,73,0.35);
+  }
+  .badge-white {
+    background: rgba(230,237,243,0.08);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .badge-dim {
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+  .pill {
+    padding: 0.4rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    border: 1px solid var(--border);
+    background: var(--panel-hi);
+    transition: all 0.12s;
+  }
+  .tier.must .pill {
+    background: var(--red-bg);
+    border-color: rgba(248,81,73,0.4);
+    color: #ffb4ac;
+  }
+  .tier.common .pill {
+    color: var(--text);
+  }
+  .tier.also .pill {
+    color: var(--text-dim);
+    opacity: 0.75;
+  }
+  .pill.match {
+    outline: 1px solid var(--accent);
+    outline-offset: 1px;
+  }
+  .pill.hidden { display: none; }
+
+  .tier.empty-tier { display: none; }
+
+  .panel-empty {
+    padding: 2rem;
+    text-align: center;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  footer {
+    text-align: center;
+    margin-top: 2.5rem;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Differentials</h1>
+    <p>Chief complaints, tiered by how bad you feel if you miss them.</p>
+  </header>
+
+  <div class="search-row">
+    <input type="text" class="search" id="search" placeholder="Search complaints or diagnoses (e.g. 'dissection', 'dyspnea')…">
+  </div>
+
+  <div class="layout">
+    <nav class="sidebar" id="sidebar" aria-label="Chief complaints"></nav>
+    <section class="panel" id="panel"></section>
+  </div>
+
+  <footer>
+    <p>Educational use only. Not a substitute for clinical judgment.</p>
+    <p style="margin-top:0.4rem;"><a href="../">← Back to seansooch.dev</a></p>
+  </footer>
+</div>
+
+<script>
+  const COMPLAINTS = [
+    { id: 'chest-pain', name: 'Chest Pain',
+      mustNotMiss: ['Acute MI / ACS','Aortic dissection','Pulmonary embolism','Tension pneumothorax','Cardiac tamponade','Esophageal rupture (Boerhaave)'],
+      common: ['GERD','Costochondritis','Stable angina','Pericarditis','Pneumonia','Musculoskeletal strain'],
+      alsoConsider: ['Anxiety / panic','Herpes zoster','Cholecystitis','Peptic ulcer disease']
+    },
+    { id: 'dyspnea', name: 'Dyspnea / Shortness of Breath',
+      mustNotMiss: ['Pulmonary embolism','Acute MI','Tension pneumothorax','CHF / flash pulmonary edema','Anaphylaxis','Upper airway obstruction'],
+      common: ['Asthma exacerbation','COPD exacerbation','Pneumonia','Acute bronchitis'],
+      alsoConsider: ['Anxiety','Anemia','Pleural effusion','DKA','Metabolic acidosis']
+    },
+    { id: 'headache', name: 'Headache',
+      mustNotMiss: ['Subarachnoid hemorrhage','Meningitis / encephalitis','Temporal arteritis','Carbon monoxide poisoning','Intracerebral hemorrhage','Cerebral venous sinus thrombosis','Acute angle-closure glaucoma','Hypertensive emergency'],
+      common: ['Migraine','Tension-type headache','Cluster headache','Sinusitis','Medication overuse headache'],
+      alsoConsider: ['Post-LP headache','TMJ dysfunction','Cervicogenic headache','Trigeminal neuralgia']
+    },
+    { id: 'abdominal-pain', name: 'Abdominal Pain',
+      mustNotMiss: ['Ruptured AAA','Mesenteric ischemia','Ectopic pregnancy','Perforated viscus','Bowel obstruction','Appendicitis','Ovarian torsion','Testicular torsion','Inferior MI'],
+      common: ['Gastroenteritis','Cholecystitis','Pancreatitis','Diverticulitis','Peptic ulcer disease','Constipation','UTI / pyelonephritis'],
+      alsoConsider: ['Irritable bowel syndrome','DKA','Sickle cell crisis','Porphyria','Lead poisoning']
+    },
+    { id: 'syncope', name: 'Syncope',
+      mustNotMiss: ['Arrhythmia (VT / heart block)','Massive PE','Ruptured AAA','Ectopic pregnancy','Aortic stenosis','HOCM','Subarachnoid hemorrhage','Acute MI'],
+      common: ['Vasovagal','Orthostatic hypotension','Dehydration','Medication-induced'],
+      alsoConsider: ['Seizure','Hypoglycemia','Carotid sinus hypersensitivity','Situational syncope']
+    },
+    { id: 'altered-mental-status', name: 'Altered Mental Status',
+      mustNotMiss: ['Hypoglycemia','Stroke','Meningitis / encephalitis','Intoxication / overdose','Hypoxia','Hyponatremia','Sepsis','Intracerebral hemorrhage','Non-convulsive status epilepticus'],
+      common: ['Delirium','UTI in elderly','Dementia','Electrolyte derangement'],
+      alsoConsider: ['Wernicke encephalopathy','Hepatic encephalopathy','Thyroid storm / myxedema','Uremia','B12 deficiency']
+    },
+    { id: 'back-pain', name: 'Back Pain',
+      mustNotMiss: ['Cauda equina syndrome','Epidural abscess','Spinal cord compression','Ruptured AAA','Vertebral osteomyelitis','Malignancy / metastasis','Pyelonephritis'],
+      common: ['Mechanical / muscle strain','Disc herniation','Spinal stenosis','Facet arthropathy'],
+      alsoConsider: ['Nephrolithiasis','Herpes zoster','Compression fracture','Ankylosing spondylitis']
+    },
+    { id: 'dizziness', name: 'Dizziness / Vertigo',
+      mustNotMiss: ['Posterior circulation stroke','Vertebral artery dissection','Cerebellar hemorrhage'],
+      common: ['BPPV','Vestibular neuritis','Ménière disease','Orthostatic hypotension'],
+      alsoConsider: ['Labyrinthitis','Medication side effect','Acoustic neuroma','Anxiety']
+    },
+    { id: 'gi-bleed', name: 'GI Bleeding',
+      mustNotMiss: ['Variceal hemorrhage','Aorto-enteric fistula','Mesenteric ischemia','Massive upper GI bleed'],
+      common: ['Peptic ulcer disease','Esophagitis','Mallory-Weiss tear','Diverticulosis','Hemorrhoids','Angiodysplasia'],
+      alsoConsider: ['Colon cancer','Inflammatory bowel disease','NSAID gastropathy','Meckel diverticulum']
+    },
+    { id: 'fever', name: 'Fever',
+      mustNotMiss: ['Sepsis / septic shock','Meningitis','Necrotizing fasciitis','Infective endocarditis','Neutropenic fever','Malaria','Toxic shock syndrome'],
+      common: ['Viral URI','Influenza','Pneumonia','UTI / pyelonephritis','Cellulitis'],
+      alsoConsider: ['Drug fever','DVT / PE','Thyroid storm','Autoimmune flare','Tick-borne illness']
+    },
+    { id: 'seizure', name: 'Seizure',
+      mustNotMiss: ['Status epilepticus','Intracerebral hemorrhage','Meningitis','Hypoglycemia','Hyponatremia','Eclampsia','Alcohol / benzo withdrawal','Toxic ingestion'],
+      common: ['Known epilepsy','AED noncompliance','Febrile seizure (peds)','Alcohol withdrawal'],
+      alsoConsider: ['Syncope mimic','Psychogenic nonepileptic spells','Sleep deprivation']
+    },
+    { id: 'hematuria', name: 'Hematuria',
+      mustNotMiss: ['Bladder malignancy','Renal cell carcinoma','Renal trauma'],
+      common: ['UTI','Nephrolithiasis','BPH','Glomerulonephritis'],
+      alsoConsider: ['Exercise-induced','Anticoagulation','Schistosomiasis','Rhabdomyolysis (myoglobinuria)']
+    },
+    { id: 'weakness', name: 'Weakness',
+      mustNotMiss: ['Stroke / TIA','Guillain-Barré syndrome','Myasthenic crisis','Spinal cord compression','Botulism','Tick paralysis','Hyperkalemia'],
+      common: ['Deconditioning','Electrolyte derangement','Medication side effect','Anemia'],
+      alsoConsider: ['Hypothyroidism','Multiple sclerosis','Polymyositis','Chronic fatigue syndrome']
+    },
+    { id: 'joint-pain', name: 'Joint Pain',
+      mustNotMiss: ['Septic arthritis','Compartment syndrome','Necrotizing fasciitis'],
+      common: ['Osteoarthritis','Rheumatoid arthritis','Gout','Pseudogout'],
+      alsoConsider: ['Reactive arthritis','Lyme disease','SLE','Psoriatic arthritis']
+    },
+    { id: 'rash', name: 'Rash',
+      mustNotMiss: ['Stevens-Johnson / TEN','Meningococcemia','Necrotizing fasciitis','Anaphylaxis','DRESS syndrome','Toxic shock syndrome','Rocky Mountain spotted fever'],
+      common: ['Contact dermatitis','Atopic eczema','Viral exanthem','Cellulitis','Drug rash'],
+      alsoConsider: ['Pityriasis rosea','Tinea','Scabies','Psoriasis']
+    },
+    { id: 'cough', name: 'Cough',
+      mustNotMiss: ['Pulmonary embolism','Pneumonia','Tuberculosis','Lung malignancy','Foreign body aspiration','CHF'],
+      common: ['Viral URI','Post-nasal drip','GERD','Asthma','Acute bronchitis','ACE-inhibitor cough'],
+      alsoConsider: ['Pertussis','Sarcoidosis','Interstitial lung disease']
+    },
+    { id: 'palpitations', name: 'Palpitations',
+      mustNotMiss: ['Ventricular tachycardia','WPW with pre-excited AFib','Long QT syndrome','HOCM','Acute MI','Pulmonary embolism'],
+      common: ['SVT','Atrial fibrillation','Sinus tachycardia','PVCs','Anxiety'],
+      alsoConsider: ['Hyperthyroidism','Pheochromocytoma','Stimulant / caffeine','Anemia']
+    },
+    { id: 'jaundice', name: 'Jaundice',
+      mustNotMiss: ['Acute liver failure','Ascending cholangitis','Pancreatic / biliary malignancy','Hemolytic crisis'],
+      common: ['Viral hepatitis','Alcoholic hepatitis','Choledocholithiasis','Drug-induced liver injury'],
+      alsoConsider: ['Gilbert syndrome','Autoimmune hepatitis','Hemochromatosis','Wilson disease']
+    },
+    { id: 'vomiting', name: 'Vomiting',
+      mustNotMiss: ['Small bowel obstruction','Increased intracranial pressure','DKA','Acute MI','Perforated viscus','HELLP / preeclampsia'],
+      common: ['Gastroenteritis','Migraine','Gastritis','Medication side effect','Pregnancy / hyperemesis'],
+      alsoConsider: ['Cyclic vomiting syndrome','Cannabinoid hyperemesis','Vestibular causes','Uremia']
+    },
+    { id: 'leg-swelling', name: 'Leg Swelling',
+      mustNotMiss: ['Deep vein thrombosis','Compartment syndrome','Necrotizing fasciitis','CHF','Bilateral PE consideration'],
+      common: ['Cellulitis','Venous insufficiency','Lymphedema','Medication (CCB) edema'],
+      alsoConsider: ['Ruptured Baker cyst','Hypoalbuminemia','Hepatic / renal edema']
+    }
+  ];
+
+  let activeId = 'chest-pain';
+  let searchTerm = '';
+
+  // Build sidebar
+  const sidebar = document.getElementById('sidebar');
+  COMPLAINTS.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'complaint-btn';
+    btn.dataset.id = c.id;
+    btn.textContent = c.name;
+    btn.addEventListener('click', () => {
+      activeId = c.id;
+      renderPanel();
+      updateSidebarActive();
+    });
+    sidebar.appendChild(btn);
+  });
+  const noComplaints = document.createElement('div');
+  noComplaints.className = 'no-complaints';
+  noComplaints.textContent = 'No complaints match.';
+  noComplaints.style.display = 'none';
+  sidebar.appendChild(noComplaints);
+
+  function updateSidebarActive() {
+    document.querySelectorAll('.complaint-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.id === activeId);
+    });
+  }
+
+  function complaintMatchesSearch(c, term) {
+    if (!term) return true;
+    if (c.name.toLowerCase().includes(term)) return true;
+    const all = [...c.mustNotMiss, ...c.common, ...c.alsoConsider];
+    return all.some(d => d.toLowerCase().includes(term));
+  }
+
+  function renderSidebar() {
+    let visible = 0;
+    COMPLAINTS.forEach(c => {
+      const btn = sidebar.querySelector('[data-id="' + c.id + '"]');
+      const show = complaintMatchesSearch(c, searchTerm);
+      btn.classList.toggle('hidden', !show);
+      if (show) visible++;
+    });
+    noComplaints.style.display = visible === 0 ? 'block' : 'none';
+  }
+
+  const panel = document.getElementById('panel');
+
+  function buildTier(labelText, badgeClass, tierClass, items, term) {
+    const section = document.createElement('div');
+    section.className = 'tier ' + tierClass;
+
+    const header = document.createElement('div');
+    header.className = 'tier-header';
+    const title = document.createElement('div');
+    title.className = 'tier-title';
+    title.textContent = labelText;
+    const badge = document.createElement('span');
+    badge.className = 'tier-badge ' + badgeClass;
+    badge.textContent = tierClass === 'must' ? 'Red flag' : tierClass === 'common' ? 'Common' : 'Consider';
+    header.appendChild(title);
+    header.appendChild(badge);
+    section.appendChild(header);
+
+    const pills = document.createElement('div');
+    pills.className = 'pills';
+    let matchCount = 0;
+    items.forEach(dx => {
+      const pill = document.createElement('span');
+      pill.className = 'pill';
+      pill.textContent = dx;
+      if (term) {
+        const isMatch = dx.toLowerCase().includes(term);
+        if (isMatch) {
+          pill.classList.add('match');
+          matchCount++;
+        } else {
+          pill.classList.add('hidden');
+        }
+      } else {
+        matchCount++;
+      }
+      pills.appendChild(pill);
+    });
+    section.appendChild(pills);
+
+    // If searching and no matches in this tier, hide the whole tier
+    if (term && matchCount === 0) section.classList.add('empty-tier');
+    return section;
+  }
+
+  function renderPanel() {
+    const c = COMPLAINTS.find(x => x.id === activeId);
+    panel.innerHTML = '';
+
+    if (!c) {
+      panel.innerHTML = '<div class="panel-empty">Select a chief complaint.</div>';
+      return;
+    }
+
+    const h2 = document.createElement('h2');
+    h2.textContent = c.name;
+    panel.appendChild(h2);
+
+    const sub = document.createElement('p');
+    sub.className = 'panel-sub';
+    sub.textContent = 'Working differential. Tiered by urgency, not probability.';
+    panel.appendChild(sub);
+
+    const mustTier   = buildTier('Must Not Miss', 'badge-red',  'must',   c.mustNotMiss,  searchTerm);
+    const commonTier = buildTier('Common',        'badge-white','common', c.common,       searchTerm);
+    const alsoTier   = buildTier('Also Consider', 'badge-dim',  'also',   c.alsoConsider, searchTerm);
+
+    panel.appendChild(mustTier);
+    panel.appendChild(commonTier);
+    panel.appendChild(alsoTier);
+
+    // If every tier is empty (search filtered out everything in active complaint),
+    // show a gentle empty state.
+    if ([mustTier, commonTier, alsoTier].every(t => t.classList.contains('empty-tier'))) {
+      const empty = document.createElement('div');
+      empty.className = 'panel-empty';
+      empty.textContent = 'No diagnoses in this complaint match "' + searchTerm + '".';
+      panel.appendChild(empty);
+    }
+  }
+
+  // Search wiring
+  document.getElementById('search').addEventListener('input', (e) => {
+    searchTerm = e.target.value.trim().toLowerCase();
+    renderSidebar();
+
+    // If active complaint was filtered out of the sidebar, auto-jump to first visible.
+    if (searchTerm) {
+      const activeBtn = sidebar.querySelector('.complaint-btn[data-id="' + activeId + '"]');
+      if (activeBtn && activeBtn.classList.contains('hidden')) {
+        const firstVisible = sidebar.querySelector('.complaint-btn:not(.hidden)');
+        if (firstVisible) activeId = firstVisible.dataset.id;
+      }
+    }
+    renderPanel();
+    updateSidebarActive();
+  });
+
+  // Initial render
+  renderSidebar();
+  renderPanel();
+  updateSidebarActive();
+</script>
+</body>
+</html>
