@@ -152,6 +152,174 @@
         }
 
         /* ================================================================
+           Direction B — Editorial TOC ("Inside This Issue")
+           ================================================================ */
+        .toc {
+            font-family: 'Source Serif 4', Georgia, serif;
+            color: #eeeee8;
+            padding: 0.5rem 0 0;
+            margin-top: 2.5rem;
+        }
+        .toc-masthead {
+            display: grid;
+            grid-template-columns: 1fr auto auto 1fr;
+            align-items: center;
+            gap: 1.25rem;
+            padding: 0 0 0.9rem;
+        }
+        .toc-masthead-rule {
+            display: block;
+            height: 1px;
+            background: rgba(255,255,255,0.3);
+        }
+        .toc-masthead-title {
+            font-family: 'Fraunces', Georgia, serif;
+            font-weight: 600;
+            font-style: italic;
+            font-size: clamp(1.4rem, 2vw, 1.85rem);
+            letter-spacing: -0.01em;
+            line-height: 1;
+            color: #eeeee8;
+            padding: 0 0.1rem;
+            white-space: nowrap;
+        }
+        .toc-masthead-title::first-letter { color: var(--secondary); }
+        .toc-masthead-meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.26em;
+            color: rgba(238,238,232,0.55);
+            text-transform: uppercase;
+            padding-left: 1rem;
+            border-left: 1px solid rgba(255,255,255,0.14);
+            white-space: nowrap;
+        }
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            border-top: 3px double rgba(255,255,255,0.3);
+            border-bottom: 1px solid rgba(255,255,255,0.14);
+        }
+        .toc-col {
+            padding: 1.4rem 1.5rem 1.6rem;
+            border-right: 1px solid rgba(255,255,255,0.14);
+        }
+        .toc-col:last-child { border-right: 0; }
+        .toc-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+            font-size: 10.5px;
+            letter-spacing: 0.24em;
+            color: #eeeee8;
+            text-transform: uppercase;
+            padding-bottom: 0.65rem;
+            margin-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(255,255,255,0.14);
+        }
+        .toc-group-dot { font-size: 12px; line-height: 1; }
+        .toc-group-dot-pink { color: var(--secondary); }
+        .toc-group-dot-cyan { color: var(--primary); }
+        .toc-list { list-style: none; display: flex; flex-direction: column; }
+        .toc-row {
+            display: grid;
+            grid-template-columns: 48px 1fr;
+            column-gap: 0.85rem;
+            align-items: baseline;
+            padding: 0.5rem 0;
+            border-bottom: 1px dotted rgba(255,255,255,0.08);
+        }
+        .toc-row:last-child { border-bottom: 0; }
+        .toc-page {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10.5px;
+            letter-spacing: 0.12em;
+            color: rgba(238,238,232,0.55);
+            font-variant-numeric: tabular-nums;
+            text-transform: uppercase;
+            padding-top: 0.15rem;
+        }
+        .toc-link {
+            font-family: 'Fraunces', Georgia, serif;
+            font-weight: 500;
+            font-size: 1.15rem;
+            line-height: 1.25;
+            letter-spacing: -0.01em;
+            color: #eeeee8;
+            text-decoration: none;
+            position: relative;
+            padding-bottom: 1px;
+            transition: color 0.18s ease;
+            display: inline-block;
+        }
+        .toc-link::after {
+            content: '';
+            position: absolute;
+            left: 0; right: 100%;
+            bottom: -1px;
+            height: 1px;
+            background: var(--primary);
+            transition: right 0.25s ease;
+        }
+        .toc-link:hover, .toc-link:focus-visible {
+            color: var(--primary);
+            outline: none;
+        }
+        .toc-link:hover::after, .toc-link:focus-visible::after { right: 0; }
+        .toc-col-foot {
+            margin-top: 0.85rem;
+            padding-top: 0.75rem;
+            border-top: 1px dotted rgba(255,255,255,0.08);
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 0.88rem;
+            line-height: 1.45;
+            color: rgba(238,238,232,0.55);
+            max-width: 26ch;
+        }
+        .toc-col-foot em { font-style: italic; color: var(--primary); }
+        .toc-footrule {
+            display: block;
+            height: 0;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            margin-top: 0;
+        }
+        @media (max-width: 1099px) {
+            .toc-grid { grid-template-columns: repeat(3, 1fr); }
+            .toc-col:nth-child(3) { border-right: 0; }
+            .toc-col:nth-child(4) {
+                grid-column: 1 / -1;
+                border-right: 0;
+                border-top: 1px solid rgba(255,255,255,0.14);
+            }
+            .toc-col-foot { max-width: none; }
+        }
+        @media (max-width: 900px) {
+            .toc-masthead { grid-template-columns: 1fr auto 1fr; }
+            .toc-masthead-meta { display: none; }
+            .toc-grid { grid-template-columns: repeat(2, 1fr); }
+            .toc-col:nth-child(odd) { border-right: 1px solid rgba(255,255,255,0.14); }
+            .toc-col:nth-child(even) { border-right: 0; }
+            .toc-col:nth-child(n+3) { border-top: 1px solid rgba(255,255,255,0.14); }
+            .toc-col:nth-child(4) { grid-column: auto; }
+        }
+        @media (max-width: 600px) {
+            .toc-masthead { padding-bottom: 0.7rem; }
+            .toc-masthead-title { font-size: 1.3rem; }
+            .toc-grid { grid-template-columns: 1fr; }
+            .toc-col {
+                border-right: 0 !important;
+                border-bottom: 1px solid rgba(255,255,255,0.14);
+                padding: 1.1rem 0.25rem 1.2rem;
+            }
+            .toc-col:last-child { border-bottom: 0; }
+            .toc-col:nth-child(n+3) { border-top: 0; }
+            .toc-row { grid-template-columns: 44px 1fr; }
+        }
+
+        /* ================================================================
            Direction B — Edition Shell (masthead + ticker + paper frame)
            ================================================================ */
         #hero.edition-shell {
@@ -2071,26 +2239,49 @@
                 </aside>
                 </div>
 
-                <nav aria-label="Site quick navigation" class="quick-nav glass-panel">
-                    <div class="quick-nav-label neural-text">[ Writing &amp; Research ]</div>
-                    <div class="quick-nav-grid">
-                        <a href="#research" class="btn-tactical btn-tactical-writing">Frontier Risk Stack</a>
-                        <a href="#literature" class="btn-tactical btn-tactical-writing">Reading Room</a>
-                        <a href="#philosophy" class="btn-tactical btn-tactical-writing">Philosophy Room</a>
+                <nav class="toc" aria-label="Inside this issue">
+                    <header class="toc-masthead">
+                        <span class="toc-masthead-rule toc-masthead-rule-l" aria-hidden="true"></span>
+                        <h2 class="toc-masthead-title">Inside This Issue</h2>
+                        <span class="toc-masthead-meta" aria-hidden="true">&sect; 03 / &sect; 14 &middot; 12 ENTRIES</span>
+                        <span class="toc-masthead-rule toc-masthead-rule-r" aria-hidden="true"></span>
+                    </header>
+                    <div class="toc-grid">
+                        <section class="toc-col" aria-labelledby="toc-grp-1">
+                            <h3 class="toc-group" id="toc-grp-1"><span class="toc-group-dot toc-group-dot-pink">&bull;</span>Writing &amp; Research</h3>
+                            <ul class="toc-list">
+                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;03</span><a class="toc-link" href="#research">Frontier Risk Stack</a></li>
+                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;04</span><a class="toc-link" href="#literature">Reading Room</a></li>
+                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;05</span><a class="toc-link" href="#philosophy">Philosophy Room</a></li>
+                            </ul>
+                        </section>
+                        <section class="toc-col" aria-labelledby="toc-grp-2">
+                            <h3 class="toc-group" id="toc-grp-2"><span class="toc-group-dot toc-group-dot-cyan">&bull;</span>Case Studies</h3>
+                            <ul class="toc-list">
+                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;06</span><a class="toc-link" href="#project-ncaat">NCAAT Bracket</a></li>
+                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;07</span><a class="toc-link" href="#project-step2">Step 2 CK</a></li>
+                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;08</span><a class="toc-link" href="#project-masters">Masters Hub</a></li>
+                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;09</span><a class="toc-link" href="#project-handoff">Handoff Tracker</a></li>
+                            </ul>
+                        </section>
+                        <section class="toc-col" aria-labelledby="toc-grp-3">
+                            <h3 class="toc-group" id="toc-grp-3"><span class="toc-group-dot toc-group-dot-cyan">&bull;</span>Continued</h3>
+                            <ul class="toc-list">
+                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;10</span><a class="toc-link" href="#project-detroit">Detroit Sports</a></li>
+                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;11</span><a class="toc-link" href="#project-warrior">Warrior Ready</a></li>
+                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;12</span><a class="toc-link" href="#project-agi">AGI Tracker</a></li>
+                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;13</span><a class="toc-link" href="#project-microtd">MICRO TD</a></li>
+                            </ul>
+                        </section>
+                        <section class="toc-col" aria-labelledby="toc-grp-4">
+                            <h3 class="toc-group" id="toc-grp-4"><span class="toc-group-dot toc-group-dot-pink">&bull;</span>Also Built</h3>
+                            <ul class="toc-list">
+                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;14</span><a class="toc-link" href="#explorables">Explorables</a></li>
+                            </ul>
+                            <p class="toc-col-foot">A small shelf of one-off interactive pieces. <em>Continued online.</em></p>
+                        </section>
                     </div>
-                    <div class="quick-nav-divider"></div>
-                    <div class="quick-nav-label">[ Projects ]</div>
-                    <div class="quick-nav-grid">
-                        <a href="#project-ncaat" class="btn-tactical">NCAAT Bracket</a>
-                        <a href="#project-step2" class="btn-tactical">Step 2 CK</a>
-                        <a href="#project-masters" class="btn-tactical">Masters Hub</a>
-                        <a href="#project-handoff" class="btn-tactical">Handoff Tracker</a>
-                        <a href="#project-detroit" class="btn-tactical">Detroit Sports</a>
-                        <a href="#project-warrior" class="btn-tactical">Warrior Ready</a>
-                        <a href="#project-agi" class="btn-tactical">AGI Tracker</a>
-                        <a href="#project-microtd" class="btn-tactical">MICRO TD</a>
-                        <a href="#explorables" class="btn-tactical">Explorables</a>
-                    </div>
+                    <footer class="toc-footrule" aria-hidden="true"></footer>
                 </nav>
             </div>
             </div>
