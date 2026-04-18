@@ -4,8 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sean Sooch | AI-Augmented Development Portfolio</title>
+    <meta name="description" content="Eight shipped tools across medicine, sports, and AI safety. Built solo by a medical student and military officer with AI as a force multiplier.">
 
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://seansooch.dev/">
+    <meta property="og:title" content="Sean Sooch | AI-Augmented Development Portfolio">
+    <meta property="og:description" content="Eight shipped tools across medicine, sports, and AI safety. Built solo with AI as a force multiplier.">
+    <meta property="og:image" content="https://seansooch.dev/screenshots/space.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://seansooch.dev/">
+    <meta name="twitter:title" content="Sean Sooch | AI-Augmented Development Portfolio">
+    <meta name="twitter:description" content="Eight shipped tools across medicine, sports, and AI safety. Built solo with AI as a force multiplier.">
+    <meta name="twitter:image" content="https://seansooch.dev/screenshots/space.png">
+
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/bold/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/fill/style.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -189,7 +206,10 @@
             margin-top: 2.5rem;
             padding: 1.5rem 2rem;
             border-radius: 0.75rem;
-            border: 1px solid rgba(0,255,255,0.15);
+            border: 1px solid transparent;
+            background:
+                linear-gradient(rgba(13,13,26,0.8), rgba(13,13,26,0.8)) padding-box,
+                linear-gradient(135deg, rgba(124,127,237,0.45), rgba(217,70,204,0.45)) border-box;
             width: 90%;
         }
         @media (max-width: 1024px) { .quick-nav { width: 100%; } }
@@ -203,6 +223,12 @@
             margin-bottom: 1rem;
         }
 
+        .quick-nav-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.07);
+            margin: 1.25rem 0;
+        }
+
         .quick-nav-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -210,6 +236,19 @@
         }
         @media (max-width: 768px) { .quick-nav-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 480px) { .quick-nav-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        .quick-nav-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+        @media (max-width: 768px) { .quick-nav-grid-3 { grid-template-columns: repeat(2, 1fr); } }
+
+        .btn-tactical-writing {
+            border-color: rgba(0,255,255,0.4);
+            color: rgba(0,255,255,0.7);
+        }
+        .btn-tactical-writing:hover { color: #0a0a0f !important; }
 
         /* Tactical Button */
         .btn-tactical {
@@ -280,17 +319,167 @@
 
         .side-nav a:hover .side-nav-label { opacity: 1; transform: translateX(0); }
 
+        /* Neural — Writing & Research Color System */
+        :root {
+            --neural-l: #7C7FED;
+            --neural-r: #D946CC;
+            --neural-mid: #A862DD;
+            --neural-glow: rgba(168, 98, 221, 0.55);
+        }
+
+        .neural-text {
+            background: linear-gradient(90deg, var(--neural-l), var(--neural-r));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none !important;
+        }
+
+        /* Writing & Research nav buttons */
+        .btn-tactical-writing {
+            border: 1px solid transparent !important;
+            color: var(--neural-mid) !important;
+            background:
+                linear-gradient(rgba(13,13,26,0.95), rgba(13,13,26,0.95)) padding-box,
+                linear-gradient(135deg, rgba(124,127,237,0.8), rgba(217,70,204,0.8)) border-box !important;
+        }
+        .btn-tactical-writing::before { background: var(--neural-mid) !important; }
+        .btn-tactical-writing:hover { color: #0a0a0f !important; }
+
+        /* Section labels for writing/research sections */
+        #research .section-label,
+        #literature .section-label,
+        #philosophy .section-label {
+            background: linear-gradient(90deg, var(--neural-l), var(--neural-r));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+        }
+
+        /* Side nav dots for writing sections */
+        .side-nav a[data-section="research"] .side-nav-dot,
+        .side-nav a[data-section="literature"] .side-nav-dot,
+        .side-nav a[data-section="philosophy"] .side-nav-dot {
+            border-color: rgba(168, 98, 221, 0.35);
+        }
+        .side-nav a[data-section="research"]:hover .side-nav-dot,
+        .side-nav a[data-section="research"].active .side-nav-dot,
+        .side-nav a[data-section="literature"]:hover .side-nav-dot,
+        .side-nav a[data-section="literature"].active .side-nav-dot,
+        .side-nav a[data-section="philosophy"]:hover .side-nav-dot,
+        .side-nav a[data-section="philosophy"].active .side-nav-dot {
+            border-color: var(--neural-mid);
+            background: var(--neural-mid);
+            box-shadow: 0 0 8px var(--neural-glow);
+        }
+        .side-nav a[data-section="research"] .side-nav-label,
+        .side-nav a[data-section="literature"] .side-nav-label,
+        .side-nav a[data-section="philosophy"] .side-nav-label {
+            background: linear-gradient(90deg, var(--neural-l), var(--neural-r));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Reading Room card — neural accents */
+        .reading-room-card {
+            border-left-color: transparent !important;
+        }
+        .reading-room-card::before {
+            content: '';
+            position: absolute;
+            top: 0; bottom: 0; left: -4px; width: 4px;
+            background: linear-gradient(180deg, var(--neural-l), var(--neural-r));
+            border-radius: 3px 0 0 3px;
+        }
+        .reading-room-card:hover {
+            border-color: transparent !important;
+        }
+        .reading-room-icon {
+            background: rgba(168, 98, 221, 0.08) !important;
+            border-color: rgba(168, 98, 221, 0.2) !important;
+            color: var(--neural-mid) !important;
+        }
+        .reading-room-card:hover .reading-room-title { color: var(--neural-mid) !important; }
+        .reading-room-arrow { color: var(--neural-mid) !important; }
+
+        /* Philosophy Room card — neural accents */
+        .phil-card {
+            border-left-color: transparent !important;
+        }
+        .phil-card::before {
+            content: '';
+            position: absolute;
+            top: 0; bottom: 0; left: -4px; width: 4px;
+            background: linear-gradient(180deg, var(--neural-l), var(--neural-r));
+            border-radius: 3px 0 0 3px;
+        }
+        .phil-card:hover {
+            border-color: transparent !important;
+            box-shadow: 0 8px 32px rgba(168, 98, 221, 0.08) !important;
+        }
+        .phil-card-icon {
+            background: rgba(168, 98, 221, 0.08) !important;
+            border-color: rgba(168, 98, 221, 0.2) !important;
+            color: var(--neural-mid) !important;
+        }
+        .phil-card:hover .phil-card-title { color: var(--neural-mid) !important; }
+        .phil-card-arrow { color: var(--neural-mid) !important; }
+
+        /* Research section — neural accents (AGI Tracker btn stays cyan via default .btn-tactical) */
+        #research .paper-card {
+            border-left-color: transparent;
+        }
+        #research .paper-card::before {
+            content: '';
+            position: absolute;
+            top: 0; bottom: 0; left: -4px; width: 4px;
+            background: linear-gradient(180deg, var(--neural-l), var(--neural-r));
+            border-radius: 3px 0 0 3px;
+        }
+        #research .paper-icon {
+            background: rgba(168, 98, 221, 0.08);
+            border-color: rgba(168, 98, 221, 0.2);
+            color: var(--neural-mid);
+        }
+        #research .tag {
+            border-color: rgba(168, 98, 221, 0.25);
+            color: var(--neural-mid);
+        }
+        #research .btn-pdf:hover {
+            border-color: rgba(168, 98, 221, 0.45);
+            color: var(--neural-mid);
+        }
+        #research .risk-stack-label {
+            background: linear-gradient(90deg, var(--neural-l), var(--neural-r));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Philosophy stats — neural */
+        .phil-stat {
+            background: rgba(168, 98, 221, 0.04) !important;
+            border-color: rgba(168, 98, 221, 0.12) !important;
+        }
+        .phil-stat-num {
+            color: var(--neural-mid) !important;
+            text-shadow: 0 0 12px var(--neural-glow) !important;
+        }
+
         /* Reveal animations */
         .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
         /* Section labels */
         .section-label {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.65rem;
             text-transform: uppercase;
-            letter-spacing: 0.2em;
-            color: rgba(255,255,255,0.3);
+            letter-spacing: 0.3em;
+            color: var(--primary);
+            text-shadow: 0 0 12px rgba(0,255,255,0.4);
             margin-bottom: 1rem;
         }
 
@@ -508,52 +697,62 @@
         }
 
         .risk-stack-label {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 9px;
             text-transform: uppercase;
-            letter-spacing: 0.2em;
+            letter-spacing: 0.25em;
             color: var(--primary);
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.25rem;
         }
 
-        .risk-layers { display: flex; flex-direction: column; gap: 0.375rem; }
+        .risk-layers { display: flex; flex-direction: column; gap: 0.3rem; }
 
         .risk-layer {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            padding: 0.75rem 1rem;
-            border-radius: 4px;
+            padding: 0.65rem 1rem;
+            border-radius: 3px;
+            position: relative;
+            transition: background 0.2s, box-shadow 0.2s;
+            cursor: default;
+        }
+        .risk-layer:hover {
+            filter: brightness(1.15);
         }
 
         .risk-num {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
-            width: 1rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 8px;
+            width: 1.1rem;
             flex-shrink: 0;
+            letter-spacing: 0.05em;
         }
 
         .risk-name {
             font-family: 'Inter', sans-serif;
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             color: var(--text);
             font-weight: 500;
             flex: 1;
+            letter-spacing: 0.02em;
         }
 
         .risk-desc {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
+            font-size: 8.5px;
             color: var(--text-dim);
+            letter-spacing: 0.02em;
         }
         @media (max-width: 768px) { .risk-desc { display: none; } }
 
         .risk-stack-note {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
+            font-size: 8.5px;
             color: var(--text-dim);
             margin-top: 1rem;
-            opacity: 0.6;
+            opacity: 0.5;
+            letter-spacing: 0.03em;
         }
 
         /* Literature */
@@ -572,6 +771,7 @@
             border-left: 4px solid var(--primary);
             text-decoration: none;
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
         }
 
         .reading-room-card:hover { border-color: rgba(0,255,255,0.5); transform: translateY(-2px); }
@@ -627,13 +827,179 @@
             line-height: 1.6;
         }
 
+        /* Philosophy Room Section */
+        #philosophy {
+            padding: 5rem 0;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            margin-top: 0;
+            scroll-margin-top: 6rem;
+        }
+
+        .phil-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .phil-grid { grid-template-columns: 1fr; }
+        }
+
+        .phil-topics {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .phil-topic {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            border-left: 2px solid;
+            background: rgba(255,255,255,0.02);
+            transition: background 0.2s;
+        }
+
+        .phil-topic:hover { background: rgba(255,255,255,0.05); }
+
+        .phil-topic-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            opacity: 0.9;
+            flex-shrink: 0;
+        }
+
+        .phil-topic-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.08em;
+            color: var(--text);
+            text-transform: uppercase;
+        }
+
+        .phil-topic-meta {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-left: auto;
+            font-family: 'JetBrains Mono', monospace;
+            flex-shrink: 0;
+        }
+
+        .phil-entry-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .phil-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .phil-stat {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            background: rgba(0,255,255,0.03);
+            border: 1px solid rgba(0,255,255,0.1);
+        }
+
+        .phil-stat-num {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-shadow: 0 0 12px rgba(0,255,255,0.4);
+            display: block;
+        }
+
+        .phil-stat-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 0.25rem;
+            display: block;
+        }
+
+        .phil-card {
+            display: block;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            border-left: 4px solid var(--primary);
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+
+        .phil-card:hover { border-color: rgba(0,255,255,0.5); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,255,255,0.06); }
+
+        .phil-card-inner {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .phil-card-icon {
+            width: 48px; height: 48px;
+            border-radius: 0.5rem;
+            background: rgba(0,255,255,0.08);
+            border: 1px solid rgba(0,255,255,0.15);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--primary);
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .phil-card-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.25rem;
+            color: var(--text);
+            transition: color 0.3s;
+        }
+
+        .phil-card:hover .phil-card-title { color: var(--primary); }
+
+        .phil-card-meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--text-dim);
+            margin-top: 0.25rem;
+        }
+
+        .phil-card-arrow {
+            color: var(--primary);
+            font-size: 1.125rem;
+            opacity: 0.5;
+            transition: all 0.3s;
+            margin-left: auto;
+        }
+
+        .phil-card:hover .phil-card-arrow { opacity: 1; transform: translateX(4px); }
+
+        .phil-card-desc {
+            font-size: 0.875rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            line-height: 1.6;
+        }
+
         /* Project Case Studies */
         .projects-label {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.65rem;
             text-transform: uppercase;
-            letter-spacing: 0.2em;
-            color: rgba(255,255,255,0.3);
+            letter-spacing: 0.3em;
+            color: var(--primary);
+            text-shadow: 0 0 12px rgba(0,255,255,0.4);
             margin-bottom: 3rem;
             margin-top: 6rem;
         }
@@ -663,7 +1029,7 @@
         .project-stats.order-1 {
             order: 1;
             padding-right: 2.5rem;
-            border-right: 1px solid rgba(255,255,255,0.08);
+            border-right: 1px solid rgba(0,255,255,0.12);
         }
 
         @media (max-width: 1024px) {
@@ -674,14 +1040,15 @@
         .project-category {
             display: inline-flex;
             padding: 0.25rem 0.75rem;
-            border: 1px solid rgba(255,255,255,0.15);
+            border: 1px solid rgba(0,255,255,0.3);
             border-radius: 3px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 8.5px;
             text-transform: uppercase;
-            letter-spacing: 0.15em;
-            color: rgba(255,255,255,0.5);
-            background: rgba(13,13,26,0.6);
+            letter-spacing: 0.18em;
+            color: var(--primary);
+            background: rgba(0,255,255,0.04);
+            box-shadow: 0 0 10px rgba(0,255,255,0.08), inset 0 0 8px rgba(0,255,255,0.03);
             width: fit-content;
         }
 
@@ -697,13 +1064,14 @@
         }
 
         .features-label {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 8.5px;
             text-transform: uppercase;
-            letter-spacing: 0.2em;
-            color: rgba(255,255,255,0.35);
+            letter-spacing: 0.25em;
+            color: var(--primary);
+            opacity: 0.7;
             padding-bottom: 0.5rem;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
+            border-bottom: 1px solid rgba(0,255,255,0.15);
             margin-bottom: 1rem;
         }
 
@@ -753,7 +1121,7 @@
             flex-direction: column;
             gap: 1.5rem;
             padding-left: 2.5rem;
-            border-left: 1px solid rgba(255,255,255,0.08);
+            border-left: 1px solid rgba(0,255,255,0.12);
         }
         @media (max-width: 1024px) {
             .project-stats { padding-left: 0; border-left: none; }
@@ -763,30 +1131,35 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1px;
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(0,255,255,0.1);
+            border: 1px solid rgba(0,255,255,0.18);
+            box-shadow: 0 0 20px rgba(0,255,255,0.06), inset 0 0 20px rgba(0,255,255,0.02);
         }
 
         .stat-cell {
             background: var(--bg-card);
-            padding: 1rem;
+            padding: 1.1rem;
             display: flex;
             flex-direction: column;
+            transition: background 0.2s;
         }
+        .stat-cell:hover { background: rgba(0,255,255,0.04); }
 
         .stat-value {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.5rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 600;
             color: var(--text);
+            letter-spacing: 0.03em;
         }
 
         .stat-label {
-            font-family: 'Inter', sans-serif;
-            font-size: 10px;
-            color: #6b7280;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            color: var(--text-dim);
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-top: 0.25rem;
+            letter-spacing: 0.15em;
+            margin-top: 0.3rem;
         }
 
         .cold-start-note {
@@ -905,11 +1278,12 @@
 
         .toolchain-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
         }
-        @media (max-width: 1024px) { .toolchain-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 640px) { .toolchain-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 1200px) { .toolchain-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 900px) { .toolchain-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 580px) { .toolchain-grid { grid-template-columns: 1fr; } }
 
         .tool-card {
             padding: 1.5rem;
@@ -987,31 +1361,41 @@
         .back-to-top:hover { background: var(--primary); color: #0a0a0f; }
 
         /* Simple Mode Toggle */
-        #simple-toggle {
+        .simple-toggle-wrap {
             position: fixed; bottom: 1.5rem; right: 5rem; z-index: 50;
-            padding: 0.5rem 1rem;
+            padding: 0.45rem 0.85rem;
             border-radius: 6px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            border: 1px solid rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.1);
             background: rgba(13,13,26,0.92);
             backdrop-filter: blur(8px);
-            color: var(--text-dim);
-            cursor: pointer;
-            transition: all 0.3s ease;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: border-color 0.2s;
         }
+        .simple-toggle-wrap:hover { border-color: rgba(0,255,255,0.3); }
 
-        #simple-toggle:hover { border-color: rgba(0,255,255,0.4); color: var(--primary); }
-        #simple-toggle.active { border-color: rgba(0,255,255,0.5); color: var(--primary); }
+        .mode-toggle {
+            display: flex; align-items: center; gap: 0.5rem;
+            font-family: 'JetBrains Mono', monospace; font-size: 10px;
+            text-transform: uppercase; letter-spacing: 0.12em;
+            color: var(--text-dim); cursor: pointer; user-select: none;
+            transition: color 0.2s;
+        }
+        .mode-toggle:has(input:checked) { color: var(--primary); }
+        .mode-toggle input { display: none; }
+        .toggle-track {
+            width: 32px; height: 18px; background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.15); border-radius: 9px;
+            position: relative; transition: all 0.2s;
+        }
+        .toggle-track::after {
+            content: ''; position: absolute; top: 2px; left: 2px;
+            width: 12px; height: 12px; background: var(--text-dim);
+            border-radius: 50%; transition: all 0.2s;
+        }
+        .mode-toggle input:checked + .toggle-track { border-color: var(--primary); box-shadow: 0 0 8px rgba(0,255,255,0.25); }
+        .mode-toggle input:checked + .toggle-track::after { left: 16px; background: var(--primary); }
 
         /* Simple/Technical Mode */
-        [data-simple] { display: none; }
-        [data-technical] { display: inline; }
-        body.simple [data-simple] { display: inline; }
-        body.simple [data-technical] { display: none; }
         [data-simple-block] { display: none; }
         [data-technical-block] { display: block; }
         body.simple [data-simple-block] { display: block; }
@@ -1030,7 +1414,7 @@
             margin-top: 1.5rem;
         }
 
-        /* Glow orbs — Skubal-style diffuse background blobs */
+        /* Glow orbs - Skubal-style diffuse background blobs */
         @keyframes glowPulse {
             0%, 100% { opacity: 1; transform: scale(1); }
             50%       { opacity: 0.6; transform: scale(1.06); }
@@ -1063,6 +1447,105 @@
 </head>
 <body id="top">
 
+    <!-- Intro splash overlay -->
+    <style>
+        #intro-splash { position: fixed; inset: 0; z-index: 99999; background: #000; display: none; align-items: center; justify-content: center; opacity: 1; transition: opacity 0.6s ease; overflow: hidden; }
+        #intro-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: blur(40px) brightness(0.5); transform: scale(1.15); z-index: 0; }
+        #intro-video { position: relative; z-index: 1; height: 100vh; width: auto; max-width: 100vw; object-fit: contain; background: transparent; }
+        @media (max-width: 768px) {
+            #intro-bg { display: none; }
+            #intro-video { width: 100vw; height: 100vh; object-fit: contain; background: #000; }
+            #intro-unmute, #intro-skip { bottom: calc(28px + env(safe-area-inset-bottom)) !important; }
+        }
+        #intro-tap { position: absolute; inset: 0; z-index: 2; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 14px; color: #00ffff; font-family: 'JetBrains Mono', monospace; font-size: 14px; letter-spacing: 3px; text-transform: uppercase; cursor: pointer; }
+        #intro-tap.show { display: flex; }
+        #intro-tap .ring { width: 86px; height: 86px; border-radius: 50%; border: 2px solid #00ffff; display: flex; align-items: center; justify-content: center; font-size: 30px; }
+        #intro-unmute, #intro-skip { z-index: 3; }
+    </style>
+    <div id="intro-splash" aria-hidden="true">
+        <video id="intro-bg" playsinline muted preload="none" aria-hidden="true">
+            <source src="videos/intro.mp4" type="video/mp4">
+        </video>
+        <video id="intro-video" playsinline muted preload="auto" webkit-playsinline>
+            <source src="videos/intro.mp4" type="video/mp4">
+        </video>
+        <div id="intro-tap"><div class="ring">▶</div><span>Tap to play</span></div>
+        <button id="intro-unmute" aria-label="Unmute" style="
+            position: absolute; bottom: 28px; left: 28px;
+            background: rgba(0,0,0,0.55); color: #00ffff;
+            border: 1px solid rgba(0,255,255,0.45);
+            padding: 10px 16px; border-radius: 999px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 13px; letter-spacing: 2px; text-transform: uppercase;
+            cursor: pointer; backdrop-filter: blur(6px);
+        ">▶ Tap for sound</button>
+        <button id="intro-skip" aria-label="Skip intro" style="
+            position: absolute; bottom: 28px; right: 28px;
+            background: rgba(0,0,0,0.55); color: #e0e0e0;
+            border: 1px solid rgba(255,255,255,0.25);
+            padding: 10px 16px; border-radius: 999px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 13px; letter-spacing: 2px; text-transform: uppercase;
+            cursor: pointer; backdrop-filter: blur(6px);
+        ">Skip ✕</button>
+    </div>
+    <script>
+    (function () {
+        var KEY = 'ssd_intro_seen_v1';
+        try { if (localStorage.getItem(KEY)) return; } catch (e) {}
+        var splash = document.getElementById('intro-splash');
+        var video  = document.getElementById('intro-video');
+        var unmute = document.getElementById('intro-unmute');
+        var skip   = document.getElementById('intro-skip');
+        if (!splash || !video) return;
+
+        splash.style.display = 'flex';
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+
+        function dismiss() {
+            try { localStorage.setItem(KEY, '1'); } catch (e) {}
+            splash.style.opacity = '0';
+            try { video.pause(); } catch (e) {}
+            setTimeout(function () {
+                splash.style.display = 'none';
+                document.documentElement.style.overflow = '';
+                document.body.style.overflow = '';
+            }, 650);
+        }
+
+        unmute.addEventListener('click', function () {
+            video.muted = false;
+            video.volume = 1;
+            unmute.style.display = 'none';
+        });
+        skip.addEventListener('click', dismiss);
+        video.addEventListener('ended', dismiss);
+
+        var bg = document.getElementById('intro-bg');
+        var tap = document.getElementById('intro-tap');
+
+        function showTap() { if (tap) tap.classList.add('show'); }
+        function hideTap() { if (tap) tap.classList.remove('show'); }
+
+        function tryPlay() {
+            var p = video.play();
+            if (p && typeof p.then === 'function') {
+                p.then(hideTap).catch(showTap);
+            }
+            if (bg) { try { bg.play(); } catch (e) {} }
+        }
+
+        if (tap) tap.addEventListener('click', function () {
+            video.muted = false; video.volume = 1;
+            if (unmute) unmute.style.display = 'none';
+            tryPlay();
+        });
+
+        tryPlay();
+    })();
+    </script>
+
     <div class="glow-orb glow-orb-cyan"></div>
     <div class="glow-orb glow-orb-pink"></div>
     <div class="glow-orb glow-orb-purple"></div>
@@ -1074,6 +1557,7 @@
         <a href="#thesis" data-section="thesis"><span class="side-nav-dot"></span><span class="side-nav-label">Thesis</span></a>
         <a href="#research" data-section="research"><span class="side-nav-dot"></span><span class="side-nav-label">Research</span></a>
         <a href="#literature" data-section="literature"><span class="side-nav-dot"></span><span class="side-nav-label">Literature</span></a>
+        <a href="#philosophy" data-section="philosophy"><span class="side-nav-dot"></span><span class="side-nav-label">Philosophy</span></a>
         <a href="#project-ncaat" data-section="project-ncaat"><span class="side-nav-dot"></span><span class="side-nav-label">NCAAT</span></a>
         <a href="#project-step2" data-section="project-step2"><span class="side-nav-dot"></span><span class="side-nav-label">Step 2 CK</span></a>
         <a href="#project-masters" data-section="project-masters"><span class="side-nav-dot"></span><span class="side-nav-label">Masters</span></a>
@@ -1081,6 +1565,7 @@
         <a href="#project-detroit" data-section="project-detroit"><span class="side-nav-dot"></span><span class="side-nav-label">Detroit</span></a>
         <a href="#project-warrior" data-section="project-warrior"><span class="side-nav-dot"></span><span class="side-nav-label">Warrior Ready</span></a>
         <a href="#project-agi" data-section="project-agi"><span class="side-nav-dot"></span><span class="side-nav-label">AGI Tracker</span></a>
+        <a href="#project-microtd" data-section="project-microtd"><span class="side-nav-dot"></span><span class="side-nav-label">MICRO TD</span></a>
         <a href="#explorables" data-section="explorables"><span class="side-nav-dot"></span><span class="side-nav-label">Explorables</span></a>
     </nav>
 
@@ -1095,9 +1580,9 @@
                     <span class="status-label">All Projects Live</span>
                 </div>
                 <h1 class="hero-title">
-                    Seven Projects.<br>
-                    <span class="cyan-line">72,797 Lines of Code.</span><br>
-                    <span class="dim-line">One Developer.</span>
+                    Eight shipped tools.<br>
+                    <span class="cyan-line">Medicine, sports, AI safety.</span><br>
+                    <span class="dim-line">Built solo with AI as a force multiplier.</span>
                 </h1>
                 <h2 class="hero-byline">
                     Sean Sooch // Medical Student | Military Officer | Software Developer
@@ -1106,11 +1591,18 @@
                     A portfolio of AI-augmented applications built at the intersection of medicine, sports, and computational technology.
                 </p>
                 <p class="hero-desc" data-simple-block>
-                    Seven apps built by one person using AI as a coding partner. Medical tools, sports dashboards, military fitness, and AI research, all built in 23 days.
+                    Eight apps built by one person using AI as a coding partner. Medical tools, a tower defense game, sports dashboards, military fitness, and AI research, all built in 24 days.
                 </p>
 
-                <nav aria-label="Project quick navigation" class="quick-nav glass-panel">
-                    <div class="quick-nav-label">View All Projects</div>
+                <nav aria-label="Site quick navigation" class="quick-nav glass-panel">
+                    <div class="quick-nav-label neural-text">[ Writing &amp; Research ]</div>
+                    <div class="quick-nav-grid">
+                        <a href="#research" class="btn-tactical btn-tactical-writing">Frontier Risk Stack</a>
+                        <a href="#literature" class="btn-tactical btn-tactical-writing">Reading Room</a>
+                        <a href="#philosophy" class="btn-tactical btn-tactical-writing">Philosophy Room</a>
+                    </div>
+                    <div class="quick-nav-divider"></div>
+                    <div class="quick-nav-label">[ Projects ]</div>
                     <div class="quick-nav-grid">
                         <a href="#project-ncaat" class="btn-tactical">NCAAT Bracket</a>
                         <a href="#project-step2" class="btn-tactical">Step 2 CK</a>
@@ -1119,6 +1611,7 @@
                         <a href="#project-detroit" class="btn-tactical">Detroit Sports</a>
                         <a href="#project-warrior" class="btn-tactical">Warrior Ready</a>
                         <a href="#project-agi" class="btn-tactical">AGI Tracker</a>
+                        <a href="#project-microtd" class="btn-tactical">MICRO TD</a>
                         <a href="#explorables" class="btn-tactical">Explorables</a>
                     </div>
                 </nav>
@@ -1135,7 +1628,7 @@
                         These projects were built by a single developer, a medical student and military officer with no formal CS degree, using AI as a force multiplier. Claude Code's autonomous agents researched APIs, generated components, debugged edge cases, and iterated on designs in real-time. The result is a collection of production-grade applications that would traditionally require a team of specialists. All were started after March 15th, 2026, built in free time after clinical rotations and in between study sessions. That alone says more about where the tools are heading than anything about me individually.
                     </p>
                     <p style="text-indent:2rem;">
-                        The motivation behind each project is personal. The NCAAT Bracket, Masters Tournament Hub, and Detroit Sports Hub exist because I love sports. March Madness, the Masters, and Detroit baseball and basketball are things I follow every year with genuine passion, and building interactive tools around them was a natural way to test what AI-augmented development could produce. The Detroit Sports Hub pushed the boundary furthest: 9,500 lines across two broadcast-quality trackers, one for the Tigers season and one for the Pistons' historic playoff run from 14-68 to #1 seed. The Tigers tracker pulls from four public APIs with a news curator that cross-references headlines against actual game results. The Pistons tracker features a live playoff countdown, Cade Cunningham injury watch with recovery progress bar, a 2004 championship tribute comparing that squad to this year's roster, and fact-checked data validated by four autonomous research agents. Together they form a unified Detroit Sports hub with iframe isolation to keep both apps running independently with zero conflicts. The Step 2 CK Study Engine exists because I needed it. No commercial platform offered the adaptive, data-dense study architecture I wanted for my medical education, so I built one. The Patient Handoff Tracker exists because patient handoff is where the majority of preventable medical errors originate, and I wanted to build a system that enforces the evidence-based I-PASS framework at the point of care. Claude Code's <span class="inline-code">/teach-me</span> skill became a built-in tutor, letting me learn new patterns in context as I developed each platform.
+                        The motivation behind each project is personal. The NCAAT Bracket, Masters Tournament Hub, and Detroit Sports Hub exist because I love sports. March Madness, the Masters, and Detroit baseball and basketball are things I follow every year with genuine passion, and building interactive tools around them was a natural way to test what AI-augmented development could produce. The Detroit Sports Hub pushed the boundary furthest: 10,895 lines across two broadcast-quality trackers, one for the Tigers season and one for the Pistons' historic playoff run from 14-68 to #1 seed. The Tigers tracker pulls from four public APIs with a news curator that cross-references headlines against actual game results. The Pistons tracker features a live playoff countdown, Cade Cunningham injury watch with recovery progress bar, a 2004 championship tribute comparing that squad to this year's roster, and fact-checked data validated by four autonomous research agents. Together they form a unified Detroit Sports hub with iframe isolation to keep both apps running independently with zero conflicts. The Step 2 CK Study Engine exists because I needed it. No commercial platform offered the adaptive, data-dense study architecture I wanted for my medical education, so I built one. The Patient Handoff Tracker exists because patient handoff is where the majority of preventable medical errors originate, and I wanted to build a system that enforces the evidence-based I-PASS framework at the point of care. Claude Code's <span class="inline-code">/teach-me</span> skill became a built-in tutor, letting me learn new patterns in context as I developed each platform.
                     </p>
                     <p style="text-indent:2rem;">
                         Beyond writing code, the AI ecosystem extends into thinking and decision-making. I use <span class="inline-code">/council</span> to pressure-test ideas from multiple angles before committing to an architecture. <span class="inline-code">/brainstorm</span> for structured ideation when I am stuck. Auto-agents to delegate research, refactoring, and testing to parallel workers while I focus on design. These are not gimmicks. They are workflows that change how a solo builder operates.
@@ -1147,7 +1640,7 @@
                         But the deeper thesis is about what comes next. We are approaching a point where AI capabilities compound faster than any individual can fully track, which is exactly why I built the <a href="https://differential-c57.pages.dev" target="_blank" rel="noopener noreferrer" class="thesis-link">AGI Capability Tracker</a>. It monitors progress across 8 domains, 25+ frontier models, and dozens of benchmarks in real time. The data tells the story plainly: competition math went from unsolvable to perfect scores in 14 months. Coding benchmarks that stumped every model a year ago are now cleared at 94%. Reasoning tests designed to be AGI-proof are already being matched on their second iteration. A restricted model that fewer than 40 organizations can access surpasses human baselines on autonomous computer operation. GitHub Copilot normalized AI in the editor. OpenAI's Codex proved that natural language could generate working code. Model Context Protocol plugins are connecting AI to every tool and API imaginable. These capabilities will not stay behind developer consoles forever. They will leak into every profession, every workflow, every industry. The professionals who thrive in that environment will not be the ones who resist AI or passively consume it. They will be the ones who learned to operate fluently in a dual ecosystem, human and machine working in concert. The bottleneck is no longer technical skill. It is imagination, domain knowledge, and the willingness to build.
                     </p>
                     <p style="text-indent:2rem;">
-                        These projects are my small proof of that alignment. Evidence that someone who understands the problem space and has learned to work alongside AI can ship real software that solves real problems, in days rather than months. I am still learning, still building, and still a long way from where I want to be. But I believe this is the direction the world is heading, and I would rather be early than late.
+                        These projects are my small proof of that alignment. Evidence that someone who understands the problem space and has learned to work alongside AI can ship real software that solves real problems, in days rather than months. I am still learning, still building, and still a long way from where I want to be. Part of that means educating myself on what these tools can actually do, and part of it means sharing what I find with the people around me. I do not know where this goes. I just think it is worth paying attention to now.
                     </p>
                 </div>
                 <div class="thesis-simple" data-simple-block>
@@ -1167,7 +1660,7 @@
             <div class="metrics-grid">
                 <div class="metric-item">
                     <span class="metric-label">Lines of Code</span>
-                    <span class="metric-value counter" data-target="72797">0</span>
+                    <span class="metric-value counter" data-target="81713">0</span>
                 </div>
                 <div class="metric-item">
                     <span class="metric-label">Functions</span>
@@ -1183,11 +1676,11 @@
                 </div>
                 <div class="metric-item">
                     <span class="metric-label">Live Deploys</span>
-                    <span class="metric-value counter" data-target="7">0</span>
+                    <span class="metric-value counter" data-target="8">0</span>
                 </div>
                 <div class="metric-item">
                     <span class="metric-label">Days to Build</span>
-                    <span class="metric-value counter" data-target="23">0</span>
+                    <span class="metric-value counter" data-target="24">0</span>
                 </div>
             </div>
         </section>
@@ -1240,33 +1733,33 @@
                 <div class="risk-stack-card glass-panel">
                     <p class="risk-stack-label">The Six Risk Layers</p>
                     <div class="risk-layers">
-                        <div class="risk-layer" style="background: rgba(255,68,68,0.05); border-left: 2px solid rgba(255,68,68,0.6);">
-                            <span class="risk-num" style="color: rgba(255,68,68,0.6);">01</span>
+                        <div class="risk-layer" style="background: rgba(255,0,128,0.06); border-left: 2px solid #ff0080; box-shadow: inset 3px 0 12px rgba(255,0,128,0.08);">
+                            <span class="risk-num" style="color: #ff0080; text-shadow: 0 0 8px rgba(255,0,128,0.6);">01</span>
                             <span class="risk-name">Model Risk</span>
                             <span class="risk-desc">Deception, unsafe knowledge, concealment</span>
                         </div>
-                        <div class="risk-layer" style="background: rgba(255,119,68,0.05); border-left: 2px solid rgba(255,119,68,0.6);">
-                            <span class="risk-num" style="color: rgba(255,119,68,0.6);">02</span>
+                        <div class="risk-layer" style="background: rgba(255,80,0,0.06); border-left: 2px solid #ff5000; box-shadow: inset 3px 0 12px rgba(255,80,0,0.08);">
+                            <span class="risk-num" style="color: #ff5000; text-shadow: 0 0 8px rgba(255,80,0,0.6);">02</span>
                             <span class="risk-name">System Risk</span>
                             <span class="risk-desc">Orchestration, tool use, parallel execution</span>
                         </div>
-                        <div class="risk-layer" style="background: rgba(255,170,0,0.05); border-left: 2px solid rgba(255,170,0,0.6);">
-                            <span class="risk-num" style="color: rgba(255,170,0,0.6);">03</span>
+                        <div class="risk-layer" style="background: rgba(255,180,0,0.06); border-left: 2px solid #ffb400; box-shadow: inset 3px 0 12px rgba(255,180,0,0.08);">
+                            <span class="risk-num" style="color: #ffb400; text-shadow: 0 0 8px rgba(255,180,0,0.6);">03</span>
                             <span class="risk-name">Deployment Risk</span>
                             <span class="risk-desc">Real permissions, production access, API control</span>
                         </div>
-                        <div class="risk-layer" style="background: rgba(68,170,255,0.05); border-left: 2px solid rgba(68,170,255,0.6);">
-                            <span class="risk-num" style="color: rgba(68,170,255,0.6);">04</span>
+                        <div class="risk-layer" style="background: rgba(0,255,255,0.05); border-left: 2px solid #00ffff; box-shadow: inset 3px 0 12px rgba(0,255,255,0.07);">
+                            <span class="risk-num" style="color: #00ffff; text-shadow: 0 0 8px rgba(0,255,255,0.6);">04</span>
                             <span class="risk-name">Access Risk</span>
                             <span class="risk-desc">Concentration, cognitive inequality</span>
                         </div>
-                        <div class="risk-layer" style="background: rgba(124,77,255,0.05); border-left: 2px solid rgba(124,77,255,0.6);">
-                            <span class="risk-num" style="color: rgba(124,77,255,0.6);">05</span>
+                        <div class="risk-layer" style="background: rgba(124,58,237,0.07); border-left: 2px solid #7c3aed; box-shadow: inset 3px 0 12px rgba(124,58,237,0.1);">
+                            <span class="risk-num" style="color: #a855f7; text-shadow: 0 0 8px rgba(124,58,237,0.7);">05</span>
                             <span class="risk-name">Governance Risk</span>
                             <span class="risk-desc">Weak audits, regulatory capture</span>
                         </div>
-                        <div class="risk-layer" style="background: rgba(170,68,255,0.05); border-left: 2px solid rgba(170,68,255,0.6);">
-                            <span class="risk-num" style="color: rgba(170,68,255,0.6);">06</span>
+                        <div class="risk-layer" style="background: rgba(180,0,255,0.06); border-left: 2px solid #b400ff; box-shadow: inset 3px 0 12px rgba(180,0,255,0.08);">
+                            <span class="risk-num" style="color: #b400ff; text-shadow: 0 0 8px rgba(180,0,255,0.6);">06</span>
                             <span class="risk-name">Civilizational Risk</span>
                             <span class="risk-desc">Compounding failures across all layers</span>
                         </div>
@@ -1280,7 +1773,8 @@
         <section id="literature" class="reveal">
             <div class="section-label">[ Literature &amp; Commentary ]</div>
             <h3 class="section-title">Reading Room</h3>
-            <p class="section-desc">External research I'm actively engaging with. Annotated with context on why each paper matters.</p>
+            <p class="section-desc" data-technical-block>External research I'm actively engaging with. Annotated with context on why each paper matters.</p>
+            <p class="section-desc" data-simple-block>A curated reading list of papers, articles, and posts I'm working through, with notes on what each one says and why it matters.</p>
 
             <a href="https://reading-room.pages.dev" target="_blank" rel="noopener noreferrer" class="reading-room-card glass-panel">
                 <div class="reading-room-inner">
@@ -1289,12 +1783,89 @@
                     </div>
                     <div style="flex:1;">
                         <p class="reading-room-title">Enter the Reading Room</p>
-                        <p class="reading-room-meta">Papers &bull; Tweets &bull; Annotated Commentary</p>
+                        <p class="reading-room-meta">Papers &bull; Tweets &bull; Blogs &bull; Annotated Commentary</p>
                     </div>
                     <i class="ph-bold ph-arrow-right reading-room-arrow"></i>
                 </div>
-                <p class="reading-room-desc">Curated research papers and X threads with technical summaries, key mechanisms, and personal commentary on why each piece matters.</p>
+                <p class="reading-room-desc" data-technical-block>Curated research papers, blog posts, and X threads with technical summaries, key mechanisms, and personal commentary on why each piece matters.</p>
+                <p class="reading-room-desc" data-simple-block>Papers, blog posts, and threads I've read, with plain-language summaries and my own take on why each one is worth your time.</p>
             </a>
+
+        </section>
+
+        <!-- PHILOSOPHY ROOM -->
+        <section id="philosophy" class="reveal">
+            <div class="section-label">[ Philosophy ]</div>
+            <h3 class="section-title">The Philosophy Room</h3>
+            <p class="section-desc" data-technical-block>One thesis: the alignment problem is the most consequential question in human history. 19 essays build the philosophical case from cosmology, consciousness, identity, theology, and game theory.</p>
+            <p class="section-desc" data-simple-block>19 essays making the case that AI alignment is the most important problem humanity has ever faced. Starts with the universe and ends with game theory.</p>
+
+            <div class="phil-grid">
+                <div class="phil-topics">
+                    <div class="phil-topic" style="border-color: #d4af37; box-shadow: inset 3px 0 12px rgba(212,175,55,0.06);">
+                        <span class="phil-topic-num" style="color: #d4af37;">01</span>
+                        <span class="phil-topic-name">Cosmological</span>
+                        <span class="phil-topic-meta">3 essays</span>
+                    </div>
+                    <div class="phil-topic" style="border-color: #c084fc; box-shadow: inset 3px 0 12px rgba(192,132,252,0.06);">
+                        <span class="phil-topic-num" style="color: #c084fc;">02</span>
+                        <span class="phil-topic-name">Consciousness</span>
+                        <span class="phil-topic-meta">4 essays</span>
+                    </div>
+                    <div class="phil-topic" style="border-color: #00ffff; box-shadow: inset 3px 0 12px rgba(0,255,255,0.05);">
+                        <span class="phil-topic-num" style="color: #00ffff;">03</span>
+                        <span class="phil-topic-name">AI &amp; Intelligence</span>
+                        <span class="phil-topic-meta">4 essays</span>
+                    </div>
+                    <div class="phil-topic" style="border-color: #fb923c; box-shadow: inset 3px 0 12px rgba(251,146,60,0.06);">
+                        <span class="phil-topic-num" style="color: #fb923c;">04</span>
+                        <span class="phil-topic-name">Identity &amp; Self</span>
+                        <span class="phil-topic-meta">3 essays</span>
+                    </div>
+                    <div class="phil-topic" style="border-color: #4ade80; box-shadow: inset 3px 0 12px rgba(74,222,128,0.05);">
+                        <span class="phil-topic-num" style="color: #4ade80;">05</span>
+                        <span class="phil-topic-name">Theology</span>
+                        <span class="phil-topic-meta">3 essays</span>
+                    </div>
+                    <div class="phil-topic" style="border-color: #f472b6; box-shadow: inset 3px 0 12px rgba(244,114,182,0.06);">
+                        <span class="phil-topic-num" style="color: #f472b6;">06</span>
+                        <span class="phil-topic-name">Game Theory</span>
+                        <span class="phil-topic-meta">2 essays</span>
+                    </div>
+                </div>
+
+                <div class="phil-entry-panel">
+                    <div class="phil-stats">
+                        <div class="phil-stat">
+                            <span class="phil-stat-num">19</span>
+                            <span class="phil-stat-label">Essays</span>
+                        </div>
+                        <div class="phil-stat">
+                            <span class="phil-stat-num">6</span>
+                            <span class="phil-stat-label">Sections</span>
+                        </div>
+                        <div class="phil-stat">
+                            <span class="phil-stat-num">~30</span>
+                            <span class="phil-stat-label">Min Read</span>
+                        </div>
+                    </div>
+
+                    <a href="https://philosophy-room.pages.dev" target="_blank" rel="noopener noreferrer" class="phil-card glass-panel">
+                        <div class="phil-card-inner">
+                            <div class="phil-card-icon">
+                                <i class="ph-bold ph-atom"></i>
+                            </div>
+                            <div style="flex:1;">
+                                <p class="phil-card-title">Enter the Philosophy Room</p>
+                                <p class="phil-card-meta">Essays &bull; AI Lens &bull; Simple Mode</p>
+                            </div>
+                            <i class="ph-bold ph-arrow-right phil-card-arrow"></i>
+                        </div>
+                        <p class="phil-card-desc" data-technical-block>A structured inquiry into the questions that matter most. Each essay includes an AI Lens sidebar and a Simple Mode for any reading level.</p>
+                        <p class="phil-card-desc" data-simple-block>Essays on the biggest questions: Does the universe have a purpose? What is consciousness? What does God mean in an age of AI? And why does any of it matter for our future?</p>
+                    </a>
+                </div>
+            </div>
         </section>
 
         <!-- PROJECT CASE STUDIES LABEL -->
@@ -1320,7 +1891,7 @@
                             <li>Injury adjustment mode (11 teams)</li>
                             <li>Guard X-Factor mode</li>
                             <li>3PT X-Factor mode</li>
-                            <li>Cascade prediction engine</li>
+                            <li>Multi-model score aggregation engine</li>
                             <li>Desktop horizontal bracket view</li>
                             <li>Mobile tab navigation</li>
                             <li>Offline-first caching (PWA)</li>
@@ -1334,8 +1905,8 @@
                         <span class="tech-tag">CSS3</span>
                         <span class="tech-tag">PWA</span>
                         <span class="tech-tag">Service Workers</span>
-                        <span class="tech-tag">ESPN CDN</span>
-                        <span class="tech-tag">weserv.nl Proxy</span>
+                        <span class="tech-tag">ESPN API</span>
+                        <span class="tech-tag">Image Proxy CDN</span>
                     </div>
                     <div class="project-cta">
                         <a href="https://ncaat-bracket-2026.pages.dev" target="_blank" rel="noopener noreferrer" class="btn-tactical btn-tactical-lg">
@@ -1523,7 +2094,7 @@
                             <span>View Live</span>
                             <i class="ph-bold ph-arrow-up-right"></i>
                         </a>
-                        <span class="cold-start-note">First load may take ~30s (free-tier cold start)</span>
+                        <span class="cold-start-note">Cold start: ~30s on first load</span>
                     </div>
                 </div>
                 <div class="project-stats order-1">
@@ -1545,13 +2116,13 @@
         <section id="project-detroit" class="project-section reveal">
             <div class="project-grid">
                 <div class="project-content">
-                    <span class="project-category">Sports Analytics &amp; Real-Time Data</span>
+                    <span class="project-category">Broadcast-Quality Sports Dashboards</span>
                     <h2 class="project-title">Detroit Sports Hub</h2>
                     <p class="project-desc" data-technical-block>
-                        A broadcast-quality sports hub combining two full-scale trackers for the 2026 Detroit Tigers season and the Detroit Pistons playoff run. The <strong style="color:#d1d5db;">Tigers tracker</strong> features live pitch-by-pitch game tracking, win probability graphs, spray charts, Baseball Savant Statcast integration, a 30-prospect farm system, and a Skubalverse shrine. The <strong style="color:#d1d5db;">Pistons tracker</strong> covers the franchise's historic rise from 14-68 to #1 seed with a live playoff countdown, Cade Cunningham injury watch, MVP case analysis, full bracket visualization, play-in scenarios, a 2004 "Going to Work" championship tribute, and 22 features across 10 tabs. Both apps run in complete isolation via iframe architecture: zero namespace conflicts, zero dependencies, zero frameworks.
+                        A broadcast-quality sports hub combining two full-scale trackers for the 2026 Detroit Tigers season and the Detroit Pistons playoff run. The <strong style="color:#d1d5db;">Tigers tracker</strong> features live pitch-by-pitch game tracking, win probability graphs, spray charts, Baseball Savant Statcast integration, a 30-prospect farm system, and a Skubalverse shrine. The <strong style="color:#d1d5db;">Pistons tracker</strong> covers the franchise's historic rise from 14-68 to #1 seed with a live playoff countdown, Cade Cunningham injury watch, MVP case analysis, full bracket visualization, play-in scenarios, a 2004 "Going to Work" championship tribute, and 33 features across 11 tabs. Both apps run in complete isolation via iframe architecture: zero namespace conflicts, zero dependencies, zero frameworks.
                     </p>
                     <p class="project-desc" data-simple-block>
-                        Two full sports apps in one hub with a live "Motor City Pulse" dashboard. The <strong style="color:#d1d5db;">Tigers tracker</strong> follows the 2026 season with live game updates, pitch-by-pitch tracking, adaptive auto-refresh, Statcast integration, prospect rankings, storyline narratives, and a Tarik Skubal fan zone. The <strong style="color:#d1d5db;">Pistons tracker</strong> covers the franchise's turnaround from worst in the league to #1 seed, with live NBA API data, storyline narratives, Cade Cunningham injury watch, MVP stats, bracket visualization, and a tribute to the 2004 championship team. 66 features combined across 21 tabs.
+                        Two full sports apps in one hub. The <strong style="color:#d1d5db;">Tigers tracker</strong> follows the 2026 season with live game updates, pitch-by-pitch tracking, Statcast stats, prospect rankings, and a Tarik Skubal fan zone. The <strong style="color:#d1d5db;">Pistons tracker</strong> covers the franchise's turnaround from worst in the league to #1 seed, with live standings, Cade Cunningham injury watch, MVP stats, playoff bracket, and a tribute to the 2004 championship team. Both apps are fully isolated and run side by side with no conflicts.
                     </p>
                     <div>
                         <div class="sub-features-label">Tigers Tracker</div>
@@ -1724,6 +2295,66 @@
             </div>
         </section>
 
+        <div class="project-divider reveal"></div>
+
+        <!-- PROJECT: MICRO TD -->
+        <section id="project-microtd" class="project-section reveal">
+            <div class="project-grid reverse">
+                <div class="project-content order-2">
+                    <span class="project-category">Medical Education &amp; Game-Based Learning</span>
+                    <h2 class="project-title">MICRO TD</h2>
+                    <p class="project-desc" data-technical-block>
+                        A tower defense game built on React 19, Vite, TypeScript, and HTML5 Canvas that teaches Infectious Disease pharmacology through gameplay. Players place antibiotic "towers" to defend against 16 bacterial pathogens across 15 escalating clinical scenarios. Each pathogen carries a real gram stain, morphology, resistance profile, and clinical pearl. The game engine enforces the drug-bug coverage matrix: wrong antibiotics deal zero damage and trigger resistance evolution. Features synergy combos (12 RIPE pairs, CTX+Metro, and more), precision scoring (3x multiplier for zero-wrong-drug kills), and a Supabase-backed leaderboard with Row Level Security. Responsive layout switches to a mobile-first bottom-sheet UI on narrow viewports.
+                    </p>
+                    <p class="project-desc" data-simple-block>
+                        A tower defense game where you fight bacteria with antibiotics. 16 real pathogens, 25 drugs, 15 clinical scenarios from ED walk-ins to ICU ventilator patients. Pick the wrong drug and it does nothing. Pair the right drugs together for combo damage. Built to make studying for ID boards feel like a game. Works on desktop and mobile.
+                    </p>
+                    <div>
+                        <div class="features-label">Core Features</div>
+                        <ul class="features-list">
+                            <li>60fps Canvas game loop with 16 pathogens</li>
+                            <li>25 antibiotics across 9 drug classes</li>
+                            <li>Drug-bug coverage matrix (weakTo/resistantTo)</li>
+                            <li>Resistance evolution on wrong-drug hits</li>
+                            <li>Synergy combos (2.5x damage, 1200ms window)</li>
+                            <li>RIPE regimen for M. tuberculosis (12-pair matrix)</li>
+                            <li>Precision scoring (3x for zero-wrong kills)</li>
+                            <li>Clinical pearls on first clean kill per species</li>
+                            <li>15 waves: ED to Final Exam (fog of war)</li>
+                            <li>Wave coverage highlights on drug panel</li>
+                            <li>Mobile-responsive bottom-sheet layout</li>
+                            <li>Supabase leaderboard with RLS</li>
+                        </ul>
+                    </div>
+                    <div class="tech-tags">
+                        <span class="tech-tag">React 19</span>
+                        <span class="tech-tag">TypeScript</span>
+                        <span class="tech-tag">Vite</span>
+                        <span class="tech-tag">HTML5 Canvas</span>
+                        <span class="tech-tag">Supabase</span>
+                        <span class="tech-tag">Cloudflare Pages</span>
+                    </div>
+                    <div class="project-cta">
+                        <a href="https://micro-td.pages.dev" target="_blank" rel="noopener noreferrer" class="btn-tactical btn-tactical-lg">
+                            <span>Play Live</span>
+                            <i class="ph-bold ph-arrow-up-right"></i>
+                        </a>
+                        <div style="color: var(--text-dim); font-size: 0.75rem; opacity: 0.7; margin-top: 0.5rem;">Best on desktop</div>
+                    </div>
+                </div>
+                <div class="project-stats order-1">
+                    <div class="stats-grid">
+                        <div class="stat-cell"><span class="stat-value">11,500</span><span class="stat-label">Lines of Code</span></div>
+                        <div class="stat-cell"><span class="stat-value">25</span><span class="stat-label">Antibiotics</span></div>
+                        <div class="stat-cell"><span class="stat-value">16</span><span class="stat-label">Pathogens</span></div>
+                        <div class="stat-cell"><span class="stat-value">15</span><span class="stat-label">Clinical Waves</span></div>
+                        <div class="stat-cell"><span class="stat-value">9</span><span class="stat-label">Drug Classes</span></div>
+                        <div class="stat-cell"><span class="stat-value">60</span><span class="stat-label">FPS Canvas Loop</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- EXPLORABLES -->
         <section id="explorables" class="reveal">
             <div class="explorables-header">
@@ -1746,7 +2377,7 @@
                         <span class="tag">Video Demo</span>
                     </div>
                     <div class="explorable-footer">
-                        <a href="https://youtube.com/shorts/cqneyyuSem0" target="_blank" rel="noopener noreferrer" class="btn-tactical btn-tactical-lg" style="width:100%; justify-content:center;">
+                        <a href="/videos/pika-demo.mp4" target="_blank" rel="noopener noreferrer" class="btn-tactical btn-tactical-lg" style="width:100%; justify-content:center;">
                             <i class="ph-fill ph-play"></i>
                             <span>Watch Demo</span>
                         </a>
@@ -1766,7 +2397,7 @@
                         <span class="tag">Sports Media</span>
                     </div>
                     <div class="explorable-footer">
-                        <a href="https://youtu.be/bRezTz-l5cI" target="_blank" rel="noopener noreferrer" class="btn-tactical btn-tactical-lg" style="width:100%; justify-content:center;">
+                        <a href="/videos/skubal-hype.mp4" target="_blank" rel="noopener noreferrer" class="btn-tactical btn-tactical-lg" style="width:100%; justify-content:center;">
                             <i class="ph-fill ph-play"></i>
                             <span>Watch Video</span>
                         </a>
@@ -1789,6 +2420,26 @@
                         <a href="https://cic-dashboard.pages.dev" target="_blank" rel="noopener noreferrer" class="btn-tactical btn-tactical-lg" style="width:100%; justify-content:center;">
                             <i class="ph-fill ph-rocket-launch"></i>
                             <span>Explore</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="explorable-card glass-panel bento-hover">
+                    <div class="explorable-card-header">
+                        <i class="ph-fill ph-first-aid-kit explorable-icon"></i>
+                        <span class="explorable-type">Field Toolkit</span>
+                    </div>
+                    <h4 class="explorable-title">Hospital &amp; Field Toolkit</h4>
+                    <p class="explorable-desc" data-technical-block>A unified reference suite spanning hospital and field medicine: clinical scoring calculators (CHA₂DS₂-VASc, Wells PE, CURB-65, MELD), an antibiotic coverage matrix filterable by organism class, a tiered differential diagnosis engine across 20 chief complaints, a 64-lab quick reference with global search, and a TCCC MARCH protocol module covering Care Under Fire, Tactical Field Care, and TacEvac with field drug dosing. Five single-file vanilla-JS tools behind one hub.</p>
+                    <p class="explorable-desc" data-simple-block>A bookmark-on-day-one reference page for medical rotations and field medicine. Five tools in one hub: bedside calculators, antibiotic coverage charts, differential diagnosis lists, normal lab values, and tactical combat casualty care guidelines. Built to load fast and work offline.</p>
+                    <div class="explorable-tags">
+                        <span class="tag">Medicine</span>
+                        <span class="tag">TCCC</span>
+                        <span class="tag">Reference</span>
+                    </div>
+                    <div class="explorable-footer">
+                        <a href="/toolkit/" class="btn-tactical btn-tactical-lg" style="width:100%; justify-content:center;">
+                            <i class="ph-fill ph-first-aid-kit"></i>
+                            <span>Open Toolkit</span>
                         </a>
                     </div>
                 </div>
@@ -1818,80 +2469,149 @@
         <!-- TOOLCHAIN ECOSYSTEM -->
         <section class="toolchain-section reveal">
             <h3 class="toolchain-title">The Development Ecosystem</h3>
-            <p class="toolchain-subtitle">How a single developer ships production software</p>
+            <p class="toolchain-subtitle">Full stack of an AI-augmented solo developer</p>
             <div class="toolchain-grid">
+
+                <!-- ORCHESTRATION -->
                 <div class="tool-card glass-panel bento-hover">
                     <div class="tool-card-header">
-                        <i class="ph-fill ph-code tool-icon"></i>
-                        <span class="tool-type">Autonomous</span>
+                        <i class="ph-fill ph-robot tool-icon"></i>
+                        <span class="tool-type">Orchestration</span>
                     </div>
                     <h4 class="tool-name">Claude Code</h4>
-                    <p class="tool-desc">AI pair programmer with sub-agent orchestration, custom skills (/council, /brainstorm, /teach-me, /after-action), and parallel auto-agents for research, refactoring, and testing.</p>
+                    <p class="tool-desc">Autonomous agent platform driving this entire portfolio. Parallel sub-agents in isolated git worktrees, custom skill library (/council, /brainstorm, /after-action, /review-gate, /teach-me), session memory across projects, and background task execution.</p>
                 </div>
+
                 <div class="tool-card glass-panel bento-hover">
                     <div class="tool-card-header">
-                        <i class="ph-fill ph-video-camera tool-icon"></i>
-                        <span class="tool-type">Renderer</span>
+                        <i class="ph-fill ph-lightning tool-icon"></i>
+                        <span class="tool-type">AI API</span>
                     </div>
-                    <h4 class="tool-name">Remotion</h4>
-                    <p class="tool-desc">React-based programmatic video engine. Converts component trees into frame-perfect broadcast video with spring physics and interpolation.</p>
+                    <h4 class="tool-name">Anthropic API</h4>
+                    <p class="tool-desc">Streaming tool_use with multi-turn context windows, vision input, structured JSON output, and extended thinking for multi-hop reasoning chains. Powers the AGI Tracker's dynamic content layer and the Study Engine's tutoring loop.</p>
                 </div>
+
                 <div class="tool-card glass-panel bento-hover">
                     <div class="tool-card-header">
-                        <i class="ph-fill ph-tree-structure tool-icon"></i>
-                        <span class="tool-type">Architecture</span>
+                        <i class="ph-fill ph-flow-arrow tool-icon"></i>
+                        <span class="tool-type">Multi-Agent</span>
                     </div>
-                    <h4 class="tool-name">Draw.io</h4>
-                    <p class="tool-desc">Architectural diagramming for system design, data flow visualization, and component relationship mapping.</p>
+                    <h4 class="tool-name">Agent Architecture</h4>
+                    <p class="tool-desc">Specialized sub-agents running in parallel: architect (structural drift detection), security (PHI/auth review), test-runner (coverage gating), research agents (API fact-checking), and plan agents for cross-file design before any code is written.</p>
                 </div>
-                <div class="tool-card glass-panel bento-hover">
-                    <div class="tool-card-header">
-                        <i class="ph-fill ph-brain tool-icon"></i>
-                        <span class="tool-type">Intelligence</span>
-                    </div>
-                    <h4 class="tool-name">Claude API</h4>
-                    <p class="tool-desc">LLM integration for adaptive learning features, content generation, and intelligent tutoring capabilities.</p>
-                </div>
-                <div class="tool-card glass-panel bento-hover">
-                    <div class="tool-card-header">
-                        <i class="ph-fill ph-cell-signal-high tool-icon"></i>
-                        <span class="tool-type">Offline</span>
-                    </div>
-                    <h4 class="tool-name">PWA Stack</h4>
-                    <p class="tool-desc">Service Workers, Web App Manifests, and Cache API for offline-first, installable applications.</p>
-                </div>
-                <div class="tool-card glass-panel bento-hover">
-                    <div class="tool-card-header">
-                        <i class="ph-fill ph-file-text tool-icon"></i>
-                        <span class="tool-type">Pipeline</span>
-                    </div>
-                    <h4 class="tool-name">Content Pipeline</h4>
-                    <p class="tool-desc">Custom OCR + PDF extraction pipeline (pdftotext, Tesseract, Node.js) for converting study materials into structured JSON.</p>
-                </div>
-                <div class="tool-card glass-panel bento-hover">
-                    <div class="tool-card-header">
-                        <i class="ph-fill ph-paint-brush tool-icon"></i>
-                        <span class="tool-type">Design</span>
-                    </div>
-                    <h4 class="tool-name">AI Designer</h4>
-                    <p class="tool-desc">AI-powered design generation used to architect the layout, typography, and visual system of this portfolio. Generates production HTML from natural language prompts.</p>
-                </div>
-                <div class="tool-card glass-panel bento-hover">
-                    <div class="tool-card-header">
-                        <i class="ph-fill ph-github-logo tool-icon"></i>
-                        <span class="tool-type">Co-pilot</span>
-                    </div>
-                    <h4 class="tool-name">GitHub Copilot</h4>
-                    <p class="tool-desc">Inline code completion and suggestion engine integrated into the editor. Accelerates routine coding patterns and reduces context-switching overhead.</p>
-                </div>
+
                 <div class="tool-card glass-panel bento-hover">
                     <div class="tool-card-header">
                         <i class="ph-fill ph-plugs-connected tool-icon"></i>
-                        <span class="tool-type">Connectors</span>
+                        <span class="tool-type">MCP Servers</span>
                     </div>
-                    <h4 class="tool-name">MCP Plugins</h4>
-                    <p class="tool-desc">Model Context Protocol servers connecting AI to external tools: Figma for design, Draw.io for diagrams, browser automation for testing, and custom integrations.</p>
+                    <h4 class="tool-name">MCP Stack</h4>
+                    <p class="tool-desc">Live tool connections: computer-use (native desktop control), Claude_in_Chrome (DOM-aware browser automation), Figma (design variable inspection), iMessage (agentic notification layer), AIDesigner (HTML generation), scheduled-tasks, and Draw.io.</p>
                 </div>
+
+                <!-- INFRASTRUCTURE -->
+                <div class="tool-card glass-panel bento-hover">
+                    <div class="tool-card-header">
+                        <i class="ph-fill ph-cloud-arrow-up tool-icon"></i>
+                        <span class="tool-type">Infrastructure</span>
+                    </div>
+                    <h4 class="tool-name">Cloudflare Pages</h4>
+                    <p class="tool-desc">Edge CDN deployment for all 10 production sites via Wrangler CLI direct upload -- no git provider dependency. Sub-second global propagation. Projects include seansooch.dev, differential, detroit-sports, reading-room, and forge.</p>
+                </div>
+
+                <div class="tool-card glass-panel bento-hover">
+                    <div class="tool-card-header">
+                        <i class="ph-fill ph-device-mobile tool-icon"></i>
+                        <span class="tool-type">Native Mobile</span>
+                    </div>
+                    <h4 class="tool-name">Capacitor</h4>
+                    <p class="tool-desc">Cross-platform iOS packaging from a web codebase. Custom icon pipeline, safe-area inset handling, WKWebView bridge, and Xcode build chain targeting TestFlight distribution. Used for the Tigers 2026 iOS app.</p>
+                </div>
+
+                <div class="tool-card glass-panel bento-hover">
+                    <div class="tool-card-header">
+                        <i class="ph-fill ph-stack tool-icon"></i>
+                        <span class="tool-type">Backend</span>
+                    </div>
+                    <h4 class="tool-name">Flask + SQLite</h4>
+                    <p class="tool-desc">Full-stack data layer for the Patient Handoff Tracker: relational schema design, HIPAA-conscious audit logging, Jinja2 templating, REST endpoints for QI dashboard, and publication-ready compliance data export.</p>
+                </div>
+
+                <div class="tool-card glass-panel bento-hover">
+                    <div class="tool-card-header">
+                        <i class="ph-fill ph-arrows-split tool-icon"></i>
+                        <span class="tool-type">Framework</span>
+                    </div>
+                    <h4 class="tool-name">Next.js</h4>
+                    <p class="tool-desc">React framework driving the Sellout Index: server components, API routes, dynamic routing per Congress member, and composite score computation across four political data sources. The first multi-route application in this portfolio.</p>
+                </div>
+
+                <!-- FRONTEND -->
+                <div class="tool-card glass-panel bento-hover">
+                    <div class="tool-card-header">
+                        <i class="ph-fill ph-file-code tool-icon"></i>
+                        <span class="tool-type">Frontend</span>
+                    </div>
+                    <h4 class="tool-name">Vanilla JS at Scale</h4>
+                    <p class="tool-desc">Single-file applications reaching 9k-38k LOC with self-contained rendering engines, SM-2 spaced repetition state machines, iframe isolation architecture, service workers, and zero framework overhead. Chosen deliberately for portability.</p>
+                </div>
+
+                <div class="tool-card glass-panel bento-hover">
+                    <div class="tool-card-header">
+                        <i class="ph-fill ph-chart-bar tool-icon"></i>
+                        <span class="tool-type">Rendering</span>
+                    </div>
+                    <h4 class="tool-name">Canvas API</h4>
+                    <p class="tool-desc">Custom rendering pipelines built from primitives: radar charts for AGI capability domains, animated performance heatmaps for surgical topics, real-time animated gauges, and CSS glow orb systems replacing particle engines.</p>
+                </div>
+
+                <div class="tool-card glass-panel bento-hover">
+                    <div class="tool-card-header">
+                        <i class="ph-fill ph-paint-bucket tool-icon"></i>
+                        <span class="tool-type">Design System</span>
+                    </div>
+                    <h4 class="tool-name">CSS Architecture</h4>
+                    <p class="tool-desc">Custom property design systems, keyframe animation chains, glassmorphism with backdrop-filter, multi-theme toggling (cyberpunk / warm parchment / dark), mobile-first responsive grids, and scoped component injection via DOMParser.</p>
+                </div>
+
+                <!-- DATA -->
+                <div class="tool-card glass-panel bento-hover">
+                    <div class="tool-card-header">
+                        <i class="ph-fill ph-broadcast tool-icon"></i>
+                        <span class="tool-type">Live Data</span>
+                    </div>
+                    <h4 class="tool-name">Multi-API Layer</h4>
+                    <p class="tool-desc">Live data aggregation across MLB Stats, ESPN CDN, NASA (20+ endpoints), FEC, OpenSecrets, and custom webhook polling. Includes intelligent fallback SVG generation, CDN image resolution logic, and cross-referencing headlines against game results.</p>
+                </div>
+
+                <div class="tool-card glass-panel bento-hover">
+                    <div class="tool-card-header">
+                        <i class="ph-fill ph-file-magnifying-glass tool-icon"></i>
+                        <span class="tool-type">Ingest</span>
+                    </div>
+                    <h4 class="tool-name">OCR Pipeline</h4>
+                    <p class="tool-desc">pdftotext + Tesseract OCR + Node.js ingest scripts converting 5 clinical subjects of study material into structured question/flashcard JSON. Keyword-based topic classification routes 2,245 questions across 351 medical topics automatically.</p>
+                </div>
+
+                <!-- MEDIA -->
+                <div class="tool-card glass-panel bento-hover">
+                    <div class="tool-card-header">
+                        <i class="ph-fill ph-video-camera tool-icon"></i>
+                        <span class="tool-type">Video</span>
+                    </div>
+                    <h4 class="tool-name">Remotion</h4>
+                    <p class="tool-desc">Programmatic broadcast video: React component trees compiled to frame-perfect MP4 with spring physics, Bezier interpolation, and multi-scene composition at 30fps. Used for the Masters 2026 course walkthrough and the Skubal hype reel.</p>
+                </div>
+
+                <div class="tool-card glass-panel bento-hover">
+                    <div class="tool-card-header">
+                        <i class="ph-fill ph-figma-logo tool-icon"></i>
+                        <span class="tool-type">Design Bridge</span>
+                    </div>
+                    <h4 class="tool-name">Figma MCP</h4>
+                    <p class="tool-desc">Live design-to-code: inspect Figma variable sets, component specs, and layout constraints directly in the editor. Eliminates the screenshot-to-CSS translation step and keeps design and implementation in sync without context-switching.</p>
+                </div>
+
             </div>
         </section>
 
@@ -1903,9 +2623,13 @@
     </footer>
 
     <!-- Simple Mode Toggle -->
-    <button id="simple-toggle" onclick="toggleSimpleMode()" title="Toggle between technical and plain-language descriptions">
-        <span id="simple-label">Simple Mode</span>
-    </button>
+    <div class="simple-toggle-wrap" title="Toggle between technical and plain-language descriptions">
+        <label class="mode-toggle">
+            <span>Simple</span>
+            <input type="checkbox" id="modeToggle">
+            <span class="toggle-track"></span>
+        </label>
+    </div>
 
     <!-- Back to Top -->
     <a href="#top" class="back-to-top" aria-label="Back to top">
@@ -1995,20 +2719,24 @@
             });
         });
 
-        let simpleMode = false;
-        function toggleSimpleMode() {
-            simpleMode = !simpleMode;
-            document.body.classList.toggle('simple', simpleMode);
-            const btn = document.getElementById('simple-toggle');
-            const label = document.getElementById('simple-label');
-            if (simpleMode) {
-                btn.classList.add('active');
-                label.textContent = 'Technical Mode';
-            } else {
-                btn.classList.remove('active');
-                label.textContent = 'Simple Mode';
+        document.getElementById('modeToggle').addEventListener('change', e => {
+            let refEl = null;
+            for (let y = 10; y < window.innerHeight / 2; y += 8) {
+                const el = document.elementFromPoint(window.innerWidth / 2, y);
+                if (el && !el.closest('[data-simple-block],[data-technical-block]')) {
+                    refEl = el;
+                    break;
+                }
             }
-        }
+            const before = refEl ? refEl.getBoundingClientRect().top : 0;
+            document.documentElement.style.scrollBehavior = 'auto';
+            document.body.classList.toggle('simple', e.target.checked);
+            if (refEl) {
+                const after = refEl.getBoundingClientRect().top;
+                window.scrollBy(0, after - before);
+            }
+            requestAnimationFrame(() => { document.documentElement.style.scrollBehavior = ''; });
+        });
     </script>
 </body>
 </html>
