@@ -743,38 +743,48 @@
         .reveal.active { opacity: 1; transform: translateY(0); }
 
         /* Section labels */
-        body { counter-reset: section-counter; }
-        section.reveal { counter-increment: section-counter; }
-
         .section-label {
             display: flex;
-            align-items: baseline;
-            gap: 0.85rem;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0.25rem;
+            margin-top: 0;
+            margin-bottom: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.3);
+            border-bottom: 1px solid rgba(255,255,255,0.14);
             font-family: 'JetBrains Mono', monospace;
             font-size: 10.5px;
             font-weight: 600;
+            letter-spacing: 0.22em;
             text-transform: uppercase;
-            letter-spacing: 0.24em;
-            color: var(--secondary);
+            color: rgba(238,238,232,0.55);
             text-shadow: none;
-            margin-bottom: 1.25rem;
-            padding-bottom: 0.65rem;
-            border-bottom: 1px solid rgba(255,255,255,0.14);
+            gap: 1rem;
         }
-        .section-label::before {
-            content: "§ " counter(section-counter, decimal-leading-zero);
+        .section-label-left {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            flex-wrap: wrap;
+        }
+        .section-label-num {
+            color: var(--secondary);
+            font-weight: 700;
+        }
+        .section-label-cat { color: rgba(238,238,232,0.55); }
+        .section-label-right {
             color: var(--primary);
             font-weight: 700;
-            letter-spacing: 0.18em;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
         }
-        .section-label::after {
-            content: "";
-            flex: 1;
-            height: 1px;
-            min-width: 3rem;
-            background: rgba(255,255,255,0.1);
-            align-self: center;
-            margin-left: 0.5rem;
+        .section-label-dot {
+            display: inline-block;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 0 6px var(--primary);
         }
 
         .section-title {
@@ -2060,6 +2070,13 @@
 
         <!-- THESIS -->
         <section id="thesis" class="reveal">
+            <div class="section-label">
+                <div class="section-label-left">
+                    <span class="section-label-num">&sect; 01</span>
+                    <span class="section-label-cat">Editor's Note / Thesis</span>
+                </div>
+                <div class="section-label-right">Paper.01</div>
+            </div>
             <div class="thesis-card glass-panel">
                 <div class="thesis-watermark">PAPER.01</div>
                 <h3 class="thesis-title">The Case for AI-Augmented Development</h3>
@@ -2096,7 +2113,13 @@
 
         <!-- GLOBAL METRICS -->
         <section class="metrics-section reveal">
-            <div class="section-label">[ Global Metrics ]</div>
+            <div class="section-label">
+                <div class="section-label-left">
+                    <span class="section-label-num">&sect; 02</span>
+                    <span class="section-label-cat">Global Metrics</span>
+                </div>
+                <div class="section-label-right"><span class="section-label-dot"></span>Live</div>
+            </div>
             <div class="metrics-grid">
                 <div class="metric-item">
                     <span class="metric-label">Lines of Code</span>
@@ -2127,7 +2150,13 @@
 
         <!-- RESEARCH -->
         <section id="research" class="reveal">
-            <div class="section-label">[ Research ]</div>
+            <div class="section-label">
+                <div class="section-label-left">
+                    <span class="section-label-num">&sect; 03</span>
+                    <span class="section-label-cat">Research / Paper</span>
+                </div>
+                <div class="section-label-right">Frontier AI Risk Stack</div>
+            </div>
             <h3 class="section-title">The Frontier AI Risk Stack</h3>
             <p class="section-desc">A six-layer framework for understanding systemic risk in advanced AI systems. Published as an independent research paper, April 2026.</p>
 
@@ -2211,7 +2240,13 @@
 
         <!-- LITERATURE -->
         <section id="literature" class="reveal">
-            <div class="section-label">[ Literature &amp; Commentary ]</div>
+            <div class="section-label">
+                <div class="section-label-left">
+                    <span class="section-label-num">&sect; 04</span>
+                    <span class="section-label-cat">Literature &amp; Commentary</span>
+                </div>
+                <div class="section-label-right">Reading Room</div>
+            </div>
             <h3 class="section-title">Reading Room</h3>
             <p class="section-desc" data-technical-block>External research I'm actively engaging with. Annotated with context on why each paper matters.</p>
             <p class="section-desc" data-simple-block>A curated reading list of papers, articles, and posts I'm working through, with notes on what each one says and why it matters.</p>
@@ -2235,7 +2270,13 @@
 
         <!-- PHILOSOPHY ROOM -->
         <section id="philosophy" class="reveal">
-            <div class="section-label">[ Philosophy ]</div>
+            <div class="section-label">
+                <div class="section-label-left">
+                    <span class="section-label-num">&sect; 05</span>
+                    <span class="section-label-cat">Philosophy</span>
+                </div>
+                <div class="section-label-right">19 Essays</div>
+            </div>
             <h3 class="section-title">The Philosophy Room</h3>
             <p class="section-desc" data-technical-block>One thesis: the alignment problem is the most consequential question in human history. 19 essays build the philosophical case from cosmology, consciousness, identity, theology, and game theory.</p>
             <p class="section-desc" data-simple-block>19 essays making the case that AI alignment is the most important problem humanity has ever faced. Starts with the universe and ends with game theory.</p>
@@ -2798,7 +2839,13 @@
         <!-- EXPLORABLES -->
         <section id="explorables" class="reveal">
             <div class="explorables-header">
-                <div class="section-label">[ Also Built Since March ]</div>
+                <div class="section-label">
+                    <div class="section-label-left">
+                        <span class="section-label-num">&sect; 06</span>
+                        <span class="section-label-cat">Also Built Since March</span>
+                    </div>
+                    <div class="section-label-right">Explorables</div>
+                </div>
                 <h3 class="section-title">Explorables</h3>
                 <p class="section-desc" style="margin-bottom:0;">Smaller experiments and side projects from the same period. Each one started as a curiosity and turned into a working prototype.</p>
             </div>
