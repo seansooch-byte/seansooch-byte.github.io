@@ -852,8 +852,36 @@
             color: #eeeee8;
         }
 
-        .editorial-text { column-count: 2; column-gap: 3rem; }
-        @media (max-width: 768px) { .editorial-text { column-count: 1; } }
+        .editorial-text {
+            column-count: 2;
+            column-gap: 3rem;
+            column-rule: 1px solid rgba(255,255,255,0.14);
+        }
+        @media (max-width: 768px) { .editorial-text { column-count: 1; column-rule: 0; } }
+
+        /* Direction B — Pullquote */
+        .pullquote {
+            margin: 2rem 0;
+            padding: 1.5rem 2rem;
+            border-top: 1px solid rgba(255,255,255,0.3);
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            font-family: 'Fraunces', Georgia, serif;
+            font-weight: 400;
+            font-style: italic;
+            font-size: 1.55rem;
+            line-height: 1.35;
+            letter-spacing: -0.005em;
+            color: #eeeee8;
+            text-align: center;
+            break-inside: avoid;
+        }
+        .pullquote::before {
+            content: '';
+            display: block;
+            width: 40px; height: 1px;
+            background: var(--primary);
+            margin: 0 auto 0.85rem;
+        }
 
         .editorial-text p, .thesis-simple p {
             font-family: 'Source Serif 4', Georgia, serif;
@@ -2354,6 +2382,13 @@
 
         <!-- PROJECT 1: NCAAT -->
         <section id="project-ncaat" class="project-section reveal">
+            <div class="section-label">
+                <div class="section-label-left">
+                    <span class="section-label-num">&sect; 06</span>
+                    <span class="section-label-cat">Case Study / Sports</span>
+                </div>
+                <div class="section-label-right">NCAAT Bracket</div>
+            </div>
             <div class="project-grid">
                 <div class="project-content">
                     <span class="project-category">Sports Analytics &amp; Predictive Modeling</span>
@@ -2413,6 +2448,13 @@
 
         <!-- PROJECT 2: Step 2 CK (reverse layout) -->
         <section id="project-step2" class="project-section reveal">
+            <div class="section-label">
+                <div class="section-label-left">
+                    <span class="section-label-num">&sect; 07</span>
+                    <span class="section-label-cat">Case Study / Medicine</span>
+                </div>
+                <div class="section-label-right">Step 2 CK Engine</div>
+            </div>
             <div class="project-grid">
                 <div class="project-content order-2">
                     <span class="project-category">Medical Education Tech &amp; Adaptive Learning</span>
@@ -2474,6 +2516,13 @@
 
         <!-- PROJECT 3: Masters 2026 -->
         <section id="project-masters" class="project-section reveal">
+            <div class="section-label">
+                <div class="section-label-left">
+                    <span class="section-label-num">&sect; 08</span>
+                    <span class="section-label-cat">Case Study / Sports</span>
+                </div>
+                <div class="section-label-right">Masters 2026 Hub</div>
+            </div>
             <div class="project-grid">
                 <div class="project-content">
                     <span class="project-category">Interactive Web Experience &amp; Programmatic Video</span>
@@ -2533,6 +2582,13 @@
 
         <!-- PROJECT 4: Handoff Tracker (reverse layout) -->
         <section id="project-handoff" class="project-section reveal">
+            <div class="section-label">
+                <div class="section-label-left">
+                    <span class="section-label-num">&sect; 09</span>
+                    <span class="section-label-cat">Case Study / Medicine</span>
+                </div>
+                <div class="section-label-right">Handoff Tracker</div>
+            </div>
             <div class="project-grid">
                 <div class="project-content order-2">
                     <span class="project-category">Clinical QI &amp; Patient Safety</span>
@@ -2595,6 +2651,13 @@
 
         <!-- PROJECT 5: Detroit Sports Hub -->
         <section id="project-detroit" class="project-section reveal">
+            <div class="section-label">
+                <div class="section-label-left">
+                    <span class="section-label-num">&sect; 10</span>
+                    <span class="section-label-cat">Case Study / Sports</span>
+                </div>
+                <div class="section-label-right">Detroit Sports Hub</div>
+            </div>
             <div class="project-grid">
                 <div class="project-content">
                     <span class="project-category">Broadcast-Quality Sports Dashboards</span>
@@ -2664,6 +2727,13 @@
 
         <!-- PROJECT 6: Warrior Ready (reverse layout) -->
         <section id="project-warrior" class="project-section reveal">
+            <div class="section-label">
+                <div class="section-label-left">
+                    <span class="section-label-num">&sect; 11</span>
+                    <span class="section-label-cat">Case Study / Military</span>
+                </div>
+                <div class="section-label-right">Warrior Ready</div>
+            </div>
             <div class="project-grid">
                 <div class="project-content order-2">
                     <span class="project-category">Military &amp; Fitness Technology</span>
@@ -2722,6 +2792,13 @@
 
         <!-- PROJECT 7: AGI Capability Tracker -->
         <section id="project-agi" class="project-section reveal">
+            <div class="section-label">
+                <div class="section-label-left">
+                    <span class="section-label-num">&sect; 12</span>
+                    <span class="section-label-cat">Case Study / AI Safety</span>
+                </div>
+                <div class="section-label-right">AGI Capability Tracker</div>
+            </div>
             <div class="project-grid">
                 <div class="project-content">
                     <span class="project-category">AI Research &amp; Data Visualization</span>
@@ -2780,6 +2857,13 @@
 
         <!-- PROJECT: MICRO TD -->
         <section id="project-microtd" class="project-section reveal">
+            <div class="section-label">
+                <div class="section-label-left">
+                    <span class="section-label-num">&sect; 13</span>
+                    <span class="section-label-cat">Case Study / Game</span>
+                </div>
+                <div class="section-label-right">MICRO TD</div>
+            </div>
             <div class="project-grid reverse">
                 <div class="project-content order-2">
                     <span class="project-category">Medical Education &amp; Game-Based Learning</span>
@@ -2841,7 +2925,7 @@
             <div class="explorables-header">
                 <div class="section-label">
                     <div class="section-label-left">
-                        <span class="section-label-num">&sect; 06</span>
+                        <span class="section-label-num">&sect; 14</span>
                         <span class="section-label-cat">Also Built Since March</span>
                     </div>
                     <div class="section-label-right">Explorables</div>
