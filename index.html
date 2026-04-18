@@ -795,6 +795,27 @@
             text-shadow: none;
         }
 
+        /* Writing & Research — unify kicker + paper-index accents with side nav neural gradient */
+        #research .section-label-num,
+        #literature .section-label-num,
+        #philosophy .section-label-num,
+        #research .section-label-cat,
+        #literature .section-label-cat,
+        #philosophy .section-label-cat,
+        #research .section-label-right,
+        #literature .section-label-right,
+        #philosophy .section-label-right {
+            background: linear-gradient(90deg, var(--neural-l), var(--neural-r));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+        }
+        #research .paper-index-num,
+        #philosophy .paper-index-num {
+            color: var(--neural-mid);
+        }
+
         /* Side nav dots for writing sections */
         .side-nav a[data-section="research"] .side-nav-dot,
         .side-nav a[data-section="literature"] .side-nav-dot,
@@ -965,6 +986,20 @@
             color: #eeeee8;
         }
 
+        @media (max-width: 640px) {
+            .section-label {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+                padding: 0.85rem 0.25rem;
+            }
+            .section-label-right {
+                opacity: 0.8;
+                font-size: 10px;
+            }
+            .edition-masthead-center span:nth-last-child(-n+2) { display: none; }
+        }
+
         .section-desc {
             font-family: 'Source Serif 4', Georgia, serif;
             font-style: italic;
@@ -1059,18 +1094,260 @@
             line-height: 1.7;
             margin-bottom: 1.25rem;
         }
+        .editorial-text p:first-child,
+        .thesis-simple p:first-child { text-indent: 0 !important; }
         .editorial-text p:first-child::first-letter,
         .thesis-simple p:first-child::first-letter {
             font-family: 'Fraunces', Georgia, serif;
             font-weight: 600;
             float: left;
-            font-size: 3.4rem;
-            line-height: 0.9;
-            padding: 0.35rem 0.6rem 0 0;
+            font-size: 3.2rem;
+            line-height: 0.85;
+            padding: 0.25rem 0.5rem 0 0;
+            margin-top: 0.1rem;
             color: var(--primary);
         }
 
         .editorial-text p:last-child, .thesis-simple p:last-child { margin-bottom: 0; }
+
+        /* Direction B — Editorial Paper (Writing & Research) */
+        .paper-byline {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: rgba(238,238,232,0.55);
+            margin: 0.5rem 0 2rem;
+            padding: 0.65rem 0;
+            border-top: 1px solid rgba(255,255,255,0.14);
+            border-bottom: 1px solid rgba(255,255,255,0.14);
+        }
+        .paper-byline-name { color: #eeeee8; }
+        .paper-byline-sep { color: rgba(238,238,232,0.3); margin: 0 0.6em; }
+
+        .paper-grid {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 3rem;
+            align-items: start;
+        }
+        @media (max-width: 900px) { .paper-grid { grid-template-columns: 1fr; gap: 2rem; } }
+
+        .paper-prose {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 1.0625rem;
+            line-height: 1.7;
+            color: #d8d8d0;
+        }
+        .paper-prose p { margin: 0 0 1.25rem; }
+        .paper-prose p:last-child { margin-bottom: 0; }
+        .paper-prose p:first-child::first-letter {
+            font-family: 'Fraunces', Georgia, serif;
+            font-weight: 600;
+            float: left;
+            font-size: 3.2rem;
+            line-height: 0.85;
+            padding: 0.25rem 0.5rem 0 0;
+            margin-top: 0.1rem;
+            color: var(--primary);
+        }
+
+        .paper-tags {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: rgba(238,238,232,0.55);
+            margin: 2rem 0 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.14);
+        }
+        .paper-tags span { color: #eeeee8; }
+        .paper-tags-sep { color: rgba(238,238,232,0.3); margin: 0 0.55em; }
+
+        .paper-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.1rem 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.14);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+        .paper-action-primary {
+            color: var(--primary);
+            border-bottom: 1px solid var(--primary);
+            padding-bottom: 0.25rem;
+            text-decoration: none;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .paper-action-primary:hover { color: #fff; border-color: #fff; }
+        .paper-action-secondary {
+            color: rgba(238,238,232,0.7);
+            text-decoration: none;
+            border-bottom: 1px dotted rgba(238,238,232,0.35);
+            padding-bottom: 0.25rem;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .paper-action-secondary:hover { color: var(--primary); border-color: var(--primary); }
+
+        .paper-index {
+            border: 1px solid rgba(255,255,255,0.14);
+            padding: 1.5rem 1.5rem 1.25rem;
+            background: rgba(255,255,255,0.015);
+        }
+        .paper-index-head {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: rgba(238,238,232,0.6);
+            margin: 0 0 0.25rem;
+            padding-bottom: 0.85rem;
+            border-bottom: 1px solid rgba(255,255,255,0.14);
+            font-weight: 500;
+        }
+        .paper-index-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .paper-index-row {
+            display: grid;
+            grid-template-columns: 2.5rem 1fr;
+            column-gap: 0.9rem;
+            padding: 0.9rem 0;
+            border-bottom: 1px dotted rgba(255,255,255,0.14);
+        }
+        .paper-index-row:last-child { border-bottom: 0; }
+        .paper-index-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--secondary);
+            letter-spacing: 0.1em;
+            padding-top: 0.25rem;
+        }
+        .paper-index-title {
+            font-family: 'Fraunces', Georgia, serif;
+            font-weight: 500;
+            font-size: 1.05rem;
+            color: #eeeee8;
+            display: block;
+            line-height: 1.25;
+        }
+        .paper-index-note {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-style: italic;
+            font-size: 0.875rem;
+            color: rgba(238,238,232,0.6);
+            display: block;
+            margin-top: 0.25rem;
+            line-height: 1.4;
+        }
+        .paper-index-foot {
+            margin: 1rem 0 0;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.14);
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-style: italic;
+            font-size: 0.85rem;
+            color: rgba(238,238,232,0.6);
+            line-height: 1.5;
+        }
+
+        .paper-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            border-top: 1px solid rgba(255,255,255,0.14);
+            border-bottom: 1px solid rgba(255,255,255,0.14);
+            margin: 0 0 2rem;
+        }
+        .paper-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.25rem 0.75rem;
+            border-right: 1px solid rgba(255,255,255,0.14);
+        }
+        .paper-stat:last-child { border-right: 0; }
+        .paper-stat-num {
+            font-family: 'Fraunces', Georgia, serif;
+            font-weight: 400;
+            font-size: 2.5rem;
+            line-height: 1;
+            color: var(--primary);
+        }
+        .paper-stat-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: rgba(238,238,232,0.55);
+            margin-top: 0.4rem;
+        }
+
+        .reading-entry {
+            display: block;
+            border: 1px solid rgba(255,255,255,0.14);
+            border-top: 3px double rgba(255,255,255,0.3);
+            padding: 2rem 2.25rem;
+            color: inherit;
+            text-decoration: none;
+            background: transparent;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .reading-entry:hover {
+            border-color: var(--primary);
+            background: rgba(0,255,255,0.025);
+        }
+        .reading-entry-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: rgba(238,238,232,0.55);
+            padding-bottom: 0.85rem;
+            border-bottom: 1px solid rgba(255,255,255,0.14);
+            margin-bottom: 1.25rem;
+        }
+        .reading-entry-arrow {
+            color: var(--primary);
+            font-family: 'JetBrains Mono', monospace;
+            transition: transform 0.2s;
+        }
+        .reading-entry:hover .reading-entry-arrow { transform: translateX(4px); }
+        .reading-entry-title {
+            font-family: 'Fraunces', Georgia, serif;
+            font-weight: 500;
+            font-style: italic;
+            font-size: 2rem;
+            line-height: 1.15;
+            color: #eeeee8;
+            margin: 0 0 0.85rem;
+        }
+        .reading-entry-dek {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #d8d8d0;
+            margin: 0 0 1.25rem;
+        }
+        .reading-entry-dek:last-of-type { margin-bottom: 1.5rem; }
+        .reading-entry-tags {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: rgba(238,238,232,0.55);
+            margin: 0;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.14);
+        }
 
         .inline-code {
             color: var(--primary);
@@ -2150,12 +2427,7 @@
             </header>
             <div class="edition-ticker" aria-hidden="true">
                 <div class="edition-ticker-track">
-                    <span>LOC 81,713</span><span class="edition-ticker-dot">&bull;</span>
-                    <span>FUNCTIONS 620</span><span class="edition-ticker-dot">&bull;</span>
-                    <span>MEDICAL Q'S 2,245</span><span class="edition-ticker-dot">&bull;</span>
-                    <span>PLAYERS/TEAMS 244</span><span class="edition-ticker-dot">&bull;</span>
-                    <span>LIVE DEPLOYS 8</span><span class="edition-ticker-dot">&bull;</span>
-                    <span>DAYS TO BUILD 24</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>LATEST</span><span class="edition-ticker-dot">&bull;</span>
                     <span>NCAAT BRACKET &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
                     <span>STEP 2 CK &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
                     <span>MASTERS HUB &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
@@ -2164,12 +2436,10 @@
                     <span>WARRIOR READY &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
                     <span>AGI TRACKER &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
                     <span>MICRO TD &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
-                    <span>LOC 81,713</span><span class="edition-ticker-dot">&bull;</span>
-                    <span>FUNCTIONS 620</span><span class="edition-ticker-dot">&bull;</span>
-                    <span>MEDICAL Q'S 2,245</span><span class="edition-ticker-dot">&bull;</span>
-                    <span>PLAYERS/TEAMS 244</span><span class="edition-ticker-dot">&bull;</span>
-                    <span>LIVE DEPLOYS 8</span><span class="edition-ticker-dot">&bull;</span>
-                    <span>DAYS TO BUILD 24</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>FILED FROM CLINICAL ROTATIONS</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>BUILT WITH CLAUDE CODE</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>VOL 01 / ISSUE 01 &middot; APRIL 2026</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>LATEST</span><span class="edition-ticker-dot">&bull;</span>
                     <span>NCAAT BRACKET &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
                     <span>STEP 2 CK &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
                     <span>MASTERS HUB &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
@@ -2178,6 +2448,9 @@
                     <span>WARRIOR READY &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
                     <span>AGI TRACKER &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
                     <span>MICRO TD &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>FILED FROM CLINICAL ROTATIONS</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>BUILT WITH CLAUDE CODE</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>VOL 01 / ISSUE 01 &middot; APRIL 2026</span><span class="edition-ticker-dot">&bull;</span>
                 </div>
             </div>
             <div class="edition-inner">
@@ -2196,7 +2469,7 @@
                 </div>
                 <h1 class="hero-title">
                     Eight shipped tools.<br>
-                    <span class="cyan-line">Medicine, sports, AI safety.</span><br>
+                    <span class="cyan-line">Medicine, Sports, AI safety.</span><br>
                     <span class="dim-line">Built solo with AI as a force multiplier.</span>
                 </h1>
                 <h2 class="hero-byline">
@@ -2256,26 +2529,26 @@
                             </ul>
                         </section>
                         <section class="toc-col" aria-labelledby="toc-grp-2">
-                            <h3 class="toc-group" id="toc-grp-2"><span class="toc-group-dot toc-group-dot-cyan">&bull;</span>Case Studies</h3>
+                            <h3 class="toc-group" id="toc-grp-2"><span class="toc-group-dot toc-group-dot-cyan">&bull;</span>Medicine &amp; Military</h3>
                             <ul class="toc-list">
-                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;06</span><a class="toc-link" href="#project-ncaat">NCAAT Bracket</a></li>
-                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;07</span><a class="toc-link" href="#project-step2">Step 2 CK</a></li>
-                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;08</span><a class="toc-link" href="#project-masters">Masters Hub</a></li>
-                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;09</span><a class="toc-link" href="#project-handoff">Handoff Tracker</a></li>
+                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;07</span><a class="toc-link" href="#project-step2">Step 2 CK Study Engine</a></li>
+                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;09</span><a class="toc-link" href="#project-handoff">Patient Handoff Tracker</a></li>
+                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;11</span><a class="toc-link" href="#project-warrior">Warrior Ready Fitness</a></li>
+                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;13</span><a class="toc-link" href="#project-microtd">MICRO TD: Antibiotic Defense</a></li>
                             </ul>
                         </section>
                         <section class="toc-col" aria-labelledby="toc-grp-3">
-                            <h3 class="toc-group" id="toc-grp-3"><span class="toc-group-dot toc-group-dot-cyan">&bull;</span>Continued</h3>
+                            <h3 class="toc-group" id="toc-grp-3"><span class="toc-group-dot toc-group-dot-cyan">&bull;</span>Sports</h3>
                             <ul class="toc-list">
-                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;10</span><a class="toc-link" href="#project-detroit">Detroit Sports</a></li>
-                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;11</span><a class="toc-link" href="#project-warrior">Warrior Ready</a></li>
-                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;12</span><a class="toc-link" href="#project-agi">AGI Tracker</a></li>
-                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;13</span><a class="toc-link" href="#project-microtd">MICRO TD</a></li>
+                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;06</span><a class="toc-link" href="#project-ncaat">NCAAT Interactive Bracket</a></li>
+                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;08</span><a class="toc-link" href="#project-masters">Masters 2026 Tournament Hub</a></li>
+                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;10</span><a class="toc-link" href="#project-detroit">Detroit Sports Hub</a></li>
                             </ul>
                         </section>
                         <section class="toc-col" aria-labelledby="toc-grp-4">
-                            <h3 class="toc-group" id="toc-grp-4"><span class="toc-group-dot toc-group-dot-pink">&bull;</span>Also Built</h3>
+                            <h3 class="toc-group" id="toc-grp-4"><span class="toc-group-dot toc-group-dot-pink">&bull;</span>AI &amp; Also Built</h3>
                             <ul class="toc-list">
+                                <li class="toc-row"><span class="toc-page">&sect;&nbsp;12</span><a class="toc-link" href="#project-agi">AGI Capability Tracker</a></li>
                                 <li class="toc-row"><span class="toc-page">&sect;&nbsp;14</span><a class="toc-link" href="#explorables">Explorables</a></li>
                             </ul>
                             <p class="toc-col-foot">A small shelf of one-off interactive pieces. <em>Continued online.</em></p>
@@ -2379,81 +2652,78 @@
             <h3 class="section-title">The Frontier AI Risk Stack</h3>
             <p class="section-desc">A six-layer framework for understanding systemic risk in advanced AI systems. Published as an independent research paper, April 2026.</p>
 
-            <div class="research-grid">
-                <!-- Paper Card -->
-                <div class="paper-card glass-panel">
-                    <div class="paper-watermark">PAPER.01</div>
-                    <div class="paper-author-row">
-                        <div class="paper-icon">
-                            <i class="ph-bold ph-file-text"></i>
-                        </div>
-                        <div>
-                            <p class="paper-author-name">Sean Sooch</p>
-                            <p class="paper-author-meta">Independent Researcher &bull; April 2026</p>
-                        </div>
+            <p class="paper-byline">
+                By <span class="paper-byline-name">Sean Sooch</span><span class="paper-byline-sep">/</span>Independent Researcher<span class="paper-byline-sep">/</span>April 2026
+            </p>
+
+            <div class="paper-grid">
+                <div class="paper-body">
+                    <div class="paper-prose" data-technical-block>
+                        <p>This paper argues that frontier AI risk is best understood not as a single category but as a stack of six interacting risk layers: Model Risk, System Risk, Deployment Risk, Access Risk, Governance Risk, and Civilizational Risk. The most serious dangers arise not from any single layer but from the way failures compound across layers. The framework provides a structured analytical tool for policymakers, developers, and civil society.</p>
                     </div>
-                    <p class="paper-desc">
-                        <span data-technical>This paper argues that frontier AI risk is best understood not as a single category but as a stack of six interacting risk layers: Model Risk, System Risk, Deployment Risk, Access Risk, Governance Risk, and Civilizational Risk. The most serious dangers arise not from any single layer but from the way failures compound across layers. The framework provides a structured analytical tool for policymakers, developers, and civil society.</span><span data-simple>AI risk is not one problem. It is six problems stacked on top of each other: how dangerous the AI itself is, what happens when you give it tools, what happens when you deploy it in the real world, who gets access to it, whether governments can keep up, and what it all means for society long-term. The biggest dangers come from these layers making each other worse.</span>
+                    <div class="paper-prose" data-simple-block>
+                        <p>AI risk is not one problem. It is six problems stacked on top of each other: how dangerous the AI itself is, what happens when you give it tools, what happens when you deploy it in the real world, who gets access to it, whether governments can keep up, and what it all means for society long-term. The biggest dangers come from these layers making each other worse.</p>
+                    </div>
+
+                    <p class="paper-tags">
+                        <span>AI Governance</span><span class="paper-tags-sep">&middot;</span><span>Risk Taxonomy</span><span class="paper-tags-sep">&middot;</span><span>Agentic Systems</span><span class="paper-tags-sep">&middot;</span><span>AI Safety</span>
                     </p>
-                    <div class="tags-row">
-                        <span class="tag">AI Governance</span>
-                        <span class="tag">Risk Taxonomy</span>
-                        <span class="tag">Agentic Systems</span>
-                        <span class="tag">AI Safety</span>
-                    </div>
-                    <div class="paper-links">
-                        <a href="https://differential-c57.pages.dev/#analysis-section" target="_blank" rel="noopener noreferrer" class="btn-tactical btn-tactical-lg">
-                            <i class="ph-bold ph-arrow-square-out"></i>
-                            <span>Read on AGI Tracker</span>
-                        </a>
-                        <a href="https://differential-c57.pages.dev/frontier-risk-stack.pdf" target="_blank" rel="noopener noreferrer" class="btn-pdf">
-                            <i class="ph-bold ph-download-simple"></i>
-                            <span>Technical PDF</span>
-                        </a>
-                        <a href="frontier-risk-stack-simple.pdf" target="_blank" rel="noopener noreferrer" class="btn-pdf">
-                            <i class="ph-bold ph-download-simple"></i>
-                            <span>Plain Language PDF</span>
-                        </a>
+
+                    <div class="paper-actions">
+                        <a href="https://differential-c57.pages.dev/#analysis-section" target="_blank" rel="noopener noreferrer" class="paper-action-primary">Read on AGI Tracker &rarr;</a>
+                        <a href="https://differential-c57.pages.dev/frontier-risk-stack.pdf" target="_blank" rel="noopener noreferrer" class="paper-action-secondary">Download Technical PDF</a>
+                        <a href="frontier-risk-stack-simple.pdf" target="_blank" rel="noopener noreferrer" class="paper-action-secondary">Download Plain-Language PDF</a>
                     </div>
                 </div>
 
-                <!-- Interactive 6-Layer Stack -->
-                <div class="risk-stack-card glass-panel">
-                    <p class="risk-stack-label">The Six Risk Layers</p>
-                    <div class="risk-layers">
-                        <div class="risk-layer" style="background: rgba(255,0,128,0.06); border-left: 2px solid #ff0080; box-shadow: inset 3px 0 12px rgba(255,0,128,0.08);">
-                            <span class="risk-num" style="color: #ff0080; text-shadow: 0 0 8px rgba(255,0,128,0.6);">01</span>
-                            <span class="risk-name">Model Risk</span>
-                            <span class="risk-desc">Deception, unsafe knowledge, concealment</span>
-                        </div>
-                        <div class="risk-layer" style="background: rgba(255,80,0,0.06); border-left: 2px solid #ff5000; box-shadow: inset 3px 0 12px rgba(255,80,0,0.08);">
-                            <span class="risk-num" style="color: #ff5000; text-shadow: 0 0 8px rgba(255,80,0,0.6);">02</span>
-                            <span class="risk-name">System Risk</span>
-                            <span class="risk-desc">Orchestration, tool use, parallel execution</span>
-                        </div>
-                        <div class="risk-layer" style="background: rgba(255,180,0,0.06); border-left: 2px solid #ffb400; box-shadow: inset 3px 0 12px rgba(255,180,0,0.08);">
-                            <span class="risk-num" style="color: #ffb400; text-shadow: 0 0 8px rgba(255,180,0,0.6);">03</span>
-                            <span class="risk-name">Deployment Risk</span>
-                            <span class="risk-desc">Real permissions, production access, API control</span>
-                        </div>
-                        <div class="risk-layer" style="background: rgba(0,255,255,0.05); border-left: 2px solid #00ffff; box-shadow: inset 3px 0 12px rgba(0,255,255,0.07);">
-                            <span class="risk-num" style="color: #00ffff; text-shadow: 0 0 8px rgba(0,255,255,0.6);">04</span>
-                            <span class="risk-name">Access Risk</span>
-                            <span class="risk-desc">Concentration, cognitive inequality</span>
-                        </div>
-                        <div class="risk-layer" style="background: rgba(124,58,237,0.07); border-left: 2px solid #7c3aed; box-shadow: inset 3px 0 12px rgba(124,58,237,0.1);">
-                            <span class="risk-num" style="color: #a855f7; text-shadow: 0 0 8px rgba(124,58,237,0.7);">05</span>
-                            <span class="risk-name">Governance Risk</span>
-                            <span class="risk-desc">Weak audits, regulatory capture</span>
-                        </div>
-                        <div class="risk-layer" style="background: rgba(180,0,255,0.06); border-left: 2px solid #b400ff; box-shadow: inset 3px 0 12px rgba(180,0,255,0.08);">
-                            <span class="risk-num" style="color: #b400ff; text-shadow: 0 0 8px rgba(180,0,255,0.6);">06</span>
-                            <span class="risk-name">Civilizational Risk</span>
-                            <span class="risk-desc">Compounding failures across all layers</span>
-                        </div>
-                    </div>
-                    <p class="risk-stack-note">Central claim: risks compound across layers. No single layer fully explains the danger.</p>
-                </div>
+                <aside class="paper-index">
+                    <h4 class="paper-index-head">The Six Risk Layers</h4>
+                    <ol class="paper-index-list">
+                        <li class="paper-index-row">
+                            <span class="paper-index-num">&sect; 01</span>
+                            <div>
+                                <span class="paper-index-title">Model Risk</span>
+                                <span class="paper-index-note">Deception, unsafe knowledge, concealment</span>
+                            </div>
+                        </li>
+                        <li class="paper-index-row">
+                            <span class="paper-index-num">&sect; 02</span>
+                            <div>
+                                <span class="paper-index-title">System Risk</span>
+                                <span class="paper-index-note">Orchestration, tool use, parallel execution</span>
+                            </div>
+                        </li>
+                        <li class="paper-index-row">
+                            <span class="paper-index-num">&sect; 03</span>
+                            <div>
+                                <span class="paper-index-title">Deployment Risk</span>
+                                <span class="paper-index-note">Real permissions, production access, API control</span>
+                            </div>
+                        </li>
+                        <li class="paper-index-row">
+                            <span class="paper-index-num">&sect; 04</span>
+                            <div>
+                                <span class="paper-index-title">Access Risk</span>
+                                <span class="paper-index-note">Concentration, cognitive inequality</span>
+                            </div>
+                        </li>
+                        <li class="paper-index-row">
+                            <span class="paper-index-num">&sect; 05</span>
+                            <div>
+                                <span class="paper-index-title">Governance Risk</span>
+                                <span class="paper-index-note">Weak audits, regulatory capture</span>
+                            </div>
+                        </li>
+                        <li class="paper-index-row">
+                            <span class="paper-index-num">&sect; 06</span>
+                            <div>
+                                <span class="paper-index-title">Civilizational Risk</span>
+                                <span class="paper-index-note">Compounding failures across all layers</span>
+                            </div>
+                        </li>
+                    </ol>
+                    <p class="paper-index-foot">Central claim: risks compound across layers. No single layer fully explains the danger.</p>
+                </aside>
             </div>
         </section>
 
@@ -2470,19 +2740,15 @@
             <p class="section-desc" data-technical-block>External research I'm actively engaging with. Annotated with context on why each paper matters.</p>
             <p class="section-desc" data-simple-block>A curated reading list of papers, articles, and posts I'm working through, with notes on what each one says and why it matters.</p>
 
-            <a href="https://reading-room.pages.dev" target="_blank" rel="noopener noreferrer" class="reading-room-card glass-panel">
-                <div class="reading-room-inner">
-                    <div class="reading-room-icon">
-                        <i class="ph-bold ph-book-open-text"></i>
-                    </div>
-                    <div style="flex:1;">
-                        <p class="reading-room-title">Enter the Reading Room</p>
-                        <p class="reading-room-meta">Papers &bull; Tweets &bull; Blogs &bull; Annotated Commentary</p>
-                    </div>
-                    <i class="ph-bold ph-arrow-right reading-room-arrow"></i>
+            <a href="https://reading-room.pages.dev" target="_blank" rel="noopener noreferrer" class="reading-entry">
+                <div class="reading-entry-head">
+                    <span>Open &middot; External</span>
+                    <span class="reading-entry-arrow">&rarr;</span>
                 </div>
-                <p class="reading-room-desc" data-technical-block>Curated research papers, blog posts, and X threads with technical summaries, key mechanisms, and personal commentary on why each piece matters.</p>
-                <p class="reading-room-desc" data-simple-block>Papers, blog posts, and threads I've read, with plain-language summaries and my own take on why each one is worth your time.</p>
+                <p class="reading-entry-title">Enter the Reading Room</p>
+                <p class="reading-entry-dek" data-technical-block>Curated research papers, blog posts, and X threads with technical summaries, key mechanisms, and personal commentary on why each piece matters.</p>
+                <p class="reading-entry-dek" data-simple-block>Papers, blog posts, and threads I've read, with plain-language summaries and my own take on why each one is worth your time.</p>
+                <p class="reading-entry-tags">Papers &middot; Tweets &middot; Blogs &middot; Annotated Commentary</p>
             </a>
 
         </section>
@@ -2500,71 +2766,82 @@
             <p class="section-desc" data-technical-block>One thesis: the alignment problem is the most consequential question in human history. 19 essays build the philosophical case from cosmology, consciousness, identity, theology, and game theory.</p>
             <p class="section-desc" data-simple-block>19 essays making the case that AI alignment is the most important problem humanity has ever faced. Starts with the universe and ends with game theory.</p>
 
-            <div class="phil-grid">
-                <div class="phil-topics">
-                    <div class="phil-topic" style="border-color: #d4af37; box-shadow: inset 3px 0 12px rgba(212,175,55,0.06);">
-                        <span class="phil-topic-num" style="color: #d4af37;">01</span>
-                        <span class="phil-topic-name">Cosmological</span>
-                        <span class="phil-topic-meta">3 essays</span>
-                    </div>
-                    <div class="phil-topic" style="border-color: #c084fc; box-shadow: inset 3px 0 12px rgba(192,132,252,0.06);">
-                        <span class="phil-topic-num" style="color: #c084fc;">02</span>
-                        <span class="phil-topic-name">Consciousness</span>
-                        <span class="phil-topic-meta">4 essays</span>
-                    </div>
-                    <div class="phil-topic" style="border-color: #00ffff; box-shadow: inset 3px 0 12px rgba(0,255,255,0.05);">
-                        <span class="phil-topic-num" style="color: #00ffff;">03</span>
-                        <span class="phil-topic-name">AI &amp; Intelligence</span>
-                        <span class="phil-topic-meta">4 essays</span>
-                    </div>
-                    <div class="phil-topic" style="border-color: #fb923c; box-shadow: inset 3px 0 12px rgba(251,146,60,0.06);">
-                        <span class="phil-topic-num" style="color: #fb923c;">04</span>
-                        <span class="phil-topic-name">Identity &amp; Self</span>
-                        <span class="phil-topic-meta">3 essays</span>
-                    </div>
-                    <div class="phil-topic" style="border-color: #4ade80; box-shadow: inset 3px 0 12px rgba(74,222,128,0.05);">
-                        <span class="phil-topic-num" style="color: #4ade80;">05</span>
-                        <span class="phil-topic-name">Theology</span>
-                        <span class="phil-topic-meta">3 essays</span>
-                    </div>
-                    <div class="phil-topic" style="border-color: #f472b6; box-shadow: inset 3px 0 12px rgba(244,114,182,0.06);">
-                        <span class="phil-topic-num" style="color: #f472b6;">06</span>
-                        <span class="phil-topic-name">Game Theory</span>
-                        <span class="phil-topic-meta">2 essays</span>
-                    </div>
-                </div>
-
-                <div class="phil-entry-panel">
-                    <div class="phil-stats">
-                        <div class="phil-stat">
-                            <span class="phil-stat-num">19</span>
-                            <span class="phil-stat-label">Essays</span>
+            <div class="paper-grid">
+                <div class="paper-body">
+                    <div class="paper-stats">
+                        <div class="paper-stat">
+                            <span class="paper-stat-num">19</span>
+                            <span class="paper-stat-label">Essays</span>
                         </div>
-                        <div class="phil-stat">
-                            <span class="phil-stat-num">6</span>
-                            <span class="phil-stat-label">Sections</span>
+                        <div class="paper-stat">
+                            <span class="paper-stat-num">6</span>
+                            <span class="paper-stat-label">Sections</span>
                         </div>
-                        <div class="phil-stat">
-                            <span class="phil-stat-num">~30</span>
-                            <span class="phil-stat-label">Min Read</span>
+                        <div class="paper-stat">
+                            <span class="paper-stat-num">~30</span>
+                            <span class="paper-stat-label">Min Read</span>
                         </div>
                     </div>
 
-                    <a href="https://philosophy-room.pages.dev" target="_blank" rel="noopener noreferrer" class="phil-card glass-panel">
-                        <div class="phil-card-inner">
-                            <div class="phil-card-icon">
-                                <i class="ph-bold ph-atom"></i>
-                            </div>
-                            <div style="flex:1;">
-                                <p class="phil-card-title">Enter the Philosophy Room</p>
-                                <p class="phil-card-meta">Essays &bull; AI Lens &bull; Simple Mode</p>
-                            </div>
-                            <i class="ph-bold ph-arrow-right phil-card-arrow"></i>
+                    <a href="https://philosophy-room.pages.dev" target="_blank" rel="noopener noreferrer" class="reading-entry">
+                        <div class="reading-entry-head">
+                            <span>Open &middot; External</span>
+                            <span class="reading-entry-arrow">&rarr;</span>
                         </div>
-                        <p class="phil-card-desc" data-technical-block>A structured inquiry into the questions that matter most. Each essay includes an AI Lens sidebar and a Simple Mode for any reading level.</p>
-                        <p class="phil-card-desc" data-simple-block>Essays on the biggest questions: Does the universe have a purpose? What is consciousness? What does God mean in an age of AI? And why does any of it matter for our future?</p>
+                        <p class="reading-entry-title">Enter the Philosophy Room</p>
+                        <p class="reading-entry-dek" data-technical-block>A structured inquiry into the questions that matter most. Each essay includes an AI Lens sidebar and a Simple Mode for any reading level.</p>
+                        <p class="reading-entry-dek" data-simple-block>Essays on the biggest questions: Does the universe have a purpose? What is consciousness? What does God mean in an age of AI? And why does any of it matter for our future?</p>
+                        <p class="reading-entry-tags">Essays &middot; AI Lens &middot; Simple Mode</p>
                     </a>
                 </div>
+
+                <aside class="paper-index">
+                    <h4 class="paper-index-head">Six Sections</h4>
+                    <ol class="paper-index-list">
+                        <li class="paper-index-row">
+                            <span class="paper-index-num">&sect; 01</span>
+                            <div>
+                                <span class="paper-index-title">Cosmological</span>
+                                <span class="paper-index-note">3 essays</span>
+                            </div>
+                        </li>
+                        <li class="paper-index-row">
+                            <span class="paper-index-num">&sect; 02</span>
+                            <div>
+                                <span class="paper-index-title">Consciousness</span>
+                                <span class="paper-index-note">4 essays</span>
+                            </div>
+                        </li>
+                        <li class="paper-index-row">
+                            <span class="paper-index-num">&sect; 03</span>
+                            <div>
+                                <span class="paper-index-title">AI &amp; Intelligence</span>
+                                <span class="paper-index-note">4 essays</span>
+                            </div>
+                        </li>
+                        <li class="paper-index-row">
+                            <span class="paper-index-num">&sect; 04</span>
+                            <div>
+                                <span class="paper-index-title">Identity &amp; Self</span>
+                                <span class="paper-index-note">3 essays</span>
+                            </div>
+                        </li>
+                        <li class="paper-index-row">
+                            <span class="paper-index-num">&sect; 05</span>
+                            <div>
+                                <span class="paper-index-title">Theology</span>
+                                <span class="paper-index-note">3 essays</span>
+                            </div>
+                        </li>
+                        <li class="paper-index-row">
+                            <span class="paper-index-num">&sect; 06</span>
+                            <div>
+                                <span class="paper-index-title">Game Theory</span>
+                                <span class="paper-index-note">2 essays</span>
+                            </div>
+                        </li>
+                    </ol>
+                </aside>
             </div>
         </section>
 
