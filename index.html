@@ -151,6 +151,132 @@
             font-weight: 600;
         }
 
+        /* ================================================================
+           Direction B — Edition Shell (masthead + ticker + paper frame)
+           ================================================================ */
+        #hero.edition-shell {
+            min-height: 0;
+            display: block;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.14);
+            background: #0d0d14;
+            margin-bottom: 4rem;
+        }
+        #hero.edition-shell .hero-grid { display: none; }
+        #hero.edition-shell .status-badge { display: none; }
+
+        .edition-masthead {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            padding: 1.35rem 1.75rem;
+            gap: 1.5rem;
+            border-bottom: 3px double rgba(255,255,255,0.3);
+        }
+        .edition-masthead-left {
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+        }
+        .edition-brand {
+            font-family: 'Fraunces', Georgia, serif;
+            font-weight: 700;
+            font-size: clamp(1.65rem, 2.4vw, 2.2rem);
+            letter-spacing: -0.02em;
+            color: #eeeee8;
+            line-height: 1;
+        }
+        .edition-brand-sub {
+            font-family: 'Fraunces', Georgia, serif;
+            font-weight: 400;
+            font-style: italic;
+            font-size: clamp(1.1rem, 1.6vw, 1.4rem);
+            color: var(--primary);
+            letter-spacing: -0.01em;
+        }
+        .edition-masthead-center {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10.5px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(238,238,232,0.55);
+            text-align: center;
+        }
+        .edition-masthead-sep { opacity: 0.4; margin: 0 0.4rem; }
+        .edition-live {
+            justify-self: end;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.55rem;
+            padding: 0.4rem 0.8rem;
+            border: 1px solid rgba(0,255,255,0.35);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.25em;
+            color: var(--primary);
+            font-weight: 600;
+            border-radius: 0;
+        }
+        .edition-live-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 0 8px var(--primary);
+            animation: editionPulse 2s ease-out infinite;
+        }
+        @keyframes editionPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.15); }
+        }
+
+        .edition-ticker {
+            border-bottom: 1px solid rgba(255,255,255,0.14);
+            background: #000;
+            overflow: hidden;
+            position: relative;
+        }
+        .edition-ticker::before,
+        .edition-ticker::after {
+            content: '';
+            position: absolute; top: 0; bottom: 0; width: 60px;
+            z-index: 2; pointer-events: none;
+        }
+        .edition-ticker::before { left: 0; background: linear-gradient(90deg, #000, transparent); }
+        .edition-ticker::after { right: 0; background: linear-gradient(-90deg, #000, transparent); }
+        .edition-ticker-track {
+            display: inline-flex;
+            align-items: center;
+            gap: 1.25rem;
+            padding: 0.7rem 0;
+            white-space: nowrap;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            color: var(--primary);
+            text-transform: uppercase;
+            animation: editionTicker 60s linear infinite;
+        }
+        .edition-ticker-track span { font-variant-numeric: tabular-nums; }
+        .edition-ticker-dot { color: var(--secondary); opacity: 0.8; font-size: 7px; }
+        @keyframes editionTicker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .edition-inner {
+            padding: 3rem 1.75rem 2.5rem;
+            position: relative;
+        }
+
+        @media (max-width: 768px) {
+            .edition-masthead {
+                grid-template-columns: 1fr;
+                gap: 0.85rem;
+                padding: 1rem 1.1rem;
+            }
+            .edition-masthead-center, .edition-live { justify-self: start; }
+            .edition-inner { padding: 2rem 1.1rem 1.75rem; }
+        }
+
         /* Hero Title — Direction B editorial display */
         .hero-title {
             font-family: 'Fraunces', Georgia, serif;
@@ -1674,7 +1800,57 @@
     <main>
 
         <!-- HERO -->
-        <section id="hero" class="reveal">
+        <section id="hero" class="reveal edition-shell">
+            <header class="edition-masthead">
+                <div class="edition-masthead-left">
+                    <span class="edition-brand">SEANSOOCH</span>
+                    <span class="edition-brand-sub">.dev</span>
+                </div>
+                <div class="edition-masthead-center">
+                    <span>VOL. 01 &middot; ISSUE 01</span>
+                    <span class="edition-masthead-sep">&middot;</span>
+                    <span>APRIL 2026</span>
+                    <span class="edition-masthead-sep">&middot;</span>
+                    <span>THE AI-AUGMENTED PORTFOLIO</span>
+                </div>
+                <div class="edition-live">
+                    <span class="edition-live-dot"></span>
+                    <span>LIVE</span>
+                </div>
+            </header>
+            <div class="edition-ticker" aria-hidden="true">
+                <div class="edition-ticker-track">
+                    <span>LOC 81,713</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>FUNCTIONS 620</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>MEDICAL Q'S 2,245</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>PLAYERS/TEAMS 244</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>LIVE DEPLOYS 8</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>DAYS TO BUILD 24</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>NCAAT BRACKET &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>STEP 2 CK &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>MASTERS HUB &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>HANDOFF TRACKER &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>DETROIT SPORTS &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>WARRIOR READY &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>AGI TRACKER &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>MICRO TD &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>LOC 81,713</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>FUNCTIONS 620</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>MEDICAL Q'S 2,245</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>PLAYERS/TEAMS 244</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>LIVE DEPLOYS 8</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>DAYS TO BUILD 24</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>NCAAT BRACKET &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>STEP 2 CK &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>MASTERS HUB &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>HANDOFF TRACKER &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>DETROIT SPORTS &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>WARRIOR READY &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>AGI TRACKER &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
+                    <span>MICRO TD &middot; LIVE</span><span class="edition-ticker-dot">&bull;</span>
+                </div>
+            </div>
+            <div class="edition-inner">
             <div class="hero-grid"></div>
             <div class="hero-content">
                 <div class="status-badge">
@@ -1724,6 +1900,7 @@
                         <a href="#explorables" class="btn-tactical">Explorables</a>
                     </div>
                 </nav>
+            </div>
             </div>
         </section>
 
