@@ -8,13 +8,16 @@ server and no dependencies to install. Branch `main` is the site.
 ```mermaid
 flowchart LR
   subgraph Outside["Sources outside this repo (Sean's laptop)"]
-    V["~/seansooch-astra-preview<br>homepage views A and F, switcher"]
+    A["~/app-redesign/work/home-astra<br>homepage view A"]
     O["~/app-redesign/work/home-opus<br>homepage view O"]
+    V["~/seansooch-astra-preview<br>shared record, view F, switcher"]
     T["~/app-redesign/work/toolkit<br>seven tool pages"]
+    L["~/lab-decoder<br>CBC and CMP decoder"]
     E["~/app-redesign/work/ekg<br>Read This"]
     M["~/mv-last-light<br>LAST LIGHT video segments"]
   end
-  V & O & T & E & M -->|built output copied in| Repo["this repo, branch main"]
+  A & O -->|written into| V
+  V & T & L & E & M -->|built output copied in| Repo["this repo, branch main"]
   Hand["pages written by hand here"] --> Repo
   Repo -->|git push| GH["GitHub, private"]
   Repo -->|"tools/stage.sh<br>git archive minus export-ignore"| Bundle["/tmp/seansooch-bundle"]
@@ -31,7 +34,8 @@ flowchart LR
 - **The bundle** is a commit minus everything marked `export-ignore` in `.gitattributes` (Markdown, `tools/`, git
   plumbing). That file is the only definition of the difference between the repo and the site. Nothing ships from an
   uncommitted working tree, and nothing ships from a commit that holds a symlink: `tools/stage.sh` refuses both.
-- **The audit.** `tools/audit.sh` compares every file in the bundle with the live site by hash. Before a deploy its DIFF
+- **The audit.** `tools/audit.sh` compares every served file in the bundle with the live site by hash (`_headers` and
+  `_redirects` are consumed by Pages, not served, so their effect is checked by behaviour). Before a deploy its DIFF
   list should be exactly the files you meant to change; after, it should be empty.
 
 ## What is in here
@@ -41,25 +45,29 @@ flowchart LR
 | `index.html`, `two-stories/` | Homepage and essay, view A (OpenAI Astra) | No. Generated. |
 | `designs/fable/`, `designs/opus/` | The same two pages in views F and O | No. Generated. |
 | `design-switcher.css`, `design-switcher.js` | The fixed bar that switches views | No. Copied from the preview. |
-| `antibiotic-coverage/`, `calculators/`, `clinical-calculators/`, `differentials/`, `lab-values/`, `tccc/`, `toolkit/` | Field Toolkit, Edition 2 "Pocket Cards" | No. Generated. |
+| `antibiotic-coverage/`, `calculators/`, `clinical-calculators/`, `differentials/`, `lab-values/index.html`, `tccc/`, `toolkit/` | Field Toolkit, Edition 2 "Pocket Cards" | No. Generated. |
+| `lab-values/cbc-cmp/` | CBC and CMP decoder | No. Copied from `~/lab-decoder`. |
 | `ekg/index.html` | Read This, Edition 2 | No. Generated. |
 | `ekg/*.js`, `ekg/films/` | Read This data and chest films; `ekg/ARCHITECTURE.md` describes them | Yes, with care |
 | `music/index.html`, `music/last-light/index.html` | Music category and the LAST LIGHT page | Yes |
 | `music/last-light/media/` | HLS video segments (most of the repo's size) | No. Rendered elsewhere. |
 | `videos/`, `screenshots/`, `*.pdf`, `favicon.svg` | Films, card images, papers | Yes |
 | `_headers`, `_redirects`, `robots.txt`, `sitemap.xml` | Edge behaviour and crawl rules | Yes |
-| `*.md`, `tools/` | Never shipped | Yes |
+| `CNAME` | Left over from GitHub Pages; still ships | Leave it |
+| `*.md`, `tools/`, `.gitattributes`, `.gitignore` | Never shipped | Yes |
 
 A generated page is overwritten the next time its source is rebuilt, so a hand edit to one does not last. Its source is
 on Sean's laptop, outside this repo:
 
-- **Homepage, three views of one text.** Views A and F and the switcher come from `~/seansooch-astra-preview`
-  (`build-designs.py`); view O comes from `~/app-redesign/work/home-opus` (`build.py`). All three read one shared record
-  (`sources/editions.json`, `sources/corrections.json`), so a fact changes in one place and agrees in every view. That
-  folder's own `ARCHITECTURE.md` is the authority on the build order.
+- **Homepage, three views of one text.** All six pages and the switcher are assembled in `~/seansooch-astra-preview`
+  and copied here. View A's content is built in `~/app-redesign/work/home-astra`; view O is built by
+  `~/app-redesign/work/home-opus/build.py`, which writes into the preview; `build-designs.py` in the preview generates
+  view F and stamps the shared record (`sources/editions.json`, `sources/corrections.json`) into all three, so a fact
+  changes in one place and agrees in every view. The preview's own `ARCHITECTURE.md` is the authority on the build order.
 - **Field Toolkit.** `~/app-redesign/work/toolkit/build.py` writes the seven pages and `toolkit/pocket.css` from
   `src/<page>/index.html`.
-- **Read This.** `~/app-redesign/work/ekg/build.py` assembles `ekg/index.html` from four parts.
+- **Read This.** `~/app-redesign/work/ekg/build.py` assembles `ekg/index.html` from its parts.
+- **CBC and CMP decoder.** `lab-values/cbc-cmp/index.html` is a copy of `~/lab-decoder/index.html`.
 
 To change a generated page from a pull request, describe the change and name the page. Sean applies it at the source.
 
@@ -71,6 +79,11 @@ To change a generated page from a pull request, describe the change and name the
   in every deploy; it never appears in the upload receipt.
 - `www.seansooch.dev` redirects to the apex by a Cloudflare Redirect Rule, not by anything in this repo.
 - An unknown path answers **200 with the homepage**. A status code proves nothing about a deploy; compare bytes.
+
+## Third-party requests at runtime
+
+Google Fonts on most pages, and `hls.js` from cdn.jsdelivr.net (pinned by integrity hash) on `/music/last-light/`.
+Nothing else is loaded from another origin (the homepage host probes are requests whose responses are never read), and no page posts data anywhere.
 
 ## Other hosts
 
