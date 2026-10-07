@@ -4,216 +4,28 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Antibiotic Coverage Matrix | Sean Sooch</title>
-<style>
-  :root {
-    --bg: #0d1117;
-    --panel: #161b22;
-    --panel-hi: #1c2230;
-    --border: #30363d;
-    --text: #e6edf3;
-    --text-dim: #8b949e;
-    --accent: #58a6ff;
-    --full: #3fb950;
-    --partial: #d29922;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    line-height: 1.5;
-    min-height: 100vh;
-    padding: 2.5rem 1.25rem 4rem;
-  }
-  .wrap { max-width: 1100px; margin: 0 auto; }
-
-  header {
-    text-align: center;
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border);
-  }
-  header h1 {
-    font-size: clamp(1.75rem, 4vw, 2.5rem);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-  }
-  header p {
-    color: var(--text-dim);
-    font-size: 0.95rem;
-    margin-top: 0.5rem;
-    font-style: italic;
-  }
-
-  /* Controls */
-  .controls {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1.25rem;
-  }
-  .filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-  .filter-btn {
-    background: var(--panel);
-    color: var(--text-dim);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 0.5rem 0.9rem;
-    font-size: 0.82rem;
-    font-weight: 500;
-    cursor: pointer;
-    font-family: inherit;
-    transition: all 0.15s;
-  }
-  .filter-btn:hover {
-    color: var(--text);
-    border-color: var(--accent);
-  }
-  .filter-btn.active {
-    background: var(--accent);
-    color: #0d1117;
-    border-color: var(--accent);
-  }
-  .search {
-    background: var(--panel);
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 0.5rem 0.85rem;
-    font-size: 0.88rem;
-    font-family: inherit;
-    min-width: 220px;
-    flex: 1;
-    max-width: 280px;
-  }
-  .search:focus {
-    outline: none;
-    border-color: var(--accent);
-  }
-  .search::placeholder { color: var(--text-dim); }
-
-  /* Legend */
-  .legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.25rem;
-    margin-bottom: 1rem;
-    padding: 0.75rem 1rem;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 0.82rem;
-    color: var(--text-dim);
-  }
-  .legend-item { display: flex; align-items: center; gap: 0.5rem; }
-  .dot {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    display: inline-block;
-    flex-shrink: 0;
-  }
-  .dot.full    { background: var(--full);    box-shadow: 0 0 6px rgba(63,185,80,0.35); }
-  .dot.partial { background: var(--partial); box-shadow: 0 0 6px rgba(210,153,34,0.35); }
-  .dot.none {
-    background: transparent;
-    border: 1px solid var(--border);
-  }
-
-  /* Table */
-  .table-wrap {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow-x: auto;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.85rem;
-    min-width: 720px;
-  }
-  thead th {
-    background: var(--panel-hi);
-    color: var(--text);
-    font-weight: 600;
-    padding: 0.85rem 0.65rem;
-    text-align: center;
-    font-size: 0.78rem;
-    border-bottom: 1px solid var(--border);
-    white-space: nowrap;
-    position: sticky;
-    top: 0;
-  }
-  thead th.drug-col {
-    text-align: left;
-    padding-left: 1.1rem;
-  }
-  thead th .group {
-    display: block;
-    font-size: 0.64rem;
-    font-weight: 500;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 0.15rem;
-  }
-  tbody tr { border-bottom: 1px solid var(--border); }
-  tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: rgba(88,166,255,0.04); }
-  tbody td {
-    padding: 0.8rem 0.65rem;
-    text-align: center;
-  }
-  tbody td.drug-name {
-    text-align: left;
-    padding-left: 1.1rem;
-    font-weight: 500;
-    color: var(--text);
-    white-space: nowrap;
-  }
-  tbody td.drug-name .klass {
-    display: block;
-    font-size: 0.72rem;
-    font-weight: 400;
-    color: var(--text-dim);
-    margin-top: 0.1rem;
-  }
-  tbody td .dot {
-    margin: 0 auto;
-  }
-  .hidden-col { display: none; }
-  .hidden-row { display: none; }
-
-  .empty-state {
-    padding: 2rem;
-    text-align: center;
-    color: var(--text-dim);
-    font-style: italic;
-  }
-
-  footer {
-    text-align: center;
-    margin-top: 2.5rem;
-    color: var(--text-dim);
-    font-size: 0.8rem;
-  }
-  footer a { color: var(--accent); text-decoration: none; }
-  footer a:hover { text-decoration: underline; }
-
-  @media (max-width: 640px) {
-    .controls { flex-direction: column; align-items: stretch; }
-    .search { max-width: none; }
-  }
-</style>
+<meta name="description" content="Interactive antibiotic spectrum matrix: see which drugs cover which organisms, from gram-positives to anaerobes. A fast bug-drug reference for students and clinicians.">
+<link rel="canonical" href="https://seansooch.dev/antibiotic-coverage/">
+<meta name="theme-color" content="#0a0a0f">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://seansooch.dev/antibiotic-coverage/">
+<meta property="og:title" content="Antibiotic Coverage Matrix | Sean Sooch">
+<meta property="og:description" content="Interactive antibiotic spectrum matrix: which drugs cover which organisms, from gram-positives to anaerobes.">
+<meta property="og:image" content="https://seansooch.dev/screenshots/space.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="800">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Antibiotic Coverage Matrix | Sean Sooch">
+<meta name="twitter:description" content="Interactive antibiotic spectrum matrix: which drugs cover which organisms, from gram-positives to anaerobes.">
+<meta name="twitter:image" content="https://seansooch.dev/screenshots/space.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@400;700&family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/toolkit/pocket.css">
 </head>
-<body>
+<body data-tool="antibiotic-coverage">
+<!--pc:chrome--><header class="pc-bar"><div class="in"><a class="pc-home" href="/">&larr; seansooch.dev</a><a class="pc-kit" href="/toolkit/">Field Toolkit</a><nav class="pc-tools" aria-label="Tools"><a href="/calculators/"><i style="background:#1F5FA8"></i>Calculators</a><a href="/lab-values/"><i style="background:#1E7A4C"></i>Lab values</a><a href="/antibiotic-coverage/" aria-current="page"><i style="background:#6B3FA0"></i>Antibiotics</a><a href="/differentials/"><i style="background:#B86E00"></i>Differentials</a><a href="/tccc/"><i style="background:#B3261E"></i>TCCC</a></nav></div></header><div class="pc-review"><p>Some coverage cells were flagged for clinician review (site audit, 28 May 2026). Always check your local antibiogram and current guidelines.</p></div><!--/pc:chrome-->
 <div class="wrap">
   <header>
     <h1>Antibiotic Coverage Matrix</h1>
@@ -359,5 +171,6 @@
     applyFilters();
   });
 </script>
+<!--pc:chrome--><div class="pc-foot"><span>Educational reference. Not a substitute for clinical judgment.</span><span>Edition 2 by Claude Opus 5.5 · <a href="https://toolkit-v1.pages.dev/toolkit/">Edition 1</a></span></div><!--/pc:chrome-->
 </body>
 </html>

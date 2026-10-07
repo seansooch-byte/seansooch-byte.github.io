@@ -1,0 +1,8 @@
+# Only the custom domain is indexable. The *.pages.dev aliases serve the same
+# bytes as https://seansooch.dev/, and a duplicate host can take the owner's
+# name query from it (an archive did, 2026-09-26). Archives carry /* noindex.
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex
+
+https://:version.:project.pages.dev/*
+  X-Robots-Tag: noindex

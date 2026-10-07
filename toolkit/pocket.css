@@ -1,0 +1,266 @@
+/* Field Toolkit Edition 2 "Pocket Cards" (Claude Opus 5.5, 2026-09-22).
+   Laminated pocket reference cards on a scrub-ceil ground. Written from a blank page; it styles the
+   class vocabulary the Edition 1 scripts emit (those scripts and all clinical content are unchanged).
+   Style entry: ~/app-redesign/STYLES.md. */
+:root {
+  --ceil: #A9C6D8; --ceil-2: #97B8CC; --card: #FDFDFB; --card-2: #F1F4F6; --ink: #10161B; --ink-2: #3D4953; --ink-3: #66727C;
+  --rule: #D6DEE4; --rule-2: #B9C6D0; --tab: #1F5FA8; --red: #B3261E; --amber: #9A5B00; --green: #1E7A4C;
+  --display: 'Barlow Condensed', 'Arial Narrow', sans-serif; --text: 'Atkinson Hyperlegible Next', 'Atkinson Hyperlegible', system-ui, sans-serif; --mono: 'Atkinson Hyperlegible Mono', ui-monospace, Menlo, monospace;
+  --r: 12px; color-scheme: light;
+  /* Edition 1 variable names some scripts reference inline */
+  --text-dim: var(--ink-3); --accent: var(--tab); --panel: var(--card-2); --border: var(--rule);
+}
+@media (prefers-color-scheme: dark) {
+  :root { --ceil: #12202A; --ceil-2: #0D1820; --card: #1A2630; --card-2: #22303B; --ink: #E8EEF2; --ink-2: #B9C6D0; --ink-3: #8B9AA6; --rule: #2E3E4A; --rule-2: #3E5160; --red: #FF7B70; --amber: #F2B04E; --green: #6FD39C; color-scheme: dark; }
+}
+body[data-tool="calculators"], body[data-tool="clinical-calculators"] { --tab: #1F5FA8; }
+body[data-tool="lab-values"] { --tab: #1E7A4C; }
+body[data-tool="antibiotic-coverage"] { --tab: #6B3FA0; }
+body[data-tool="differentials"] { --tab: #B86E00; }
+body[data-tool="tccc"] { --tab: #B3261E; }
+@media (prefers-color-scheme: dark) {
+  body[data-tool="calculators"], body[data-tool="clinical-calculators"] { --tab: #6FA8EC; }
+  body[data-tool="lab-values"] { --tab: #6FD39C; }
+  body[data-tool="antibiotic-coverage"] { --tab: #B99AF0; }
+  body[data-tool="differentials"] { --tab: #F2B04E; }
+  body[data-tool="tccc"] { --tab: #FF7B70; }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--ceil); color: var(--ink); font: 16px/1.5 var(--text); }
+a { color: var(--tab); }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--tab); outline-offset: 2px; }
+.hidden { display: none !important; }
+h1, h2, h3 { font-family: var(--display); font-weight: 700; letter-spacing: .01em; line-height: 1.05; }
+
+/* ── Shared chrome: the lanyard strip ── */
+.pc-bar { background: var(--ceil-2); border-bottom: 1px solid rgba(16,22,27,.12); }
+.pc-bar .in { max-width: 1180px; margin: 0 auto; padding: 10px 20px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.pc-bar a { color: var(--ink); text-decoration: none; }
+.pc-home { font-size: 13px; color: var(--ink-2) !important; }
+.pc-kit { font: 700 20px var(--display); letter-spacing: .02em; text-transform: uppercase; margin-right: auto; }
+.pc-tools { display: flex; gap: 6px; flex-wrap: wrap; }
+.pc-tools a { font: 600 13px var(--text); padding: 5px 10px; border-radius: 999px; background: var(--card); border: 1px solid transparent; }
+.pc-tools a[aria-current="page"] { border-color: var(--ink); }
+.pc-tools a i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+.pc-review { max-width: 1180px; margin: 14px auto 0; padding: 0 20px; }
+.pc-review p { margin: 0; background: #FFF4D6; color: #5A3E00; border: 1px solid #E8C97A; border-radius: 10px; padding: 9px 13px; font-size: 14px; }
+@media (prefers-color-scheme: dark) { .pc-review p { background: #33290F; color: #F2D48A; border-color: #6B5520; } }
+.pc-foot { max-width: 1180px; margin: 22px auto 36px; padding: 0 20px; color: var(--ink-2); font-size: 13px; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.pc-foot a { color: var(--ink); }
+
+/* ── The card: every tool's main container ── */
+.wrap, body[data-tool="calculators"] .layout {
+  position: relative; max-width: 1180px; margin: 18px auto 0; background: var(--card); border-radius: var(--r);
+  box-shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 18px 40px -26px rgba(10,20,30,.55); padding: 26px 30px 30px 40px; overflow: hidden;
+}
+.wrap::before, body[data-tool="calculators"] .layout::before { /* colour-coded edge tab */
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 12px; background: var(--tab);
+}
+.wrap::after, body[data-tool="calculators"] .layout::after { /* lanyard hole */
+  content: ""; position: absolute; right: 18px; top: 16px; width: 18px; height: 18px; border-radius: 50%;
+  background: var(--ceil); box-shadow: inset 0 1px 3px rgba(0,0,0,.35);
+}
+.wrap > header, .wrap header:first-child { margin-bottom: 18px; padding-right: 40px; }
+.wrap header h1 { margin: 0; font-size: clamp(34px, 5vw, 52px); text-transform: uppercase; }
+.wrap header p, .wrap header .sub { margin: 6px 0 0; color: var(--ink-2); font-size: 17px; }
+.wrap header .label { font: 700 12px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--tab); }
+.accent-bar { height: 4px; width: 80px; background: var(--tab); border-radius: 2px; margin-top: 12px; }
+.wrap footer, body > footer { margin-top: 26px; padding-top: 14px; border-top: 1px solid var(--rule); color: var(--ink-3); font-size: 13.5px; }
+body > footer { max-width: 1180px; margin: 0 auto; padding: 14px 20px 0; border: 0; color: var(--ink-2); }
+body > footer a, .wrap footer a { color: var(--ink); }
+
+/* Shared controls */
+.search { width: 100%; border: 1.5px solid var(--rule-2); background: var(--card); border-radius: 10px; padding: 10px 13px; font-size: 16px; }
+.search:focus { border-color: var(--tab); outline: none; }
+.filters, .rot-filters, .tabs, .phase-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.filter, .filter-btn, .rot-btn, .tab, .phase-tab {
+  border: 1.5px solid var(--rule-2); background: var(--card); border-radius: 999px; padding: 6px 13px; font-size: 14px; font-weight: 600; color: var(--ink-2);
+}
+.filter.active, .filter-btn.active, .rot-btn.active, .tab.active, .phase-tab.active { background: var(--tab); border-color: var(--tab); color: #fff; }
+@media (prefers-color-scheme: dark) { .filter.active, .filter-btn.active, .rot-btn.active, .tab.active, .phase-tab.active { color: #0D1820; } }
+.controls { display: grid; gap: 12px; margin-bottom: 16px; }
+table { border-collapse: collapse; width: 100%; }
+.table-wrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 10px; }
+
+/* ── Hub (toolkit) ── */
+body[data-tool="toolkit"] .wrap { background: transparent; box-shadow: none; padding: 26px 20px 0; overflow: visible; }
+body[data-tool="toolkit"] .wrap::before, body[data-tool="toolkit"] .wrap::after { display: none; }
+body[data-tool="toolkit"] .wrap header h1 { font-size: clamp(40px, 7vw, 76px); }
+body[data-tool="toolkit"] .filters { margin-bottom: 18px; }
+.ring { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+.pcard {
+  --tab: #1F5FA8; position: relative; display: flex; flex-direction: column; gap: 8px; text-decoration: none; color: var(--ink);
+  background: var(--card); border-radius: var(--r); padding: 20px 22px 20px 34px; min-height: 210px; overflow: hidden;
+  box-shadow: 0 18px 40px -28px rgba(10,20,30,.6); transition: transform .15s ease, box-shadow .15s ease;
+}
+.pcard:hover { transform: translateY(-3px) rotate(-.4deg); box-shadow: 0 24px 44px -26px rgba(10,20,30,.7); }
+.pcard::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 12px; background: var(--tab); }
+.pcard::after { content: ""; position: absolute; right: 16px; top: 14px; width: 16px; height: 16px; border-radius: 50%; background: var(--ceil); box-shadow: inset 0 1px 3px rgba(0,0,0,.35); }
+.pcard .dom { font: 700 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--tab); }
+.pcard h2 { margin: 0; font-size: 30px; text-transform: uppercase; }
+.pcard p { margin: 0; color: var(--ink-2); font-size: 15px; }
+.pcard .n { margin-top: auto; display: flex; gap: 14px; font: 700 13px var(--mono); color: var(--ink-3); }
+.pcard .n b { color: var(--ink); }
+.pcard.hidden { display: none; }
+
+/* ── Calculators (19) ── */
+body[data-tool="calculators"] .topbar { max-width: 1180px; margin: 18px auto 0; padding: 0 20px; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+body[data-tool="calculators"] .topbar h1 { margin: 0; font-size: clamp(34px, 5vw, 52px); text-transform: uppercase; }
+body[data-tool="calculators"] .topbar .dim { color: var(--ink-2); font-size: .5em; letter-spacing: .04em; }
+body[data-tool="calculators"] .topbar .back { color: var(--ink); font-size: 14px; }
+body[data-tool="calculators"] .layout { display: grid; grid-template-columns: 300px 1fr; gap: 0; padding: 0 0 0 12px; }
+.sidebar { border-right: 1px solid var(--rule); padding: 18px 16px; display: grid; gap: 12px; align-content: start; max-height: 80vh; overflow-y: auto; position: sticky; top: 0; }
+.calc-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.calc-list li { padding: 8px 10px; border-radius: 8px; cursor: pointer; border-left: 3px solid transparent; font-size: 14.5px; }
+.calc-list li:hover { background: var(--card-2); }
+.calc-list li.active { background: var(--card-2); border-left-color: var(--tab); font-weight: 700; }
+.calc-list li .meta, .calc-list li small { display: block; color: var(--ink-3); font-size: 12px; font-weight: 400; }
+.empty-list { color: var(--ink-3); font-size: 14px; }
+.main { padding: 24px 30px 30px; min-width: 0; }
+.calc-head .calc-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.tag { font: 700 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; background: var(--card-2); color: var(--tab); border-radius: 999px; padding: 3px 9px; }
+.calc-head .condition { margin-top: 12px; color: var(--ink-3); font-size: 14px; }
+.calc-head h2 { margin: 2px 0 6px; font-size: 38px; text-transform: uppercase; }
+.calc-head .desc { margin: 0 0 16px; color: var(--ink-2); }
+.inputs-block { display: grid; gap: 0; border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
+.input-row { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; padding: 10px 14px; border-top: 1px solid var(--rule); }
+.input-row:first-child { border-top: 0; }
+.input-row input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--tab); }
+.input-row input[type=number] { grid-column: 3; width: 130px; border: 1.5px solid var(--rule-2); border-radius: 8px; padding: 6px 9px; font: 16px var(--mono); background: var(--card); }
+.input-row label:first-child { grid-column: 1 / 3; }
+.pts { font: 700 13px var(--mono); color: var(--ink-3); white-space: nowrap; }
+.reset { margin: 12px 0; background: none; border: 1.5px solid var(--rule-2); border-radius: 999px; padding: 6px 14px; font-weight: 600; font-size: 14px; }
+.result { border-radius: 10px; padding: 16px 18px; background: var(--card-2); border-left: 6px solid var(--rule-2); margin: 6px 0 14px; }
+.result .label { font: 700 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+.result .score { font: 700 44px/1.05 var(--mono); }
+.result .interp { color: var(--ink-2); }
+.result.low { border-left-color: var(--green); } .result.low .score { color: var(--green); }
+.result.mod { border-left-color: var(--amber); } .result.mod .score { color: var(--amber); }
+.result.high { border-left-color: var(--red); } .result.high .score { color: var(--red); }
+.result.empty { color: var(--ink-3); border-left-color: var(--rule-2); }
+.next-steps, .pitfalls { margin-top: 14px; }
+.next-steps h3, .pitfalls h3 { margin: 0 0 6px; font-size: 20px; text-transform: uppercase; color: var(--tab); }
+.next-steps ul { margin: 0; padding-left: 20px; } .next-steps li { margin: 4px 0; }
+.pitfalls p { margin: 0; color: var(--ink-2); }
+.related { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+.related a { font-size: 14px; background: var(--card-2); border-radius: 999px; padding: 5px 11px; text-decoration: none; font-weight: 600; }
+
+/* ── Clinical calculators (4, legacy page) ── */
+body[data-tool="clinical-calculators"] .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+body[data-tool="clinical-calculators"] .card { border: 1px solid var(--rule); border-radius: 10px; padding: 16px 18px; }
+body[data-tool="clinical-calculators"] .card h2 { margin: 0; font-size: 28px; text-transform: uppercase; }
+body[data-tool="clinical-calculators"] .card .sub { color: var(--ink-3); font-size: 14px; margin-bottom: 10px; }
+.inputs { display: grid; gap: 4px; margin-bottom: 10px; }
+.check { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; padding: 6px 4px; border-bottom: 1px solid var(--rule); font-size: 15px; }
+.check input { width: 18px; height: 18px; accent-color: var(--tab); }
+.num-row { display: grid; grid-template-columns: 1fr 130px; gap: 8px; align-items: center; padding: 5px 0; }
+.num-row input { border: 1.5px solid var(--rule-2); border-radius: 8px; padding: 6px 9px; font: 16px var(--mono); background: var(--card); }
+.calc { background: var(--tab); color: #fff; border: 0; border-radius: 999px; padding: 8px 18px; font-weight: 700; margin: 6px 0 10px; }
+
+/* ── Antibiotic coverage ── */
+.legend { display: flex; gap: 16px; flex-wrap: wrap; margin: 4px 0 12px; font-size: 14px; color: var(--ink-2); }
+.legend-item { display: flex; gap: 6px; align-items: center; }
+.dot { display: inline-block; width: 16px; height: 16px; border-radius: 50%; vertical-align: middle; }
+.dot.full { background: var(--green); }
+.dot.partial { background: transparent; border: 3px solid var(--amber); }
+.dot.none { background: transparent; border: 1.5px dashed var(--rule-2); }
+#matrix th, #matrix td { border-bottom: 1px solid var(--rule); padding: 8px 8px; text-align: center; font-size: 13px; }
+#matrix thead th { background: var(--card-2); font-weight: 700; position: sticky; top: 0; }
+#matrix th.drug-col, #matrix td.drug-name, #matrix td:first-child { text-align: left; position: sticky; left: 0; background: var(--card); z-index: 1; }
+#matrix thead th:first-child { z-index: 2; background: var(--card-2); }
+.drug-name { font-weight: 700; white-space: nowrap; }
+.klass, .cls { display: block; font: 600 11px var(--mono); color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; }
+#matrix tr.group td, #matrix tr.group th { background: var(--card-2); color: var(--tab); font: 700 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; text-align: left; }
+.hidden-col, .hidden-row { display: none; }
+.empty-state { padding: 26px; text-align: center; color: var(--ink-3); }
+#matrix tbody tr:hover td { background: var(--card-2); }
+
+/* ── Differentials ── */
+body[data-tool="differentials"] .search-row { margin-bottom: 14px; }
+body[data-tool="differentials"] .layout { display: grid; grid-template-columns: 260px 1fr; gap: 20px; align-items: start; }
+body[data-tool="differentials"] .sidebar { border: 1px solid var(--rule); border-radius: 10px; padding: 8px; max-height: 70vh; position: sticky; top: 10px; gap: 2px; }
+.complaint-btn { display: block; width: 100%; text-align: left; background: none; border: 0; border-radius: 8px; padding: 8px 10px; font-size: 15px; color: var(--ink-2); border-left: 3px solid transparent; }
+.complaint-btn:hover { background: var(--card-2); }
+.complaint-btn.active { background: var(--card-2); color: var(--ink); font-weight: 700; border-left-color: var(--tab); }
+.no-complaints, .panel-empty { color: var(--ink-3); padding: 12px; }
+.panel h2 { margin: 0; font-size: 40px; text-transform: uppercase; }
+.panel-sub { margin: 4px 0 16px; color: var(--ink-3); }
+.tier { border-top: 1px solid var(--rule); padding: 14px 0; }
+.tier-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.tier-title { font: 700 22px var(--display); text-transform: uppercase; letter-spacing: .02em; }
+.tier-badge { font: 700 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; border-radius: 999px; padding: 3px 9px; }
+.badge-red { background: var(--red); color: #fff; }
+.badge-white { background: var(--card-2); color: var(--ink); border: 1px solid var(--rule-2); }
+.badge-dim { color: var(--ink-3); border: 1px dashed var(--rule-2); }
+.tier.must .tier-title { color: var(--red); }
+.pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.pill { background: var(--card-2); border-radius: 999px; padding: 6px 12px; font-size: 14.5px; }
+.tier.must .pill { background: color-mix(in srgb, var(--red) 12%, var(--card)); color: var(--ink); border: 1px solid color-mix(in srgb, var(--red) 40%, transparent); font-weight: 600; }
+.tier.also .pill { background: transparent; border: 1px dashed var(--rule-2); color: var(--ink-2); }
+.pill.match { outline: 2px solid var(--tab); }
+.tier.empty-tier { display: none; }
+
+/* ── Lab values ── */
+.feature-link { display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; text-decoration: none; color: var(--ink); border: 1.5px solid var(--tab); border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; }
+.fl-tag { font: 700 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; background: var(--tab); color: #fff; border-radius: 999px; padding: 3px 9px; }
+.fl-title { display: block; font: 700 22px var(--display); text-transform: uppercase; }
+.fl-sub { display: block; color: var(--ink-2); font-size: 14px; }
+.fl-arrow { font-size: 22px; color: var(--tab); }
+#labtable th { text-align: left; font: 700 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); background: var(--card-2); padding: 9px 12px; }
+#labtable td { padding: 9px 12px; border-top: 1px solid var(--rule); vertical-align: top; font-size: 15px; }
+#labtable td.lab { font-weight: 700; }
+#labtable td.abbr { font: 600 14px var(--mono); color: var(--ink-2); }
+#labtable td.range { font: 700 15px var(--mono); white-space: nowrap; }
+#labtable td.flag { color: var(--ink-2); font-size: 14px; }
+#labtable td.flag b { color: var(--red); }
+td.units, thead th.units-h { display: none; }
+.sys-chip { display: none; font: 700 10px var(--mono); letter-spacing: .08em; background: var(--card-2); color: var(--tab); border-radius: 999px; padding: 2px 7px; margin-right: 8px; vertical-align: 2px; }
+.empty { padding: 20px; color: var(--ink-3); text-align: center; }
+
+/* ── TCCC ── */
+body[data-tool="tccc"] .phase-tabs { margin-bottom: 14px; }
+.march { display: grid; gap: 10px; }
+.step { border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
+.step-head { display: grid; grid-template-columns: 56px 1fr auto; gap: 14px; align-items: center; padding: 12px 14px; cursor: pointer; }
+.step-head:hover { background: var(--card-2); }
+.letter { width: 48px; height: 48px; border-radius: 10px; background: var(--tab); color: #fff; display: grid; place-items: center; font: 700 30px var(--display); }
+.step-title h2 { margin: 0; font-size: 26px; text-transform: uppercase; }
+.step-title p { margin: 2px 0 0; color: var(--ink-3); font-size: 14px; }
+.chevron { color: var(--ink-3); transition: transform .15s; }
+.step.open .chevron { transform: rotate(90deg); }
+.step-body { display: none; padding: 0 16px 16px 84px; }
+.step.open .step-body { display: block; }
+.threat { font: 700 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--tab); margin-bottom: 6px; }
+.actions { margin: 0 0 10px; padding-left: 20px; } .actions li { margin: 4px 0; }
+.notes { background: var(--card-2); border-radius: 8px; padding: 10px 12px; color: var(--ink-2); font-size: 14.5px; }
+.drugs { margin-top: 24px; }
+.drugs h2 { font-size: 30px; text-transform: uppercase; margin: 0 0 10px; }
+.drug-table { border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
+.drug-table th { text-align: left; font: 700 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); background: var(--card-2); padding: 9px 12px; }
+.drug-table td { padding: 10px 12px; border-top: 1px solid var(--rule); vertical-align: top; font-size: 15px; }
+.drug-table td.name { font-weight: 700; }
+.drug-table td.dose { font: 700 15px var(--mono); color: var(--tab); white-space: nowrap; }
+.drug-table td.note { color: var(--ink-2); font-size: 14px; }
+
+/* ── Phones ── */
+@media (max-width: 800px) {
+  .wrap, body[data-tool="calculators"] .layout { margin: 12px 10px 0; padding: 20px 16px 22px 26px; }
+  body[data-tool="calculators"] .layout, body[data-tool="differentials"] .layout { grid-template-columns: 1fr; padding-left: 12px; }
+  .sidebar, body[data-tool="differentials"] .sidebar { position: static; max-height: 260px; border-right: 0; border-bottom: 1px solid var(--rule); }
+  .main { padding: 18px 12px; }
+  body[data-tool="clinical-calculators"] .grid { grid-template-columns: 1fr; }
+  .step-body { padding-left: 16px; }
+  .drug-table, .drug-table tbody, .drug-table tr, .drug-table td { display: block; width: 100%; }
+  .drug-table thead { display: none; }
+  .drug-table tr { border-top: 1px solid var(--rule); padding: 8px 0; }
+  .drug-table td { border: 0; padding: 3px 12px; }
+  #labtable td.flag { min-width: 220px; }
+  .pc-bar .in { padding: 8px 12px; gap: 10px; }
+  .pc-tools { width: 100%; overflow-x: auto; flex-wrap: nowrap; }
+  .pc-tools a { flex: none; }
+}
+@media (prefers-reduced-motion: reduce) { .pcard { transition: none; } }

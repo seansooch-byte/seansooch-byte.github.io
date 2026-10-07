@@ -1,0 +1,1801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Read This | Sean Sooch</title>
+<meta name="description" content="Learn to read EKGs and chest X-rays: rhythm strips, a step-by-step 12-lead approach, MI localization, and interpretation drills.">
+<link rel="canonical" href="https://seansooch.dev/ekg/">
+<meta name="theme-color" content="#0D1014">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://seansooch.dev/ekg/">
+<meta property="og:title" content="Read This: EKG and CXR Trainer | Sean Sooch">
+<meta property="og:description" content="Rhythm strips, a step-by-step 12-lead approach, MI localization, and chest X-ray interpretation drills.">
+<meta property="og:image" content="https://seansooch.dev/screenshots/ekg.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Read This: EKG and CXR Trainer | Sean Sooch">
+<meta name="twitter:description" content="Rhythm strips, a step-by-step 12-lead approach, MI localization, and chest X-ray interpretation drills.">
+<meta name="twitter:image" content="https://seansooch.dev/screenshots/ekg.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   Read This, Edition 2 "Reading Room" (Claude Opus 5.5, September 2026)
+
+   A radiology reading room. The room is dark; the strip or film sits on a
+   bright lightbox; the read is dictated as a report that fills in step by
+   step. Three zones: WORKLIST (pick the study), LIGHTBOX (look), REPORT (say
+   what you see). Newsreader for the voice, DM Mono for every measurement.
+   The room lights can come on (light mode); the lightbox never changes.
+   ========================================================================== */
+:root {
+  --room: #0D1014; --room-2: #13181D; --line: #242C34; --line-2: #313B45;
+  --ink: #E8E5DE; --ink-2: #A3AAB1; --ink-3: #6D767F;
+  --box: #F3F0E8; --box-2: #E9E4D8; --box-ink: #1B1B1A; --box-ink-2: #58544D; --box-ink-3: #8C877D; --box-line: #D6CFC1;
+  --red: #D2473B; --cyan: #7FB7C9; --amber: #D9A441; --ok: #2F7D52; --bad: #B8382D;
+  /* engine tokens (read by the canvas painters through getCss) */
+  --paper: #FFF3EF; --paper-line: #F3BCB3; --paper-line-bold: #E27E71; --trace-ink: #1A1416; --green: #56E08A;
+  --serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --mono: "DM Mono", ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+:root[data-lights="on"] {
+  --room: #E4E1DA; --room-2: #ECE9E3; --line: #CEC8BD; --line-2: #BDB6A9;
+  --ink: #1C1E21; --ink-2: #4D5359; --ink-3: #7B8289;
+  --box: #FFFFFF; --box-2: #F4F1EA;
+  color-scheme: light;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; background: var(--room); color: var(--ink); }
+body { font: 400 16px/1.5 var(--serif); -webkit-font-smoothing: antialiased; min-height: 100vh; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.k { font: 500 10.5px/1.3 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+.hidden { display: none !important; }
+
+/* ---------- the room: top bar ---------- */
+.topbar { display: grid; grid-template-columns: auto 1fr auto auto; align-items: center; gap: 12px 28px; padding: 14px 22px; border-bottom: 1px solid var(--line); }
+.home { font: 500 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); text-decoration: none; }
+.home:hover { color: var(--cyan); }
+.brand { display: flex; align-items: baseline; gap: 14px; min-width: 0; }
+.brand h1 { margin: 0; font: 500 30px/1 var(--serif); letter-spacing: -.01em; }
+.brand p { margin: 0; font: italic 400 15px/1.2 var(--serif); color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* film-jacket tabs: a label on a folder edge; the lit one is the open study */
+.jackets { display: flex; gap: 6px; }
+.jackets button { display: flex; align-items: baseline; gap: 8px; padding: 8px 14px 7px; border: 1px solid var(--line-2); font: 500 17px/1 var(--serif); color: var(--ink-2); }
+.jackets button .n { font: 500 10px/1 var(--mono); letter-spacing: .1em; color: var(--ink-3); }
+.jackets button:hover { color: var(--ink); border-color: var(--ink-3); }
+.jackets button[aria-selected="true"] { background: var(--box); color: var(--box-ink); border-color: var(--box); }
+.jackets button[aria-selected="true"] .n { color: var(--red); }
+.lights { font: 500 10.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); border: 1px solid var(--line-2); padding: 8px 10px; }
+.lights:hover { color: var(--ink); }
+.calbar { padding: 7px 22px; border-bottom: 1px solid var(--line); font: 400 11px/1.4 var(--mono); letter-spacing: .06em; color: var(--ink-3); }
+.calbar b { color: var(--ink-2); font-weight: 500; }
+@media (max-width: 980px) {
+  .topbar { grid-template-columns: 1fr auto; }
+  .brand { grid-column: 1 / -1; order: -1; }
+  .brand p { display: none; }
+  .jackets { grid-column: 1 / -1; overflow-x: auto; order: 2; }
+  .jackets button { flex: 0 0 auto; }
+}
+
+/* ---------- three zones ---------- */
+.reading { display: grid; grid-template-columns: 250px minmax(0, 1fr) 400px; min-height: calc(100vh - 110px); }
+.worklist { border-right: 1px solid var(--line); background: var(--room-2); display: flex; flex-direction: column; min-width: 0; }
+.lightbox { padding: 18px 22px 28px; min-width: 0; }
+.report { border-left: 1px solid var(--line); padding: 18px 20px 28px; min-width: 0; }
+@media (max-width: 1240px) {
+  .reading { grid-template-columns: 230px minmax(0, 1fr); }
+  .report { grid-column: 2; border-left: 0; border-top: 1px solid var(--line); }
+}
+@media (max-width: 760px) {
+  .reading { grid-template-columns: 1fr; }
+  .worklist { border-right: 0; border-bottom: 1px solid var(--line); }
+  .wl-list { max-height: 34vh; }
+  .report { grid-column: auto; }
+  .lightbox, .report { padding-left: 16px; padding-right: 16px; }
+  .topbar, .calbar { padding-left: 16px; padding-right: 16px; }
+  /* a 12-lead squeezed to phone width is unreadable: keep it at reading size and let it scroll */
+  #screen12 { overflow-x: auto; }
+  #screen12 canvas { width: 720px !important; max-width: none; }
+}
+
+/* worklist */
+.wl-head { padding: 14px 14px 10px; border-bottom: 1px solid var(--line); display: grid; gap: 10px; }
+.wl-list { overflow-y: auto; padding: 4px 0 12px; flex: 1; }
+.wl-cat { padding: 14px 14px 5px; }
+.wl-row { display: grid; grid-template-columns: 22px 1fr auto; gap: 8px; align-items: baseline; width: 100%; text-align: left; padding: 7px 14px 7px 12px; border-left: 2px solid transparent; font: 400 15px/1.25 var(--serif); color: var(--ink-2); }
+.wl-row .no { font: 400 10.5px/1 var(--mono); color: var(--ink-3); }
+.wl-row .mk { font: 500 11px/1 var(--mono); }
+.wl-row:hover { color: var(--ink); background: color-mix(in srgb, var(--ink) 5%, transparent); }
+.wl-row[aria-current="true"] { color: var(--box-ink); background: var(--box); border-left-color: var(--red); }
+.wl-row[aria-current="true"] .no { color: var(--box-ink-3); }
+.sev { display: inline-block; width: 7px; height: 7px; margin-right: 2px; vertical-align: 1px; }
+.sev.benign { background: var(--ink-3); } .sev.warning { background: var(--amber); } .sev.lethal { background: var(--red); }
+.session { padding: 16px 14px; display: grid; gap: 14px; }
+.session .tally { font: 400 13px/1.5 var(--mono); color: var(--ink-2); }
+.session .tally b { color: var(--ink); font-weight: 500; }
+.session ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+.session li { font: 400 14px/1.3 var(--serif); color: var(--ink-2); display: flex; gap: 8px; }
+.session li .mk { font: 500 11px/1.4 var(--mono); width: 14px; }
+.ok { color: var(--ok); } .bad { color: var(--bad); }
+:root:not([data-lights="on"]) .session .ok { color: #6FCF97; } :root:not([data-lights="on"]) .session .bad { color: #F08A7E; }
+
+/* segmented controls: words between hairlines */
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line-2); }
+.seg button { font: 500 10.5px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); padding: 8px 10px; border-right: 1px solid var(--line-2); }
+.seg button:last-child { border-right: 0; }
+.seg button:hover { color: var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--room); }
+
+/* lightbox: the study on a bright panel */
+.viewer { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.viewer .k b { color: var(--ink); font-weight: 500; }
+.panel { background: var(--box); padding: 14px; border: 1px solid var(--box-line); }
+.screen { position: relative; }
+.screen canvas { display: block; width: 100%; }
+.screen-head { display: flex; justify-content: space-between; gap: 10px; padding: 0 0 8px; font: 500 10.5px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--box-ink-2); }
+.screen.paper { background: var(--box); border: 1px solid var(--box-line); padding: 12px 14px 14px; }
+.screen.monitor { background: #000; padding: 8px 10px 10px; }
+.screen.monitor .screen-head { color: var(--green); }
+.strip-hint { padding-top: 8px; font: 400 10.5px/1.4 var(--mono); letter-spacing: .04em; color: var(--box-ink-2); }
+.screen.film { background: #07080A; padding: 8px 10px 10px; }
+.screen.film .screen-head { color: #9FB0C4; }
+.screen.film canvas.cxr-film { display: block; width: 100%; max-width: 480px; height: auto; margin: 0 auto; image-rendering: auto; }
+.film-img { display: flex; justify-content: center; }
+.film-img img { max-width: 100%; max-height: 580px; height: auto; display: block; }
+.film-credit { font: 400 10.5px/1.4 var(--mono); color: #7A8796; text-align: right; padding-top: 8px; }
+.film-credit a { color: #A9B7C6; }
+.lead-tag, .rate-tag { font: inherit; }
+.caption { margin-top: 10px; font: italic 400 14px/1.45 var(--serif); color: var(--ink-2); }
+.method { margin-top: 16px; max-width: 70ch; display: grid; gap: 6px; }
+.method p { margin: 0; font: 400 15.5px/1.55 var(--serif); color: var(--ink-2); }
+
+/* ---------- the report ---------- */
+.sheet { background: var(--box); color: var(--box-ink); border: 1px solid var(--box-line); padding: 18px 20px 20px; }
+.sheet .k { color: var(--box-ink-3); }
+.rep-head { border-bottom: 1px solid var(--box-line); padding-bottom: 12px; margin-bottom: 12px; }
+.rep-head h2 { margin: 6px 0 0; font: 500 26px/1.1 var(--serif); letter-spacing: -.005em; }
+.flags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.flag { font: 500 10px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; padding: 5px 6px 4px; border: 1px solid currentColor; color: var(--box-ink-2); }
+.flag.warning { color: #9A6B12; } .flag.lethal { color: var(--bad); } .flag.shock { background: var(--bad); color: #fff; border-color: var(--bad); }
+.findings { margin: 0; display: grid; }
+.findings > div { display: grid; grid-template-columns: 112px 1fr; gap: 10px; padding: 7px 0; border-bottom: 1px dotted var(--box-line); }
+.findings dt { font: 500 10.5px/1.6 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--box-ink-3); }
+.findings dd { margin: 0; font: 400 15.5px/1.4 var(--serif); }
+.impression { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--box-ink); }
+.impression h3 { margin: 0 0 4px; font: 500 10.5px/1.3 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--box-ink-3); }
+.impression p { margin: 0; font: 500 18px/1.4 var(--serif); }
+.note { margin: 12px 0 0; font: 400 15px/1.45 var(--serif); color: var(--box-ink-2); }
+.note b { color: var(--box-ink); font-weight: 600; }
+.note.lead { color: #8A5D0E; }
+.src { margin-top: 12px; font: 400 11px/1.4 var(--mono); color: var(--box-ink-3); }
+.src a { color: var(--box-ink-2); }
+
+/* step list: the dictation, one line per step, filling in */
+.steps { list-style: none; margin: 0; padding: 0; }
+.st { border-bottom: 1px dotted var(--box-line); }
+.st-line { display: grid; grid-template-columns: 22px 112px 1fr 16px; gap: 8px; align-items: baseline; padding: 8px 0; }
+.st .n { font: 400 11px/1 var(--mono); color: var(--box-ink-3); }
+.st .lab { font: 500 10.5px/1.5 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--box-ink-3); }
+.st .ans { font: 400 15.5px/1.4 var(--serif); }
+.st .mk { font: 500 12px/1 var(--mono); text-align: right; }
+.st.todo .lab { color: color-mix(in srgb, var(--box-ink-3) 55%, transparent); }
+.st.cur { border-left: 3px solid var(--red); margin-left: -20px; padding-left: 17px; background: var(--box-2); border-bottom: 1px solid var(--box-line); }
+.st.cur .lab { color: var(--box-ink); }
+.st-body { padding: 0 0 14px 30px; }
+.q { margin: 0 0 6px; font: 500 19px/1.3 var(--serif); }
+.how { margin: 0 0 12px; font: 400 14.5px/1.5 var(--serif); color: var(--box-ink-2); }
+.opts { display: grid; gap: 6px; margin: 8px 0 4px; }
+.opt { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: baseline; text-align: left; padding: 8px 10px; border: 1px solid var(--box-line); background: var(--box); font: 400 15.5px/1.3 var(--serif); color: var(--box-ink); }
+.opt .key { font: 400 10.5px/1 var(--mono); color: var(--box-ink-3); }
+.opt:hover:not(:disabled) { border-color: var(--box-ink); }
+.opt:disabled { cursor: default; }
+.opt.correct { border-color: var(--ok); box-shadow: inset 3px 0 0 var(--ok); }
+.opt.wrong { border-color: var(--bad); box-shadow: inset 3px 0 0 var(--bad); color: var(--bad); }
+.answer { margin-top: 10px; padding: 10px 12px; border: 1px solid var(--box-line); background: var(--box); }
+.answer .v { font: 500 16.5px/1.4 var(--serif); margin-top: 3px; }
+.answer.missed { border-color: var(--bad); }
+.acts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.act { font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; padding: 10px 12px; border: 1px solid var(--box-ink); color: var(--box-ink); }
+.act.primary { background: var(--box-ink); color: var(--box); }
+.act:hover { background: var(--box-ink); color: var(--box); }
+.act .kbd { opacity: .6; margin-left: 6px; }
+.verdict { margin: 0 0 10px; font: 500 17px/1.35 var(--serif); }
+.score-line { font: 400 12px/1.4 var(--mono); color: var(--box-ink-2); }
+.score-line b { color: var(--box-ink); font-weight: 500; }
+
+/* reference drawer */
+.ref { margin-top: 16px; border: 1px solid var(--line-2); }
+.ref summary { cursor: pointer; padding: 10px 12px; font: 500 10.5px/1.3 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); list-style: none; }
+.ref summary::-webkit-details-marker { display: none; }
+.ref summary::before { content: "+ "; color: var(--ink-3); }
+.ref[open] summary::before { content: "\2212 "; }
+.ref-body { padding: 4px 12px 14px; border-top: 1px solid var(--line-2); }
+.ref-block { margin-top: 14px; }
+.ref-block h4 { margin: 0 0 6px; font: 500 10.5px/1.3 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+.ref-block p { margin: 0; font: 400 14.5px/1.5 var(--serif); color: var(--ink-2); }
+.ref-table { width: 100%; border-collapse: collapse; font: 400 14px/1.35 var(--serif); }
+.ref-table th { text-align: left; font: 500 10px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); padding: 6px 6px 6px 0; border-bottom: 1px solid var(--line-2); }
+.ref-table td { padding: 6px 6px 6px 0; border-bottom: 1px solid var(--line); vertical-align: top; color: var(--ink-2); }
+.ref-note { margin-top: 8px; font: italic 400 13.5px/1.45 var(--serif); color: var(--amber); }
+
+.foot { border-top: 1px solid var(--line); padding: 16px 22px 30px; display: flex; flex-wrap: wrap; gap: 10px 28px; font: 400 11px/1.5 var(--mono); color: var(--ink-3); }
+.foot a { color: var(--ink-2); }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a class="home" href="/">&larr; seansooch.dev</a>
+  <div class="brand"><h1>Read This</h1><p>Read it the same way every time.</p></div>
+  <nav class="jackets" id="moduleSwitch" role="tablist" aria-label="Studies">
+    <button role="tab" data-mod="rhythms" aria-selected="true"><span class="n">01</span>Rhythm strip</button>
+    <button role="tab" data-mod="read" aria-selected="false"><span class="n">02</span>12-lead ECG</button>
+    <button role="tab" data-mod="cxr" aria-selected="false"><span class="n">03</span>Chest film</button>
+  </nav>
+  <button class="lights" id="lights" type="button">Lights on</button>
+</header>
+<div class="calbar" id="calLine">Calibration <b>25 mm/s</b> &middot; <b>10 mm/mV</b> &middot; small box 0.04 s / 0.1 mV &middot; big box 0.20 s</div>
+
+<!-- STUDY 01: RHYTHM STRIP -->
+<section class="reading module" id="mod-rhythms">
+  <aside class="worklist" aria-label="Rhythm worklist">
+    <div class="wl-head">
+      <span class="k">Worklist &middot; 28 rhythms</span>
+      <div class="seg" id="rMode"><button data-mode="learn" aria-pressed="true">Study</button><button data-mode="quiz" aria-pressed="false">Quiz</button></div>
+    </div>
+    <nav class="wl-list" id="wlR"></nav>
+    <div class="session hidden" id="sessR"></div>
+  </aside>
+  <main class="lightbox">
+    <div class="viewer">
+      <span class="k" id="viewR"></span>
+      <div class="seg" id="rRender"><button data-render="monitor" aria-pressed="true">Monitor</button><button data-render="strip" aria-pressed="false">Printed strip</button></div>
+    </div>
+    <div class="screen" id="screenR"></div>
+    <div class="method">
+      <span class="k">Method</span>
+      <p>Read every strip in the same order: rate, regularity, P waves, PR interval, QRS width. Rate: 300 divided by the large boxes between two R waves (1500 by small boxes for precision). If the rhythm is irregular, count the QRS complexes in 6 seconds (30 large boxes) and multiply by 10.</p>
+    </div>
+  </main>
+  <article class="report" aria-live="polite"><div class="sheet" id="reportR"></div></article>
+</section>
+
+<!-- STUDY 02: 12-LEAD ECG -->
+<section class="reading module hidden" id="mod-read">
+  <aside class="worklist" aria-label="12-lead worklist">
+    <div class="wl-head">
+      <span class="k">Worklist &middot; 12-lead cases</span>
+      <div class="seg" id="eMode"><button data-rmode="guided" aria-pressed="true">Guided</button><button data-rmode="quiz" aria-pressed="false">Quiz</button></div>
+    </div>
+    <nav class="wl-list" id="wlE"></nav>
+  </aside>
+  <main class="lightbox">
+    <div class="viewer"><span class="k" id="viewE"></span></div>
+    <div class="screen paper" id="screen12"></div>
+    <details class="ref"><summary>Reference &middot; axis, leads, MI localization</summary><div class="ref-body" id="refBody"></div></details>
+  </main>
+  <article class="report" aria-live="polite"><div class="sheet" id="reportE"></div></article>
+</section>
+
+<!-- STUDY 03: CHEST FILM -->
+<section class="reading module hidden" id="mod-cxr">
+  <aside class="worklist" aria-label="Chest film worklist">
+    <div class="wl-head">
+      <span class="k">Worklist &middot; chest films</span>
+      <div class="seg" id="cMode"><button data-cmode="guided" aria-pressed="true">Guided</button><button data-cmode="quiz" aria-pressed="false">Quiz</button><button data-cmode="recognize" aria-pressed="false">Real films</button></div>
+      <div class="seg hidden" id="cRecog"><button data-rec="spot" aria-pressed="true">Spot it</button><button data-rec="read" aria-pressed="false">Full read</button></div>
+    </div>
+    <nav class="wl-list" id="wlC"></nav>
+  </aside>
+  <main class="lightbox">
+    <div class="viewer"><span class="k" id="viewC"></span></div>
+    <div class="screen film" id="screenCXR"></div>
+    <details class="ref"><summary>Reference &middot; RIPE adequacy, key signs, review areas</summary><div class="ref-body" id="cxrRefBody"></div></details>
+  </main>
+  <article class="report" aria-live="polite"><div class="sheet" id="reportC"></div></article>
+</section>
+
+<footer class="foot">
+  <span>Read This &middot; Edition 2, &ldquo;Reading Room&rdquo;, designed by Claude Opus 5.5, September 2026</span>
+  <span>Engines and clinical data from Edition 1 (Claude Opus 4.8 to Fable 5), unchanged &middot; <a href="https://ekg-v1.pages.dev">Edition 1, retired with honors</a></span>
+  <span>Sources: LITFL, Radiopaedia, Radiology Masterclass, StatPearls, ECGpedia, AHA; films CC0 / CC-BY-SA via Wikimedia Commons</span>
+  <span>Keys: 1 to 7 choose &middot; Enter next &middot; L lights</span>
+</footer>
+
+<script src="rhythms.js"></script>
+<script src="reads.js"></script>
+<script src="cxr.js"></script>
+<script src="cxr-films.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* ---------------- ENGINES (12-lead: Edition 1, verbatim, canvas label font swapped to DM Mono; rhythm strip and chest film: Edition 2) ---------------- */
+  /* ============================================================
+     RHYTHM STRIP: synthesis, paper and monitor (Edition 2 engine, Claude Opus 5.5, 2026-09-23)
+     Replaces Edition 1's rhythm engine. The shared helpers the 12-lead engine uses (gauss,
+     setupCanvas, gridPaper, getCss and the FS / MM_PER_S / MM_PER_MV / PX_PER_MM calibration)
+     keep their names and signatures.
+     What changed and why:
+     - Beats are drawn from VERTICES (onset, q, R, S, J) joined by straight slopes and rounded by a
+       3 ms smoothing kernel, which is what a real QRS looks like; Edition 1 summed bell curves, so
+       every complex was a round hump and VT looked like a sine wave. P and T are asymmetric
+       (T rises slowly and falls fast); QT follows the rate (Bazett, QTc 0.40 s).
+     - Every render flag in rhythms.js is honoured (Edition 1 ignored t.discordant, p.pseudo and
+       fusionBeats). Rhythm-specific signals: fibrillatory waves, sawtooth flutter locked to
+       conduction, torsades twisting continuously through the baseline, coarse VF built from
+       wandering oscillators, needle-thin pacing spikes (the strip is synthesized at 1000 Hz).
+     - A printed strip is real ECG paper: 1 mV calibration pulse, 3-second marks, 6 s of rhythm,
+       and calipers (drag to measure an interval and its rate). The monitor sweeps with an erase
+       bar over a 2-minute buffer, like a bedside monitor, instead of scrolling a 14 s loop.
+     Calibration is exact: 25 mm/s, 10 mm/mV, 1 small box 0.04 s / 0.1 mV. Every interval is
+     taken from the rhythm's render data and measures correctly with the calipers.
+     ============================================================ */
+  const RHYTHMS = window.RHYTHMS;
+  const FS = 400;                 // sample rate shared with the 12-lead engine (Hz)
+  const MM_PER_S = 25;            // paper speed
+  const MM_PER_MV = 10;           // gain
+  const PX_PER_MM = 4;            // logical px per mm
+  const WIN_S = 6;                // a rhythm strip is 6 seconds
+
+  // ── shared with the 12-lead engine ──
+  function gauss(buf, tc, amp, sigma) {
+    const n = buf.length, span = sigma * 4;
+    let i0 = Math.floor((tc - span) * FS), i1 = Math.ceil((tc + span) * FS);
+    if (i0 < 0) i0 = 0; if (i1 > n - 1) i1 = n - 1;
+    const inv = 1 / (2 * sigma * sigma);
+    for (let i = i0; i <= i1; i++) { const d = i / FS - tc; buf[i] += amp * Math.exp(-d * d * inv); }
+  }
+  function getCss(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+  function setupCanvas(cv, wMm, hMm) {
+    const dpr = window.devicePixelRatio || 1;
+    const w = wMm * PX_PER_MM, h = hMm * PX_PER_MM;
+    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+    cv.style.width = '100%'; cv.style.aspectRatio = (w / h).toFixed(3);
+    const ctx = cv.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx, w, h };
+  }
+  // ECG paper: 1 mm boxes in a light line, 5 mm boxes in a darker one, snapped to device pixels
+  function gridPaper(ctx, w, h) {
+    ctx.fillStyle = getCss('--paper'); ctx.fillRect(0, 0, w, h);
+    const dpr = ctx.getTransform().a || 1, snap = v => (Math.round(v * dpr) + 0.5) / dpr;
+    const lines = (step, width, color) => {
+      ctx.lineWidth = width; ctx.strokeStyle = color; ctx.beginPath();
+      for (let x = 0; x <= w + 0.1; x += step) { const X = snap(x); ctx.moveTo(X, 0); ctx.lineTo(X, h); }
+      for (let y = 0; y <= h + 0.1; y += step) { const Y = snap(y); ctx.moveTo(0, Y); ctx.lineTo(w, Y); }
+      ctx.stroke();
+    };
+    lines(PX_PER_MM, 0.55, getCss('--paper-line'));
+    lines(PX_PER_MM * 5, 1.15, getCss('--paper-line-bold'));
+  }
+
+  // ── synthesis ──
+  const RFS = 1000;               // the rhythm strip is synthesized at 1 kHz (pacing spikes are ~2 ms)
+  function seeded(str) {
+    let h = 2166136261;
+    for (let i = 0; i < str.length; i++) h = Math.imul(h ^ str.charCodeAt(i), 16777619);
+    let a = h >>> 0;
+    return () => { a = (a + 0x6d2b79f5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  }
+  // asymmetric raised cosine: rises over skew of dur, falls over the rest
+  function bump(buf, onset, dur, amp, skew) {
+    const i0 = Math.round(onset * RFS), n = Math.max(2, Math.round(dur * RFS)), up = Math.max(1, Math.round(n * (skew == null ? 0.5 : skew)));
+    for (let k = 0; k <= n; k++) {
+      const i = i0 + k; if (i < 0 || i >= buf.length) continue;
+      const y = k < up ? 0.5 - 0.5 * Math.cos(Math.PI * k / up) : 0.5 + 0.5 * Math.cos(Math.PI * (k - up) / (n - up));
+      buf[i] += amp * y;
+    }
+  }
+  // straight segments between vertices [[t, mV], ...] (t relative to onset, seconds)
+  function vertices(buf, onset, pts) {
+    for (let j = 0; j < pts.length - 1; j++) {
+      const [t0, v0] = pts[j], [t1, v1] = pts[j + 1];
+      const i0 = Math.round((onset + t0) * RFS), i1 = Math.round((onset + t1) * RFS);
+      for (let i = i0; i < i1; i++) if (i >= 0 && i < buf.length) buf[i] += v0 + (v1 - v0) * (i - i0) / Math.max(1, i1 - i0);
+    }
+  }
+  function smooth(buf, sigmaMs) {
+    const s = sigmaMs / 1000 * RFS, R = Math.ceil(s * 3), k = [];
+    let sum = 0; for (let j = -R; j <= R; j++) { const v = Math.exp(-j * j / (2 * s * s)); k.push(v); sum += v; }
+    const out = new Float32Array(buf.length);
+    for (let i = 0; i < buf.length; i++) {
+      let acc = 0;
+      for (let j = -R; j <= R; j++) acc += buf[Math.min(buf.length - 1, Math.max(0, i + j))] * k[j + R];
+      out[i] = acc / sum;
+    }
+    return out;
+  }
+
+  // QRS shapes as vertices, for width W (s) and amplitude A (mV); lead II unless the rhythm names V1/V6
+  const QRS_SHAPES = {
+    normal: (W, A) => [[0, 0], [0.1 * W, -0.07 * A], [0.45 * W, A], [0.72 * W, -0.22 * A], [W, 0]],
+    'rsr-prime': (W, A) => [[0, 0], [0.16 * W, 0.32 * A], [0.34 * W, -0.3 * A], [0.62 * W, 0.2 * A], [0.74 * W, 0.85 * A], [0.9 * W, 0.2 * A], [W, 0]],
+    'notched-r': (W, A) => [[0, 0], [0.18 * W, 0.55 * A], [0.36 * W, 0.92 * A], [0.48 * W, 0.76 * A], [0.64 * W, A], [0.86 * W, 0.35 * A], [W, 0]],
+    delta: (W, A) => [[0, 0], [0.4 * W, 0.3 * A], [0.6 * W, A], [0.8 * W, -0.12 * A], [W, 0]],
+    wide: (W, A) => [[0, 0], [0.12 * W, -0.08 * A], [0.3 * W, 0.55 * A], [0.5 * W, A], [0.66 * W, 0.45 * A], [0.84 * W, -0.3 * A], [W, 0]],
+    bizarre: (W, A) => [[0, 0], [0.18 * W, -0.3 * A], [0.42 * W, 0.85 * A], [0.56 * W, 0.62 * A], [0.74 * W, A], [0.9 * W, 0.2 * A], [W, 0]],
+    'paced-lbbb': (W, A) => [[0, 0], [0.2 * W, 0.25 * A], [0.52 * W, A], [0.72 * W, 0.82 * A], [0.9 * W, 0.3 * A], [W, 0]],
+  };
+  const dominant = pts => pts.reduce((m, p) => (Math.abs(p[1]) > Math.abs(m) ? p[1] : m), 0);
+
+  // one beat: b = { q: QRS onset (s), W, A, morph, p: {amp, dur, inverted} | null, pr (s), t: {amp, dur, discordant}, rr, pseudo, spike }
+  function beat(buf, b, spikes) {
+    const W = b.W, pts = (QRS_SHAPES[b.morph] || QRS_SHAPES.normal)(W, b.A);
+    if (b.pseudo) pts.splice(pts.length - 1, 1, [W * 0.92, -0.02 * b.A], [W + 0.012, -0.14 * b.A], [W + 0.03, 0]);   // retrograde P as a pseudo-S
+    if (b.p) bump(buf, b.q - b.pr, b.p.dur, (b.p.inverted ? -1 : 1) * b.p.amp, 0.5);
+    if (b.spike) spikes.push(b.q - 0.004);
+    vertices(buf, b.q, pts);
+    if (b.t && b.t.amp) {
+      const amp = b.t.discordant ? -Math.sign(dominant(pts)) * Math.abs(b.t.amp) : b.t.amp;
+      const qt = Math.max(0.4 * Math.sqrt(Math.min(1.6, b.rr)), W + 0.06 + b.t.dur);   // Bazett, QTc 0.40 s
+      bump(buf, b.q + qt - b.t.dur, b.t.dur, amp, 0.62);
+    }
+  }
+
+  // Everything a strip shows, from render data only. Returns the signal plus annotations (QRS onsets).
+  function synth(rhythm, seconds, seed) {
+    const r = rhythm.render || {}, type = r.rhythm || 'regular';
+    const rnd = seeded(rhythm.id + ':' + (seed || 0));
+    const n = Math.ceil(seconds * RFS);
+    let buf = new Float32Array(n);
+    const spikes = [], beats = [];
+    const rr0 = r.rateBpm ? 60 / r.rateBpm : 0.8;
+    const q0 = r.qrs || { width: 90, amp: 1.2 };
+    const P = r.p && r.p.present ? { amp: r.p.amp == null ? 0.15 : r.p.amp, dur: (r.p.dur || 90) / 1000, inverted: !!r.p.inverted } : null;
+    const PR = typeof r.pr === 'number' ? r.pr / 1000 : 0.16;
+    const T = r.t ? { amp: r.t.amp == null ? 0.3 : r.t.amp, dur: (r.t.dur || 160) / 1000, discordant: !!r.t.discordant } : null;
+    const base = over => Object.assign({ W: (q0.width || 90) / 1000, A: q0.amp == null ? 1.2 : q0.amp, morph: q0.morph || 'normal', p: P, pr: PR, t: T, rr: rr0, spike: !!r.mode, pseudo: !!(r.p && r.p.pseudo) }, over);
+    const push = b => { beats.push(b); beat(buf, b, spikes); };
+    const sinusJitter = () => 1 + (rnd() - 0.5) * 0.03;   // normal heart-rate variability, about 1.5%
+
+    if (type === 'flat') {
+      // asystole: a wandering line, nothing organized
+      const wv = r.wander || 0.02;
+      for (let i = 0; i < n; i++) { const t = i / RFS; buf[i] = wv * Math.sin(2 * Math.PI * 0.21 * t) + wv * 0.6 * Math.sin(2 * Math.PI * 0.07 * t + 1); }
+    } else if (type === 'chaotic') {
+      // VF: wandering oscillators (3 to 8 Hz) with random-walk amplitude and harmonics; no complexes, no two waves alike
+      const coarse = r.amplitude === 'coarse', amp = coarse ? 0.5 : 0.18;
+      const osc = [0, 1, 2, 3].map(() => ({ ph: rnd() * 6.28, f: 3.6 + rnd() * 3.2, fm: 0, am: 0.6 + rnd() * 0.4 }));
+      for (let i = 0; i < n; i++) {
+        let v = 0;
+        for (const o of osc) {
+          o.fm = 0.995 * o.fm + (rnd() - 0.5) * 0.35;                         // frequency drifts
+          o.am = Math.max(0.1, Math.min(1.4, o.am + (rnd() - 0.5) * 0.012));   // amplitude drifts
+          o.ph += 2 * Math.PI * Math.max(2.5, o.f + o.fm) / RFS;
+          v += o.am * (Math.sin(o.ph) + 0.3 * Math.sin(2 * o.ph + o.f));
+        }
+        buf[i] = amp * v / 2.4;
+      }
+    } else if (type === 'torsades') {
+      // polymorphic VT: complexes twist around the baseline, amplitude and polarity swinging every few beats
+      const f = 1 / rr0, Ptw = (r.twistPeriodBeats || 8) * rr0, A = q0.amp || 1.6;
+      let ph = rnd() * 6.28;
+      for (let i = 0; i < n; i++) {
+        const t = i / RFS; ph += 2 * Math.PI * f * (1 + 0.06 * Math.sin(2 * Math.PI * t / 1.7)) / RFS;
+        const env = Math.cos(2 * Math.PI * t / Ptw) * 0.85 + 0.15 * Math.sin(2 * Math.PI * t / (Ptw * 0.37));
+        buf[i] = A * env * (Math.sin(ph) + 0.32 * Math.sin(2 * ph + 0.7)) / 1.2;
+      }
+    } else if (type === 'dissociated') {
+      // complete heart block: P waves march through at their own rate, escape QRS at another
+      const pp = 60 / (r.atrialRate || 80);
+      for (let t = rnd() * pp; t < seconds; t += pp) if (P) bump(buf, t, P.dur, P.amp, 0.5);
+      for (let t = 0.25 + rnd() * rr0 * 0.5; t < seconds; t += rr0) push(base({ q: t, p: null }));
+    } else if (rhythm.id === 'aflutter' || r.flutterRate) {
+      // flutter: inverted sawtooth F waves (lead II); every Nth wave conducts at a fixed coupling
+      const fp = 60 / (r.flutterRate || 300), conduction = r.conduction || 2, off = rnd() * fp;
+      for (let i = 0; i < n; i++) { const u = ((i / RFS + off) / fp) % 1; buf[i] += 0.22 * (u < 0.7 ? 0.5 - u / 0.7 : -0.5 + (u - 0.7) / 0.3); }
+      for (let k = 0, t0 = fp - off + 0.2 * fp; t0 < seconds; k++, t0 += fp) if (k % conduction === 0) push(base({ q: t0 + 0.14, p: null, rr: fp * conduction, t: T && { amp: T.amp * 0.7, dur: T.dur, discordant: T.discordant } }));
+    } else if (type === 'grouped' && r.block) {
+      // second-degree block: P at a constant rate; Wenckebach lengthens the PR then drops, Mobitz II drops without warning
+      const bl = r.block, [A] = (bl.ratio || '4:3').split(':').map(Number);
+      for (let t = 0.25 + rnd() * 0.2, g = 0; t < seconds; t += rr0, g = (g + 1) % A) {
+        const dropped = g === A - 1;
+        const pr = bl.type === 'wenckebach' ? ((bl.prStart || 160) + g * (bl.prIncrement || 50)) / 1000 : PR;
+        if (dropped) { if (P) bump(buf, t, P.dur, P.amp, 0.5); continue; }
+        push(base({ q: t + pr, pr, rr: rr0 }));
+      }
+    } else {
+      // everything else is a list of beats: regular, respiratory, multifocal, fibrillating, or with ectopics
+      const e = r.ectopic;
+      let t = 0.25 + rnd() * 0.3, i = 0;
+      while (t < seconds + 1) {
+        if (type === 'irregular' && r.respiratory) {
+          push(base({ q: t })); t += rr0 * (1 + (r.ppVariation || 0.2) * Math.sin(2 * Math.PI * t / 4));
+        } else if (type === 'irregular' && r.p && r.p.multifocal) {
+          // at least three P morphologies, each with its own PR
+          const k = Math.floor(rnd() * r.p.multifocal);
+          const shapes = [{ amp: 0.15, dur: 0.09 }, { amp: 0.23, dur: 0.07 }, { amp: 0.11, dur: 0.08, inverted: true }, { amp: 0.09, dur: 0.11 }];
+          push(base({ q: t, p: shapes[k % shapes.length], pr: 0.12 + k * 0.04 })); t += rr0 * (0.72 + rnd() * 0.56);
+        } else if (type === 'irregular') {
+          // atrial fibrillation: no P, irregularly irregular (no two RR alike, no pattern)
+          push(base({ q: t, p: null })); t += rr0 * (0.55 + rnd() * 0.9);
+        } else if (e && i > 0 && i % (e.every || 6) === 0) {
+          const early = t - rr0 * 0.42;
+          if (e.type === 'pvc') {
+            const pv = r.pvcQrs || { width: 150, amp: 1.8, morph: 'wide' };
+            push(base({ q: early, p: null, W: pv.width / 1000, A: pv.amp, morph: pv.morph || 'wide', t: { amp: 0.45, dur: 0.18, discordant: true } }));
+          } else if (e.type === 'pjc') push(base({ q: early, p: { amp: 0.1, dur: 0.07, inverted: true }, pr: 0.09 }));
+          else push(base({ q: early, p: { amp: 0.13, dur: 0.08 }, pr: 0.15 }));        // PAC: an early, differently shaped P
+          if (e.pause === 'noncompensatory') t = early + rr0;                          // the SA node resets: the next beat is one RR after the ectopic
+          else {
+            // compensatory: the sinus impulse due now fires on time but meets refractory tissue and is not
+            // conducted (its P hides in the ectopic's ST-T); the next conducted beat lands two RRs after the last normal one
+            if (e.type === 'pvc' && P) bump(buf, t - PR, P.dur, P.amp, 0.5);
+            t += rr0;
+          }
+          i++; continue;
+        } else if (r.fusionBeats && i > 0 && i % 7 === 0) {
+          // AIVR: a sinus beat occasionally captures part of the ventricle (fusion): P, then an intermediate QRS
+          push(base({ q: t, p: { amp: 0.14, dur: 0.09 }, pr: 0.12, W: ((q0.width || 140) / 1000 + 0.09) / 2, A: (q0.amp || 1.4) * 0.8, morph: 'normal' }));
+          t += rr0;
+        } else {
+          push(base({ q: t })); t += rr0 * (P ? sinusJitter() : 1);
+        }
+        i++;
+      }
+      if (rhythm.render && rhythm.render.fibWaves || rhythm.id === 'afib') {
+        // fibrillatory baseline: coarse waves at 350 to 450 per minute, no two alike
+        const osc = [0, 1, 2].map(() => ({ ph: rnd() * 6.28, f: 5.6 + rnd() * 1.9 }));
+        const a = r.fibWaves === 'fine' ? 0.025 : 0.05;
+        for (let j = 0; j < n; j++) { const tt = j / RFS; let v = 0; for (const o of osc) { o.ph += 2 * Math.PI * (o.f + 0.6 * Math.sin(tt * 1.3 + o.f)) / RFS; v += Math.sin(o.ph); } buf[j] += a * v; }
+      }
+    }
+
+    // the smoothing that turns vertices into a trace, then wander and a little muscle noise
+    buf = smooth(buf, type === 'chaotic' || type === 'torsades' ? 5 : 3);
+    if (type !== 'flat') {
+      const ph = rnd() * 6.28;
+      let nz = 0;
+      for (let i = 0; i < n; i++) {
+        const t = i / RFS; nz = 0.85 * nz + (rnd() - 0.5) * 0.012;
+        buf[i] += 0.025 * Math.sin(2 * Math.PI * 0.22 * t + ph) + 0.012 * Math.sin(2 * Math.PI * 0.09 * t) + nz;
+      }
+    }
+    // pacing spikes: needle-thin, drawn after smoothing so they stay sharp
+    const sp = (r.spike && r.spike.amp) || 2;
+    for (const s of spikes) for (let k = 0; k < 2; k++) { const i = Math.round(s * RFS) + k; if (i >= 0 && i < n) buf[i] += sp; }
+    return { sig: buf, beats, spikes };
+  }
+
+  // ── printed strip: calibration pulse, 6 s of rhythm, 3-second marks, calipers ──
+  const CAL_MM = 12, STRIP_H = 44, BASE_Y = 0.6;
+  const stripW = () => CAL_MM + WIN_S * MM_PER_S;
+  function drawStrip(ctx, w, h, sig, lead) {
+    gridPaper(ctx, w, h);
+    const ink = getCss('--trace-ink'), px = PX_PER_MM, y0 = h * BASE_Y;
+    const yOf = v => Math.max(1.5, Math.min(h - 1.5, y0 - v * MM_PER_MV * px));
+    ctx.strokeStyle = ink; ctx.lineWidth = 1.35; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    // standardization: a 1 mV, 200 ms square pulse before the rhythm (10 mm tall, 5 mm wide)
+    ctx.beginPath();
+    ctx.moveTo(1.5 * px, y0); ctx.lineTo(3 * px, y0); ctx.lineTo(3 * px, y0 - 10 * px); ctx.lineTo(8 * px, y0 - 10 * px); ctx.lineTo(8 * px, y0); ctx.lineTo(CAL_MM * px, y0);
+    ctx.stroke();
+    ctx.beginPath();
+    for (let i = 0; i < sig.length; i++) {
+      const x = (CAL_MM + (i / RFS) * MM_PER_S) * px, y = yOf(sig[i]);
+      i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+    }
+    ctx.stroke();
+    // print: lead, 3-second marks along the top, settings
+    ctx.fillStyle = ink; ctx.font = '600 11px "DM Mono", ui-monospace, monospace'; ctx.textBaseline = 'top';
+    ctx.fillText(lead, 3 * px, 2.5 * px);
+    ctx.lineWidth = 1.4;
+    for (let s = 0; s <= WIN_S; s += 3) { const x = (CAL_MM + s * MM_PER_S) * px; ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 2.5 * px); ctx.stroke(); }
+    ctx.font = '500 9px "DM Mono", ui-monospace, monospace'; ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+    ctx.fillText('25 mm/s   10 mm/mV', w - 2 * px, h - 1.2 * px);
+    ctx.textAlign = 'left';
+  }
+
+  function renderStrip(cv, rhythm) {
+    const wMm = stripW(), hMm = STRIP_H;
+    const { ctx, w, h } = setupCanvas(cv, wMm, hMm);
+    const { sig } = synth(rhythm, WIN_S, 1);
+    const lead = (rhythm.render && rhythm.render.lead) || 'II';
+    // cache the printed strip; calipers are drawn over it
+    const dpr = ctx.getTransform().a || 1;
+    const printed = document.createElement('canvas'); printed.width = cv.width; printed.height = cv.height;
+    const pc = printed.getContext('2d'); pc.setTransform(dpr, 0, 0, dpr, 0, 0);
+    drawStrip(pc, w, h, sig, lead);
+    let a = null, b = null;
+    const paint = () => {
+      ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(printed, 0, 0); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      if (a === null || b === null || Math.abs(b - a) < 2) return;
+      const x0 = Math.min(a, b), x1 = Math.max(a, b), sec = (x1 - x0) / (MM_PER_S * PX_PER_MM);
+      ctx.strokeStyle = '#2F55C8'; ctx.fillStyle = '#2F55C8'; ctx.lineWidth = 1.2; ctx.setLineDash([4, 3]);
+      ctx.beginPath(); ctx.moveTo(x0, 6); ctx.lineTo(x0, h); ctx.moveTo(x1, 6); ctx.lineTo(x1, h); ctx.stroke(); ctx.setLineDash([]);
+      ctx.beginPath(); ctx.moveTo(x0, 14); ctx.lineTo(x1, 14); ctx.stroke();
+      const label = Math.round(sec * 1000) + ' ms  ·  ' + (60 / sec).toFixed(0) + ' /min  ·  ' + (sec / 0.04).toFixed(1) + ' small boxes';
+      ctx.font = '600 10.5px "DM Mono", ui-monospace, monospace'; ctx.textBaseline = 'middle';
+      const tw = ctx.measureText(label).width + 10, lx = Math.min(w - tw - 2, Math.max(2, (x0 + x1) / 2 - tw / 2));
+      ctx.fillStyle = 'rgba(255,255,255,.94)'; ctx.fillRect(lx, 18, tw, 16);
+      ctx.strokeStyle = '#2F55C8'; ctx.strokeRect(lx + 0.5, 18.5, tw - 1, 15);
+      ctx.fillStyle = '#2F55C8'; ctx.fillText(label, lx + 5, 26.5);
+    };
+    const xAt = ev => { const r = cv.getBoundingClientRect(); return (ev.clientX - r.left) / r.width * w; };
+    cv.style.touchAction = 'pan-y'; cv.style.cursor = 'crosshair';
+    cv.addEventListener('pointerdown', ev => { a = b = xAt(ev); cv.setPointerCapture(ev.pointerId); paint(); });
+    cv.addEventListener('pointermove', ev => { if (ev.buttons && a !== null) { b = xAt(ev); paint(); } });
+    cv.addEventListener('dblclick', () => { a = b = null; paint(); });
+    paint();
+  }
+
+  // ── bedside monitor: erase-bar sweep over a 2-minute buffer ──
+  let animId = null;
+  function renderMonitor(cv, rhythm) {
+    cancelAnimationFrame(animId);
+    const wMm = WIN_S * MM_PER_S, hMm = STRIP_H;
+    const { ctx, w, h } = setupCanvas(cv, wMm, hMm);
+    const LOOP = 120, { sig, beats } = synth(rhythm, LOOP, 2), total = sig.length;
+    const green = getCss('--green') || '#56E08A', y0 = h * BASE_Y, px = PX_PER_MM, pxS = MM_PER_S * px;
+    const yOf = v => Math.max(2, Math.min(h - 2, y0 - v * MM_PER_MV * px));
+    const qrsTimes = beats.map(b => b.q);
+    let t = 0, last = performance.now(), flash = 0, nextBeat = 0;
+    const lead = (rhythm.render && rhythm.render.lead) || 'II';
+    function frame(now) {
+      const dt = Math.min(0.05, (now - last) / 1000); last = now; t += dt;
+      const sweep = t % WIN_S, cycle = Math.floor(t / WIN_S), headX = sweep * pxS, gap = 6 * px;
+      ctx.fillStyle = '#020604'; ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = 'rgba(86,224,138,.10)';
+      for (let x = 0; x <= w; x += 5 * px) for (let y = 0; y <= h; y += 5 * px) ctx.fillRect(x - 0.6, y - 0.6, 1.2, 1.2);
+      const sample = x => {   // the time shown at column x: this sweep left of the head, the last sweep right of it
+        const tt = (x <= headX ? cycle : cycle - 1) * WIN_S + x / pxS;
+        return sig[((Math.round(tt * RFS) % total) + total) % total];
+      };
+      const path = (x0, x1) => { ctx.beginPath(); for (let x = x0; x <= x1; x += 0.75) { const y = yOf(sample(x)); x === x0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); } };
+      for (const [lw, alpha] of [[4.5, 0.18], [1.7, 1]]) {
+        ctx.strokeStyle = green; ctx.globalAlpha = alpha; ctx.lineWidth = lw; ctx.lineJoin = 'round';
+        path(0, headX); ctx.stroke();
+        if (cycle > 0 && headX + gap < w) { path(headX + gap, w); ctx.stroke(); }
+      }
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = '#d8ffe6'; ctx.beginPath(); ctx.arc(headX, yOf(sample(headX)), 2.2, 0, Math.PI * 2); ctx.fill();
+      // beat indicator: flashes as each QRS reaches the sweep head
+      const tl = t % LOOP;
+      while (nextBeat < qrsTimes.length && qrsTimes[nextBeat] < tl) { flash = 1; nextBeat++; }
+      if (tl < 0.05) nextBeat = 0;
+      flash = Math.max(0, flash - dt * 5);
+      ctx.fillStyle = green; ctx.font = '600 11px "DM Mono", ui-monospace, monospace'; ctx.textBaseline = 'top';
+      ctx.fillText(lead + '   x1', 3 * px, 2.2 * px);
+      ctx.textAlign = 'right'; ctx.fillText('25 mm/s', w - 3 * px, 2.2 * px);
+      ctx.globalAlpha = 0.25 + flash * 0.75; ctx.fillText('♥', w - 3 * px, h - 5 * px); ctx.globalAlpha = 1; ctx.textAlign = 'left';
+      animId = requestAnimationFrame(frame);
+    }
+    animId = requestAnimationFrame(frame);
+  }
+
+  function screenMarkup(rhythm, mode) {
+    const lead = rhythm.render && rhythm.render.lead ? rhythm.render.lead : 'II';
+    return '<div class="screen-head"><span class="lead-tag">LEAD ' + lead + '</span><span class="rate-tag">' + rhythm.rate + '</span></div><canvas></canvas>'
+      + (mode === 'strip' ? '<div class="strip-hint">Drag across the strip to measure with calipers &middot; double-click to clear</div>' : '');
+  }
+  function paintScreen(screenEl, rhythm, renderMode) {
+    cancelAnimationFrame(animId);
+    screenEl.className = 'screen ' + (renderMode === 'strip' ? 'paper' : 'monitor');
+    screenEl.innerHTML = screenMarkup(rhythm, renderMode);
+    const cv = screenEl.querySelector('canvas');
+    if (renderMode === 'strip') renderStrip(cv, rhythm); else renderMonitor(cv, rhythm);
+  }
+
+
+  /* ================= READ THE EKG ================= */
+  const READS = window.ECG_READS;
+  const LEAD_ANGLE = { I: 0, II: 60, III: 120, aVR: -150, aVL: -30, aVF: 90 };
+  const PRECORDIAL_RDOM = { V1: -0.8, V2: -0.4, V3: 0.15, V4: 0.7, V5: 1.0, V6: 0.9 };
+  const PRECORDIAL_T = { V1: -0.05, V2: 0.30, V3: 0.40, V4: 0.45, V5: 0.40, V6: 0.30 };
+
+  // one P-QRS-T complex for a single lead with explicit q/r/s amplitudes + ST offset
+  function drawComplex(buf, center, o) {
+    const w = (o.qrsWidth || 90) / 1000;
+    const st = o.stOffset || 0;
+    const qrsEnd = center + w * 0.55;
+    const tCenter = center + Math.min(0.40, (o.qt ? (o.qt / 1000) * 0.62 : 0.30));
+    let tAmp = o.tAmp || 0;
+    if (o.morph === 'wide') {                   // wide QRS: BBB / ventricular - slurred, monophasic-dominant
+      const net = (o.rAmp || 0) - (o.sAmp || 0);
+      const amp = Math.abs(net) < 0.25 ? (net >= 0 ? 0.9 : -0.9) : net;
+      gauss(buf, center - w * 0.18, amp * 0.55, w * 0.36);
+      gauss(buf, center + w * 0.24, amp * 0.98, w * 0.42);
+      if (amp >= 0) gauss(buf, center + w * 0.62, -Math.abs(amp) * 0.18, w * 0.24);
+      tAmp = -Math.sign(amp) * Math.max(0.18, Math.abs(tAmp));  // discordant T
+    } else {                                    // normal narrow QRS: explicit q / r / s
+      if (o.qAmp) gauss(buf, center - w * 0.42, -Math.abs(o.qAmp), w * 0.10);
+      if (o.rAmp) gauss(buf, center - w * 0.05, o.rAmp, w * 0.16);
+      if (o.sAmp) gauss(buf, center + w * 0.32, -Math.abs(o.sAmp), w * 0.16);
+    }
+    if (st) {                                   // ST segment baseline shift (elevation/depression)
+      const i0 = Math.max(0, Math.floor(qrsEnd * FS));
+      const i1 = Math.min(buf.length - 1, Math.ceil(tCenter * FS));
+      for (let i = i0; i <= i1; i++) {
+        const ramp = Math.min(1, (i / FS - qrsEnd) / 0.02);
+        buf[i] += st * Math.max(0, ramp);
+      }
+    }
+    if (tAmp) gauss(buf, tCenter, tAmp + st * 0.5, (o.tDur || 160) / 1000 / 5);
+  }
+
+  // deterministic PRNG so every lead of a case shares identical beat timing (true simultaneity)
+  function mulberry32(seed) {
+    return function () {
+      seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function caseSeed(r) {
+    return Math.round((r.rateBpm || 75) * 7 + (r.axisDeg || 0) * 3 + (r.rhythm || 'sinus').length * 131);
+  }
+
+  // beat centers + whether each carries a normal sinus P, deterministic across leads
+  function beatList(r, seconds) {
+    const type = r.rhythm || 'sinus';
+    const rr = 60 / (r.rateBpm || 75);
+    const beats = [];
+    if (type === 'afib') {
+      const rnd = mulberry32(caseSeed(r));
+      let t = 0.2 + rnd() * rr;
+      while (t < seconds) { beats.push({ c: t, p: false }); t += rr * (0.55 + rnd() * 0.9); }
+    } else if (type === 'aflutter') {
+      const step = (r.conduction || 2) * (60 / (r.flutterRate || 300));
+      for (let t = 0.25; t < seconds; t += step) beats.push({ c: t, p: false });
+    } else {                                    // sinus / junctional / ventricular: regular
+      const pPresent = (type === 'sinus');
+      for (let t = 0.18 + rr * 0.5; t < seconds; t += rr) beats.push({ c: t, p: pPresent });
+    }
+    return beats;
+  }
+
+  // per-lead amplitude of fibrillatory / flutter baseline (biggest where atrial vector projects)
+  const FIB_SCALE = { V1: 1.0, II: 0.55, III: 0.5, aVF: 0.5, V2: 0.6, I: 0.3, aVL: 0.25, aVR: 0.3, V3: 0.4, V4: 0.3, V5: 0.25, V6: 0.2 };
+  const FLUTTER_SCALE = { II: 1.0, III: 1.0, aVF: 0.95, V1: 0.7, aVR: 0.6, I: 0.15, aVL: 0.15, V2: 0.4, V3: 0.3, V4: 0.25, V5: 0.2, V6: 0.2 };
+  function addFib(buf, lead) {
+    const k = (FIB_SCALE[lead] || 0.3), rnd = mulberry32(7919 + lead.charCodeAt(0));
+    for (let i = 0; i < buf.length; i++) {
+      const t = i / FS;
+      buf[i] += k * (0.04 * Math.sin(t * 2 * Math.PI * 7.5 + Math.sin(t * 13)) + (rnd() - 0.5) * 0.03);
+    }
+  }
+  function addFlutter(buf, lead, rate) {
+    const k = (FLUTTER_SCALE[lead] || 0.3), f = rate / 60;
+    for (let i = 0; i < buf.length; i++) {
+      const ph = (i / FS * f) % 1;
+      buf[i] += k * (ph < 0.7 ? -ph / 0.7 : (ph - 0.7) / 0.3 * 2 - 1) * 0.12;
+    }
+  }
+
+  // synthesize one lead of a 12-lead case
+  function synthLead(c, lead, seconds) {
+    const r = c.render;
+    const type = r.rhythm || 'sinus';
+    const buf = new Float32Array(Math.ceil(seconds * FS));
+    if (type === 'afib') addFib(buf, lead);
+    if (type === 'aflutter') addFlutter(buf, lead, r.flutterRate || 300);
+    let rAmp, sAmp, qAmp, tAmp, pAmp;
+    if (LEAD_ANGLE[lead] !== undefined) {                 // limb lead: frontal-plane projection
+      const proj = Math.cos((r.axisDeg - LEAD_ANGLE[lead]) * Math.PI / 180);
+      if (proj >= 0) { rAmp = 1.0 * proj + 0.12; sAmp = 0.08; qAmp = 0.04; }
+      else { rAmp = 0.07; sAmp = 1.0 * (-proj) + 0.12; qAmp = 0.02; }
+      const sgn = proj >= 0 ? 1 : -1;
+      tAmp = 0.28 * sgn * Math.min(1, Math.abs(proj) + 0.4);
+      pAmp = 0.12 * sgn * Math.min(1, Math.abs(proj) + 0.5);
+    } else {                                              // precordial: R-wave progression profile
+      let rdom = (r.rDom && r.rDom[lead] !== undefined) ? r.rDom[lead] : PRECORDIAL_RDOM[lead];
+      if (rdom >= 0) { rAmp = rdom + 0.12; sAmp = Math.max(0.04, 0.5 - rdom * 0.45); qAmp = rdom > 0.6 ? 0.05 : 0; }
+      else { rAmp = Math.max(0.06, 0.32 + rdom * 0.22); sAmp = -rdom + 0.12; qAmp = 0; }
+      tAmp = PRECORDIAL_T[lead];
+      pAmp = 0.08;
+    }
+    // atrial enlargement: tall peaked P (RAE) in inferior / right-sided leads
+    let pSigma = 0.018;
+    if (r.chamber === 'rae' && pAmp > 0) { pAmp *= (FLUTTER_SCALE[lead] || 0.3) * 2.4 + 0.3; pSigma = 0.014; }
+    const st = (r.st && r.st[lead]) || 0;
+    const morph = r.qrsMorph === 'wide' ? 'wide' : 'normal';
+    const beats = beatList(r, seconds);
+    for (const b of beats) {
+      if (b.p && pAmp) gauss(buf, b.c - (r.pr || 160) / 1000 - 0.01, pAmp, pSigma);
+      drawComplex(buf, b.c, { qrsWidth: r.qrsWidth, rAmp, sAmp, qAmp, tAmp, stOffset: st, qt: r.qt, morph });
+    }
+    return buf;
+  }
+
+  function drawTrace(ctx, buf, x0mm, yCenterMm, seconds) {
+    ctx.beginPath();
+    for (let i = 0; i < buf.length; i++) {
+      const xmm = x0mm + (i / FS) * MM_PER_S;
+      const ymm = yCenterMm - buf[i] * MM_PER_MV;
+      const x = xmm * PX_PER_MM, y = ymm * PX_PER_MM;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+
+  const LAYOUT_12 = [['I', 'II', 'III'], ['aVR', 'aVL', 'aVF'], ['V1', 'V2', 'V3'], ['V4', 'V5', 'V6']];
+  function render12Lead(cv, c) {
+    const colSec = 2.5, cols = 4, rows = 3;
+    const colWmm = colSec * MM_PER_S, rowHmm = 25, padTop = 7, stripHmm = 26, gap = 4;
+    const wMm = colWmm * cols;
+    const hMm = padTop + rows * rowHmm + stripHmm + gap;
+    const { ctx, w, h } = setupCanvas(cv, wMm, hMm);
+    gridPaper(ctx, w, h);
+    ctx.strokeStyle = getCss('--trace-ink'); ctx.lineWidth = 1.3; ctx.lineJoin = 'round';
+    const labelPx = 2.5 * PX_PER_MM;
+    for (let col = 0; col < cols; col++) {
+      for (let row = 0; row < rows; row++) {
+        const lead = LAYOUT_12[col][row];
+        const yC = padTop + row * rowHmm + rowHmm / 2;
+        drawTrace(ctx, synthLead(c, lead, colSec), col * colWmm, yC, colSec);
+        ctx.fillStyle = getCss('--trace-ink'); ctx.font = '700 ' + labelPx + 'px DM Mono';
+        ctx.fillText(lead, (col * colWmm + 1.5) * PX_PER_MM, (padTop + row * rowHmm + 4.5) * PX_PER_MM);
+      }
+    }
+    const yStrip = padTop + rows * rowHmm + gap + stripHmm / 2;
+    drawTrace(ctx, synthLead(c, 'II', colSec * cols), 0, yStrip, colSec * cols);
+    ctx.fillStyle = getCss('--trace-ink'); ctx.font = '700 ' + labelPx + 'px DM Mono';
+    ctx.fillText('II', 1.5 * PX_PER_MM, (padTop + rows * rowHmm + gap + 4.5) * PX_PER_MM);
+  }
+
+  function paint12(c) {
+    const el = document.getElementById('screen12');
+    el.className = 'screen paper';
+    el.innerHTML = '<div class="screen-head"><span class="lead-tag">12-LEAD ECG</span><span class="rate-tag">' + c.title + '</span></div><canvas></canvas>';
+    render12Lead(el.querySelector('canvas'), c);
+  }
+
+  /* ============================================================
+     READ THE CHEST FILM: radiograph synthesis (Edition 2 engine, Claude Opus 5.5, 2026-09-23)
+     Replaces Edition 1's schematic SVG. A radiograph is a projection: each pixel shows the total
+     attenuation along the beam. So the film is built as an ATTENUATION FIELD from anatomy (soft
+     tissue, lung air, mediastinum and heart, trachea and bronchi, spine, ribs with cortical rims,
+     clavicles, scapulae, humeral heads, a branching vessel tree, diaphragm, gastric bubble) plus
+     exactly the findings in case.render, then developed like film (characteristic curve,
+     unsharpness, quantum mottle). Overlap is physical for free: ribs cross the heart, the spine
+     fades behind it, markings stop at a pneumothorax line, an opacity against the diaphragm
+     erases its border (the silhouette sign).
+     Contract unchanged: data is truth, the render never improvises a finding. Every film is
+     deterministic (seeded by case id) and cached after its first paint.
+     Coordinates: film 600 x 720 px (about 43 cm tall, so 1 cm is about 16.7 px). u is the
+     distance from the midline; side 'R' is the patient's right, drawn on the viewer's left.
+     ============================================================ */
+  const CXR = window.CXR_READS;
+  const renderCXR = (function () {
+    const W = 600, H = 720, N = W * H, MID = 300, TW = 238;   // film, midline, inner half-width of the thorax
+    const SX = { R: -1, L: 1 };
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const smooth = t => { t = clamp(t, 0, 1); return t * t * (3 - 2 * t); };
+
+    function seeded(str) {
+      let h = 2166136261;
+      for (let i = 0; i < str.length; i++) h = Math.imul(h ^ str.charCodeAt(i), 16777619);
+      let a = h >>> 0;
+      return () => { a = (a + 0x6d2b79f5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+    }
+
+    // ── one reusable drawing surface; each layer is drawn in white, read back as coverage 0..1 ──
+    let cv = null, g = null;
+    function layer(draw, blurR) {
+      if (!cv) { cv = document.createElement('canvas'); cv.width = W; cv.height = H; g = cv.getContext('2d', { willReadFrequently: true }); }
+      g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
+      g.clearRect(0, 0, W, H); g.fillStyle = g.strokeStyle = '#fff'; g.lineCap = 'round'; g.lineJoin = 'round';
+      // every layer starts from the same state, so a film never depends on which film was drawn before it
+      g.lineWidth = 1; g.setLineDash([]); g.textAlign = 'left'; g.textBaseline = 'alphabetic'; g.font = '10px sans-serif';
+      draw(g);
+      const d = g.getImageData(0, 0, W, H).data, out = new Float32Array(N);
+      for (let i = 0; i < N; i++) out[i] = d[i * 4 + 3] / 255;
+      return blurR ? blur(out, blurR) : out;
+    }
+    // three box passes approximate a Gaussian
+    function blur(a, r) {
+      r = Math.max(1, Math.round(r));
+      const t = new Float32Array(N), k = 1 / (2 * r + 1);
+      for (let p = 0; p < 3; p++) {
+        for (let y = 0; y < H; y++) {
+          const o = y * W; let s = 0;
+          for (let x = -r; x <= r; x++) s += a[o + clamp(x, 0, W - 1)];
+          for (let x = 0; x < W; x++) { t[o + x] = s * k; s += a[o + Math.min(x + r + 1, W - 1)] - a[o + Math.max(x - r, 0)]; }
+        }
+        for (let x = 0; x < W; x++) {
+          let s = 0;
+          for (let y = -r; y <= r; y++) s += t[clamp(y, 0, H - 1) * W + x];
+          for (let y = 0; y < H; y++) { a[y * W + x] = s * k; s += t[Math.min(y + r + 1, H - 1) * W + x] - t[Math.max(y - r, 0) * W + x]; }
+        }
+      }
+      return a;
+    }
+    const add = (D, L, w, m) => { for (let i = 0; i < N; i++) D[i] += w * L[i] * (m ? m[i] : 1); };
+    const poly = (c, pts) => { c.beginPath(); pts.forEach((p, i) => (i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]))); c.closePath(); };
+    const line = (c, pts) => { c.beginPath(); pts.forEach((p, i) => (i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]))); };
+
+    // Catmull-Rom through control points, returned as a dense polyline
+    function spline(P, step) {
+      const out = [];
+      for (let i = 0; i < P.length - 1; i++) {
+        const p0 = P[Math.max(0, i - 1)], p1 = P[i], p2 = P[i + 1], p3 = P[Math.min(P.length - 1, i + 2)];
+        const n = Math.max(2, Math.ceil(Math.hypot(p2[0] - p1[0], p2[1] - p1[1]) / (step || 4)));
+        for (let k = 0; k < n; k++) {
+          const t = k / n, t2 = t * t, t3 = t2 * t;
+          out.push([0, 1].map(j => 0.5 * (2 * p1[j] + (-p0[j] + p2[j]) * t + (2 * p0[j] - 5 * p1[j] + 4 * p2[j] - p3[j]) * t2 + (-p0[j] + 3 * p1[j] - 3 * p2[j] + p3[j]) * t3)));
+        }
+      }
+      out.push(P[P.length - 1].slice());
+      return out;
+    }
+    // offset a polyline sideways by d (per-point, so a bone can taper)
+    function offset(pts, d) {
+      return pts.map((p, i) => {
+        const a = pts[Math.max(0, i - 1)], b = pts[Math.min(pts.length - 1, i + 1)];
+        const dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy) || 1, dd = typeof d === 'function' ? d(i / (pts.length - 1)) : d;
+        return [p[0] - dy / L * dd, p[1] + dx / L * dd];
+      });
+    }
+    // a tubular bone: trabecular band plus two cortical rims; alpha(t) fades a stretch (anterior ribs)
+    function bone(c, P, width, band, rim, alpha) {
+      const pts = spline(P, 3), half = typeof width === 'function' ? t => width(t) / 2 : width / 2;
+      const A = offset(pts, half), B = offset(pts, typeof half === 'function' ? t => -half(t) : -half);
+      const n = pts.length;
+      for (let i = 0; i < n - 1; i++) {
+        const a = alpha ? alpha(i / (n - 1)) : 1; if (a <= 0.01) continue;
+        c.globalAlpha = band * a; poly(c, [A[i], A[i + 1], B[i + 1], B[i]]); c.fill();
+        c.globalAlpha = rim * a; c.lineWidth = 1.4;
+        line(c, [A[i], A[i + 1]]); c.stroke(); line(c, [B[i], B[i + 1]]); c.stroke();
+      }
+      c.globalAlpha = 1;
+    }
+
+    // ── anatomy from the case data ──
+    function anatomy(r) {
+      const poor = r.inspiration === 'poor', ap = r.projection === 'AP';
+      const ptx = r.pneumothorax || null, tension = !!ptx && ptx.size === 'tension';
+      const lift = poor ? 54 : 0;
+      const dome = { R: 522 - lift + (tension && ptx.side === 'R' ? 40 : 0), L: 542 - lift + (tension && ptx.side === 'L' ? 40 : 0) };
+      const curv = { R: tension && ptx.side === 'R' ? 0.45 : 1, L: tension && ptx.side === 'L' ? 0.45 : 1 };
+      const msX = r.mediastinum === 'shift-left' ? 34 : r.mediastinum === 'shift-right' ? -34 : 0;
+      const wide = r.mediastinum === 'wide' ? 24 : 0;
+      const Wh = (r.ctr || 0.45) * 2 * TW;                    // heart width from the cardiothoracic ratio
+      const Rm = Wh * 0.33, Lm = Wh * 0.67;                    // about a third right of the midline, two thirds left
+      const carina = 252 - lift * 0.3, apexY = 104;
+      const devX = r.trachea === 'left' ? 20 : r.trachea === 'right' ? -20 : 0;
+      const tracheaX = y => MID + devX * smooth((y - 70) / (carina - 70));
+
+      // hemidiaphragm height at lateral offset u: dome near u = 105, down to the costophrenic angle
+      const domeY = (s, u) => {
+        const d = dome[s], k = curv[s];
+        return u > 105 ? d + k * 72 * Math.pow((u - 105) / (TW - 105), 1.9) : d + k * 20 * Math.pow((105 - u) / 75, 2);
+      };
+      // inner chest wall
+      const wallU = y => y < apexY ? 105 : y < 232 ? 105 + (TW - 8 - 105) * Math.sqrt((y - apexY) / (232 - apexY))
+        : y < 420 ? TW - 8 + 8 * Math.sin((y - 232) / 188 * Math.PI / 2) : TW - 11 * Math.pow((y - 420) / 150, 2);
+      // mediastinal borders (u from the midline, before the shift)
+      const bump = (y, a, b) => Math.sin(clamp((y - a) / (b - a), 0, 1) * Math.PI);
+      const uR = y => {
+        if (y < 150) return 20;
+        if (y < 300) return 38 + wide * smooth((300 - y) / 120);
+        const t = (y - 300) / (dome.R - 300);
+        return 38 + (Rm - 38) * (t < 0.62 ? Math.sin(t / 0.62 * Math.PI / 2) : 1 - 0.14 * Math.pow((t - 0.62) / 0.38, 2));
+      };
+      const uL = y => {
+        if (y < 160) return 22;
+        if (y < 232) return 24 + (60 + wide - 24) * bump(y, 160, 238) + wide * 0.4;   // aortic knob
+        if (y < 272) return 48 + wide * 0.3;                                              // aortopulmonary window
+        if (y < 318) return 48 + 10 * bump(y, 268, 322);                                  // main pulmonary artery
+        if (y < 342) return 55;                                                           // left atrial appendage
+        const t = (y - 342) / (dome.L - 342);
+        return 55 + (Lm - 55) * (t < 0.78 ? Math.sin(t / 0.78 * Math.PI / 2) : 1 - 0.1 * Math.pow((t - 0.78) / 0.22, 2));
+      };
+      const medX = (s, y) => MID + msX + (s === 'R' ? -uR(y) : uL(y));
+
+      // lung field outline for one side
+      function lungPoly(s) {
+        const sx = SX[s], pts = [];
+        const cp = { u: wallU(dome[s] + 70), y: domeY(s, wallU(dome[s] + 70)) };
+        for (let y = 150; y <= dome[s] + 6; y += 5) pts.push([medX(s, y), y]);
+        pts.reverse();                                                   // medial border, bottom -> top
+        for (let t = 0; t <= 1.0001; t += 0.05) {                        // apex arc, medial -> lateral top
+          const u = 22 + t * 83, y = 150 - (150 - apexY) * Math.sin(t * Math.PI / 2);
+          pts.push([MID + sx * u + msX * (1 - t), y]);
+        }
+        for (let y = apexY + 4; y < cp.y; y += 5) pts.push([MID + sx * wallU(y), y]);   // lateral wall
+        const uMedBase = s === 'R' ? uR(dome[s]) : uL(dome[s]);
+        for (let u = cp.u; u > uMedBase; u -= 5) pts.push([MID + sx * u + msX * clamp(1 - u / 120, 0, 1), domeY(s, u)]);   // diaphragm
+        return pts;
+      }
+      const hilum = { R: [MID + msX - 62, 322], L: [MID + msX + 64, 304] };
+      return { poor, ap, ptx, tension, lift, dome, domeY, wallU, uR, uL, medX, msX, carina, apexY, tracheaX, devX, lungPoly, hilum, Wh };
+    }
+
+    // pleural line of a pneumothorax: how far the lung has fallen away from the wall
+    function pleuralU(A, s, size, y) {
+      const wall = A.wallU(y), med = s === 'R' ? A.uR(y) : A.uL(y);
+      if (size === 'tension' || size === 'large') {
+        const hy = s === 'R' ? 322 : 304;
+        const b = Math.max(0, 1 - Math.pow((y - hy - 20) / 170, 2));
+        return clamp(med + 12 + 62 * Math.sqrt(b), med + 6, wall - 60);
+      }
+      const gap = size === 'small' ? 22 : 48;
+      return wall - gap - 30 * smooth((260 - y) / 150);    // air rises: wider at the apex on an erect film
+    }
+
+    function develop(r, id) {
+      const rnd = seeded('cxr:' + id), A = anatomy(r);
+      const D = new Float32Array(N);
+
+      // 1. soft tissue: neck, shoulders, chest wall; thicker through the middle of the chest
+      const body = layer(c => {
+        c.beginPath();
+        c.moveTo(MID - 60, -5); c.bezierCurveTo(MID - 62, 30, MID - 80, 44, MID - 140, 50);
+        c.bezierCurveTo(MID - 220, 56, MID - 300, 48, MID - 330, 40);
+        c.lineTo(MID - 330, H + 5); c.lineTo(MID + 330, H + 5); c.lineTo(MID + 330, 40);
+        c.bezierCurveTo(MID + 300, 48, MID + 220, 56, MID + 140, 50);
+        c.bezierCurveTo(MID + 80, 44, MID + 62, 30, MID + 60, -5); c.closePath(); c.fill();
+      }, 8);
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+        const dx = (x - MID) / 300;
+        body[y * W + x] *= 0.62 + 0.4 * Math.sqrt(Math.max(0, 1 - dx * dx)) + 0.05 * (y / H);
+      }
+      add(D, body, 1);
+      // chest-wall soft tissue beyond the ribs (axillae, latissimus): a denser rim at each side
+      add(D, layer(c => { for (const s of ['R', 'L']) { c.beginPath(); c.ellipse(MID + SX[s] * 285, 330, 40, 260, 0, 0, Math.PI * 2); c.fill(); } }, 22), 0.12);
+
+      // 2. lungs: aerated fields subtract density; air is deeper laterally and toward the bases
+      const lungR = A.lungPoly('R'), lungL = A.lungPoly('L');
+      const lungMask = layer(c => { poly(c, lungR); c.fill(); poly(c, lungL); c.fill(); }, 1);
+      const lungPath = { R: new Path2D(), L: new Path2D() };
+      for (const [s, P] of [['R', lungR], ['L', lungL]]) { P.forEach((p, i) => (i ? lungPath[s].lineTo(p[0], p[1]) : lungPath[s].moveTo(p[0], p[1]))); lungPath[s].closePath(); }
+      const inLung = (s, x, y) => { g.setTransform(1, 0, 0, 1, 0, 0); return g.isPointInPath(lungPath[s], x, y); };
+
+      // pneumothorax: the space between the visceral pleural line and the wall holds only air
+      let ptxMask = null;
+      if (A.ptx) {
+        const s = A.ptx.side, sx = SX[s];
+        ptxMask = layer(c => {
+          c.save(); c.clip(lungPath[s]);
+          const pts = [];
+          for (let y = 60; y < H; y += 5) pts.push([MID + sx * pleuralU(A, s, A.ptx.size, y), y]);
+          poly(c, [...pts, [sx < 0 ? -10 : W + 10, H], [sx < 0 ? -10 : W + 10, 60]]); c.fill();
+          c.restore();
+        }, 1);
+      }
+      const aer = new Float32Array(N);                  // aerated, lung-bearing tissue (markings live here)
+      for (let i = 0; i < N; i++) aer[i] = Math.max(0, lungMask[i] - (ptxMask ? ptxMask[i] : 0));
+      const airDepth = new Float32Array(N);
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+        const u = Math.abs(x - MID) / TW;
+        airDepth[y * W + x] = 0.38 + 0.09 * smooth(u * 1.3) + 0.07 * smooth((y - 110) / 380);
+      }
+      const collapse = A.ptx ? (A.ptx.size === 'tension' || A.ptx.size === 'large' ? 0.55 : 0.85) : 1;
+      for (let i = 0; i < N; i++) {
+        const onPtxSide = A.ptx && ((i % W) < MID + A.msX) === (A.ptx.side === 'R');
+        D[i] -= airDepth[i] * aer[i] * (onPtxSide ? collapse : 1);
+        if (ptxMask) D[i] -= (airDepth[i] + 0.1) * ptxMask[i];
+      }
+      // solid organs under the domes (liver, spleen) are a touch denser than the chest wall
+      add(D, layer(c => {
+        for (const s of ['R', 'L']) {
+          c.beginPath(); c.moveTo(MID + SX[s] * 300, H);
+          for (let u = 300; u >= 0; u -= 6) c.lineTo(MID + SX[s] * u, A.domeY(s, Math.min(u, TW)) + 6);
+          c.lineTo(MID, H); c.closePath(); c.fill();
+        }
+      }, 7), 0.12);
+
+      // 3. mediastinum and heart: the heart is thicker than the upper mediastinum
+      add(D, layer(c => {
+        const pts = [];
+        for (let y = 290; y <= A.dome.L + 16; y += 4) pts.push([A.medX('L', Math.min(y, A.dome.L)), y]);
+        for (let y = A.dome.R + 12; y >= 290; y -= 4) pts.push([A.medX('R', Math.min(y, A.dome.R)), y]);
+        poly(c, pts); c.fill();
+      }, 3), 0.07);
+      add(D, layer(c => { c.beginPath(); c.ellipse(A.medX('L', 198) - 16, 200, 24, 20, 0, 0, Math.PI * 2); c.fill(); }, 4), 0.12);  // aortic knob
+      add(D, layer(c => { c.lineWidth = 22; line(c, [[A.medX('L', 205) - 22, 215], [MID + A.msX + 34, 360], [MID + A.msX + 30, A.dome.L + 10]]); c.stroke(); }, 6), 0.07);  // descending aorta
+      // hila: the pulmonary arteries and their first branches
+      add(D, layer(c => {
+        for (const s of ['R', 'L']) {
+          const [hx, hy] = A.hilum[s], sx = SX[s];
+          c.beginPath(); c.ellipse(hx, hy, 15, 30, sx * 0.25, 0, Math.PI * 2); c.fill();
+          c.lineWidth = 12; line(c, [[hx - sx * 6, hy - 10], [hx + sx * 10, hy + 44], [hx + sx * 8, hy + 80]]); c.stroke();
+          c.lineWidth = 9; line(c, [[hx, hy - 10], [hx + sx * 22, hy - 44]]); c.stroke();
+        }
+      }, 4), 0.13);
+
+      // 4. airway: trachea to the carina, then the main bronchi (right steeper and shorter)
+      const air = layer(c => {
+        const pts = []; for (let y = -5; y <= A.carina; y += 5) pts.push([A.tracheaX(y), y]);
+        c.lineWidth = 17; line(c, pts); c.stroke();
+        const [tx, ty] = [A.tracheaX(A.carina), A.carina];
+        c.lineWidth = 12; line(c, [[tx, ty], [tx - 22, ty + 18], [tx - 46, ty + 40]]); c.stroke();
+        c.lineWidth = 10; line(c, [[tx, ty], [tx + 30, ty + 20], [tx + 62, ty + 48]]); c.stroke();
+      }, 2);
+      add(D, air, -0.24);
+
+      // 5. spine: vertebral bodies, endplates, pedicles, spinous processes (which move with rotation)
+      // rotation: the posterior spinous processes and the anterior clavicular heads move opposite ways,
+      // so the spinous processes no longer sit midway between the heads (the RIPE rotation check)
+      const rotX = (r.rotation || 0) * 16, clavX = -(r.rotation || 0) * 22;
+      add(D, layer(c => { for (let y = -10; y < H; y += 31) { c.beginPath(); c.roundRect(MID - 23, y, 46, 25, 6); c.fill(); } }, 2), 0.07);
+      add(D, layer(c => {
+        c.lineWidth = 2;
+        for (let y = -10; y < H; y += 31) {
+          line(c, [[MID - 22, y + 1], [MID + 22, y + 1]]); c.stroke(); line(c, [[MID - 22, y + 23], [MID + 22, y + 23]]); c.stroke();
+          for (const s of [-1, 1]) { c.beginPath(); c.ellipse(MID + s * 17, y + 7, 4.5, 6.5, 0, 0, Math.PI * 2); c.stroke(); }
+        }
+      }, 1), 0.045);
+      // spinous processes: teardrops in the midline, clearest over T1 to T5 between the clavicles
+      add(D, layer(c => {
+        for (let y = 90; y < 330; y += 31) {
+          c.globalAlpha = 1 - (y - 90) / 330;
+          c.beginPath(); c.moveTo(MID + rotX - 5, y); c.quadraticCurveTo(MID + rotX - 6, y + 16, MID + rotX, y + 24); c.quadraticCurveTo(MID + rotX + 6, y + 16, MID + rotX + 5, y); c.closePath(); c.fill();
+        }
+      }, 1), 0.16);
+
+      // 6. ribs: posterior ribs rise from the spine then arch down to the axilla; the fainter anterior
+      //    ribs slope down and medially toward the (invisible) costal cartilage. 10 posterior ribs sit
+      //    above the dome on a good inspiration; spacing widens on the side of a tension pneumothorax.
+      add(D, layer(c => {
+        for (const s of ['R', 'L']) {
+          const sx = SX[s], gap = 41 * (A.tension && A.ptx.side === s ? 1.1 : 1);
+          for (let k = 1; k <= 12; k++) {
+            const y0 = 128 + (k - 1) * gap;
+            const P = k === 1
+              ? [[24, 122], [52, 106], [92, 102], [122, 112], [136, 134]]
+              : k >= 11
+                ? [[24, y0], [58, y0 - 10], [110, y0 - 4], [150 + (12 - k) * 34, y0 + 16]]
+                : (() => {
+                  const ax = Math.min(240, 190 + k * 7), dk = k * 2;
+                  return [[24, y0], [58, y0 - 9], [110, y0 - 6 + k * 0.4], [168, y0 + 10 + k], [ax - 18, y0 + 34 + dk], [ax, y0 + 64 + dk],
+                    [ax - 6, y0 + 94 + dk], [ax - 42, y0 + 122 + dk], [150, y0 + 146 + dk], [105, y0 + 164 + dk]];
+                })();
+            const pts = P.map(([u, y]) => [MID + sx * u, y]);
+            const post = k === 1 || k >= 11 ? 1 : 0.55;
+            bone(c, pts, t => (t < post ? 14 : 12), 0.42, 0.75, t => (t < post ? 1 : 0.4 * smooth((1 - t) / 0.35 + 0.05)));
+          }
+        }
+      }, 0), 0.2);
+
+      // 7. shoulder girdle: clavicles (medial heads either side of the spinous process), scapulae, humeral heads
+      add(D, layer(c => {
+        const up = A.ap ? -14 : 0;
+        for (const s of ['R', 'L']) {
+          const sx = SX[s];
+          const clav = [[26, 130], [70, 123], [140, 118 + up * 0.3], [192, 105 + up], [230, 92 + up], [252, 96 + up]].map(([u, y], i) => [MID + sx * u + clavX * Math.max(0, 1 - i / 3), y]);
+          bone(c, clav, t => 18 - 5 * t, 0.55, 0.6);
+          // scapula: lateral on a PA film (shoulders rolled forward), over the lungs on an AP film
+          const mb = A.ap ? 172 : 238;
+          const sc = [[mb + 12, 124], [mb, 190], [mb - 6, 300], [mb + 14, 336], [262, 250], [262, 128]].map(([u, y]) => [MID + sx * u, y]);
+          c.globalAlpha = 0.22; poly(c, sc); c.fill();
+          c.globalAlpha = 0.5; c.lineWidth = 2; poly(c, sc); c.stroke();
+          c.globalAlpha = 0.55; c.beginPath(); c.arc(MID + sx * 282, 116 + up, 46, 0, Math.PI * 2); c.fill();
+          c.globalAlpha = 0.6; c.lineWidth = 3; c.stroke();
+          c.globalAlpha = 1;
+        }
+      }, 0), 0.28);
+
+      // 8. lung markings: a branching vessel tree from each hilum, fading toward the periphery
+      const edema = !!r.edema;
+      const vessels = layer(c => {
+        c.globalCompositeOperation = 'lighter';
+        function branch(s, x, y, th, len, w, depth) {
+          if (depth > 7 || w < 0.6) return;
+          const sx = SX[s];
+          const x2 = x + sx * Math.cos(th) * len, y2 = y + Math.sin(th) * len;
+          if (!inLung(s, x2, y2)) { len *= 0.5; if (len < 6) return; return branch(s, x, y, th, len, w * 0.8, depth + 1); }
+          const cephal = edema && y2 < A.hilum[s][1] ? 1.7 : edema ? 1.2 : 1;
+          const bend = (rnd() - 0.5) * len * 0.35;
+          const reach = Math.abs(x2 - MID) / A.wallU(y2);
+          if (reach > 0.9) return;
+          c.globalAlpha = clamp((0.16 + w * 0.07) * (1.15 - reach), 0, 1);
+          c.lineWidth = w * cephal;
+          c.beginPath(); c.moveTo(x, y); c.quadraticCurveTo((x + x2) / 2 + bend, (y + y2) / 2 - bend, x2, y2); c.stroke();
+          const n = rnd() < 0.3 ? 3 : 2;
+          for (let k = 0; k < n; k++) {
+            const spread = (0.22 + rnd() * 0.34) * (k === 0 ? -1 : 1) * (k === 2 ? 0.15 : 1);
+            branch(s, x2, y2, th + spread, len * (0.72 + rnd() * 0.16), w * (0.66 + rnd() * 0.1), depth + 1);
+          }
+        }
+        const trunks = [[-96, -24, 5.2], [-62, -18, 5.4], [-24, -2, 5.6], [10, 14, 6.4], [42, 30, 7], [74, 44, 6.6]];
+        for (const s of ['R', 'L']) {
+          const [hx, hy] = A.hilum[s];
+          for (const [deg, dy, w] of trunks) {
+            const th = (deg + (rnd() - 0.5) * 14) * Math.PI / 180;
+            branch(s, hx + SX[s] * (4 + rnd() * 8), hy + dy + (rnd() - 0.5) * 8, th, 40 + rnd() * 16, w, 0);
+          }
+        }
+      }, 1);
+      add(D, vessels, 0.3, aer);
+      // parenchyma: the fine mottle of overlapping small vessels and interstitium
+      const tex = new Float32Array(N);
+      for (let i = 0; i < N; i++) tex[i] = rnd() * 2 - 1;
+      blur(tex, 3);
+      let v = 0; for (let i = 0; i < N; i += 7) v += tex[i] * tex[i];
+      add(D, tex, 0.022 / Math.sqrt(v / (N / 7)), aer);
+
+      // 9. the stomach bubble under the left dome, with its air-fluid level on an erect film
+      if (r.gastricBubble) {
+        const bubble = layer(c => {
+          const cxb = MID + 96, lvl = A.domeY('L', 96) + 50;
+          c.beginPath(); c.moveTo(cxb - 50, lvl); c.ellipse(cxb, lvl, 50, 34, 0, Math.PI, 2 * Math.PI); c.closePath(); c.fill();
+        }, 1);
+        add(D, bubble, -0.46);
+      }
+
+      // ── findings, only as the data states them ──
+      if (r.consolidation) {
+        // lobar airspace opacity: ill-defined above (no fissure on a frontal film for a lower lobe), densest
+        // where it abuts the structure it silhouettes, running behind the heart for a lower lobe
+        const { side: s, zone } = r.consolidation, sx = SX[s], [hx, hy] = A.hilum[s];
+        const top = zone === 'upper' ? A.apexY + 20 : zone === 'mid' ? hy - 10 : hy + 40;
+        const bot = zone === 'upper' ? hy - 10 : zone === 'mid' ? A.dome[s] - 40 : A.dome[s] + 12;
+        const blob = layer(c => {
+          const pts = [];
+          for (let y = top; y <= bot; y += 6) pts.push([MID + sx * (A.wallU(y) + 4), y]);
+          for (let y = bot; y >= top; y -= 6) pts.push([MID + sx * (zone === 'mid' ? 30 : 16), y]);
+          poly(c, pts); c.fill();
+          for (let k = 0; k < 18; k++) { c.beginPath(); c.arc(MID + sx * (40 + rnd() * 180), top + (rnd() - 0.3) * 30, 12 + rnd() * 22, 0, Math.PI * 2); c.fill(); }
+          if (r.consolidation.silhouette === 'diaphragm') { c.beginPath(); c.ellipse(MID + sx * 90, A.dome[s] + 6, 96, 26, 0, 0, Math.PI * 2); c.fill(); }
+          if (r.consolidation.silhouette === 'heart') { c.beginPath(); c.ellipse(A.medX(s, (top + bot) / 2) + sx * 30, (top + bot) / 2, 44, (bot - top) / 2, 0, 0, Math.PI * 2); c.fill(); }
+        }, 12);
+        for (let i = 0; i < N; i++) blob[i] *= lungMask[i];
+        for (let y = 0; y < H; y++) { const ramp = 0.55 + 0.45 * smooth((y - top) / Math.max(40, bot - top)); for (let x = 0; x < W; x++) blob[y * W + x] *= ramp; }
+        add(D, blob, 0.74);
+        // air bronchograms: dark branching airways seen through the opacity
+        add(D, layer(c => {
+          function airway(x, y, th, len, w, d) {
+            if (d > 4 || w < 1) return;
+            const x2 = x + sx * Math.cos(th) * len, y2 = y + Math.sin(th) * len;
+            c.lineWidth = w; line(c, [[x, y], [(x + x2) / 2 + (rnd() - 0.5) * 6, (y + y2) / 2], [x2, y2]]); c.stroke();
+            airway(x2, y2, th - 0.3 - rnd() * 0.2, len * 0.75, w * 0.72, d + 1);
+            airway(x2, y2, th + 0.25 + rnd() * 0.2, len * 0.7, w * 0.7, d + 1);
+          }
+          const y0 = (top + bot) / 2 - 10;
+          airway(hx + sx * 8, y0 - 20, 0.7, 34, 4, 0); airway(hx + sx * 30, y0 + 10, 0.35, 30, 3.4, 0);
+        }, 1), -0.3, blob);
+      }
+
+      if (r.edema) {
+        // perihilar (bat-wing) haze, Kerley B lines at the lateral bases, peribronchial cuffing
+        add(D, layer(c => { for (const s of ['R', 'L']) { c.beginPath(); c.ellipse(A.hilum[s][0] + SX[s] * 20, A.hilum[s][1] + 10, 95, 90, 0, 0, Math.PI * 2); c.fill(); } }, 26), 0.2, lungMask);
+        add(D, layer(c => {
+          c.lineWidth = 1.3;
+          for (const s of ['R', 'L']) for (let k = 0; k < 9; k++) {
+            const y = A.dome[s] - 20 - k * 13 - rnd() * 5, u = A.wallU(y) - 2;
+            line(c, [[MID + SX[s] * u, y], [MID + SX[s] * (u - 14 - rnd() * 8), y + (rnd() - 0.5) * 2]]); c.stroke();
+          }
+          c.lineWidth = 2;
+          for (const s of ['R', 'L']) for (let k = 0; k < 5; k++) { c.beginPath(); c.arc(A.hilum[s][0] + SX[s] * (18 + rnd() * 30), A.hilum[s][1] - 40 + rnd() * 80, 4 + rnd() * 2, 0, Math.PI * 2); c.stroke(); }
+        }, 0), 0.16, lungMask);
+      }
+
+      if (r.effusion) {
+        // dependent fluid: homogeneous, rising higher laterally (the meniscus), erasing the angle and the dome
+        const s = r.effusion.side, sx = SX[s], h = r.effusion.size === 'large' ? 175 : r.effusion.size === 'small' ? 42 : 96;
+        const top = A.dome[s] - h;
+        const fluid = layer(c => {
+          c.beginPath();
+          for (let u = 0; u <= TW + 20; u += 4) {
+            const f = Math.pow(Math.min(1, u / TW), 3.6);
+            c.lineTo(MID + sx * u + A.msX * (1 - u / TW), top + h * 0.42 - (h * 0.42 + 34) * f);
+          }
+          c.lineTo(MID + sx * (TW + 20), H); c.lineTo(MID, H); c.closePath(); c.fill();
+        }, 5);
+        for (let i = 0; i < N; i++) fluid[i] *= lungMask[i];
+        add(D, fluid, 0.64);
+      }
+
+      if (A.ptx) {
+        // the visceral pleural line: a thin white edge with no markings beyond it
+        const s = A.ptx.side, sx = SX[s];
+        add(D, layer(c => {
+          c.save(); c.clip(lungPath[s]); c.lineWidth = 1.6;
+          const pts = []; for (let y = 60; y < H; y += 4) pts.push([MID + sx * pleuralU(A, s, A.ptx.size, y), y]);
+          line(c, pts); c.stroke(); c.restore();
+        }, 0), 0.16);
+      }
+
+      if (r.subcutaneousEmphysema) {
+        // gas tracking along the chest-wall muscle planes: streaky lucencies (the ginkgo-leaf pattern)
+        const sx = SX[r.subcutaneousEmphysema];
+        add(D, layer(c => {
+          c.lineWidth = 1.6;
+          for (let k = 0; k < 26; k++) {
+            const u = 240 + rnd() * 50, y = 160 + rnd() * 300, len = 26 + rnd() * 40;
+            line(c, spline([[MID + sx * u, y], [MID + sx * (u - 6 + rnd() * 4), y + len * 0.5], [MID + sx * (u - 14), y + len]], 3)); c.stroke();
+          }
+          for (let k = 0; k < 12; k++) {   // along the pectoralis toward the axilla
+            const u = 120 + rnd() * 100, y = 150 + rnd() * 50;
+            line(c, spline([[MID + sx * u, y], [MID + sx * (u + 40), y + 18], [MID + sx * (u + 80), y + 26]], 3)); c.stroke();
+          }
+        }, 1), -0.3, body);
+      }
+
+      if (r.freeAir) {
+        // gas between the right hemidiaphragm and the liver: the dome becomes a thin line with dark on both sides
+        add(D, layer(c => {
+          c.beginPath();
+          for (let u = 40; u <= 205; u += 4) c.lineTo(MID - u, A.domeY('R', u) + 6);
+          for (let u = 205; u >= 40; u -= 4) c.lineTo(MID - u, A.domeY('R', u) + 6 + 24 * Math.sin((u - 40) / 165 * Math.PI));
+          c.closePath(); c.fill();
+        }, 1), -0.62);
+      }
+
+      if (r.mass) {
+        const z = r.mass, sx = SX[z.side], y = z.zone === 'upper' ? 200 : z.zone === 'mid' ? 300 : A.dome[z.side] - 80, rad = z.r || 24;
+        add(D, layer(c => { for (let k = 0; k < 7; k++) { const a = k / 7 * Math.PI * 2; c.beginPath(); c.arc(MID + sx * 150 + Math.cos(a) * rad * 0.35, y + Math.sin(a) * rad * 0.35, rad * 0.75, 0, Math.PI * 2); c.fill(); } }, 1), 0.5);
+      }
+
+      // devices: radiopaque, sharp
+      if ((r.lines || []).length) add(D, layer(c => {
+        for (const ln of r.lines) {
+          if (ln.type === 'ETT') {
+            const tx = A.tracheaX(A.carina);
+            const path = ln.pos === 'rightmain'
+              ? [[MID, -5], [A.tracheaX(150), 150], [tx, A.carina - 4], [tx - 26, A.carina + 22], [tx - 40, A.carina + 36]]
+              : [[MID, -5], [A.tracheaX(120), 120], [A.tracheaX(A.carina - 70), A.carina - 70]];   // 4 cm above the carina
+            c.globalAlpha = 0.28; c.lineWidth = 12; line(c, path); c.stroke();              // the tube itself, faint
+            c.globalAlpha = 1; c.lineWidth = 2.2; line(c, offset(spline(path, 4), 4)); c.stroke();   // radiopaque stripe
+          } else if (ln.type === 'NG') {
+            c.globalAlpha = 0.7; c.lineWidth = 2;
+            line(c, spline([[MID + 8, -5], [MID + 12, 200], [MID + 16, 380], [MID + 28, A.dome.L + 18], [MID + 70, A.dome.L + 40], [MID + 104, A.dome.L + 44]], 4)); c.stroke();
+          } else if (ln.type === 'CVC') {
+            c.globalAlpha = 0.9; c.lineWidth = 2.4;
+            line(c, spline([[MID - 175, 138], [MID - 90, 150], [MID - 44 + A.msX, 178], [MID - 36 + A.msX, 250], [MID - 34 + A.msX, 318]], 4)); c.stroke();
+          } else if (ln.type === 'chesttube') {
+            c.globalAlpha = 0.9; c.lineWidth = 5; line(c, spline([[MID - 280, 470], [MID - 225, 420], [MID - 190, 300], [MID - 150, 170]], 4)); c.stroke();
+          }
+        }
+      }, 0), 0.9);
+
+      // markers: the lead R marker (patient right, viewer left); AP films are labelled as portables
+      add(D, layer(c => {
+        c.font = '600 30px Arial, Helvetica, sans-serif'; c.textBaseline = 'top';
+        c.fillText('R', 34, 34);
+        c.lineWidth = 2; c.strokeRect(26, 28, 36, 40);
+        if (A.ap) { c.font = '600 17px Arial, Helvetica, sans-serif'; c.textAlign = 'right'; c.fillText('AP PORTABLE', W - 30, 38); }
+      }, 0), 1.6);
+
+      // ── develop: unsharpness, quantum mottle, the film's characteristic curve ──
+      blur(D, 1);
+      const kp = r.penetration === 'under' ? 1.22 : r.penetration === 'over' ? 0.8 : 1;
+      const gamma = 2.55, mid = 0.8;
+      const s = d => 1 / (1 + Math.exp(-gamma * (d * kp - mid)));
+      const s0 = s(0), s1 = s(2.4);
+      const out = document.createElement('canvas'); out.width = W; out.height = H;
+      const ox = out.getContext('2d'), img = ox.createImageData(W, H), px = img.data;
+      for (let i = 0; i < N; i++) {
+        const nse = (rnd() + rnd() + rnd() - 1.5) * 0.028;
+        let b = (s(D[i] + nse) - s0) / (s1 - s0);
+        b = clamp(b, 0, 1);
+        px[i * 4] = 10 + b * 232; px[i * 4 + 1] = 11 + b * 236; px[i * 4 + 2] = 13 + b * 240; px[i * 4 + 3] = 255;
+      }
+      ox.putImageData(img, 0, 0);
+      return out;
+    }
+
+    const films = new Map();
+    return function renderCXR(container, c) {
+      const r = c.render;
+      let film = films.get(c.id);
+      if (!film) { film = develop(r, c.id); films.set(c.id, film); }
+      const proj = (r.projection || 'PA') + (r.projection === 'AP' ? ' (portable)' : '');
+      container.className = 'screen film';
+      container.innerHTML = '<div class="screen-head"><span class="lead-tag">CHEST ' + proj + '</span><span class="rate-tag">' + c.title + '</span></div>';
+      const view = document.createElement('canvas');
+      view.width = W; view.height = H; view.className = 'cxr-film';
+      view.setAttribute('role', 'img'); view.setAttribute('aria-label', 'Chest radiograph, ' + proj + ' projection: ' + c.title);
+      view.getContext('2d').drawImage(film, 0, 0);
+      container.appendChild(view);
+    };
+  })();
+
+
+  /* ======================================================================
+     EDITION 2 UI: the reading room (Claude Opus 5.5, September 2026)
+     Everything above this block is Edition 1's engine code, unchanged apart
+     from the canvas label font: synthesis, calibration, canvas and SVG painters.
+
+     Expected behaviour
+     - Three studies behind film-jacket tabs (#rhythms, #read, #cxr deep-link).
+       Each study: WORKLIST (pick), LIGHTBOX (look), REPORT (say what you see).
+     - Rhythm strip. Study: the worklist lists all 28 rhythms by category; the report
+       states the findings (rate, regularity, P, PR, QRS), the impression (defining
+       feature), clinical significance, lead note and source. Quiz: the worklist becomes
+       a session log (score, streak, last 12); the report asks, then gives the verdict
+       and the full report of the correct rhythm.
+     - 12-lead ECG and chest film: the read is an 8-step report that fills in line by
+       line. Finished steps stay written, with a tick or cross in quiz mode; the open
+       step shows the question, the method, and options (quiz) or Show answer (walk-
+       through). Finishing writes the impression. Any case can be opened from the
+       worklist; finished cases are ticked for this visit.
+     - Chest film, Real films: "Spot it" (one question per film) or "Full read" (the
+       full 8 steps on the real film). Film titles stay hidden until
+       answered, because they name the finding.
+     - Keys: 1 to 7 choose an option, Enter or N advances, L toggles the room lights.
+     ====================================================================== */
+  const $ = id => document.getElementById(id);
+  const host = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch (e) { return 'source'; } };
+  const srcLine = (u, label) => u ? '<div class="src">Source &middot; <a href="' + u + '" target="_blank" rel="noopener">' + (label || host(u)) + '</a></div>' : '';
+  const pad2 = n => String(n).padStart(2, '0');
+  const TICK = '<span class="ok">&#10003;</span>', CROSS = '<span class="bad">&#10007;</span>';
+  function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+  function press(seg, el) { seg.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b === el))); }
+
+  // the active study decides what the keyboard does
+  let current = 'rhythms';
+  const KEYS = { rhythms: {}, read: {}, cxr: {} };
+
+  /* ---------------- room lights ---------------- */
+  function setLights(on) {
+    document.documentElement.dataset.lights = on ? 'on' : 'off';
+    $('lights').textContent = on ? 'Lights off' : 'Lights on';
+    try { localStorage.setItem('readthis:lights', on ? 'on' : 'off'); } catch (e) {}
+  }
+  $('lights').addEventListener('click', () => setLights(document.documentElement.dataset.lights !== 'on'));
+
+  /* ================= STUDY 01: RHYTHM STRIP ================= */
+  let state = { mode: 'learn', render: 'monitor', current: RHYTHMS[0] };
+  let quiz = { score: 0, total: 0, streak: 0, answer: null, answered: false, log: [] };
+
+  function buildWorklistR() {
+    const cats = [...new Set(RHYTHMS.map(r => r.category))];
+    let n = 0;
+    $('wlR').innerHTML = cats.map(cat => '<div class="wl-cat k">' + cat + '</div>' + RHYTHMS.filter(r => r.category === cat).map(r =>
+      '<button class="wl-row" data-id="' + r.id + '"><span class="no">' + pad2(++n) + '</span><span>' + r.name + '</span>'
+      + '<span class="sev ' + r.danger + '" title="' + r.danger + '"></span></button>').join('')).join('');
+  }
+  $('wlR').addEventListener('click', e => {
+    const b = e.target.closest('.wl-row'); if (!b) return;
+    state.current = RHYTHMS.find(r => r.id === b.dataset.id);
+    renderLearn();
+  });
+
+  function rhythmReport(r) {
+    const lead = (r.render && r.render.lead) || 'II';
+    const rows = [['Rate', r.rate], ['Regularity', r.regularity], ['P wave', r.pWave], ['PR interval', r.pr], ['QRS', r.qrs]];
+    return '<header class="rep-head"><span class="k">Report &middot; rhythm strip &middot; lead ' + lead + '</span><h2>' + r.name + '</h2>'
+      + '<div class="flags"><span class="flag ' + r.danger + '">' + r.danger + '</span>' + (r.shockable ? '<span class="flag shock">Shockable</span>' : '')
+      + '<span class="flag">' + r.category + '</span></div></header>'
+      + '<dl class="findings">' + rows.map(([k, v]) => '<div><dt>' + k + '</dt><dd>' + v + '</dd></div>').join('') + '</dl>'
+      + '<section class="impression"><h3>Impression</h3><p>' + r.defining + '</p></section>'
+      + '<p class="note"><b>Clinical.</b> ' + r.significance + '</p>'
+      + (r.leadNote ? '<p class="note lead">' + r.leadNote + '</p>' : '')
+      + srcLine(r.source);
+  }
+
+  function renderLearn() {
+    document.querySelectorAll('#wlR .wl-row').forEach(b => b.setAttribute('aria-current', String(b.dataset.id === state.current.id)));
+    paintScreen($('screenR'), state.current, state.render);
+    $('viewR').innerHTML = 'Study &middot; <b>' + state.current.name + '</b>';
+    $('reportR').innerHTML = rhythmReport(state.current);
+    KEYS.rhythms = {
+      digit: null,
+      enter: () => { const i = RHYTHMS.indexOf(state.current); state.current = RHYTHMS[(i + 1) % RHYTHMS.length]; renderLearn(); },
+    };
+  }
+
+  // in a quiz the strip header must not print the rate range: it gives the answer away
+  function maskRate(show) {
+    const rt = $('screenR').querySelector('.rate-tag');
+    if (rt) rt.textContent = show ? quiz.answer.rate : 'rate: measure it';
+  }
+
+  function sessionR() {
+    $('sessR').innerHTML = '<span class="k">Session</span>'
+      + '<div class="tally">Correct <b>' + quiz.score + ' / ' + quiz.total + '</b> &middot; streak <b>' + quiz.streak + '</b></div>'
+      + (quiz.log.length
+        ? '<ol>' + quiz.log.slice(-12).reverse().map(x => '<li><span class="mk">' + (x.ok ? TICK : CROSS) + '</span>' + x.name + '</li>').join('') + '</ol>'
+        : '<p class="tally">Name each strip. A miss shows the full report of the right answer.</p>');
+  }
+
+  function newQuestion() {
+    quiz.answered = false;
+    const correct = RHYTHMS[Math.floor(Math.random() * RHYTHMS.length)];
+    quiz.answer = correct;
+    // distractors: prefer the same category, fill with random (Edition 1's rule)
+    const pool = RHYTHMS.filter(r => r.id !== correct.id);
+    const same = pool.filter(r => r.category === correct.category);
+    const opts = [correct];
+    while (opts.length < 4) {
+      const src = (same.length && Math.random() < 0.55) ? same : pool;
+      const pick = src[Math.floor(Math.random() * src.length)];
+      if (!opts.includes(pick)) opts.push(pick);
+    }
+    shuffle(opts);
+    paintScreen($('screenR'), correct, state.render);
+    maskRate(false);
+    $('viewR').innerHTML = 'Quiz &middot; <b>unknown strip</b>';
+    $('reportR').innerHTML = '<header class="rep-head"><span class="k">Report &middot; rhythm strip &middot; your read</span><h2>What is this rhythm?</h2></header>'
+      + '<div class="opts" id="qOpts">' + opts.map((o, i) => '<button class="opt" data-id="' + o.id + '"><span class="key">' + (i + 1) + '</span><span>' + o.name + '</span></button>').join('') + '</div>';
+    sessionR();
+    KEYS.rhythms = { digit: i => { const b = document.querySelectorAll('#qOpts .opt')[i]; if (b) answer(b.dataset.id); }, enter: null };
+  }
+
+  function answer(id) {
+    if (quiz.answered) return;
+    quiz.answered = true; quiz.total++;
+    const correct = quiz.answer, right = id === correct.id;
+    if (right) { quiz.score++; quiz.streak++; } else { quiz.streak = 0; }
+    quiz.log.push({ name: correct.name, ok: right });
+    document.querySelectorAll('#qOpts .opt').forEach(b => {
+      b.disabled = true;
+      if (b.dataset.id === correct.id) b.classList.add('correct');
+      else if (b.dataset.id === id) b.classList.add('wrong');
+    });
+    $('viewR').innerHTML = 'Quiz &middot; <b>' + correct.name + '</b>';
+    maskRate(true);
+    const opts = $('qOpts').outerHTML;
+    $('reportR').innerHTML = '<p class="verdict ' + (right ? 'ok' : 'bad') + '">' + (right ? 'Correct.' : 'Not quite. This is ' + correct.name + '.') + '</p>'
+      + opts + '<div class="acts"><button class="act primary" id="qNext">Next strip<span class="kbd">&#9166;</span></button></div>'
+      + '<div style="margin-top:18px">' + rhythmReport(correct) + '</div>';
+    $('qNext').addEventListener('click', newQuestion);
+    sessionR();
+    KEYS.rhythms = { digit: null, enter: newQuestion };
+  }
+  $('reportR').addEventListener('click', e => {
+    const b = e.target.closest('#qOpts .opt'); if (b && !b.disabled) answer(b.dataset.id);
+  });
+
+  $('rMode').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    press($('rMode'), b); state.mode = b.dataset.mode;
+    $('wlR').classList.toggle('hidden', state.mode !== 'learn');
+    $('sessR').classList.toggle('hidden', state.mode !== 'quiz');
+    cancelAnimationFrame(animId);
+    state.mode === 'learn' ? renderLearn() : newQuestion();
+  });
+  $('rRender').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    press($('rRender'), b); state.render = b.dataset.render;
+    paintScreen($('screenR'), state.mode === 'learn' ? state.current : quiz.answer, state.render);
+    if (state.mode === 'quiz') maskRate(quiz.answered);
+  });
+
+  /* ================= THE READER: an 8-step report that fills in ================= */
+  // Shared by the 12-lead and chest-film studies. o supplies the algorithm, the list of
+  // subjects, how to paint one, and the labels; the reader owns the state and the report.
+  function makeReader(o) {
+    const st = { mode: 'guided', ci: 0, si: 0, score: 0, total: 0, results: [], picked: null, answered: false, done: false, finished: new Set(), started: false };
+    const subj = () => o.subjects()[st.ci];
+    // an answer key may list alternates as "RCA|LCx"; the first is the one shown
+    const accepted = (step, c) => String(step.id === 'impression' ? c.read.impression : c.read[step.id]).split('|').map(s => s.trim());
+
+    function worklist() {
+      $(o.wl).innerHTML = o.subjects().map((c, i) =>
+        '<button class="wl-row" data-i="' + i + '" aria-current="' + (i === st.ci) + '"><span class="no">' + pad2(i + 1) + '</span>'
+        + '<span>' + o.title(c, i, st.finished.has(i)) + '</span><span class="mk">' + (st.finished.has(i) ? TICK : '') + '</span></button>').join('');
+    }
+    function open(i) {
+      st.ci = i; st.si = 0; st.score = 0; st.total = 0; st.results = []; st.picked = null; st.answered = false; st.done = false; st.started = true;
+      o.paint(subj(), i);
+      worklist(); render();
+    }
+    function stepHtml(s, i, c) {
+      const last = i === o.algorithm.length - 1;
+      const line = (cls, ans, mk) => '<li class="st ' + cls + '"><div class="st-line"><span class="n">' + s.n + '</span><span class="lab">' + s.label + '</span>'
+        + '<span class="ans">' + (ans || '') + '</span><span class="mk">' + (mk || '') + '</span></div>';
+      if (st.done || i < st.si) {
+        const r = st.results[i];
+        const ans = s.id === 'impression' ? '<i>see impression</i>' : accepted(s, c).join(' or ');
+        return line('done', ans, r === true ? TICK : r === false ? CROSS : '') + '</li>';
+      }
+      if (i > st.si) return line('todo') + '</li>';
+      // the open step
+      const quizzing = st.mode === 'quiz' && s.options;
+      let body = '<p class="q">' + s.question + '</p><p class="how">' + s.how + '</p>';
+      if (quizzing) {
+        const acc = accepted(s, c);
+        body += '<div class="opts">' + s.options.map((op, k) => {
+          let cls = '';
+          if (st.answered) cls = acc.includes(op) ? ' correct' : (op === st.picked ? ' wrong' : '');
+          return '<button class="opt' + cls + '" data-opt="' + op.replace(/"/g, '&quot;') + '"' + (st.answered ? ' disabled' : '') + '><span class="key">' + (k + 1) + '</span><span>' + op + '</span></button>';
+        }).join('') + '</div>';
+      }
+      if (st.answered) {
+        const r = st.results[i], isImp = s.id === 'impression';
+        body += '<div class="answer' + (r === false ? ' missed' : '') + '"><span class="k">' + (isImp ? 'Model impression' : 'Answer') + (r === false ? ' &middot; you missed this' : '') + '</span>'
+          + '<div class="v">' + (isImp ? c.read.impression : accepted(s, c).join(' or ')) + '</div>' + srcLine(s.source) + '</div>'
+          + '<div class="acts"><button class="act primary" data-act="next">' + (last ? 'Finish the read' : 'Next step') + '<span class="kbd">&#9166;</span></button></div>';
+      } else if (!quizzing) {
+        body += '<div class="acts"><button class="act primary" data-act="show">Show answer<span class="kbd">&#9166;</span></button></div>';
+      }
+      return line('cur') + '<div class="st-body">' + body + '</div></li>';
+    }
+    function render() {
+      const c = subj();
+      $(o.view).innerHTML = o.viewLabel(c, st.ci);
+      let h = '<header class="rep-head"><span class="k">' + o.kicker(c, st.ci) + '</span><h2>' + o.heading(c, st.ci, st.done) + '</h2>'
+        + (st.mode === 'quiz' ? '<div class="score-line" style="margin-top:8px">Score <b>' + st.score + ' / ' + st.total + '</b></div>' : '') + '</header>';
+      h += '<ol class="steps">' + o.algorithm.map((s, i) => stepHtml(s, i, c)).join('') + '</ol>';
+      if (st.done) {
+        h += '<section class="impression"><h3>Impression</h3><p>' + c.read.impression + '</p>' + srcLine(o.source(c), o.sourceLabel && o.sourceLabel(c)) + '</section>'
+          + (st.mode === 'quiz' ? '<p class="score-line" style="margin-top:10px">Scored <b>' + st.score + ' / ' + st.total + '</b> on the steps with choices.</p>' : '')
+          + '<div class="acts"><button class="act primary" data-act="nextcase">' + o.nextLabel + '<span class="kbd">&#9166;</span></button><button class="act" data-act="again">Read it again</button></div>';
+      }
+      $(o.report).innerHTML = h;
+      const cur = $(o.report).querySelector('.st.cur');
+      if (cur && st.si > 0 && cur.getBoundingClientRect().top > innerHeight - 120) cur.scrollIntoView({ block: 'nearest' });
+      const s = o.algorithm[st.si];
+      KEYS[o.key] = {
+        digit: (!st.done && !st.answered && st.mode === 'quiz' && s.options) ? k => { if (s.options[k] != null) pick(s.options[k]); } : null,
+        enter: st.done ? nextCase : st.answered ? next : (st.mode === 'quiz' && s.options) ? null : show,
+      };
+    }
+    function pick(op) {
+      if (st.answered) return;
+      const s = o.algorithm[st.si], right = accepted(s, subj()).includes(op);
+      st.answered = true; st.total++; st.picked = op; st.results[st.si] = right;
+      if (right) st.score++;
+      render();
+    }
+    function show() { st.answered = true; st.results[st.si] = null; render(); }
+    function next() {
+      if (st.si === o.algorithm.length - 1) { st.done = true; st.finished.add(st.ci); worklist(); }
+      else { st.si++; st.answered = false; st.picked = null; }
+      render();
+    }
+    function nextCase() { open((st.ci + 1) % o.subjects().length); }
+    $(o.report).addEventListener('click', e => {
+      const op = e.target.closest('.opt');
+      if (op && !op.disabled) return pick(op.dataset.opt);
+      const a = e.target.closest('[data-act]'); if (!a) return;
+      ({ show, next, nextcase: nextCase, again: () => open(st.ci) })[a.dataset.act]();
+    });
+    $(o.wl).addEventListener('click', e => { const b = e.target.closest('.wl-row'); if (b && o.active()) open(+b.dataset.i); });
+    return { st, open, render, worklist, setMode(m) { st.mode = m; st.finished.clear(); open(0); } };
+  }
+
+  /* ================= STUDY 02: 12-LEAD ECG ================= */
+  const ecg = makeReader({
+    key: 'read', algorithm: READS.algorithm, wl: 'wlE', report: 'reportE', view: 'viewE',
+    subjects: () => READS.cases, active: () => true,
+    paint: c => paint12(c),
+    title: c => c.title.replace(/^Case \d+\s*-\s*/, ''),
+    viewLabel: (c, i) => 'Case ' + (i + 1) + ' of ' + READS.cases.length + ' &middot; <b>' + c.title.replace(/^Case \d+\s*-\s*/, '') + '</b>',
+    kicker: (c, i) => 'Report &middot; 12-lead ECG &middot; case ' + pad2(i + 1),
+    heading: c => c.title.replace(/^Case \d+\s*-\s*/, ''),
+    source: c => c.source, nextLabel: 'Next case',
+  });
+  $('eMode').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; press($('eMode'), b); ecg.setMode(b.dataset.rmode); });
+
+  function buildReference() {
+    const t = READS.teaching;
+    let h = '<div class="ref-block"><h4>Frontal vs horizontal plane</h4><p>' + t.planes + '</p></div>';
+    h += '<div class="ref-block"><h4>Axis, quadrant method</h4><table class="ref-table"><tr><th>Class</th><th>Degrees</th><th>Lead I</th><th>aVF</th></tr>'
+      + t.axisBoundaries.map(a => '<tr><td>' + a.cls + '</td><td>' + a.range + '</td><td>' + a.leadI + '</td><td>' + a.aVF + '</td></tr>').join('')
+      + '</table><p class="ref-note">' + t.axisNote + '</p></div>';
+    h += '<div class="ref-block"><h4>MI localization</h4><table class="ref-table"><tr><th>Territory</th><th>ST elevation</th><th>Reciprocal</th><th>Artery</th></tr>'
+      + t.territories.map(z => '<tr><td>' + z.name + '</td><td>' + z.ste + '</td><td>' + z.recip + '</td><td>' + z.artery + '</td></tr>').join('')
+      + '</table><p class="ref-note">' + t.steCriteria + '</p></div>';
+    $('refBody').innerHTML = h;
+  }
+
+  /* ================= STUDY 03: CHEST FILM ================= */
+  const CXR_FILMS = window.CXR_FILMS || [];
+  const cx = { mode: 'guided', recog: 'spot', fi: 0, spot: { answered: false, picked: null, score: 0, total: 0, seen: new Set() } };
+  const recognizing = () => cx.mode === 'recognize';
+  const filmTitle = (f, i, done) => done ? f.finding : 'Film ' + (i + 1);
+
+  function paintFilm(film) {
+    const el = $('screenCXR');
+    el.className = 'screen film';
+    el.innerHTML = '<div class="screen-head"><span class="lead-tag">Chest radiograph</span><span class="rate-tag">real film</span></div>'
+      + '<div class="film-img"><img src="' + film.src + '" alt="' + film.alt + '"/></div>'
+      + '<div class="film-credit">' + film.credit + ' &middot; ' + film.license + ' &middot; <a href="' + film.sourceUrl + '" target="_blank" rel="noopener">source</a></div>';
+  }
+
+  const cxrRead = makeReader({
+    key: 'cxr', algorithm: CXR.algorithm, wl: 'wlC', report: 'reportC', view: 'viewC',
+    subjects: () => recognizing() ? CXR_FILMS : CXR.cases,
+    active: () => !(recognizing() && cx.recog === 'spot'),
+    paint: (c, i) => recognizing() ? paintFilm(c) : renderCXR($('screenCXR'), c),
+    title: (c, i, done) => recognizing() ? filmTitle(c, i, done) : c.title,
+    viewLabel: (c, i) => recognizing() ? 'Film ' + (i + 1) + ' of ' + CXR_FILMS.length + ' &middot; <b>run the read</b>' : 'Case ' + (i + 1) + ' of ' + CXR.cases.length + ' &middot; <b>' + (c.render && c.render.projection || 'PA') + ' film</b>',
+    kicker: (c, i) => recognizing() ? 'Report &middot; chest radiograph &middot; real film ' + pad2(i + 1) : 'Report &middot; chest ' + ((c.render && c.render.projection) || 'PA') + ' &middot; case ' + pad2(i + 1),
+    heading: (c, i, done) => recognizing() ? (done ? c.finding : 'Film ' + (i + 1)) : c.title,
+    source: c => c.source || c.sourceUrl, sourceLabel: c => c.credit ? c.credit + ' (' + c.license + ')' : null,
+    nextLabel: 'Next film',
+  });
+
+  // Real films, "spot the finding": one question per film
+  function spotWorklist() {
+    $('wlC').innerHTML = CXR_FILMS.map((f, i) => '<button class="wl-row" data-f="' + i + '" aria-current="' + (i === cx.fi) + '"><span class="no">' + pad2(i + 1) + '</span>'
+      + '<span>' + filmTitle(f, i, cx.spot.seen.has(i)) + '</span><span class="mk">' + (cx.spot.seen.has(i) ? TICK : '') + '</span></button>').join('');
+  }
+  function openSpot(i) {
+    cx.fi = i; cx.spot.answered = false; cx.spot.picked = null;
+    paintFilm(CXR_FILMS[i]); spotWorklist(); renderSpot();
+  }
+  function renderSpot() {
+    const f = CXR_FILMS[cx.fi], s = cx.spot;
+    $('viewC').innerHTML = 'Film ' + (cx.fi + 1) + ' of ' + CXR_FILMS.length + ' &middot; <b>spot the finding</b>';
+    let h = '<header class="rep-head"><span class="k">Report &middot; chest radiograph &middot; real film ' + pad2(cx.fi + 1) + '</span><h2>' + (s.answered ? f.finding : 'What is the finding?') + '</h2>'
+      + '<div class="score-line" style="margin-top:8px">Score <b>' + s.score + ' / ' + s.total + '</b></div></header>'
+      + '<p class="q">' + f.prompt + '</p><div class="opts">' + f.options.map((op, k) => {
+        let cls = s.answered ? (op === f.finding ? ' correct' : op === s.picked ? ' wrong' : '') : '';
+        return '<button class="opt' + cls + '" data-opt="' + op.replace(/"/g, '&quot;') + '"' + (s.answered ? ' disabled' : '') + '><span class="key">' + (k + 1) + '</span><span>' + op + '</span></button>';
+      }).join('') + '</div>';
+    if (s.answered) {
+      const right = s.picked === f.finding;
+      h += '<div class="answer' + (right ? '' : ' missed') + '"><span class="k">Finding' + (right ? '' : ' &middot; you missed this') + '</span><div class="v">' + f.finding + '</div>'
+        + '<p class="note">' + f.teaching + '</p>' + srcLine(f.sourceUrl, f.credit + ' (' + f.license + ')') + '</div>'
+        + '<div class="acts"><button class="act primary" data-spot="next">Next film<span class="kbd">&#9166;</span></button></div>';
+    }
+    $('reportC').innerHTML = h;
+    KEYS.cxr = { digit: s.answered ? null : k => { if (f.options[k] != null) spotPick(f.options[k]); }, enter: s.answered ? () => openSpot((cx.fi + 1) % CXR_FILMS.length) : null };
+  }
+  function spotPick(op) {
+    const s = cx.spot; if (s.answered) return;
+    s.answered = true; s.picked = op; s.total++; if (op === CXR_FILMS[cx.fi].finding) s.score++;
+    s.seen.add(cx.fi); spotWorklist(); renderSpot();
+  }
+  $('reportC').addEventListener('click', e => {
+    if (!(recognizing() && cx.recog === 'spot')) return;
+    const op = e.target.closest('.opt'); if (op && !op.disabled) { e.stopImmediatePropagation(); return spotPick(op.dataset.opt); }
+    if (e.target.closest('[data-spot="next"]')) { e.stopImmediatePropagation(); openSpot((cx.fi + 1) % CXR_FILMS.length); }
+  }, true);
+  $('wlC').addEventListener('click', e => { const b = e.target.closest('.wl-row[data-f]'); if (b && recognizing() && cx.recog === 'spot') openSpot(+b.dataset.f); });
+
+  function startCxr() {
+    $('cRecog').classList.toggle('hidden', !recognizing());
+    if (recognizing() && !CXR_FILMS.length) {
+      $('wlC').innerHTML = ''; $('viewC').textContent = '';
+      $('screenCXR').innerHTML = '<p class="caption" style="padding:40px 16px">Real films are being curated.</p>';
+      $('reportC').innerHTML = '<p class="note">The schematic drill (Guided, Quiz) is fully available.</p>';
+      return;
+    }
+    if (recognizing() && cx.recog === 'spot') openSpot(0);
+    else cxrRead.setMode(cx.mode === 'quiz' ? 'quiz' : 'guided');
+  }
+  $('cMode').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; press($('cMode'), b); cx.mode = b.dataset.cmode; startCxr(); });
+  $('cRecog').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; press($('cRecog'), b); cx.recog = b.dataset.rec; startCxr(); });
+
+  function buildCxrReference() {
+    const t = CXR.teaching;
+    let h = '<div class="ref-block"><h4>The approach</h4><p>' + t.approach + '</p></div>';
+    h += '<div class="ref-block"><h4>RIPE: is the film adequate?</h4><table class="ref-table"><tr><th>Check</th><th>What to confirm</th></tr>'
+      + t.ripe.map(a => '<tr><td>' + a.k + '</td><td>' + a.v + '</td></tr>').join('') + '</table></div>';
+    h += '<div class="ref-block"><h4>Key signs</h4><table class="ref-table"><tr><th>Sign</th><th>Meaning</th></tr>'
+      + t.signs.map(z => '<tr><td>' + z.name + '</td><td>' + z.meaning + '</td></tr>').join('')
+      + '</table><p class="ref-note">' + t.reviewAreas + '</p></div>';
+    $('cxrRefBody').innerHTML = h;
+  }
+
+  /* ================= router + keys ================= */
+  const started = { read: false, cxr: false };
+  function go(mod) {
+    if (!KEYS[mod]) mod = 'rhythms';
+    current = mod;
+    document.querySelectorAll('#moduleSwitch button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.mod === mod)));
+    ['rhythms', 'read', 'cxr'].forEach(m => $('mod-' + m).classList.toggle('hidden', m !== mod));
+    $('calLine').classList.toggle('hidden', mod === 'cxr');
+    cancelAnimationFrame(animId);
+    if (mod === 'rhythms') {
+      if (state.mode === 'learn') renderLearn();
+      else { paintScreen($('screenR'), quiz.answer, state.render); maskRate(quiz.answered); }
+    }
+    else if (mod === 'read' && !started.read) { started.read = true; buildReference(); ecg.open(0); }
+    else if (mod === 'cxr' && !started.cxr) { started.cxr = true; buildCxrReference(); startCxr(); }
+    try { history.replaceState(null, '', mod === 'rhythms' ? location.pathname : '#' + mod); } catch (e) {}
+  }
+  $('moduleSwitch').addEventListener('click', e => { const b = e.target.closest('button'); if (b) go(b.dataset.mod); });
+  document.addEventListener('keydown', e => {
+    if (e.metaKey || e.ctrlKey || e.altKey || /input|textarea|select/i.test(e.target.tagName)) return;
+    const k = KEYS[current];
+    if (/^[1-9]$/.test(e.key) && k.digit) { e.preventDefault(); k.digit(+e.key - 1); }
+    // Enter on a focused control belongs to that control; elsewhere it advances the read
+    else if ((e.key === 'Enter' || e.key.toLowerCase() === 'n') && k.enter && !(e.target.closest && e.target.closest('button, a, summary'))) { e.preventDefault(); k.enter(); }
+    else if (e.key.toLowerCase() === 'l') setLights(document.documentElement.dataset.lights !== 'on');
+  });
+
+  /* ---------------- init ---------------- */
+  let lightsSaved = null; try { lightsSaved = localStorage.getItem('readthis:lights'); } catch (e) {}
+  setLights(lightsSaved === 'on');
+  buildWorklistR();
+  // canvas labels use DM Mono; wait for it so the first paint is not in a fallback face
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(() => go(location.hash.slice(1)));
+})();
+</script>
+</body>
+</html>

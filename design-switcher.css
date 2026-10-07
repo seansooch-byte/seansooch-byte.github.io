@@ -1,0 +1,61 @@
+/* Shared edition controls are deliberately independent of either page's styles. */
+html { scroll-padding-bottom: 110px; }
+body { padding-bottom: 104px; }
+.design-switcher, .design-switcher * { box-sizing: border-box; }
+.design-switcher {
+  position: fixed; z-index: 80; left: 50%; bottom: max(18px, env(safe-area-inset-bottom));
+  transform: translateX(-50%); display: flex; align-items: center; gap: 14px;
+  padding: 7px 8px 7px 18px; width: max-content; max-width: calc(100% - 24px);
+  border: 1px solid #b9bcb5; border-radius: 8px; background: #fffffff5;
+  box-shadow: 0 5px 30px #17191618; color: #171916;
+  font: 500 12px/1.2 'Space Grotesk', Arial, sans-serif;
+}
+.design-switcher .design-caption { font-size: 9px; font-weight: 700; letter-spacing: .12em; line-height: 1.5; }
+.design-options { display: grid; grid-template-columns: repeat(3, 112px); position: relative; gap: 3px; }
+.design-options::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 112px; background: #171916; border-radius: 4px; transition: transform 300ms cubic-bezier(.22,1,.36,1), background 300ms; }
+[data-selected="fable"] .design-options::before { transform: translateX(115px); background: #274e50; }
+[data-selected="opus"] .design-options::before { transform: translateX(230px); background: #9c3824; }
+.design-switcher .design-choice {
+  position: relative; display: flex; align-items: center; justify-content: center; flex-direction: column;
+  gap: 3px; min-height: 46px; margin: 0; padding: 6px 8px; border: 0; border-radius: 4px;
+  background: transparent; color: #454a42; font: inherit; text-decoration: none; letter-spacing: 0;
+  cursor: pointer; transition: color 200ms, background 200ms;
+}
+.design-switcher .design-choice:hover { background: #1719160a; }
+.design-switcher [aria-current] { color: #fff; }
+.design-switcher .design-choice:focus-visible { outline: 3px solid #254dff; outline-offset: 3px; }
+.design-curtain {
+  position: fixed; z-index: 9999; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center;
+  gap: 20px; background: #254dff; color: #fff; transform: translateY(101%); visibility: hidden; pointer-events: none;
+  font-family: 'Space Grotesk', Arial, sans-serif;
+}
+.design-curtain[data-destination="fable"] { background: #e9e3d4; color: #274e50; }
+.design-curtain[data-destination="opus"] { background: #14120f; color: #e9e2d2; }
+.design-curtain[data-destination="opus"] strong { font: italic 400 clamp(52px, 12vw, 160px)/1 Georgia, 'Times New Roman', serif; letter-spacing: -.01em; } /* a face every page has, so the leaving and arriving curtains match */
+.design-curtain[data-destination="opus"] span { color: #e8664c; }
+.design-curtain strong { font: 700 clamp(48px, 12vw, 160px)/1 Arial, sans-serif; letter-spacing: -.065em; }
+.design-curtain span { font-size: 11px; letter-spacing: .22em; }
+[data-design-phase="leave"] .design-curtain { visibility: visible; pointer-events: auto; animation: design-cover 340ms cubic-bezier(.65,0,.35,1) both; }
+[data-design-phase="arrive"] .design-curtain { visibility: visible; transform: translateY(0); pointer-events: auto; }
+/* Arriving: the page paints before the curtain element is parsed (it closes the body), so hide the page and fill
+   the window with the curtain colour from the first paint; the curtain itself stays visible inside the hidden body. */
+[data-design-phase="arrive"] body { visibility: hidden; }
+html[data-design="astra"][data-design-phase="arrive"] { background: #254dff; }
+html[data-design="fable"][data-design-phase="arrive"] { background: #e9e3d4; }
+html[data-design="opus"][data-design-phase="arrive"] { background: #14120f; }
+[data-design-phase="reveal"] .design-curtain { visibility: visible; animation: design-reveal 500ms cubic-bezier(.65,0,.35,1) both; }
+@keyframes design-cover { from { transform: translateY(101%); } to { transform: translateY(0); } }
+@keyframes design-reveal { from { transform: translateY(0); } to { transform: translateY(-101%); } }
+@media (max-width: 540px) {
+  .design-switcher { padding: 6px; gap: 0; bottom: max(12px, env(safe-area-inset-bottom)); }
+  .design-switcher .design-caption { display: none; }
+  .design-options { grid-template-columns: repeat(3, minmax(0, 1fr)); width: min(336px, calc(100vw - 38px)); }
+  .design-options::before { width: calc((100% - 6px) / 3); }
+  [data-selected="fable"] .design-options::before { transform: translateX(calc(100% + 3px)); }
+  [data-selected="opus"] .design-options::before { transform: translateX(calc(200% + 6px)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .design-switcher *, .design-options::before { transition: none !important; }
+  .design-curtain { display: none !important; animation: none !important; }
+}
+@media print { .design-switcher, .design-curtain { display: none !important; } body { padding-bottom: 0; } }

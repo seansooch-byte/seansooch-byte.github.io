@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab Values | Sean Sooch</title>
+<meta name="description" content="Searchable lab reference ranges with interpretation and clinical flags. Find normal values and what abnormal results point to, fast.">
+<link rel="canonical" href="https://seansooch.dev/lab-values/">
+<meta name="theme-color" content="#0a0a0f">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://seansooch.dev/lab-values/">
+<meta property="og:title" content="Lab Values | Sean Sooch">
+<meta property="og:description" content="Searchable lab reference ranges with interpretation and clinical flags.">
+<meta property="og:image" content="https://seansooch.dev/screenshots/space.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="800">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Lab Values | Sean Sooch">
+<meta name="twitter:description" content="Searchable lab reference ranges with interpretation and clinical flags.">
+<meta name="twitter:image" content="https://seansooch.dev/screenshots/space.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@400;700&family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/toolkit/pocket.css">
+</head>
+<body data-tool="lab-values">
+<!--pc:chrome--><header class="pc-bar"><div class="in"><a class="pc-home" href="/">&larr; seansooch.dev</a><a class="pc-kit" href="/toolkit/">Field Toolkit</a><nav class="pc-tools" aria-label="Tools"><a href="/calculators/"><i style="background:#1F5FA8"></i>Calculators</a><a href="/lab-values/" aria-current="page"><i style="background:#1E7A4C"></i>Lab values</a><a href="/antibiotic-coverage/"><i style="background:#6B3FA0"></i>Antibiotics</a><a href="/differentials/"><i style="background:#B86E00"></i>Differentials</a><a href="/tccc/"><i style="background:#B3261E"></i>TCCC</a></nav></div></header><!--/pc:chrome-->
+<div class="wrap">
+  <header>
+    <h1>Lab Values</h1>
+    <p>Know what a number means before it bites you.</p>
+  </header>
+
+  <a class="feature-link" href="cbc-cmp/">
+    <span class="fl-tag">New</span>
+    <span class="fl-body">
+      <span class="fl-title">CBC + CMP Decoder</span>
+      <span class="fl-sub">Click a value to study the high-yield differential for a high or low result. Built for the IM shelf.</span>
+    </span>
+    <span class="fl-arrow" aria-hidden="true">&rarr;</span>
+  </a>
+
+  <div class="controls">
+    <input type="text" class="search" id="search" placeholder="Search lab name or abbreviation (e.g. K, sodium, troponin)">
+    <div class="tabs" id="tabs"></div>
+  </div>
+
+  <div class="table-wrap">
+    <table id="labtable">
+      <thead>
+        <tr>
+          <th>Lab</th>
+          <th>Abbr</th>
+          <th>Range</th>
+          <th class="units-h">Units</th>
+          <th>Clinical Flag</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="empty hidden" id="empty">No labs match your search.</div>
+  </div>
+
+  <footer>
+    <p>Educational use only. Not a substitute for clinical judgment.</p>
+    <p style="margin-top:0.4rem;"><a href="../">← Back to seansooch.dev</a></p>
+  </footer>
+</div>
+
+<script>
+const SYSTEMS = [
+  { id: 'metabolic', label: 'Metabolic' },
+  { id: 'hematology', label: 'Hematology' },
+  { id: 'coags', label: 'Coags' },
+  { id: 'lfts', label: 'LFTs' },
+  { id: 'cardiac', label: 'Cardiac' },
+  { id: 'urine', label: 'Urine' },
+  { id: 'csf', label: 'CSF' },
+];
+
+const LABS = [
+  // METABOLIC
+  { sys:'metabolic', lab:'Sodium', abbr:'Na', range:'135–145', units:'mEq/L', flag:'<b>Low:</b> SIADH, diuretics, CHF, cirrhosis. <b>High:</b> dehydration, DI. Correct slowly to avoid CPM.' },
+  { sys:'metabolic', lab:'Potassium', abbr:'K', range:'3.5–5.0', units:'mEq/L', flag:'<b>Low:</b> diuretics, vomiting, DKA tx. <b>High:</b> AKI, ACE-I, rhabdo. ECG changes >6.0.' },
+  { sys:'metabolic', lab:'Chloride', abbr:'Cl', range:'98–106', units:'mEq/L', flag:'Tracks Na. <b>Low:</b> vomiting (NGT loss). <b>High:</b> NS infusion, RTA.' },
+  { sys:'metabolic', lab:'Bicarbonate', abbr:'HCO₃', range:'22–28', units:'mEq/L', flag:'<b>Low:</b> metabolic acidosis (DKA, lactic, uremia). <b>High:</b> metabolic alkalosis (vomiting, diuretics).' },
+  { sys:'metabolic', lab:'BUN', abbr:'BUN', range:'7–20', units:'mg/dL', flag:'<b>High:</b> dehydration, AKI, GI bleed (BUN/Cr >20:1 = pre-renal).' },
+  { sys:'metabolic', lab:'Creatinine', abbr:'Cr', range:'0.6–1.2', units:'mg/dL', flag:'<b>High:</b> AKI, CKD. Baseline matters. Use eGFR for staging.' },
+  { sys:'metabolic', lab:'Glucose', abbr:'Glu', range:'70–110', units:'mg/dL', flag:'<b>Low:</b> insulin overdose, sepsis, adrenal crisis. <b>High:</b> DM, stress, steroids.' },
+  { sys:'metabolic', lab:'Calcium', abbr:'Ca', range:'8.5–10.5', units:'mg/dL', flag:'<b>Low:</b> hypoparathyroid, vit D def, CKD. <b>High:</b> CHIMPANZEES (Ca, hyperPTH, malignancy). Correct for albumin.' },
+  { sys:'metabolic', lab:'Magnesium', abbr:'Mg', range:'1.7–2.2', units:'mg/dL', flag:'<b>Low:</b> EtOH, diuretics, refeeding. Replete before K. Causes refractory hypoK and torsades.' },
+  { sys:'metabolic', lab:'Phosphate', abbr:'PO₄', range:'2.5–4.5', units:'mg/dL', flag:'<b>Low:</b> refeeding, DKA tx, alcoholism. <b>High:</b> CKD, tumor lysis.' },
+  { sys:'metabolic', lab:'Albumin', abbr:'Alb', range:'3.5–5.0', units:'g/dL', flag:'<b>Low:</b> malnutrition, liver disease, nephrotic, inflammation. Affects Ca interpretation.' },
+  { sys:'metabolic', lab:'Anion Gap', abbr:'AG', range:'8–12', units:'mEq/L', flag:'<b>High AG:</b> MUDPILES (methanol, uremia, DKA, propylene glycol, INH, lactic, ethylene glycol, salicylate).' },
+  { sys:'metabolic', lab:'Lactate', abbr:'Lac', range:'0.5–2.0', units:'mmol/L', flag:'<b>High:</b> sepsis, shock, ischemia, metformin. >4 = severe. Trend with resuscitation.' },
+
+  // HEMATOLOGY
+  { sys:'hematology', lab:'White Blood Cells', abbr:'WBC', range:'4.5–11.0', units:'×10³/µL', flag:'<b>High:</b> infection, inflammation, leukemia, steroids. <b>Low:</b> sepsis, chemo, BM failure.' },
+  { sys:'hematology', lab:'Hemoglobin', abbr:'Hgb', range:'M 13.5–17.5 / F 12–16', units:'g/dL', flag:'<b>Low:</b> anemia (workup by MCV). <b>High:</b> polycythemia, dehydration.' },
+  { sys:'hematology', lab:'Hematocrit', abbr:'Hct', range:'M 41–53 / F 36–46', units:'%', flag:'~3× Hgb. <b>Drop of 3:</b> ~1 unit blood loss. Trend over time in GIB.' },
+  { sys:'hematology', lab:'Platelets', abbr:'Plt', range:'150–400', units:'×10³/µL', flag:'<b>Low:</b> ITP, DIC, HIT, sepsis, drugs. Spontaneous bleeding risk <20.' },
+  { sys:'hematology', lab:'Mean Corp Volume', abbr:'MCV', range:'80–100', units:'fL', flag:'<b>Micro:</b> Fe def, thal, ACD, sideroblastic. <b>Macro:</b> B12/folate, EtOH, hypothyroid, MDS.' },
+  { sys:'hematology', lab:'RDW', abbr:'RDW', range:'11.5–14.5', units:'%', flag:'<b>High:</b> mixed anemia, early Fe def, retic response, hemolysis.' },
+  { sys:'hematology', lab:'Reticulocytes', abbr:'Retic', range:'0.5–2.5', units:'%', flag:'<b>High:</b> appropriate response to hemolysis or bleed. <b>Low w/ anemia:</b> BM failure or nutrient def.' },
+  { sys:'hematology', lab:'Absolute Neutrophil', abbr:'ANC', range:'1.5–8.0', units:'×10³/µL', flag:'<500 = neutropenic; fever = emergency, broad-spectrum abx within 1 hr.' },
+  { sys:'hematology', lab:'ESR', abbr:'ESR', range:'M <15 / F <20', units:'mm/hr', flag:'Nonspecific inflammation. <b>Very high (>100):</b> GCA, infection, malignancy, multiple myeloma.' },
+  { sys:'hematology', lab:'C-Reactive Protein', abbr:'CRP', range:'<10', units:'mg/L', flag:'Acute phase reactant; rises faster than ESR. Track infection/inflammation response.' },
+  { sys:'hematology', lab:'Ferritin', abbr:'Fer', range:'M 30–400 / F 13–150', units:'ng/mL', flag:'<b>Low:</b> Fe def. <b>High:</b> inflammation, hemochromatosis, AOSD (>10,000), HLH.' },
+  { sys:'hematology', lab:'Haptoglobin', abbr:'Hapto', range:'30–200', units:'mg/dL', flag:'<b>Low:</b> intravascular hemolysis. Pair with high LDH and low Hgb.' },
+
+  // COAGS
+  { sys:'coags', lab:'Prothrombin Time', abbr:'PT', range:'11–13.5', units:'sec', flag:'Extrinsic + common pathway (II, V, VII, X). <b>High:</b> warfarin, vit K def, liver disease, DIC.' },
+  { sys:'coags', lab:'INR', abbr:'INR', range:'0.8–1.1', units:'—', flag:'Standardized PT. Warfarin target 2–3 (afib, DVT) or 2.5–3.5 (mech mitral valve). Reverse with vit K or PCC.' },
+  { sys:'coags', lab:'Partial Thromboplastin', abbr:'PTT', range:'25–35', units:'sec', flag:'Intrinsic + common (VIII, IX, XI, XII). <b>High:</b> heparin, hemophilia, vWD, lupus anticoagulant.' },
+  { sys:'coags', lab:'Fibrinogen', abbr:'Fib', range:'200–400', units:'mg/dL', flag:'<b>Low:</b> DIC, severe liver disease, thrombolysis. Cryo if <100 + bleeding.' },
+  { sys:'coags', lab:'D-dimer', abbr:'D-d', range:'<500', units:'ng/mL', flag:'High sensitivity, low specificity. <b>Use:</b> rule out PE/DVT in low pre-test probability.' },
+  { sys:'coags', lab:'Thrombin Time', abbr:'TT', range:'14–19', units:'sec', flag:'<b>High:</b> heparin, DIC, hypofibrinogenemia, dabigatran.' },
+
+  // LFTs
+  { sys:'lfts', lab:'AST', abbr:'AST', range:'10–40', units:'U/L', flag:'<b>High:</b> hepatocyte injury, also muscle/heart. AST>ALT (>2:1) suggests EtOH.' },
+  { sys:'lfts', lab:'ALT', abbr:'ALT', range:'7–56', units:'U/L', flag:'Most liver-specific. <b>>1000:</b> ischemia, viral hep, toxin (acetaminophen).' },
+  { sys:'lfts', lab:'Alk Phosphatase', abbr:'ALP', range:'40–129', units:'U/L', flag:'<b>High:</b> cholestasis, bone (Paget, mets), pregnancy. Confirm hepatic origin with GGT.' },
+  { sys:'lfts', lab:'Total Bilirubin', abbr:'T.bili', range:'0.1–1.2', units:'mg/dL', flag:'<b>Unconjugated:</b> hemolysis, Gilbert. <b>Conjugated:</b> obstruction, hepatocellular.' },
+  { sys:'lfts', lab:'Direct Bilirubin', abbr:'D.bili', range:'<0.3', units:'mg/dL', flag:'<b>High:</b> conjugated hyperbilirubinemia (obstruction, Dubin-Johnson, Rotor).' },
+  { sys:'lfts', lab:'GGT', abbr:'GGT', range:'9–48', units:'U/L', flag:'Confirms hepatic origin of high ALP. <b>High:</b> EtOH, drugs, biliary disease.' },
+  { sys:'lfts', lab:'Albumin', abbr:'Alb', range:'3.5–5.0', units:'g/dL', flag:'Liver synthetic function. Half-life ~20d. Slow indicator vs PT/INR.' },
+  { sys:'lfts', lab:'Ammonia', abbr:'NH₃', range:'15–45', units:'µg/dL', flag:'<b>High:</b> hepatic encephalopathy. Treat with lactulose +/- rifaximin. Poor correlation with severity.' },
+
+  // CARDIAC
+  { sys:'cardiac', lab:'Troponin I', abbr:'Trop I', range:'<0.04', units:'ng/mL', flag:'<b>High:</b> MI, demand ischemia, myocarditis, PE, sepsis, CKD. Trend over 3–6 hrs.' },
+  { sys:'cardiac', lab:'High-sens Trop T', abbr:'hs-cTnT', range:'<14', units:'ng/L', flag:'Detects MI earlier. Δ ≥20% over 3 hrs is concerning. Many baseline elevated.' },
+  { sys:'cardiac', lab:'Creatine Kinase', abbr:'CK', range:'30–200', units:'U/L', flag:'<b>High:</b> muscle injury, rhabdo (>5000), MI, statins. Risk of AKI when very high.' },
+  { sys:'cardiac', lab:'CK-MB', abbr:'CK-MB', range:'<5', units:'ng/mL', flag:'Cardiac muscle. Largely replaced by troponin. Useful for re-infarction (shorter half-life).' },
+  { sys:'cardiac', lab:'BNP', abbr:'BNP', range:'<100', units:'pg/mL', flag:'<b>High:</b> heart failure (>400 likely, <100 unlikely). Falsely low in obesity, high in CKD.' },
+  { sys:'cardiac', lab:'NT-proBNP', abbr:'NT-pBNP', range:'<300', units:'pg/mL', flag:'Longer half-life than BNP. Age-adjusted cutoffs: <50: 450, 50–75: 900, >75: 1800.' },
+  { sys:'cardiac', lab:'LDH', abbr:'LDH', range:'140–280', units:'U/L', flag:'Nonspecific. <b>High:</b> hemolysis, MI, liver, lymphoma, tumor lysis, PCP pneumonia.' },
+  { sys:'cardiac', lab:'Lactate', abbr:'Lac', range:'0.5–2.0', units:'mmol/L', flag:'Tissue hypoperfusion marker. >4 = severe. Trend during resuscitation.' },
+
+  // URINE
+  { sys:'urine', lab:'Specific Gravity', abbr:'SG', range:'1.005–1.030', units:'—', flag:'<b>High:</b> dehydration, SIADH. <b>Low:</b> overhydration, DI, ATN.' },
+  { sys:'urine', lab:'pH', abbr:'pH', range:'4.5–8.0', units:'—', flag:'<b>Alkaline:</b> proteus UTI, RTA type 1, vegetarian. <b>Acidic:</b> stones, DKA.' },
+  { sys:'urine', lab:'Protein', abbr:'Prot', range:'Negative', units:'—', flag:'<b>Positive:</b> nephrotic (>3.5g/d), nephritic, infection, orthostatic. Quantify with UPCR.' },
+  { sys:'urine', lab:'Glucose', abbr:'Glu', range:'Negative', units:'—', flag:'<b>Positive:</b> serum >180 (DM), Fanconi syndrome, SGLT2-i.' },
+  { sys:'urine', lab:'Ketones', abbr:'Ket', range:'Negative', units:'—', flag:'<b>Positive:</b> DKA, starvation, alcoholic ketoacidosis. Detects acetoacetate, not β-hydroxybutyrate.' },
+  { sys:'urine', lab:'Leukocyte Esterase', abbr:'LE', range:'Negative', units:'—', flag:'<b>Positive:</b> pyuria, UTI. Sensitive but not specific.' },
+  { sys:'urine', lab:'Nitrites', abbr:'Nit', range:'Negative', units:'—', flag:'<b>Positive:</b> gram-neg UTI (E. coli). Specific but not sensitive (need bladder dwell time).' },
+  { sys:'urine', lab:'WBC', abbr:'WBC', range:'<5/hpf', units:'/hpf', flag:'<b>High:</b> UTI, pyelonephritis, interstitial nephritis, sterile pyuria (TB, stones).' },
+  { sys:'urine', lab:'RBC', abbr:'RBC', range:'<3/hpf', units:'/hpf', flag:'<b>Hematuria:</b> stones, UTI, malignancy, GN (dysmorphic + casts), trauma.' },
+  { sys:'urine', lab:'Casts', abbr:'Casts', range:'None', units:'—', flag:'<b>RBC:</b> GN. <b>WBC:</b> pyelo, AIN. <b>Muddy brown:</b> ATN. <b>Hyaline:</b> nonspecific.' },
+  { sys:'urine', lab:'FENa', abbr:'FENa', range:'<1% pre-renal', units:'%', flag:'<b><1%:</b> pre-renal AKI. <b>>2%:</b> ATN. Invalid on diuretics; use FEUrea instead.' },
+
+  // CSF
+  { sys:'csf', lab:'Opening Pressure', abbr:'OP', range:'5–20', units:'cm H₂O', flag:'<b>High:</b> meningitis, IIH, mass, hemorrhage. Therapeutic LP for IIH.' },
+  { sys:'csf', lab:'WBC', abbr:'WBC', range:'0–5', units:'/µL', flag:'<b>>1000 PMN:</b> bacterial. <b>Lymph:</b> viral, TB, fungal. Always check after a febrile LP.' },
+  { sys:'csf', lab:'Neutrophils', abbr:'Neut%', range:'0', units:'%', flag:'<b>High %:</b> bacterial meningitis. Early viral may also be neut-predominant.' },
+  { sys:'csf', lab:'Lymphocytes', abbr:'Lymph%', range:'60–70', units:'%', flag:'<b>High:</b> viral, TB, fungal, autoimmune (MS), neoplastic.' },
+  { sys:'csf', lab:'Protein', abbr:'Prot', range:'15–45', units:'mg/dL', flag:'<b>High:</b> bacterial meningitis (>200), GBS (albuminocytologic dissociation), MS.' },
+  { sys:'csf', lab:'Glucose', abbr:'Glu', range:'45–80', units:'mg/dL', flag:'<b>Low:</b> bacterial, TB, fungal, neoplastic. Normal in viral meningitis.' },
+  { sys:'csf', lab:'CSF/Serum Glucose', abbr:'Ratio', range:'>0.6', units:'—', flag:'<b><0.4:</b> bacterial meningitis. More reliable than absolute CSF glucose.' },
+  { sys:'csf', lab:'Lactate', abbr:'Lac', range:'<3.5', units:'mmol/L', flag:'<b>High:</b> bacterial > viral meningitis. Useful when WBC is borderline.' },
+];
+
+let activeTab = 'metabolic';
+let searchTerm = '';
+
+const tabsEl = document.getElementById('tabs');
+const tbody = document.getElementById('tbody');
+const search = document.getElementById('search');
+const empty = document.getElementById('empty');
+
+SYSTEMS.forEach(s => {
+  const btn = document.createElement('button');
+  btn.className = 'tab' + (s.id === activeTab ? ' active' : '');
+  btn.textContent = s.label;
+  btn.dataset.id = s.id;
+  btn.addEventListener('click', () => {
+    activeTab = s.id;
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.id === activeTab));
+    render();
+  });
+  tabsEl.appendChild(btn);
+});
+
+LABS.forEach((l, i) => {
+  const tr = document.createElement('tr');
+  tr.className = 'sys-' + l.sys;
+  tr.dataset.sys = l.sys;
+  tr.dataset.search = (l.lab + ' ' + l.abbr).toLowerCase();
+  tr.innerHTML = `
+    <td class="lab"><span class="sys-chip ${l.sys}">${l.sys.toUpperCase()}</span>${l.lab}</td>
+    <td class="abbr">${l.abbr}</td>
+    <td class="range">${l.range}</td>
+    <td class="units">${l.units}</td>
+    <td class="flag">${l.flag}</td>
+  `;
+  tbody.appendChild(tr);
+});
+
+search.addEventListener('input', e => {
+  searchTerm = e.target.value.trim().toLowerCase();
+  render();
+});
+
+function render() {
+  let visible = 0;
+  const rows = tbody.querySelectorAll('tr');
+  const searching = searchTerm.length > 0;
+  // hide/show system chips: only show during global search
+  document.querySelectorAll('.sys-chip').forEach(c => c.style.display = searching ? 'inline-block' : 'none');
+  rows.forEach(tr => {
+    const sysMatch = searching || tr.dataset.sys === activeTab;
+    const textMatch = !searching || tr.dataset.search.includes(searchTerm);
+    const show = sysMatch && textMatch;
+    tr.classList.toggle('hidden', !show);
+    if (show) visible++;
+  });
+  empty.classList.toggle('hidden', visible > 0);
+  // dim tabs during global search
+  document.querySelectorAll('.tab').forEach(t => t.style.opacity = searching ? '0.4' : '');
+}
+
+render();
+</script>
+<!--pc:chrome--><div class="pc-foot"><span>Educational reference. Not a substitute for clinical judgment.</span><span>Edition 2 by Claude Opus 5.5 · <a href="https://toolkit-v1.pages.dev/toolkit/">Edition 1</a></span></div><!--/pc:chrome-->
+</body>
+</html>

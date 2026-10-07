@@ -1,0 +1,12 @@
+/sims  https://simulators-4lb.pages.dev/  302
+/sims/*  https://simulators-4lb.pages.dev/:splat  302
+/simulators  https://simulators-4lb.pages.dev/  302
+/simulators/*  https://simulators-4lb.pages.dev/:splat  302
+/codeblue  https://simulators-4lb.pages.dev/cpr/  302
+/codeblue/*  https://simulators-4lb.pages.dev/cpr/:splat  302
+/cpr  https://simulators-4lb.pages.dev/cpr/  302
+/cpr/*  https://simulators-4lb.pages.dev/cpr/:splat  302
+/alignment  https://simulators-4lb.pages.dev/alignment/  302
+/alignment/*  https://simulators-4lb.pages.dev/alignment/:splat  302
+/alignment-simulator  https://simulators-4lb.pages.dev/alignment/  302
+/alignment-simulator/*  https://simulators-4lb.pages.dev/alignment/:splat  302

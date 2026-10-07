@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en" data-design="opus">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sean Sooch: The Commentary</title>
+<meta name="description" content="Thirteen working systems across medicine, the military, and frontier AI, set as a glossed edition with commentary in the margins. Built by a medical student and military officer with AI as the engineering tool. Every host is asked to answer as the page loads.">
+<meta property="og:title" content="Sean Sooch: The Commentary">
+<meta property="og:description" content="One site, three views. This one, The Commentary, was set by Claude Opus 5.5 beside the Field Manual of Claude Fable 5.1 and the Personal Index of OpenAI Astra.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://seansooch.dev/designs/opus/">
+<meta property="og:url" content="https://seansooch.dev/designs/opus/">
+<meta name="theme-color" content="#14120F">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400..800;1,400..800&family=Alegreya+SC:wght@500;700&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+/* The Commentary. A glossed edition: the work in the centre column, commentary in the margins,
+   one rubric red. Layout is one three-column grid (side-heads | text | glosses) reused by every
+   row, so the drypoint ruling lines at the text block edges hold for the whole page. */
+:root{
+  --ground:#14120F; --leaf:#1B1915; --leaf-2:#221F1A;
+  --text:#E9E2D2; --text-2:#B3AA97; --text-3:#8C8472;
+  --rule:#2C2823; --rule-2:#3A352E;
+  --rubric:#E8664C; --rubric-dim:#B64C37;
+  --ok:#8DB89C; --bad:#E8664C;
+  --gl:188px; --tx:660px; --gr:232px; --gap:44px;
+  --page:calc(var(--gl) + var(--tx) + var(--gr) + 2 * var(--gap));
+  --display:'Cormorant Garamond','Iowan Old Style',Georgia,serif;
+  --serif:'Alegreya',Georgia,serif;
+  --sc:'Alegreya SC','Alegreya',Georgia,serif;
+  --sans:'Alegreya Sans',system-ui,sans-serif;
+  --d0:0s;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px;background:var(--ground)}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{background:var(--ground);color:var(--text);font-family:var(--serif);font-size:19px;line-height:1.62;
+  -webkit-font-smoothing:antialiased;font-variant-numeric:oldstyle-nums proportional-nums;text-rendering:optimizeLegibility}
+a{color:inherit;text-decoration-color:var(--rubric-dim);text-underline-offset:.18em;text-decoration-thickness:1px}
+a:hover{color:var(--rubric)}
+::selection{background:var(--rubric);color:var(--ground)}
+:focus-visible{outline:2px solid var(--rubric);outline-offset:3px}
+b,strong{font-weight:700}
+button{font:inherit;color:inherit}
+.rub{color:var(--rubric)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- the ruled page ---------- */
+.row3{display:grid;grid-template-columns:var(--gl) minmax(0,var(--tx)) var(--gr);column-gap:var(--gap);
+  width:min(var(--page),100% - 48px);margin:0 auto}
+.gl{grid-column:1;text-align:right}
+.tx{grid-column:2;min-width:0}
+.gr{grid-column:3;min-width:0}
+.span2{grid-column:2 / 4;background:var(--ground);position:relative}
+.ruling{position:fixed;inset:0;pointer-events:none;z-index:0;display:grid;grid-template-columns:var(--gl) minmax(0,var(--tx)) var(--gr);
+  column-gap:var(--gap);width:min(var(--page),100% - 48px);margin:0 auto}
+.ruling i{grid-column:2;border-left:1px solid var(--rule);border-right:1px solid var(--rule);margin:0 -22px;transform-origin:top;
+  animation:rule-in 1.1s cubic-bezier(.6,0,.2,1) var(--d0) both}
+@keyframes rule-in{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+main,header.bar,footer{position:relative;z-index:1}
+
+/* ---------- running head ---------- */
+.bar{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--ground) 90%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--rule)}
+.bar .row3{align-items:center;height:56px}
+.bar .mark{grid-column:1;justify-self:end;font-family:var(--sc);font-weight:500;font-size:15px;letter-spacing:.06em;text-decoration:none;white-space:nowrap}
+.bar .mark .rub{font-family:var(--display);font-size:22px;line-height:0;vertical-align:-1px}
+.bar nav{grid-column:2 / 4;display:flex;align-items:center;gap:22px;font-family:var(--sans);font-size:14px;color:var(--text-2)}
+.bar nav a{text-decoration:none;white-space:nowrap}
+.bar nav a .n{font-family:var(--display);font-style:italic;color:var(--rubric);margin-right:4px;font-size:15px}
+.bar .tools{margin-left:auto;display:flex;gap:8px}
+.btn{font-family:var(--sans);font-size:13px;letter-spacing:.02em;background:transparent;color:var(--text);border:1px solid var(--rule-2);padding:6px 12px 6px;border-radius:2px;cursor:pointer;line-height:1.2;white-space:nowrap;transition:border-color .15s,color .15s,background .15s}
+.btn:hover{border-color:var(--rubric);color:var(--rubric)}
+.btn[aria-pressed="true"]{background:var(--text);color:var(--ground);border-color:var(--text)}
+.btn kbd{font:inherit;color:var(--text-3);margin-left:7px}
+
+/* ---------- title page ---------- */
+.title-page{padding:clamp(56px,11vh,120px) 0 40px}
+.incipit{font-family:var(--display);font-style:italic;font-size:30px;line-height:1;color:var(--rubric);margin-top:14px}
+.gl .gloss,.gr .gloss{font-family:var(--sans);font-size:14.5px;line-height:1.5;color:var(--text-2)}
+.gl .gloss{margin-top:10px}
+.kicker{font-family:var(--sc);font-size:16px;letter-spacing:.08em;color:var(--text-2)}
+.name{font-family:var(--display);font-weight:300;font-size:clamp(76px,12.4vw,178px);line-height:.84;letter-spacing:-.012em;margin:18px 0 0 -.04em}
+.name > span{display:block}
+.name .it{font-style:italic;padding-left:.42em}
+.subtitle{font-family:var(--display);font-style:italic;font-size:clamp(24px,2.6vw,32px);color:var(--text-2);margin:26px 0 30px;line-height:1.2}
+.lede{font-size:21px;line-height:1.6;max-width:36em}
+.lede b{font-weight:600}
+.versal{font-family:var(--display);font-weight:500;float:left;font-size:4.6em;line-height:.8;margin:.07em .05em 0 -.03em;color:var(--rubric)}
+.hands{margin-top:26px;font-family:var(--sans);font-size:15px;color:var(--text-2);line-height:1.6;max-width:44em}
+.hands b{color:var(--text);font-weight:500}
+.figures{display:grid;gap:18px;padding-top:6px}
+.figures div{border-top:1px solid var(--rule);padding-top:10px}
+.figures dd{font-family:var(--display);font-weight:400;font-size:40px;line-height:1;font-variant-numeric:lining-nums tabular-nums;color:var(--text)}
+.figures dt{font-family:var(--sans);font-size:13.5px;color:var(--text-2);margin-top:5px}
+.figures .live dd{color:var(--ok)}
+.probe-stamp{font-family:var(--sans);font-size:13px;color:var(--text-3);margin-top:14px;line-height:1.45}
+
+/* scribe first, rubricator second */
+.ink-in{animation:ink-in .9s ease calc(var(--d0) + .35s) both}
+.ink-in-2{animation:ink-in .9s ease calc(var(--d0) + .6s) both}
+.ink-in-3{animation:ink-in .9s ease calc(var(--d0) + .85s) both}
+@keyframes ink-in{from{opacity:0;filter:blur(3px);transform:translateY(6px)}to{opacity:1;filter:none;transform:none}}
+.rubricate{animation:rubricate 1s ease calc(var(--d0) + 1.3s) both}
+@keyframes rubricate{from{color:var(--text)}to{color:var(--rubric)}}
+@media (prefers-reduced-motion: reduce){
+  .ruling i,.ink-in,.ink-in-2,.ink-in-3,.rubricate{animation:none !important}
+}
+
+/* ---------- sections ---------- */
+.sec{padding-top:112px}
+.sec-h{align-items:end;margin-bottom:34px}
+.secno{font-family:var(--display);font-style:italic;font-weight:400;font-size:64px;line-height:.8;color:var(--rubric);display:block}
+.sec-h h2{font-family:var(--display);font-weight:400;font-size:clamp(40px,4.4vw,56px);line-height:1;letter-spacing:-.005em}
+.sec-h .sub{font-style:italic;color:var(--text-2);margin-top:10px;font-size:18px}
+.sec-h .gr{font-family:var(--sans);font-size:13.5px;color:var(--text-3);line-height:1.5;padding-bottom:4px}
+.sec-h::after{content:"";grid-column:1 / 4;height:1px;background:var(--rule-2);margin-top:22px}
+.sidehead{font-family:var(--sc);font-size:15.5px;letter-spacing:.06em;color:var(--text-2);display:block;padding-top:3px}
+.para{margin-bottom:22px}
+.para p{max-width:36em}
+.para p b{font-weight:600}
+.para .tx p::before{content:"¶";color:var(--rubric);margin-right:.35em;font-family:var(--display);font-weight:500}
+.nb{display:inline-block;font-family:var(--display);font-style:italic;font-weight:500;color:var(--rubric);font-size:22px;line-height:1;margin-right:6px}
+.subhead{margin:44px auto 10px}
+.subhead .tx{font-family:var(--sc);font-size:17px;letter-spacing:.08em;color:var(--rubric);border-bottom:1px solid var(--rule);padding-bottom:8px}
+.subhead .gl{font-family:var(--sans);font-size:13.5px;color:var(--text-3);align-self:end;padding-bottom:9px}
+
+/* filter line */
+.readonly{margin-bottom:8px}
+.readonly .tx{display:flex;flex-wrap:wrap;gap:4px 18px;font-family:var(--sans);font-size:14.5px;color:var(--text-2)}
+.readonly .lbl{font-style:italic;font-family:var(--serif);color:var(--text-3)}
+.chip{background:none;border:0;border-bottom:1px solid transparent;padding:1px 0;cursor:pointer;color:var(--text-2);font-family:var(--sans);font-size:14.5px}
+.chip:hover{color:var(--text)}
+.chip.on{color:var(--text);border-bottom-color:var(--rubric)}
+.chip .c{color:var(--text-3);margin-left:3px}
+
+/* ---------- works (lemma entries) ---------- */
+.work{padding:26px 0 28px;border-bottom:1px solid var(--rule)}
+.work.hide,.group.hide{display:none}
+.wno{display:block;font-family:var(--display);font-size:34px;line-height:.9;font-variant-numeric:lining-nums;color:var(--text-3)}
+.dom{display:block;font-family:var(--sc);font-size:14px;letter-spacing:.05em;color:var(--text-2);margin-top:8px;line-height:1.35}
+.att{display:inline-flex;align-items:center;gap:7px;font-family:var(--sans);font-size:13px;color:var(--text-3);margin-top:10px;white-space:nowrap}
+.att i{width:7px;height:7px;border-radius:50%;border:1px solid var(--text-3);display:inline-block;flex:none}
+.att.up{color:var(--ok)} .att.up i{background:var(--ok);border-color:var(--ok)}
+.att.down{color:var(--bad)} .att.down i{background:var(--bad);border-color:var(--bad)}
+.att.wake{color:var(--text-2)} .att.wake i{border-color:var(--text-2);animation:wake 1.2s ease-in-out infinite}
+@keyframes wake{50%{background:var(--text-2)}}
+@media (prefers-reduced-motion: reduce){.att.wake i{animation:none;background:var(--text-2)}}
+.work h3{font-family:var(--serif);font-weight:600;font-size:27px;line-height:1.15;letter-spacing:-.005em}
+.work h3 a{text-decoration:none}
+.work h3 a:hover{color:var(--rubric)}
+.tag{font-family:var(--sc);font-weight:500;font-size:14px;letter-spacing:.06em;color:var(--rubric);margin-left:10px;vertical-align:3px}
+.work .tx p{margin-top:10px;max-width:36em;color:var(--text)}
+.go{display:inline-block;margin-top:12px;font-family:var(--sans);font-size:14.5px;color:var(--text-2);text-decoration:none;border-bottom:1px solid var(--rule-2)}
+.go:hover{color:var(--rubric);border-color:var(--rubric)}
+.nums{list-style:none;display:grid;gap:10px;padding-top:4px}
+.nums li{font-family:var(--sans);font-size:13.5px;color:var(--text-2);line-height:1.3}
+.nums b{display:block;font-family:var(--display);font-weight:500;font-size:26px;line-height:1;color:var(--text);font-variant-numeric:lining-nums tabular-nums;margin-bottom:2px}
+.host{font-family:var(--sans);font-size:12.5px;color:var(--text-3);margin-top:12px;overflow-wrap:anywhere}
+
+/* papers */
+.layers{list-style:none;counter-reset:l;display:grid;gap:8px;font-family:var(--sans);font-size:14px;line-height:1.35;color:var(--text-2)}
+.layers li{counter-increment:l;display:grid;grid-template-columns:26px 1fr}
+.layers li::before{content:counter(l,lower-roman) ".";font-family:var(--display);font-style:italic;font-size:16px;color:var(--rubric);line-height:1.1}
+.layers b{color:var(--text);font-weight:500;display:block}
+.links{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px 22px;font-family:var(--sans);font-size:14.5px}
+.links a{color:var(--text-2);text-decoration:none;border-bottom:1px solid var(--rule-2)}
+.links a:hover{color:var(--rubric);border-color:var(--rubric)}
+
+/* lesser works */
+.lesser{padding:18px 0;border-bottom:1px solid var(--rule)}
+.lesser h3{font-family:var(--serif);font-weight:600;font-size:21px;line-height:1.2}
+.lesser h3 a{text-decoration:none}
+.lesser .tx p{font-size:17.5px;color:var(--text-2);margin-top:4px;max-width:36em}
+.lesser .gr{font-family:var(--sans);font-size:13.5px;color:var(--text-3);padding-top:4px}
+.lesser .att{margin-top:6px}
+
+/* ---------- films ---------- */
+.plate{margin-bottom:26px}
+.plate-btn{display:block;width:100%;border:1px solid var(--rule-2);padding:0;background:#000;cursor:pointer;position:relative;line-height:0}
+.plate-btn img{width:100%;height:auto;display:block;opacity:.86;transition:opacity .3s}
+.plate-btn:hover img{opacity:1}
+.play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.play span{width:74px;height:74px;border-radius:50%;background:color-mix(in srgb,var(--ground) 70%,transparent);border:1px solid var(--rubric);display:flex;align-items:center;justify-content:center;transition:transform .2s}
+.play span::after{content:"";margin-left:5px;border-left:20px solid var(--rubric);border-top:12px solid transparent;border-bottom:12px solid transparent}
+.plate-btn:hover .play span{transform:scale(1.06)}
+.plate figcaption{font-family:var(--sans);font-size:14px;color:var(--text-2);margin-top:10px;line-height:1.5}
+.plate figcaption b{font-family:var(--sc);font-weight:500;color:var(--rubric);letter-spacing:.05em}
+.film{display:grid;grid-template-columns:var(--gl) minmax(0,var(--tx)) var(--gr);column-gap:var(--gap);width:min(var(--page),100% - 48px);margin:0 auto;
+  background:none;border:0;border-bottom:1px solid var(--rule);padding:16px 0;text-align:left;cursor:pointer;font:inherit;color:inherit}
+.film:hover h3{color:var(--rubric)}
+.film h3{font-family:var(--serif);font-weight:600;font-size:21px;line-height:1.2;transition:color .15s}
+.film .tx p{font-size:17px;color:var(--text-2);margin-top:3px}
+.film .gl{font-family:var(--display);font-size:24px;font-variant-numeric:lining-nums;color:var(--text-3);line-height:1.1}
+.film .gr{font-family:var(--sans);font-size:13.5px;color:var(--text-3);padding-top:4px}
+.film .gr b{display:block;color:var(--text-2);font-weight:500}
+
+/* ---------- tables ---------- */
+.tcap{font-family:var(--sans);font-size:14px;color:var(--text-2);margin:0 0 10px}
+.tcap b{font-family:var(--sc);font-weight:500;color:var(--rubric);letter-spacing:.04em}
+.tbl{overflow-x:auto;margin-bottom:34px;border-top:1px solid var(--rule-2);border-bottom:1px solid var(--rule-2)}
+table{width:100%;border-collapse:collapse;font-family:var(--sans);font-size:15px}
+.tbl table{min-width:600px}
+th{font-family:var(--sc);font-weight:500;font-size:14px;letter-spacing:.05em;color:var(--text-2);text-align:left;padding:12px 14px 9px;border-bottom:1px solid var(--rule-2)}
+td{padding:11px 14px;border-bottom:1px solid var(--rule);vertical-align:baseline;color:var(--text)}
+tr:last-child td{border-bottom:0}
+td.val{font-family:var(--display);font-weight:500;font-size:24px;line-height:1;font-variant-numeric:lining-nums tabular-nums;white-space:nowrap}
+td.ref{color:var(--text-2);font-size:14px}
+td.hs{color:var(--text-3);font-size:13.5px}
+td.st{white-space:nowrap;font-size:14px}
+td.ms{text-align:right;font-variant-numeric:lining-nums tabular-nums;color:var(--text-2);font-size:14px;white-space:nowrap}
+td.st i{display:inline-block;width:7px;height:7px;border-radius:50%;border:1px solid var(--text-3);margin-right:8px;vertical-align:1px}
+td.st.up{color:var(--ok)} td.st.up i{background:var(--ok);border-color:var(--ok)}
+td.st.down{color:var(--bad)} td.st.down i{background:var(--bad);border-color:var(--bad)}
+td.st.wake{color:var(--text-2)}
+td a{text-decoration:none}
+td a:hover{color:var(--rubric)}
+tbody tr:hover td{background:var(--leaf)}
+td.cur{color:var(--rubric);font-family:var(--sc);font-weight:500;letter-spacing:.03em;white-space:nowrap}
+td.ret{color:var(--text-2);font-family:var(--sc);font-weight:500;letter-spacing:.03em;white-space:nowrap}
+td.lnk{white-space:nowrap;color:var(--text-3)}
+table.ed td:nth-child(4){white-space:nowrap}
+td.lnk a{border-bottom:1px solid var(--rule-2)}
+tr.sub td:first-child{padding-left:30px}
+tr.sub td.val{font-style:italic;color:var(--rubric)}
+
+/* ---------- stemma ---------- */
+.stemma{margin:6px 0 40px}
+.stem{list-style:none;position:relative;margin-left:22px;padding-left:34px;border-left:1px solid var(--rubric-dim)}
+.stem li{position:relative;padding:0 0 26px}
+.stem li::before{content:"";position:absolute;left:-39px;top:12px;width:9px;height:9px;border-radius:50%;background:var(--ground);border:1px solid var(--rubric)}
+.stem li.omega::before{background:var(--rubric)}
+.stem .sig{font-family:var(--display);font-style:italic;font-size:22px;color:var(--rubric);margin-right:10px;font-variant-numeric:lining-nums}
+.stem b{font-family:var(--serif);font-weight:600;font-size:21px}
+.stem .who{display:block;font-family:var(--sans);font-size:14.5px;color:var(--text-2);margin-top:2px}
+.stem .who a{color:var(--text-2)}
+.fork{position:relative;margin-left:22px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding-top:28px}
+.fork::before{content:"";position:absolute;top:0;left:0;right:calc(100% / 6);border-top:1px solid var(--rubric-dim);height:0}
+.fork::after{content:"";position:absolute;top:-26px;left:0;height:26px;border-left:1px solid var(--rubric-dim)}
+.wit{position:relative;border:1px solid var(--rule-2);padding:18px 18px 16px;background:var(--leaf);display:flex;flex-direction:column;gap:6px;text-decoration:none}
+.wit::before{content:"";position:absolute;top:-29px;left:calc(50% - .5px);height:28px;border-left:1px solid var(--rubric-dim)}
+.wit:first-child::before{left:-1px}
+.wit .siglum{font-family:var(--display);font-weight:500;font-size:64px;line-height:.8;color:var(--text)}
+.wit b{font-family:var(--serif);font-weight:600;font-size:19px;line-height:1.2}
+.wit span{font-family:var(--sans);font-size:14px;color:var(--text-2)}
+.wit em{font-family:var(--sans);font-style:normal;font-size:13.5px;color:var(--text-3);margin-top:auto;padding-top:8px}
+a.wit:hover{border-color:var(--rubric)}
+a.wit:hover .siglum{color:var(--rubric)}
+.wit.here{border-color:var(--rubric-dim)}
+.wit .lead{position:absolute;top:14px;right:16px;font-family:var(--sc);font-weight:500;font-size:14px;letter-spacing:.06em;color:var(--rubric)}
+.wit.here .siglum{color:var(--rubric)}
+.stemma figcaption{font-family:var(--sans);font-size:14px;color:var(--text-2);margin-top:18px;line-height:1.5}
+.stemma figcaption b{font-family:var(--sc);font-weight:500;color:var(--rubric);letter-spacing:.04em}
+
+/* ---------- index ---------- */
+.index{columns:3;column-gap:36px}
+.index .grp{break-inside:avoid;margin-bottom:16px}
+.index .ltr{font-family:var(--display);font-weight:500;font-size:30px;line-height:1;color:var(--rubric);margin-bottom:4px}
+.index a{display:flex;gap:8px;align-items:baseline;text-decoration:none;font-size:16px;line-height:1.35;padding:2px 0}
+.index a .dots{flex:1;border-bottom:1px dotted var(--rule-2);transform:translateY(-4px);min-width:12px}
+.index a .pg{font-family:var(--sans);font-size:13px;color:var(--text-3);white-space:nowrap}
+
+/* ---------- colophon ---------- */
+.colophon{padding:120px 0 60px;text-align:center}
+.colophon .explicit{font-family:var(--display);font-style:italic;font-size:40px;color:var(--rubric);line-height:1}
+.cul{margin:26px auto 0;font-family:var(--display);font-style:italic;font-size:22px;line-height:1.5;color:var(--text)}
+.cul span{display:block;white-space:nowrap}
+.cul .fin{color:var(--rubric);font-style:normal;margin-top:10px}
+.set-in{font-family:var(--sans);font-size:14px;color:var(--text-3);margin-top:36px;line-height:1.6}
+
+footer{border-top:1px solid var(--rule);padding:22px 0 40px;font-family:var(--sans);font-size:13.5px;color:var(--text-3)}
+footer .tx{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+footer a{color:var(--text-2)}
+
+/* ---------- dialogs ---------- */
+.lightbox{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:28px;background:rgba(8,7,6,.94)}
+.lightbox[aria-hidden="false"]{display:flex}
+.lightbox video{width:min(1180px,100%);max-height:calc(100vh - 80px);background:#000;border:1px solid var(--rule-2)}
+.lightbox-close{position:absolute;top:16px;right:18px;width:42px;height:42px;border:1px solid var(--rule-2);background:var(--ground);color:var(--text);font-size:22px;line-height:1;cursor:pointer}
+.lightbox-close:hover{border-color:var(--rubric);color:var(--rubric)}
+.lightbox .cap{position:absolute;left:28px;bottom:16px;font-family:var(--display);font-style:italic;font-size:18px;color:var(--text-2)}
+.pal{position:fixed;inset:0;z-index:300;display:none;align-items:flex-start;justify-content:center;padding:12vh 16px 16px;background:rgba(8,7,6,.72)}
+.pal[aria-hidden="false"]{display:flex}
+.pal-box{width:min(660px,100%);background:var(--leaf);border:1px solid var(--rule-2);box-shadow:0 40px 90px rgba(0,0,0,.6)}
+.pal-in{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--rule-2)}
+.pal-in .lbl{font-family:var(--display);font-style:italic;font-size:22px;color:var(--rubric)}
+.pal-in input{flex:1;border:0;background:transparent;font:18px var(--serif);color:var(--text);outline:none}
+.pal-in input::placeholder{color:var(--text-3)}
+.pal-list{max-height:52vh;overflow:auto}
+.pal-item{display:grid;grid-template-columns:1fr auto;gap:12px;padding:10px 18px;border-bottom:1px solid var(--rule);text-decoration:none;color:var(--text);font-size:17px;align-items:baseline}
+.pal-item small{display:block;color:var(--text-3);font-family:var(--sans);font-size:13px}
+.pal-item .pg{font-family:var(--sans);font-size:13px;color:var(--text-3)}
+.pal-item.sel,.pal-item:hover{background:var(--leaf-2)}
+.pal-item.sel .pg{color:var(--rubric)}
+.pal-foot{display:flex;gap:18px;padding:9px 18px;font-family:var(--sans);font-size:12.5px;color:var(--text-3)}
+.pal-foot kbd{font:inherit;border:1px solid var(--rule-2);padding:0 5px;margin-right:4px}
+.pal-empty{padding:18px;color:var(--text-2);font-size:16px}
+
+/* ---------- narrower pages: glosses fold toward the text ---------- */
+@media (max-width:1180px){
+  :root{--gl:0px;--gap:36px;--tx:640px;--gr:220px}
+  .row3,.ruling,.film{grid-template-columns:minmax(0,var(--tx)) var(--gr)}
+  .gl{grid-column:1;text-align:left}
+  .tx{grid-column:1}
+  .gr{grid-column:2}
+  .span2{grid-column:1 / 3}
+  .ruling i{grid-column:1;border-left:0;margin:0 -18px 0 0}
+  .row3 > .gl:not(:empty){margin-bottom:8px}
+  .sec-h::after{grid-column:1 / 3}
+  .secno{font-size:44px;margin-bottom:10px}
+  .title-page .gl{display:flex;gap:14px;align-items:baseline;margin-bottom:22px}
+  .title-page .gl .gloss{margin:0}
+  .incipit{margin:0}
+  .work .gl,.lesser .gl{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline}
+  .wno{font-size:22px;display:inline}
+  .dom,.att{margin-top:0}
+  .film .gl{display:none}
+  .bar .mark{grid-column:1;justify-self:start}
+  .bar nav{grid-column:1 / 3;margin-left:170px}
+  .bar nav a:not(.keep){display:none}
+  .sidehead{padding-top:0}
+}
+@media (max-width:820px){
+  body{font-size:18px}
+  .row3,.ruling,.film{grid-template-columns:minmax(0,1fr);width:calc(100% - 32px)}
+  .gl,.tx,.gr,.span2{grid-column:1}
+  .ruling{display:none}
+  .row3 > .gr:not(:empty){margin-top:14px;padding-left:14px;border-left:1px solid var(--rubric-dim)}
+  .title-page .gr{border-left:0 !important;padding-left:0 !important;margin-top:34px}
+  .figures{grid-template-columns:1fr 1fr;gap:14px 20px}
+  .figures dd{font-size:32px}
+  .sec{padding-top:80px}
+  .sec-h::after{grid-column:1}
+  .sec-h .gr{border-left:0 !important;padding-left:0 !important;margin-top:8px}
+  .nums{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .nums b{font-size:22px}
+  .lede{font-size:19px}
+  .fork{grid-template-columns:1fr;margin-left:22px;padding-top:0;padding-left:34px;border-left:1px solid var(--rubric-dim);gap:14px}
+  .fork::before,.fork::after{display:none}
+  .wit::before{top:26px;left:-35px;height:0;width:34px;border-left:0;border-top:1px solid var(--rubric-dim)}
+  .wit:first-child::before{left:-35px}
+  .stem{padding-bottom:0}
+  .index{columns:1}
+  .bar nav{margin-left:0;justify-content:flex-end}
+  .bar nav a.keep{display:none}
+  .bar .mark{display:none}
+  .bar .tools{margin-left:0}
+  .film .gr{display:none}
+  .colophon .cul{font-size:18px}
+  .cul span{white-space:normal;text-wrap:balance}
+}
+@media (max-width:1180px) and (min-width:821px){ .index{columns:2} }
+
+@media print{
+  :root{--ground:#fff;--leaf:#fff;--leaf-2:#fff;--text:#111;--text-2:#333;--text-3:#555;--rule:#bbb;--rule-2:#999;--rubric:#B3261E;--rubric-dim:#B3261E;--ok:#111}
+  body{font-size:11pt}
+  .bar,.readonly,.pal,.lightbox,.btn,.ruling,.play{display:none !important}
+  .sec{padding-top:28pt}
+  .work,.lesser,.film,.wit{break-inside:avoid}
+}
+</style>
+<!-- design-switcher:start --><link rel="stylesheet" href="/design-switcher.css?v=f0ec4a2cfd"><script src="/design-switcher.js?v=e71976f7c2"></script><!-- design-switcher:end --></head>
+<body>
+
+<div class="ruling" aria-hidden="true"><i></i></div>
+
+<header class="bar">
+  <div class="row3">
+    <a class="mark" href="#top" aria-label="Sean Sooch, The Commentary, top of page"><span class="rub">S</span>ean <span class="rub">S</span>ooch</a>
+    <nav aria-label="Sections">
+      <a href="#ch1"><span class="n">i</span>Prologue</a>
+      <a class="keep" href="#ch3"><span class="n">ii</span>Works</a>
+      <a class="keep" href="#ch4"><span class="n">iii</span>Writings</a>
+      <a href="#appb"><span class="n">v</span>Films</a>
+      <a href="#ch2"><span class="n">vi</span>Attestation</a>
+      <a class="keep" href="#appa"><span class="n">vii</span>Editions</a>
+      <span class="tools">
+        <button class="btn" id="modeBtn" aria-pressed="false">Plain language</button>
+        <button class="btn" id="palBtn" aria-keyshortcuts="/">Index<kbd>/</kbd></button>
+      </span>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============ TITLE PAGE ============ -->
+  <section class="title-page" aria-label="Title">
+    <div class="row3">
+      <div class="gl ink-in">
+        <p class="incipit">Incipit</p>
+        <p class="gloss">Here begins a record of working systems, with commentary in the margins.</p>
+      </div>
+      <div class="tx">
+        <p class="kicker ink-in">Medicine · the military · machines</p>
+        <h1 class="name ink-in"><span><span class="rubricate">S</span>ean</span><span class="it"><span class="rubricate">S</span>ooch</span></h1>
+        <p class="subtitle ink-in-2">Working systems, with commentary</p>
+        <p class="lede ink-in-2"
+           data-tech="<span class='versal rubricate'>T</span>hirteen working systems where medicine, the military, and frontier AI meet, built by a <b>medical student</b> and <b>military officer</b> with AI as the engineering tool. <b>150,906 lines</b> across 247 files. Every one is live, and this page asks each host to answer while you read."
+           data-simple="<span class='versal rubricate'>T</span>hirteen working apps, built by one person in spare time. I'm a <b>medical student</b> and a <b>military officer</b>, and AI wrote most of the code with me. <b>Everything here is online</b>, and this page checks that for you as it loads."><span class="versal rubricate">T</span>hirteen working systems where medicine, the military, and frontier AI meet, built by a <b>medical student</b> and <b>military officer</b> with AI as the engineering tool. <b>150,906 lines</b> across 247 files. Every one is live, and this page asks each host to answer while you read.</p>
+        <p class="hands ink-in-3">Written and built by <b>Sean Sooch</b>. This view set by <b>Claude Opus 5.5</b>, third in line, beside the Field Manual of <b>Claude Fable 5.1</b> and the Personal Index of <b>OpenAI Astra</b>. One site, three views; the switch at the foot of the page keeps your place.</p>
+      </div>
+      <aside class="gr ink-in-3" aria-label="Figures">
+        <dl class="figures">
+          <div><dd>150,906</dd><dt>lines of source, generated data excluded</dt></div>
+          <div><dd>247</dd><dt>source files</dt></div>
+          <div><dd>12,972</dd><dt>board-style questions, each independently reviewed</dt></div>
+          <div class="live"><dd><span id="sysCount">…</span><span style="color:var(--text-3)"> / <span id="sysTotal">18</span></span></dd><dt>hosts answering this page now</dt></div>
+        </dl>
+        <p class="probe-stamp" id="probeStamp">Asking every host from your browser…</p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ I. PROLOGUE ============ -->
+  <section id="ch1" class="sec">
+    <div class="row3 sec-h">
+      <div class="gl"><span class="secno">i</span></div>
+      <div class="tx"><h2>Prologue</h2><p class="sub">Purpose, scope, and method</p></div>
+      <div class="gr"></div>
+    </div>
+    <div class="row3 para">
+      <div class="gl"><span class="sidehead">Purpose</span></div>
+      <div class="tx"><p data-tech="This record documents five months of learning and building in spare hours. These projects were made possible by tools that lowered the technical barrier between an idea and working software. Others will bring different experience and build better things."
+         data-simple="This page documents five months of learning and building thirteen working projects in spare time. New tools made it easier to turn ideas into software. Other people will bring different experience and build better things.">This record documents five months of learning and building in spare hours. These projects were made possible by tools that lowered the technical barrier between an idea and working software. Others will bring different experience and build better things.</p></div>
+      <div class="gr"><p class="gloss">First deploy April 2026. Everything since, in evenings and weekends.</p></div>
+    </div>
+    <div class="row3 para">
+      <div class="gl"><span class="sidehead">Scope</span></div>
+      <div class="tx"><p data-tech="Everything listed is deployed and public. The page does not take that on faith: when it loads, your browser asks every host listed under Attestation to answer, and records what came back. The Works follow by domain, then the Writings, the lesser works, and the films. The Editions are the change record for the site itself."
+         data-simple="Everything here is online and public. When the page loads, it checks each app from your own browser and shows the result under Attestation. The Works are the apps, the Writings are the papers, and the Editions explain why this site keeps getting rebuilt.">Everything listed is deployed and public. The page does not take that on faith: when it loads, your browser asks every host listed under Attestation to answer, and records what came back. The Works follow by domain, then the Writings, the lesser works, and the films. The Editions are the change record for the site itself.</p></div>
+      <div class="gr"><p class="gloss">A green mark means a host answered, not that its page is right. <a href="#ch2">See the caution</a>.</p></div>
+    </div>
+    <div class="row3 para">
+      <div class="gl"><span class="sidehead">Method</span></div>
+      <div class="tx"><p data-tech="Every system was specified by the author and written with Claude, then verified the way a clinician verifies a lab: against a source, by a second reader, and against the live deployment rather than the local copy. Medical content carries its citations. Scoring tables cite the governing publication. Where a source deck was wrong, the question was corrected and the correction logged."
+         data-simple="I describe what I want, the AI writes it, and then it gets checked the way a doctor checks a test result: against a trusted source, by a second reviewer, and on the real live site. Medical facts show where they came from.">Every system was specified by the author and written with Claude, then verified the way a clinician verifies a lab: against a source, by a second reader, and against the live deployment rather than the local copy. Medical content carries its citations. Scoring tables cite the governing publication. Where a source deck was wrong, the question was corrected and the correction logged.</p></div>
+      <div class="gr"><p class="gloss"><span class="nb">NB</span>Study tools here are for exam preparation and are not medical advice. Calculators and field references are teaching aids; confirm with the governing guideline before use on a patient.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ II. THE WORKS ============ -->
+  <section id="ch3" class="sec">
+    <div class="row3 sec-h">
+      <div class="gl"><span class="secno">ii</span></div>
+      <div class="tx"><h2>The Works</h2><p class="sub">Thirteen systems and a film, by domain. Each name is a link.</p></div>
+      <div class="gr">In the margin beside each: what it holds, and whether its host answered this page.</div>
+    </div>
+    <div class="row3 readonly">
+      <div class="gl"></div>
+      <div class="tx" role="group" aria-label="Show works by domain">
+        <span class="lbl">Read</span>
+        <button class="chip on" data-f="all" aria-pressed="true">all<span class="c">14</span></button>
+        <button class="chip" data-f="med" aria-pressed="false">medicine<span class="c">5</span></button>
+        <button class="chip" data-f="mil" aria-pressed="false">military<span class="c">1</span></button>
+        <button class="chip" data-f="mac" aria-pressed="false">machines<span class="c">2</span></button>
+        <button class="chip" data-f="spt" aria-pressed="false">sports<span class="c">4</span></button>
+        <button class="chip" data-f="hum" aria-pressed="false">humanities<span class="c">1</span></button>
+        <button class="chip" data-f="mus" aria-pressed="false">music<span class="c">1</span></button>
+      </div>
+    </div>
+
+    <div class="group" data-d="med">
+      <div class="row3 subhead"><div class="gl">five works</div><div class="tx">Medicine</div></div>
+
+      <article class="row3 work" data-d="med" data-index="Step 2 CK Qbank" data-ref="Works 1" data-kw="medicine questions anki uworld study guides usmle comlex" data-href="https://step2-ck.pages.dev" data-sys="step2">
+        <div class="gl"><span class="wno">1</span><span class="dom">Medicine</span><span class="att" data-sys="step2"><i></i><span>asking</span></span></div>
+        <div class="tx">
+          <h3><a href="https://step2-ck.pages.dev" target="_blank" rel="noopener">Step 2 CK Qbank</a><span class="tag">rebuilt</span></h3>
+          <p data-tech="Public study site over seven Anki-derived banks: 12,972 board-style questions and 12,357 guide facts across eight subjects, a UWorld-style test engine with tutor and exam modes, per-system performance, and three drill tools. Built by a chunk, author, independent-review, adversarial-triage pipeline that caught and corrected about 100 factual errors in the commercial source decks."
+             data-simple="Free practice questions and study guides for the Step 2 CK and COMLEX subjects: nearly 13,000 questions, every one independently reviewed before it went live and most reviewed twice, plus a test mode that works like the commercial question banks.">Public study site over seven Anki-derived banks: 12,972 board-style questions and 12,357 guide facts across eight subjects, a UWorld-style test engine with tutor and exam modes, per-system performance, and three drill tools. Built by a chunk, author, independent-review, adversarial-triage pipeline that caught and corrected about 100 factual errors in the commercial source decks.</p>
+          <a class="go" href="https://step2-ck.pages.dev" target="_blank" rel="noopener">Open the question bank →</a>
+        </div>
+        <div class="gr"><ul class="nums"><li><b>12,972</b>questions</li><li><b>8</b>subjects</li><li><b>2-3</b>review passes</li></ul><p class="host">step2-ck.pages.dev</p></div>
+      </article>
+
+      <article class="row3 work" data-d="med" data-index="Patient Handoff Tracker" data-ref="Works 2" data-kw="medicine ipass sbar emergency department flask quality improvement" data-href="https://patient-handoff-tracker.onrender.com" data-sys="handoff">
+        <div class="gl"><span class="wno">2</span><span class="dom">Medicine · QI</span><span class="att" data-sys="handoff"><i></i><span>asking</span></span></div>
+        <div class="tx">
+          <h3><a href="https://patient-handoff-tracker.onrender.com" target="_blank" rel="noopener">Patient Handoff Tracker</a></h3>
+          <p data-tech="Full-stack I-PASS/SBAR handoff system built as an emergency medicine QI project: named-receiver read-back that only the receiver can acknowledge and verify, action items, Joint Commission compliance metrics with CSV export, and HIPAA-conscious audit logging over synthetic patients. Flask and SQLite on a free tier, so the first load wakes the server."
+             data-simple="A digital checklist for doctors handing off patients between shifts, a step the Joint Commission names as a leading cause of serious safety events. Built as an emergency medicine quality improvement project, with made-up patients only. The first load takes about 30 seconds while the free server wakes up.">Full-stack I-PASS/SBAR handoff system built as an emergency medicine QI project: named-receiver read-back that only the receiver can acknowledge and verify, action items, Joint Commission compliance metrics with CSV export, and HIPAA-conscious audit logging over synthetic patients. Flask and SQLite on a free tier, so the first load wakes the server.</p>
+          <a class="go" href="https://patient-handoff-tracker.onrender.com" target="_blank" rel="noopener">Open the tracker (about 30 s to wake) →</a>
+        </div>
+        <div class="gr"><ul class="nums"><li><b>22</b>API endpoints</li><li><b>8</b>DB tables</li><li>Flask</li></ul><p class="host">patient-handoff-tracker.onrender.com</p></div>
+      </article>
+
+      <article class="row3 work" data-d="med" data-index="Read This (EKG and CXR trainer)" data-ref="Works 3" data-kw="medicine ekg ecg rhythms 12-lead cardiology chest x-ray" data-href="https://seansooch.dev/ekg/" data-sys="ekg">
+        <div class="gl"><span class="wno">3</span><span class="dom">Medicine · Cardiology</span><span class="att" data-sys="ekg"><i></i><span>asking</span></span></div>
+        <div class="tx">
+          <h3><a href="https://seansooch.dev/ekg/" target="_blank" rel="noopener">Read This</a></h3>
+          <p data-tech="Pattern-interpretation trainer: 28 procedurally generated rhythm strips at 25 mm/s with calipers and a live monitor, a fixed 8-step read of 14 twelve-lead cases with MI localization by territory, and an outside-in chest film read over synthesized radiographs and real films. Every case sourced."
+             data-simple="Learn to read heart tracings and chest X-rays the same disciplined way every time. Draws realistic EKGs from medical criteria, then quizzes you.">Pattern-interpretation trainer: 28 procedurally generated rhythm strips at 25 mm/s with calipers and a live monitor, a fixed 8-step read of 14 twelve-lead cases with MI localization by territory, and an outside-in chest film read over synthesized radiographs and real films. Every case sourced.</p>
+          <a class="go" href="https://seansooch.dev/ekg/" target="_blank" rel="noopener">Open the reading room →</a>
+        </div>
+        <div class="gr"><ul class="nums"><li><b>28</b>rhythms</li><li><b>8</b>read steps</li><li><b>100%</b>sourced</li></ul><p class="host">seansooch.dev/ekg</p></div>
+      </article>
+
+      <article class="row3 work" data-d="med" data-index="MICRO TD" data-ref="Works 4" data-kw="medicine game tower defense antibiotics microbiology" data-href="https://micro-td.pages.dev" data-sys="microtd">
+        <div class="gl"><span class="wno">4</span><span class="dom">Medicine × Game</span><span class="att" data-sys="microtd"><i></i><span>asking</span></span></div>
+        <div class="tx">
+          <h3><a href="https://micro-td.pages.dev" target="_blank" rel="noopener">MICRO TD</a></h3>
+          <p data-tech="Tower defense where the body is the map: 16 guideline cases as levels, 34 real drugs as towers against 25 organisms, damage set by coverage and site penetration, resistance bred by antibiotic pressure, and organ toxicity, plus a one-patient Ward Rounds mode. TypeScript and Canvas, every fact sourced, 104 tests."
+             data-simple="Treat infections as a tower defense game: every tower is a real antibiotic that only works where it reaches and against the germs it covers. Broad drugs breed resistance, and every drug costs the patient something. Built to make studying infectious disease feel like a game.">Tower defense where the body is the map: 16 guideline cases as levels, 34 real drugs as towers against 25 organisms, damage set by coverage and site penetration, resistance bred by antibiotic pressure, and organ toxicity, plus a one-patient Ward Rounds mode. TypeScript and Canvas, every fact sourced, 104 tests.</p>
+          <a class="go" href="https://micro-td.pages.dev" target="_blank" rel="noopener">Play →</a>
+        </div>
+        <div class="gr"><ul class="nums"><li><b>16</b>guideline cases</li><li><b>34</b>drugs</li><li><b>25</b>organisms</li></ul><p class="host">micro-td.pages.dev</p></div>
+      </article>
+
+      <article class="row3 work" data-d="med" data-index="AdmissionsAcademy" data-ref="Works 5" data-kw="medicine medical school admissions advising mentorship education access" data-href="https://admissionsacademy.org" data-sys="admissions">
+        <div class="gl"><span class="wno">5</span><span class="dom">Medicine · Education</span><span class="att" data-sys="admissions"><i></i><span>asking</span></span></div>
+        <div class="tx">
+          <h3><a href="https://admissionsacademy.org" target="_blank" rel="noopener">Admissions<wbr>Academy</a></h3>
+          <p data-tech="Founded by Paul Clancy to expand access to medical education: a free Pre-Med Essentials course, MCAT strategy, and application guidance for students from any background. Sean serves as Chief Technology Officer."
+             data-simple="Founded by Paul Clancy to make the path to medical school easier to navigate, with free guides, MCAT help and mentorship for students from any background.">Founded by Paul Clancy to expand access to medical education: a free Pre-Med Essentials course, MCAT strategy, and application guidance for students from any background. Sean serves as Chief Technology Officer.</p>
+          <a class="go" href="https://admissionsacademy.org" target="_blank" rel="noopener">Visit →</a>
+        </div>
+        <div class="gr"><ul class="nums"><li><b>Free</b>premed course</li><li><b>1-on-1</b>guidance</li><li><b>CTO</b>Sean's role</li></ul><p class="host">admissionsacademy.org</p></div>
+      </article>
+    </div>
+
+    <div class="group" data-d="mil">
+      <div class="row3 subhead"><div class="gl">one work</div><div class="tx">Military</div></div>
+      <article class="row3 work" data-d="mil" data-index="Warrior Ready" data-ref="Works 6" data-kw="military fitness pt test acft pfa pft calculator ruck" data-href="https://warrior-ready.pages.dev" data-sys="warrior">
+        <div class="gl"><span class="wno">6</span><span class="dom">Military</span><span class="att" data-sys="warrior"><i></i><span>asking</span></span></div>
+        <div class="tx">
+          <h3><a href="https://warrior-ready.pages.dev" target="_blank" rel="noopener">Warrior Ready</a></h3>
+          <p data-tech="All-branch PT scorecard at 2026 standards: six services scored from their official charts with the source cited, per-service body composition screens, run pacer with lap splits, ruck planner, and score history. The build refuses to ship unless 72 spot checks read off the printed charts pass."
+             data-simple="A fitness test calculator for every U.S. military branch, scored from each service's official 2026 charts with the source shown. Enter your numbers, see your score instantly. No account needed.">All-branch PT scorecard at 2026 standards: six services scored from their official charts with the source cited, per-service body composition screens, run pacer with lap splits, ruck planner, and score history. The build refuses to ship unless 72 spot checks read off the printed charts pass.</p>
+          <a class="go" href="https://warrior-ready.pages.dev" target="_blank" rel="noopener">Open →</a>
+        </div>
+        <div class="gr"><ul class="nums"><li><b>6</b>branches</li><li><b>72</b>chart spot checks</li><li><b>0</b>deps</li></ul><p class="host">warrior-ready.pages.dev</p></div>
+      </article>
+    </div>
+
+    <div class="group" data-d="mac">
+      <div class="row3 subhead"><div class="gl">two works</div><div class="tx">Machines</div></div>
+      <article class="row3 work" data-d="mac" data-index="AGI Capability Tracker" data-ref="Works 7" data-kw="machines ai benchmarks frontier models dashboard safety ledger" data-href="https://differential-c57.pages.dev" data-sys="agi">
+        <div class="gl"><span class="wno">7</span><span class="dom">Machines · AI safety</span><span class="att" data-sys="agi"><i></i><span>asking</span></span></div>
+        <div class="tx">
+          <h3><a href="https://differential-c57.pages.dev" target="_blank" rel="noopener">AGI Capability Tracker</a></h3>
+          <p data-tech="Frontier capability ledger across 10 sectors, 57 models and dozens of benchmarks: a weighted composite score with its method published, verified ARC-AGI cells, a capability-milestones register, a capability-against-control safety ledger, and a gated-tier toggle for what the labs hold back. Updated September 2026."
+             data-simple="A dashboard tracking how close AI is to human-level ability across 10 skill areas, following 57 models, with a record of the moments that actually moved the frontier. A toggle shows what the labs keep back from public release.">Frontier capability ledger across 10 sectors, 57 models and dozens of benchmarks: a weighted composite score with its method published, verified ARC-AGI cells, a capability-milestones register, a capability-against-control safety ledger, and a gated-tier toggle for what the labs hold back. Updated September 2026.</p>
+          <a class="go" href="https://differential-c57.pages.dev" target="_blank" rel="noopener">Open the ledger →</a>
+        </div>
+        <div class="gr"><ul class="nums"><li><b>57</b>models</li><li><b>10</b>sectors</li><li><b>5</b>milestones</li></ul><p class="host">differential-c57.pages.dev</p></div>
+      </article>
+      <article class="row3 work" data-d="mac" data-index="Simulators" data-ref="Works 8" data-kw="machines alignment simulator cpr code blue caffeine telescope" data-href="https://seansooch.dev/simulators" data-sys="sims">
+        <div class="gl"><span class="wno">8</span><span class="dom">Machines × Medicine</span><span class="att" data-sys="sims"><i></i><span>asking</span></span></div>
+        <div class="tx">
+          <h3><a href="https://seansooch.dev/simulators" target="_blank" rel="noopener">Simulators</a></h3>
+          <p data-tech="Four sims, one umbrella: the Alignment Simulator (run a frontier lab, 12 decisions, 6 endings, built from the Risk Stack paper), Code Blue (spacebar CPR with live rate and depth feedback, AHA 2020), Half-Life Tracker (caffeine, hydration, and BAC pharmacokinetics), and Pocket Telescope (live night-sky ID and star quizzes)."
+             data-simple="Four browser tools: run an AI lab and live with your choices, perform CPR with real-time coaching, watch caffeine or alcohol clear your system over time, and learn tonight's sky from your location.">Four sims, one umbrella: the Alignment Simulator (run a frontier lab, 12 decisions, 6 endings, built from the Risk Stack paper), Code Blue (spacebar CPR with live rate and depth feedback, AHA 2020), Half-Life Tracker (caffeine, hydration, and BAC pharmacokinetics), and Pocket Telescope (live night-sky ID and star quizzes).</p>
+          <a class="go" href="https://seansooch.dev/simulators" target="_blank" rel="noopener">Run →</a>
+        </div>
+        <div class="gr"><ul class="nums"><li><b>4</b>sims</li><li><b>24</b>decisions</li><li><b>11</b>endings</li></ul><p class="host">seansooch.dev/simulators</p></div>
+      </article>
+    </div>
+
+    <div class="group" data-d="spt">
+      <div class="row3 subhead"><div class="gl">four works</div><div class="tx">Sports</div></div>
+      <article class="row3 work" data-d="spt" data-index="Edge Draft Terminal" data-ref="Works 9" data-kw="sports fantasy football draft sleeper adp monte carlo" data-href="https://edge-7yj.pages.dev" data-sys="edge">
+        <div class="gl"><span class="wno">9</span><span class="dom">Sports · Fantasy football</span><span class="att" data-sys="edge"><i></i><span>asking</span></span></div>
+        <div class="tx">
+          <h3><a href="https://edge-7yj.pages.dev" target="_blank" rel="noopener">Edge Draft Terminal</a></h3>
+          <p data-tech="Draft intelligence terminal for a 12-team half-PPR league: an 862-player board valued on a weighted seven-source composite and read against the Sleeper room's market price, weekly projections priced as points above replacement, Monte Carlo pick-path simulation in a worker, an in-season wire of injuries and market movers, and read-only replay of a live Sleeper draft room. Static PWA with CI-gated deploys and a test suite that also runs against production."
+             data-simple="A fantasy football draft assistant that blends seven rankings and markets into one value per player, flags bargains, simulates what happens before your next pick, and can follow a live Sleeper draft as it happens. Every update is tested end to end before it ships.">Draft intelligence terminal for a 12-team half-PPR league: an 862-player board valued on a weighted seven-source composite and read against the Sleeper room's market price, weekly projections priced as points above replacement, Monte Carlo pick-path simulation in a worker, an in-season wire of injuries and market movers, and read-only replay of a live Sleeper draft room. Static PWA with CI-gated deploys and a test suite that also runs against production.</p>
+          <a class="go" href="https://edge-7yj.pages.dev" target="_blank" rel="noopener">Draft →</a>
+        </div>
+        <div class="gr"><ul class="nums"><li><b>862</b>players</li><li><b>7</b>sources</li><li><b>21,761</b>lines of tests</li></ul><p class="host">edge-7yj.pages.dev</p></div>
+      </article>
+      <article class="row3 work" data-d="spt" data-index="NCAAT Bracket" data-ref="Works 10" data-kw="sports basketball march madness bracket kenpom" data-href="https://ncaat-bracket-2026.pages.dev" data-sys="ncaat">
+        <div class="gl"><span class="wno">10</span><span class="dom">Sports · Hoops</span><span class="att" data-sys="ncaat"><i></i><span>asking</span></span></div>
+        <div class="tx">
+          <h3><a href="https://ncaat-bracket-2026.pages.dev" target="_blank" rel="noopener">NCAAT Bracket</a></h3>
+          <p data-tech="Archive of the finished 2026 men's tournament: all 67 games from a frozen ESPN snapshot, every first-edition model graded against the results, and an interactive bracket that scores your own picks. A sourced fact-check corrected 531 first-edition claims, all listed on the page."
+             data-simple="The finished 2026 March Madness, kept as an archive: every game, plus a report card on how each prediction model actually did. Fill in your own bracket to see how it would have scored.">Archive of the finished 2026 men's tournament: all 67 games from a frozen ESPN snapshot, every first-edition model graded against the results, and an interactive bracket that scores your own picks. A sourced fact-check corrected 531 first-edition claims, all listed on the page.</p>
+          <a class="go" href="https://ncaat-bracket-2026.pages.dev" target="_blank" rel="noopener">Open →</a>
+        </div>
+        <div class="gr"><ul class="nums"><li><b>67</b>games</li><li><b>4</b>models graded</li><li><b>531</b>corrections</li></ul><p class="host">ncaat-bracket-2026.pages.dev</p></div>
+      </article>
+      <article class="row3 work" data-d="spt" data-index="Masters 2026 Hub" data-ref="Works 11" data-kw="sports golf augusta leaderboard" data-href="https://masters-2026.pages.dev" data-sys="masters">
+        <div class="gl"><span class="wno">11</span><span class="dom">Sports · Golf</span><span class="att" data-sys="masters"><i></i><span>asking</span></span></div>
+        <div class="tx">
+          <h3><a href="https://masters-2026.pages.dev" target="_blank" rel="noopener">Masters 2026 Hub</a></h3>
+          <p data-tech="Archive of the 2026 Masters as a hand-operated leaderboard: the final board for all 91 players with hole-by-hole cards from a frozen ESPN snapshot, an 18-hole yardage-book course guide, a searchable field, the champions' roll, and a Remotion film rendered from code. 137 corrections to the first edition are listed."
+             data-simple="The 2026 Masters, kept as a finished scoreboard: every player's final card hole by hole, all 18 holes at Augusta with notes, the full field and past champions, and a short video made entirely from code.">Archive of the 2026 Masters as a hand-operated leaderboard: the final board for all 91 players with hole-by-hole cards from a frozen ESPN snapshot, an 18-hole yardage-book course guide, a searchable field, the champions' roll, and a Remotion film rendered from code. 137 corrections to the first edition are listed.</p>
+          <a class="go" href="https://masters-2026.pages.dev" target="_blank" rel="noopener">Open →</a>
+        </div>
+        <div class="gr"><ul class="nums"><li><b>91</b>players</li><li><b>18</b>holes</li><li><b>600</b>frames</li></ul><p class="host">masters-2026.pages.dev</p></div>
+      </article>
+      <article class="row3 work" data-d="spt" data-index="Detroit Sports Hub" data-ref="Works 12" data-kw="sports tigers pistons lions baseball basketball football statcast" data-href="https://detroit-sports.pages.dev" data-sys="detroit">
+        <div class="gl"><span class="wno">12</span><span class="dom">Sports · Detroit</span><span class="att" data-sys="detroit"><i></i><span>asking</span></span></div>
+        <div class="tx">
+          <h3><a href="https://detroit-sports.pages.dev" target="_blank" rel="noopener">Detroit Sports Hub</a></h3>
+          <p data-tech="Hub board for the Lions, Tigers, Pistons and Red Wings plus three trackers: a new Lions app (live down and distance on a drawn field, drive charts, win probability), Tigers with pitch-by-pitch tracking, Statcast and a 30-prospect farm system, and the Pistons' 14-68 to East #1 seed run with injury watch and a 2004 tribute."
+             data-simple="Detroit's teams on one board, with three full trackers: a new Lions app with live drive charts and win probability, a Tigers tracker with live game updates and prospect rankings, and a Pistons page on the worst-to-first turnaround. Zero frameworks.">Hub board for the Lions, Tigers, Pistons and Red Wings plus three trackers: a new Lions app (live down and distance on a drawn field, drive charts, win probability), Tigers with pitch-by-pitch tracking, Statcast and a 30-prospect farm system, and the Pistons' 14-68 to East #1 seed run with injury watch and a 2004 tribute.</p>
+          <a class="go" href="https://detroit-sports.pages.dev" target="_blank" rel="noopener">Open →</a>
+        </div>
+        <div class="gr"><ul class="nums"><li><b>3</b>trackers</li><li><b>29</b>tabs</li><li><b>0</b>deps</li></ul><p class="host">detroit-sports.pages.dev</p></div>
+      </article>
+    </div>
+
+    <div class="group" data-d="hum">
+      <div class="row3 subhead"><div class="gl">one work</div><div class="tx">Humanities</div></div>
+      <article class="row3 work" data-d="hum" data-index="Great Books" data-ref="Works 13" data-kw="humanities philosophy literature liberty knowledge reading compress" data-href="https://great-books.pages.dev" data-sys="greatbooks">
+        <div class="gl"><span class="wno">13</span><span class="dom">Humanities · Literature and philosophy</span><span class="att" data-sys="greatbooks"><i></i><span>asking</span></span></div>
+        <div class="tx">
+          <h3><a href="https://great-books.pages.dev" target="_blank" rel="noopener">Great Books</a></h3>
+          <p data-tech="Continuous-zoom library of 46 works across existentialism, political order, liberty, machines, knowledge, and reality."
+             data-simple="Explore 46 major books at any depth, from a one-sentence overview to detailed chapter maps.">Continuous-zoom library of 46 works across existentialism, political order, liberty, machines, knowledge, and reality.</p>
+          <a class="go" href="https://great-books.pages.dev" target="_blank" rel="noopener">Read →</a>
+        </div>
+        <div class="gr"><ul class="nums"><li><b>46</b>books</li><li><b>5</b>shelves</li><li><b>4</b>depths</li></ul><p class="host">great-books.pages.dev</p></div>
+      </article>
+    </div>
+    <div class="group" data-d="mus">
+      <div class="row3 subhead"><div class="gl">one work</div><div class="tx">Music</div></div>
+      <article class="row3 work" data-d="mus" data-index="LAST LIGHT" data-ref="Works 14" data-kw="music video song grunge black hole sun physics film risograph countdown" data-href="https://seansooch.dev/music/last-light/" data-sys="music">
+        <div class="gl"><span class="wno">14</span><span class="dom">Music · Film</span><span class="att" data-sys="music"><i></i><span>asking</span></span></div>
+        <div class="tx">
+          <h3><a href="https://seansooch.dev/music/last-light/" target="_blank" rel="noopener">LAST LIGHT</a></h3>
+          <p data-tech="Soundgarden's Black Hole Sun, taken literally. When the Sun collapses, its light keeps coming for 8 minutes and 20 seconds. A grunge song counts them down, sung three ways."
+             data-simple="Inspired by Soundgarden's Black Hole Sun: if the Sun turned into a black hole, the sky would stay bright for 8 more minutes. This song counts them down. Three singers, one film.">Soundgarden's Black Hole Sun, taken literally. When the Sun collapses, its light keeps coming for 8 minutes and 20 seconds. A grunge song counts them down, sung three ways.</p>
+          <a class="go" href="https://seansooch.dev/music/last-light/" target="_blank" rel="noopener">Watch →</a>
+        </div>
+        <div class="gr"><ul class="nums"><li><b>3</b>takes</li><li><b>2:19</b>runtime</li><li><b>33</b>sourced facts</li></ul><p class="host">seansooch.dev/music</p></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ III. WRITINGS ============ -->
+  <section id="ch4" class="sec">
+    <div class="row3 sec-h">
+      <div class="gl"><span class="secno">iii</span></div>
+      <div class="tx"><h2>Writings</h2><p class="sub">Three papers and two reading rooms</p></div>
+      <div class="gr">The margin lists each paper's parts in the order it argues them.</div>
+    </div>
+
+    <article class="row3 work" data-index="The Frontier AI Risk Stack (paper)" data-ref="Writings 1" data-kw="paper ai risk layers policy doctrine" data-href="https://differential-c57.pages.dev/#analysis-section">
+      <div class="gl"><span class="wno">I</span><span class="dom">April 2026</span><span class="dom" style="color:var(--text-3)">Independent research</span></div>
+      <div class="tx">
+        <h3><a href="https://differential-c57.pages.dev/#analysis-section" target="_blank" rel="noopener">The Frontier AI Risk Stack</a></h3>
+        <p data-tech="Frontier AI risk is best understood not as a single category but as a stack of six interacting layers. The most serious dangers arise from the way failures compound across layers: a structured analytical tool for policymakers, developers, and civil society."
+           data-simple="AI risk isn't one problem, it's six problems stacked on top of each other, and the biggest dangers come from these layers making each other worse.">Frontier AI risk is best understood not as a single category but as a stack of six interacting layers. The most serious dangers arise from the way failures compound across layers: a structured analytical tool for policymakers, developers, and civil society.</p>
+        <p class="links"><a href="https://differential-c57.pages.dev/#analysis-section" target="_blank" rel="noopener">Read on the AGI Tracker</a><a href="https://differential-c57.pages.dev/frontier-risk-stack.pdf" target="_blank" rel="noopener">Technical PDF</a><a href="https://seansooch.dev/frontier-risk-stack-simple.pdf" target="_blank" rel="noopener">Plain-language PDF</a></p>
+      </div>
+      <div class="gr"><ol class="layers">
+        <li><span><b>Model risk</b>deception, unsafe knowledge, concealment</span></li>
+        <li><span><b>System risk</b>orchestration, tool use, parallel execution</span></li>
+        <li><span><b>Deployment risk</b>real permissions, production access</span></li>
+        <li><span><b>Access risk</b>concentration, cognitive inequality</span></li>
+        <li><span><b>Governance risk</b>weak audits, regulatory capture</span></li>
+        <li><span><b>Civilizational risk</b>compounding failures across all layers</span></li>
+      </ol></div>
+    </article>
+
+    <article class="row3 work" data-index="Three Roads From Here (paper)" data-ref="Writings 2" data-kw="paper ai safety acceleration pause game theory doctrine" data-href="https://seansooch.dev/three-roads-from-here.pdf">
+      <div class="gl"><span class="wno">II</span><span class="dom">June 2026</span><span class="dom" style="color:var(--text-3)">Independent research</span></div>
+      <div class="tx">
+        <h3><a href="https://seansooch.dev/three-roads-from-here.pdf" target="_blank" rel="noopener">Three Roads From Here</a></h3>
+        <p data-tech="The three positions on frontier AI (safety through development, acceleration, pause) characterized on their strongest terms, with existential and suffering risk treated as separate axes that do not always move together. The central frame: the camps are reading three different payoff matrices for the same game."
+           data-simple="Three camps argue about powerful AI: keep building carefully, go faster, or pause. This paper explains all three fairly, shows there are two different worst cases rather than one, and plays the future out as a game to find the most likely outcome.">The three positions on frontier AI (safety through development, acceleration, pause) characterized on their strongest terms, with existential and suffering risk treated as separate axes that do not always move together. The central frame: the camps are reading three different payoff matrices for the same game.</p>
+        <p class="links"><a href="https://seansooch.dev/three-roads-from-here.pdf" target="_blank" rel="noopener">Academic PDF</a><a href="https://seansooch.dev/three-roads-simple-mode.pdf" target="_blank" rel="noopener">Simple Mode PDF</a><a href="https://seansooch.dev/three-roads-game-theory-mode.pdf" target="_blank" rel="noopener">Game Theory Mode PDF</a></p>
+      </div>
+      <div class="gr"><ol class="layers">
+        <li><span><b>Steer</b>build inside guardrails and tripwires</span></li>
+        <li><span><b>Speed</b>the race cannot be stopped, only won</span></li>
+        <li><span><b>Stop</b>pause until alignment is solved</span></li>
+        <li><span><b>X-risk</b>losing the future entirely</span></li>
+        <li><span><b>S-risk</b>a future that continues, and hurts</span></li>
+        <li><span><b>The game</b>one matrix, three readings, edit the payoffs</span></li>
+      </ol></div>
+    </article>
+
+    <article class="row3 work" data-index="Two Stories About the Beginning (paper)" data-ref="Writings 3" data-kw="paper cosmology origin simulation big bang generated doctrine" data-href="/designs/opus/two-stories/">
+      <div class="gl"><span class="wno">III</span><span class="dom">September 2026</span><span class="dom" style="color:var(--text-3)">Independent research</span></div>
+      <div class="tx">
+        <h3><a href="/designs/opus/two-stories/">Two Stories About the Beginning</a></h3>
+        <p data-tech="The Big Bang and a generated origin are the same kind of story: a starting condition plus a rule, with the evidence only ever reaching the rule. Four objections (tidiness, cheating, motive, proving too much) are taken seriously; two of them force the second story to change, and it survives as a testable rival rather than an evasion."
+           data-simple="Physics says the universe started hot and dense and then the rules ran. A second story keeps the same start and the same rules and only changes who set them running. From inside you cannot tell the two apart, and this paper explains why that is not a problem with either story.">The Big Bang and a generated origin are the same kind of story: a starting condition plus a rule, with the evidence only ever reaching the rule. Four objections (tidiness, cheating, motive, proving too much) are taken seriously; two of them force the second story to change, and it survives as a testable rival rather than an evasion.</p>
+        <p class="links"><a href="/designs/opus/two-stories/">Read the paper</a><a href="/designs/opus/two-stories/#table43">The two stories, side by side</a><a href="/designs/opus/two-stories/#part2">Part II, stated in full</a></p>
+      </div>
+      <div class="gr"><ol class="layers">
+        <li><span><b>Start + rule</b>every origin story, and the evidence reaches only the rule</span></li>
+        <li><span><b>Tidiness</b>the first story already carries the extra layer</span></li>
+        <li><span><b>Cheating</b>no shortcuts; the saving is that the rule is short</span></li>
+        <li><span><b>Motive</b>dropped; the process only has to exist and run</span></li>
+        <li><span><b>Last Thursday</b>a rival commits to something, an evasion to nothing</span></li>
+        <li><span><b>The tests</b>finite grain, finite information, more room outside</span></li>
+      </ol></div>
+    </article>
+
+    <div class="row3 subhead"><div class="gl">two rooms</div><div class="tx">Reading rooms</div></div>
+    <article class="row3 lesser" data-index="Reading Room" data-ref="Writings" data-kw="annotated papers reading ai research digest" data-href="https://reading-room.pages.dev" data-sys="reading">
+      <div class="gl"><span class="att" data-sys="reading"><i></i><span>asking</span></span></div>
+      <div class="tx"><h3><a href="https://reading-room.pages.dev" target="_blank" rel="noopener">Reading Room</a></h3><p>An annotated card catalogue of 64 AI papers, X threads and blog posts collected through April 2026, each with a technical summary, a plain-language version and a note on why it matters.</p></div>
+      <div class="gr">papers · posts · threads<br>reading-room.pages.dev</div>
+    </article>
+    <article class="row3 lesser" data-index="Philosophy Room" data-ref="Writings" data-kw="essays alignment philosophy theology game theory" data-href="https://philosophy-room.pages.dev" data-sys="philosophy">
+      <div class="gl"><span class="att" data-sys="philosophy"><i></i><span>asking</span></span></div>
+      <div class="tx"><h3><a href="https://philosophy-room.pages.dev" target="_blank" rel="noopener">Philosophy Room</a></h3><p>One thesis: every great question converges on alignment, whether we can build minds that want what we want. Cosmology, consciousness, AI, identity, theology and game theory, each question read twice: as the classical problem and through the AI lens.</p></div>
+      <div class="gr">19 essays in 6 sections, about 30 minutes<br>philosophy-room.pages.dev</div>
+    </article>
+  </section>
+
+  <!-- ============ IV. LESSER WORKS ============ -->
+  <section id="ch5" class="sec">
+    <div class="row3 sec-h">
+      <div class="gl"><span class="secno">iv</span></div>
+      <div class="tx"><h2>Lesser works</h2><p class="sub">Smaller experiments, same hands, same months</p></div>
+      <div class="gr"></div>
+    </div>
+    <article class="row3 lesser" data-index="Forge" data-ref="Lesser works" data-kw="claude api site builder prompt html" data-href="https://forge-8ce.pages.dev" data-sys="forge">
+      <div class="gl"><span class="att" data-sys="forge"><i></i><span>asking</span></span></div>
+      <div class="tx"><h3><a href="https://forge-8ce.pages.dev" target="_blank" rel="noopener">Forge</a></h3><p>Prompt-to-HTML site builder on the Anthropic streaming API, clone mode, component injector, live theme controls.</p></div>
+      <div class="gr">Claude API · vision<br>forge-8ce.pages.dev</div>
+    </article>
+    <article class="row3 lesser" data-index="Hospital and Field Toolkit" data-ref="Lesser works" data-kw="calculators antibiotics differentials lab values tccc march" data-href="https://seansooch.dev/toolkit/" data-sys="toolkit">
+      <div class="gl"><span class="att" data-sys="toolkit"><i></i><span>asking</span></span></div>
+      <div class="tx"><h3><a href="https://seansooch.dev/toolkit/" target="_blank" rel="noopener">Hospital and Field Toolkit</a></h3><p>Clinical calculators, antibiotic coverage matrix, differentials, lab reference with the CBC + CMP decoder, and TCCC MARCH: five tools, one hub.</p></div>
+      <div class="gr">Medicine · TCCC<br>seansooch.dev/toolkit</div>
+    </article>
+    <article class="row3 lesser" data-index="Space Explorer" data-ref="Lesser works" data-kw="nasa apis iss asteroids apod" data-href="https://cic-dashboard.pages.dev" data-sys="space">
+      <div class="gl"><span class="att" data-sys="space"><i></i><span>asking</span></span></div>
+      <div class="tx"><h3><a href="https://cic-dashboard.pages.dev" target="_blank" rel="noopener">Space Explorer</a></h3><p>Live dashboard in eight sections over twelve public feeds, seven of them NASA's: APOD, the ISS over a map with its ground track, launch countdowns, EPIC Earth imagery and events, the Sun and its flares, near-Earth approaches, deep space, news.</p></div>
+      <div class="gr">NASA · live APIs<br>cic-dashboard.pages.dev</div>
+    </article>
+  </section>
+
+  <!-- ============ V. FILMS ============ -->
+  <section id="appb" class="sec">
+    <div class="row3 sec-h">
+      <div class="gl"><span class="secno">v</span></div>
+      <div class="tx"><h2>Films</h2><p class="sub">Rendered from code, captured from live sites. Sound on.</p></div>
+      <div class="gr"></div>
+    </div>
+    <div class="row3">
+      <div class="gl"></div>
+      <figure class="plate span2" id="plate1">
+        <button class="plate-btn" type="button" data-film="https://seansooch.dev/videos/vol3-launch-film.mp4" data-poster="https://seansooch.dev/videos/vol3-poster.jpg" data-title="The Field Manual, launch film" data-index="Field Manual launch film" data-ref="Films" data-kw="films video edition vol 3 fable" aria-label="Play the Field Manual launch film">
+          <img src="https://seansooch.dev/videos/vol3-poster.jpg" width="1280" height="720" alt="Launch film of the Field Manual: its readiness table with the line count rolling to 150,906" loading="lazy" decoding="async">
+          <span class="play" aria-hidden="true"><span></span></span>
+        </button>
+        <figcaption><b>Plate.</b> The Field Manual (view F) in motion: the cover, the topology answering, the roll call, the record, the index. 1:20.</figcaption>
+      </figure>
+    </div>
+    <button class="film" type="button" data-film="https://seansooch.dev/videos/launch-film.mp4" data-poster="https://seansooch.dev/videos/launch-poster.jpg" data-title="Vol. 02 launch film" data-index="Vol. 02 launch film" data-ref="Films" data-kw="films video edition">
+      <span class="gl">1</span><span class="tx"><h3>Vol. 02 launch film</h3><p>The June 2026 edition in motion: the triad, the rhythm strip, and every system in sequence.</p></span><span class="gr"><b>2:02</b>edition film</span>
+    </button>
+    <button class="film" type="button" data-film="https://seansooch.dev/videos/edge-demo.mp4" data-poster="https://seansooch.dev/videos/edge-poster.jpg" data-title="Edge product demo" data-index="Edge product demo (film)" data-ref="Films" data-kw="films video fantasy football hyperframes">
+      <span class="gl">2</span><span class="tx"><h3>Edge product demo</h3><p>Fourteen states of the live draft terminal walked by a headless browser, narrated, and rendered with HyperFrames.</p></span><span class="gr"><b>1:26</b>HyperFrames</span>
+    </button>
+    <button class="film" type="button" data-film="https://seansooch.dev/videos/pika-demo.mp4" data-title="Pika, an AI meeting agent" data-index="Pika: AI meeting agent (film)" data-ref="Films" data-kw="films video agent google meet">
+      <span class="gl">3</span><span class="tx"><h3>Pika: AI meeting agent</h3><p>An autonomous agent that joins live Google Meet calls, listens, and participates in real time.</p></span><span class="gr"><b>0:15</b>agents</span>
+    </button>
+    <button class="film" type="button" data-film="https://seansooch.dev/videos/skubal-hype.mp4" data-title="Skubal hype reel" data-index="Skubal hype reel (film)" data-ref="Films" data-kw="films video remotion tigers">
+      <span class="gl">4</span><span class="tx"><h3>Skubal hype reel</h3><p>A broadcast-style hype reel for Tarik Skubal generated entirely from React components and frame math.</p></span><span class="gr"><b>0:17</b>Remotion</span>
+    </button>
+  </section>
+
+  <!-- ============ VI. ATTESTATION ============ -->
+  <section id="ch2" class="sec">
+    <div class="row3 sec-h">
+      <div class="gl"><span class="secno">vi</span></div>
+      <div class="tx"><h2>Attestation</h2><p class="sub">What is claimed, and what answered</p></div>
+      <div class="gr">Counts recounted 14 September 2026. Answers measured on every page load.</div>
+    </div>
+    <div class="row3">
+      <div class="gl"><span class="sidehead">The counts</span></div>
+      <div class="span2">
+        <div class="tbl">
+          <table>
+            <thead><tr><th>Measure</th><th>Result</th><th>Standard</th></tr></thead>
+            <tbody>
+              <tr><td>Lines of code</td><td class="val">150,906</td><td class="ref">unique source files, generated data excluded; 21,761 of these are one project's test suite</td></tr>
+              <tr><td>Source files</td><td class="val">247</td><td class="ref">html, js, css, python, typescript</td></tr>
+              <tr><td>Board-style questions</td><td class="val">12,972</td><td class="ref">7 question banks, 8 subjects, every item independently reviewed, most a second time</td></tr>
+              <tr><td>Players and teams tracked</td><td class="val">1,106</td><td class="ref">sports intel across 12 data sources</td></tr>
+              <tr><td>Hosts answering</td><td class="val"><span id="sysCount2">…</span></td><td class="ref">of <span id="sysTotal2">18</span>, measured from your browser <span id="probeWhen">now</span></td></tr>
+              <tr><td>Median round trip</td><td class="val"><span id="medianMs">…</span></td><td class="ref">milliseconds, edge-cached static hosts; the one server-rendered app is left out while it wakes</td></tr>
+              <tr><td>Months since first deploy</td><td class="val">5</td><td class="ref">April to September 2026, evenings and weekends</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="row3" id="fig11">
+      <div class="gl"><span class="sidehead">The answers</span></div>
+      <div class="tx">
+        <div class="tbl">
+          <table id="statusTbl">
+            <thead><tr><th>System</th><th>Host</th><th>Answer</th><th style="text-align:right">Round trip</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="gr"><p class="gloss"><span class="nb">Caveat</span>The ask is an opaque cross-origin fetch, so it can only report that a host answered, not that the answer was the right page. Cloudflare Pages serves a soft 200 for unknown paths. Read a green mark as "the lights are on", and click through for anything that matters.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ VII. EDITIONS ============ -->
+  <section id="appa" class="sec">
+    <div class="row3 sec-h">
+      <div class="gl"><span class="secno">vii</span></div>
+      <div class="tx"><h2>Editions</h2><p class="sub">The change record, drawn as a family tree</p></div>
+      <div class="gr">One redesign per model class. Retired editions stay online.</div>
+    </div>
+    <div class="row3 para">
+      <div class="gl"><span class="sidehead">The practice</span></div>
+      <div class="tx"><p data-tech="This site is rebuilt from the ground up at every new Anthropic model class, as a personal benchmark of frontier capability. Each edition is designed end to end by the model it is named for, then <b>retired, not deleted</b>, when its successor arrives. Put two side by side and you can see, in typography and judgment rather than benchmark scores, how far the frontier moved. Vol. 03 changed the practice: when the next class arrived it was not retired. The Field Manual stays current beside OpenAI Astra's Personal Index, and this Commentary joins them third, so Vol. 03 has three views drawn by three hands, and you can switch between them without losing your place."
+         data-simple="Every time a new class of Claude comes out, I have it redesign this entire site. The old version gets archived, not deleted, so you can compare them and see how much better the models are getting: <b>taste is harder to fake than a test score</b>. This time the old design stayed: three AI designers each drew their own version of the same site, and you can switch between them.">This site is rebuilt from the ground up at every new Anthropic model class, as a personal benchmark of frontier capability. Each edition is designed end to end by the model it is named for, then <b>retired, not deleted</b>, when its successor arrives. Put two side by side and you can see, in typography and judgment rather than benchmark scores, how far the frontier moved. Vol. 03 changed the practice: when the next class arrived it was not retired. The Field Manual stays current beside OpenAI Astra's Personal Index, and this Commentary joins them third, so Vol. 03 has three views drawn by three hands, and you can switch between them without losing your place.</p></div>
+      <div class="gr"><p class="gloss">A stemma is the family tree an editor draws of the surviving copies of a text. Each copy is a witness, named by a letter, its siglum.</p></div>
+    </div>
+
+    <div class="row3">
+      <div class="gl"><span class="sidehead">Stemma</span></div>
+      <figure class="stemma span2" aria-label="Stemma of the editions">
+        <ol class="stem">
+          <li class="omega"><span class="sig">ω</span><b>The work itself</b><span class="who">Thirteen systems, three papers, five films. Every edition below is a copy of this.</span></li>
+          <li data-index="Vol. 01, The Magazine (archive)" data-ref="Editions" data-kw="editions archive opus" data-href="https://seansooch-vol1.pages.dev"><span class="sig">Vol. 01</span><b>The Magazine</b><span class="who">Claude Opus 4.7 · April 2026 · retired with honors · <a href="https://seansooch-vol1.pages.dev" target="_blank" rel="noopener">read the archive</a></span></li>
+          <li data-index="Vol. 02, Triad × Vitals (archive)" data-ref="Editions" data-kw="editions archive fable 5 vitals ecg" data-href="https://seansooch-vol2.pages.dev"><span class="sig">Vol. 02</span><b>Triad × Vitals</b><span class="who">Claude Fable 5 · June 2026 · retired with honors · <a href="https://seansooch-vol2.pages.dev" target="_blank" rel="noopener">read the archive</a></span></li>
+          <li><span class="sig">Vol. 03</span><b>Three views</b><span class="who">OpenAI Astra + Claude Fable 5.1 + Claude Opus 5.5 · September 2026 · the text the three current views share</span></li>
+        </ol>
+        <div class="fork">
+          <a class="wit" href="/designs/fable/" data-index="The Field Manual (view F)" data-ref="Editions" data-kw="editions view claude fable 5.1" data-href="/designs/fable/"><span class="siglum">F</span><b>The Field Manual</b><span>Claude Fable 5.1</span><em>Vol. 03 · first in line. Numbered chapters, live readiness, a printed index. Read this view →</em></a>
+          <a class="wit" href="/" data-index="The Personal Index (view A)" data-ref="Editions" data-kw="editions view openai astra" data-href="/"><span class="siglum">A</span><b>The Personal Index</b><span>OpenAI Astra</span><em>Vol. 03 · second in line. A white exhibition catalogue: the name set huge, numbered editorial rows. Read this view →</em></a>
+          <div class="wit here" aria-current="page" data-index="The Commentary (view O)" data-ref="Editions" data-kw="editions view claude opus 5.5" data-href="#appa"><span class="lead">Frontier lead</span><span class="siglum">O</span><b>The Commentary</b><span>Claude Opus 5.5</span><em>Vol. 03 · third in line. A glossed edition: the work in the centre, commentary in the margins, one rubric red. You are reading this view.</em></div>
+        </div>
+
+        <figcaption><b>Stemma.</b> Solid line: descent. Vol. 01 and 02 are retired and kept online. Vol. 03 is the text the three current views share: F, A and O are its three views, in the order they joined; O is the frontier lead.</figcaption>
+      </figure>
+    </div>
+
+    <div class="row3">
+      <div class="gl"><span class="sidehead">The record</span></div>
+      <div class="span2">
+        <p class="tcap"><b>Change record.</b> Editions of this site, in order of issue.</p>
+        <div class="tbl">
+          <table class="ed">
+            <thead><tr><th>Edition</th><th>Design</th><th>Designed by</th><th>Issued</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr><td class="val">01</td><td>The Magazine: dark editorial, sixteen sections, terminal metrics</td><td>Claude Opus 4.7</td><td>April 2026</td><td class="ret">Retired with honors</td><td class="lnk"><a href="https://seansooch-vol1.pages.dev" target="_blank" rel="noopener">archive</a></td></tr>
+              <tr><td class="val">02</td><td>Triad × Vitals: three worlds, one chart, reactive ink</td><td>Claude Fable 5</td><td>June 2026</td><td class="ret">Retired with honors</td><td class="lnk"><a href="https://seansooch-vol2.pages.dev" target="_blank" rel="noopener">archive</a></td></tr>
+              <tr><td class="val">03</td><td>Three views: the Field Manual, the Personal Index and the Commentary, switchable in place</td><td>OpenAI Astra + Claude Fable 5.1 + Claude Opus 5.5</td><td>September 2026</td><td class="cur">Current</td><td class="lnk">you are here</td></tr>
+              <tr><td class="val">04</td><td class="ref">To be designed</td><td class="ref">The next class</td><td class="ref">-</td><td class="ret">Awaiting release</td><td class="lnk"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="row3 para">
+      <div class="gl"><span class="sidehead">Since Change 3</span></div>
+      <div class="tx"><p data-tech="What changed beyond the design. The site is now three views of one text, switched from the bar at the foot of every page, which carries your place across, and each view's own record now lists all three. Every description was checked against the live apps on 23 September 2026 and corrected where an app had moved on; the corrections are one shared file, so all three views say the same thing. The <b>Two Stories</b> paper is set in each view. And the apps began keeping editions of their own: fifteen were redesigned from a blank page by Claude Opus 5.5 on 22 and 23 September 2026, and every retired edition stays online at its own address, listed below."
+         data-simple="Since the last edition: the site became three designs you can switch between, every app description was checked against the live apps and corrected, and most of the apps were redesigned too. Their old versions are still online, listed below.">What changed beyond the design. The site is now three views of one text, switched from the bar at the foot of every page, which carries your place across, and each view's own record now lists all three. Every description was checked against the live apps on 23 September 2026 and corrected where an app had moved on; the corrections are one shared file, so all three views say the same thing. The <b>Two Stories</b> paper is set in each view. And the apps began keeping editions of their own: fifteen were redesigned from a blank page by Claude Opus 5.5 on 22 and 23 September 2026, and every retired edition stays online at its own address, listed below.</p></div>
+      <div class="gr"></div>
+    </div>
+
+    <div class="row3" id="appeds">
+      <div class="gl"><span class="sidehead">The apps' editions</span></div>
+      <div class="span2">
+        <p class="tcap"><b>App editions.</b> Current edition of each app, and where its predecessor is kept.</p>
+        <div class="tbl">
+          <table>
+            <thead><tr><th>App</th><th>Current edition</th><th>Designed by</th><th>Retired edition</th></tr></thead>
+            <tbody id="appEdRows">
+              <tr><td><a href="https://step2-ck.pages.dev" target="_blank" rel="noopener">Step 2 CK Qbank</a></td><td><i>Workroom</i> <span style="color:var(--text-3)">22 Sep 2026</span></td><td>Claude Opus 5.5</td><td class="lnk"><a href="https://step2-ck-v1.pages.dev" target="_blank" rel="noopener">Edition 1</a></td></tr>
+              <tr><td><a href="https://patient-handoff-tracker.onrender.com" target="_blank" rel="noopener">Patient Handoff Tracker</a></td><td><i>Chart Tab</i> <span style="color:var(--text-3)">22 Sep 2026</span></td><td>Claude Opus 5.5</td><td class="lnk"><a href="https://handoff-tracker-v1.pages.dev" target="_blank" rel="noopener">Edition 1</a></td></tr>
+              <tr><td><a href="https://seansooch.dev/ekg/" target="_blank" rel="noopener">Read This</a></td><td><i>Reading Room</i> <span style="color:var(--text-3)">22 Sep 2026</span></td><td>Claude Opus 5.5</td><td class="lnk"><a href="https://ekg-v1.pages.dev" target="_blank" rel="noopener">Edition 1</a></td></tr>
+              <tr><td><a href="https://micro-td.pages.dev" target="_blank" rel="noopener">MICRO TD</a></td><td><i>Oil Immersion</i> <span style="color:var(--text-3)">22 Sep 2026</span></td><td>Claude Opus 5.5</td><td class="lnk"><a href="https://micro-td-v1.pages.dev" target="_blank" rel="noopener">Edition 1</a></td></tr>
+              <tr><td><a href="https://seansooch.dev/toolkit/" target="_blank" rel="noopener">Hospital and Field Toolkit</a></td><td><i>Pocket Cards</i> <span style="color:var(--text-3)">22 Sep 2026</span></td><td>Claude Opus 5.5</td><td class="lnk"><a href="https://toolkit-v1.pages.dev/toolkit/" target="_blank" rel="noopener">Edition 1</a></td></tr>
+              <tr><td><a href="https://warrior-ready.pages.dev" target="_blank" rel="noopener">Warrior Ready</a></td><td><i>Scorecard</i> <span style="color:var(--text-3)">22 Sep 2026</span></td><td>Claude Opus 5.5</td><td class="lnk"><a href="https://warrior-ready-v1.pages.dev" target="_blank" rel="noopener">Edition 1</a></td></tr>
+              <tr><td><a href="https://differential-c57.pages.dev" target="_blank" rel="noopener">AGI Capability Tracker</a></td><td><i>The Ledger</i> <span style="color:var(--text-3)">16 Sep 2026</span></td><td>Claude Fable 5.1</td><td class="lnk"><a href="https://agi-tracker-v2.pages.dev" target="_blank" rel="noopener">Edition 2</a></td></tr>
+              <tr><td><a href="https://seansooch.dev/simulators" target="_blank" rel="noopener">Simulators</a></td><td><i>Drawing Set</i> <span style="color:var(--text-3)">22 Sep 2026</span></td><td>Claude Opus 5.5</td><td class="lnk"><a href="https://simulators-v1.pages.dev" target="_blank" rel="noopener">Edition 1</a></td></tr>
+              <tr><td><a href="https://forge-8ce.pages.dev" target="_blank" rel="noopener">Forge</a></td><td><i>Casting Floor</i> <span style="color:var(--text-3)">22 Sep 2026</span></td><td>Claude Opus 5.5</td><td class="lnk"><a href="https://forge-v1.pages.dev" target="_blank" rel="noopener">Edition 1</a></td></tr>
+              <tr><td><a href="https://cic-dashboard.pages.dev" target="_blank" rel="noopener">Space Explorer</a></td><td><i>Flight Plan</i> <span style="color:var(--text-3)">22 Sep 2026</span></td><td>Claude Opus 5.5</td><td class="lnk"><a href="https://cic-dashboard-v1.pages.dev" target="_blank" rel="noopener">Edition 1</a></td></tr>
+              <tr><td><a href="https://edge-7yj.pages.dev" target="_blank" rel="noopener">Edge Draft Terminal</a></td><td><i>Edition 1</i> <span style="color:var(--text-3)">2026</span></td><td>earlier Claude models</td><td class="lnk">redesign queued</td></tr>
+              <tr><td><a href="https://ncaat-bracket-2026.pages.dev" target="_blank" rel="noopener">NCAAT Bracket</a></td><td><i>Studio</i> <span style="color:var(--text-3)">23 Sep 2026</span></td><td>Claude Opus 5.5</td><td class="lnk"><a href="https://ncaat-bracket-2026-v1.pages.dev" target="_blank" rel="noopener">Edition 1</a></td></tr>
+              <tr><td><a href="https://masters-2026.pages.dev" target="_blank" rel="noopener">Masters 2026 Hub</a></td><td><i>Big Board</i> <span style="color:var(--text-3)">22 Sep 2026</span></td><td>Claude Opus 5.5</td><td class="lnk"><a href="https://masters-2026-v1.pages.dev" target="_blank" rel="noopener">Edition 1</a></td></tr>
+              <tr><td><a href="https://detroit-sports.pages.dev" target="_blank" rel="noopener">Detroit Sports Hub</a></td><td><i>Woodward</i> <span style="color:var(--text-3)">22 Sep 2026</span></td><td>Claude Opus 5.5</td><td class="lnk"><a href="https://detroit-sports-v1.pages.dev" target="_blank" rel="noopener">Edition 1</a></td></tr>
+              <tr><td><a href="https://great-books.pages.dev" target="_blank" rel="noopener">Great Books</a></td><td><i>Tri-band</i> <span style="color:var(--text-3)">22 Sep 2026</span></td><td>Claude Opus 5.5</td><td class="lnk"><a href="https://great-books-v1.pages.dev" target="_blank" rel="noopener">Edition 1</a></td></tr>
+              <tr><td><a href="https://reading-room.pages.dev" target="_blank" rel="noopener">Reading Room</a></td><td><i>The Stacks</i> <span style="color:var(--text-3)">22 Sep 2026</span></td><td>Claude Opus 5.5</td><td class="lnk"><a href="https://reading-room-v1.pages.dev" target="_blank" rel="noopener">Edition 1</a></td></tr>
+              <tr><td><a href="https://philosophy-room.pages.dev" target="_blank" rel="noopener">Philosophy Room</a></td><td><i>Black-Figure</i> <span style="color:var(--text-3)">22 Sep 2026</span></td><td>Claude Opus 5.5</td><td class="lnk"><a href="https://philosophy-room-v1.pages.dev" target="_blank" rel="noopener">Edition 1</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ INDEX ============ -->
+  <section id="indexsec" class="sec">
+    <div class="row3 sec-h">
+      <div class="gl"><span class="secno">¶</span></div>
+      <div class="tx"><h2>Index</h2><p class="sub">Every work, writing, film, and edition on this page. Press / to search it.</p></div>
+      <div class="gr"></div>
+    </div>
+    <div class="row3"><div class="gl"></div><div class="span2"><div class="index" id="indexList"></div></div></div>
+  </section>
+
+  <!-- ============ COLOPHON ============ -->
+  <section class="colophon" id="colophon" aria-label="Colophon">
+    <div class="row3"><div class="gl"></div><div class="tx">
+      <p class="explicit">Explicit</p>
+      <p class="cul">
+        <span>This view was set by Claude Opus 5.5 in September 2026, third</span>
+        <span>in line, beside the Field Manual of Claude Fable 5.1</span>
+        <span>and the Personal Index of OpenAI Astra. Three</span>
+        <span>hands drew three views of one world. The</span>
+        <span>work they describe is Sean's, who</span>
+        <span>asked each of us to make it</span>
+        <span>well, and put our</span>
+        <span>names on it.</span>
+        <span class="fin">❧</span>
+      </p>
+      <p class="set-in">Set in Alegreya, by Juan Pablo del Peral, and Cormorant Garamond, by Christian Thalmann.<br>Built as one static page. Nothing on it is a mockup.</p>
+    </div><div class="gr"></div></div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="row3"><div class="gl"></div><div class="tx">
+    <span>© 2026 seansooch.dev · The Commentary</span>
+    <span><a href="#appa">Change record</a> · <a href="#top">Top</a></span>
+  </div><div class="gr"></div></div>
+</footer>
+
+<div class="lightbox" id="filmLightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Film">
+  <button class="lightbox-close" id="filmClose" aria-label="Close film">&times;</button>
+  <video id="filmVideo" controls playsinline preload="none"></video>
+  <span class="cap" id="filmCap"></span>
+</div>
+
+<div class="pal" id="pal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Index">
+  <div class="pal-box">
+    <div class="pal-in"><span class="lbl">Index</span><input id="palIn" type="text" placeholder="A work, a paper, a film, an edition…" autocomplete="off" spellcheck="false" aria-label="Search the index"></div>
+    <div class="pal-list" id="palList"></div>
+    <div class="pal-foot"><span><kbd>↑↓</kbd>move</span><span><kbd>↵</kbd>open</span><span><kbd>esc</kbd>close</span></div>
+  </div>
+</div>
+
+<script>
+/* Expected behaviour (no test infrastructure for this single page; checked in the browser):
+   - Every host in SYSTEMS is asked once, staggered 60 ms, by an opaque fetch; each .att[data-sys] mark and
+     its status row read asking -> answered (ms) | waking (handoff only, after 4 s) | no answer.
+   - Counts: #sysCount and #sysCount2 show hosts answered; #medianMs the median of answered, non-waking hosts.
+   - Read line filters .work/.group by domain; plain-language swaps every [data-tech] for its [data-simple].
+   - Index: every [data-index] element plus the section heads, alphabetised; "/" opens the search, Esc closes.
+   - Films open in the lightbox; closing clears the source and returns focus to the trigger.
+   - Arriving by the view switch delays the load animation until the curtain lifts. */
+(function(){
+  'use strict';
+  var $ = function(s, r){ return (r||document).querySelector(s); };
+  var $$ = function(s, r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); };
+  var root = document.documentElement;
+  if (root.dataset.designPhase) root.style.setProperty('--d0', '.55s');
+
+  var WORLDS = { med:'Medicine', mil:'Military', mac:'Machines', spt:'Sports', hum:'Humanities', mus:'Music' };
+  var SYSTEMS = [
+    {id:'step2',     name:'Step 2 CK Qbank',        host:'step2-ck.pages.dev',                   url:'https://step2-ck.pages.dev/',                   w:'med'},
+    {id:'handoff',   name:'Handoff Tracker',        host:'patient-handoff-tracker.onrender.com', url:'https://patient-handoff-tracker.onrender.com/', w:'med', wake:true},
+    {id:'ekg',       name:'Read This',              host:'seansooch.dev/ekg',                    url:'https://seansooch.dev/ekg/',                    w:'med'},
+    {id:'microtd',   name:'MICRO TD',               host:'micro-td.pages.dev',                   url:'https://micro-td.pages.dev/',                   w:'med'},
+    {id:'admissions',name:'AdmissionsAcademy',      host:'admissionsacademy.org',                url:'https://admissionsacademy.org/',                w:'med'},
+    {id:'warrior',   name:'Warrior Ready',          host:'warrior-ready.pages.dev',              url:'https://warrior-ready.pages.dev/',              w:'mil'},
+    {id:'toolkit',   name:'Field Toolkit',          host:'seansooch.dev/toolkit',                url:'https://seansooch.dev/toolkit/',                w:'mil'},
+    {id:'agi',       name:'AGI Capability Tracker', host:'differential-c57.pages.dev',           url:'https://differential-c57.pages.dev/',           w:'mac'},
+    {id:'sims',      name:'Simulators',             host:'simulators-4lb.pages.dev',             url:'https://simulators-4lb.pages.dev/',             w:'mac'},
+    {id:'forge',     name:'Forge',                  host:'forge-8ce.pages.dev',                  url:'https://forge-8ce.pages.dev/',                  w:'mac'},
+    {id:'space',     name:'Space Explorer',         host:'cic-dashboard.pages.dev',              url:'https://cic-dashboard.pages.dev/',              w:'mac'},
+    {id:'edge',      name:'Edge Draft Terminal',    host:'edge-7yj.pages.dev',                   url:'https://edge-7yj.pages.dev/',                   w:'spt'},
+    {id:'ncaat',     name:'NCAAT Bracket',          host:'ncaat-bracket-2026.pages.dev',         url:'https://ncaat-bracket-2026.pages.dev/',         w:'spt'},
+    {id:'masters',   name:'Masters 2026 Hub',       host:'masters-2026.pages.dev',               url:'https://masters-2026.pages.dev/',               w:'spt'},
+    {id:'detroit',   name:'Detroit Sports Hub',     host:'detroit-sports.pages.dev',             url:'https://detroit-sports.pages.dev/',             w:'spt'},
+    {id:'greatbooks',name:'Great Books',            host:'great-books.pages.dev',                url:'https://great-books.pages.dev/',                w:'hum'},
+    {id:'reading',   name:'Reading Room',           host:'reading-room.pages.dev',               url:'https://reading-room.pages.dev/',               w:'hum'},
+    {id:'philosophy',name:'Philosophy Room',        host:'philosophy-room.pages.dev',            url:'https://philosophy-room.pages.dev/',            w:'hum'},
+    {id:'music',     name:'Music',                  host:'seansooch.dev/music',                  url:'https://seansooch.dev/music/',                  w:'mus'}
+  ];
+  SYSTEMS.forEach(function(s){ s.status = 'probing'; s.ms = null; });
+  $('#sysTotal').textContent = SYSTEMS.length;
+  $('#sysTotal2').textContent = SYSTEMS.length;
+
+  // ---------- the answers table ----------
+  var tb = $('#statusTbl tbody');
+  SYSTEMS.forEach(function(s){
+    var tr = document.createElement('tr');
+    tr.id = 'row-' + s.id;
+    tr.innerHTML = '<td><a href="'+s.url+'" target="_blank" rel="noopener">'+s.name+'</a><div style="font-size:12.5px;color:var(--text-3)">'+WORLDS[s.w]+'</div></td>' +
+      '<td class="hs">'+s.host+'</td><td class="st"><i></i><span>asking</span></td><td class="ms"></td>';
+    tb.appendChild(tr);
+  });
+
+  // ---------- the ask ----------
+  function fmtMs(ms){ return ms == null ? '' : Math.round(ms) + ' ms'; }
+  function word(s){ return s.status === 'up' ? 'answered' : s.status === 'down' ? 'no answer' : s.status === 'wake' ? 'waking' : 'asking'; }
+  function paint(s){
+    var cls = s.status === 'probing' ? '' : s.status;
+    $$('.att[data-sys="'+s.id+'"]').forEach(function(a){
+      a.className = 'att ' + cls;
+      a.querySelector('span').textContent = s.status === 'up' ? 'answered · ' + fmtMs(s.ms) : word(s);
+    });
+    var row = $('#row-' + s.id);
+    if (row){
+      var st = row.querySelector('.st'); st.className = 'st ' + cls;
+      st.querySelector('span').textContent = word(s);
+      row.querySelector('.ms').textContent = s.status === 'up' ? fmtMs(s.ms) : '';
+    }
+  }
+  function summarize(){
+    var done = SYSTEMS.filter(function(s){ return s.status === 'up' || s.status === 'down'; }).length;
+    var up = SYSTEMS.filter(function(s){ return s.status === 'up'; }).length;
+    var lat = SYSTEMS.filter(function(s){ return s.status === 'up' && !s.wake; }).map(function(s){ return s.ms; }).sort(function(a,b){ return a-b; });
+    $('#sysCount').textContent = up; $('#sysCount2').textContent = up;
+    if (lat.length){ var m = lat.length % 2 ? lat[(lat.length-1)/2] : (lat[lat.length/2-1] + lat[lat.length/2]) / 2; $('#medianMs').textContent = Math.round(m); }
+    var hh = new Date().toTimeString().slice(0,5);
+    if (done === SYSTEMS.length){
+      $('#probeStamp').textContent = up + ' of ' + SYSTEMS.length + ' hosts answered, asked from your browser at ' + hh + '.';
+      $('#probeWhen').textContent = 'at ' + hh;
+    } else {
+      $('#probeStamp').textContent = up + ' answered so far; ' + (SYSTEMS.length - done) + ' still being asked.';
+    }
+  }
+  function probe(s){
+    var t0 = performance.now();
+    var ctrl = ('AbortController' in window) ? new AbortController() : null;
+    var timer = setTimeout(function(){ if (ctrl) ctrl.abort(); }, s.wake ? 90000 : 20000);
+    var wakeTimer = s.wake ? setTimeout(function(){ if (s.status === 'probing'){ s.status = 'wake'; paint(s); summarize(); } }, 4000) : null;
+    var sameOrigin = s.url.indexOf(location.origin + '/') === 0;
+    var opts = { method:'GET', cache:'no-store', redirect:'follow', credentials:'omit' };
+    if (!sameOrigin) opts.mode = 'no-cors';
+    if (ctrl) opts.signal = ctrl.signal;
+    return fetch(s.url, opts).then(function(r){
+      s.ms = performance.now() - t0;
+      s.status = (sameOrigin && !r.ok) ? 'down' : 'up';
+    }).catch(function(){ s.ms = null; s.status = 'down'; })
+    .then(function(){ clearTimeout(timer); if (wakeTimer) clearTimeout(wakeTimer); paint(s); summarize(); });
+  }
+  if (window.fetch){
+    SYSTEMS.forEach(paint); summarize();
+    SYSTEMS.forEach(function(s, i){ setTimeout(function(){ probe(s); }, i * 60); });
+  } else {
+    $('#probeStamp').textContent = 'This browser cannot ask the hosts.';
+  }
+
+  // ---------- read by domain ----------
+  var chips = $$('.chip');
+  function applyFilter(f){
+    $$('#ch3 .group').forEach(function(g){ g.classList.toggle('hide', f !== 'all' && g.dataset.d !== f); });
+    chips.forEach(function(c){ var on = c.dataset.f === f; c.classList.toggle('on', on); c.setAttribute('aria-pressed', String(on)); });
+  }
+  chips.forEach(function(c){ c.addEventListener('click', function(){ applyFilter(c.dataset.f); }); });
+
+  // ---------- plain language ----------
+  var modeBtn = $('#modeBtn'), simple = false;
+  modeBtn.addEventListener('click', function(){
+    simple = !simple;
+    modeBtn.setAttribute('aria-pressed', String(simple));
+    modeBtn.textContent = simple ? 'Technical language' : 'Plain language';
+    $$('[data-tech]').forEach(function(e){ e.innerHTML = simple ? e.dataset.simple : e.dataset.tech; });
+  });
+
+  // ---------- films ----------
+  var box = $('#filmLightbox'), vid = $('#filmVideo'), closeBtn = $('#filmClose'), cap = $('#filmCap'), lastTrigger = null;
+  function openFilm(btn){
+    lastTrigger = btn;
+    vid.setAttribute('poster', btn.dataset.poster || '');
+    vid.src = btn.dataset.film;
+    cap.textContent = btn.dataset.title;
+    box.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden';
+    var p = vid.play(); if (p && p.catch) p.catch(function(){});
+    closeBtn.focus();
+  }
+  function closeFilm(){
+    box.setAttribute('aria-hidden', 'true'); document.body.style.overflow = '';
+    vid.pause(); vid.removeAttribute('src'); vid.load();
+    if (lastTrigger) lastTrigger.focus();
+  }
+  $$('[data-film]').forEach(function(b){ b.addEventListener('click', function(){ openFilm(b); }); });
+  closeBtn.addEventListener('click', closeFilm);
+  box.addEventListener('click', function(e){ if (e.target === box) closeFilm(); });
+
+  // ---------- index: read from the page, so it cannot drift from the content ----------
+  var ENTRIES = $$('[data-index]').map(function(e){
+    return { title:e.dataset.index, kw:e.dataset.kw || '', href:e.getAttribute('href') || e.dataset.href || null, ref:e.dataset.ref || '', el:e };
+  });
+  [['i','Prologue','#ch1','purpose scope method'],['ii','The Works','#ch3','systems projects apps'],['iii','Writings','#ch4','papers research doctrine'],
+   ['iv','Lesser works','#ch5','ancillary experiments'],['v','Films','#appb','video'],['vi','Attestation','#ch2','status probe readiness live answers'],
+   ['vii','Editions','#appa','change record archive stemma versions'],['vii','App editions','#appeds','retired archives redesign'],['','Colophon','#colophon','credits hands']]
+    .forEach(function(c){ ENTRIES.push({ title:c[1], kw:c[3], href:c[2], ref:c[0] ? 'Section ' + c[0] : 'End', el:null }); });
+  ENTRIES.sort(function(a,b){ return a.title.localeCompare(b.title, 'en', {sensitivity:'base'}); });
+  function isExternal(h){ return /^https?:/.test(h); }
+  function openEntry(en){
+    if (!en) return;
+    if (en.el && en.el.dataset.film){ closePal(); openFilm(en.el); return; }
+    if (!en.href) return;
+    closePal();
+    if (en.href.charAt(0) === '#'){ var t = $(en.href); if (t) t.scrollIntoView({behavior:'smooth'}); return; }
+    if (isExternal(en.href)) window.open(en.href, '_blank', 'noopener'); else location.assign(en.href);
+  }
+  var list = $('#indexList'), groups = {};
+  ENTRIES.forEach(function(en){ var L = en.title.charAt(0).toUpperCase(); if (!/[A-Z]/.test(L)) L = '#'; (groups[L] = groups[L] || []).push(en); });
+  Object.keys(groups).sort().forEach(function(L){
+    var g = document.createElement('div'); g.className = 'grp';
+    var h = document.createElement('div'); h.className = 'ltr'; h.textContent = L; g.appendChild(h);
+    groups[L].forEach(function(en){
+      var a = document.createElement('a');
+      a.href = en.href || '#';
+      if (en.href && isExternal(en.href)){ a.target = '_blank'; a.rel = 'noopener'; }
+      a.innerHTML = '<span></span><span class="dots"></span><span class="pg"></span>';
+      a.firstChild.textContent = en.title; a.lastChild.textContent = en.ref;
+      if (en.el && en.el.dataset.film) a.addEventListener('click', function(ev){ ev.preventDefault(); openFilm(en.el); });
+      g.appendChild(a);
+    });
+    list.appendChild(g);
+  });
+
+  var pal = $('#pal'), palIn = $('#palIn'), palList = $('#palList'), sel = 0, shown = [], palOpener = null;
+  function score(en, q){
+    if (!q) return 1;
+    var title = en.title.toLowerCase(), hay = (en.title + ' ' + en.kw + ' ' + en.ref).toLowerCase(), sc = 0;
+    var terms = q.toLowerCase().split(/\s+/).filter(Boolean);
+    for (var i = 0; i < terms.length; i++){
+      var t = terms[i];
+      if (title.indexOf(t) === 0) sc += 3; else if (title.indexOf(t) >= 0) sc += 2; else if (hay.indexOf(t) >= 0) sc += 1; else return 0;
+    }
+    return sc;
+  }
+  function renderPal(){
+    var q = palIn.value.trim();
+    shown = ENTRIES.map(function(en){ return {en:en, s:score(en, q)}; }).filter(function(x){ return x.s > 0; })
+      .sort(function(a,b){ return b.s - a.s || a.en.title.localeCompare(b.en.title); }).slice(0, 12).map(function(x){ return x.en; });
+    sel = Math.min(sel, Math.max(0, shown.length - 1));
+    palList.innerHTML = '';
+    if (!shown.length){ var d = document.createElement('div'); d.className = 'pal-empty'; d.textContent = 'Nothing in the index matches "' + q + '".'; palList.appendChild(d); return; }
+    shown.forEach(function(en, i){
+      var a = document.createElement('a');
+      a.className = 'pal-item' + (i === sel ? ' sel' : '');
+      a.href = en.href || '#';
+      a.innerHTML = '<span><span></span><small></small></span><span class="pg"></span>';
+      a.firstChild.firstChild.textContent = en.title;
+      a.firstChild.lastChild.textContent = en.href && isExternal(en.href) ? en.href.replace(/^https?:\/\//, '').replace(/\/$/, '') : en.el && en.el.dataset.film ? 'plays here' : 'on this site';
+      a.lastChild.textContent = en.ref;
+      a.addEventListener('click', function(ev){ ev.preventDefault(); openEntry(en); });
+      a.addEventListener('mousemove', function(){ if (sel !== i){ sel = i; $$('.pal-item', palList).forEach(function(x, j){ x.classList.toggle('sel', j === sel); }); } });
+      palList.appendChild(a);
+    });
+  }
+  function openPal(){ palOpener = document.activeElement; pal.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden'; palIn.value = ''; sel = 0; renderPal(); setTimeout(function(){ palIn.focus(); }, 0); }
+  function closePal(){ if (pal.getAttribute('aria-hidden') === 'true') return; pal.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; if (palOpener && palOpener.focus) palOpener.focus(); }
+  $('#palBtn').addEventListener('click', openPal);
+  pal.addEventListener('click', function(e){ if (e.target === pal) closePal(); });
+  palIn.addEventListener('input', function(){ sel = 0; renderPal(); });
+  palIn.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowDown'){ e.preventDefault(); sel = Math.min(sel + 1, shown.length - 1); renderPal(); }
+    else if (e.key === 'ArrowUp'){ e.preventDefault(); sel = Math.max(sel - 1, 0); renderPal(); }
+    else if (e.key === 'Enter'){ e.preventDefault(); openEntry(shown[sel]); }
+  });
+  document.addEventListener('keydown', function(e){
+    var typing = /input|textarea|select/i.test((e.target && e.target.tagName) || '');
+    if (e.key === 'Escape'){
+      if (pal.getAttribute('aria-hidden') === 'false') closePal();
+      else if (box.getAttribute('aria-hidden') === 'false') closeFilm();
+      return;
+    }
+    if (e.key === '/' && !typing && !e.metaKey && !e.ctrlKey && !e.altKey){ e.preventDefault(); openPal(); }
+  });
+})();
+</script>
+<!-- design-switcher:start --><nav class="design-switcher" aria-label="Website design" data-selected="opus"><span class="design-caption">SAME WORLD.<br>THREE VIEWS.</span><div class="design-options"><a class="design-choice" data-design="astra" href="/">Astra</a><a class="design-choice" data-design="fable" href="/designs/fable/">Fable 5.1</a><a class="design-choice" data-design="opus" href="/designs/opus/" aria-current="page">Opus 5.5</a></div></nav><div class="design-curtain" data-destination="opus" aria-hidden="true"><strong>OPUS 5.5</strong><span>THE COMMENTARY</span></div><!-- design-switcher:end -->
+</body>
+</html>

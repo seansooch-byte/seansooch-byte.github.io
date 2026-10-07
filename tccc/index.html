@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TCCC | Sean Sooch</title>
+<meta name="description" content="Tactical Combat Casualty Care reference: the MARCH algorithm, interventions, and field protocols for point-of-injury care.">
+<link rel="canonical" href="https://seansooch.dev/tccc/">
+<meta name="theme-color" content="#0a0a0f">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://seansooch.dev/tccc/">
+<meta property="og:title" content="TCCC: Tactical Combat Casualty Care | Sean Sooch">
+<meta property="og:description" content="The MARCH algorithm, interventions, and field protocols for point-of-injury care.">
+<meta property="og:image" content="https://seansooch.dev/screenshots/space.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="800">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TCCC: Tactical Combat Casualty Care | Sean Sooch">
+<meta name="twitter:description" content="The MARCH algorithm, interventions, and field protocols for point-of-injury care.">
+<meta name="twitter:image" content="https://seansooch.dev/screenshots/space.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@400;700&family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/toolkit/pocket.css">
+</head>
+<body data-tool="tccc">
+<!--pc:chrome--><header class="pc-bar"><div class="in"><a class="pc-home" href="/">&larr; seansooch.dev</a><a class="pc-kit" href="/toolkit/">Field Toolkit</a><nav class="pc-tools" aria-label="Tools"><a href="/calculators/"><i style="background:#1F5FA8"></i>Calculators</a><a href="/lab-values/"><i style="background:#1E7A4C"></i>Lab values</a><a href="/antibiotic-coverage/"><i style="background:#6B3FA0"></i>Antibiotics</a><a href="/differentials/"><i style="background:#B86E00"></i>Differentials</a><a href="/tccc/" aria-current="page"><i style="background:#B3261E"></i>TCCC</a></nav></div></header><div class="pc-review"><p>Flagged for clinician review (site audit, 28 May 2026): some drug doses and protocols on this page may not match current CoTCCC guidance. Verify against the current TCCC guidelines before use.</p></div><!--/pc:chrome-->
+<div class="wrap">
+  <header>
+    <h1>TCCC</h1>
+    <p class="sub">Tactical Combat Casualty Care · MARCH Protocol</p>
+    <div class="accent-bar"></div>
+  </header>
+
+  <div class="phase-tabs" id="phases"></div>
+
+  <div class="march" id="marchSteps"></div>
+
+  <div class="drugs">
+    <h2>Field Drugs &amp; Doses</h2>
+    <table class="drug-table">
+      <thead>
+        <tr><th>Drug</th><th>Dose</th><th>Route</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="name">TXA</td>
+          <td class="dose">1 g</td>
+          <td>IV/IO over 10 min</td>
+          <td class="note">Within 3 hr of injury. Repeat 1 g over 8 hr if signs of shock or amputation.</td>
+        </tr>
+        <tr>
+          <td class="name">Ketamine</td>
+          <td class="dose">50 mg IM/IN<br>20 mg slow IV/IO</td>
+          <td>IM / IN / IV / IO</td>
+          <td class="note">Analgesia + dissociation. Repeat q30 min IM or q20 min IV until effect. Maintains BP and airway.</td>
+        </tr>
+        <tr>
+          <td class="name">Fentanyl OTFC</td>
+          <td class="dose">800 µg</td>
+          <td>Transmucosal lozenge</td>
+          <td class="note">Mild–moderate pain, casualty still able to fight. Tape to finger. Monitor for resp depression.</td>
+        </tr>
+        <tr>
+          <td class="name">Morphine</td>
+          <td class="dose">5 mg</td>
+          <td>IV/IO, repeat q10 min</td>
+          <td class="note">Severe pain. Naloxone reversal available. Avoid in head injury or hypotension.</td>
+        </tr>
+        <tr>
+          <td class="name">Moxifloxacin</td>
+          <td class="dose">400 mg PO</td>
+          <td>PO daily</td>
+          <td class="note">Combat wound prophylaxis if casualty can take PO. Penetrating trauma, open fractures.</td>
+        </tr>
+        <tr>
+          <td class="name">Ertapenem</td>
+          <td class="dose">1 g</td>
+          <td>IV/IM</td>
+          <td class="note">Wound prophylaxis if PO not tolerated (abdominal wound, shock, AMS).</td>
+        </tr>
+        <tr>
+          <td class="name">Hextend / Plasma</td>
+          <td class="dose">500 mL bolus</td>
+          <td>IV/IO</td>
+          <td class="note">Hemorrhagic shock. Whole blood preferred when available. Reassess after each bolus.</td>
+        </tr>
+        <tr>
+          <td class="name">Naloxone</td>
+          <td class="dose">0.4–2 mg</td>
+          <td>IV/IM/IN</td>
+          <td class="note">Reverse opioid resp depression. Repeat q2–3 min.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <footer>
+    <p>Educational reference only. Follow your unit SOPs and current TCCC guidelines.</p>
+    <p style="margin-top:0.4rem;"><a href="../">← Back to seansooch.dev</a></p>
+  </footer>
+</div>
+
+<script>
+const PHASES = [
+  { id:'cuf', label:'Care Under Fire' },
+  { id:'tfc', label:'Tactical Field Care' },
+  { id:'tacevac', label:'Tactical Evacuation' },
+];
+
+const STEPS = {
+  cuf: [
+    {
+      letter:'M', title:'Massive Hemorrhage',
+      threat:'Exsanguination kills in minutes. Return fire first; suppression is medicine.',
+      actions:[
+        'Direct casualty to return fire and self-aid if able.',
+        'Tourniquet HIGH and TIGHT over uniform on extremity wounds — no time to expose.',
+        'Move casualty to cover before further care.',
+      ],
+      notes:'<b>Priority:</b> fire superiority. Dead medics save no one. Tourniquets only — no airway, no needle decomp under fire.'
+    },
+    { letter:'A', title:'Airway', threat:'Defer in Care Under Fire.', actions:['Defer airway management until tactical situation permits.'], notes:'No airway interventions in CUF unless casualty is at the point of evacuation.' },
+    { letter:'R', title:'Respiration', threat:'Defer in Care Under Fire.', actions:['Defer until tactical field care.'], notes:'No needle decomp, no chest seals while taking effective fire.' },
+    { letter:'C', title:'Circulation', threat:'Defer in Care Under Fire.', actions:['Limited to extremity hemorrhage control with tourniquets.'], notes:'No IVs, no fluids, no TXA in CUF.' },
+    { letter:'H', title:'Hypothermia', threat:'Defer in Care Under Fire.', actions:['Defer.'], notes:'Address in TFC.' },
+  ],
+  tfc: [
+    {
+      letter:'M', title:'Massive Hemorrhage',
+      threat:'#1 preventable battlefield death. Reassess every tourniquet.',
+      actions:[
+        'Reassess and tighten all tourniquets. Convert to wound packing + pressure dressing if delay to MTF >2 hr and casualty is stable.',
+        'Pack junctional wounds (groin, axilla, neck) with hemostatic gauze (Combat Gauze) for 3 min minimum.',
+        'Apply junctional tourniquet (CRoC, JETT, SAM JT) for inguinal/axillary wounds not amenable to extremity TQ.',
+        'Mark all tourniquets with time of application on the device or forehead.',
+      ],
+      notes:'<b>Conversion criteria:</b> not in shock, can monitor wound, not on amputation, not in CUF. <b>Never convert</b> if >6 hrs since application.'
+    },
+    {
+      letter:'A', title:'Airway',
+      threat:'Obstruction kills the unconscious casualty. Position first, intervene second.',
+      actions:[
+        'Conscious casualty: allow self-positioning (often sitting forward).',
+        'Unconscious without obstruction: recovery position.',
+        'Unconscious with obstruction: chin lift / jaw thrust → NPA (nasopharyngeal airway).',
+        'Failed NPA or maxillofacial trauma: surgical cricothyroidotomy.',
+      ],
+      notes:'<b>NPA first</b> in tactical setting — tolerated awake, doesn\'t require sedation. <b>Cric:</b> bougie + 6.0 ETT preferred.'
+    },
+    {
+      letter:'R', title:'Respiration',
+      threat:'Tension pneumothorax = #2 preventable battlefield death.',
+      actions:[
+        'Penetrating chest trauma: apply vented chest seal (Halo, HyFin) immediately, even if asymptomatic.',
+        'Suspected tension pneumothorax (resp distress, hypoxia, hemodynamic compromise after chest trauma): needle decompress.',
+        'Site: 5th ICS at anterior axillary line OR 2nd ICS midclavicular. 14g × 3.25" needle.',
+        'Burp the chest seal if respiratory status worsens.',
+        'Reassess; repeat needle decomp on opposite side if continued instability.',
+      ],
+      notes:'<b>Lateral approach (5th ICS AAL)</b> is now first-line per TCCC — better penetration, lower failure rate than the classic 2nd ICS.'
+    },
+    {
+      letter:'C', title:'Circulation',
+      threat:'Hemorrhagic shock. Pulse not the same as perfusion.',
+      actions:[
+        'Establish IV (18g antecubital) or IO (humeral head preferred, sternal next, tibia last).',
+        'TXA 1 g in 100 mL NS over 10 min if hemorrhagic shock or amputation, within 3 hours of injury.',
+        'Whole blood preferred. If unavailable: plasma → Hextend 500 mL bolus.',
+        'Target: palpable radial pulse + improved mental status (permissive hypotension, SBP ~80–90, until definitive care).',
+        'Reassess after each unit/bolus. Stop if target met.',
+      ],
+      notes:'<b>TBI exception:</b> normotensive resuscitation (SBP >110) for suspected head injury. <b>Pelvic binder</b> for suspected open-book pelvic fracture.'
+    },
+    {
+      letter:'H', title:'Hypothermia / Head Injury',
+      threat:'Cold trauma triad: hypothermia + acidosis + coagulopathy = death.',
+      actions:[
+        'Remove wet clothing. Insulate from ground.',
+        'Wrap in Hypothermia Prevention and Management Kit (HPMK) or improvised: blanket + Mylar + windproof outer.',
+        'Active warming if available: heated blanket, warmed IV fluids.',
+        'Document GCS / AVPU and pupil exam serially for head-injured casualties.',
+      ],
+      notes:'<b>All trauma casualties get warmed</b>, even in summer. Hypothermia worsens coagulopathy independent of ambient temp.'
+    },
+  ],
+  tacevac: [
+    {
+      letter:'M', title:'Massive Hemorrhage',
+      threat:'In-flight rebleeding from loosened TQ or wound packing.',
+      actions:[
+        'Reassess every tourniquet, junctional device, and wound pack.',
+        'Continue blood product resuscitation; aim for 1:1:1 ratio when components available.',
+        'Repeat TXA 1 g over 8 hr if not given prior or first dose given >3 hr ago.',
+      ],
+      notes:'Anticipate 30–50% need for additional intervention en route. Reverify on every transfer of care.'
+    },
+    {
+      letter:'A', title:'Airway',
+      threat:'Loss of airway in low-light, vibrating, noisy aircraft.',
+      actions:[
+        'Upgrade NPA to definitive airway if prolonged transport: ETT, supraglottic device, or surgical airway.',
+        'Pre-oxygenate. RSI per protocol (ketamine + rocuronium common).',
+        'Confirm placement with capnography (waveform ETCO₂).',
+        'Secure with commercial tube holder, not just tape.',
+      ],
+      notes:'<b>Capnography is mandatory</b> in tacevac — auscultation is unreliable in flight.'
+    },
+    {
+      letter:'R', title:'Respiration',
+      threat:'Altitude expansion of trapped air; recurrent pneumothorax.',
+      actions:[
+        'Place chest tube for casualties with chest seal at altitude or on mechanical ventilation.',
+        'Continuous SpO₂ and ETCO₂ monitoring.',
+        'Reassess for tension pneumothorax with any clinical deterioration.',
+      ],
+      notes:'<b>Boyle\'s law:</b> trapped air expands ~30% from sea level to 8,000 ft. Plan accordingly.'
+    },
+    {
+      letter:'C', title:'Circulation',
+      threat:'Ongoing hemorrhage; coagulopathy of trauma.',
+      actions:[
+        'Continue blood product resuscitation. Whole blood > components.',
+        'Calcium replacement after every 4 units of blood (1 g calcium gluconate or 500 mg calcium chloride).',
+        'Warm all fluids. Monitor for citrate toxicity (paresthesias, tetany).',
+        'Reassess pulse quality, mental status, ETCO₂ trends.',
+      ],
+      notes:'<b>Calcium</b> is the forgotten resuscitation pillar — citrate in stored blood chelates ionized Ca, worsening coagulopathy and hemodynamics.'
+    },
+    {
+      letter:'H', title:'Hypothermia / Head Injury',
+      threat:'Cabin temperature, wind chill, ongoing fluid losses.',
+      actions:[
+        'Maintain HPMK. Pre-warm transport platform if possible.',
+        'Elevate head of stretcher 30° for TBI; avoid jugular compression.',
+        'Maintain SBP >110 for TBI. Avoid hypoxia (SpO₂ ≥94%) and hypocapnia.',
+      ],
+      notes:'<b>TBI golden rules:</b> no hypotension, no hypoxia, no hyperventilation. One episode of hypotension doubles TBI mortality.'
+    },
+  ],
+};
+
+let activePhase = 'tfc';
+const phasesEl = document.getElementById('phases');
+const stepsEl = document.getElementById('marchSteps');
+
+PHASES.forEach(p => {
+  const btn = document.createElement('button');
+  btn.className = 'phase-tab' + (p.id === activePhase ? ' active' : '');
+  btn.textContent = p.label;
+  btn.dataset.id = p.id;
+  btn.addEventListener('click', () => {
+    activePhase = p.id;
+    document.querySelectorAll('.phase-tab').forEach(t => t.classList.toggle('active', t.dataset.id === activePhase));
+    renderSteps();
+  });
+  phasesEl.appendChild(btn);
+});
+
+function renderSteps() {
+  stepsEl.innerHTML = '';
+  STEPS[activePhase].forEach((s, i) => {
+    const div = document.createElement('div');
+    div.className = 'step' + (i === 0 ? ' open' : '');
+    div.innerHTML = `
+      <div class="step-head">
+        <div class="letter">${s.letter}</div>
+        <div class="step-title">
+          <h2>${s.title}</h2>
+          <p>${s.threat}</p>
+        </div>
+        <div class="chevron">▶</div>
+      </div>
+      <div class="step-body">
+        <div class="threat">Action</div>
+        <ol class="actions">${s.actions.map(a => `<li>${a}</li>`).join('')}</ol>
+        <div class="notes">${s.notes}</div>
+      </div>
+    `;
+    div.querySelector('.step-head').addEventListener('click', () => div.classList.toggle('open'));
+    stepsEl.appendChild(div);
+  });
+}
+
+renderSteps();
+</script>
+<!--pc:chrome--><div class="pc-foot"><span>Educational reference. Not a substitute for clinical judgment.</span><span>Edition 2 by Claude Opus 5.5 · <a href="https://toolkit-v1.pages.dev/toolkit/">Edition 1</a></span></div><!--/pc:chrome-->
+</body>
+</html>

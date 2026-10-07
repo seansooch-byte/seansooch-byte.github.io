@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculators | Sean Sooch</title>
+<meta name="description" content="Bedside clinical calculators and scoring tools: risk scores, severity indices, and decision rules in one fast, dependency-free reference.">
+<link rel="canonical" href="https://seansooch.dev/calculators/">
+<meta name="theme-color" content="#0a0a0f">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://seansooch.dev/calculators/">
+<meta property="og:title" content="Calculators | Sean Sooch">
+<meta property="og:description" content="Bedside clinical calculators: risk scores, severity indices, and decision rules in one fast reference.">
+<meta property="og:image" content="https://seansooch.dev/screenshots/space.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="800">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Calculators | Sean Sooch">
+<meta name="twitter:description" content="Bedside clinical calculators: risk scores, severity indices, and decision rules in one fast reference.">
+<meta name="twitter:image" content="https://seansooch.dev/screenshots/space.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@400;700&family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/toolkit/pocket.css">
+</head>
+<body data-tool="calculators">
+<!--pc:chrome--><header class="pc-bar"><div class="in"><a class="pc-home" href="/">&larr; seansooch.dev</a><a class="pc-kit" href="/toolkit/">Field Toolkit</a><nav class="pc-tools" aria-label="Tools"><a href="/calculators/" aria-current="page"><i style="background:#1F5FA8"></i>Calculators</a><a href="/lab-values/"><i style="background:#1E7A4C"></i>Lab values</a><a href="/antibiotic-coverage/"><i style="background:#6B3FA0"></i>Antibiotics</a><a href="/differentials/"><i style="background:#B86E00"></i>Differentials</a><a href="/tccc/"><i style="background:#B3261E"></i>TCCC</a></nav></div></header><div class="pc-review"><p>Some calculators here were flagged for clinician review (site audit, 28 May 2026). Verify scores and interpretations against current references before clinical use.</p></div><!--/pc:chrome-->
+<div class="topbar">
+  <h1>Calculators <span class="dim">/ Sean Sooch</span></h1>
+  <a href="../" class="back">← seansooch.dev</a>
+</div>
+
+<div class="layout">
+  <aside class="sidebar">
+    <input type="text" class="search" id="search" placeholder="Search by name, condition, or input">
+    <div class="rot-filters" id="rotFilters"></div>
+    <ul class="calc-list" id="calcList"></ul>
+    <div class="empty-list hidden" id="emptyList">No calculators match.</div>
+  </aside>
+
+  <main class="main" id="main"></main>
+</div>
+
+<footer>
+  Educational use only. Not a substitute for clinical judgment. <a href="../toolkit/">Field Toolkit</a> · <a href="../">seansooch.dev</a>
+</footer>
+
+<script>
+// ============================================================================
+// CALCULATOR DATA
+// Each calc: id, name, abbr, condition, rotations[], desc, inputs[], compute(),
+//            tiers (score → {tier, label, interp, action}), pitfalls, related[]
+// ============================================================================
+
+const ROTATIONS = ['IM', 'EM', 'ICU', 'GI', 'Cards', 'Surg', 'Neuro'];
+
+const CALCS = [
+
+// ─── CARDS ────────────────────────────────────────────────────────────────
+{
+  id: 'chads-vasc', name: 'CHA₂DS₂-VASc', condition: 'Afib stroke risk',
+  rotations: ['Cards','IM','EM'],
+  desc: 'Annual stroke risk in non-valvular atrial fibrillation. Drives anticoagulation decisions.',
+  inputs: [
+    { label: 'CHF / LV dysfunction', pts: 1 },
+    { label: 'Hypertension', pts: 1 },
+    { label: 'Age 65–74', pts: 1, group: 'age' },
+    { label: 'Age ≥75', pts: 2, group: 'age' },
+    { label: 'Diabetes', pts: 1 },
+    { label: 'Stroke/TIA/thromboembolism (prior)', pts: 2 },
+    { label: 'Vascular disease (prior MI, PAD, aortic plaque)', pts: 1 },
+    { label: 'Female sex', pts: 1 },
+  ],
+  tier: s => s <= 1 ? { t:'low', l:'Low risk', i:'<b>Annual stroke risk ~0.6–1%.</b> Anticoagulation generally not recommended (or reasonable to omit).' }
+       : s === 2 ? { t:'mod', l:'Moderate risk', i:'<b>Annual stroke risk ~2.2%.</b> Anticoagulation reasonable. DOAC preferred over warfarin in non-valvular AF.' }
+       // NOTE: the s*1.5 figure is an approximation, not validated CHA2DS2-VASc
+       // annual event rates; flagged for clinician-sourced rates before publish.
+       // Fixed the Math.min/toFixed ordering so the capped value formats correctly.
+       : { t:'high', l:'High risk', i:`<b>Annual stroke risk ~${Math.min(15, s*1.5).toFixed(1)}%.</b> Anticoagulation strongly recommended.` },
+  nextSteps: ['Score ≥2 (males) or ≥3 (females): start DOAC unless contraindicated.','Calculate HAS-BLED for bleeding risk before starting anticoag.','Recheck annually — risk profile changes over time.','Discuss valvular AF separately (mech valve / mod-severe MS → warfarin only).'],
+  pitfalls: 'Female sex alone does not warrant anticoag (score of 1 in an otherwise healthy woman). Risk modifier, not standalone trigger.',
+  related: ['has-bled'],
+},
+
+{
+  id: 'has-bled', name: 'HAS-BLED', condition: 'Bleed risk on anticoagulation',
+  rotations: ['Cards','IM'],
+  desc: 'Estimates 1-year major bleeding risk in patients on anticoagulation for AF.',
+  inputs: [
+    { label: 'Hypertension (uncontrolled, SBP >160)', pts: 1 },
+    { label: 'Abnormal renal function (Cr >2.26 or dialysis)', pts: 1 },
+    { label: 'Abnormal liver function (cirrhosis, bili >2× ULN)', pts: 1 },
+    { label: 'Stroke (prior)', pts: 1 },
+    { label: 'Bleeding history or predisposition', pts: 1 },
+    { label: 'Labile INR (TTR <60%)', pts: 1 },
+    { label: 'Elderly (>65)', pts: 1 },
+    { label: 'Drugs (antiplatelet, NSAID)', pts: 1 },
+    { label: 'Alcohol (≥8 drinks/week)', pts: 1 },
+  ],
+  tier: s => s <= 2 ? { t:'low', l:'Low risk', i:'<b>~1% major bleed/yr.</b> Anticoagulation safe to start.' }
+       : s === 3 ? { t:'mod', l:'Moderate risk', i:'<b>~3.7% major bleed/yr.</b> Address modifiable risks but generally do not withhold anticoag.' }
+       : { t:'high', l:'High risk', i:'<b>≥8.7% major bleed/yr.</b> Address reversible factors. Do not auto-withhold anticoag — bleeding risk often parallels stroke risk.' },
+  nextSteps: ['Modify what you can: BP control, stop NSAIDs, reduce alcohol, treat liver/renal disease.','Score ≥3 ≠ contraindication. Compare to CHA₂DS₂-VASc — usually stroke risk wins.','Consider DOAC over warfarin (lower ICH risk).'],
+  pitfalls: 'Never use HAS-BLED alone to deny anticoagulation. Use it to identify modifiable risks and to inform monitoring frequency.',
+  related: ['chads-vasc'],
+},
+
+// ─── EM / PE ──────────────────────────────────────────────────────────────
+{
+  id: 'wells-pe', name: 'Wells Criteria (PE)', condition: 'Pulmonary embolism pretest probability',
+  rotations: ['EM','IM','ICU'],
+  desc: 'Pretest probability for pulmonary embolism. Drives D-dimer vs. CTPA decision.',
+  inputs: [
+    { label: 'Clinical signs of DVT (leg swelling, pain on palpation)', pts: 3 },
+    { label: 'PE is #1 diagnosis OR equally likely', pts: 3 },
+    { label: 'HR > 100', pts: 1.5 },
+    { label: 'Immobilization ≥3 days OR surgery in past 4 wks', pts: 1.5 },
+    { label: 'Previous DVT/PE', pts: 1.5 },
+    { label: 'Hemoptysis', pts: 1 },
+    { label: 'Active malignancy (treatment in past 6 mos or palliative)', pts: 1 },
+  ],
+  tier: s => s < 2 ? { t:'low', l:'Low probability', i:'<b>~3.6% PE prevalence.</b> Apply PERC; if all PERC negative → no further workup. Otherwise → D-dimer.' }
+       : s <= 6 ? { t:'mod', l:'Moderate probability', i:'<b>~20.5% PE prevalence.</b> D-dimer first; if positive → CTPA.' }
+       : { t:'high', l:'High probability', i:'<b>~66.7% PE prevalence.</b> Skip D-dimer. Go directly to CTPA (or V/Q if contrast contraindicated).' },
+  nextSteps: ['Low + PERC negative → done.','Low/Mod + D-dimer negative → PE excluded.','High → CTPA without D-dimer.','If CTPA contraindicated: V/Q scan, lower extremity dopplers, or empiric anticoag while imaging arranged.'],
+  pitfalls: 'Wells "PE is most likely diagnosis" is subjective — be honest. Pregnancy modifies the algorithm (consider YEARS or pregnancy-adapted Geneva).',
+  related: ['wells-dvt','perc'],
+},
+
+{
+  id: 'wells-dvt', name: 'Wells Criteria (DVT)', condition: 'DVT pretest probability',
+  rotations: ['EM','IM'],
+  desc: 'Pretest probability for lower extremity DVT.',
+  inputs: [
+    { label: 'Active cancer', pts: 1 },
+    { label: 'Paralysis, paresis, or recent immobilization', pts: 1 },
+    { label: 'Bedridden ≥3 days OR major surgery within 12 wks', pts: 1 },
+    { label: 'Localized tenderness along deep veins', pts: 1 },
+    { label: 'Entire leg swollen', pts: 1 },
+    { label: 'Calf swelling >3 cm vs. asymptomatic side', pts: 1 },
+    { label: 'Pitting edema (greater in symptomatic leg)', pts: 1 },
+    { label: 'Collateral superficial veins (non-varicose)', pts: 1 },
+    { label: 'Previously documented DVT', pts: 1 },
+    { label: 'Alternative diagnosis at least as likely', pts: -2 },
+  ],
+  tier: s => s <= 0 ? { t:'low', l:'Low probability', i:'<b>~5% DVT prevalence.</b> D-dimer; if negative → DVT excluded.' }
+       : s <= 2 ? { t:'mod', l:'Moderate probability', i:'<b>~17% DVT prevalence.</b> D-dimer or duplex ultrasound.' }
+       : { t:'high', l:'High probability', i:'<b>~53% DVT prevalence.</b> Duplex ultrasound. Consider empiric anticoag if delays.' },
+  nextSteps: ['Low + negative D-dimer → DVT ruled out.','Mod/High → ultrasound first-line.','Negative US in high-probability patient: repeat US in 3–7 days OR move to venography.'],
+  pitfalls: 'D-dimer alone never rules in DVT. Cancer patients, pregnancy, and post-op patients have elevated baseline D-dimers.',
+  related: ['wells-pe'],
+},
+
+{
+  id: 'perc', name: 'PERC Rule', condition: 'Rule out PE in low-risk patients',
+  rotations: ['EM'],
+  desc: 'Eight criteria to rule out PE without further workup. ALL must be negative AND clinician gestalt must be low.',
+  inputs: [
+    { label: 'Age ≥50', pts: 1 },
+    { label: 'HR ≥100', pts: 1 },
+    { label: 'SpO₂ <95% on room air', pts: 1 },
+    { label: 'Unilateral leg swelling', pts: 1 },
+    { label: 'Hemoptysis', pts: 1 },
+    { label: 'Recent surgery or trauma (≤4 wks, requiring intubation/anesthesia)', pts: 1 },
+    { label: 'Prior PE or DVT', pts: 1 },
+    { label: 'Hormone use (OCP, HRT, estrogen)', pts: 1 },
+  ],
+  tier: s => s === 0 ? { t:'low', l:'PERC negative', i:'<b>PE ruled out.</b> If clinician gestalt is also low (<15%), no further workup. <1.8% miss rate.' }
+       : { t:'high', l:'PERC positive', i:'<b>PE not ruled out by PERC.</b> Proceed with D-dimer or CTPA based on Wells score.' },
+  nextSteps: ['Use PERC ONLY in patients with low pretest probability.','PERC negative + low gestalt = stop. No D-dimer needed.','Any positive → escalate to D-dimer or imaging.'],
+  pitfalls: 'PERC is not a screening tool. Do not apply to moderate or high probability patients — false reassurance.',
+  related: ['wells-pe'],
+},
+
+// ─── IM / PNEUMONIA ───────────────────────────────────────────────────────
+{
+  id: 'curb-65', name: 'CURB-65', condition: 'CAP severity & disposition',
+  rotations: ['IM','EM'],
+  desc: 'Mortality risk in community-acquired pneumonia. Drives outpatient vs. admission vs. ICU decision.',
+  inputs: [
+    { label: 'Confusion (new onset)', pts: 1 },
+    { label: 'Urea (BUN) > 19 mg/dL', pts: 1 },
+    { label: 'Respiratory rate ≥30', pts: 1 },
+    { label: 'BP: SBP <90 or DBP ≤60', pts: 1 },
+    { label: 'Age ≥65', pts: 1 },
+  ],
+  tier: s => s <= 1 ? { t:'low', l:'Low mortality', i:'<b>30-day mortality ~1.5%.</b> Outpatient management appropriate.' }
+       : s === 2 ? { t:'mod', l:'Moderate mortality', i:'<b>30-day mortality ~9.2%.</b> Short-stay admission or close outpatient follow-up.' }
+       : { t:'high', l:'High mortality', i:'<b>30-day mortality ~22%.</b> Admit. Consider ICU at score ≥4.' },
+  nextSteps: ['Pair with clinical judgment: hypoxia, comorbidities, social support.','Start empiric antibiotics within 4 hours of admission.','Get blood cultures BEFORE antibiotics if admitting.','Score ≥3: assess for ICU admission, especially if ≥2 minor IDSA/ATS criteria present.'],
+  pitfalls: 'Underestimates severity in young patients with septic CAP. Always layer clinical gestalt on top.',
+  related: ['psi','antibiotic-coverage'],
+},
+
+{
+  id: 'psi', name: 'PSI / PORT Score', condition: 'CAP severity (granular)',
+  rotations: ['IM','EM'],
+  desc: 'More granular CAP risk score than CURB-65. Better at identifying truly low-risk patients safe for outpatient care.',
+  inputs: [
+    { label: 'Age (males = age, females = age − 10)', type:'number', key:'age', placeholder:'years' },
+    { label: 'Nursing home resident', pts: 10 },
+    { label: 'Neoplastic disease', pts: 30 },
+    { label: 'Liver disease', pts: 20 },
+    { label: 'CHF', pts: 10 },
+    { label: 'Cerebrovascular disease', pts: 10 },
+    { label: 'Renal disease', pts: 10 },
+    { label: 'Altered mental status', pts: 20 },
+    { label: 'RR ≥30', pts: 20 },
+    { label: 'SBP <90', pts: 20 },
+    { label: 'Temp <35 or ≥40°C', pts: 15 },
+    { label: 'HR ≥125', pts: 10 },
+    { label: 'pH <7.35', pts: 30 },
+    { label: 'BUN ≥30', pts: 20 },
+    { label: 'Na <130', pts: 20 },
+    { label: 'Glucose ≥250', pts: 10 },
+    { label: 'Hct <30%', pts: 10 },
+    { label: 'PaO₂ <60 or SpO₂ <90%', pts: 10 },
+    { label: 'Pleural effusion', pts: 10 },
+  ],
+  // FIX: PSI previously summed only checkboxes and silently dropped age, the
+  // single largest PSI contributor, so elderly CAP patients mis-classified as
+  // low-risk "Outpatient". Age points = entered age (the label instructs females
+  // to enter age minus 10); base = summed risk-factor points. The validated point
+  // schema (Fine et al., NEJM 1997) and class cutoffs are unchanged. CLINICIAN
+  // SIGN-OFF PENDING before publish.
+  compute: (v, base) => (parseInt(v.age, 10) || 0) + base,
+  tier: s => s < 51 ? { t:'low', l:'Class I-II — Low', i:'<b>0.1–0.7% mortality.</b> Outpatient.' }
+       : s < 91 ? { t:'low', l:'Class III — Low', i:'<b>~2.8% mortality.</b> Outpatient or short observation.' }
+       : s < 131 ? { t:'mod', l:'Class IV — Moderate', i:'<b>~8.2% mortality.</b> Admit to ward.' }
+       : { t:'high', l:'Class V — High', i:'<b>~29% mortality.</b> Admit, consider ICU.' },
+  nextSteps: ['PSI >130: ICU evaluation strongly considered.','Pair with clinical gestalt and social factors.','Use over CURB-65 when more granular outpatient triage needed (e.g., young patient, marginal case).'],
+  pitfalls: 'Heavily age-weighted — penalizes elderly patients regardless of physiology. May over-triage stable elderly.',
+  related: ['curb-65','antibiotic-coverage'],
+},
+
+// ─── EM / STREP / APPENDICITIS ────────────────────────────────────────────
+{
+  id: 'centor', name: 'Centor / McIsaac', condition: 'Strep pharyngitis',
+  rotations: ['EM','IM'],
+  desc: 'Probability of Group A Strep pharyngitis. Drives testing/treatment.',
+  inputs: [
+    { label: 'Tonsillar exudate', pts: 1 },
+    { label: 'Tender anterior cervical lymphadenopathy', pts: 1 },
+    { label: 'Fever (history or measured >38°C)', pts: 1 },
+    { label: 'Absence of cough', pts: 1 },
+    { label: 'Age 3–14', pts: 1, group:'age' },
+    { label: 'Age 15–44', pts: 0, group:'age' },
+    { label: 'Age ≥45', pts: -1, group:'age' },
+  ],
+  tier: s => s <= 1 ? { t:'low', l:'Low probability', i:'<b>~1–10%.</b> No test, no antibiotic.' }
+       : s <= 3 ? { t:'mod', l:'Moderate probability', i:'<b>~15–35%.</b> Rapid strep test; treat if positive.' }
+       : { t:'high', l:'High probability', i:'<b>~50%+.</b> Test and treat empirically while awaiting result, OR treat without testing.' },
+  nextSteps: ['First-line: penicillin V or amoxicillin × 10 days.','PCN-allergic: cephalexin (mild allergy) or azithromycin (severe).','Goal of treatment: prevent rheumatic fever, reduce duration, prevent suppurative complications.'],
+  pitfalls: 'Overdiagnosis is common. Adults score ≥4 in only ~10% of cases. Avoid antibiotics for low scores even if patient demands.',
+  related: ['antibiotic-coverage'],
+},
+
+{
+  id: 'alvarado', name: 'Alvarado Score', condition: 'Acute appendicitis',
+  rotations: ['Surg','EM'],
+  desc: 'Probability of acute appendicitis based on symptoms, signs, and labs.',
+  inputs: [
+    { label: 'Migration of pain to RLQ', pts: 1 },
+    { label: 'Anorexia', pts: 1 },
+    { label: 'Nausea or vomiting', pts: 1 },
+    { label: 'Tenderness in RLQ', pts: 2 },
+    { label: 'Rebound tenderness', pts: 1 },
+    { label: 'Fever ≥37.3°C', pts: 1 },
+    { label: 'Leukocytosis (WBC >10)', pts: 2 },
+    { label: 'Left shift (neutrophils >75%)', pts: 1 },
+  ],
+  tier: s => s <= 3 ? { t:'low', l:'Low probability', i:'<b>~3% appendicitis.</b> Discharge with return precautions, consider alternative dx.' }
+       : s <= 6 ? { t:'mod', l:'Moderate probability', i:'<b>~25–30% appendicitis.</b> Imaging (CT or US in peds/pregnancy).' }
+       : { t:'high', l:'High probability', i:'<b>>75% appendicitis.</b> Surgical consult. Imaging often skipped if clear-cut.' },
+  nextSteps: ['Score ≤3: clinical observation, follow-up imaging if symptoms persist.','Score 4–6: CT abdomen/pelvis with IV contrast (or US in pregnancy/peds).','Score ≥7: surgical consult; imaging often confirmatory.','NPO, IV fluids, analgesia, broad-spectrum abx if perforation suspected.'],
+  pitfalls: 'Less reliable in women (PID, ovarian cyst, ectopic), pregnancy, and very young/old patients. Imaging over score in equivocal cases.',
+  related: ['differentials'],
+},
+
+// ─── ICU ──────────────────────────────────────────────────────────────────
+{
+  id: 'qsofa', name: 'qSOFA', condition: 'Sepsis bedside screen',
+  rotations: ['ICU','EM','IM'],
+  desc: 'Quick bedside screen for poor outcomes in suspected infection. Not diagnostic for sepsis — a flag.',
+  inputs: [
+    { label: 'Altered mental status (GCS <15)', pts: 1 },
+    { label: 'Respiratory rate ≥22', pts: 1 },
+    { label: 'SBP ≤100', pts: 1 },
+  ],
+  tier: s => s <= 1 ? { t:'low', l:'Low risk', i:'<b>Lower mortality.</b> Continue monitoring; reassess for sepsis.' }
+       : { t:'high', l:'High risk', i:'<b>≥2 = 3-14× higher in-hospital mortality.</b> Escalate evaluation: full SOFA, lactate, broad workup.' },
+  nextSteps: ['qSOFA ≥2 in suspected infection → think sepsis, mobilize resources.','Get lactate, blood cultures × 2, CBC, BMP, UA.','Start broad-spectrum antibiotics within 1 hour of recognition.','Crystalloid 30 mL/kg if hypoperfusion or lactate ≥4.','Calculate full SOFA in ICU for organ failure tracking.'],
+  pitfalls: 'qSOFA is a SCREEN, not a diagnosis. A negative qSOFA does not exclude sepsis. Trust clinical gestalt — septic patients can be normotensive.',
+  related: ['sofa'],
+},
+
+{
+  id: 'sofa', name: 'SOFA Score', condition: 'Organ dysfunction in critical illness',
+  rotations: ['ICU'],
+  desc: 'Sequential Organ Failure Assessment. Tracks 6 organ systems (0–4 each). Used to define and trend sepsis.',
+  inputs: [
+    { label: 'Respiration: PaO₂/FiO₂ <100 + ventilated', pts: 4, group:'resp' },
+    { label: 'Respiration: PaO₂/FiO₂ <200 + ventilated', pts: 3, group:'resp' },
+    { label: 'Respiration: PaO₂/FiO₂ <300', pts: 2, group:'resp' },
+    { label: 'Respiration: PaO₂/FiO₂ <400', pts: 1, group:'resp' },
+    { label: 'Coags: Plt <20', pts: 4, group:'coag' },
+    { label: 'Coags: Plt <50', pts: 3, group:'coag' },
+    { label: 'Coags: Plt <100', pts: 2, group:'coag' },
+    { label: 'Coags: Plt <150', pts: 1, group:'coag' },
+    { label: 'Liver: Bili ≥12', pts: 4, group:'liver' },
+    { label: 'Liver: Bili 6–11.9', pts: 3, group:'liver' },
+    { label: 'Liver: Bili 2–5.9', pts: 2, group:'liver' },
+    { label: 'Liver: Bili 1.2–1.9', pts: 1, group:'liver' },
+    { label: 'CV: Pressors high-dose', pts: 4, group:'cv' },
+    { label: 'CV: Pressors moderate', pts: 3, group:'cv' },
+    { label: 'CV: Dopamine ≤5 OR dobutamine', pts: 2, group:'cv' },
+    { label: 'CV: MAP <70', pts: 1, group:'cv' },
+    { label: 'CNS: GCS <6', pts: 4, group:'cns' },
+    { label: 'CNS: GCS 6–9', pts: 3, group:'cns' },
+    { label: 'CNS: GCS 10–12', pts: 2, group:'cns' },
+    { label: 'CNS: GCS 13–14', pts: 1, group:'cns' },
+    { label: 'Renal: Cr ≥5 or UOP <200', pts: 4, group:'renal' },
+    { label: 'Renal: Cr 3.5–4.9 or UOP <500', pts: 3, group:'renal' },
+    { label: 'Renal: Cr 2–3.4', pts: 2, group:'renal' },
+    { label: 'Renal: Cr 1.2–1.9', pts: 1, group:'renal' },
+  ],
+  tier: s => s < 6 ? { t:'low', l:'Low organ dysfunction', i:'<b>Mortality ~10%.</b>' }
+       : s < 10 ? { t:'mod', l:'Moderate', i:'<b>Mortality ~20–40%.</b>' }
+       : { t:'high', l:'Severe', i:'<b>Mortality >50%.</b>' },
+  nextSteps: ['ΔSOFA ≥2 from baseline + suspected infection = sepsis (Sepsis-3).','Trend daily — increasing SOFA = deteriorating, decreasing = responding.','Drives ICU resource decisions and goals-of-care conversations.'],
+  pitfalls: 'Within each organ category, take the WORST single value. Do not double-count.',
+  related: ['qsofa'],
+},
+
+// ─── NEURO ────────────────────────────────────────────────────────────────
+{
+  id: 'gcs', name: 'Glasgow Coma Scale', condition: 'Level of consciousness',
+  rotations: ['Neuro','EM','ICU'],
+  desc: 'Standardized assessment of consciousness. 3 (deep coma) to 15 (normal).',
+  inputs: [
+    { label: 'Eye: Spontaneous (4)', pts: 4, group:'eye' },
+    { label: 'Eye: To voice (3)', pts: 3, group:'eye' },
+    { label: 'Eye: To pain (2)', pts: 2, group:'eye' },
+    { label: 'Eye: None (1)', pts: 1, group:'eye' },
+    { label: 'Verbal: Oriented (5)', pts: 5, group:'verbal' },
+    { label: 'Verbal: Confused (4)', pts: 4, group:'verbal' },
+    { label: 'Verbal: Inappropriate words (3)', pts: 3, group:'verbal' },
+    { label: 'Verbal: Incomprehensible sounds (2)', pts: 2, group:'verbal' },
+    { label: 'Verbal: None (1)', pts: 1, group:'verbal' },
+    { label: 'Motor: Obeys commands (6)', pts: 6, group:'motor' },
+    { label: 'Motor: Localizes pain (5)', pts: 5, group:'motor' },
+    { label: 'Motor: Withdraws from pain (4)', pts: 4, group:'motor' },
+    { label: 'Motor: Flexion to pain / decorticate (3)', pts: 3, group:'motor' },
+    { label: 'Motor: Extension to pain / decerebrate (2)', pts: 2, group:'motor' },
+    { label: 'Motor: None (1)', pts: 1, group:'motor' },
+  ],
+  tier: s => s >= 13 ? { t:'low', l:'Mild TBI', i:'<b>Mild injury.</b> Observation; CT if criteria met.' }
+       : s >= 9 ? { t:'mod', l:'Moderate TBI', i:'<b>Moderate injury.</b> CT, neurosurgery consult, admission.' }
+       : { t:'high', l:'Severe TBI', i:'<b>Severe injury.</b> Intubate (GCS ≤8 = "intubate"). ICU. Neurosurgery emergent.' },
+  nextSteps: ['GCS ≤8 → secure airway.','Document component scores (E_V_M_) — total alone loses information.','Use to trend over time, not just at presentation.','Pair with pupillary exam and motor lateralization.'],
+  pitfalls: 'Sedation, intubation, and language barriers all corrupt the score. Document modifiers (T = intubated, S = sedated). Take the BEST response from each component, not the worst.',
+  related: ['differentials'],
+},
+
+{
+  id: 'nihss-lite', name: 'NIHSS (Lite)', condition: 'Stroke severity',
+  rotations: ['Neuro','EM'],
+  desc: 'Simplified NIH Stroke Scale for rapid bedside use. The full NIHSS has 11 items totaling 0–42 — this captures the most predictive elements for triage.',
+  inputs: [
+    { label: 'LOC: Not alert, requires stimulation', pts: 1, group:'loc' },
+    { label: 'LOC: Responds only to pain', pts: 2, group:'loc' },
+    { label: 'LOC: Unresponsive / reflex only', pts: 3, group:'loc' },
+    { label: 'Gaze palsy: Partial', pts: 1, group:'gaze' },
+    { label: 'Gaze palsy: Forced deviation', pts: 2, group:'gaze' },
+    { label: 'Visual field: Partial hemianopia', pts: 1, group:'vis' },
+    { label: 'Visual field: Complete hemianopia', pts: 2, group:'vis' },
+    { label: 'Visual field: Bilateral hemianopia', pts: 3, group:'vis' },
+    { label: 'Facial palsy: Minor (flattened NLF)', pts: 1, group:'face' },
+    { label: 'Facial palsy: Partial (lower face)', pts: 2, group:'face' },
+    { label: 'Facial palsy: Complete (one or both sides)', pts: 3, group:'face' },
+    { label: 'Motor arm: Drift (one or both)', pts: 2 },
+    { label: 'Motor leg: Drift (one or both)', pts: 2 },
+    { label: 'Ataxia present', pts: 1 },
+    { label: 'Sensory loss', pts: 1 },
+    { label: 'Aphasia: Mild–moderate', pts: 1, group:'lang' },
+    { label: 'Aphasia: Severe', pts: 2, group:'lang' },
+    { label: 'Aphasia: Mute / global', pts: 3, group:'lang' },
+    { label: 'Dysarthria', pts: 1 },
+    { label: 'Neglect / extinction', pts: 1 },
+  ],
+  tier: s => s <= 4 ? { t:'low', l:'Minor stroke', i:'<b>Minor.</b> Consider tPA within window; weigh risk/benefit individually.' }
+       : s <= 15 ? { t:'mod', l:'Moderate stroke', i:'<b>Moderate.</b> tPA strongly indicated within window. Assess for LVO → thrombectomy.' }
+       : s <= 20 ? { t:'high', l:'Mod-severe stroke', i:'<b>Moderate-to-severe.</b> tPA + thrombectomy evaluation urgent.' }
+       : { t:'high', l:'Severe stroke', i:'<b>Severe.</b> Emergent intervention. Higher hemorrhage risk with tPA — assess carefully.' },
+  nextSteps: ['Establish last known well (LKW) time.','Stat non-contrast head CT to exclude hemorrhage.','tPA window: 4.5 hrs from LKW.','Thrombectomy window: up to 24 hrs for select LVO patients.','Activate stroke team and neurology.'],
+  pitfalls: 'NIHSS undercounts posterior circulation strokes (vertigo, ataxia, diplopia score low). Always pair with clinical suspicion. This lite version is a triage tool — formal NIHSS by certified examiner for thrombolysis decisions.',
+  related: ['differentials'],
+},
+
+{
+  id: 'abcd2', name: 'ABCD²', condition: 'Stroke risk after TIA',
+  rotations: ['Neuro','EM'],
+  desc: 'Predicts 2-day stroke risk after a TIA. Drives admission vs. expedited outpatient workup.',
+  inputs: [
+    { label: 'Age ≥60', pts: 1 },
+    { label: 'BP ≥140/90 at presentation', pts: 1 },
+    { label: 'Clinical: Unilateral weakness', pts: 2, group:'clin' },
+    { label: 'Clinical: Speech disturbance without weakness', pts: 1, group:'clin' },
+    { label: 'Duration ≥60 min', pts: 2, group:'dur' },
+    { label: 'Duration 10–59 min', pts: 1, group:'dur' },
+    { label: 'Diabetes', pts: 1 },
+  ],
+  tier: s => s <= 3 ? { t:'low', l:'Low risk', i:'<b>~1% 2-day stroke risk.</b> Outpatient workup acceptable if rapid.' }
+       : s <= 5 ? { t:'mod', l:'Moderate risk', i:'<b>~4% 2-day stroke risk.</b> Admission generally recommended.' }
+       : { t:'high', l:'High risk', i:'<b>~8% 2-day stroke risk.</b> Admission, urgent vascular imaging.' },
+  nextSteps: ['Admit for scores ≥4 in most centers (lower threshold reasonable).','MRI brain + MRA head/neck OR CTA.','Carotid duplex if unable to do MRA/CTA.','Echo to assess for cardiac source.','Start antiplatelet therapy unless hemorrhage.','Risk factor modification: BP, statin, glycemic control.'],
+  pitfalls: 'TIAs without classic clinical features (weakness, speech) get under-scored. ABCD² is a guide, not a replacement for clinical judgment — high-risk features (afib, recent crescendo TIAs) override.',
+  related: ['chads-vasc','differentials'],
+},
+
+// ─── GI ───────────────────────────────────────────────────────────────────
+{
+  id: 'meld', name: 'MELD Score', condition: '90-day mortality in cirrhosis',
+  rotations: ['GI','IM'],
+  desc: 'Model for End-Stage Liver Disease. Predicts 90-day mortality and drives transplant priority.',
+  inputs: [
+    { label: 'Bilirubin', type:'number', key:'bili', placeholder:'mg/dL', step:'0.1' },
+    { label: 'INR', type:'number', key:'inr', placeholder:'INR', step:'0.1' },
+    { label: 'Creatinine', type:'number', key:'cr', placeholder:'mg/dL', step:'0.1' },
+    { label: 'On dialysis ≥2× in past week', pts: 0, key:'dialysis' },
+  ],
+  compute: vals => {
+    let bili = Math.max(parseFloat(vals.bili) || 1, 1);
+    let inr = Math.max(parseFloat(vals.inr) || 1, 1);
+    let cr = Math.max(parseFloat(vals.cr) || 1, 1);
+    if (vals.dialysis || cr > 4) cr = 4;
+    const m = Math.round(3.78 * Math.log(bili) + 11.2 * Math.log(inr) + 9.57 * Math.log(cr) + 6.43);
+    return Math.max(6, Math.min(40, m));
+  },
+  tier: s => s < 10 ? { t:'low', l:'Low mortality', i:'<b>~2% 3-mo mortality.</b> Mild dysfunction. Outpatient management.' }
+       : s < 20 ? { t:'mod', l:'Moderate mortality', i:'<b>~6–20% 3-mo mortality.</b>' }
+       : s < 30 ? { t:'high', l:'High mortality', i:'<b>~20–50% 3-mo mortality.</b> Transplant evaluation.' }
+       : { t:'high', l:'Critical', i:'<b>>50% 3-mo mortality.</b> High transplant priority.' },
+  nextSteps: ['Score ≥15: transplant evaluation indicated.','Use MELD-Na (adds sodium) for more accurate prediction in hyponatremia.','Pair with Child-Pugh for surgical risk assessment.','Reassess every 1–3 months in stable cirrhosis.'],
+  pitfalls: 'MELD does NOT capture hepatic encephalopathy or ascites — Child-Pugh does. Use both for comprehensive assessment. Floors apply (min 1.0 for each input).',
+  related: ['child-pugh','lab-values'],
+},
+
+{
+  id: 'child-pugh', name: 'Child-Pugh', condition: 'Cirrhosis severity & surgical risk',
+  rotations: ['GI','Surg'],
+  desc: 'Cirrhosis classification (A/B/C). Predicts perioperative mortality and need for variceal screening.',
+  inputs: [
+    { label: 'Bilirubin <2', pts: 1, group:'bili' },
+    { label: 'Bilirubin 2–3', pts: 2, group:'bili' },
+    { label: 'Bilirubin >3', pts: 3, group:'bili' },
+    { label: 'Albumin >3.5', pts: 1, group:'alb' },
+    { label: 'Albumin 2.8–3.5', pts: 2, group:'alb' },
+    { label: 'Albumin <2.8', pts: 3, group:'alb' },
+    { label: 'INR <1.7', pts: 1, group:'inr' },
+    { label: 'INR 1.7–2.3', pts: 2, group:'inr' },
+    { label: 'INR >2.3', pts: 3, group:'inr' },
+    { label: 'Ascites: None', pts: 1, group:'asc' },
+    { label: 'Ascites: Mild (diuretic-controlled)', pts: 2, group:'asc' },
+    { label: 'Ascites: Moderate-severe (refractory)', pts: 3, group:'asc' },
+    { label: 'Encephalopathy: None', pts: 1, group:'enc' },
+    { label: 'Encephalopathy: Grade 1–2', pts: 2, group:'enc' },
+    { label: 'Encephalopathy: Grade 3–4', pts: 3, group:'enc' },
+  ],
+  tier: s => s <= 6 ? { t:'low', l:'Class A', i:'<b>1-year survival ~100%, 2-year ~85%.</b> Compensated cirrhosis. Surgery generally tolerable.' }
+       : s <= 9 ? { t:'mod', l:'Class B', i:'<b>1-year survival ~80%, 2-year ~60%.</b> Surgery risky; non-essential procedures avoided.' }
+       : { t:'high', l:'Class C', i:'<b>1-year survival ~45%, 2-year ~35%.</b> Decompensated. Avoid elective surgery.' },
+  nextSteps: ['Class A: routine variceal screening, surveillance for HCC.','Class B/C: avoid hepatotoxic drugs, manage ascites/HE, transplant referral.','For surgical risk: pair with MELD (more accurate than Child-Pugh alone for emergency surgery).'],
+  pitfalls: 'Encephalopathy and ascites are subjective. Albumin lags acute changes. Less precise than MELD for acute decompensation.',
+  related: ['meld'],
+},
+
+{
+  id: 'glasgow-blatchford', name: 'Glasgow-Blatchford', condition: 'Upper GI bleed triage',
+  rotations: ['GI','EM'],
+  desc: 'Identifies upper GI bleed patients who can be safely managed as outpatients vs. need admission/intervention.',
+  inputs: [
+    { label: 'BUN 18.2–22.4', pts: 2, group:'bun' },
+    { label: 'BUN 22.4–28', pts: 3, group:'bun' },
+    { label: 'BUN 28–70', pts: 4, group:'bun' },
+    { label: 'BUN ≥70', pts: 6, group:'bun' },
+    { label: 'Hgb (M) 12–13', pts: 1, group:'hgb' },
+    { label: 'Hgb (M) 10–12 OR (F) 10–12', pts: 3, group:'hgb' },
+    { label: 'Hgb <10', pts: 6, group:'hgb' },
+    { label: 'SBP 100–109', pts: 1, group:'sbp' },
+    { label: 'SBP 90–99', pts: 2, group:'sbp' },
+    { label: 'SBP <90', pts: 3, group:'sbp' },
+    { label: 'HR ≥100', pts: 1 },
+    { label: 'Melena', pts: 1 },
+    { label: 'Syncope', pts: 2 },
+    { label: 'Liver disease', pts: 2 },
+    { label: 'Heart failure', pts: 2 },
+  ],
+  tier: s => s === 0 ? { t:'low', l:'Very low risk', i:'<b>Outpatient management acceptable.</b> Outpatient endoscopy within 24–72 hrs.' }
+       : s <= 5 ? { t:'mod', l:'Moderate risk', i:'<b>Admit.</b> Endoscopy within 24 hrs.' }
+       : { t:'high', l:'High risk', i:'<b>Admit. Likely needs intervention.</b> Urgent endoscopy, transfusion preparation.' },
+  nextSteps: ['Score 0: outpatient endoscopy.','Score ≥1: admit. PPI drip, IV fluids, type & screen.','Score ≥6: ICU consideration, urgent GI consult.','Octreotide if variceal bleed suspected, ceftriaxone for cirrhotics.'],
+  pitfalls: 'Score of 0 must include ALL of: BUN <18.2, normal Hgb, SBP ≥110, HR <100, no melena/syncope, no liver/cardiac disease. Borderline patients can be missed.',
+  related: ['lab-values'],
+},
+
+{
+  id: 'ranson', name: 'Ranson Criteria', condition: 'Acute pancreatitis severity',
+  rotations: ['GI','Surg'],
+  desc: 'Predicts mortality in acute pancreatitis. Five criteria at admission, six more at 48 hours.',
+  inputs: [
+    { label: 'On admission: Age >55', pts: 1 },
+    { label: 'On admission: WBC >16', pts: 1 },
+    { label: 'On admission: Glucose >200', pts: 1 },
+    { label: 'On admission: AST >250', pts: 1 },
+    { label: 'On admission: LDH >350', pts: 1 },
+    { label: 'At 48 hrs: Hct drop >10%', pts: 1 },
+    { label: 'At 48 hrs: BUN rise >5', pts: 1 },
+    { label: 'At 48 hrs: Calcium <8', pts: 1 },
+    { label: 'At 48 hrs: PaO₂ <60', pts: 1 },
+    { label: 'At 48 hrs: Base deficit >4', pts: 1 },
+    { label: 'At 48 hrs: Fluid sequestration >6 L', pts: 1 },
+  ],
+  tier: s => s <= 2 ? { t:'low', l:'Low mortality', i:'<b>~1% mortality.</b> Mild pancreatitis. Floor admission, supportive care.' }
+       : s <= 4 ? { t:'mod', l:'Moderate mortality', i:'<b>~15% mortality.</b> Closer monitoring; consider ICU.' }
+       : s <= 6 ? { t:'high', l:'High mortality', i:'<b>~40% mortality.</b> ICU. Aggressive resuscitation.' }
+       : { t:'high', l:'Severe', i:'<b>~100% mortality.</b> Maximum support; address goals of care.' },
+  nextSteps: ['IV fluids: aggressive (250–500 mL/hr crystalloid in first 12–24 hrs).','NPO initially; advance diet as tolerated.','Pain control.','ERCP for gallstone pancreatitis with cholangitis or biliary obstruction.','No prophylactic antibiotics; treat infected necrosis.'],
+  pitfalls: 'Requires 48 hours to fully apply. Use BISAP or APACHE II if you need a bedside score sooner. Modified Ranson exists for gallstone pancreatitis (uses different cutoffs).',
+  related: ['lab-values'],
+},
+
+// ─── PE PROPHYLAXIS ───────────────────────────────────────────────────────
+{
+  id: 'caprini', name: 'Caprini VTE Risk', condition: 'Surgical VTE risk',
+  rotations: ['Surg'],
+  desc: 'Estimates VTE risk in surgical patients to guide prophylaxis.',
+  inputs: [
+    { label: 'Age 41–60', pts: 1, group:'age' },
+    { label: 'Age 61–74', pts: 2, group:'age' },
+    { label: 'Age ≥75', pts: 3, group:'age' },
+    { label: 'Minor surgery', pts: 1 },
+    { label: 'Major surgery (>45 min)', pts: 2 },
+    { label: 'Arthroscopic / laparoscopic surgery', pts: 2 },
+    { label: 'BMI >25', pts: 1 },
+    { label: 'Swollen legs / varicose veins', pts: 1 },
+    { label: 'Sepsis (within 1 month)', pts: 1 },
+    { label: 'Serious lung disease (within 1 month)', pts: 1 },
+    { label: 'Pregnancy or postpartum', pts: 1 },
+    { label: 'Hx of unexplained stillbirth, recurrent miscarriage', pts: 1 },
+    { label: 'Oral contraceptives or HRT', pts: 1 },
+    { label: 'Malignancy', pts: 2 },
+    { label: 'Confined to bed (>72 hrs)', pts: 2 },
+    { label: 'Central venous access', pts: 2 },
+    { label: 'Hx of DVT/PE', pts: 3 },
+    { label: 'Family hx of thrombosis', pts: 3 },
+    { label: 'Stroke (<1 month)', pts: 5 },
+    { label: 'Hip/pelvis/leg fracture', pts: 5 },
+    { label: 'Acute spinal cord injury (<1 month)', pts: 5 },
+  ],
+  tier: s => s <= 1 ? { t:'low', l:'Low risk', i:'<b><1.5% VTE.</b> Early ambulation only.' }
+       : s === 2 ? { t:'mod', l:'Moderate risk', i:'<b>~3% VTE.</b> Mechanical prophylaxis (SCDs).' }
+       : s <= 4 ? { t:'high', l:'High risk', i:'<b>~6% VTE.</b> Pharm prophylaxis (LMWH, UFH) + SCDs.' }
+       : { t:'high', l:'Highest risk', i:'<b>~18% VTE.</b> Pharm prophylaxis + SCDs. Consider extended duration (28 days) post-op.' },
+  nextSteps: ['Match prophylaxis intensity to score.','Hold pharm prophylaxis if active bleeding or HIT.','Mechanical prophylaxis when pharm contraindicated.','Reassess daily — risk and bleeding profile change.'],
+  pitfalls: 'Caprini is for SURGICAL patients. Use Padua for medical inpatients. Bleeding risk must be weighed independently.',
+  related: ['padua'],
+},
+
+{
+  id: 'padua', name: 'Padua VTE Risk', condition: 'Medical inpatient VTE risk',
+  rotations: ['IM'],
+  desc: 'Predicts VTE risk in hospitalized medical patients to guide prophylaxis.',
+  inputs: [
+    { label: 'Active cancer', pts: 3 },
+    { label: 'Previous VTE (excluding superficial)', pts: 3 },
+    { label: 'Reduced mobility (bedrest ≥3 days)', pts: 3 },
+    { label: 'Known thrombophilia', pts: 3 },
+    { label: 'Recent trauma or surgery (<1 month)', pts: 2 },
+    { label: 'Age ≥70', pts: 1 },
+    { label: 'Heart or respiratory failure', pts: 1 },
+    { label: 'Acute MI or ischemic stroke', pts: 1 },
+    { label: 'Acute infection or rheumatologic disease', pts: 1 },
+    { label: 'BMI ≥30', pts: 1 },
+    { label: 'Hormonal therapy', pts: 1 },
+  ],
+  tier: s => s < 4 ? { t:'low', l:'Low risk', i:'<b>~0.3% VTE without prophylaxis.</b> Early ambulation only.' }
+       : { t:'high', l:'High risk', i:'<b>~11% VTE without prophylaxis.</b> Pharmacologic prophylaxis indicated unless contraindicated.' },
+  nextSteps: ['High risk: enoxaparin 40 mg SC daily OR UFH 5000 SC q8h.','Mechanical prophylaxis (SCDs) if pharm contraindicated.','Reassess daily — bleeding risk, mobility, and clinical status all change.'],
+  pitfalls: 'Designed for medical inpatients only. Use Caprini for surgical patients. Always pair with bleeding risk assessment.',
+  related: ['caprini'],
+},
+
+// ─── EARLY WARNING ────────────────────────────────────────────────────────
+{
+  id: 'mews', name: 'MEWS', condition: 'Early warning for clinical deterioration',
+  rotations: ['IM','EM'],
+  desc: 'Modified Early Warning Score. Bedside score predicting need for ICU and mortality.',
+  inputs: [
+    { label: 'SBP ≤70', pts: 3, group:'sbp' },
+    { label: 'SBP 71–80', pts: 2, group:'sbp' },
+    { label: 'SBP 81–100', pts: 1, group:'sbp' },
+    { label: 'SBP ≥200', pts: 2, group:'sbp' },
+    { label: 'HR <40', pts: 2, group:'hr' },
+    { label: 'HR 41–50', pts: 1, group:'hr' },
+    { label: 'HR 101–110', pts: 1, group:'hr' },
+    { label: 'HR 111–129', pts: 2, group:'hr' },
+    { label: 'HR ≥130', pts: 3, group:'hr' },
+    { label: 'RR <9', pts: 2, group:'rr' },
+    { label: 'RR 15–20', pts: 1, group:'rr' },
+    { label: 'RR 21–29', pts: 2, group:'rr' },
+    { label: 'RR ≥30', pts: 3, group:'rr' },
+    { label: 'Temp <35', pts: 2, group:'temp' },
+    { label: 'Temp 38.5–38.9', pts: 1, group:'temp' },
+    { label: 'Temp ≥39', pts: 2, group:'temp' },
+    { label: 'AVPU: Reacts to Voice', pts: 1, group:'avpu' },
+    { label: 'AVPU: Reacts to Pain', pts: 2, group:'avpu' },
+    { label: 'AVPU: Unresponsive', pts: 3, group:'avpu' },
+  ],
+  tier: s => s <= 2 ? { t:'low', l:'Low', i:'<b>Routine observation.</b>' }
+       : s <= 4 ? { t:'mod', l:'Moderate', i:'<b>Increase observation frequency. Notify primary team.</b>' }
+       : { t:'high', l:'High — escalate', i:'<b>Urgent assessment.</b> Consider ICU consult, rapid response, MET activation.' },
+  nextSteps: ['Score ≥5 or any single parameter scoring 3 → urgent attention.','Trend over time — direction matters more than absolute number.','Pair with clinical gestalt; MEWS misses subtle deterioration.','Activate rapid response per institutional thresholds.'],
+  pitfalls: 'MEWS is a screen, not a diagnosis. Septic patients may have a low MEWS early. Trends > snapshots.',
+  related: ['qsofa'],
+},
+
+// ─── FROM SEAN'S EHR CALCULATOR LIST (added 2026-09-22; sources in ~/app-redesign/work/toolkit/new-calcs.notes.md) ───
+
+
+// ─── CHADS2 (Gage BF et al. JAMA 2001;285:2864) ──────────────────────────────
+{
+  id: 'chads2', name: 'CHADS₂', condition: 'Afib stroke risk (original score)',
+  rotations: ['Cards','IM','EM'],
+  desc: 'Original stroke risk index for nonrheumatic atrial fibrillation (Gage 2001, National Registry of AF). Stroke rates are for patients not on warfarin.',
+  inputs: [
+    { label: 'Congestive heart failure', pts: 1 },
+    { label: 'Hypertension', pts: 1 },
+    { label: 'Age ≥75 years', pts: 1 },
+    { label: 'Diabetes mellitus', pts: 1 },
+    { label: 'Prior stroke or TIA', pts: 2 },
+  ],
+  // Rates: stroke per 100 patient-years without antithrombotic therapy, with 95% CI
+  // (Gage 2001 abstract). Low/moderate/high grouping follows MDCalc (0 / 1 to 2 / 3 to 6).
+  tier: s => {
+    const r = ['1.9 (95% CI 1.2 to 3.0)','2.8 (95% CI 2.0 to 3.8)','4.0 (95% CI 3.1 to 5.1)','5.9 (95% CI 4.6 to 7.3)','8.5 (95% CI 6.3 to 11.1)','12.5 (95% CI 8.2 to 17.5)','18.2 (95% CI 10.5 to 27.4)'][s];
+    const line = `<b>Stroke rate ${r} per 100 patient-years</b> without antithrombotic therapy (Gage 2001).`;
+    return s === 0 ? { t:'low', l:'Low risk', i: line }
+         : s <= 2 ? { t:'mod', l:'Moderate risk', i: line }
+         : { t:'high', l:'High risk', i: line };
+  },
+  nextSteps: [
+    'Compare with CHA₂DS₂-VASc, which current AF guidelines use for anticoagulation decisions.',
+    'Assess bleeding risk (e.g. HAS-BLED) and modifiable bleeding factors before any anticoagulation decision.',
+    'Confirm the AF is nonrheumatic; the Gage 2001 cohort had nonrheumatic AF only.',
+    'Reassess when comorbidities change (new CHF, diabetes, stroke, or turning 75).',
+  ],
+  pitfalls: 'Rates come from 1,733 Medicare beneficiaries aged 65 to 95 with nonrheumatic AF not prescribed warfarin at discharge; the outcome was hospitalization for ischemic stroke from claims data. A score of 0 still carried 1.9 strokes per 100 patient-years in that cohort, so CHADS₂ 0 is not the same as very low risk. It omits vascular disease, age 65 to 74 and sex.',
+  related: ['chads-vasc','has-bled'],
+},
+
+// ─── HEART (Six 2008; Backus 2010; Backus 2013 Int J Cardiol 168:2153) ─────
+{
+  id: 'heart', name: 'HEART Score', condition: 'Chest pain: 6-week MACE risk',
+  rotations: ['EM','Cards','IM'],
+  desc: 'History, ECG, Age, Risk factors, Troponin. Each scored 0 to 2 (total 0 to 10) to estimate 6-week major adverse cardiac events (AMI, PCI, CABG, death) in ED chest pain.',
+  inputs: [
+    { label: 'History: slightly or non-suspicious', pts: 0, group:'hist' },
+    { label: 'History: moderately suspicious (mix of nonspecific and suspicious elements)', pts: 1, group:'hist' },
+    { label: 'History: highly suspicious (primarily specific elements)', pts: 2, group:'hist' },
+    { label: 'ECG: normal', pts: 0, group:'ecg' },
+    { label: 'ECG: nonspecific repolarization disturbance (incl. BBB, LVH, digoxin effect, unchanged known repolarization changes)', pts: 1, group:'ecg' },
+    { label: 'ECG: significant ST depression or elevation not due to BBB, LVH or digoxin', pts: 2, group:'ecg' },
+    { label: 'Age: <45 years', pts: 0, group:'age' },
+    { label: 'Age: 45 to 64 years', pts: 1, group:'age' },
+    { label: 'Age: ≥65 years', pts: 2, group:'age' },
+    { label: 'Risk factors: none known', pts: 0, group:'rf' },
+    { label: 'Risk factors: 1 or 2 (treated DM, current or recent smoker, HTN, hypercholesterolemia, family history of CAD, obesity)', pts: 1, group:'rf' },
+    { label: 'Risk factors: ≥3, OR history of atherosclerotic disease (MI, coronary revascularization, stroke, PAD)', pts: 2, group:'rf' },
+    { label: 'Initial troponin: ≤ normal limit', pts: 0, group:'trop' },
+    { label: 'Initial troponin: >1 to <3× normal limit', pts: 1, group:'trop' },
+    { label: 'Initial troponin: ≥3× normal limit', pts: 2, group:'trop' },
+  ],
+  tier: s => s <= 3 ? { t:'low', l:'Low (0 to 3)', i:'<b>6-week MACE 1.7% (15/870)</b> in the 2,440-patient prospective validation (Backus 2013). The authors wrote that low scores exclude short-term MACE with >98% certainty and that reserved policies might be considered.' }
+       : s <= 6 ? { t:'mod', l:'Moderate (4 to 6)', i:'<b>6-week MACE 16.6% (183/1101)</b> (Backus 2013). The HEART authors propose observation with non-invasive investigation (e.g. repeat troponin) rather than immediate discharge.' }
+       : { t:'high', l:'High (7 to 10)', i:'<b>6-week MACE 50.1% (209/417)</b> (Backus 2013). The authors suggest the high risk may indicate more aggressive (early invasive) policies.' },
+  nextSteps: [
+    'Score on arrival data (ECG and first troponin); the validation ignored data obtained more than 1 hour after presentation.',
+    'Use for suspected ACS without ST elevation; STEMI patients were not part of the derivation cohort.',
+    'A low score is one input to a chest pain pathway, which usually adds serial troponin testing; follow the local pathway.',
+    'Keep alternative dangerous causes (PE, dissection) in the differential; HEART does not address them.',
+  ],
+  pitfalls: 'History is the most subjective element; the original authors scored it without considering risk factors, ECG or labs. Troponin cut-offs are relative to the local assay\'s normal limit (the 2008 derivation used 1 to 2× and >2×; the 2013 validation used >1 to <3× and ≥3×). Published age cut-offs differ at exactly 45 (derivation: <45 scores 0; 2013 table: ≤45 scores 0).',
+  related: ['perc','wells-pe'],
+},
+
+// ─── NEXUS (Hoffman JR et al. NEJM 2000;343:94) ────────────────────────────
+{
+  id: 'nexus', name: 'NEXUS C-Spine Criteria', condition: 'C-spine imaging after blunt trauma',
+  rotations: ['EM','Surg','Neuro'],
+  desc: 'Five clinical criteria identifying blunt trauma patients at very low probability of cervical spine injury who do not need imaging. All five must be absent.',
+  inputs: [
+    { label: 'Midline posterior cervical spine tenderness', pts: 1 },
+    { label: 'Focal neurologic deficit', pts: 1 },
+    { label: 'Altered level of alertness', pts: 1 },
+    { label: 'Evidence of intoxication', pts: 1 },
+    { label: 'Painful, distracting injury', pts: 1 },
+  ],
+  tier: s => s === 0 ? { t:'low', l:'NEXUS low risk', i:'<b>No criteria present: imaging not indicated by NEXUS.</b> In 34,069 patients, sensitivity 99.0% (95% CI 98.0 to 99.6%) and NPV 99.8% (95% CI 99.6 to 100%) for any cervical spine injury; 99.6% sensitivity and 99.9% NPV for clinically significant injury (Hoffman 2000).' }
+       : { t:'high', l:'Not low risk', i:`<b>${s} criteri${s === 1 ? 'on' : 'a'} present: NEXUS cannot exclude injury; imaging indicated by the rule.</b> Specificity was 12.9% and PPV 2.7%, so most rule-positive patients have no injury.` },
+  nextSteps: [
+    'Maintain spinal motion restriction until the rule is satisfied or imaging is complete.',
+    'Reassess after intoxication clears or distracting injuries are treated; criteria can change.',
+    'If any criterion is present, image according to local trauma protocol.',
+  ],
+  pitfalls: 'Validated only for blunt trauma. The rule classifies as low risk only when all five criteria are absent; any single positive criterion means the rule cannot classify the patient as low risk. "Distracting injury" and "intoxication" are judgment calls. The validation predates routine CT, and the rule missed 8 of 818 injuries (2 clinically significant).',
+  related: ['gcs'],
+},
+
+// ─── San Francisco Syncope Rule (Quinn 2004; Quinn 2006; Saccilotto 2011) ─
+{
+  id: 'sfsr', name: 'San Francisco Syncope Rule', condition: 'Syncope: short-term serious outcome',
+  rotations: ['EM','IM','Cards'],
+  desc: 'CHESS: CHF history, Hematocrit <30%, ECG abnormal, Shortness of breath, Systolic BP <90 at triage. Any one positive = high risk for a short-term serious outcome.',
+  inputs: [
+    { label: 'History of congestive heart failure', pts: 1 },
+    { label: 'Hematocrit <30%', pts: 1 },
+    { label: 'Abnormal ECG (new changes or non-sinus rhythm)', pts: 1 },
+    { label: 'Complaint of shortness of breath', pts: 1 },
+    { label: 'Triage systolic BP <90 mmHg', pts: 1 },
+  ],
+  tier: s => s === 0 ? { t:'low', l:'SFSR negative', i:'<b>Low risk by the rule.</b> Derivation: sensitivity 96%, specificity 62% for 7-day serious outcomes (Quinn 2004). Validation: sensitivity 98% (95% CI 89 to 100%), specificity 56% for 30-day outcomes (Quinn 2006). Meta-analysis of 12 studies: pooled sensitivity 87% (95% CI 79 to 93%), specificity 52%; serious-outcome probability with a negative rule was 5% or lower (Saccilotto 2011).' }
+       : { t:'high', l:'SFSR positive', i:`<b>${s} predictor${s === 1 ? '' : 's'} present: high risk for a serious outcome</b> (death, MI, arrhythmia, PE, stroke, SAH, significant hemorrhage, or return visit with hospitalization). The rule was designed to guide admission decisions.` },
+  nextSteps: [
+    'Apply only after the ED evaluation finds no clear cause of syncope (Saccilotto 2011).',
+    'Review all available ECGs and consider cardiac monitoring; missed arrhythmia was the most common false negative.',
+    'A negative rule does not override concerning clinical findings; disposition remains a clinical decision.',
+  ],
+  pitfalls: 'External validation has been inconsistent (pooled sensitivity 87% with a 95% prediction interval of 55 to 98%). The validation excluded trauma, alcohol or drug-associated loss of consciousness and definite seizures. "Abnormal ECG" means new changes or any non-sinus rhythm.',
+  related: ['wells-pe','perc'],
+},
+
+// ─── LRINEC (Wong CH et al. Crit Care Med 2004;32:1535) ─────────────────────
+{
+  id: 'lrinec', name: 'LRINEC Score', condition: 'Necrotizing soft tissue infection',
+  rotations: ['Surg','EM','ICU'],
+  desc: 'Laboratory Risk Indicator for Necrotizing Fasciitis. Six admission labs distinguish necrotizing fasciitis from severe cellulitis or abscess. US units; original cut-offs converted (Cr 141 µmol/L = 1.6 mg/dL, glucose 10 mmol/L = 180 mg/dL).',
+  inputs: [
+    { label: 'CRP (mg/L): ≥150 = 4', type:'number', key:'crp', placeholder:'mg/L', step:'1' },
+    { label: 'WBC (×10³/µL): <15 = 0, 15 to 25 = 1, >25 = 2', type:'number', key:'wbc', placeholder:'×10³/µL', step:'0.1' },
+    { label: 'Hemoglobin (g/dL): >13.5 = 0, 11 to 13.5 = 1, <11 = 2', type:'number', key:'hb', placeholder:'g/dL', step:'0.1' },
+    { label: 'Sodium (mEq/L): <135 = 2', type:'number', key:'na', placeholder:'mEq/L', step:'1' },
+    { label: 'Creatinine (mg/dL): >1.6 = 2', type:'number', key:'cr', placeholder:'mg/dL', step:'0.1' },
+    { label: 'Glucose (mg/dL): >180 = 1', type:'number', key:'glu', placeholder:'mg/dL', step:'1' },
+  ],
+  // Points per Wong 2004. Blank fields contribute 0 points.
+  compute: v => {
+    const n = k => { const x = parseFloat(v[k]); return isFinite(x) ? x : null; };
+    const crp = n('crp'), wbc = n('wbc'), hb = n('hb'), na = n('na'), cr = n('cr'), glu = n('glu');
+    let s = 0;
+    if (crp !== null && crp >= 150) s += 4;
+    if (wbc !== null) s += wbc > 25 ? 2 : wbc >= 15 ? 1 : 0;
+    if (hb !== null) s += hb < 11 ? 2 : hb <= 13.5 ? 1 : 0;
+    if (na !== null && na < 135) s += 2;
+    if (cr !== null && cr > 1.6) s += 2;
+    if (glu !== null && glu > 180) s += 1;
+    return s;
+  },
+  tier: s => s <= 5 ? { t:'low', l:'Low risk (≤5)', i:'<b>Derivation probability of necrotizing fasciitis <50%.</b> A score <6 does not rule out the diagnosis: about 10% of patients with necrotizing fasciitis scored <6 in the original study. Check that all six labs are entered.' }
+       : s <= 7 ? { t:'mod', l:'Intermediate risk (6 to 7)', i:'<b>Derivation probability 50 to 75%.</b> At the ≥6 cut-off the original study reported PPV 92.0% and NPV 96.0% (Wong 2004).' }
+       : { t:'high', l:'High risk (≥8)', i:'<b>Derivation probability >75%.</b>' },
+  nextSteps: [
+    'High clinical suspicion (pain out of proportion, rapid progression, systemic toxicity) warrants immediate surgical consultation regardless of score.',
+    'Treat a score ≥6 as a reason to evaluate carefully for necrotizing fasciitis (Wong 2004).',
+    'Do not delay surgical assessment for imaging or repeat labs when suspicion is high.',
+  ],
+  pitfalls: 'Retrospective derivation; later validations found much lower sensitivity (e.g. 59.2% at ≥6 in a pathology-confirmed cohort). Use it to support, never to exclude, the diagnosis. The score was derived from admission labs; infection, diabetes, CKD or other illness can raise individual values.',
+  related: ['qsofa','sofa','antibiotic-coverage'],
+},
+
+// ─── COWS (Wesson DR, Ling W. J Psychoactive Drugs 2003;35:253) ─────────────
+{
+  id: 'cows', name: 'COWS', condition: 'Opioid withdrawal severity',
+  rotations: ['EM','IM','ICU'],
+  desc: 'Clinical Opiate Withdrawal Scale: 11 clinician-rated signs and symptoms. Rate each item only on its apparent relationship to opiate withdrawal. Total 0 to 48.',
+  inputs: [
+    { label: 'Resting pulse (after sitting or lying 1 min): 80 or below', pts: 0, group:'pulse' },
+    { label: 'Resting pulse: 81 to 100', pts: 1, group:'pulse' },
+    { label: 'Resting pulse: 101 to 120', pts: 2, group:'pulse' },
+    { label: 'Resting pulse: greater than 120', pts: 4, group:'pulse' },
+    { label: 'Sweating (past 1/2 hr, not from room temp or activity): no report of chills or flushing', pts: 0, group:'sweat' },
+    { label: 'Sweating: subjective report of chills or flushing', pts: 1, group:'sweat' },
+    { label: 'Sweating: flushed or observable moistness on face', pts: 2, group:'sweat' },
+    { label: 'Sweating: beads of sweat on brow or face', pts: 3, group:'sweat' },
+    { label: 'Sweating: sweat streaming off face', pts: 4, group:'sweat' },
+    { label: 'Restlessness (observed during assessment): able to sit still', pts: 0, group:'restless' },
+    { label: 'Restlessness: reports difficulty sitting still, but is able to do so', pts: 1, group:'restless' },
+    { label: 'Restlessness: frequent shifting or extraneous movements of legs/arms', pts: 3, group:'restless' },
+    { label: 'Restlessness: unable to sit still for more than a few seconds', pts: 5, group:'restless' },
+    { label: 'Pupil size: pupils pinned or normal size for room light', pts: 0, group:'pupil' },
+    { label: 'Pupil size: possibly larger than normal for room light', pts: 1, group:'pupil' },
+    { label: 'Pupil size: moderately dilated', pts: 2, group:'pupil' },
+    { label: 'Pupil size: so dilated that only the rim of the iris is visible', pts: 5, group:'pupil' },
+    { label: 'Bone or joint aches (score only the part attributed to withdrawal): not present', pts: 0, group:'ache' },
+    { label: 'Bone or joint aches: mild diffuse discomfort', pts: 1, group:'ache' },
+    { label: 'Bone or joint aches: patient reports severe diffuse aching of joints/muscles', pts: 2, group:'ache' },
+    { label: 'Bone or joint aches: rubbing joints or muscles and unable to sit still because of discomfort', pts: 4, group:'ache' },
+    { label: 'Runny nose or tearing (not from cold or allergies): not present', pts: 0, group:'nose' },
+    { label: 'Runny nose or tearing: nasal stuffiness or unusually moist eyes', pts: 1, group:'nose' },
+    { label: 'Runny nose or tearing: nose running or tearing', pts: 2, group:'nose' },
+    { label: 'Runny nose or tearing: nose constantly running or tears streaming down cheeks', pts: 4, group:'nose' },
+    { label: 'GI upset (over last 1/2 hr): no GI symptoms', pts: 0, group:'gi' },
+    { label: 'GI upset: stomach cramps', pts: 1, group:'gi' },
+    { label: 'GI upset: nausea or loose stool', pts: 2, group:'gi' },
+    { label: 'GI upset: vomiting or diarrhea', pts: 3, group:'gi' },
+    { label: 'GI upset: multiple episodes of diarrhea or vomiting', pts: 5, group:'gi' },
+    { label: 'Tremor (outstretched hands): no tremor', pts: 0, group:'tremor' },
+    { label: 'Tremor: can be felt, but not observed', pts: 1, group:'tremor' },
+    { label: 'Tremor: slight tremor observable', pts: 2, group:'tremor' },
+    { label: 'Tremor: gross tremor or muscle twitching', pts: 4, group:'tremor' },
+    { label: 'Yawning (observed during assessment): no yawning', pts: 0, group:'yawn' },
+    { label: 'Yawning: once or twice during assessment', pts: 1, group:'yawn' },
+    { label: 'Yawning: three or more times during assessment', pts: 2, group:'yawn' },
+    { label: 'Yawning: several times/minute', pts: 4, group:'yawn' },
+    { label: 'Anxiety or irritability: none', pts: 0, group:'anx' },
+    { label: 'Anxiety or irritability: patient reports increasing irritability or anxiousness', pts: 1, group:'anx' },
+    { label: 'Anxiety or irritability: patient obviously irritable or anxious', pts: 2, group:'anx' },
+    { label: 'Anxiety or irritability: so irritable or anxious that participation in the assessment is difficult', pts: 4, group:'anx' },
+    { label: 'Gooseflesh skin: skin is smooth', pts: 0, group:'goose' },
+    { label: 'Gooseflesh skin: piloerection can be felt or hairs standing up on arms', pts: 3, group:'goose' },
+    { label: 'Gooseflesh skin: prominent piloerection', pts: 5, group:'goose' },
+  ],
+  tier: s => s < 5 ? { t:'low', l:'Below mild range (<5)', i:'<b>Score below the published mild band (5 to 12).</b> Few objective withdrawal signs at this assessment.' }
+       : s <= 12 ? { t:'low', l:'Mild (5 to 12)', i:'<b>Mild withdrawal</b> (Wesson and Ling 2003 bands).' }
+       : s <= 24 ? { t:'mod', l:'Moderate (13 to 24)', i:'<b>Moderate withdrawal.</b>' }
+       : s <= 36 ? { t:'high', l:'Moderately severe (25 to 36)', i:'<b>Moderately severe withdrawal.</b>' }
+       : { t:'high', l:'Severe (>36)', i:'<b>Severe withdrawal.</b>' },
+  nextSteps: [
+    'Repeat COWS over time to track the course of withdrawal and response to treatment.',
+    'Buprenorphine can precipitate withdrawal in opioid-dependent patients who are not yet in withdrawal; follow the local induction protocol for timing and COWS thresholds.',
+    'Look for complications and co-ingestions (dehydration from vomiting or diarrhea, other substances).',
+  ],
+  pitfalls: 'Score each item only for its apparent relationship to withdrawal: a pulse raised by exertion, fever or pain does not count. Several items are self-reported. Stimulants, benzodiazepine or alcohol withdrawal, and anxiety disorders can raise the score.',
+  related: [],
+},
+
+// ─── NIHSS full (NINDS NIH Stroke Scale; Brott T et al. Stroke 1989;20:864) ─
+{
+  id: 'nihss', name: 'NIH Stroke Scale (full)', condition: 'Stroke severity',
+  rotations: ['Neuro','EM'],
+  desc: 'The official 15-item NIH Stroke Scale (items 1a to 11, arms and legs scored separately), total 0 to 42. Administer items in order and score what the patient does, not what you think the patient can do.',
+  inputs: [
+    { label: '1a LOC: Alert; keenly responsive', pts: 0, group:'1a' },
+    { label: '1a LOC: Not alert; arousable by minor stimulation to obey, answer, or respond', pts: 1, group:'1a' },
+    { label: '1a LOC: Not alert; requires repeated stimulation, or obtunded and requires strong or painful stimulation to make movements (not stereotyped)', pts: 2, group:'1a' },
+    { label: '1a LOC: Responds only with reflex motor or autonomic effects, or totally unresponsive, flaccid, and areflexic', pts: 3, group:'1a' },
+    { label: '1b LOC questions (month, age): Answers both correctly', pts: 0, group:'1b' },
+    { label: '1b LOC questions: Answers one correctly', pts: 1, group:'1b' },
+    { label: '1b LOC questions: Answers neither correctly', pts: 2, group:'1b' },
+    { label: '1c LOC commands (eyes, grip): Performs both tasks correctly', pts: 0, group:'1c' },
+    { label: '1c LOC commands: Performs one task correctly', pts: 1, group:'1c' },
+    { label: '1c LOC commands: Performs neither task correctly', pts: 2, group:'1c' },
+    { label: '2 Best gaze: Normal', pts: 0, group:'gaze' },
+    { label: '2 Best gaze: Partial gaze palsy (abnormal in one or both eyes, no forced deviation or total gaze paresis)', pts: 1, group:'gaze' },
+    { label: '2 Best gaze: Forced deviation, or total gaze paresis not overcome by oculocephalic maneuver', pts: 2, group:'gaze' },
+    { label: '3 Visual: No visual loss', pts: 0, group:'vis' },
+    { label: '3 Visual: Partial hemianopia', pts: 1, group:'vis' },
+    { label: '3 Visual: Complete hemianopia', pts: 2, group:'vis' },
+    { label: '3 Visual: Bilateral hemianopia (blind, including cortical blindness)', pts: 3, group:'vis' },
+    { label: '4 Facial palsy: Normal symmetrical movements', pts: 0, group:'face' },
+    { label: '4 Facial palsy: Minor paralysis (flattened nasolabial fold, asymmetry on smiling)', pts: 1, group:'face' },
+    { label: '4 Facial palsy: Partial paralysis (total or near-total paralysis of lower face)', pts: 2, group:'face' },
+    { label: '4 Facial palsy: Complete paralysis of one or both sides (no movement in upper and lower face)', pts: 3, group:'face' },
+    { label: '5a Left arm: No drift; holds 90 (or 45) degrees for full 10 seconds', pts: 0, group:'5a' },
+    { label: '5a Left arm: Drift; drifts down before full 10 seconds, does not hit bed or other support', pts: 1, group:'5a' },
+    { label: '5a Left arm: Some effort against gravity; cannot get to or maintain position, drifts down to bed', pts: 2, group:'5a' },
+    { label: '5a Left arm: No effort against gravity; limb falls', pts: 3, group:'5a' },
+    { label: '5a Left arm: No movement', pts: 4, group:'5a' },
+    { label: '5b Right arm: No drift; holds 90 (or 45) degrees for full 10 seconds', pts: 0, group:'5b' },
+    { label: '5b Right arm: Drift; drifts down before full 10 seconds, does not hit bed or other support', pts: 1, group:'5b' },
+    { label: '5b Right arm: Some effort against gravity; cannot get to or maintain position, drifts down to bed', pts: 2, group:'5b' },
+    { label: '5b Right arm: No effort against gravity; limb falls', pts: 3, group:'5b' },
+    { label: '5b Right arm: No movement', pts: 4, group:'5b' },
+    { label: '6a Left leg: No drift; holds 30 degrees for full 5 seconds', pts: 0, group:'6a' },
+    { label: '6a Left leg: Drift; falls by end of 5 seconds but does not hit bed', pts: 1, group:'6a' },
+    { label: '6a Left leg: Some effort against gravity; falls to bed by 5 seconds', pts: 2, group:'6a' },
+    { label: '6a Left leg: No effort against gravity; falls to bed immediately', pts: 3, group:'6a' },
+    { label: '6a Left leg: No movement', pts: 4, group:'6a' },
+    { label: '6b Right leg: No drift; holds 30 degrees for full 5 seconds', pts: 0, group:'6b' },
+    { label: '6b Right leg: Drift; falls by end of 5 seconds but does not hit bed', pts: 1, group:'6b' },
+    { label: '6b Right leg: Some effort against gravity; falls to bed by 5 seconds', pts: 2, group:'6b' },
+    { label: '6b Right leg: No effort against gravity; falls to bed immediately', pts: 3, group:'6b' },
+    { label: '6b Right leg: No movement', pts: 4, group:'6b' },
+    { label: '7 Limb ataxia: Absent', pts: 0, group:'ataxia' },
+    { label: '7 Limb ataxia: Present in one limb', pts: 1, group:'ataxia' },
+    { label: '7 Limb ataxia: Present in two limbs', pts: 2, group:'ataxia' },
+    { label: '8 Sensory: Normal; no sensory loss', pts: 0, group:'sens' },
+    { label: '8 Sensory: Mild-to-moderate loss (pinprick less sharp or dull, or aware of being touched)', pts: 1, group:'sens' },
+    { label: '8 Sensory: Severe or total loss (not aware of being touched in face, arm, and leg)', pts: 2, group:'sens' },
+    { label: '9 Best language: No aphasia; normal', pts: 0, group:'lang' },
+    { label: '9 Best language: Mild-to-moderate aphasia', pts: 1, group:'lang' },
+    { label: '9 Best language: Severe aphasia (fragmentary expression; listener carries burden)', pts: 2, group:'lang' },
+    { label: '9 Best language: Mute, global aphasia', pts: 3, group:'lang' },
+    { label: '10 Dysarthria: Normal', pts: 0, group:'dys' },
+    { label: '10 Dysarthria: Mild-to-moderate (slurs some words, understood with some difficulty)', pts: 1, group:'dys' },
+    { label: '10 Dysarthria: Severe (unintelligible, or mute/anarthric)', pts: 2, group:'dys' },
+    { label: '11 Extinction and inattention: No abnormality', pts: 0, group:'neglect' },
+    { label: '11 Extinction and inattention: Inattention or extinction in one sensory modality', pts: 1, group:'neglect' },
+    { label: '11 Extinction and inattention: Profound hemi-inattention or extinction to more than one modality', pts: 2, group:'neglect' },
+  ],
+  // The NINDS scale defines no severity bands. Colours follow the widely circulated
+  // descriptive bands (1 to 4 minor, 5 to 15 moderate, 16 to 20 moderate to severe,
+  // 21 to 42 severe), stated as convention in the interpretation text.
+  tier: s => s === 0 ? { t:'low', l:'NIHSS 0', i:'<b>No deficit measured by the scale.</b> A score of 0 does not exclude stroke; posterior circulation and some lacunar strokes can score low.' }
+       : s <= 4 ? { t:'low', l:`NIHSS ${s}`, i:'<b>Commonly described as a minor stroke (1 to 4).</b> These descriptive bands are convention, not part of the official NINDS scale; a low score can still be disabling (e.g. isolated aphasia or hemianopia).' }
+       : s <= 15 ? { t:'mod', l:`NIHSS ${s}`, i:'<b>Commonly described as moderate (5 to 15).</b> Descriptive bands are convention, not part of the official NINDS scale.' }
+       : s <= 20 ? { t:'high', l:`NIHSS ${s}`, i:'<b>Commonly described as moderate to severe (16 to 20).</b> Descriptive bands are convention, not part of the official NINDS scale.' }
+       : { t:'high', l:`NIHSS ${s}`, i:'<b>Commonly described as severe (21 to 42).</b> Descriptive bands are convention, not part of the official NINDS scale.' },
+  nextSteps: [
+    'Record the time of the exam and last known well alongside the score.',
+    'Reperfusion decisions use the NIHSS together with imaging, timing and disability; follow current AHA/ASA guidance and the stroke team.',
+    'Repeat the NIHSS to trend; a rising score signals deterioration.',
+    'Document item scores, not just the total, so later examiners can compare.',
+  ],
+  pitfalls: 'Administer in order and do not go back to change scores. If 1a = 3 (coma), item 8 is automatically 2 and item 9 automatically 3. Limb items and ataxia are recorded as untestable (UN) only for amputation or joint fusion, and dysarthria only for intubation or another physical barrier; leave those unticked here and document UN. Ataxia is scored only if out of proportion to weakness. The scale underestimates posterior circulation, lacunar and cerebellar strokes and does not test cognition. Certification (NIHSS training) is expected for formal use.',
+  related: ['gcs','abcd2'],
+},
+
+// ─── WIfI (Mills JL Sr et al. J Vasc Surg 2014;59:220; staging table) ───────
+{
+  id: 'wifi', name: 'SVS WIfI Classification', condition: 'Threatened limb: 1-year amputation risk',
+  rotations: ['Surg','IM'],
+  desc: 'Society for Vascular Surgery Wound, Ischemia, foot Infection grades (0 to 3 each), combined into clinical stage 1 to 4 for estimated 1-year major amputation risk using the SVS consensus table. The number shown is the clinical stage.',
+  inputs: [
+    { label: 'W0: No ulcer, no gangrene (ischemic rest pain: typical symptoms + ischemia grade 3)', pts: 0, key:'w0', group:'w' },
+    { label: 'W1: Small, shallow ulcer on distal leg or foot; no exposed bone unless limited to distal phalanx; no gangrene', pts: 0, key:'w1', group:'w' },
+    { label: 'W2: Deeper ulcer with exposed bone, joint or tendon (generally not heel; shallow heel ulcer without calcaneal involvement), or gangrene limited to digits', pts: 0, key:'w2', group:'w' },
+    { label: 'W3: Extensive deep ulcer or gangrene of forefoot and/or midfoot; deep full-thickness heel ulcer or necrosis ± calcaneal involvement', pts: 0, key:'w3', group:'w' },
+    { label: 'I0: ABI ≥0.80, ankle pressure >100 mmHg, TP or TcPO₂ ≥60 mmHg', pts: 0, key:'i0', group:'i' },
+    { label: 'I1: ABI 0.6 to 0.79, ankle pressure 70 to 100 mmHg, TP or TcPO₂ 40 to 59 mmHg', pts: 0, key:'i1', group:'i' },
+    { label: 'I2: ABI 0.4 to 0.59, ankle pressure 50 to 70 mmHg, TP or TcPO₂ 30 to 39 mmHg', pts: 0, key:'i2', group:'i' },
+    { label: 'I3: ABI ≤0.39, ankle pressure <50 mmHg, TP or TcPO₂ <30 mmHg', pts: 0, key:'i3', group:'i' },
+    { label: 'fI0: Uninfected (no symptoms or signs of infection)', pts: 0, key:'f0', group:'f' },
+    { label: 'fI1: Mild: ≥2 of swelling/induration, erythema >0.5 to ≤2 cm, tenderness, warmth, purulence; skin and subcutaneous tissue only', pts: 0, key:'f1', group:'f' },
+    { label: 'fI2: Moderate: erythema >2 cm or deeper structures (abscess, osteomyelitis, septic arthritis, fasciitis), no SIRS', pts: 0, key:'f2', group:'f' },
+    { label: 'fI3: Severe: local infection with SIRS (≥2 of T >38 or <36 °C, HR >90, RR >20 or PaCO₂ <32, WBC >12,000 or <4,000 or 10% bands)', pts: 0, key:'f3', group:'f' },
+  ],
+  // Stage lookup T[W][I][fI] transcribed from the SVS consensus "estimate risk of
+  // amputation at 1 year" grid (Mills 2014), VL=1, L=2, M=3, H=4. Cross-checked
+  // against three reproductions of the grid (Cerqueira 2020 J Vasc Bras Table 4;
+  // Hardman 2014 Semin Intervent Radiol Table 7; Darling 2017 J Vasc Surg Table I)
+  // and the GVG 2019 Table 3.5 stage listing. Returns 0 until all three are graded.
+  compute: v => {
+    const g = p => [0,1,2,3].find(n => v[p + n]);
+    const w = g('w'), i = g('i'), f = g('f');
+    if (w === undefined || i === undefined || f === undefined) return 0;
+    const T = [
+      [[1,1,2,3],[1,2,3,4],[2,2,3,4],[2,3,3,4]],
+      [[1,1,2,3],[1,2,3,4],[2,3,4,4],[3,3,4,4]],
+      [[2,2,3,4],[3,3,4,4],[3,4,4,4],[4,4,4,4]],
+      [[3,3,4,4],[4,4,4,4],[4,4,4,4],[4,4,4,4]],
+    ];
+    return T[w][i][f];
+  },
+  tier: s => s === 0 ? { t:'low', l:'Incomplete', i:'<b>Select one W, one I and one fI grade</b> to assign a clinical stage.' }
+       : s === 1 ? { t:'low', l:'Stage 1: very low risk', i:'<b>Consensus estimate: very low 1-year amputation risk.</b> Observed 1-year major amputation across 10 validation cohorts (GVG 2019 Table 1.2): median 0%, weighted mean 3.2%.' }
+       : s === 2 ? { t:'low', l:'Stage 2: low risk', i:'<b>Consensus estimate: low 1-year amputation risk.</b> Observed across validation cohorts: median 9%, weighted mean 7.0%.' }
+       : s === 3 ? { t:'mod', l:'Stage 3: moderate risk', i:'<b>Consensus estimate: moderate 1-year amputation risk.</b> Observed across validation cohorts: median 9.4%, weighted mean 8.7%.' }
+       : { t:'high', l:'Stage 4: high risk', i:'<b>Consensus estimate: high 1-year amputation risk.</b> Observed across validation cohorts: median 29%, weighted mean 23.3%.' },
+  nextSteps: [
+    'Report the three grades with the stage (e.g. WIfI 1-2-1, stage 3); the grades carry information the stage loses.',
+    'Measure toe pressure in patients with diabetes; if ABI and toe pressure give different grades, toe pressure determines the ischemia grade.',
+    'Global Vascular Guidelines (2019) recommend an integrated threatened-limb classification such as WIfI to stage all CLTI patients who are candidates for limb salvage.',
+    'fI3 means systemic infection (SIRS); assess and treat the systemic illness alongside limb evaluation.',
+  ],
+  pitfalls: 'Stages 1 to 4 are expert-consensus estimates, later validated with overlapping observed rates for stages 2 and 3. Stage 5 (unsalvageable foot) is outside the table and not computed. The SVS panel\'s separate revascularization-benefit estimate assumes infection is controlled first. If calcification makes ABI or toe pressure unreliable, grade ischemia by TcPO₂, skin perfusion pressure or pulse volume recording.',
+  related: ['qsofa','antibiotic-coverage'],
+}
+
+];
+
+// ============================================================================
+// RELATED LINKS (external tool paths)
+// ============================================================================
+const EXTERNAL_LINKS = {
+  'antibiotic-coverage': { name:'Antibiotic Coverage', href:'../antibiotic-coverage/' },
+  'differentials': { name:'Differentials', href:'../differentials/' },
+  'lab-values': { name:'Lab Values', href:'../lab-values/' },
+};
+
+// ============================================================================
+// RENDER ENGINE
+// ============================================================================
+let activeRot = 'all';
+let searchTerm = '';
+let activeCalc = CALCS[0].id;
+
+const sidebar = document.getElementById('calcList');
+const main = document.getElementById('main');
+const search = document.getElementById('search');
+const rotFiltersEl = document.getElementById('rotFilters');
+const emptyList = document.getElementById('emptyList');
+
+// Build rotation filters
+const allBtn = document.createElement('button');
+allBtn.className = 'rot-btn active';
+allBtn.textContent = 'All';
+allBtn.dataset.rot = 'all';
+rotFiltersEl.appendChild(allBtn);
+ROTATIONS.forEach(r => {
+  const b = document.createElement('button');
+  b.className = 'rot-btn';
+  b.textContent = r;
+  b.dataset.rot = r;
+  rotFiltersEl.appendChild(b);
+});
+rotFiltersEl.addEventListener('click', e => {
+  if (!e.target.classList.contains('rot-btn')) return;
+  activeRot = e.target.dataset.rot;
+  document.querySelectorAll('.rot-btn').forEach(b => b.classList.toggle('active', b.dataset.rot === activeRot));
+  renderList();
+});
+
+// Build calc list
+CALCS.forEach(c => {
+  const li = document.createElement('li');
+  li.dataset.id = c.id;
+  li.dataset.search = (c.name + ' ' + c.condition + ' ' + c.rotations.join(' ') + ' ' + (c.inputs.map(i => i.label).join(' '))).toLowerCase();
+  li.dataset.rotations = c.rotations.join(',');
+  li.innerHTML = `<div>${c.name}</div><div class="meta">${c.condition}</div>`;
+  li.addEventListener('click', () => { location.hash = c.id; });
+  sidebar.appendChild(li);
+});
+
+search.addEventListener('input', e => {
+  searchTerm = e.target.value.trim().toLowerCase();
+  renderList();
+});
+
+function renderList() {
+  let visible = 0;
+  document.querySelectorAll('.calc-list li').forEach(li => {
+    const rotMatch = activeRot === 'all' || li.dataset.rotations.includes(activeRot);
+    const textMatch = !searchTerm || li.dataset.search.includes(searchTerm);
+    const show = rotMatch && textMatch;
+    li.classList.toggle('hidden', !show);
+    if (show) visible++;
+  });
+  emptyList.classList.toggle('hidden', visible > 0);
+}
+
+function renderCalc(id) {
+  const c = CALCS.find(x => x.id === id);
+  if (!c) { main.innerHTML = '<p style="color:var(--text-dim);">Calculator not found.</p>'; return; }
+  activeCalc = id;
+  document.querySelectorAll('.calc-list li').forEach(li => li.classList.toggle('active', li.dataset.id === id));
+  const li = document.querySelector(`.calc-list li[data-id="${id}"]`);
+  if (li && li.scrollIntoView) li.scrollIntoView({ block:'nearest' });
+
+  const tagsHtml = c.rotations.map(r => `<span class="tag">${r}</span>`).join('');
+  // Build inputs
+  let inputsHtml = '';
+  let lastGroup = null;
+  c.inputs.forEach((inp, idx) => {
+    if (inp.group && inp.group !== lastGroup) {
+      // start of new group, add a small label maybe (omit for cleanliness)
+      lastGroup = inp.group;
+    }
+    if (inp.type === 'number') {
+      inputsHtml += `
+        <div class="input-row">
+          <label for="${c.id}-${idx}">${inp.label}</label>
+          <input type="number" id="${c.id}-${idx}" data-key="${inp.key}" placeholder="${inp.placeholder || ''}" step="${inp.step || 'any'}">
+        </div>`;
+    } else {
+      const grpAttr = inp.group ? `data-group="${inp.group}"` : '';
+      inputsHtml += `
+        <div class="input-row">
+          <input type="checkbox" id="${c.id}-${idx}" data-pts="${inp.pts}" data-idx="${idx}" ${grpAttr} ${inp.key ? `data-key="${inp.key}"` : ''}>
+          <label for="${c.id}-${idx}">${inp.label}</label>
+          <span class="pts">${inp.pts >= 0 ? '+' : ''}${inp.pts} pt${Math.abs(inp.pts)===1?'':'s'}</span>
+        </div>`;
+    }
+  });
+
+  // Related
+  const relatedHtml = (c.related || []).map(rid => {
+    if (CALCS.find(x => x.id === rid)) return `<a href="#${rid}">${CALCS.find(x=>x.id===rid).name}</a>`;
+    if (EXTERNAL_LINKS[rid]) return `<a href="${EXTERNAL_LINKS[rid].href}">${EXTERNAL_LINKS[rid].name} ↗</a>`;
+    return '';
+  }).join('');
+
+  main.innerHTML = `
+    <div class="calc-head">
+      <div class="calc-tags">${tagsHtml}</div>
+      <div class="condition">${c.condition}</div>
+      <h2>${c.name}</h2>
+      <p class="desc">${c.desc}</p>
+    </div>
+    <div class="inputs-block" id="inputs">${inputsHtml}</div>
+    <button class="reset" id="reset">Reset</button>
+    <div class="result" id="result" role="status" aria-live="polite" aria-atomic="true">
+      <div class="label">Score</div>
+      <div class="score">—</div>
+      <div class="interp">Select inputs to calculate.</div>
+    </div>
+    <div class="next-steps">
+      <h3>Next Steps</h3>
+      <ul>${c.nextSteps.map(s => `<li>${s}</li>`).join('')}</ul>
+    </div>
+    ${c.pitfalls ? `<div class="pitfalls"><h3>Pitfalls</h3><p>${c.pitfalls}</p></div>` : ''}
+    ${relatedHtml ? `<div class="related">${relatedHtml}</div>` : ''}
+  `;
+
+  // Wire up inputs
+  const inputs = main.querySelectorAll('input');
+  inputs.forEach(inp => inp.addEventListener('change', () => calculate(c)));
+  inputs.forEach(inp => inp.addEventListener('input', () => calculate(c)));
+  document.getElementById('reset').addEventListener('click', () => {
+    inputs.forEach(inp => { if (inp.type === 'checkbox') inp.checked = false; else inp.value = ''; });
+    calculate(c);
+  });
+
+  // Group enforcement (mutually exclusive checkboxes within same group)
+  inputs.forEach(inp => {
+    if (inp.dataset.group) {
+      inp.addEventListener('change', e => {
+        if (e.target.checked) {
+          main.querySelectorAll(`input[data-group="${inp.dataset.group}"]`).forEach(other => {
+            if (other !== e.target) other.checked = false;
+          });
+          calculate(c);
+        }
+      });
+    }
+  });
+
+  calculate(c);
+}
+
+function calculate(c) {
+  // Always tally checked checkbox points first. This "base" is the score for
+  // simple calcs and is handed to compute() so hybrid calcs (e.g. PSI, which adds
+  // age on top of risk-factor checkboxes) can build on it instead of ignoring it.
+  let base = 0;
+  main.querySelectorAll('input[type=checkbox]').forEach(inp => {
+    if (inp.checked) base += parseFloat(inp.dataset.pts);
+  });
+  let score;
+  if (c.compute) {
+    const vals = {};
+    main.querySelectorAll('input').forEach(inp => {
+      if (inp.dataset.key) {
+        vals[inp.dataset.key] = inp.type === 'checkbox' ? inp.checked : inp.value;
+      }
+    });
+    score = c.compute(vals, base);
+  } else {
+    score = base;
+  }
+  const tier = c.tier(score);
+  const resultEl = document.getElementById('result');
+  resultEl.className = 'result ' + tier.t;
+  resultEl.innerHTML = `
+    <div class="label">${tier.l}</div>
+    <div class="score">${score}</div>
+    <div class="interp">${tier.i}</div>
+  `;
+}
+
+// Hash routing
+function handleHash() {
+  const id = location.hash.replace('#','') || CALCS[0].id;
+  renderCalc(id);
+}
+window.addEventListener('hashchange', handleHash);
+
+renderList();
+handleHash();
+</script>
+<!--pc:chrome--><div class="pc-foot"><span>Educational reference. Not a substitute for clinical judgment.</span><span>Edition 2 by Claude Opus 5.5 · <a href="https://toolkit-v1.pages.dev/toolkit/">Edition 1</a></span></div><!--/pc:chrome-->
+</body>
+</html>
