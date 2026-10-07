@@ -52,6 +52,7 @@ flowchart LR
 | `music/index.html`, `music/last-light/index.html` | Music category and the LAST LIGHT page | Yes |
 | `music/last-light/media/` | HLS video segments (most of the repo's size) | No. Rendered elsewhere. |
 | `videos/`, `screenshots/`, `*.pdf`, `favicon.svg` | Films, card images, papers | Yes |
+| `lab/` | The Lab: one small app a day, its index and ledger (see The Lab below) | Yes |
 | `_headers`, `_redirects`, `robots.txt`, `sitemap.xml` | Edge behaviour and crawl rules | Yes |
 | `CNAME` | Left over from GitHub Pages; still ships | Leave it |
 | `*.md`, `tools/`, `.gitattributes`, `.gitignore` | Never shipped | Yes |
@@ -70,6 +71,22 @@ on Sean's laptop, outside this repo:
 - **CBC and CMP decoder.** `lab-values/cbc-cmp/index.html` is a copy of `~/lab-decoder/index.html`.
 
 To change a generated page from a pull request, describe the change and name the page. Sean applies it at the source.
+
+## The Lab
+
+`lab/` is written here, by hand or by the daily lab pipeline (which runs outside this repo and opens a pull request for
+each app). Nothing in it is generated from a source on Sean's laptop.
+
+- `lab/<slug>/` is one app: static HTML, CSS and JavaScript from this origin only, no third-party requests except Google
+  Fonts, no data sent anywhere. Each links back to `/lab/` and `/`.
+- `lab/apps.json` is the ledger of shipped apps (slug, title, date, description, builder, reviewer).
+- `lab/index.html` is hand-written except the block between its `LAB:LIST` markers, which `node tools/lab-index.mjs`
+  rewrites from `lab/apps.json`. The same script adds `/lab/` and each app to `sitemap.xml`.
+- Lab apps are deployed automatically after checks (Sean approved this for `lab/` only): a lab deploy is cut from a
+  pushed commit on `main` with `tools/stage.sh`, and is aborted if `tools/audit.sh` reports a difference outside `lab/`
+  and the added `sitemap.xml` lines.
+- Anything in the lab that touches medicine is educational, says it is not for clinical use, and never changes or
+  restates the clinical values in the toolkit or Read This as authoritative.
 
 ## Edge behaviour
 
