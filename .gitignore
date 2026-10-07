@@ -1,0 +1,9 @@
+# Local tool state. None of it is the site.
+.claude/
+.gstack/
+.wrangler/
+.DS_Store
+
+# The root decision log stays on Sean's laptop. Its past entries are
+# append-only and name things that do not belong in a repo other agents read.
+/DECISIONS.md

@@ -1,0 +1,7 @@
+# What never ships. tools/stage.sh builds the deploy bundle with `git archive`,
+# which leaves out every path marked export-ignore. This file is the only
+# definition of the difference between the repo and the site.
+.gitattributes  export-ignore
+.gitignore      export-ignore
+*.md            export-ignore
+/tools          export-ignore
