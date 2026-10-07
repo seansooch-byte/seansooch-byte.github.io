@@ -1,0 +1,11 @@
+[
+  {
+    "slug": "mixed-strategy-arena",
+    "title": "Mixed Strategy Arena",
+    "description": "Solve sports duels like penalty kicks, pitch calls and tennis serves for their Nash mix, then play an AI that learns and exploits your habits.",
+    "category": "crossover",
+    "shipped": "2026-10-07",
+    "withdrawn": "2026-10-07",
+    "reason": "Withdrawn by Sean on 2026-10-07: AI-themed (an AI opponent that learns your habits) and a game. He asked for something different from AI, with no game necessary."
+  }
+]
