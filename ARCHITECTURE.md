@@ -77,6 +77,11 @@ To change a generated page from a pull request, describe the change and name the
   simulators site, a separate Pages project.
 - `_headers` marks every `*.pages.dev` host of this project `noindex`. Only the custom domain is indexable. Keep the file
   in every deploy; it never appears in the upload receipt.
+- `_headers` also sets security headers on every path and host: HSTS (one year, no `includeSubDomains`, no `preload`),
+  `nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy`, a `Permissions-Policy`, and a **report-only**
+  Content-Security-Policy that logs violations to the console and blocks nothing. Its `connect-src` names every host the
+  homepage probes: a new probed host needs an entry there. Cloudflare injects Web Analytics
+  (`static.cloudflareinsights.com`) into live HTML, so the policy allows that script too.
 - `www.seansooch.dev` redirects to the apex by a Cloudflare Redirect Rule, not by anything in this repo.
 - An unknown path answers **200 with the homepage**. A status code proves nothing about a deploy; compare bytes.
 
