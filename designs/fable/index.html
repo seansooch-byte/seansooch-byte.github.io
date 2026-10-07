@@ -60,6 +60,7 @@
   .nav a{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);text-decoration:none;letter-spacing:.02em}
   .nav a:hover{color:var(--accent)}
   .nav a b{color:var(--ink);font-weight:600}
+  .nav a.nav-lab{white-space:nowrap}
   .btn{font-family:var(--mono);font-size:11px;letter-spacing:.06em;border:1.5px solid var(--ink);background:transparent;color:var(--ink);padding:6px 12px;cursor:pointer;transition:all .15s;line-height:1.2}
   .btn:hover{background:var(--ink);color:var(--paper)}
   .btn[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
@@ -293,6 +294,7 @@
     .rooms{grid-template-columns:1fr}
     .index{columns:2}
     .nav a{display:none}
+    .nav a.nav-lab{display:inline}
   }
   @media(max-width:700px){
     .wrap{padding:0 18px}
@@ -311,6 +313,11 @@
     .triad button{display:block}
     .triad .sep{display:none}
   }
+
+  /* The Lab link (2026-10-07): one more item in the bar */
+  @media(min-width:981px){.nav{gap:16px}}
+  @media(max-width:420px){.nav{gap:10px}}
+  @media(max-width:380px){.nav{gap:8px}.nav a.nav-lab b{display:none}}
 
   /* ============ print ============ */
   @media print{
@@ -356,6 +363,7 @@
       <a href="#ch5"><b>5</b> Ancillary</a>
       <a href="#appa"><b>A</b> Changes</a>
       <a href="#appb"><b>B</b> Films</a>
+      <a class="nav-lab" href="https://seansooch.dev/lab/"><b>L</b> Lab</a>
       <button class="btn" id="modeBtn" aria-pressed="false">Plain language</button>
       <button class="btn" id="palBtn">Index<kbd>/</kbd></button>
     </nav>
@@ -695,6 +703,28 @@
         <span class="xname"><span class="sdot" data-sys="space"><i></i></span> Space Explorer</span>
         <span class="xdesc">Live dashboard in eight sections over twelve public feeds, seven of them NASA's: APOD, the ISS over a map with its ground track, launch countdowns, EPIC Earth imagery and events, the Sun and its flares, near-Earth approaches, deep space, news.</span>
         <span class="xtag">NASA · Live APIs</span><span class="xgo">Explore →</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ============ THE LAB ============ -->
+  <section id="lab" class="wrap ch">
+    <div class="ch-head"><span class="lbl">Annex L</span><h2>The Lab</h2><span class="meta">visual lessons in plain language · educational, not for clinical use</span></div>
+    <p class="ed-note" data-tech="A course in core medicine, taught one picture at a time. Each lesson takes a single idea, starting with how the heart fills and empties, builds it step by step in plain language with animated visuals, then shows how common drug classes change the picture. New lessons are added in order. Educational only, not for clinical use."
+       data-simple="Short visual lessons that teach how the body works, one step at a time and in plain language. Start with the heart, then see what common medicines do to it. For learning only, not for patient care.">
+       A course in core medicine, taught one picture at a time. Each lesson takes a single idea, starting with how the heart fills and empties, builds it step by step in plain language with animated visuals, then shows how common drug classes change the picture. New lessons are added in order. Educational only, not for clinical use.</p>
+    <div class="xlist">
+      <a class="xrow" data-index="The Lab (all lessons)" data-ref="The Lab" data-kw="lab course lessons core medicine physiology pharmacology drugs teaching visual students" href="https://seansooch.dev/lab/">
+        <span class="xfn">L-1</span>
+        <span class="xname">All lessons</span>
+        <span class="xdesc">The course page: every lesson in order, each one a single idea built up step by step.</span>
+        <span class="xtag">Course · Medicine</span><span class="xgo">Enter →</span>
+      </a>
+      <a class="xrow" data-index="Pressure-volume loop (Lab lesson)" data-ref="The Lab" data-kw="lab lesson heart cardiology physiology pv loop preload afterload contractility ventricle" href="https://seansooch.dev/lab/pressure-volume-loop/">
+        <span class="xfn">L-2</span>
+        <span class="xname">The pressure-volume loop</span>
+        <span class="xdesc">How one heartbeat fills and empties the left ventricle, and how preload, afterload and contractility reshape the loop.</span>
+        <span class="xtag">Lesson · Heart</span><span class="xgo">Learn →</span>
       </a>
     </div>
   </section>
