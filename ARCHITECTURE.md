@@ -80,11 +80,17 @@ each app). Nothing in it is generated from a source on Sean's laptop.
 - `lab/<slug>/` is one app: static HTML, CSS and JavaScript from this origin only, no third-party requests except Google
   Fonts, no data sent anywhere. Each links back to `/lab/` and `/`.
 - `lab/apps.json` is the ledger of shipped apps (slug, title, date, description, builder, reviewer).
+- `lab/rejected.json` lists apps Sean turned down and why. A withdrawn app is deleted from `lab/`, the ledger, the index
+  and the sitemap in the same pull request that records it here, so the pipeline never proposes it, or anything like
+  it, again. Its old URL then falls back to the homepage like any unknown path.
 - `lab/index.html` is hand-written except the block between its `LAB:LIST` markers, which `node tools/lab-index.mjs`
-  rewrites from `lab/apps.json`. The same script adds `/lab/` and each app to `sitemap.xml`.
+  rewrites from `lab/apps.json`. The same script adds `/lab/` and each app to `sitemap.xml`, and drops the sitemap
+  entries of apps no longer in the ledger.
 - Lab apps are deployed automatically after checks (Sean approved this for `lab/` only): a lab deploy is cut from a
   pushed commit on `main` with `tools/stage.sh`, and is aborted if `tools/audit.sh` reports a difference outside `lab/`
-  and the added `sitemap.xml` lines.
+  and the lab lines of `sitemap.xml`.
+- Lab apps are never AI-themed (no AI opponents, no "learns your habits", no frontier-AI topics, no machine learning as
+  the gimmick), and games are optional rather than the default.
 - Anything in the lab that touches medicine is educational, says it is not for clinical use, and never changes or
   restates the clinical values in the toolkit or Read This as authoritative.
 
