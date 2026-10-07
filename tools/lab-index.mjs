@@ -45,11 +45,15 @@ if (!re.test(html)) throw new Error('lab/index.html: LAB:LIST markers not found'
 fs.writeFileSync(root + 'lab/index.html', html.replace(re, `$1${block}$2`));
 
 let sm = read('sitemap.xml');
+const before = sm;
+// Drop entries for lab apps that are no longer in the ledger (withdrawn apps). /lab/ itself always stays.
+let dropped = 0;
+sm = sm.replace(/^[ \t]*<url><loc>https:\/\/seansooch\.dev\/lab\/([a-z0-9-]+)\/<\/loc>.*<\/url>\r?\n/gm, (line, slug) => (seen.has(slug) ? line : (dropped++, '')));
 const want = ['https://seansooch.dev/lab/', ...apps.map(a => `https://seansooch.dev/lab/${a.slug}/`)];
 const add = want.filter(u => !sm.includes(`<loc>${u}</loc>`));
 if (add.length) {
   const lines = add.map(u => `  <url><loc>${u}</loc><changefreq>${u.endsWith('/lab/') ? 'daily' : 'monthly'}</changefreq><priority>${u.endsWith('/lab/') ? '0.7' : '0.6'}</priority></url>`).join('\n');
   sm = sm.replace('</urlset>', `${lines}\n</urlset>`);
-  fs.writeFileSync(root + 'sitemap.xml', sm);
 }
-console.log(`lab index: ${apps.length} app(s); sitemap +${add.length}`);
+if (sm !== before) fs.writeFileSync(root + 'sitemap.xml', sm);
+console.log(`lab index: ${apps.length} app(s); sitemap +${add.length} -${dropped}`);
