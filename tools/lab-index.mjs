@@ -22,24 +22,50 @@ for (const a of apps) {
   seen.add(a.slug);
   if (!fs.existsSync(`${root}lab/${a.slug}/index.html`)) throw new Error(`apps.json: lab/${a.slug}/index.html does not exist`);
 }
-const ordered = apps.map((a, i) => ({ ...a, no: i + 1 })).sort((x, y) => y.date.localeCompare(x.date) || y.no - x.no);
+// The course: lab/syllabus.json lists every module in teaching order. Shipped lessons (in apps.json) are links; the rest
+// are listed as "Coming soon" with no link, so the page never points at a page that does not exist.
 const fmt = d => new Date(d + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
-// The public list shows lesson number, subject and date. Who built and reviewed each lesson stays in apps.json,
-// the commit and the PR (Sean: the Lab is not about AI, so the page does not advertise the tooling).
-const SUBJECT = { medicine: 'Medicine', military: 'Military history', sports: 'Sports', music: 'Music', philosophy: 'Philosophy',
-  books: 'Books', history: 'History', michigan: 'Michigan', crossover: 'Crossover' };
-const subject = c => SUBJECT[c] || (c ? c[0].toUpperCase() + c.slice(1) : '');
+let syllabus = { modules: [] };
+if (fs.existsSync(root + 'lab/syllabus.json')) syllabus = JSON.parse(read('lab/syllabus.json'));
+const mods = syllabus.modules || [];
+const mseen = new Set();
+for (const m of mods) {
+  for (const k of ['slug', 'title', 'description']) if (!m[k]) throw new Error(`syllabus.json: ${m.slug || '?'} is missing ${k}`);
+  if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(m.slug)) throw new Error(`syllabus.json: bad slug ${m.slug}`);
+  if (mseen.has(m.slug)) throw new Error(`syllabus.json: duplicate slug ${m.slug}`);
+  if (m.drugClasses && !Array.isArray(m.drugClasses)) throw new Error(`syllabus.json: ${m.slug} drugClasses must be a list`);
+  mseen.add(m.slug);
+}
+const bySlug = Object.fromEntries(apps.map(a => [a.slug, a]));
+const pad = n => String(n).padStart(2, '0');
+const lessons = mods.map((m, i) => ({ ...m, no: i + 1, app: bySlug[m.slug] }));
+// Shipped apps that are not (or no longer) in the syllabus stay reachable, listed after the course.
+const extra = apps.filter(a => !mseen.has(a.slug)).sort((x, y) => x.date.localeCompare(y.date));
+const ready = lessons.filter(l => l.app).length + extra.length;
+const latest = apps.length ? apps.map(a => a.date).sort().at(-1) : null;
 
-const items = ordered.map(a => `    <li class="app"><a class="card" href="/lab/${a.slug}/">
-      <span class="no" aria-hidden="true">${String(a.no).padStart(3, '0')}</span>
-      <div><h2>${esc(a.title)}</h2><p>${esc(a.description)}</p><p class="meta">${esc([`Lesson ${a.no}`, subject(a.category)].filter(Boolean).join(' · '))}</p></div>
+const item = l => l.app
+  ? `    <li class="app ready"><a class="card" href="/lab/${l.slug}/">
+      <span class="no" aria-hidden="true">${pad(l.no)}</span>
+      <div><h2>${esc(l.title)}</h2><p>${esc(l.description)}</p><p class="meta">Lesson ${l.no}${l.drugClasses && l.drugClasses.length ? ' · ' + esc(l.drugClasses.join(', ')) : ''}</p></div>
+      <time class="date" datetime="${l.app.date}">${fmt(l.app.date)}</time>
+    </a></li>`
+  : `    <li class="app soon"><div class="card">
+      <span class="no" aria-hidden="true">${pad(l.no)}</span>
+      <div><h2>${esc(l.title)}</h2><p>${esc(l.description)}</p><p class="meta">Lesson ${l.no}${l.drugClasses && l.drugClasses.length ? ' · ' + esc(l.drugClasses.join(', ')) : ''}</p></div>
+      <span class="date">Coming soon</span>
+    </div></li>`;
+const extraItem = a => `    <li class="app ready"><a class="card" href="/lab/${a.slug}/">
+      <span class="no" aria-hidden="true">+</span>
+      <div><h2>${esc(a.title)}</h2><p>${esc(a.description)}</p></div>
       <time class="date" datetime="${a.date}">${fmt(a.date)}</time>
-    </a></li>`).join('\n');
+    </a></li>`;
 
-const block = apps.length
-  ? `  <p class="tally"><span>${apps.length} lesson${apps.length === 1 ? '' : 's'}</span><span>Latest: ${fmt(ordered[0].date)}</span></p>
-  <ol class="apps" reversed>
-${items}
+const total = mods.length + extra.length;
+const block = total
+  ? `  <p class="tally"><span>${ready} of ${total} lesson${total === 1 ? '' : 's'} ready</span>${latest ? `<span>Latest: ${fmt(latest)}</span>` : ''}</p>
+  <ol class="apps course">
+${[...lessons.map(item), ...extra.map(extraItem)].join('\n')}
   </ol>`
   : `  <p class="empty">The first lesson is on its way.</p>`;
 

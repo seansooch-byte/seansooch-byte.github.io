@@ -77,6 +77,13 @@ To change a generated page from a pull request, describe the change and name the
 `lab/` is written here, by hand or by the daily lab pipeline (which runs outside this repo and opens a pull request for
 each app). Nothing in it is generated from a source on Sean's laptop.
 
+- `lab/syllabus.json` is the course: about twenty core-medicine modules in teaching order (slug, title, one-line
+  description, the drug classes and disease states each lesson animates). Sean reorders or edits it by hand. `/lab/`
+  renders it as the course: shipped lessons link to their page, the rest say "Coming soon" and link nowhere. The daily
+  pipeline builds the first module that is neither shipped nor withdrawn; never rename a shipped lesson's slug.
+- Every lesson is a guided, step-by-step lesson for a first-year student: a Lesson tab of plain-language steps (one idea,
+  one big visual, one short caption, Back/Next, "Step X of N"), then one animated step per drug class or disease state
+  with a ghost of the normal picture; a Clinical values tab; and an optional Explore freely tab for the technical model.
 - The Lab is presented on the site as a course in core medicine (step-by-step visual lessons in plain language); the
   `/lab/` page and its list say nothing about how lessons are built. Who built and reviewed each one is recorded in
   `lab/apps.json`, the commit and the pull request.
