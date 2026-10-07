@@ -28,9 +28,15 @@ h1 span{color:var(--accent)}
 .app .date{font-size:14px;font-weight:600;white-space:nowrap}
 .app a.card:hover h2,.app a.card:focus-visible h2{text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:4px}
 .empty{padding:28px 0;color:var(--soft)}
+.app.soon .card{display:grid;grid-template-columns:120px 1fr auto;gap:8px 24px;align-items:baseline;padding:22px 0;color:var(--soft)}
+.app.soon .no{color:var(--rule)}
+.app.soon h2{color:var(--soft);font-size:clamp(24px,3vw,34px)}
+.app.soon p{color:var(--soft)}
+.app.soon .date{font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:12px;border:1px solid var(--rule);padding:3px 8px;align-self:start}
+.app.ready .meta{color:var(--ink)}
 footer{margin-top:72px;border-top:2px solid var(--ink)}
 footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:14px;padding-bottom:40px;font-size:14px}
-@media (max-width:720px){.app a.card{grid-template-columns:1fr;gap:4px}.app .no{font-size:34px}.app .date{order:-1}}
+@media (max-width:720px){.app a.card,.app.soon .card{grid-template-columns:1fr;gap:4px}.app.soon .date{justify-self:start}.app .no{font-size:34px}.app .date{order:-1}}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 /* Site top bar, matching the homepage's view A (Astra) bar. Scoped names so it cannot collide with lab.css or a lesson's CSS. */
 .site-top{position:sticky;top:0;z-index:50;background:rgba(247,247,242,.96);border-bottom:1px solid #171916;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);font-family:'Space Grotesk',system-ui,-apple-system,'Segoe UI',sans-serif}

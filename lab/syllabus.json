@@ -1,0 +1,252 @@
+{
+  "about": "The Lab's core-medicine course, in teaching order. The daily pipeline builds the first module that is neither shipped (in lab/apps.json) nor withdrawn (in lab/rejected.json). Reorder, add or remove modules by editing this list; never change the slug of a shipped lesson. drugClasses are the drug classes and disease states each lesson animates (never doses).",
+  "modules": [
+    {
+      "slug": "pressure-volume-loop",
+      "title": "The Pressure–Volume Loop",
+      "description": "How one heartbeat fills and empties the left ventricle, drawn as a loop, and how fluids, blood pressure and heart drugs reshape it.",
+      "drugClasses": [
+        "IV fluids (more preload)",
+        "Arterial vasoconstrictors and hypertension (more afterload)",
+        "Positive inotropes",
+        "Venodilators",
+        "Beta-blockers",
+        "Heart failure with reduced ejection fraction"
+      ]
+    },
+    {
+      "slug": "nephron-diuretics",
+      "title": "The Nephron and Diuretics",
+      "description": "Follow salt and water along a nephron, segment by segment, and see where each diuretic blocks salt reabsorption and how much water follows it out.",
+      "drugClasses": [
+        "Loop diuretics (furosemide)",
+        "Thiazide diuretics",
+        "Potassium-sparing diuretics (aldosterone antagonists, ENaC blockers)",
+        "Carbonic anhydrase inhibitors (acetazolamide)",
+        "Osmotic diuretics (mannitol)"
+      ],
+      "notes": "Loop diuretic step: show Na+ leaving the nephron in the urine and blood volume dropping."
+    },
+    {
+      "slug": "frank-starling-cardiac-output",
+      "title": "Frank–Starling and Cardiac Output",
+      "description": "Why a fuller heart pumps harder, and how filling, heart rate and contraction strength add up to cardiac output.",
+      "drugClasses": [
+        "IV fluids",
+        "Diuretics (less preload)",
+        "Positive inotropes",
+        "Beta-blockers",
+        "Venodilators (nitrates)",
+        "Heart failure"
+      ]
+    },
+    {
+      "slug": "blood-pressure-regulation",
+      "title": "Blood Pressure Regulation",
+      "description": "Blood pressure as flow times resistance, and how the baroreflex keeps it steady from one moment to the next.",
+      "drugClasses": [
+        "Calcium channel blockers",
+        "Alpha-1 blockers",
+        "Central alpha-2 agonists",
+        "Beta-blockers",
+        "Direct vasodilators",
+        "Hemorrhage (volume loss)"
+      ]
+    },
+    {
+      "slug": "renin-angiotensin-aldosterone",
+      "title": "The Renin–Angiotensin–Aldosterone System",
+      "description": "The hormone chain the kidney uses to raise blood pressure and hold on to salt, and the drugs that cut it at each link.",
+      "drugClasses": [
+        "ACE inhibitors",
+        "Angiotensin receptor blockers (ARBs)",
+        "Aldosterone antagonists (spironolactone)",
+        "Direct renin inhibitors"
+      ]
+    },
+    {
+      "slug": "autonomic-synapse",
+      "title": "The Autonomic Synapse",
+      "description": "How sympathetic and parasympathetic nerves talk to organs through receptors, and how drugs mimic or block that signal.",
+      "drugClasses": [
+        "Muscarinic agonists and antagonists",
+        "Cholinesterase inhibitors",
+        "Alpha agonists and blockers",
+        "Beta agonists and blockers"
+      ]
+    },
+    {
+      "slug": "cardiac-action-potential",
+      "title": "The Cardiac Action Potential",
+      "description": "The ion currents behind each heartbeat, in pacemaker and muscle cells, and how antiarrhythmic drugs change their shape.",
+      "drugClasses": [
+        "Sodium channel blockers (class I)",
+        "Beta-blockers (class II)",
+        "Potassium channel blockers (class III)",
+        "Calcium channel blockers (class IV)"
+      ]
+    },
+    {
+      "slug": "neuromuscular-junction",
+      "title": "The Neuromuscular Junction",
+      "description": "How a nerve signal becomes a muscle contraction, and how paralytic and reversal drugs act at the junction.",
+      "drugClasses": [
+        "Nondepolarizing neuromuscular blockers",
+        "Depolarizing neuromuscular blockers (succinylcholine)",
+        "Cholinesterase inhibitors (reversal)",
+        "Myasthenia gravis"
+      ]
+    },
+    {
+      "slug": "oxygen-hemoglobin-dissociation",
+      "title": "Oxygen and Hemoglobin",
+      "description": "Why hemoglobin grabs oxygen in the lungs and lets go in the tissues, drawn as the dissociation curve, and what shifts it.",
+      "drugClasses": [
+        "Right shift (acid, carbon dioxide, heat, 2,3-BPG)",
+        "Left shift (fetal hemoglobin, cold, alkalosis)",
+        "Carbon monoxide poisoning",
+        "Anemia"
+      ]
+    },
+    {
+      "slug": "ventilation-perfusion",
+      "title": "Ventilation, Perfusion and the Alveolus",
+      "description": "How air and blood meet in the lung, and what happens to oxygen when the two are mismatched.",
+      "drugClasses": [
+        "Supplemental oxygen",
+        "Bronchodilators (beta-2 agonists, muscarinic antagonists)",
+        "Pulmonary embolism (dead space)",
+        "Pneumonia (shunt)"
+      ]
+    },
+    {
+      "slug": "acid-base",
+      "title": "Acid–Base Balance",
+      "description": "The bicarbonate buffer, the lungs and the kidneys working together to hold blood pH steady, and the four ways it goes wrong.",
+      "drugClasses": [
+        "Carbonic anhydrase inhibitors",
+        "Loop and thiazide diuretics (contraction alkalosis)",
+        "Sodium bicarbonate",
+        "Salicylate toxicity"
+      ]
+    },
+    {
+      "slug": "coagulation-cascade",
+      "title": "The Coagulation Cascade",
+      "description": "How a clot is built, from platelet plug to fibrin mesh, and where each anticoagulant and clot-busting drug acts.",
+      "drugClasses": [
+        "Heparins",
+        "Vitamin K antagonists (warfarin)",
+        "Factor Xa inhibitors",
+        "Direct thrombin inhibitors",
+        "Antiplatelet drugs",
+        "Thrombolytics"
+      ]
+    },
+    {
+      "slug": "insulin-glucose",
+      "title": "Insulin and Glucose",
+      "description": "How insulin moves glucose out of the blood after a meal, what fails in diabetes, and how each diabetes drug helps.",
+      "drugClasses": [
+        "Insulin",
+        "Metformin",
+        "Sulfonylureas",
+        "SGLT2 inhibitors",
+        "GLP-1 receptor agonists",
+        "DPP-4 inhibitors"
+      ]
+    },
+    {
+      "slug": "thyroid-axis",
+      "title": "The Thyroid Axis",
+      "description": "The brain-to-thyroid feedback loop that sets the body's metabolic pace, and the drugs that replace or suppress thyroid hormone.",
+      "drugClasses": [
+        "Levothyroxine",
+        "Thionamides (methimazole, propylthiouracil)",
+        "Radioactive iodine",
+        "Beta-blockers for symptoms"
+      ]
+    },
+    {
+      "slug": "hpa-axis-steroids",
+      "title": "The HPA Axis and Steroids",
+      "description": "How the brain and adrenal glands control cortisol through feedback, and why steroid drugs switch the axis off.",
+      "drugClasses": [
+        "Glucocorticoids",
+        "Mineralocorticoids",
+        "Steroid synthesis inhibitors",
+        "Cushing syndrome and adrenal insufficiency"
+      ]
+    },
+    {
+      "slug": "gastric-acid-secretion",
+      "title": "Stomach Acid and the Parietal Cell",
+      "description": "How one stomach cell pumps acid on command, and how acid-reducing drugs turn it down at different steps.",
+      "drugClasses": [
+        "Proton pump inhibitors",
+        "H2 receptor blockers",
+        "Antacids",
+        "Prostaglandin analogues"
+      ]
+    },
+    {
+      "slug": "pharmacokinetics",
+      "title": "Pharmacokinetics: Drug Levels Over Time",
+      "description": "How a drug's level rises, plateaus and falls in the blood: absorption, distribution, half-life and steady state, drawn as curves.",
+      "drugClasses": [
+        "Enzyme inducers",
+        "Enzyme inhibitors",
+        "Reduced kidney clearance",
+        "Oral versus intravenous routes"
+      ]
+    },
+    {
+      "slug": "arachidonic-acid-nsaids",
+      "title": "Inflammation and the Arachidonic Acid Pathway",
+      "description": "How injured cells make prostaglandins and leukotrienes, and where anti-inflammatory drugs block the pathway.",
+      "drugClasses": [
+        "NSAIDs",
+        "COX-2 selective inhibitors",
+        "Aspirin",
+        "Glucocorticoids",
+        "Leukotriene modifiers"
+      ]
+    },
+    {
+      "slug": "bacterial-cell-antibiotics",
+      "title": "The Bacterial Cell and Antibiotic Targets",
+      "description": "A tour of a bacterium's wall, ribosomes and DNA machinery, and the antibiotic families that attack each one.",
+      "drugClasses": [
+        "Beta-lactams",
+        "Glycopeptides (vancomycin)",
+        "Aminoglycosides",
+        "Macrolides and tetracyclines",
+        "Fluoroquinolones",
+        "Sulfonamides and trimethoprim"
+      ]
+    },
+    {
+      "slug": "immune-response",
+      "title": "The Immune Response",
+      "description": "How the body recognises an invader, from the first innate response to antibodies and memory, and how immune drugs steer it.",
+      "drugClasses": [
+        "Vaccines",
+        "Calcineurin inhibitors",
+        "Anti-TNF biologics",
+        "Glucocorticoids"
+      ]
+    },
+    {
+      "slug": "cell-cycle-chemotherapy",
+      "title": "The Cell Cycle and Chemotherapy",
+      "description": "How a cell copies itself, phase by phase, and which chemotherapy drugs strike at which phase.",
+      "drugClasses": [
+        "Antimetabolites (S phase)",
+        "Vinca alkaloids and taxanes (M phase)",
+        "Alkylating agents",
+        "Topoisomerase inhibitors",
+        "CDK4/6 inhibitors"
+      ]
+    }
+  ]
+}
