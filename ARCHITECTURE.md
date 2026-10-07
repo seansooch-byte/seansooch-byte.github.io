@@ -77,13 +77,20 @@ To change a generated page from a pull request, describe the change and name the
 `lab/` is written here, by hand or by the daily lab pipeline (which runs outside this repo and opens a pull request for
 each app). Nothing in it is generated from a source on Sean's laptop.
 
+- The Lab is presented on the site as a course in core medicine (step-by-step visual lessons in plain language); the
+  `/lab/` page and its list say nothing about how lessons are built. Who built and reviewed each one is recorded in
+  `lab/apps.json`, the commit and the pull request.
 - `lab/<slug>/` is one app: static HTML, CSS and JavaScript from this origin only, no third-party requests except Google
-  Fonts, no data sent anywhere. Each links back to `/lab/` and `/`.
+  Fonts, no data sent anywhere. Each opens with the site's shared top bar (the homepage's view A bar: brand to `/`,
+  Work, Writing, Films, Editions, and The Lab to `/lab/`), copied exactly from the pipeline's
+  `templates/site-top-lesson.html` with `aria-current="true"` on The Lab, its CSS appended to the app's own stylesheet.
+  `/lab/` carries the same bar with `aria-current="page"`, its CSS at the end of `lab/lab.css`.
 - `lab/apps.json` is the ledger of shipped apps (slug, title, date, description, builder, reviewer).
 - `lab/rejected.json` lists apps Sean turned down and why. A withdrawn app is deleted from `lab/`, the ledger, the index
   and the sitemap in the same pull request that records it here, so the pipeline never proposes it, or anything like
   it, again. Its old URL then falls back to the homepage like any unknown path.
-- `lab/index.html` is hand-written except the block between its `LAB:LIST` markers, which `node tools/lab-index.mjs`
+- `lab/index.html` and `lab/lab.css` are hand-written in the pipeline's `bootstrap/lab/` and synced on every run;
+  `lab/index.html` is fixed except the block between its `LAB:LIST` markers, which `node tools/lab-index.mjs`
   rewrites from `lab/apps.json`. The same script adds `/lab/` and each app to `sitemap.xml`, and drops the sitemap
   entries of apps no longer in the ledger.
 - Lab apps are deployed automatically after checks (Sean approved this for `lab/` only): a lab deploy is cut from a

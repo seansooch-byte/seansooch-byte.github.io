@@ -24,20 +24,24 @@ for (const a of apps) {
 }
 const ordered = apps.map((a, i) => ({ ...a, no: i + 1 })).sort((x, y) => y.date.localeCompare(x.date) || y.no - x.no);
 const fmt = d => new Date(d + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
-const who = m => esc(`${m.tool}${m.model ? ' (' + m.model + ')' : ''}`);
+// The public list shows lesson number, subject and date. Who built and reviewed each lesson stays in apps.json,
+// the commit and the PR (Sean: the Lab is not about AI, so the page does not advertise the tooling).
+const SUBJECT = { medicine: 'Medicine', military: 'Military history', sports: 'Sports', music: 'Music', philosophy: 'Philosophy',
+  books: 'Books', history: 'History', michigan: 'Michigan', crossover: 'Crossover' };
+const subject = c => SUBJECT[c] || (c ? c[0].toUpperCase() + c.slice(1) : '');
 
 const items = ordered.map(a => `    <li class="app"><a class="card" href="/lab/${a.slug}/">
       <span class="no" aria-hidden="true">${String(a.no).padStart(3, '0')}</span>
-      <div><h2>${esc(a.title)}</h2><p>${esc(a.description)}</p><p class="meta">Built by ${who(a.builder)} · reviewed by ${who(a.reviewer)}</p></div>
+      <div><h2>${esc(a.title)}</h2><p>${esc(a.description)}</p><p class="meta">${esc([`Lesson ${a.no}`, subject(a.category)].filter(Boolean).join(' · '))}</p></div>
       <time class="date" datetime="${a.date}">${fmt(a.date)}</time>
     </a></li>`).join('\n');
 
 const block = apps.length
-  ? `  <p class="tally"><span>${apps.length} app${apps.length === 1 ? '' : 's'} shipped</span><span>Latest: ${fmt(ordered[0].date)}</span></p>
+  ? `  <p class="tally"><span>${apps.length} lesson${apps.length === 1 ? '' : 's'}</span><span>Latest: ${fmt(ordered[0].date)}</span></p>
   <ol class="apps" reversed>
 ${items}
   </ol>`
-  : `  <p class="empty">The first app ships soon.</p>`;
+  : `  <p class="empty">The first lesson is on its way.</p>`;
 
 const html = read('lab/index.html');
 const re = /(<!-- LAB:LIST:START[^>]*-->\n)[\s\S]*?(\n\s*<!-- LAB:LIST:END -->)/;
