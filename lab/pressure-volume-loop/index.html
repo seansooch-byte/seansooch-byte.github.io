@@ -29,6 +29,14 @@
     <p class="lede">A small model of the left ventricle beats live below. Pick a scenario or drag a slider, and watch the loop, the Wiggers diagram and the numbers move to a new steady state. The faint dashed loop is where you started.</p>
   </section>
 
+  <div class="lesson-tabs" id="lesson-tabs" role="tablist" aria-label="Lesson and clinical values">
+    <button type="button" role="tab" id="ltab-lesson" aria-controls="lpanel-lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="ltab-clinical" aria-controls="lpanel-clinical" aria-selected="false" tabindex="-1">Clinical values</button>
+  </div>
+  <p class="sr-only" id="announcer" aria-live="polite"></p>
+  <p class="notice" id="notice" role="alert" hidden></p>
+
+  <div class="lesson" id="lpanel-lesson" role="tabpanel" aria-labelledby="ltab-lesson">
   <section class="presets" aria-labelledby="h-presets">
     <h2 id="h-presets" class="eyebrow">Try a scenario</h2>
     <div class="preset-buttons" id="preset-buttons"></div>
@@ -65,8 +73,6 @@
     <div><dt>Stroke work</dt><dd><span id="n-sw">–</span><small>mmHg·mL</small></dd></div>
     <div><dt>Aortic</dt><dd><span id="n-pao">–</span><small>mmHg</small></dd></div>
   </dl>
-  <p class="sr-only" id="announcer" aria-live="polite"></p>
-  <p class="notice" id="notice" role="alert" hidden></p>
 
   <div class="tabs" id="tabs" hidden>
     <button type="button" role="tab" id="tab-loop" aria-controls="panel-loop" aria-selected="true">Loop</button>
@@ -145,7 +151,7 @@ Qav = max(0, (Plv − Pao) / Rav)     aortic
 
 dV/dt   = Qmv − Qav
 C·dPao/dt = Qav − Pao / Rs</pre>
-        <p>Integrated with fixed-step fourth-order Runge–Kutta, dt = 0.5 ms. Fixed values: V0 = 10 mL, A = 0.5 mmHg, Rmv = 0.005 and Rav = 0.01 mmHg·s/mL. The run starts from V = 120 mL and Pao = 80 mmHg.</p>
+        <p>Integrated with fixed-step fourth-order Runge–Kutta, dt = 0.5 ms. Fixed values: V0 = 10 mL, A = 0.18 mmHg, Rmv = 0.005 and Rav = 0.01 mmHg·s/mL. The run starts from V = 120 mL and Pao = 80 mmHg.</p>
       </div>
       <div>
         <h3>Reading the numbers</h3>
@@ -161,9 +167,10 @@ C·dPao/dt = Qav − Pao / Rs</pre>
           <li>Left atrial pressure is held constant and is the preload control. A real atrium fills, contracts and empties; here it is a fixed reservoir.</li>
           <li>Valves are ideal one-way diodes with a small linear resistance: no regurgitation, no inertia of blood, no valve dynamics.</li>
           <li>No pericardium, no right heart, no interaction between the ventricles, and no reflexes: changing one slider changes nothing else.</li>
-          <li>Because the mitral resistance is small, filling finishes well before the next beat even at high heart rates, so this model understates how a short diastole limits filling.</li>
+          <li>Because the mitral resistance is small, filling usually comes close to finishing before the next beat, so this model understates how a short diastole limits filling. It does fall short at high heart rates, and with a very compliant ventricle (low λ) at low preload even at normal rates.</li>
           <li>The end-systolic corner lands on the ESPVR only if the aortic valve shuts near peak activation. That holds near baseline (within about 1 mmHg), but at extreme combinations, such as very low resistance and compliance with high preload, ejection runs on after the peak and the corner can fall tens of mmHg below the line. The model checks table flags this.</li>
-          <li>Parameters are chosen to draw a textbook-shaped loop. They are not fitted to any person, and no output here is a normal range or a threshold.</li>
+          <li>The default parameters were tuned towards the typical adult values in the <b>Clinical values</b> tab. Not every baseline value can sit inside its range (for example, at baseline end-diastolic pressure is approximately equal to atrial pressure, whose typical range differs), and the tab lists each place where the baseline differs. The parameters are not fitted to any person, and the model's own outputs are not reference values or thresholds.</li>
+          <li>When filling reaches equilibrium through the low-resistance mitral valve, as it does at baseline, the ventricle's end-diastolic pressure is approximately equal to the fixed atrial pressure. When filling is incomplete (a short diastole at high heart rates, or a very compliant ventricle at low preload), end-diastolic pressure stays below atrial pressure.</li>
         </ul>
         <h3>Sources</h3>
         <ul class="refs">
@@ -174,6 +181,43 @@ C·dPao/dt = Qav − Pao / Rs</pre>
         </ul>
       </div>
     </div>
+  </section>
+  </div>
+
+  <section class="clinical" id="lpanel-clinical" role="tabpanel" aria-labelledby="ltab-clinical" hidden>
+    <div class="card cv-intro-card">
+      <h2 id="h-cv">Clinical values</h2>
+      <p class="cv-disclaimer" id="cv-disclaimer"></p>
+      <p class="cv-intro">Each bar shows a typical adult value from a standard textbook or guideline: a shaded band where the source gives a range, a short black tick where it gives one typical value. The red dot is the model's last beat and moves live as you change the settings. The hollow circle is the model's own baseline. Pick a disease, drug or physiologic state to see which way each value is expected to move, and, where the model can simulate it, the model is set to match.</p>
+      <p class="cv-baseline" id="cv-baseline"></p>
+      <p class="cv-note">The banner above still applies: this is a teaching model. It has no reflexes, kidneys or right heart, so some of its changes will not match the expected direction. Those mismatches are part of the lesson. Each state gives a direction only for the values its cited passage states, with the assumptions it rests on; every other value is marked "not listed in the source". Values the model computes that have no standard reference (stroke work, arterial elastance) are not listed.</p>
+    </div>
+    <div class="cv-layout">
+      <div class="cv-side card">
+        <h3 id="h-cv-states">Pick a state</h3>
+        <div class="cv-states" id="cv-states" role="group" aria-labelledby="h-cv-states"></div>
+        <div class="cv-state-note" id="cv-state-note" aria-live="polite"></div>
+        <div class="cv-status-row">
+          <p class="cv-status" id="cv-status">Starting</p>
+          <span class="cv-buttons">
+            <button type="button" class="btn small" id="cv-pause" aria-pressed="false" aria-keyshortcuts="Space">Pause</button>
+            <button type="button" class="btn small" id="cv-settle">Settle now</button>
+          </span>
+        </div>
+        <h3>Adjust the model</h3>
+        <div class="sliders compact" id="cv-sliders"></div>
+      </div>
+      <div class="cv-main card">
+        <div class="cv-legend" aria-hidden="true">
+          <span><i class="lg-band"></i>Typical range</span><span><i class="lg-typ"></i>Typical value</span><span><i class="lg-dot"></i>Model now</span><span><i class="lg-base"></i>Model baseline</span>
+        </div>
+        <ul class="cv-list" id="cv-list"><li class="cv-loading">Loading reference values…</li></ul>
+      </div>
+    </div>
+    <section class="card cv-sources" aria-labelledby="h-cv-sources">
+      <h2 id="h-cv-sources">Sources</h2>
+      <ul class="refs" id="cv-sources"></ul>
+    </section>
   </section>
 </main>
 

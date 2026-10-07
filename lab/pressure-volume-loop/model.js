@@ -5,17 +5,21 @@
 
 export const DT = 0.0005; // s, fixed RK4 step
 
+// Tuned towards the typical adult values in clinical-values.json (EDV, ESV, EF,
+// aortic pressures, atrial pressure). With filling at equilibrium, EDP is about the
+// fixed atrial pressure, so it cannot also sit in the LVEDP range; the Clinical
+// values tab says so.
 export const DEFAULTS = Object.freeze({
-  HR: 75,     // bpm
-  Ees: 2.5,   // mmHg/mL
+  HR: 72,     // bpm
+  Ees: 3.4,   // mmHg/mL
   V0: 10,     // mL
-  A: 0.5,     // mmHg
+  A: 0.18,    // mmHg
   lam: 0.03,  // 1/mL
-  Pla: 10,    // mmHg
+  Pla: 4,     // mmHg
   Rmv: 0.005, // mmHg·s/mL
   Rav: 0.01,  // mmHg·s/mL
-  Rs: 1.0,    // mmHg·s/mL
-  C: 1.5,     // mL/mmHg
+  Rs: 1.2,    // mmHg·s/mL
+  C: 1.4,     // mL/mmHg
 });
 
 export const INITIAL = Object.freeze({ V: 120, Pao: 80 });
@@ -135,9 +139,13 @@ export class Simulator {
   }
 
   // One RK4 step. Returns a finished beat record when a cycle completes, else null.
+  // The last step of a cycle is shortened so it lands exactly on the boundary: the
+  // next beat then starts at τ = 0 with zero activation, so EDV and EDP are sampled
+  // at true end-diastole and no step integrates across two cycles.
   step() {
-    const p = this.p, c = this.cur, h = DT, Ts = c.Ts;
+    const p = this.p, c = this.cur, Ts = c.Ts;
     const tau = this.tau, V = this.V, P = this.Pao;
+    const h = Math.min(DT, c.T - tau);
     rhs(tau, V, P, p, Ts, k1);
     rhs(tau + h / 2, V + h / 2 * k1.dV, P + h / 2 * k1.dP, p, Ts, k2);
     rhs(tau + h / 2, V + h / 2 * k2.dV, P + h / 2 * k2.dP, p, Ts, k3);
@@ -153,7 +161,7 @@ export class Simulator {
     this.tau += h;
     this.time += h;
     if (this.tau >= c.T - 1e-9) {
-      this.tau = Math.max(0, this.tau - c.T);
+      this.tau = 0;
       const beat = this._finishBeat();
       this._startBeat();
       return beat;
@@ -165,8 +173,9 @@ export class Simulator {
   _finishBeat() {
     const c = this.cur, n = c.n;
     const V = c.V.slice(0, n), Plv = c.Plv.slice(0, n), Pao = c.Pao.slice(0, n), t = c.t.slice(0, n);
-    let iMin = 0, PaoMax = -Infinity, PaoMin = Infinity, PlvMax = -Infinity;
+    let iMin = 0, PaoMax = -Infinity, PaoMin = Infinity, PlvMax = -Infinity, PaoSum = 0;
     for (let i = 0; i < n; i++) {
+      PaoSum += Pao[i];
       if (V[i] < V[iMin]) iMin = i;
       if (Pao[i] > PaoMax) PaoMax = Pao[i];
       if (Pao[i] < PaoMin) PaoMin = Pao[i];
@@ -193,7 +202,7 @@ export class Simulator {
       SW: Math.abs(signedArea), signedArea,
       ESP, iES: iMin,
       Ea: ejected && SV > 0.5 ? ESP / SV : null,
-      PaoSys: PaoMax, PaoDia: PaoMin, PlvMax,
+      PaoSys: PaoMax, PaoDia: PaoMin, PaoMean: n ? PaoSum / n : 0, PlvMax, EDP: Plv[0],
       intQmv: c.intQmv, intQav: c.intQav,
       massError: c.intQmv > 1e-6 ? Math.abs(c.intQmv - c.intQav) / c.intQmv : 0,
       isoDV,

@@ -1,7 +1,7 @@
 // Pressure–Volume Loop · The Lab
 import { Simulator, DEFAULTS, DT, espvr, edpvr } from './model.js';
 
-const STORE_KEY = 'lab.pressure-volume-loop.v1';
+const STORE_KEY = 'lab.pressure-volume-loop.v2'; // v2: baseline retuned to typical adult values
 const TRAIL = 6;
 const COL = {
   ink: '#171916', soft: '#4b4f47', grid: '#e4e6df', axis: '#babeb3', white: '#ffffff',
@@ -22,12 +22,12 @@ const SPOKEN_UNIT = { 'mmHg': 'millimetres of mercury', 'mmHg·s/mL': 'mmHg seco
 const BASE = { Pla: DEFAULTS.Pla, Rs: DEFAULTS.Rs, Ees: DEFAULTS.Ees, lam: DEFAULTS.lam, C: DEFAULTS.C, HR: DEFAULTS.HR };
 const PRESETS = [
   { id: 'baseline', label: 'Baseline', set: {},
-    text: 'The reference ventricle: atrial pressure 10 mmHg, moderate resistance and contractility, 75 beats per minute. Every other scenario changes one setting from here, so you can compare against this loop.' },
-  { id: 'preload', label: '↑ Preload (Frank–Starling)', set: { Pla: 18 },
-    text: 'Atrial pressure rises from 10 to 18 mmHg, so the ventricle fills further along its EDPVR before the mitral valve closes. The bigger end-diastolic volume ejects a bigger stroke volume, and the end-systolic corner slides up the same ESPVR line.' },
-  { id: 'afterload', label: '↑ Afterload', set: { Rs: 2.0 },
+    text: 'The reference ventricle: atrial pressure 4 mmHg, moderate resistance and contractility, 72 beats per minute, tuned towards the typical adult values in the Clinical values tab (which lists where it still differs). Every other scenario changes one setting from here, so you can compare against this loop.' },
+  { id: 'preload', label: '↑ Preload (Frank–Starling)', set: { Pla: 8 },
+    text: 'Atrial pressure doubles from 4 to 8 mmHg, so the ventricle fills further along its EDPVR before the mitral valve closes. The bigger end-diastolic volume ejects a bigger stroke volume, and the end-systolic corner slides up the same ESPVR line.' },
+  { id: 'afterload', label: '↑ Afterload', set: { Rs: 2.4 },
     text: 'Arterial resistance doubles, so aortic pressure stays higher and the aortic valve opens later in the beat. The ventricle stops ejecting at a higher pressure and a larger end-systolic volume, so stroke volume falls and the Ea line steepens.' },
-  { id: 'contractility', label: '↑ Contractility', set: { Ees: 4.0 },
+  { id: 'contractility', label: '↑ Contractility', set: { Ees: 5.0 },
     text: 'The ESPVR gets steeper: at any volume, the fully activated ventricle can generate more pressure. With the same filling, ejection continues to a smaller end-systolic volume, so stroke volume and ejection fraction rise.' },
   { id: 'stiff', label: 'Stiff ventricle (↑λ)', set: { lam: 0.05 },
     text: 'The EDPVR curves upward sooner, so the same atrial pressure fills the ventricle to a smaller volume. The loop shifts left and narrows even though contractility has not changed.' },
@@ -54,6 +54,7 @@ let paused = false, speed = 1, simDebt = 0, lastFrame = 0, needsDraw = true;
 let scale = { V: 160, P: 140 };
 let mvWasOpen = false, avWasOpen = false;
 let audio = null;
+let cv = null, cvRows = {}, activeState = null, baseBeat = null, lastBeat = null;
 
 function loadSaved() {
   try {
@@ -73,19 +74,22 @@ function save() {
 }
 
 // ---------- controls ----------
-const sliderEls = {};
-function buildSliders() {
-  const box = $('sliders');
+// The lesson's Controls card and the Clinical values tab each get a set of sliders
+// driving the same parameters; prefix keeps their ids apart.
+const sliderEls = [];
+function buildSliders(boxId, prefix = '') {
+  const box = $(boxId);
   for (const s of SLIDERS) {
     const wrap = document.createElement('div');
     wrap.className = 'slider';
-    wrap.innerHTML = `<div class="slider-top"><label for="s-${s.key}">${s.label}<span class="what">${s.what}</span></label>` +
-      `<output id="o-${s.key}" for="s-${s.key}"></output></div>` +
-      `<input type="range" id="s-${s.key}" min="${s.min}" max="${s.max}" step="${s.step}">` +
+    const id = `${prefix}s-${s.key}`;
+    wrap.innerHTML = `<div class="slider-top"><label for="${id}">${s.label}<span class="what">${s.what}</span></label>` +
+      `<output id="${prefix}o-${s.key}" for="${id}"></output></div>` +
+      `<input type="range" id="${id}" min="${s.min}" max="${s.max}" step="${s.step}">` +
       `<div class="range-ends" aria-hidden="true"><span>${fmt(s.min, s.d)}</span><span>${fmt(s.max, s.d)}</span></div>`;
     box.append(wrap);
     const input = wrap.querySelector('input'), out = wrap.querySelector('output');
-    sliderEls[s.key] = { input, out, s };
+    sliderEls.push({ input, out, s });
     input.addEventListener('input', () => setParams({ [s.key]: snap(s, Number(input.value)) }));
     input.addEventListener('keydown', e => {
       if (e.key !== 'PageUp' && e.key !== 'PageDown') return;
@@ -100,7 +104,7 @@ function snap(s, v) {
   return Math.min(s.max, Math.max(s.min, +(s.min + k * s.step).toFixed(6)));
 }
 function syncSliders() {
-  for (const { input, out, s } of Object.values(sliderEls)) {
+  for (const { input, out, s } of sliderEls) {
     const v = params[s.key];
     if (Number(input.value) !== v) input.value = v;
     out.innerHTML = `${fmt(v, s.d)}<small>${s.unit}</small>`;
@@ -109,6 +113,7 @@ function syncSliders() {
   }
   const match = matchingPreset();
   for (const b of document.querySelectorAll('.preset')) b.setAttribute('aria-pressed', String(!!match && b.dataset.id === match.id));
+  renderStateNote();
 }
 function matchingPreset() {
   return PRESETS.find(p => SLIDERS.every(s => Math.abs((p.set[s.key] ?? BASE[s.key]) - params[s.key]) < 1e-9));
@@ -159,6 +164,7 @@ function safeStep() {
   try { return sim.step(); }
   catch (e) {
     params = { ...BASE };
+    activeState = null;
     sim.setParams({ ...DEFAULTS });
     sim.reset();
     trail = []; ghost = null; lastSettled = null; isSettled = false; beatsSinceChange = 0;
@@ -186,6 +192,7 @@ function onBeat(b) {
   }
   rescale();
   renderNumbers(b);
+  renderClinical(b);
 }
 
 function advance(seconds, live) {
@@ -216,9 +223,10 @@ function jumpToSteady() {
 
 function setPaused(p) {
   paused = p;
-  const btn = $('btn-pause');
-  btn.setAttribute('aria-pressed', String(p));
-  btn.textContent = p ? 'Play' : 'Pause';
+  for (const btn of [$('btn-pause'), $('cv-pause')]) {
+    btn.setAttribute('aria-pressed', String(p));
+    btn.textContent = p ? 'Play' : 'Pause';
+  }
   updateStatus();
 }
 
@@ -304,6 +312,9 @@ function updateStatus() {
   if (paused) txt += ' · paused';
   el.textContent = txt;
   el.classList.toggle('settled', isSettled && !!b && b.ejected);
+  const cs = $('cv-status');
+  cs.textContent = `Model · ${txt}`;
+  cs.classList.toggle('settled', isSettled && !!b && b.ejected);
 }
 
 function announce(b) {
@@ -632,8 +643,233 @@ function frame(now) {
   requestAnimationFrame(frame);
 }
 
+// ---------- clinical values tab ----------
+// Every reference number lives in clinical-values.json; this code only draws it.
+const SHIFT = {
+  up: { sym: '↑', word: 'rises' }, down: { sym: '↓', word: 'falls' },
+  none: { sym: '→', word: 'little change' }, variable: { sym: '↕', word: 'depends on context' },
+};
+const KIND = { disease: 'Disease', drug: 'Drug', physiologic: 'Physiologic' };
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const shortSource = id => {
+  const full = (cv && cv.sources[id]) || id;
+  if (/guyton/i.test(full)) return 'Guyton & Hall, 14th ed.';
+  if (/echocardiography/i.test(full)) return 'ASE/EACVI chamber quantification, 2015';
+  if (/AHA\/ACC\/HFSA/.test(full)) return 'AHA/ACC/HFSA heart failure guideline, 2022';
+  return full.split('.')[0];
+};
+const decimals = unit => unit === 'L/min' ? 2 : 0;
+
+function modelValue(key, b) {
+  if (!b) return null;
+  switch (key) {
+    case 'EF': return b.ejected ? b.EF * 100 : 0;
+    case 'SV': return b.ejected ? b.SV : 0;
+    case 'CO': return b.ejected ? b.CO : 0;
+    case 'PP': return b.PaoSys - b.PaoDia;
+    case 'Pla': return b.Pla;
+    case 'HR': return b.HR;
+    default: return Number.isFinite(b[key]) ? b[key] : null;
+  }
+}
+function niceCeil(x) {
+  const mag = 10 ** Math.floor(Math.log10(x));
+  return [1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10].map(m => m * mag).find(s => s >= x - 1e-9);
+}
+
+async function loadClinical() {
+  try {
+    const r = await fetch('./clinical-values.json');
+    if (!r.ok) throw new Error(r.status);
+    cv = await r.json();
+  } catch (e) {
+    $('cv-list').innerHTML = '<li class="cv-loading">The reference values could not be loaded. Reload the page to try again.</li>';
+    return;
+  }
+  $('cv-disclaimer').textContent = cv.disclaimer;
+  baseBeat = new Simulator({ ...DEFAULTS }).runToSteady(200);
+  buildClinical();
+  renderClinical(lastBeat);
+  renderStateNote();
+}
+
+function buildClinical() {
+  const list = $('cv-list');
+  list.innerHTML = '';
+  cvRows = {};
+  for (const v of cv.values) {
+    const li = document.createElement('li');
+    li.className = 'cv-row';
+    li.dataset.cv = v.id;
+    const hasRange = v.low !== null && v.high !== null;
+    const ref = hasRange ? `Typical ${fmt(v.low)}–${fmt(v.high)} ${v.unit}${v.typical !== null ? ` (mean ${fmt(v.typical)})` : ''}`
+      : `Typical about ${fmt(v.typical)} ${v.unit}`;
+    li.innerHTML =
+      `<div class="cv-name"><b>${esc(v.label)}</b><span class="cv-ref">${esc(ref)}</span></div>` +
+      `<div class="cv-bar" aria-hidden="true"><span class="cv-track"></span>` +
+        (hasRange ? '<span class="cv-band"></span>' : '') +
+        (v.typical !== null ? '<span class="cv-typ"></span>' : '') +
+        '<span class="cv-base"></span><span class="cv-dot"></span>' +
+        '<span class="cv-axis"><span class="cv-lo"></span><span class="cv-hi"></span></span></div>' +
+      `<div class="cv-now"><span class="cv-num">–</span><small>${esc(v.unit)}</small><span class="cv-flag"></span></div>` +
+      '<div class="cv-shift" hidden></div>' +
+      `<p class="cv-cite">${esc(shortSource(v.source))}, ${esc(v.where)}.${v.note ? ` <span>${esc(v.note)}</span>` : ''}</p>`;
+    list.append(li);
+    const q = s => li.querySelector(s);
+    cvRows[v.id] = { v, li, band: q('.cv-band'), typ: q('.cv-typ'), base: q('.cv-base'), dot: q('.cv-dot'),
+      lo: q('.cv-lo'), hi: q('.cv-hi'), num: q('.cv-num'), flag: q('.cv-flag'), shift: q('.cv-shift') };
+  }
+
+  const states = $('cv-states');
+  states.innerHTML = '';
+  const mk = (id, label, kind) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'cv-state'; b.dataset.state = id;
+    b.innerHTML = `${kind ? `<small>${esc(KIND[kind] || kind)}</small>` : '<small>Reference</small>'}${esc(label)}`;
+    b.setAttribute('aria-pressed', 'false');
+    b.addEventListener('click', () => applyState(id));
+    states.append(b);
+  };
+  mk('', 'Typical adult (model baseline)');
+  for (const st of cv.states) mk(st.id, st.label, st.kind);
+
+  const links = cv.sourceLinks || {};
+  $('cv-sources').innerHTML = Object.entries(cv.sources).map(([id, full]) => {
+    const url = /^https:\/\/doi\.org\//.test(links[id] || '') ? links[id] : null;
+    return `<li>${esc(full)}${url ? ` <a href="${esc(url)}" rel="noopener">${esc(url.replace('https://', ''))}</a>` : ''}</li>`;
+  }).join('');
+
+  // Say plainly where the teaching model's own baseline falls outside a typical range.
+  const gaps = cv.values.filter(v => v.low !== null && v.high !== null).map(v => {
+    const x = modelValue(v.modelKey, baseBeat);
+    if (x === null || (x >= v.low && x <= v.high)) return null;
+    const d = decimals(v.unit);
+    return `${esc(v.label)}: model ${fmt(x, d + 1)} ${esc(v.unit)}, ${x < v.low ? 'below' : 'above'} the typical ${fmt(v.low)}–${fmt(v.high)} ${esc(v.unit)}${v.note ? ` (${esc(v.note)})` : ''}`;
+  }).filter(Boolean);
+  $('cv-baseline').innerHTML = gaps.length
+    ? `<b>Where the teaching model's baseline differs from the reference ranges.</b> ${gaps.join('; ')}.`
+    : '<b>The teaching model\'s baseline sits inside every typical range shown.</b>';
+}
+
+function applyState(id) {
+  activeState = (cv && cv.states.find(s => s.id === id)) || null;
+  // A state the model cannot simulate only shows its directions; the current settings stay.
+  if (!activeState || activeState.model) setParams({ ...BASE, ...(activeState ? activeState.model : {}) }, false);
+  renderStateNote();
+  renderClinical(lastBeat);
+}
+
+function stateMatchesModel(st) {
+  const want = { ...BASE, ...(st.model || {}) };
+  return SLIDERS.every(s => Math.abs(want[s.key] - params[s.key]) < 1e-9);
+}
+
+function renderStateNote() {
+  if (!cv) return;
+  for (const b of document.querySelectorAll('.cv-state')) {
+    b.setAttribute('aria-pressed', String((activeState ? activeState.id : '') === b.dataset.state && (activeState ? true : stateMatchesModel({}))));
+  }
+  const el = $('cv-state-note'), st = activeState;
+  if (!st) {
+    el.innerHTML = stateMatchesModel({})
+      ? '<p>The model is at its baseline. The hollow circles mark where its baseline sits on each bar; see the note above for where it differs from a typical range.</p>'
+      : '<p>Custom settings. Pick a state to see the expected direction of each value.</p>';
+    return;
+  }
+  const changed = !!st.model && !stateMatchesModel(st);
+  el.innerHTML = `<p><b>${esc(st.label)}.</b> ${esc(st.summary)}</p>` +
+    (st.context ? `<p class="cv-context"><b>Assumes:</b> ${esc(st.context)}</p>` : '') +
+    `<p class="cv-model-note"><b>In the model:</b> ${esc(st.modelNote || '')}${changed ? ' You have changed the settings since picking this state.' : ''}</p>` +
+    `<p class="cv-cite">${esc(shortSource(st.source))}, ${esc(st.where)}.</p>`;
+}
+
+function renderClinical(b) {
+  lastBeat = b || lastBeat;
+  if (!cv || $('lpanel-clinical').hidden) return;
+  const st = activeState;
+  for (const { v, band, typ, base, dot, lo, hi, num, flag, shift, li } of Object.values(cvRows)) {
+    const cur = modelValue(v.modelKey, lastBeat), bas = modelValue(v.modelKey, baseBeat);
+    const ref = v.high !== null ? v.high : v.typical;
+    let top = niceCeil(Math.max(ref * 2.5, (cur || 0) * 1.05, (bas || 0) * 1.05));
+    if (v.unit === '%') top = 100;
+    const pct = x => `${Math.min(100, Math.max(0, x / top * 100))}%`;
+    if (band) { band.style.left = pct(v.low); band.style.width = `calc(${pct(v.high)} - ${pct(v.low)})`; }
+    if (typ) typ.style.left = pct(v.typical);
+    base.style.left = pct(bas ?? 0); base.hidden = bas === null;
+    lo.textContent = '0'; hi.textContent = fmt(top);
+    const d = decimals(v.unit);
+    if (cur === null) { num.textContent = '–'; flag.textContent = ''; dot.hidden = true; continue; }
+    dot.hidden = false;
+    dot.style.left = pct(cur);
+    let where, out = false;
+    if (v.low !== null && v.high !== null) {
+      // Classify the unrounded value; if rounding would hide which side of a bound it
+      // is on, print one more decimal so the number and the label agree.
+      if (cur < v.low) { where = 'below typical range'; out = true; }
+      else if (cur > v.high) { where = 'above typical range'; out = true; }
+      else where = 'within typical range';
+      let shown = d;
+      while (out && shown < d + 3 && +cur.toFixed(shown) >= v.low && +cur.toFixed(shown) <= v.high) shown++;
+      num.textContent = fmt(cur, shown);
+    } else {
+      num.textContent = fmt(cur, d);
+      const diff = +cur.toFixed(d) - v.typical;
+      // A single typical value has no band, so there is no "outside": just report the difference.
+      where = Math.abs(diff) < 10 ** -d / 2 ? 'at typical value' : `${diff > 0 ? '+' : '−'}${fmt(Math.abs(diff), d)} vs typical`;
+    }
+    flag.textContent = where;
+    li.classList.toggle('out', out);
+    li.classList.toggle('offscale', cur > top);
+
+    const dir = st && st.shifts[v.id];
+    if (!st) { shift.hidden = true; continue; }
+    shift.hidden = false;
+    const exp = dir ? SHIFT[dir] : null;
+    let model = '';
+    if (bas !== null && st.model) {
+      const delta = cur - bas, tol = Math.max(Math.abs(bas) * 0.02, 10 ** -d);
+      const m = Math.abs(delta) < tol ? SHIFT.none : delta > 0 ? SHIFT.up : SHIFT.down;
+      // Only a stated up/down/none direction can be agreed or disagreed with.
+      const judged = dir && dir !== 'variable';
+      const differs = judged && m !== SHIFT[dir];
+      model = `<span class="cv-model${judged ? (differs ? ' differ' : ' agree') : ''}"><b aria-hidden="true">${m.sym}</b> Model ${m.word}` +
+        `${m === SHIFT.none ? '' : ` (${delta > 0 ? '+' : '−'}${fmt(Math.abs(delta), d)})`}${differs ? ' · differs' : ''}</span>`;
+    } else if (!st.model) {
+      model = '<span class="cv-model">Not simulated</span>';
+    }
+    shift.innerHTML = `<span class="cv-exp dir-${dir || 'none'}"><b aria-hidden="true">${exp ? exp.sym : '·'}</b> Expected: ${exp ? exp.word : 'not listed in the source'}</span>${model}`;
+  }
+}
+
+// ---------- tabs: Lesson / Clinical values (all widths) ----------
+const ltabs = [...document.querySelectorAll('#lesson-tabs [role=tab]')];
+const lpanels = ltabs.map(t => $(t.getAttribute('aria-controls')));
+function selectLessonTab(tab, focus) {
+  ltabs.forEach((t, i) => {
+    const on = t === tab;
+    t.setAttribute('aria-selected', String(on));
+    t.tabIndex = on ? 0 : -1;
+    lpanels[i].hidden = !on;
+  });
+  if (focus) tab.focus();
+  if (tab.id === 'ltab-clinical') renderClinical(lastBeat);
+  needsDraw = true;
+  requestAnimationFrame(resize);
+}
+ltabs.forEach((t, i) => {
+  t.addEventListener('click', () => selectLessonTab(t));
+  t.addEventListener('keydown', e => {
+    let j = null;
+    if (e.key === 'ArrowRight') j = (i + 1) % ltabs.length;
+    else if (e.key === 'ArrowLeft') j = (i - 1 + ltabs.length) % ltabs.length;
+    else if (e.key === 'Home') j = 0;
+    else if (e.key === 'End') j = ltabs.length - 1;
+    if (j !== null) { e.preventDefault(); selectLessonTab(ltabs[j], true); }
+  });
+});
+
 // ---------- tabs (phone) ----------
-const tabs = [...document.querySelectorAll('[role=tab]')];
+const tabs = [...document.querySelectorAll('#tabs [role=tab]')];
 const panels = tabs.map(t => $(t.getAttribute('aria-controls')));
 function selectTab(tab, focus) {
   tabs.forEach((t, i) => {
@@ -671,16 +907,21 @@ tabs.forEach((t, i) => {
 // ---------- wiring ----------
 function init() {
   buildPresets();
-  buildSliders();
+  buildSliders('sliders');
+  buildSliders('cv-sliders', 'cv-');
   syncSliders();
   updateNote();
+  loadClinical();
 
   $('btn-pause').addEventListener('click', () => setPaused(!paused));
   $('btn-step').addEventListener('click', () => { stepOneBeat(); needsDraw = true; });
   $('btn-settle').addEventListener('click', () => { jumpToSteady(); needsDraw = true; });
   $('btn-reset').addEventListener('click', () => {
+    activeState = null;
     setParams({ ...BASE }, true);
   });
+  $('cv-settle').addEventListener('click', () => { jumpToSteady(); needsDraw = true; });
+  $('cv-pause').addEventListener('click', () => setPaused(!paused));
   for (const r of document.querySelectorAll('input[name=speed]')) {
     r.addEventListener('change', () => { if (r.checked) speed = Number(r.value); });
   }
