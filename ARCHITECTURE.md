@@ -91,8 +91,14 @@ each app). Nothing in it is generated from a source on Sean's laptop.
   and the lab lines of `sitemap.xml`.
 - Lab apps are never AI-themed (no AI opponents, no "learns your habits", no frontier-AI topics, no machine learning as
   the gimmick), and games are optional rather than the default.
-- Anything in the lab that touches medicine is educational, says it is not for clinical use, and never changes or
-  restates the clinical values in the toolkit or Read This as authoritative.
+- Anything in the lab that touches medicine is educational, says it is not for clinical use, never gives drug doses,
+  and never changes or restates the clinical values in the toolkit or Read This.
+- Every medicine or physiology lesson has a "Clinical values" tab (Sean's sign-off, 2026-10-07): typical adult
+  reference ranges from Guyton & Hall, Costanzo, Boron & Boulpaep or a major guideline, each cited with its location,
+  drawn as live range bars against the lesson's model, with the expected direction of change in each disease and drug
+  state, and the note "Typical adult reference ranges; labs vary; not for clinical decisions." All of a lesson's values
+  live in one file, `lab/<slug>/clinical-values.json`, so they can be audited in one place; the second-opinion
+  reviewer must verify each against its source.
 
 ## Edge behaviour
 
