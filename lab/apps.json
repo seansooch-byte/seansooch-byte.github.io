@@ -1,1 +1,17 @@
-[]
+[
+  {
+    "slug": "pressure-volume-loop",
+    "title": "Pressure\u2013Volume Loop",
+    "date": "2026-10-07",
+    "description": "Change preload, afterload, contractility and heart rate, and watch a live left-ventricle model redraw its PV loop and Wiggers diagram beat by beat.",
+    "category": "medicine",
+    "builder": {
+      "tool": "Claude Code",
+      "model": "claude-opus-5-5"
+    },
+    "reviewer": {
+      "tool": "OpenAI Codex",
+      "model": "gpt-6.1-sol"
+    }
+  }
+]

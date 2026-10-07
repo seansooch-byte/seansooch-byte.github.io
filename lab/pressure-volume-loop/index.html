@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pressure–Volume Loop · The Lab · Sean Sooch</title>
+<meta name="description" content="Change preload, afterload, contractility and heart rate, and watch a live left-ventricle model redraw its PV loop and Wiggers diagram beat by beat.">
+<link rel="canonical" href="https://seansooch.dev/lab/pressure-volume-loop/">
+<meta property="og:title" content="Pressure–Volume Loop · The Lab · Sean Sooch">
+<meta property="og:description" content="Change preload, afterload, contractility and heart rate, and watch a live left-ventricle model redraw its PV loop and Wiggers diagram beat by beat.">
+<meta property="og:url" content="https://seansooch.dev/lab/pressure-volume-loop/">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#f7f7f2">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the app</a>
+<header class="top"><div class="wrap"><a href="/">seansooch.dev</a><a href="/lab/">The Lab</a></div></header>
+
+<p class="banner" id="banner"><span class="wrap"><strong>Educational, not for clinical use.</strong> A simplified teaching model; numbers are illustrative, not reference values.</span></p>
+
+<main id="main" class="wrap">
+  <section class="hero" aria-labelledby="title">
+    <p class="kicker">Lab app no. 001 · Cardiac mechanics</p>
+    <h1 id="title">Pressure–Volume <span>Loop</span></h1>
+    <p class="lede">A small model of the left ventricle beats live below. Pick a scenario or drag a slider, and watch the loop, the Wiggers diagram and the numbers move to a new steady state. The faint dashed loop is where you started.</p>
+  </section>
+
+  <section class="presets" aria-labelledby="h-presets">
+    <h2 id="h-presets" class="eyebrow">Try a scenario</h2>
+    <div class="preset-buttons" id="preset-buttons"></div>
+    <p class="preset-note" id="preset-note" aria-live="polite"></p>
+  </section>
+
+  <div class="toolbar" role="group" aria-label="Playback and display">
+    <div class="tool-group">
+      <button type="button" class="btn primary" id="btn-pause" aria-pressed="false" aria-keyshortcuts="Space">Pause</button>
+      <button type="button" class="btn" id="btn-step" aria-keyshortcuts="S">Step one beat</button>
+      <button type="button" class="btn" id="btn-settle">Jump to steady state</button>
+    </div>
+    <fieldset class="seg">
+      <legend class="sr-only">Speed</legend>
+      <span class="seg-label" aria-hidden="true">Speed</span>
+      <label><input type="radio" name="speed" value="0.25"><span>0.25×</span></label>
+      <label><input type="radio" name="speed" value="1" checked><span>1×</span></label>
+    </fieldset>
+    <div class="tool-group toggles">
+      <label class="check"><input type="checkbox" id="t-curves" checked> ESPVR &amp; EDPVR</label>
+      <label class="check"><input type="checkbox" id="t-ea" checked> <span>E<sub>a</sub> line</span></label>
+      <label class="check"><input type="checkbox" id="t-ghost" checked> Ghost loop</label>
+      <label class="check"><input type="checkbox" id="t-sound"> Heart-sound clicks</label>
+    </div>
+  </div>
+
+  <dl class="numbers" id="numbers" aria-label="This beat">
+    <div class="status-cell"><dt>Status</dt><dd id="n-status">Starting</dd></div>
+    <div><dt>EDV</dt><dd><span id="n-edv">–</span><small>mL</small></dd></div>
+    <div><dt>ESV</dt><dd><span id="n-esv">–</span><small>mL</small></dd></div>
+    <div class="hl"><dt><abbr title="Stroke volume">SV</abbr></dt><dd><span id="n-sv">–</span><small>mL</small></dd></div>
+    <div class="hl"><dt>EF</dt><dd><span id="n-ef">–</span><small>%</small></dd></div>
+    <div class="hl"><dt>Output</dt><dd><span id="n-co">–</span><small>L/min</small></dd></div>
+    <div><dt>Stroke work</dt><dd><span id="n-sw">–</span><small>mmHg·mL</small></dd></div>
+    <div><dt>Aortic</dt><dd><span id="n-pao">–</span><small>mmHg</small></dd></div>
+  </dl>
+  <p class="sr-only" id="announcer" aria-live="polite"></p>
+  <p class="notice" id="notice" role="alert" hidden></p>
+
+  <div class="tabs" id="tabs" hidden>
+    <button type="button" role="tab" id="tab-loop" aria-controls="panel-loop" aria-selected="true">Loop</button>
+    <button type="button" role="tab" id="tab-wiggers" aria-controls="panel-wiggers" aria-selected="false" tabindex="-1">Wiggers</button>
+    <button type="button" role="tab" id="tab-controls" aria-controls="panel-controls" aria-selected="false" tabindex="-1">Controls</button>
+  </div>
+
+  <div class="stage">
+    <section class="card plot-card tabpanel active" id="panel-loop" aria-labelledby="h-loop">
+      <div class="card-head">
+        <h2 id="h-loop">PV loop</h2>
+        <p class="card-sub">LV pressure against LV volume, last 6 beats</p>
+      </div>
+      <div class="canvas-box pv-box"><canvas id="pv" role="img" aria-label="Pressure–volume loop. Loading."></canvas></div>
+      <p class="legend" aria-hidden="true">
+        <span><i class="sw sw-loop"></i>Loop</span><span><i class="sw sw-es"></i>ESPVR</span><span><i class="sw sw-ed"></i>EDPVR</span><span><i class="sw sw-ea"></i><span>E<sub>a</sub></span></span><span><i class="sw sw-ghost"></i>Before</span>
+      </p>
+      <p class="key">Corners: <b>MC</b> mitral closes · <b>AO</b> aortic opens · <b>AC</b> aortic closes · <b>MO</b> mitral opens. The loop runs counter-clockwise.</p>
+    </section>
+
+    <section class="card plot-card tabpanel" id="panel-wiggers" aria-labelledby="h-wiggers">
+      <div class="card-head">
+        <h2 id="h-wiggers">Wiggers diagram</h2>
+        <p class="card-sub">One cardiac cycle, sweeping left to right</p>
+      </div>
+      <div class="canvas-box wig-box"><canvas id="wiggers" role="img" aria-label="Wiggers diagram. Loading."></canvas></div>
+      <p class="legend" aria-hidden="true">
+        <span><i class="sw sw-loop"></i>LV pressure</span><span><i class="sw sw-ao"></i>Aortic</span><span><i class="sw sw-la"></i>Atrial</span><span><i class="sw sw-v"></i>LV volume</span>
+      </p>
+      <p class="key"><b>MC</b> mitral closes · <b>AO</b> aortic opens · <b>AC</b> aortic closes · <b>MO</b> mitral opens. Dashed lines mark each valve event.</p>
+    </section>
+  </div>
+
+  <div class="lower">
+    <section class="card tabpanel" id="panel-controls" aria-labelledby="h-controls">
+      <div class="card-head">
+        <h2 id="h-controls">Controls</h2>
+        <button type="button" class="btn small" id="btn-reset">Reset to baseline</button>
+      </div>
+      <p class="hint">Arrow keys nudge a slider, Page Up and Page Down take big steps. <kbd>Space</kbd> pauses, <kbd>S</kbd> steps one beat.</p>
+      <div class="sliders" id="sliders"></div>
+    </section>
+
+    <section class="card table-card" aria-labelledby="h-table">
+      <h2 id="h-table">Last beat, in numbers</h2>
+      <table class="beat-table" id="beat-table">
+        <caption class="sr-only">Values from the most recent complete beat</caption>
+        <tbody id="beat-body"></tbody>
+      </table>
+      <h3>Model checks</h3>
+      <table class="beat-table checks">
+        <caption class="sr-only">Self-checks on the most recent complete beat</caption>
+        <tbody id="check-body"></tbody>
+      </table>
+    </section>
+  </div>
+
+  <section class="card about" aria-labelledby="h-about">
+    <h2 id="h-about">About the model</h2>
+    <div class="about-grid">
+      <div>
+        <h3>What is simulated</h3>
+        <p>The left ventricle is a chamber whose stiffness rises and falls each beat (time-varying elastance). Blood enters through the mitral valve from an atrium held at a fixed pressure, leaves through the aortic valve into an arterial tree that behaves like a leaky balloon (a two-element Windkessel), and drains from there into the body through a resistance.</p>
+        <h3>Equations</h3>
+        <pre class="eq">T  = 60 / HR
+Ts = min(0.16 + 0.3·T, 0.45·T)
+τ  = t mod T
+e(τ) = sin(π·τ / Ts) for 0 ≤ τ &lt; Ts, else 0
+
+Pes(V) = Ees·(V − V0)              ESPVR
+Ped(V) = A·(exp(λ·(V − V0)) − 1)    EDPVR
+Plv    = e·Pes(V) + (1 − e)·Ped(V)
+
+Qmv = max(0, (Pla − Plv) / Rmv)     mitral
+Qav = max(0, (Plv − Pao) / Rav)     aortic
+
+dV/dt   = Qmv − Qav
+C·dPao/dt = Qav − Pao / Rs</pre>
+        <p>Integrated with fixed-step fourth-order Runge–Kutta, dt = 0.5 ms. Fixed values: V0 = 10 mL, A = 0.5 mmHg, Rmv = 0.005 and Rav = 0.01 mmHg·s/mL. The run starts from V = 120 mL and Pao = 80 mmHg.</p>
+      </div>
+      <div>
+        <h3>Reading the numbers</h3>
+        <ul>
+          <li><b>EDV</b> is the volume at the start of each cycle; <b>ESV</b> is the smallest volume in the beat.</li>
+          <li><b>SV</b> = EDV − ESV, <b>EF</b> = SV / EDV, <b>output</b> = SV × HR.</li>
+          <li><b>Stroke work</b> is the area inside the loop, by the shoelace formula over every sampled (V, Plv) point.</li>
+          <li><b>E<sub>a</sub></b>, effective arterial elastance, is end-systolic pressure divided by SV. On the plot it is the steepness of the dashed line from (EDV, 0) up to the end-systolic corner: the magnitude of its slope, since the line itself falls as volume rises.</li>
+          <li>Valve events come from the flows: a valve is open while blood moves through it. The loop counts as <b>settled</b> once EDV and ESV each move by less than 0.1 mL from one beat to the next.</li>
+        </ul>
+        <h3>Simplifications</h3>
+        <ul>
+          <li>Left atrial pressure is held constant and is the preload control. A real atrium fills, contracts and empties; here it is a fixed reservoir.</li>
+          <li>Valves are ideal one-way diodes with a small linear resistance: no regurgitation, no inertia of blood, no valve dynamics.</li>
+          <li>No pericardium, no right heart, no interaction between the ventricles, and no reflexes: changing one slider changes nothing else.</li>
+          <li>Because the mitral resistance is small, filling finishes well before the next beat even at high heart rates, so this model understates how a short diastole limits filling.</li>
+          <li>The end-systolic corner lands on the ESPVR only if the aortic valve shuts near peak activation. That holds near baseline (within about 1 mmHg), but at extreme combinations, such as very low resistance and compliance with high preload, ejection runs on after the peak and the corner can fall tens of mmHg below the line. The model checks table flags this.</li>
+          <li>Parameters are chosen to draw a textbook-shaped loop. They are not fitted to any person, and no output here is a normal range or a threshold.</li>
+        </ul>
+        <h3>Sources</h3>
+        <ul class="refs">
+          <li>Suga H, Sagawa K, Shoukas AA. Load independence of the instantaneous pressure-volume ratio of the canine left ventricle and effects of epinephrine and heart rate on the ratio. <i>Circ Res</i>. 1973;32:314–322.</li>
+          <li>Suga H, Sagawa K. Instantaneous pressure-volume relationships and their ratio in the excised, supported canine left ventricle. <i>Circ Res</i>. 1974;35:117–126.</li>
+          <li>Sunagawa K, Maughan WL, Burkhoff D, Sagawa K. Left ventricular interaction with arterial load studied in isolated canine ventricle. <i>Am J Physiol</i>. 1983;245:H773–H780.</li>
+          <li>Frank O. Die Grundform des arteriellen Pulses. <i>Z Biol</i>. 1899;37:483–526.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap"><span>Lab app no. 001 · built 2026-10-07</span><a href="/lab/">More from The Lab</a></div></footer>
+</body>
+</html>
