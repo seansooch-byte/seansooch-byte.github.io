@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pressure–Volume Loop · The Lab · Sean Sooch</title>
-<meta name="description" content="Change preload, afterload, contractility and heart rate, and watch a live left-ventricle model redraw its PV loop and Wiggers diagram beat by beat.">
+<meta name="description" content="Learn the pressure–volume loop one step at a time: how the left ventricle fills and empties, what the loop's shape means, and how fluids, drugs and heart failure change it.">
 <link rel="canonical" href="https://seansooch.dev/lab/pressure-volume-loop/">
 <meta property="og:title" content="Pressure–Volume Loop · The Lab · Sean Sooch">
-<meta property="og:description" content="Change preload, afterload, contractility and heart rate, and watch a live left-ventricle model redraw its PV loop and Wiggers diagram beat by beat.">
+<meta property="og:description" content="Learn the pressure–volume loop one step at a time: how the left ventricle fills and empties, what the loop's shape means, and how fluids, drugs and heart failure change it.">
 <meta property="og:url" content="https://seansooch.dev/lab/pressure-volume-loop/">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#f7f7f2">
@@ -15,6 +15,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <script type="module" src="app.js"></script>
+<script type="module" src="lesson.js"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to the lesson</a>
@@ -37,17 +38,173 @@
   <section class="hero" aria-labelledby="title">
     <p class="kicker"><a class="crumb" href="/lab/">All lessons</a><span aria-hidden="true"> / </span>The Lab · Lesson 1 · Cardiac mechanics</p>
     <h1 id="title">Pressure–Volume <span>Loop</span></h1>
-    <p class="lede">A small model of the left ventricle beats live below. Pick a scenario or drag a slider, and watch the loop, the Wiggers diagram and the numbers move to a new steady state. The faint dashed loop is where you started.</p>
+    <p class="lede">How the heart's main pumping chamber fills and empties with every beat, drawn as one simple picture, one step at a time.</p>
   </section>
 
-  <div class="lesson-tabs" id="lesson-tabs" role="tablist" aria-label="Lesson and clinical values">
+  <div class="lesson-tabs" id="lesson-tabs" role="tablist" aria-label="Lesson, clinical values and free exploration">
     <button type="button" role="tab" id="ltab-lesson" aria-controls="lpanel-lesson" aria-selected="true">Lesson</button>
     <button type="button" role="tab" id="ltab-clinical" aria-controls="lpanel-clinical" aria-selected="false" tabindex="-1">Clinical values</button>
+    <button type="button" role="tab" id="ltab-explore" aria-controls="lpanel-explore" aria-selected="false" tabindex="-1">Explore freely</button>
   </div>
   <p class="sr-only" id="announcer" aria-live="polite"></p>
   <p class="notice" id="notice" role="alert" hidden></p>
 
-  <div class="lesson" id="lpanel-lesson" role="tabpanel" aria-labelledby="ltab-lesson">
+  <div class="guide" id="lpanel-lesson" role="tabpanel" aria-labelledby="ltab-lesson">
+    <div class="steps" id="steps">
+      <section class="step" data-step="1" data-step-title="Meet the left ventricle" data-visual="heart" aria-labelledby="st-1">
+        <p class="step-kicker">How the loop works</p>
+        <h2 id="st-1" tabindex="-1">Meet the left ventricle</h2>
+        <figure class="step-fig"><svg class="lp" role="img" aria-label="Diagram of the left side of the heart. Blood from the lungs collects in the left atrium, a small holding chamber at the top. It passes down through the mitral valve into the left ventricle, the large muscular chamber below. It leaves upward through the aortic valve into the aorta, the main pipe out to the body."></svg></figure>
+        <p class="step-cap">The <dfn>left ventricle</dfn> is the heart's main pumping chamber: a muscle bag that fills with blood, then squeezes it out to the body. One-way doors called <dfn>valves</dfn> keep blood moving forward: the <dfn>mitral valve</dfn> lets blood in, the <dfn>aortic valve</dfn> lets it out.</p>
+      </section>
+
+      <section class="step" data-step="2" data-step-title="Two things to watch: volume and pressure" data-visual="axes" aria-labelledby="st-2" hidden>
+        <p class="step-kicker">How the loop works</p>
+        <h2 id="st-2" tabindex="-1">Two things to watch: volume and pressure</h2>
+        <figure class="step-fig"><svg class="lp" role="img" aria-label="An empty graph. Volume increases to the right; pressure increases upward. A dot low and to the left is marked: nearly empty, relaxed. A dot high and to the right is marked: full, squeezing hard."></svg></figure>
+        <p class="step-cap">We follow the ventricle with two measures. <dfn>Volume</dfn> is how much blood is inside it. <dfn>Pressure</dfn> is how hard that blood is being pushed. Each moment of a heartbeat is one dot: further right means fuller, higher up means squeezing harder.</p>
+      </section>
+
+      <section class="step" data-step="3" data-step-title="Filling: the bottom edge" data-visual="fill" aria-labelledby="st-3" hidden>
+        <p class="step-kicker">How the loop works · phase 1 of 4</p>
+        <h2 id="st-3" tabindex="-1">Filling: the bottom edge</h2>
+        <figure class="step-fig"><svg class="lp" role="img" aria-label="Graph of pressure against volume. A line is drawn from left to right along the bottom: volume grows a lot while pressure stays low. Mitral valve open, aortic valve shut."></svg>
+          <div class="fig-foot"><button type="button" class="btn small replay" data-replay>Replay</button></div></figure>
+        <p class="step-cap"><b>Phase 1, filling.</b> The ventricle relaxes and the mitral valve opens, so blood flows in. Volume grows a lot while pressure stays low, so the dot slides to the right along the bottom. This is the loop's bottom edge.</p>
+      </section>
+
+      <section class="step" data-step="4" data-step-title="Squeezing with both valves shut: the right edge" data-visual="contract" aria-labelledby="st-4" hidden>
+        <p class="step-kicker">How the loop works · phase 2 of 4</p>
+        <h2 id="st-4" tabindex="-1">Squeezing with both valves shut: the right edge</h2>
+        <figure class="step-fig"><svg class="lp" role="img" aria-label="Graph of pressure against volume. After the bottom edge, a line rises straight up at the right: pressure climbs while volume stays the same. Both valves shut."></svg>
+          <div class="fig-foot"><button type="button" class="btn small replay" data-replay>Replay</button></div></figure>
+        <p class="step-cap"><b>Phase 2, <dfn>isovolumic contraction</dfn></b> (a "same-volume squeeze"). The muscle starts to squeeze. The mitral valve snaps shut and the aortic valve is still shut, so no blood gets in or out. Pressure climbs straight up while volume stays the same: the right edge.</p>
+      </section>
+
+      <section class="step" data-step="5" data-step-title="Ejection: the top edge" data-visual="eject" aria-labelledby="st-5" hidden>
+        <p class="step-kicker">How the loop works · phase 3 of 4</p>
+        <h2 id="st-5" tabindex="-1">Ejection: the top edge</h2>
+        <figure class="step-fig"><svg class="lp" role="img" aria-label="Graph of pressure against volume. From the top of the right edge, a line runs left across the top: volume falls while pressure stays high. Mitral valve shut, aortic valve open."></svg>
+          <div class="fig-foot"><button type="button" class="btn small replay" data-replay>Replay</button></div></figure>
+        <p class="step-cap"><b>Phase 3, <dfn>ejection</dfn></b> (pumping out). Once the pressure inside is higher than in the <dfn>aorta</dfn>, the main pipe out to the body, the aortic valve opens and blood rushes out. Volume falls while pressure stays high, so the dot runs left along the top edge.</p>
+      </section>
+
+      <section class="step" data-step="6" data-step-title="Relaxing with both valves shut: the left edge" data-visual="relax" aria-labelledby="st-6" hidden>
+        <p class="step-kicker">How the loop works · phase 4 of 4</p>
+        <h2 id="st-6" tabindex="-1">Relaxing with both valves shut: the left edge</h2>
+        <figure class="step-fig"><svg class="lp" role="img" aria-label="Graph of pressure against volume. From the left end of the top edge, a line drops straight down: pressure falls while volume stays the same, back to the start of the bottom edge. Both valves shut."></svg>
+          <div class="fig-foot"><button type="button" class="btn small replay" data-replay>Replay</button></div></figure>
+        <p class="step-cap"><b>Phase 4, <dfn>isovolumic relaxation</dfn></b> (a "same-volume relax"). The muscle lets go. The aortic valve shuts and the mitral valve is not yet open, so volume cannot change while pressure drops straight down: the left edge. Then the mitral valve opens and filling begins again.</p>
+      </section>
+
+      <section class="step" data-step="7" data-step-title="One heartbeat, once round the loop" data-visual="loop" aria-labelledby="st-7" hidden>
+        <p class="step-kicker">How the loop works</p>
+        <h2 id="st-7" tabindex="-1">One heartbeat, once round the loop</h2>
+        <figure class="step-fig"><svg class="lp" role="img" aria-label="The whole loop, a rounded box shape. A dot travels round it anticlockwise: filling along the bottom, squeezing up the right edge, ejection across the top, relaxing down the left edge."></svg>
+          <div class="fig-foot"><button type="button" class="btn small replay" data-replay>Replay</button></div></figure>
+        <p class="step-cap">Put the four phases together and you get the <dfn>pressure–volume loop</dfn>: one heartbeat drawn as one lap. The dot runs round anticlockwise (against a clock's hands): fill along the bottom, squeeze up the right, pump out across the top, relax down the left.</p>
+      </section>
+
+      <section class="step" data-step="8" data-step-title="Stroke volume: the loop's width" data-visual="sv" aria-labelledby="st-8" hidden>
+        <p class="step-kicker">How the loop works · the key measures</p>
+        <h2 id="st-8" tabindex="-1">Stroke volume: the loop's width</h2>
+        <figure class="step-fig"><svg class="lp" role="img" aria-label="The whole loop with a double-headed arrow across its width, labelled stroke volume. The right edge is marked full, the left edge is marked after pumping."></svg></figure>
+        <p class="step-cap"><dfn>Stroke volume</dfn> is the amount of blood pumped out in one beat. On the loop it is the width: from the right edge (full, before the squeeze) to the left edge (what is left after pumping). A wider loop means more blood per beat.</p>
+      </section>
+
+      <section class="step" data-step="9" data-step-title="Ejection fraction: the share pumped out" data-visual="ef" aria-labelledby="st-9" hidden>
+        <p class="step-kicker">How the loop works · the key measures</p>
+        <h2 id="st-9" tabindex="-1">Ejection fraction: the share pumped out</h2>
+        <figure class="step-fig"><svg class="lp" role="img" aria-label="The loop with a bar above it that runs from empty to full. The part of the bar under the loop's width is marked pumped out; the rest, from empty to the loop's left edge, is marked left behind. The pumped-out part is a little more than half of the bar."></svg></figure>
+        <p class="step-cap"><dfn>Ejection fraction</dfn> is the share of the blood in the full ventricle that one beat pumps out: the loop's width compared with the whole bar from empty to full. A healthy ventricle pumps out a little more than half of what it holds.</p>
+      </section>
+
+      <section class="step" data-step="10" data-step-title="Preload: how full before the squeeze" data-visual="preload" aria-labelledby="st-10" hidden>
+        <p class="step-kicker">What shapes the loop · 1 of 3</p>
+        <h2 id="st-10" tabindex="-1">Preload: how full before the squeeze</h2>
+        <figure class="step-fig"><svg class="lp" role="img" aria-label="The loop with its right edge highlighted and an arrow pointing right from it, labelled preload: more filling moves this edge to the right."></svg></figure>
+        <p class="step-cap"><dfn>Preload</dfn> is how much the ventricle is filled and stretched just before it squeezes. On the loop it decides where the right edge sits: more filling pushes the right edge further right, less filling pulls it back left.</p>
+      </section>
+
+      <section class="step" data-step="11" data-step-title="Afterload: what the ventricle pushes against" data-visual="afterload" aria-labelledby="st-11" hidden>
+        <p class="step-kicker">What shapes the loop · 2 of 3</p>
+        <h2 id="st-11" tabindex="-1">Afterload: what the ventricle pushes against</h2>
+        <figure class="step-fig"><svg class="lp" role="img" aria-label="The loop with its top edge highlighted and an arrow pressing down on it from above, labelled afterload: the push-back the ventricle must overcome to pump blood out."></svg></figure>
+        <p class="step-cap"><dfn>Afterload</dfn> is how hard the ventricle must push to open the aortic valve and drive blood into the <dfn>arteries</dfn>, the vessels leading away from the heart. On the loop it shows in the top edge: more push-back means pumping happens at a higher pressure.</p>
+      </section>
+
+      <section class="step" data-step="12" data-step-title="Contractility: how strongly the muscle squeezes" data-visual="contractility" aria-labelledby="st-12" hidden>
+        <p class="step-kicker">What shapes the loop · 3 of 3</p>
+        <h2 id="st-12" tabindex="-1">Contractility: how strongly the muscle squeezes</h2>
+        <figure class="step-fig"><svg class="lp" role="img" aria-label="The loop with its top left corner highlighted and an arrow pulling it up and to the left, labelled contractility: a stronger squeeze empties the ventricle further."></svg></figure>
+        <p class="step-cap"><dfn>Contractility</dfn> is how strongly the heart muscle itself squeezes, whatever its filling. On the loop it decides how far the top left corner reaches: a stronger squeeze empties the ventricle further, moving that corner, and the left edge, to the left.</p>
+      </section>
+
+      <section class="step" data-step="13" data-step-title="More preload: fluid through a drip" data-visual="cond" data-condition="fluids" aria-labelledby="st-13" hidden>
+        <p class="step-kicker">What changes the loop · 1 of 6</p>
+        <h2 id="st-13" tabindex="-1">More preload: fluid through a drip</h2>
+        <figure class="step-fig"><svg class="lp" role="img" aria-label="The normal loop, kept as a faint dashed outline, grows into a new loop that reaches further right and higher up and is wider: the ventricle fills more and pumps more blood per beat."></svg>
+          <div class="fig-foot"><p class="lp-legend"><span><i class="lg-normal"></i>normal</span><span><i class="lg-cond"></i>with more fluid</span></p><button type="button" class="btn small replay" data-replay>Replay</button></div></figure>
+        <p class="step-cap">A drip puts fluid into a <dfn>vein</dfn>, a vessel bringing blood back to the heart. More blood returns and the ventricle fills further: more preload. Stretched muscle squeezes harder, so the loop grows right, taller and wider: more blood per beat.</p>
+      </section>
+
+      <section class="step" data-step="14" data-step-title="More afterload: high blood pressure or a vessel-tightening drug" data-visual="cond" data-condition="afterload" aria-labelledby="st-14" hidden>
+        <p class="step-kicker">What changes the loop · 2 of 6</p>
+        <h2 id="st-14" tabindex="-1">More afterload: high blood pressure or a vessel-tightening drug</h2>
+        <figure class="step-fig"><svg class="lp" role="img" aria-label="The normal loop, kept as a faint dashed outline, changes into a taller, narrower loop: its left edge moves right, so more blood is left behind and less is pumped per beat, at a higher pressure."></svg>
+          <div class="fig-foot"><p class="lp-legend"><span><i class="lg-normal"></i>normal</span><span><i class="lg-cond"></i>with tighter arteries</span></p><button type="button" class="btn small replay" data-replay>Replay</button></div></figure>
+        <p class="step-cap">When small arteries tighten, as in high blood pressure or with a drug that narrows them (an <dfn>arterial vasoconstrictor</dfn>), the ventricle must push harder to get blood out: more afterload. The loop grows taller and narrower: more blood left behind, less pumped per beat.</p>
+      </section>
+
+      <section class="step" data-step="15" data-step-title="More contractility: a positive inotrope" data-visual="cond" data-condition="inotrope" aria-labelledby="st-15" hidden>
+        <p class="step-kicker">What changes the loop · 3 of 6</p>
+        <h2 id="st-15" tabindex="-1">More contractility: a positive inotrope</h2>
+        <figure class="step-fig"><svg class="lp" role="img" aria-label="The normal loop, kept as a faint dashed outline, changes into a wider loop: the right edge stays put while the left edge moves further left, so the ventricle empties further and pumps more per beat."></svg>
+          <div class="fig-foot"><p class="lp-legend"><span><i class="lg-normal"></i>normal</span><span><i class="lg-cond"></i>with an inotrope</span></p><button type="button" class="btn small replay" data-replay>Replay</button></div></figure>
+        <p class="step-cap">A <dfn>positive inotrope</dfn> is a drug that makes heart muscle squeeze more strongly: more contractility. From the same filling, the ventricle empties further, so the left edge moves left. The loop gets wider: more blood per beat, and a bigger share pumped out.</p>
+      </section>
+
+      <section class="step" data-step="16" data-step-title="Less preload: a venodilator" data-visual="cond" data-condition="venodil" aria-labelledby="st-16" hidden>
+        <p class="step-kicker">What changes the loop · 4 of 6</p>
+        <h2 id="st-16" tabindex="-1">Less preload: a venodilator</h2>
+        <figure class="step-fig"><svg class="lp" role="img" aria-label="The normal loop, kept as a faint dashed outline, shrinks into a smaller loop: the right edge moves left and the top drops, so the ventricle fills less and pumps less per beat."></svg>
+          <div class="fig-foot"><p class="lp-legend"><span><i class="lg-normal"></i>normal</span><span><i class="lg-cond"></i>with a venodilator</span></p><button type="button" class="btn small replay" data-replay>Replay</button></div></figure>
+        <p class="step-cap">A <dfn>venodilator</dfn> is a drug that widens the veins. More blood pools in them, so less returns and the ventricle fills less: less preload. The loop shrinks from the right: less blood per beat.</p>
+      </section>
+
+      <section class="step" data-step="17" data-step-title="Slower and gentler: a beta-blocker" data-visual="cond" data-condition="beta" aria-labelledby="st-17" hidden>
+        <p class="step-kicker">What changes the loop · 5 of 6</p>
+        <h2 id="st-17" tabindex="-1">Slower and gentler: a beta-blocker</h2>
+        <figure class="step-fig"><svg class="lp" role="img" aria-label="The normal loop, kept as a faint dashed outline, changes into a shorter loop of about the same width: the heart pumps at a lower pressure and about the same amount per beat."></svg>
+          <div class="fig-foot"><p class="lp-legend"><span><i class="lg-normal"></i>normal</span><span><i class="lg-cond"></i>with a beta-blocker</span></p><button type="button" class="btn small replay" data-replay>Replay</button></div></figure>
+        <p class="step-cap">A <dfn>beta-blocker</dfn> is a drug that blocks the signals telling the heart to speed up and squeeze harder, so it beats slower and squeezes less hard. The loop gets shorter (lower pressure) but keeps about its width; with fewer beats, less blood is pumped each minute.</p>
+      </section>
+
+      <section class="step" data-step="18" data-step-title="Heart failure with reduced ejection fraction" data-visual="cond" data-condition="hfref" aria-labelledby="st-18" hidden>
+        <p class="step-kicker">What changes the loop · 6 of 6</p>
+        <h2 id="st-18" tabindex="-1">Heart failure with reduced ejection fraction</h2>
+        <figure class="step-fig"><svg class="lp" role="img" aria-label="The normal loop, kept as a faint dashed outline, changes into a loop that sits further right and is lower: the ventricle is larger, much more blood is left behind, and a smaller share is pumped out."></svg>
+          <div class="fig-foot"><p class="lp-legend"><span><i class="lg-normal"></i>normal</span><span><i class="lg-cond"></i>heart failure</span></p><button type="button" class="btn small replay" data-replay>Replay</button></div></figure>
+        <p class="step-cap">In <dfn>heart failure</dfn> the heart cannot pump enough for the body. In this kind the muscle is weak: low contractility. It empties poorly, so more blood is left behind and the ventricle enlarges. The loop moves right and drops: the ejection fraction falls.</p>
+      </section>
+    </div>
+
+    <nav class="step-nav" aria-label="Lesson steps">
+      <button type="button" class="btn step-btn" data-step-back disabled><span aria-hidden="true">← </span>Back</button>
+      <div class="step-where">
+        <p class="step-progress" data-step-progress aria-live="polite">Step 1 of 18</p>
+        <span class="step-bar" aria-hidden="true"><i id="step-bar"></i></span>
+      </div>
+      <button type="button" class="btn primary step-btn" data-step-next>Next<span aria-hidden="true"> →</span></button>
+    </nav>
+  </div>
+
+  <div class="explore" id="lpanel-explore" role="tabpanel" aria-labelledby="ltab-explore" hidden>
+  <section class="card explore-intro" aria-labelledby="h-explore">
+    <h2 id="h-explore" tabindex="-1">Explore freely</h2>
+    <p><b>An illustrative teaching model.</b> This is the simulator behind the lesson: a small model of the left ventricle that beats live. Move the sliders or pick a scenario and watch the loop, the Wiggers diagram and the numbers settle to a new steady state; the faint dashed loop is where you started. Its numbers are outputs of a simplified model, not measurements or reference values. Typical adult values are in the Clinical values tab.</p>
+  </section>
+
   <section class="presets" aria-labelledby="h-presets">
     <h2 id="h-presets" class="eyebrow">Try a scenario</h2>
     <div class="preset-buttons" id="preset-buttons"></div>

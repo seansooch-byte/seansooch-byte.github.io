@@ -317,7 +317,11 @@ function updateStatus() {
   cs.classList.toggle('settled', isSettled && !!b && b.ejected);
 }
 
+// The guided lesson has no numbers on it, so the model only speaks up on the tabs that show it.
+const onLesson = () => !$('lpanel-lesson').hidden;
+
 function announce(b) {
+  if (onLesson()) return;
   const msg = b.ejected
     ? `Loop settled. Stroke volume ${fmt(b.SV, 1)} millilitres, ejection fraction ${fmt(b.EF * 100, 0)} percent, cardiac output ${fmt(b.CO, 2)} litres per minute.`
     : 'Loop settled with no ejection: stroke volume is zero.';
@@ -783,6 +787,11 @@ function renderStateNote() {
     `<p class="cv-cite">${esc(shortSource(st.source))}, ${esc(st.where)}.</p>`;
 }
 
+// Rows that are the same measure with a sex-specific reference band take the direction a
+// state gives for that measure: the states list it once, under the original row's id.
+const SAME_MEASURE = { ef_women: 'ef' };
+const shiftFor = (st, id) => st.shifts[id] ?? (SAME_MEASURE[id] ? st.shifts[SAME_MEASURE[id]] : undefined);
+
 function renderClinical(b) {
   lastBeat = b || lastBeat;
   if (!cv || $('lpanel-clinical').hidden) return;
@@ -821,8 +830,8 @@ function renderClinical(b) {
     li.classList.toggle('out', out);
     li.classList.toggle('offscale', cur > top);
 
-    const dir = st && st.shifts[v.id];
     if (!st) { shift.hidden = true; continue; }
+    const dir = shiftFor(st, v.id);
     shift.hidden = false;
     const exp = dir ? SHIFT[dir] : null;
     let model = '';
@@ -841,7 +850,7 @@ function renderClinical(b) {
   }
 }
 
-// ---------- tabs: Lesson / Clinical values (all widths) ----------
+// ---------- tabs: Lesson / Clinical values / Explore freely (all widths) ----------
 const ltabs = [...document.querySelectorAll('#lesson-tabs [role=tab]')];
 const lpanels = ltabs.map(t => $(t.getAttribute('aria-controls')));
 function selectLessonTab(tab, focus) {
@@ -945,7 +954,7 @@ function init() {
     const t = e.target;
     const tag = t.tagName;
     const typing = tag === 'TEXTAREA' || tag === 'SELECT' || (tag === 'INPUT' && !['range', 'checkbox', 'radio'].includes(t.type));
-    if (typing) return;
+    if (typing || onLesson()) return;
     if (e.key === ' ' || e.code === 'Space') {
       const native = tag === 'BUTTON' || tag === 'A' || tag === 'SUMMARY' || (tag === 'INPUT' && (t.type === 'checkbox' || t.type === 'radio'));
       if (native) return;
