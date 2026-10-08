@@ -1,13 +1,14 @@
 /* Expected: real edition routes, same reading section, working links without JS,
    no app routing, all three editions (Opus 5.5 pages built by ~/app-redesign/work/home-opus/build.py),
-   and no motion when requested. Three pages exist in every view: the home page, the Two Stories essay and
-   the Lab course page (/lab/, which the lab pipeline writes, is view A's). A lesson is an app: one page. */
+   and no motion when requested. Four pages exist in every view: the home page, the Two Stories essay,
+   the Lab course page (/lab/, which the lab pipeline writes, is view A's) and Monitoring the Situation
+   (/monitor/ is view A's). A lesson is an app: one page. */
 (function () {
   'use strict';
   function routeFor(pathname, design, hash = '') {
     const roots = {astra: '/', fable: '/designs/fable/', opus: '/designs/opus/'};
     const page = pathname.replace(/^\/designs\/(?:fable|opus)(?=\/)/, '').replace(/index\.html$/, '').replace(/\/$/, '') || '/';
-    if (!roots[design] || !['/', '/two-stories', '/lab'].includes(page)) return null;
+    if (!roots[design] || !['/', '/two-stories', '/lab', '/monitor'].includes(page)) return null;
     return roots[design] + (page === '/' ? '' : page.slice(1) + '/') + hash;
   }
   if (typeof module !== 'undefined' && module.exports) { module.exports = {routeFor}; return; }

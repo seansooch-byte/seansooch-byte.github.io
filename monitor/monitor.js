@@ -1,6 +1,8 @@
 // Monitoring the Situation: loads the daily briefing from the feed Worker and renders it.
 // Feed text comes from X and the web, so it is only ever set with textContent and
 // createElement (never innerHTML), and only https: links are rendered.
+// One script for all three views: /monitor/ (Astra), /designs/fable/monitor/ and /designs/opus/monitor/.
+// It finds its places by id and draws plain class names; each page styles them.
 (function () {
   'use strict';
 
