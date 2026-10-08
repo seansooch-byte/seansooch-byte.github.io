@@ -1,0 +1,473 @@
+{
+  "generated_at": "2026-10-08T07:06:47-04:00",
+  "sections": [
+    {
+      "name": "Finance/markets",
+      "items": [
+        {
+          "headline": "Stocks slip from records as the 10-year yield hits its highest since 2002",
+          "summary": "The 10-year Treasury yield touched about 5.35-5.36% Wednesday before a strong $39B auction pulled it back; the S&P 500 fell 0.22% to 7,801.77 and the Dow lost 0.66% to 51,179.87, a day after record highs. Futures were lower again early Thursday.",
+          "links": [
+            {
+              "label": "CNBC",
+              "url": "https://www.cnbc.com/2026/10/07/treasury-yields-auction-fomc-minutes.html"
+            },
+            {
+              "label": "Benzinga",
+              "url": "https://www.benzinga.com/markets/market-summary/26/10/62237802/dow-falls-over-300-points-as-treasury-yields-surge-investor-sentiment-weakens-fear-greed-index-remains-in-neutral-zone"
+            },
+            {
+              "label": "Reuters on X",
+              "url": "https://x.com/Reuters/status/2108047268167274883"
+            }
+          ],
+          "source_type": "both"
+        },
+        {
+          "headline": "Oil tops $100 as Hormuz tanker attacks hit a wartime weekly high",
+          "summary": "Reuters sources say attacks on tankers around the Strait of Hormuz had their worst week since the Iran war began, and Brent was around $104 early Thursday. The IEA is speeding up the rest of its emergency stock release, with diesel first in line.",
+          "links": [
+            {
+              "label": "TipRanks",
+              "url": "https://www.tipranks.com/news/stock-market-today-oct-8-futures-fall-as-brent-crude-reaches-104"
+            },
+            {
+              "label": "Al Jazeera",
+              "url": "https://www.aljazeera.com/news/2026/10/8/us-stocks-slide-as-oil-prices-fluctuate-over-renewed-iran-war-fears"
+            },
+            {
+              "label": "Reuters on X",
+              "url": "https://x.com/Reuters/status/2107868594168029497"
+            }
+          ],
+          "source_type": "both"
+        },
+        {
+          "headline": "Michael Burry says the market is in the 'denial' stage",
+          "summary": "Burry compares the AI-led rally to the setups before 2000 and 2008, says the denial phase usually lasts 6-9 months, and holds bearish 2027 put options on Nvidia, Palantir and Micron.",
+          "links": [
+            {
+              "label": "Burry Substack",
+              "url": "https://michaeljburry.substack.com/p/short-thoughts-the-ai-cloud-oligopoly"
+            },
+            {
+              "label": "Moneywise",
+              "url": "https://moneywise.com/investing/stocks/michael-burry-stock-market-crash-warning-2008"
+            },
+            {
+              "label": "X story",
+              "url": "https://x.com/i/trending/2107164174623097194"
+            }
+          ],
+          "source_type": "both"
+        },
+        {
+          "headline": "Indian stocks keep falling after an RBI rate hike and the oil spike",
+          "summary": "Indian shares fell again Thursday as foreign selling, a weak rupee, the recent RBI rate hike, and crude above $100 weighed on the market.",
+          "links": [
+            {
+              "label": "Reuters on X",
+              "url": "https://x.com/Reuters/status/2108095084251972029"
+            },
+            {
+              "label": "X story",
+              "url": "https://x.com/i/trending/2108089119255507428"
+            }
+          ],
+          "source_type": "x"
+        }
+      ]
+    },
+    {
+      "name": "Politics",
+      "items": [
+        {
+          "headline": "Trump announces automatic enrollment in 'Trump Accounts' for about 70M kids",
+          "summary": "Every child under 18 with a Social Security number now has a government-created investment account. Kids born 2025-2028 get a one-time $1,000 Treasury seed, but only after a parent claims the account in the app.",
+          "links": [
+            {
+              "label": "White House",
+              "url": "https://www.whitehouse.gov/releases/2026/10/a-financial-stake-in-the-future-for-nearly-70-million-american-children-trump-accounts-made-it-possible/"
+            },
+            {
+              "label": "AP/PBS",
+              "url": "https://www.pbs.org/newshour/politics/watch-trump-announces-eligible-u-s-children-automatically-enrolled-in-trump-accounts"
+            },
+            {
+              "label": "X story",
+              "url": "https://x.com/i/trending/2107884467922878892"
+            }
+          ],
+          "source_type": "both"
+        },
+        {
+          "headline": "Sen. Thom Tillis calls his Hegseth vote the 'biggest regret' of his career",
+          "summary": "In his new book and on his TV tour, the retiring North Carolina Republican criticizes Hegseth and other Trump cabinet picks. Fellow Republicans are pushing back ahead of the midterms.",
+          "links": [
+            {
+              "label": "AP/PBS",
+              "url": "https://www.pbs.org/newshour/politics/sen-tillis-says-his-vote-for-hegseth-was-biggest-regret-of-my-career-in-new-book"
+            },
+            {
+              "label": "News & Observer",
+              "url": "https://www.newsobserver.com/news/politics-government/article317497858.html"
+            },
+            {
+              "label": "X story",
+              "url": "https://x.com/i/trending/2107812462049530093"
+            }
+          ],
+          "source_type": "both"
+        },
+        {
+          "headline": "Iran says the Strait of Hormuz stays closed and 'illegal routes' will be blocked",
+          "summary": "An IRGC adviser said the strait remains under Iran's military control until Tehran's demands are met, and that smuggling routes near Oman's coast will soon be shut. This is still developing.",
+          "links": [
+            {
+              "label": "Al-Monitor",
+              "url": "https://www.al-monitor.com/originals/2026/10/iranian-official-says-illegal-routes-strait-hormuz-soon-be-blocked"
+            },
+            {
+              "label": "Reuters on X",
+              "url": "https://x.com/Reuters/status/2107896289828483408"
+            }
+          ],
+          "source_type": "both"
+        },
+        {
+          "headline": "Supreme Court weighs whether climate lawsuits against oil companies can go forward",
+          "summary": "In Monday's Suncor v. Boulder argument, the justices sent mixed signals on whether state-law climate suits against energy companies can proceed. Justice Alito sat the case out.",
+          "links": [
+            {
+              "label": "SCOTUSblog",
+              "url": "https://www.scotusblog.com/2026/10/court-sends-mixed-signals-on-whether-it-will-allow-state-tort-suits-seeking-to-hold-energy-compa/"
+            },
+            {
+              "label": "CBS News",
+              "url": "https://www.cbsnews.com/news/supreme-court-climate-change-energy-companies-boulder-colorado-arguments/"
+            }
+          ],
+          "source_type": "web"
+        }
+      ]
+    },
+    {
+      "name": "Pop culture",
+      "items": [
+        {
+          "headline": "'Artificial', with Andrew Garfield as Sam Altman, is the big festival talker",
+          "summary": "Luca Guadagnino's OpenAI drama opened NYFF to mostly strong reviews, with praise for Garfield's unsettling Altman, though some critics called the satire muddled. It opens December 25.",
+          "links": [
+            {
+              "label": "Variety",
+              "url": "https://variety.com/2026/film/news/artificial-first-reactions-sam-altman-open-ai-1236899622/"
+            },
+            {
+              "label": "THR review",
+              "url": "https://www.hollywoodreporter.com/movies/movie-reviews/artificial-review-andrew-garfield-luca-guadagnino-open-ai-1236723005/"
+            },
+            {
+              "label": "X story",
+              "url": "https://x.com/i/trending/2107941561833009663"
+            }
+          ],
+          "source_type": "both"
+        },
+        {
+          "headline": "Eva Marie Saint dies at 102",
+          "summary": "The Oscar-winning star of 'On the Waterfront' and 'North by Northwest' died of natural causes at her Los Angeles home.",
+          "links": [
+            {
+              "label": "AP",
+              "url": "https://apnews.com/article/eva-marie-saint-dies-7019a82dbbac40b99a976354cbb89200"
+            },
+            {
+              "label": "NPR",
+              "url": "https://www.npr.org/2026/10/06/462030457/eva-marie-saint-on-the-waterfront-dead-102"
+            }
+          ],
+          "source_type": "web"
+        },
+        {
+          "headline": "Paramount closes its Warner Bros. Discovery takeover, and the new company is called Skydance",
+          "summary": "The merger, which closed Monday, puts Paramount, Warner Bros., HBO, CNN and their streaming services under one company, now trading as SKYD.",
+          "links": [
+            {
+              "label": "AP on X",
+              "url": "https://x.com/AP/status/2107460752185364481"
+            },
+            {
+              "label": "BBC",
+              "url": "https://www.bbc.com/news/articles/cxj0604d33qzo"
+            },
+            {
+              "label": "Press release",
+              "url": "https://www.prnewswire.com/news-releases/paramount-completes-acquisition-of-warner-bros-discovery-creating-a-new-global-entertainment-leader-skydance-302899765.html"
+            }
+          ],
+          "source_type": "both"
+        },
+        {
+          "headline": "Mark Hamill makes a surprise cameo in Mike Flanagan's 'Carrie'",
+          "summary": "Hamill is almost unrecognizable as a fortune teller in episode six of the new Prime Video Stephen King series. 'Carrie' is trending on X.",
+          "links": [
+            {
+              "label": "Page Six",
+              "url": "https://pagesix.com/2026/10/07/entertainment/star-wars-legend-mark-hamill-unrecognizable-in-surprise-carrie-cameo/"
+            }
+          ],
+          "source_type": "web"
+        }
+      ]
+    },
+    {
+      "name": "Sports",
+      "items": [
+        {
+          "headline": "Brewers beat the Padres 3-1 and head back to the NLCS",
+          "summary": "Garrett Mitchell tripled, scored, and robbed Manny Machado in the eighth as MLB's best regular-season team closed out the NLDS 3-1.",
+          "links": [
+            {
+              "label": "CBS Sports",
+              "url": "https://www.cbssports.com/mlb/news/brewers-top-padres-in-game-4-to-reach-second-straight-nlcs/"
+            },
+            {
+              "label": "MLB on X",
+              "url": "https://x.com/MLB/status/2108063093200949653"
+            }
+          ],
+          "source_type": "both"
+        },
+        {
+          "headline": "Dodgers eliminate the Braves and set up an NLCS rematch with Milwaukee",
+          "summary": "Andy Pages' two-run single in the seventh decided a 4-1 Game 4 win. Game 1 of Dodgers-Brewers is Sunday in Milwaukee.",
+          "links": [
+            {
+              "label": "AP",
+              "url": "https://apnews.com/article/dodgers-braves-score-nlds-pages-muncy-e6f70cc747da347610157ec4b359979f"
+            },
+            {
+              "label": "MLB on X",
+              "url": "https://x.com/MLB/status/2108063900105068925"
+            }
+          ],
+          "source_type": "both"
+        },
+        {
+          "headline": "Rays sweep the Yankees, helped by a fan-interference call",
+          "summary": "Tampa Bay won Game 3 4-3 after replay took away Anthony Volpe's would-be tying homer and ruled it a double. 'Cashman' is trending on X as the offseason heat starts.",
+          "links": [
+            {
+              "label": "ESPN",
+              "url": "https://www.espn.com/mlb/story/_/id/50130798/tampa-bay-rays-complete-sweep-new-york-yankees-advance-alcs"
+            },
+            {
+              "label": "CBS Sports",
+              "url": "https://www.cbssports.com/mlb/news/yankees-rays-fan-interference-alds-game-3-anthony-volpe-victor-mesa-jr/"
+            },
+            {
+              "label": "MLB on X",
+              "url": "https://x.com/MLB/status/2108032977951416717"
+            }
+          ],
+          "source_type": "both"
+        },
+        {
+          "headline": "Guardians stay alive, beating the White Sox 9-3",
+          "summary": "José Ramírez and Jo Adell starred as Cleveland forced a Game 4. Chicago still leads the ALDS 2-1.",
+          "links": [
+            {
+              "label": "AP",
+              "url": "https://apnews.com/article/guardians-white-sox-score-ramirez-adell-alds-70785b1be4c6d65913e2848c6200bc86"
+            },
+            {
+              "label": "MLB on X",
+              "url": "https://x.com/MLB/status/2107980528389366052"
+            }
+          ],
+          "source_type": "both"
+        },
+        {
+          "headline": "Tonight's TNF: Buccaneers (0-4) at Cowboys (2-2)",
+          "summary": "Rookie QB Jalon Daniels makes his first road start for Tampa Bay at 8:15 p.m. ET on Prime Video.",
+          "links": [
+            {
+              "label": "NFL.com",
+              "url": "https://www.nfl.com/news/buccaneers-vs-cowboys-three-must-know-storylines-for-thursday-s-week-5-prime-time-game"
+            }
+          ],
+          "source_type": "web"
+        }
+      ]
+    },
+    {
+      "name": "Tech & AI",
+      "items": [
+        {
+          "headline": "OpenAI rolls out GPT-6 with 'Intelligent UI' in ChatGPT",
+          "summary": "Paid tiers get GPT-6 Sol now and Free/Go users get GPT-6 Luna starting today. Answers can now include charts, buttons, forms and other interactive pieces.",
+          "links": [
+            {
+              "label": "OpenAI",
+              "url": "https://openai.com/index/gpt-6-for-everyone/"
+            },
+            {
+              "label": "OpenAI on X",
+              "url": "https://x.com/OpenAI/status/2107894997538525580"
+            }
+          ],
+          "source_type": "both"
+        },
+        {
+          "headline": "Anthropic launches Claude Haiku 5.5",
+          "summary": "Anthropic's new small model has a 1M-token context window and, according to the company, costs about 75% less to run than Haiku 4.5.",
+          "links": [
+            {
+              "label": "Anthropic",
+              "url": "https://www.anthropic.com/claude-haiku-5-5"
+            },
+            {
+              "label": "Anthropic on X",
+              "url": "https://x.com/AnthropicAI/status/2107894208547983705"
+            }
+          ],
+          "source_type": "both"
+        },
+        {
+          "headline": "OpenAI posts 722 AI-generated math papers, including a claimed 'quasi-Riemann' result",
+          "summary": "The unreleased model's work includes a claimed zero-free half-plane Re(s) > 7/8 for the zeta function (it does not prove the Riemann hypothesis). Many papers have Lean proofs, but not all are formalized or independently checked, so mathematicians are still reviewing them.",
+          "links": [
+            {
+              "label": "GitHub",
+              "url": "https://github.com/openai/math/tree/main"
+            },
+            {
+              "label": "XenoSpectrum",
+              "url": "https://xenospectrum.com/en/openai-math-manuscripts-verification/"
+            },
+            {
+              "label": "X story",
+              "url": "https://x.com/i/trending/2107577903374622920"
+            }
+          ],
+          "source_type": "both"
+        },
+        {
+          "headline": "Bezos says AI could make one-income families and 3-day weeks possible",
+          "summary": "In a Fox News interview at Blue Origin's Cape Canaveral factory, Bezos argued that AI productivity gains could lead to labor shortages rather than mass unemployment.",
+          "links": [
+            {
+              "label": "Fox News",
+              "url": "https://www.foxnews.com/media/jeff-bezos-reveals-his-vision-americas-next-frontier-ai-moon"
+            },
+            {
+              "label": "Yahoo Finance",
+              "url": "https://finance.yahoo.com/technology/ai/articles/jeff-bezos-claims-ai-could-085355659.html"
+            },
+            {
+              "label": "X story",
+              "url": "https://x.com/i/trending/2108008645128597828"
+            }
+          ],
+          "source_type": "both"
+        }
+      ]
+    },
+    {
+      "name": "Medicine",
+      "items": [
+        {
+          "headline": "Hurricane Isaias is strengthening and headed for the northern Gulf Coast",
+          "summary": "At 4 a.m. CDT it had 80 mph winds and was forecast to make landfall between Ocean Springs, MS and the Florida Panhandle late Friday or early Saturday, with 5-7 ft surge in spots. Worth watching for EMS and ED surge and evacuations; this is developing.",
+          "links": [
+            {
+              "label": "NHC advisory",
+              "url": "https://www.nhc.noaa.gov/archive/2026/al09/al092026.public.007.shtml"
+            },
+            {
+              "label": "NHC on X",
+              "url": "https://x.com/NHC_Atlantic/status/2108119216498843848"
+            }
+          ],
+          "source_type": "both"
+        },
+        {
+          "headline": "Flu season is starting about two months early in the West",
+          "summary": "Seattle Children's and other western systems are seeing December-level flu, mostly H1N1. CDC says activity is still low nationally but growing in 48 states, and there's no broad federal vaccine campaign yet.",
+          "links": [
+            {
+              "label": "Becker's",
+              "url": "https://www.beckershospitalreview.com/quality/public-health/seattle-childrens-sees-early-flu-surge-as-us-activity-climbs/"
+            },
+            {
+              "label": "Axios Portland",
+              "url": "https://www.axios.com/local/portland/2026/10/06/flu-season-early-respiratory-illness"
+            },
+            {
+              "label": "X story",
+              "url": "https://x.com/i/trending/2107849659867914644"
+            }
+          ],
+          "source_type": "both"
+        },
+        {
+          "headline": "FDA tells a court its mifepristone safety review will run to March 2027",
+          "summary": "In the Louisiana v. FDA case, the agency said study results are due in mid-December, the report by March, and no REMS changes before then.",
+          "links": [
+            {
+              "label": "The Hill",
+              "url": "https://thehill.com/policy/healthcare/6135515-fda-mifepristone-abortion-pill-review-delay/"
+            },
+            {
+              "label": "Court filing",
+              "url": "https://litigationtracker.law.georgetown.edu/wp-content/uploads/2025/10/Louisiana_2026.10.07_DEFENDANTS-STATUS-REPORT.pdf"
+            },
+            {
+              "label": "X story",
+              "url": "https://x.com/i/trending/2108047108641018265"
+            }
+          ],
+          "source_type": "both"
+        },
+        {
+          "headline": "RFK Jr. opens an NIH clinic to study suspected vaccine injuries",
+          "summary": "The plan also proposes paying doctors to report suspected injuries and upgrading adverse-event reporting. Budget, enrollment rules and oversight haven't been disclosed, and experts are wary.",
+          "links": [
+            {
+              "label": "Bloomberg Law",
+              "url": "https://news.bloomberglaw.com/health-law-and-business/rfk-jr-to-announce-new-vaccine-injury-research-at-nih"
+            },
+            {
+              "label": "Medical Daily",
+              "url": "https://www.medicaldaily.com/kennedy-nih-vaccine-injury-clinic-budget-oversight-questions-479685"
+            },
+            {
+              "label": "X story",
+              "url": "https://x.com/i/trending/2108006278400213024"
+            }
+          ],
+          "source_type": "both"
+        },
+        {
+          "headline": "WHO is still seeking answers on a Russian plague-lab worker's pneumonia death",
+          "summary": "A 28-year-old at Irkutsk's Anti-Plague Institute died October 2. Russia says contacts tested negative for plague, but WHO says it can't complete a risk assessment without more data. Lockdown rumors on X appear unfounded; this is developing.",
+          "links": [
+            {
+              "label": "NBC News",
+              "url": "https://www.nbcnews.com/world/russia/russia-says-no-plague-found-contacts-siberian-lab-worker-died-rcna601805"
+            },
+            {
+              "label": "Healthbeat",
+              "url": "https://www.healthbeat.org/2026/10/06/russia-plague-lab-researcher-death-raises-lab-accident-concerns/"
+            },
+            {
+              "label": "X story",
+              "url": "https://x.com/i/trending/2108148046458683535"
+            }
+          ],
+          "source_type": "both"
+        }
+      ]
+    }
+  ]
+}

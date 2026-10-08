@@ -56,6 +56,7 @@ flowchart LR
 | `music/last-light/media/` | HLS video segments (most of the repo's size) | No. Rendered elsewhere. |
 | `videos/`, `screenshots/`, `*.pdf`, `favicon.svg` | Films, card images, papers | Yes |
 | `lab/` | The Lab: one small app a day, its index and ledger (see The Lab below) | Yes |
+| `monitor/` | Monitoring the Situation: the daily briefing page and its saved copy (see Monitoring the Situation below) | Yes |
 | `_headers`, `_redirects`, `robots.txt`, `sitemap.xml` | Edge behaviour and crawl rules | Yes |
 | `CNAME` | Left over from GitHub Pages; still ships | Leave it |
 | `*.md`, `tools/`, `.gitattributes`, `.gitignore` | Never shipped | Yes |
@@ -148,6 +149,30 @@ each app). Nothing in it is generated from a source on Sean's laptop.
   live in one file, `lab/<slug>/clinical-values.json`, so they can be audited in one place; the second-opinion
   reviewer must verify each against its source.
 
+## Monitoring the Situation
+
+`/monitor/` shows Sean's daily news briefing (finance, politics, pop culture, sports, tech and AI, medicine). It is
+written by hand here; nothing in `monitor/` is generated. The briefing itself is **not** in this repo's deploys: the page
+fetches it at runtime, so a new briefing goes live without a site deploy.
+
+- `monitor/index.html`, `monitor/monitor.css`, `monitor/monitor.js`: the page. Self-hosted script, no inline JavaScript,
+  no third-party scripts. It opens with the site's shared top bar (as on `/lab/`), with a Monitoring item marked
+  `aria-current="page"`; the bar's CSS is copied at the end of `monitor/monitor.css`. The homepage's own nav is
+  generated off-repo and has no Monitoring link yet.
+- The page fetches `https://feed.seansooch.dev/v1/feed.json` and renders it with `textContent` and `createElement`
+  only, never `innerHTML`: the briefing is gathered from X and the web and is treated as untrusted. Only `https:` links
+  are rendered. It shows "Updated … ago" from `generated_at` and flags the briefing as stale after about 30 hours.
+- `monitor/feed.json` is a saved copy of one briefing. If the feed cannot be reached (or returns something unusable),
+  the page shows that copy with a visible "Showing saved copy" note. Refresh it now and then by copying a newer
+  briefing over it; it only ships with a site deploy.
+- **The feed** is a Cloudflare Worker, `monitor-feed`, on the Workers Custom Domain `feed.seansooch.dev`, backed by
+  the KV namespace `monitor-feed` (keys `latest`, `prev`, `archive:YYYY-MM-DD` kept 30 days). Its source lives outside
+  this repo (`/workspace/monitor-feed` on the agent box, with its own README). `GET /v1/feed.json` is public, cached 60
+  seconds, with an ETag; CORS is allowed only for `https://seansooch.dev` and `https://sean-sooch-portfolio.pages.dev`,
+  so the page reads the feed on those hosts and falls back to the saved copy elsewhere (local previews, archive
+  hosts). Publishing is `PUT /v1/feed` with a bearer secret that is not in this repo; the Worker validates the schema
+  and rejects non-`https` links.
+
 ## Edge behaviour
 
 - `_redirects` sends `/sims`, `/simulators`, `/cpr`, `/codeblue`, `/alignment` and `/alignment-simulator` to the
@@ -157,15 +182,19 @@ each app). Nothing in it is generated from a source on Sean's laptop.
 - `_headers` also sets security headers on every path and host: HSTS (one year, no `includeSubDomains`, no `preload`),
   `nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy`, a `Permissions-Policy`, and a **report-only**
   Content-Security-Policy that logs violations to the console and blocks nothing. Its `connect-src` names every host the
-  homepage probes: a new probed host needs an entry there. Cloudflare injects Web Analytics
+  homepage probes: a new probed host needs an entry there. It also names `https://feed.seansooch.dev`, the briefing
+  feed that `/monitor/` reads; that entry is written as if the policy were enforced. Cloudflare injects Web Analytics
   (`static.cloudflareinsights.com`) into live HTML, so the policy allows that script too.
 - `www.seansooch.dev` redirects to the apex by a Cloudflare Redirect Rule, not by anything in this repo.
 - An unknown path answers **200 with the homepage**. A status code proves nothing about a deploy; compare bytes.
 
 ## Third-party requests at runtime
 
-Google Fonts on most pages, and `hls.js` from cdn.jsdelivr.net (pinned by integrity hash) on `/music/last-light/`.
-Nothing else is loaded from another origin (the homepage host probes are requests whose responses are never read), and no page posts data anywhere.
+Google Fonts on most pages, `hls.js` from cdn.jsdelivr.net (pinned by integrity hash) on `/music/last-light/`, and
+the briefing JSON from `https://feed.seansooch.dev/v1/feed.json` on `/monitor/` (data only, rendered as text; see
+Monitoring the Situation). That feed is the one place a page reads data from another origin; nothing else is loaded
+from another origin (the homepage host probes are requests whose responses are never read), and no page posts data
+anywhere.
 
 ## Other hosts
 

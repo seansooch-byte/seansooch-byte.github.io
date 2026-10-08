@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Monitoring the Situation · Sean Sooch</title>
+<meta name="description" content="Monitoring the Situation: Sean Sooch's daily briefing on finance, politics, pop culture, sports, tech and AI, and medicine, with links to every source.">
+<link rel="canonical" href="https://seansooch.dev/monitor/">
+<meta property="og:title" content="Monitoring the Situation · Sean Sooch">
+<meta property="og:description" content="A daily briefing on finance, politics, pop culture, sports, tech and AI, and medicine, with links to every source.">
+<meta property="og:url" content="https://seansooch.dev/monitor/">
+<meta name="theme-color" content="#f7f7f2">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://feed.seansooch.dev" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/monitor/monitor.css">
+<script src="/monitor/monitor.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the briefing</a>
+<header class="site-top">
+  <div class="site-top-in">
+    <a class="site-brand" href="/" aria-label="Sean Sooch, home">SS<span aria-hidden="true">—</span>03</a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="site-nav-home" href="/#ch3">Work</a>
+      <a href="/#ch4">Writing</a>
+      <a href="/#appb">Films</a>
+      <a href="/#appa">Editions</a>
+      <a class="site-nav-lab" href="/lab/">The Lab</a>
+      <a class="site-nav-monitor" href="/monitor/" aria-current="page">Monitoring</a>
+    </nav>
+  </div>
+</header>
+<main id="main" class="wrap">
+  <p class="kicker">Daily briefing · refreshed every morning</p>
+  <h1>Monitoring the <span>Situation</span></h1>
+  <p class="lede">What happened in finance, politics, pop culture, sports, tech and AI, and medicine, in a few lines each, with a link to every source. Gathered from the web and from X, checked against the reporting, and written up once a day.</p>
+  <div class="status" id="status">
+    <span class="status-time" id="status-time">Loading the latest briefing…</span>
+    <span class="status-flag" id="status-stale" hidden>Stale: no new briefing in over a day</span>
+    <span class="status-flag" id="status-saved" hidden>Showing saved copy: the live feed could not be reached</span>
+  </div>
+  <p class="vh" id="announce" role="status" aria-live="polite"></p>
+  <div class="feed" id="feed" aria-busy="true">
+    <div class="loading" aria-hidden="true">
+      <div class="sk sk-h"></div><div class="sk"></div><div class="sk sk-s"></div>
+      <div class="sk sk-h"></div><div class="sk"></div><div class="sk sk-s"></div>
+    </div>
+  </div>
+  <noscript><p class="note">This page loads the briefing with JavaScript. Turn it on to read today's briefing.</p></noscript>
+</main>
+<footer><div class="wrap"><a href="/">Back to seansooch.dev</a><span>Summaries link to their sources. Read the sources before relying on anything here.</span></div></footer>
+</body>
+</html>
