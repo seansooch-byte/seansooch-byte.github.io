@@ -13,5 +13,20 @@
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
     }
+  },
+  {
+    "slug": "nephron-diuretics",
+    "title": "The Nephron and Diuretics",
+    "date": "2026-10-08",
+    "description": "Follow salt and water along a nephron, segment by segment, and see where each diuretic blocks salt reabsorption and how much water follows it out.",
+    "category": "medicine",
+    "builder": {
+      "tool": "Claude Code",
+      "model": "claude-opus-5-5"
+    },
+    "reviewer": {
+      "tool": "OpenAI Codex",
+      "model": "gpt-6.1-sol"
+    }
   }
 ]

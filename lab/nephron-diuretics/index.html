@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Nephron and Diuretics · The Lab · Sean Sooch</title>
+<meta name="description" content="Follow salt and water along a nephron, segment by segment, and see where each diuretic blocks salt reabsorption and how much water follows it out. A guided lesson, one picture at a time.">
+<link rel="canonical" href="https://seansooch.dev/lab/nephron-diuretics/">
+<meta property="og:title" content="The Nephron and Diuretics · The Lab · Sean Sooch">
+<meta property="og:description" content="Follow salt and water along a nephron, segment by segment, and see where each diuretic blocks salt reabsorption and how much water follows it out.">
+<meta property="og:url" content="https://seansooch.dev/lab/nephron-diuretics/">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#f7f7f2">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script type="module" src="app.js"></script>
+<script type="module" src="lesson.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the lesson</a>
+<header class="site-top">
+  <div class="site-top-in">
+    <a class="site-brand" href="/" aria-label="Sean Sooch, home">SS<span aria-hidden="true">—</span>03</a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="site-nav-home" href="/#ch3">Work</a>
+      <a href="/#ch4">Writing</a>
+      <a href="/#appb">Films</a>
+      <a href="/#appa">Editions</a>
+      <a class="site-nav-lab" href="/lab/" aria-current="true">The Lab</a>
+    </nav>
+  </div>
+</header>
+
+<p class="banner" id="banner"><span class="wrap"><strong>Educational, not for clinical use.</strong> A simplified teaching model; it shows directions of change, never how much of a drug to give or treatment advice.</span></p>
+
+<main id="main" class="wrap">
+  <section class="hero" aria-labelledby="title">
+    <p class="kicker"><a class="crumb" href="/lab/">All lessons</a><span aria-hidden="true"> / </span>The Lab · Lesson 2 · The kidney</p>
+    <h1 id="title">The Nephron and <span>Diuretics</span></h1>
+    <div class="lede">
+      <p>Follow salt and water along a nephron, segment by segment, and see where each diuretic stops salt being taken back, and how much water follows it out.</p>
+      <p class="prev">Builds on <a href="/lab/pressure-volume-loop/">Lesson 1: The Pressure–Volume Loop</a>. Blood volume, met at the end here, is what fills the heart.</p>
+    </div>
+  </section>
+
+  <div class="lesson-tabs" id="lesson-tabs" role="tablist" aria-label="Lesson, clinical values and free exploration">
+    <button type="button" role="tab" id="ltab-lesson" aria-controls="lpanel-lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="ltab-clinical" aria-controls="lpanel-clinical" aria-selected="false" tabindex="-1">Clinical values</button>
+    <button type="button" role="tab" id="ltab-explore" aria-controls="lpanel-explore" aria-selected="false" tabindex="-1">Explore freely</button>
+  </div>
+  <p class="sr-only" id="announcer" aria-live="polite"></p>
+
+  <div class="guide" id="lpanel-lesson" role="tabpanel" aria-labelledby="ltab-lesson">
+    <div class="steps" id="steps">
+      <section class="step" data-step="1" data-step-title="Meet the nephron" data-visual="meet" aria-labelledby="st-1">
+        <p class="step-kicker">How the kidney handles salt and water</p>
+        <h2 id="st-1" tabindex="-1">Meet the nephron</h2>
+        <figure class="step-fig"><svg class="np" role="img" aria-label="Diagram of one nephron. At top left a round filter sits on a small tuft of blood vessels. One long tube leaves it, winds, dips down in a hairpin loop, climbs back up, winds again and joins a collecting tube that runs down and carries urine out to the bladder. A kidney outline at top right is packed with nephrons."></svg></figure>
+        <p class="step-cap">Each kidney is packed with tiny tubes called <dfn>nephrons</dfn>. Every nephron starts with a filter that strains fluid out of the blood, then runs it through one long, folded tube. Whatever is still in the tube at the end becomes urine.</p>
+      </section>
+
+      <section class="step" data-step="2" data-step-title="The filter: where urine begins" data-visual="filter" aria-labelledby="st-2" hidden>
+        <p class="step-kicker">How the kidney handles salt and water</p>
+        <h2 id="st-2" tabindex="-1">The filter: where urine begins</h2>
+        <figure class="step-fig"><svg class="np" role="img" aria-label="The filter at the start of the nephron is highlighted. Blood flows into its tuft of vessels. Small specks of salt and drops of water stream out of the filter into the first stretch of tube, labelled filtrate. Blood cells stay in the blood."></svg>
+          <div class="fig-foot"><button type="button" class="btn small replay" data-replay>Replay</button></div></figure>
+        <p class="step-cap">The filter, the <dfn>glomerulus</dfn>, is a ball of tiny blood vessels. Blood pressure pushes water and small dissolved things, like salt, through it into the tube, while cells and proteins stay behind. That fluid is the <dfn>filtrate</dfn>.</p>
+      </section>
+
+      <section class="step" data-step="3" data-step-title="Almost all of it goes back" data-visual="back" aria-labelledby="st-3" hidden>
+        <p class="step-kicker">How the kidney handles salt and water</p>
+        <h2 id="st-3" tabindex="-1">Almost all of it goes back</h2>
+        <figure class="step-fig"><svg class="np" role="img" aria-label="Three columns side by side. The first, filtered each day, is very tall. The second, taken back into the blood, rises to almost the same height. The third, left as urine, is only a thin sliver."></svg>
+          <div class="fig-foot"><button type="button" class="btn small replay" data-replay>Replay</button></div></figure>
+        <p class="step-cap">The filters make a huge amount of filtrate every day, far more than all the blood in your body. Nearly all of it must be taken back into the blood. Taking it back is <dfn>reabsorption</dfn>. Only a sliver is left to become urine.</p>
+      </section>
+
+      <section class="step" data-step="4" data-step-title="Water follows salt" data-visual="osmosis" aria-labelledby="st-4" hidden>
+        <p class="step-kicker">How the kidney handles salt and water</p>
+        <h2 id="st-4" tabindex="-1">Water follows salt</h2>
+        <figure class="step-fig"><svg class="np" role="img" aria-label="Close-up of the tube wall. On the left is the inside of the tube, on the right the blood, with a wall of cells between. First, specks of salt are carried through the wall into the blood. Then drops of water follow them across on their own."></svg>
+          <div class="fig-foot"><button type="button" class="btn small replay" data-replay>Replay</button></div></figure>
+        <p class="step-cap">Cells in the tube wall carry salt (strictly, <dfn>sodium</dfn>, the part of table salt the body counts) out to the blood. Where a wall lets water through, water then follows on its own, toward the side with more dissolved particles. This pull is <dfn>osmosis</dfn>.</p>
+      </section>
+
+      <section class="step" data-step="5" data-step-title="Proximal tubule: the big take-back" data-visual="seg" data-seg="0" aria-labelledby="st-5" hidden>
+        <p class="step-kicker">Along the nephron · stop 1 of 5</p>
+        <h2 id="st-5" tabindex="-1">Proximal tubule: the big take-back</h2>
+        <figure class="step-fig"><svg class="np" role="img" aria-label="The nephron with its first winding stretch, the proximal tubule, highlighted. Two large arrows leave it back towards the blood: a salt arrow and a water arrow of about the same size."></svg>
+          <div class="fig-foot"><button type="button" class="btn small replay" data-replay>Replay</button></div></figure>
+        <p class="step-cap">The first stretch is the <dfn>proximal tubule</dfn> ("proximal" means nearest the filter). It does the bulk of the work, taking back most of the salt, and water follows in step, so the fluid left behind is just as salty as before.</p>
+      </section>
+
+      <section class="step" data-step="6" data-step-title="Down the loop: water leaves" data-visual="seg" data-seg="1" aria-labelledby="st-6" hidden>
+        <p class="step-kicker">Along the nephron · stop 2 of 5</p>
+        <h2 id="st-6" tabindex="-1">Down the loop: water leaves</h2>
+        <figure class="step-fig"><svg class="np" role="img" aria-label="The nephron with the downward limb of its hairpin loop highlighted. It dips into the deep layer of the kidney, shaded darker and darker as it gets saltier. A water arrow leaves the downward limb; no salt leaves here. The proximal tubule's arrows from the last step are shown faded."></svg>
+          <div class="fig-foot"><button type="button" class="btn small replay" data-replay>Replay</button></div></figure>
+        <p class="step-cap">Next the tube dips into the kidney's deep layer, the <dfn>medulla</dfn>, which is kept very salty. This hairpin is the <dfn>loop of Henle</dfn>. On the way down its walls let water out but hold on to salt, so the salty surroundings draw water out.</p>
+      </section>
+
+      <section class="step" data-step="7" data-step-title="Back up the loop: salt is pulled out" data-visual="seg" data-seg="2" aria-labelledby="st-7" hidden>
+        <p class="step-kicker">Along the nephron · stop 3 of 5</p>
+        <h2 id="st-7" tabindex="-1">Back up the loop: salt is pulled out</h2>
+        <figure class="step-fig"><svg class="np" role="img" aria-label="The nephron with the upward, thick part of the loop highlighted. A large salt arrow leaves it; no water leaves, because its walls block water. Earlier arrows are shown faded."></svg>
+          <div class="fig-foot"><button type="button" class="btn small replay" data-replay>Replay</button></div></figure>
+        <p class="step-cap">The upward <dfn>thick ascending limb</dfn> works the other way. Its walls block water, but a <dfn>salt carrier</dfn> (a protein that ferries salt across) pulls out a large share of the filtered salt. That keeps the deep layer salty; the fluid inside turns watery.</p>
+      </section>
+
+      <section class="step" data-step="8" data-step-title="Early distal tubule: fine-tuning" data-visual="seg" data-seg="3" aria-labelledby="st-8" hidden>
+        <p class="step-kicker">Along the nephron · stop 4 of 5</p>
+        <h2 id="st-8" tabindex="-1">Early distal tubule: fine-tuning</h2>
+        <figure class="step-fig"><svg class="np" role="img" aria-label="The nephron with the first part of the second winding stretch, the early distal tubule, highlighted. A small salt arrow leaves it; no water leaves, because its walls block water. Earlier arrows are shown faded."></svg>
+          <div class="fig-foot"><button type="button" class="btn small replay" data-replay>Replay</button></div></figure>
+        <p class="step-cap">Back near the filter, the <dfn>early distal tubule</dfn> ("distal" means further away) uses a different salt carrier to take back a small extra share of salt. Its walls also block water, so the fluid inside gets more watery still.</p>
+      </section>
+
+      <section class="step" data-step="9" data-step-title="Collecting duct: salt in, potassium out" data-visual="seg" data-seg="4" aria-labelledby="st-9" hidden>
+        <p class="step-kicker">Along the nephron · stop 5 of 5</p>
+        <h2 id="st-9" tabindex="-1">Collecting duct: salt in, potassium out</h2>
+        <figure class="step-fig"><svg class="np" role="img" aria-label="The nephron with the long collecting duct highlighted. A small salt arrow leaves it back to the blood, and a dark potassium arrow points into it from the blood side. Earlier arrows are shown faded."></svg>
+          <div class="fig-foot"><button type="button" class="btn small replay" data-replay>Replay</button></div></figure>
+        <p class="step-cap">Many nephrons drain into one <dfn>collecting duct</dfn>. Here the hormone <dfn>aldosterone</dfn>, the body's salt-keeping signal, opens salt channels. Taking salt back makes the duct push <dfn>potassium</dfn>, another blood salt the heart and muscles need, out into the urine.</p>
+      </section>
+
+      <section class="step" data-step="10" data-step-title="Collecting duct: the last chance for water" data-visual="seg" data-seg="5" aria-labelledby="st-10" hidden>
+        <p class="step-kicker">Along the nephron · stop 5 of 5</p>
+        <h2 id="st-10" tabindex="-1">Collecting duct: the last chance for water</h2>
+        <figure class="step-fig"><svg class="np" role="img" aria-label="The collecting duct highlighted again as it runs down through the salty deep layer. A large water arrow now leaves it back to the blood. Earlier arrows are shown faded."></svg>
+          <div class="fig-foot"><button type="button" class="btn small replay" data-replay>Replay</button></div></figure>
+        <p class="step-cap">Running down through the salty deep layer, the duct can let water out too, but only when <dfn>antidiuretic hormone</dfn> (the water-keeping signal) opens water channels in its walls. The salty surroundings then pull water back, leaving concentrated urine.</p>
+      </section>
+
+      <section class="step" data-step="11" data-step-title="The whole journey" data-visual="whole" aria-labelledby="st-11" hidden>
+        <p class="step-kicker">Putting it together</p>
+        <h2 id="st-11" tabindex="-1">The whole journey</h2>
+        <figure class="step-fig"><svg class="np" role="img" aria-label="The whole nephron with every arrow drawn in turn: big salt and water arrows from the proximal tubule, water from the downward limb, salt from the thick upward limb, a little salt from the early distal tubule, and salt and water from the collecting duct, with potassium going in. At the end, the urine box holds only a short salt bar and a short water bar."></svg>
+          <div class="fig-foot"><button type="button" class="btn small replay" data-replay>Replay</button></div></figure>
+        <p class="step-cap">Put together: the big take-backs come early, the later stretches fine-tune, and water follows salt wherever the walls let it. Of all the salt filtered, only a tiny sliver reaches the urine, and only a little water goes with it.</p>
+      </section>
+
+      <section class="step" data-step="12" data-step-title="Why it matters: blood volume" data-visual="volume" aria-labelledby="st-12" hidden>
+        <p class="step-kicker">Putting it together · the key measures</p>
+        <h2 id="st-12" tabindex="-1">Why it matters: blood volume</h2>
+        <figure class="step-fig"><svg class="np" role="img" aria-label="The whole nephron with all its arrows, a urine box with short salt and water bars, and a blood volume gauge at top right, filled to its normal level."></svg></figure>
+        <p class="step-cap">Salt kept in the body holds water, and that water makes up much of your <dfn>blood volume</dfn>: how much blood fills the vessels. A <dfn>diuretic</dfn> is a drug that makes the kidneys pass more urine. Most do it by passing more salt, which water follows.</p>
+      </section>
+
+      <section class="step" data-step="13" data-step-title="Loop diuretics (furosemide)" data-visual="drug" data-drug="loop" aria-labelledby="st-13" hidden>
+        <p class="step-kicker">What changes it · 1 of 5</p>
+        <h2 id="st-13" tabindex="-1">Loop diuretics (furosemide)</h2>
+        <figure class="step-fig"><svg class="np" role="img" aria-label="The normal nephron stays as faint dashed outlines while the picture changes. A blocked mark appears on the thick upward limb and its salt arrow shrinks almost to nothing. The early distal tubule and collecting duct salt arrows grow a little, but most of the extra salt reaches the urine: the urine salt and water bars rise far above their dashed normal heights. The potassium arrow grows, and the blood volume gauge drops below its dashed normal level."></svg>
+          <div class="fig-foot"><p class="np-legend"><span><i class="lg-normal"></i>normal</span><span><i class="lg-cond"></i>with a loop diuretic</span><span><i class="lg-block"></i>blocked</span></p><button type="button" class="btn small replay" data-replay>Replay</button></div></figure>
+        <p class="step-cap">A <dfn>loop diuretic</dfn>, such as furosemide, blocks the salt carrier in the thick ascending limb. A flood of salt rushes on; later stretches catch only some, and water follows the rest into the urine. Blood volume drops, and more potassium is lost.</p>
+      </section>
+
+      <section class="step" data-step="14" data-step-title="Thiazide diuretics" data-visual="drug" data-drug="thiazide" aria-labelledby="st-14" hidden>
+        <p class="step-kicker">What changes it · 2 of 5</p>
+        <h2 id="st-14" tabindex="-1">Thiazide diuretics</h2>
+        <figure class="step-fig"><svg class="np" role="img" aria-label="The normal nephron stays as faint dashed outlines. A blocked mark appears on the early distal tubule and its small salt arrow shrinks. The collecting duct takes back a little more. The urine salt and water bars rise moderately above normal, the potassium arrow grows, and the blood volume gauge dips a little."></svg>
+          <div class="fig-foot"><p class="np-legend"><span><i class="lg-normal"></i>normal</span><span><i class="lg-cond"></i>with a thiazide</span><span><i class="lg-block"></i>blocked</span></p><button type="button" class="btn small replay" data-replay>Replay</button></div></figure>
+        <p class="step-cap">A <dfn>thiazide diuretic</dfn> blocks the salt carrier in the early distal tubule. That stretch normally takes back only a small share, so the extra salt lost is modest: a gentler diuretic. Water follows that salt out, blood volume dips and potassium loss rises.</p>
+      </section>
+
+      <section class="step" data-step="15" data-step-title="Potassium-sparing diuretics" data-visual="drug" data-drug="ksp" aria-labelledby="st-15" hidden>
+        <p class="step-kicker">What changes it · 3 of 5</p>
+        <h2 id="st-15" tabindex="-1">Potassium-sparing diuretics</h2>
+        <figure class="step-fig"><svg class="np" role="img" aria-label="The normal nephron stays as faint dashed outlines. A blocked mark appears on the collecting duct and its salt arrow shrinks. The urine salt and water bars rise a little above normal, the potassium arrow becomes much thinner than normal, and the blood volume gauge dips slightly."></svg>
+          <div class="fig-foot"><p class="np-legend"><span><i class="lg-normal"></i>normal</span><span><i class="lg-cond"></i>with a potassium-sparing diuretic</span><span><i class="lg-block"></i>blocked</span></p><button type="button" class="btn small replay" data-replay>Replay</button></div></figure>
+        <p class="step-cap">A <dfn>potassium-sparing diuretic</dfn> acts in the collecting duct, either blocking aldosterone's signal or plugging the salt channels it opens. A little more salt and water leave, and with less salt taken up, less potassium is pushed into the urine, so potassium is kept.</p>
+      </section>
+
+      <section class="step" data-step="16" data-step-title="Carbonic anhydrase inhibitors (acetazolamide)" data-visual="drug" data-drug="ca" aria-labelledby="st-16" hidden>
+        <p class="step-kicker">What changes it · 4 of 5</p>
+        <h2 id="st-16" tabindex="-1">Carbonic anhydrase inhibitors (acetazolamide)</h2>
+        <figure class="step-fig"><svg class="np" role="img" aria-label="The normal nephron stays as faint dashed outlines. A blocked mark appears on the proximal tubule and its big salt and water arrows shrink. The thick upward limb and the later stretches take back more, so the urine salt and water bars rise only moderately above normal and the blood volume gauge dips a little."></svg>
+          <div class="fig-foot"><p class="np-legend"><span><i class="lg-normal"></i>normal</span><span><i class="lg-cond"></i>with acetazolamide</span><span><i class="lg-block"></i>blocked</span></p><button type="button" class="btn small replay" data-replay>Replay</button></div></figure>
+        <p class="step-cap">The proximal tubule takes back much of its salt with <dfn>bicarbonate</dfn>, the blood's acid-soaking base, helped by an <dfn>enzyme</dfn> (a protein that speeds a chemical reaction) called <dfn>carbonic anhydrase</dfn>. Acetazolamide, an <dfn>inhibitor</dfn> (blocker) of it, leaves both in the tube; bicarbonate is lost.</p>
+      </section>
+
+      <section class="step" data-step="17" data-step-title="Osmotic diuretics (mannitol)" data-visual="drug" data-drug="osmotic" aria-labelledby="st-17" hidden>
+        <p class="step-kicker">What changes it · 5 of 5</p>
+        <h2 id="st-17" tabindex="-1">Osmotic diuretics (mannitol)</h2>
+        <figure class="step-fig"><svg class="np" role="img" aria-label="The normal nephron stays as faint dashed outlines. Grey particles of mannitol appear all along the inside of the tube. The water arrows from the proximal tubule and the downward limb shrink while the salt arrows barely change. In the urine box the water bar rises well above normal, much more than the salt bar, and the blood volume gauge dips."></svg>
+          <div class="fig-foot"><p class="np-legend"><span><i class="lg-normal"></i>normal</span><span><i class="lg-cond"></i>with mannitol</span><span><i class="lg-man"></i>mannitol in the tube</span></p><button type="button" class="btn small replay" data-replay>Replay</button></div></figure>
+        <p class="step-cap">An <dfn>osmotic diuretic</dfn> such as mannitol is a sugar-like substance that passes the filter but is never taken back. Like salt, it holds water by osmosis, but it stays in the tube, so far more water than salt pours out.</p>
+      </section>
+    </div>
+
+    <nav class="step-nav" aria-label="Lesson steps">
+      <button type="button" class="btn step-btn" data-step-back disabled><span aria-hidden="true">← </span>Back</button>
+      <div class="step-where">
+        <p class="step-progress" data-step-progress aria-live="polite">Step 1 of 17</p>
+        <span class="step-bar" aria-hidden="true"><i id="step-bar"></i></span>
+      </div>
+      <button type="button" class="btn primary step-btn" data-step-next>Next<span aria-hidden="true"> →</span></button>
+    </nav>
+  </div>
+
+  <section class="clinical" id="lpanel-clinical" role="tabpanel" aria-labelledby="ltab-clinical" hidden>
+    <div class="card cv-intro-card">
+      <h2 id="h-cv">Clinical values</h2>
+      <p class="cv-disclaimer" id="cv-disclaimer"></p>
+      <p class="cv-intro">Each bar shows a typical adult value from a standard textbook: a shaded band where the source gives a range, a short black tick where it gives one typical value, and a shaded run from zero where it gives only an upper limit. The red dot is the teaching model right now and moves as you change the drugs; the hollow circle is the model with no drug. Pick a drug to see which way the source says each value moves, and the model is set to match.</p>
+      <p class="cv-baseline" id="cv-baseline"></p>
+      <p class="cv-note">The banner above still applies: this is a teaching model with no hormones or reflexes. Its sodium, urine and potassium results come from each drug's direct transport effect; its bicarbonate rise with volume loss is only a crude stand-in for contraction alkalosis, which in the body follows later, through angiotensin II and aldosterone. Each drug gives a direction only for the values its cited passage states; every other value is marked "not listed in the source". Carbonic anhydrase inhibitors and osmotic diuretics are taught in the lesson and can be set with the sliders, but are not listed as states here because their source passages have not yet been checked against the cited edition.</p>
+    </div>
+    <div class="cv-layout">
+      <div class="cv-side card">
+        <h3 id="h-cv-states">Pick a drug</h3>
+        <div class="cv-states" id="cv-states" role="group" aria-labelledby="h-cv-states"></div>
+        <div class="cv-state-note" id="cv-state-note" aria-live="polite"></div>
+        <h3>Adjust the model</h3>
+        <p class="hint">Each slider is how strongly a drug's target is inhibited in the model, from none to the model's strongest setting, not an amount of drug.</p>
+        <div class="sliders compact" id="cv-sliders"></div>
+      </div>
+      <div class="cv-main card">
+        <div class="cv-legend" aria-hidden="true">
+          <span><i class="lg-band"></i>Typical range</span><span><i class="lg-typ"></i>Typical value</span><span><i class="lg-dot"></i>Model now</span><span><i class="lg-base"></i>Model, no drug</span>
+        </div>
+        <ul class="cv-list" id="cv-list"><li class="cv-loading">Loading reference values…</li></ul>
+      </div>
+    </div>
+    <section class="card cv-sources" aria-labelledby="h-cv-sources">
+      <h2 id="h-cv-sources">Sources</h2>
+      <ul class="refs" id="cv-sources"></ul>
+    </section>
+  </section>
+
+  <div class="explore" id="lpanel-explore" role="tabpanel" aria-labelledby="ltab-explore" hidden>
+    <section class="card explore-intro" aria-labelledby="h-explore">
+      <h2 id="h-explore" tabindex="-1">Explore freely</h2>
+      <p><b>An illustrative teaching model.</b> This is the model behind the lesson. Mix drugs, or set how strongly each one blocks its target, and watch the nephron, the salt and water left in the tube, and the outputs change at once; dashed outlines are the nephron with no drug. Amounts are shares of what was filtered. The numbers are outputs of a simplified model, not measurements or reference values; typical adult values are in the Clinical values tab. Less blood volume means less filling of the heart: the preload of <a href="/lab/pressure-volume-loop/">Lesson 1</a>.</p>
+    </section>
+
+    <section class="presets" aria-labelledby="h-presets">
+      <h2 id="h-presets" class="eyebrow">Try a scenario</h2>
+      <div class="preset-buttons" id="preset-buttons"></div>
+      <p class="preset-note" id="preset-note" aria-live="polite"></p>
+    </section>
+
+    <dl class="numbers" id="numbers" aria-label="Model outputs">
+      <div class="hl"><dt>Salt out</dt><dd><span id="n-salt">–</span><small>% filtered</small></dd></div>
+      <div class="hl"><dt>Water out</dt><dd><span id="n-water">–</span><small>% filtered</small></dd></div>
+      <div><dt>Urine</dt><dd><span id="n-urine">–</span><small>L/day</small></dd></div>
+      <div><dt>Blood volume</dt><dd><span id="n-bv">–</span><small>index</small></dd></div>
+      <div><dt>Potassium</dt><dd><span id="n-k">–</span><small>mmol/L</small></dd></div>
+      <div><dt>Bicarbonate</dt><dd><span id="n-hco3">–</span><small>mmol/L</small></dd></div>
+    </dl>
+
+    <div class="stage">
+      <section class="card plot-card" aria-labelledby="h-neph">
+        <div class="card-head">
+          <h2 id="h-neph">The nephron</h2>
+          <p class="card-sub">Arrow width: amount taken back · dashed: no drug</p>
+        </div>
+        <svg class="np" id="explore-svg" role="img" aria-label="The model nephron. Loading."></svg>
+      </section>
+      <section class="card plot-card" aria-labelledby="h-chart">
+        <div class="card-head">
+          <h2 id="h-chart">Left in the tube</h2>
+          <p class="card-sub">After each stop, as % of filtered (log scale) · dashed: no drug</p>
+        </div>
+        <svg class="chart" id="chart" role="img" aria-label="Chart of salt and water left in the tube. Loading."></svg>
+        <p class="legend" aria-hidden="true"><span><i class="sw sw-salt"></i>Salt</span><span><i class="sw sw-water"></i>Water</span><span><i class="sw sw-ghost"></i>No drug</span></p>
+      </section>
+    </div>
+
+    <div class="lower">
+      <section class="card" aria-labelledby="h-controls">
+        <div class="card-head">
+          <h2 id="h-controls">Drugs</h2>
+          <button type="button" class="btn small" id="btn-reset">Reset to no drug</button>
+        </div>
+        <p class="hint">Each slider is how strongly a drug's target is inhibited in the model, from none to the model's strongest setting, not an amount of drug. Arrow keys nudge a slider; Page Up and Page Down take big steps.</p>
+        <div class="sliders" id="sliders"></div>
+      </section>
+      <section class="card table-card" aria-labelledby="h-table">
+        <h2 id="h-table">Segment by segment</h2>
+        <table class="seg-table">
+          <caption class="sr-only">Salt and water arriving at and taken back by each segment, as a percentage of what was filtered</caption>
+          <thead><tr><th scope="col">Segment</th><th scope="col">Salt in</th><th scope="col">Salt back</th><th scope="col">Water in</th><th scope="col">Water back</th></tr></thead>
+          <tbody id="seg-body"></tbody>
+        </table>
+        <p class="hint">Percent of the filtered amount. "Back" means taken back into the blood.</p>
+      </section>
+    </div>
+
+    <section class="card about" aria-labelledby="h-about">
+      <h2 id="h-about">About the model</h2>
+      <div class="about-grid">
+        <div>
+          <h3>What is simulated</h3>
+          <p>One nephron at steady state, as a chain of segments. Everything is a share of the filtered amount (filtered = 100). Each segment takes back part of the sodium that reaches it, so blocking one segment sends more sodium on, and the later segments catch some of it. The early distal tubule and collecting duct have uptake that saturates, which is why they cannot catch everything a loop diuretic sends them.</p>
+          <h3>Equations</h3>
+          <pre class="eq" id="eq"></pre>
+          <p>Loop, Thz, Ksp, CA and Osm are the drug sliders, from 0 (none) to 1 (the model's strongest setting). Even the strongest setting leaves some transport working, as the equations show. The urine water line is the key idea: urine can only be so concentrated (at most 1 + 1.2·g times plasma strength), so every bit of solute left in the tube carries water out with it.</p>
+          <p id="about-cal"></p>
+        </div>
+        <div>
+          <h3>Blood, potassium and bicarbonate</h3>
+          <ul>
+            <li><b>Blood volume</b> (index, 100 with no drug) falls with the salt and water lost beyond the no-drug amounts, saturating at a 12-point drop: L = 0.6·ΔNa_out + 0.4·ΔW_out, index = 100 · (1 − 0.12·(1 − e<sup>−L/6</sup>)).</li>
+            <li id="about-k"></li>
+            <li id="about-hco3"></li>
+          </ul>
+          <h3>Simplifications</h3>
+          <ul>
+            <li>Steady state only: no time course. Real diuretic responses build and fade over hours.</li>
+            <li>No feedback. Filtration is fixed, and the hormones and reflexes that fight a fall in blood volume (renin, angiotensin, aldosterone, thirst, antidiuretic hormone) are left out, so the sodium, water and potassium results show each drug's direct transport effect. In the body, salt retention rebounds as each drug's effect wears off.</li>
+            <li>Antidiuretic hormone is assumed present, so urine is concentrated as far as the medulla's salt gradient allows.</li>
+            <li>The baseline is calibrated at load time from clinical-values.json: the textbook shares of sodium taken back in each segment, the typical daily urine output, and the normal plasma potassium and bicarbonate. The drug strengths are not fitted to any person or drug.</li>
+          </ul>
+          <h3>Sources for the structure</h3>
+          <ul class="refs">
+            <li>Costanzo LS. Physiology. 6th edition. Philadelphia: Elsevier; 2018. Chapter 6, Renal Physiology.</li>
+            <li>Hall JE. Guyton and Hall Textbook of Medical Physiology. 13th edition. Philadelphia: Elsevier; 2016. Chapters 28 to 32.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer><div class="wrap"><span>The Lab · Lesson 2 · Core medicine: the nephron and diuretics · Added 2026-10-08</span><a href="/lab/">All lessons in The Lab</a></div></footer>
+</body>
+</html>
