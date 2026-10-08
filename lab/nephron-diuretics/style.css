@@ -312,6 +312,31 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
   .seg-table th,.seg-table td{padding-left:4px}
   .cv-states{grid-template-columns:1fr}
 }
+/* Phone fit: grid tracks of "1fr" (min auto) let the equations block and other long lines
+   stretch the page past the screen; make every track shrinkable and let all text wrap. */
+@media (max-width:899px){
+  .hero,.stage,.lower,.about-grid,.cv-layout,.presets{grid-template-columns:minmax(0,1fr)}
+  .hero>*,.stage>*,.lower>*,.about-grid>*,.cv-layout>*,.presets>*,.step>*,.cv-row>*,.card,.cv-main,.cv-side,.about,.explore>*,.clinical>*{min-width:0;max-width:100%}
+  main,.guide,.explore,.clinical{min-width:0;max-width:100%}
+  .card,.step-cap,.about p,.about li,.refs li,.cv-sources li,.cv-intro,.cv-note,.cv-baseline,.cv-disclaimer,.cv-cite,.hint,.preset-note,.card-sub,.lede,.kicker,.banner,.footer,footer .wrap{overflow-wrap:anywhere;word-break:normal}
+  .eq{white-space:pre-wrap;overflow-wrap:anywhere;overflow-x:visible;max-width:100%}
+  .cv-now{white-space:normal}
+  .cv-axis{max-width:100%}
+  .cv-shift{min-width:0}
+  .numbers dd{white-space:normal;overflow-wrap:anywhere}
+  .seg-table{table-layout:fixed;width:100%}
+  .seg-table th,.seg-table td{overflow-wrap:anywhere}
+  .np-legend{min-width:0}
+  .step-nav{max-width:100%}
+  .step-btn,.step-btn.primary{min-width:0}
+}
+@media (max-width:380px){
+  .wrap{padding:0 12px}
+  .step-nav{gap:6px}
+  .step-btn{padding:8px 10px}
+  .lesson-tabs [role=tab]{font-size:12px;letter-spacing:.02em}
+  .cv-num{font-size:20px}
+}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 @media print{.cv-side,.step-nav{position:static}}
 
