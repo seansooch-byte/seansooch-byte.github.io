@@ -103,6 +103,12 @@ course page. A lesson is an app with one page, the same in every view.
   `<head>`, the bar before `</body>`). The pipeline's own copy of that page must hold the same three or its next sync
   removes them. From this repo's root, `python3 ~/seansooch-astra-preview/build-designs.py --stamp lab/index.html`
   puts them back and is safe to repeat.
+- **`monitor/index.html` carries the switcher too**, though it is not one of the three pages: the same
+  `data-design="astra"` and the same two blocks, copied verbatim from `lab/index.html` (Sean approved the copy, since
+  `build-designs.py` was not at hand). `design-switcher.js` does not route `/monitor`, so the bar's links fall back to
+  the hrefs in the block: Fable 5.1 and Opus 5.5 open those views' Lab pages, and Astra (current) points at `/lab/`
+  without JavaScript. `python3 ~/seansooch-astra-preview/build-designs.py --stamp monitor/index.html` replaces the
+  blocks between their markers.
 - The opening paragraphs of the two generated Lab pages are copies of the ones on `/lab/`. If the pipeline's wording
   changes, they change at their sources (`sources/fable-lab.html` in the preview, `src/lab.template.html` in
   `~/app-redesign/work/home-opus`).
@@ -159,9 +165,9 @@ fetches it at runtime, so a new briefing goes live without a site deploy.
   no third-party scripts. It opens with the site's shared top bar (as on `/lab/`), with a Monitoring item marked
   `aria-current="page"`; the bar's CSS is copied at the end of `monitor/monitor.css`. The homepage's own nav is
   generated off-repo and has no Monitoring link yet.
-- `/monitor/` is not one of the three views (see Three views of the course): it has no `data-design` attribute and no
-  `design-switcher` blocks, and `design-switcher.js` routes only the home page, the essay and the Lab course page. If
-  Sean adds it to the views, the blocks come from the preview's `build-designs.py --stamp`, not a hand copy.
+- `/monitor/` exists only in view A, but carries the view switcher (see Three views of the course): `data-design="astra"`
+  on `<html>` and the two `design-switcher` blocks, copied from `lab/index.html`. Those blocks are generated; leave them
+  between their markers so `build-designs.py --stamp` can replace them. Nothing in `monitor/monitor.css` targets them.
 - The page fetches `https://feed.seansooch.dev/v1/feed.json` and renders it with `textContent` and `createElement`
   only, never `innerHTML`: the briefing is gathered from X and the web and is treated as untrusted. Only `https:` links
   are rendered. It shows "Updated … ago" from `generated_at` and flags the briefing as stale after about 30 hours.
