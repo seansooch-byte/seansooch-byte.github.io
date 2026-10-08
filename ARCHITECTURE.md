@@ -159,6 +159,9 @@ fetches it at runtime, so a new briefing goes live without a site deploy.
   no third-party scripts. It opens with the site's shared top bar (as on `/lab/`), with a Monitoring item marked
   `aria-current="page"`; the bar's CSS is copied at the end of `monitor/monitor.css`. The homepage's own nav is
   generated off-repo and has no Monitoring link yet.
+- `/monitor/` is not one of the three views (see Three views of the course): it has no `data-design` attribute and no
+  `design-switcher` blocks, and `design-switcher.js` routes only the home page, the essay and the Lab course page. If
+  Sean adds it to the views, the blocks come from the preview's `build-designs.py --stamp`, not a hand copy.
 - The page fetches `https://feed.seansooch.dev/v1/feed.json` and renders it with `textContent` and `createElement`
   only, never `innerHTML`: the briefing is gathered from X and the web and is treated as untrusted. Only `https:` links
   are rendered. It shows "Updated … ago" from `generated_at` and flags the briefing as stale after about 30 hours.
@@ -192,7 +195,8 @@ fetches it at runtime, so a new briefing goes live without a site deploy.
 
 Google Fonts on most pages, `hls.js` from cdn.jsdelivr.net (pinned by integrity hash) on `/music/last-light/`, and
 the briefing JSON from `https://feed.seansooch.dev/v1/feed.json` on `/monitor/` (data only, rendered as text; see
-Monitoring the Situation). That feed is the one place a page reads data from another origin; nothing else is loaded
+Monitoring the Situation). That feed is the one place a page reads data from another origin (`lab-course.js` reads
+`/lab/syllabus.json` and `/lab/apps.json` from this origin); nothing else is loaded
 from another origin (the homepage host probes are requests whose responses are never read), and no page posts data
 anywhere.
 
