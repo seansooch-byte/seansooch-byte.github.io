@@ -330,7 +330,7 @@
     .ch{padding-top:36pt}
   }
 </style>
-<!-- design-switcher:start --><link rel="stylesheet" href="/design-switcher.css?v=f0ec4a2cfd"><script src="/design-switcher.js?v=e71976f7c2"></script><!-- design-switcher:end --><!-- edition-views:start --><style>
+<!-- design-switcher:start --><link rel="stylesheet" href="/design-switcher.css?v=f0ec4a2cfd"><script src="/design-switcher.js?v=d8ab4df6ff"></script><script src="/lab-course.js?v=5f7b63c4ab" defer></script><!-- design-switcher:end --><!-- edition-views:start --><style>
   /* Figure A-1: the three current views (shared layer, edition_views.py) */
   .views3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5px;background:var(--ink);border:1.5px solid var(--ink);margin-bottom:34px}
   .views3 .view{background:var(--white);padding:22px 22px 18px;display:flex;flex-direction:column;gap:10px;text-decoration:none;color:var(--ink);transition:background .15s}
@@ -363,7 +363,7 @@
       <a href="#ch5"><b>5</b> Ancillary</a>
       <a href="#appa"><b>A</b> Changes</a>
       <a href="#appb"><b>B</b> Films</a>
-      <a class="nav-lab" href="https://seansooch.dev/lab/"><b>L</b> Lab</a>
+      <a class="nav-lab" href="/designs/fable/lab/"><b>L</b> Lab</a>
       <button class="btn" id="modeBtn" aria-pressed="false">Plain language</button>
       <button class="btn" id="palBtn">Index<kbd>/</kbd></button>
     </nav>
@@ -713,18 +713,22 @@
     <p class="ed-note" data-tech="A course in core medicine, taught one picture at a time. Each lesson takes a single idea, starting with how the heart fills and empties, builds it step by step in plain language with animated visuals, then shows how common drug classes change the picture. New lessons are added in order. Educational only, not for clinical use."
        data-simple="Short visual lessons that teach how the body works, one step at a time and in plain language. Start with the heart, then see what common medicines do to it. For learning only, not for patient care.">
        A course in core medicine, taught one picture at a time. Each lesson takes a single idea, starting with how the heart fills and empties, builds it step by step in plain language with animated visuals, then shows how common drug classes change the picture. New lessons are added in order. Educational only, not for clinical use.</p>
-    <div class="xlist">
-      <a class="xrow" data-index="The Lab (all lessons)" data-ref="The Lab" data-kw="lab course lessons core medicine physiology pharmacology drugs teaching visual students" href="https://seansooch.dev/lab/">
-        <span class="xfn">L-1</span>
+    <!-- The lessons are not written here: lab-course.js draws one row per shipped lesson from the lab ledger
+         (/lab/syllabus.json and /lab/apps.json), so a lesson that ships appears without a rebuild of this page. -->
+    <div class="xlist" data-lab-list="ready">
+      <template data-lab-row="ready">
+      <a class="xrow" data-lab-link data-lab-index data-ref="The Lab">
+        <span class="xfn">L-<span data-lab="no"></span></span>
+        <span class="xname" data-lab="title"></span>
+        <span class="xdesc" data-lab="description"></span>
+        <span class="xtag" data-lab="date"></span><span class="xgo">Learn →</span>
+      </a>
+      </template>
+      <a class="xrow" data-index="The Lab (all lessons)" data-ref="The Lab" data-kw="lab course lessons core medicine physiology pharmacology drugs teaching visual students" href="/designs/fable/lab/">
+        <span class="xfn">L</span>
         <span class="xname">All lessons</span>
         <span class="xdesc">The course page: every lesson in order, each one a single idea built up step by step.</span>
-        <span class="xtag">Course · Medicine</span><span class="xgo">Enter →</span>
-      </a>
-      <a class="xrow" data-index="Pressure-volume loop (Lab lesson)" data-ref="The Lab" data-kw="lab lesson heart cardiology physiology pv loop preload afterload contractility ventricle" href="https://seansooch.dev/lab/pressure-volume-loop/">
-        <span class="xfn">L-2</span>
-        <span class="xname">The pressure-volume loop</span>
-        <span class="xdesc">How one heartbeat fills and empties the left ventricle, and how preload, afterload and contractility reshape the loop.</span>
-        <span class="xtag">Lesson · Heart</span><span class="xgo">Learn →</span>
+        <span class="xtag" data-lab-text="{ready} of {total} ready">Course · Medicine</span><span class="xgo">Enter →</span>
       </a>
     </div>
   </section>
@@ -1055,6 +1059,8 @@
 
   // ---------- index: built from the page, so it cannot drift from the content ----------
   var ENTRIES = [];
+  function readIndex(){
+  ENTRIES.length = 0;
   $$('[data-index]').forEach(function(e){
     var href = e.getAttribute('href') || e.dataset.href || null;
     var ref = '';
@@ -1068,6 +1074,8 @@
   [['Chapter 1','Purpose and scope','#ch1','chapter thesis method'],['Chapter 2','Readiness','#ch2','chapter status probe table vitals'],['Chapter 3','Systems','#ch3','chapter work projects'],['Chapter 4','Doctrine','#ch4','chapter research writing papers'],['Chapter 5','Ancillary equipment','#ch5','chapter explorables'],['Appendix A','Change record','#appa','editions archive volumes'],['Appendix B','Films','#appb','video'],['Figure 1-1','Deployment topology','#fig11','live status map']]
     .forEach(function(c){ ENTRIES.push({ title:c[1], kw:c[3] + ' ' + c[0].toLowerCase(), href:c[2], ref:c[0], el:null }); });
   ENTRIES.sort(function(a,b){ return a.title.localeCompare(b.title, 'en', {sensitivity:'base'}); });
+  }
+  readIndex();
 
   function openEntry(en){
     if (!en) return;
@@ -1078,7 +1086,9 @@
     closePal();
   }
   // printed index
-  var list = $('#indexList'); var groups = {};
+  var list = $('#indexList');
+  function printIndex(){
+  var groups = {}; list.textContent = '';
   ENTRIES.forEach(function(en){ var L = en.title.charAt(0).toUpperCase(); if (!/[A-Z]/.test(L)) L = '#'; (groups[L] = groups[L] || []).push(en); });
   Object.keys(groups).sort().forEach(function(L){
     var g = document.createElement('div'); g.className = 'grp';
@@ -1086,12 +1096,17 @@
     groups[L].forEach(function(en){
       var a = document.createElement('a');
       a.href = en.href || '#'; if (en.href && en.href.charAt(0) !== '#'){ a.target = '_blank'; a.rel = 'noopener'; }
-      a.innerHTML = '<span>'+en.title+'</span><span class="dots"></span><span class="pg">'+en.ref+'</span>';
+      a.innerHTML = '<span></span><span class="dots"></span><span class="pg"></span>';
+      a.firstChild.textContent = en.title; a.lastChild.textContent = en.ref;
       if (en.el && en.el.dataset.film){ a.addEventListener('click', function(ev){ ev.preventDefault(); openFilm(en.el); }); }
       g.appendChild(a);
     });
     list.appendChild(g);
   });
+  }
+  printIndex();
+  // The Lab's lesson rows are drawn from the lab ledger after load (lab-course.js): read the page again then.
+  document.addEventListener('lab:course', function(){ readIndex(); printIndex(); });
 
   // palette
   var pal = $('#pal'), palIn = $('#palIn'), palList = $('#palList'), sel = 0, shown = [];
@@ -1120,7 +1135,10 @@
       var a = document.createElement('a');
       a.className = 'pal-item' + (i===sel ? ' sel' : '');
       a.href = en.href || '#';
-      a.innerHTML = '<span>'+en.title+'<small>'+(en.href && en.href.charAt(0)!=='#' ? en.href.replace(/^https?:\/\//,'').replace(/\/$/,'') : 'on this page')+'</small></span><span class="pg">'+en.ref+'</span>';
+      a.innerHTML = '<span><small></small></span><span class="pg"></span>';
+      a.firstChild.insertBefore(document.createTextNode(en.title), a.firstChild.firstChild);
+      a.firstChild.lastChild.textContent = en.href && en.href.charAt(0)!=='#' ? en.href.replace(/^https?:\/\//,'').replace(/\/$/,'') : 'on this page';
+      a.lastChild.textContent = en.ref;
       a.addEventListener('click', function(ev){ ev.preventDefault(); openEntry(en); });
       a.addEventListener('mousemove', function(){ if (sel!==i){ sel=i; $$('.pal-item', palList).forEach(function(x,j){ x.classList.toggle('sel', j===sel); }); } });
       palList.appendChild(a);

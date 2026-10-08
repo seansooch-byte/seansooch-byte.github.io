@@ -10,7 +10,7 @@ flowchart LR
   subgraph Outside["Sources outside this repo (Sean's laptop)"]
     A["~/app-redesign/work/home-astra<br>homepage view A"]
     O["~/app-redesign/work/home-opus<br>homepage view O"]
-    V["~/seansooch-astra-preview<br>shared record, view F, switcher"]
+    V["~/seansooch-astra-preview<br>shared record, view F, switcher, lab-course.js"]
     T["~/app-redesign/work/toolkit<br>seven tool pages"]
     L["~/lab-decoder<br>CBC and CMP decoder"]
     E["~/app-redesign/work/ekg<br>Read This"]
@@ -24,6 +24,8 @@ flowchart LR
   Bundle -->|tools/audit.sh| Check{"equal to live,<br>or only the intended diffs"}
   Check -->|"wrangler pages deploy<br>direct upload"| CF["Cloudflare Pages<br>project sean-sooch-portfolio"]
   CF --> Live["https://seansooch.dev"]
+  Pipe["lab pipeline<br>(outside this repo)"] -->|"pull request per lesson:<br>lab/, the ledger, lab lines of sitemap.xml"| Repo
+  Live -.->|"in the reader's browser, lab-course.js reads<br>/lab/syllabus.json and /lab/apps.json"| Rows["lesson rows on the three home pages<br>and on the Lab pages of views F and O"]
 ```
 
 - **Hosting.** Cloudflare Pages project `sean-sooch-portfolio`, production branch `main`, deployed by direct upload with
@@ -43,8 +45,9 @@ flowchart LR
 | Path | What | Edit here? |
 |---|---|---|
 | `index.html`, `two-stories/` | Homepage and essay, view A (OpenAI Astra) | No. Generated. |
-| `designs/fable/`, `designs/opus/` | The same two pages in views F and O | No. Generated. |
+| `designs/fable/`, `designs/opus/` | The same two pages in views F and O, and each view's Lab course page (`lab/`) | No. Generated. |
 | `design-switcher.css`, `design-switcher.js` | The fixed bar that switches views | No. Copied from the preview. |
+| `lab-course.js` | Draws lesson rows from the lab ledger on the three home pages and on the Lab pages of views F and O | No. Copied from the preview. |
 | `antibiotic-coverage/`, `calculators/`, `clinical-calculators/`, `differentials/`, `lab-values/index.html`, `tccc/`, `toolkit/` | Field Toolkit, Edition 2 "Pocket Cards" | No. Generated. |
 | `lab-values/cbc-cmp/` | CBC and CMP decoder | No. Copied from `~/lab-decoder`. |
 | `ekg/index.html` | Read This, Edition 2 | No. Generated. |
@@ -60,17 +63,48 @@ flowchart LR
 A generated page is overwritten the next time its source is rebuilt, so a hand edit to one does not last. Its source is
 on Sean's laptop, outside this repo:
 
-- **Homepage, three views of one text.** All six pages and the switcher are assembled in `~/seansooch-astra-preview`
-  and copied here. View A's content is built in `~/app-redesign/work/home-astra`; view O is built by
+- **Homepage, three views of one text.** The home page and essay of each view, the Lab course page of views F and O,
+  the switcher and `lab-course.js` are assembled in `~/seansooch-astra-preview` and copied here. View A's content is built in `~/app-redesign/work/home-astra`; view O is built by
   `~/app-redesign/work/home-opus/build.py`, which writes into the preview; `build-designs.py` in the preview generates
-  view F and stamps the shared record (`sources/editions.json`, `sources/corrections.json`) into all three, so a fact
-  changes in one place and agrees in every view. The preview's own `ARCHITECTURE.md` is the authority on the build order.
+  view F and stamps the shared record (`sources/editions.json`, `sources/corrections.json`) into views A and F, and the
+  view O build applies the same record, so a fact changes in one place and agrees in every view. The preview's own `ARCHITECTURE.md` is the authority on the build order.
 - **Field Toolkit.** `~/app-redesign/work/toolkit/build.py` writes the seven pages and `toolkit/pocket.css` from
   `src/<page>/index.html`.
 - **Read This.** `~/app-redesign/work/ekg/build.py` assembles `ekg/index.html` from its parts.
 - **CBC and CMP decoder.** `lab-values/cbc-cmp/index.html` is a copy of `~/lab-decoder/index.html`.
 
 To change a generated page from a pull request, describe the change and name the page. Sean applies it at the source.
+
+### Three views of the course
+
+Three pages exist in every view, and the switcher moves between them: the home page, the Two Stories essay and the Lab
+course page. A lesson is an app with one page, the same in every view.
+
+| | View A (Astra) | View F (Fable 5.1) | View O (Opus 5.5) |
+|---|---|---|---|
+| Lab course page | `/lab/` (`lab/index.html`, written by the lab pipeline) | `/designs/fable/lab/` | `/designs/opus/lab/` |
+| Where its lesson list comes from | Written into the page by `tools/lab-index.mjs` | Drawn in the browser by `lab-course.js` | Drawn in the browser by `lab-course.js` |
+
+- **No generated page holds a lesson.** The Lab section of each home page and the Lab pages of views F and O carry a row
+  template in that view's own markup. `lab-course.js` reads `/lab/syllabus.json` and `/lab/apps.json` in the reader's
+  browser and fills the template once per lesson, so a lesson the pipeline ships appears in all three views with no
+  rebuild of a generated page. If the files cannot be read, or hold no lessons, the page keeps what it was served with:
+  the home pages still link to the course, and the two Lab pages point at `/lab/`.
+- **The two ledger files are an interface.** `lab-course.js` reads `modules[].slug`, `title`, `description` and
+  `drugClasses` from `lab/syllabus.json`, and `slug` and `date` from each entry of `lab/apps.json` (plus `title` and
+  `description` for an app that is not in the syllabus). Renaming one of those fields empties the lesson rows on five
+  pages outside `lab/`, and a lab deploy's audit would not notice. The script trusts neither file: every value is set
+  as text, never as markup; a slug that is not lowercase words joined by hyphens is dropped; a link is this site's
+  origin plus `/lab/<slug>/`; an entry whose date is not a real day has not shipped.
+- **`lab/index.html` carries the switcher.** This is the one exception to what The Lab section below says about that
+  file. Three things in it come from the preview, not from the pipeline: the `data-design="astra"` attribute on
+  `<html>`, and the two blocks between `design-switcher:start` and `design-switcher:end` comments (the assets in
+  `<head>`, the bar before `</body>`). The pipeline's own copy of that page must hold the same three or its next sync
+  removes them. From this repo's root, `python3 ~/seansooch-astra-preview/build-designs.py --stamp lab/index.html`
+  puts them back and is safe to repeat.
+- The opening paragraphs of the two generated Lab pages are copies of the ones on `/lab/`. If the pipeline's wording
+  changes, they change at their sources (`sources/fable-lab.html` in the preview, `src/lab.template.html` in
+  `~/app-redesign/work/home-opus`).
 
 ## The Lab
 

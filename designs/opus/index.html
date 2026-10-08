@@ -361,7 +361,7 @@ footer a{color:var(--text-2)}
   .work,.lesser,.film,.wit{break-inside:avoid}
 }
 </style>
-<!-- design-switcher:start --><link rel="stylesheet" href="/design-switcher.css?v=f0ec4a2cfd"><script src="/design-switcher.js?v=e71976f7c2"></script><!-- design-switcher:end --></head>
+<!-- design-switcher:start --><link rel="stylesheet" href="/design-switcher.css?v=f0ec4a2cfd"><script src="/design-switcher.js?v=d8ab4df6ff"></script><script src="/lab-course.js?v=5f7b63c4ab" defer></script><!-- design-switcher:end --></head>
 <body>
 
 <div class="ruling" aria-hidden="true"><i></i></div>
@@ -376,7 +376,7 @@ footer a{color:var(--text-2)}
       <a href="#appb"><span class="n">v</span>Films</a>
       <a href="#ch2"><span class="n">vi</span>Attestation</a>
       <a class="keep" href="#appa"><span class="n">vii</span>Editions</a>
-      <a class="keep nav-lab" href="https://seansooch.dev/lab/">The Lab</a>
+      <a class="keep nav-lab" href="/designs/opus/lab/">The Lab</a>
       <span class="tools">
         <button class="btn" id="modeBtn" aria-pressed="false">Plain language</button>
         <button class="btn" id="palBtn" aria-keyshortcuts="/">Index<kbd>/</kbd></button>
@@ -744,16 +744,21 @@ footer a{color:var(--text-2)}
          data-simple="Short visual lessons that teach how the body works, one step at a time and in plain language. Start with the heart, then see what common medicines do to it. For learning only, not for patient care.">A course in core medicine, taught one picture at a time. Each lesson takes a single idea, starting with how the heart fills and empties, builds it step by step in plain language with animated visuals, then shows how common drug classes change the picture. New lessons are added in order. Educational only, not for clinical use.</p></div>
       <div class="gr"></div>
     </div>
-    <article class="row3 lesser" data-index="The Lab (all lessons)" data-ref="The Lab" data-kw="lab course lessons core medicine physiology pharmacology drugs teaching visual students" data-href="https://seansooch.dev/lab/">
+    <!-- ============ lessons are not written here: lab-course.js draws one row per shipped lesson from the lab ledger (/lab/syllabus.json, /lab/apps.json) ============ -->
+    <div data-lab-list="ready">
+    <template data-lab-row="ready">
+    <article class="row3 lesser" data-lab-link data-lab-index data-ref="The Lab">
       <div class="gl"></div>
-      <div class="tx"><h3><a href="https://seansooch.dev/lab/">All lessons</a></h3><p>The course page: every lesson in order, each one a single idea built up step by step.</p></div>
-      <div class="gr">Course · medicine<br>seansooch.dev/lab</div>
+      <div class="tx"><h3><a data-lab-link data-lab="title"></a></h3><p data-lab="description"></p></div>
+      <div class="gr">Lesson <span data-lab="no"></span><br><span data-lab="date"></span></div>
     </article>
-    <article class="row3 lesser" data-index="Pressure-volume loop (Lab lesson)" data-ref="The Lab" data-kw="lab lesson heart cardiology physiology pv loop preload afterload contractility ventricle" data-href="https://seansooch.dev/lab/pressure-volume-loop/">
+    </template>
+    <article class="row3 lesser" data-index="The Lab (all lessons)" data-ref="The Lab" data-kw="lab course lessons core medicine physiology pharmacology drugs teaching visual students" data-href="/designs/opus/lab/">
       <div class="gl"></div>
-      <div class="tx"><h3><a href="https://seansooch.dev/lab/pressure-volume-loop/">The pressure-volume loop</a></h3><p>How one heartbeat fills and empties the left ventricle, and how preload, afterload and contractility reshape the loop.</p></div>
-      <div class="gr">Lesson · heart<br>seansooch.dev/lab</div>
+      <div class="tx"><h3><a href="/designs/opus/lab/">All lessons</a></h3><p>The course page: every lesson in order, each one a single idea built up step by step.</p></div>
+      <div class="gr">Course · medicine<br><span data-lab-text="{ready} of {total} lessons ready">seansooch.dev/lab</span></div>
     </article>
+    </div>
   </section>
 
   <!-- ============ V. FILMS ============ -->
@@ -976,6 +981,7 @@ footer a{color:var(--text-2)}
    - Counts: #sysCount and #sysCount2 show hosts answered; #medianMs the median of answered, non-waking hosts.
    - Read line filters .work/.group by domain; plain-language swaps every [data-tech] for its [data-simple].
    - Index: every [data-index] element plus the section heads, alphabetised; "/" opens the search, Esc closes.
+     It is read again when the Lab's lesson rows arrive from the lab ledger (the lab:course event).
    - Films open in the lightbox; closing clears the source and returns focus to the trigger.
    - Arriving by the view switch delays the load animation until the curtain lifts. */
 (function(){
@@ -1111,14 +1117,19 @@ footer a{color:var(--text-2)}
   box.addEventListener('click', function(e){ if (e.target === box) closeFilm(); });
 
   // ---------- index: read from the page, so it cannot drift from the content ----------
-  var ENTRIES = $$('[data-index]').map(function(e){
-    return { title:e.dataset.index, kw:e.dataset.kw || '', href:e.getAttribute('href') || e.dataset.href || null, ref:e.dataset.ref || '', el:e };
+  var ENTRIES = [];
+  function readIndex(){
+  ENTRIES.length = 0;
+  $$('[data-index]').forEach(function(e){
+    ENTRIES.push({ title:e.dataset.index, kw:e.dataset.kw || '', href:e.getAttribute('href') || e.dataset.href || null, ref:e.dataset.ref || '', el:e });
   });
   [['i','Prologue','#ch1','purpose scope method'],['ii','The Works','#ch3','systems projects apps'],['iii','Writings','#ch4','papers research doctrine'],
    ['iv','Lesser works','#ch5','ancillary experiments'],['v','Films','#appb','video'],['vi','Attestation','#ch2','status probe readiness live answers'],
    ['vii','Editions','#appa','change record archive stemma versions'],['vii','App editions','#appeds','retired archives redesign'],['','Colophon','#colophon','credits hands']]
     .forEach(function(c){ ENTRIES.push({ title:c[1], kw:c[3], href:c[2], ref:c[0] ? 'Section ' + c[0] : 'End', el:null }); });
   ENTRIES.sort(function(a,b){ return a.title.localeCompare(b.title, 'en', {sensitivity:'base'}); });
+  }
+  readIndex();
   function isExternal(h){ return /^https?:/.test(h); }
   function openEntry(en){
     if (!en) return;
@@ -1128,7 +1139,9 @@ footer a{color:var(--text-2)}
     if (en.href.charAt(0) === '#'){ var t = $(en.href); if (t) t.scrollIntoView({behavior:'smooth'}); return; }
     if (isExternal(en.href)) window.open(en.href, '_blank', 'noopener'); else location.assign(en.href);
   }
-  var list = $('#indexList'), groups = {};
+  var list = $('#indexList');
+  function printIndex(){
+  var groups = {}; list.textContent = '';
   ENTRIES.forEach(function(en){ var L = en.title.charAt(0).toUpperCase(); if (!/[A-Z]/.test(L)) L = '#'; (groups[L] = groups[L] || []).push(en); });
   Object.keys(groups).sort().forEach(function(L){
     var g = document.createElement('div'); g.className = 'grp';
@@ -1144,6 +1157,10 @@ footer a{color:var(--text-2)}
     });
     list.appendChild(g);
   });
+  }
+  printIndex();
+  // The Lab's lesson rows are drawn from the lab ledger after load (lab-course.js): read the page again then.
+  document.addEventListener('lab:course', function(){ readIndex(); printIndex(); });
 
   var pal = $('#pal'), palIn = $('#palIn'), palList = $('#palList'), sel = 0, shown = [], palOpener = null;
   function score(en, q){
