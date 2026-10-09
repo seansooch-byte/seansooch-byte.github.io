@@ -10,3 +10,9 @@
 /alignment/*  https://simulators-4lb.pages.dev/alignment/:splat  302
 /alignment-simulator  https://simulators-4lb.pages.dev/alignment/  302
 /alignment-simulator/*  https://simulators-4lb.pages.dev/alignment/:splat  302
+/monitor  https://situation.seansooch.dev/  301
+/monitor/*  https://situation.seansooch.dev/  301
+/designs/fable/monitor  https://situation.seansooch.dev/  301
+/designs/fable/monitor/*  https://situation.seansooch.dev/  301
+/designs/opus/monitor  https://situation.seansooch.dev/  301
+/designs/opus/monitor/*  https://situation.seansooch.dev/  301

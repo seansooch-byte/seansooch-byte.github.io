@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sean Sooch: Field Manual, Vol. 03</title>
-<meta name="description" content="Thirteen working systems across medicine, the military, and frontier AI, written up as a field manual. Built solo by a medical student and military officer with AI as the engineering tool. Every system is live and measured from your browser when the page loads.">
+<meta name="description" content="Fourteen working systems across medicine, the military, and frontier AI, written up as a field manual. Built solo by a medical student and military officer with AI as the engineering tool. Every system is live and measured from your browser when the page loads.">
 <meta property="og:title" content="Sean Sooch: Field Manual, Vol. 03">
-<meta property="og:description" content="Thirteen live systems, 150,906 lines, one operator with no CS degree. Change 3 by Claude Fable 5.1, with OpenAI Astra as co-author.">
+<meta property="og:description" content="Fourteen live systems, 150,906 lines, one operator with no CS degree. Change 3 by Claude Fable 5.1, with OpenAI Astra as co-author.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://seansooch.dev/designs/fable/">
 <meta name="theme-color" content="#F3EFE4">
@@ -375,16 +375,16 @@
   <!-- ============ COVER ============ -->
   <div class="wrap">
     <div class="cover">
-      <div class="row"><span><b>FM 03</b> · FIELD MANUAL · <span id="domLabel">THIRTEEN SYSTEMS, THREE WORLDS, ONE OPERATOR</span></span><span>CHANGE 3 · <b>SEPTEMBER 2026</b></span></div>
+      <div class="row"><span><b>FM 03</b> · FIELD MANUAL · <span id="domLabel">FOURTEEN SYSTEMS, THREE WORLDS, ONE OPERATOR</span></span><span>CHANGE 3 · <b>SEPTEMBER 2026</b></span></div>
       <div class="body">
         <h1 class="triad">
           <button class="med" style="--w:var(--med)" data-filter="med" data-label="MEDICINE · MS-IV · CLINICAL TOOLS · 4 SYSTEMS">Medicine.</button><span class="sep"></span>
           <button class="mil" style="--w:var(--mil)" data-filter="mil" data-label="MILITARY · OFFICER · ALL-BRANCH READINESS">Military.</button><span class="sep"></span>
           <button class="mac" style="--w:var(--mac)" data-filter="mac" data-label="MACHINES · FRONTIER AI · CAPABILITY · SAFETY">Machines.</button>
         </h1>
-        <p class="sub" data-tech="Operator's manual for <b>thirteen working systems</b> built at the intersection of all three, by a <b>medical student</b> and <b>military officer</b> using frontier AI as the engineering tool. <b>150,906 lines</b> across 247 files, every system live, every one measured from your browser as you read this."
-           data-simple="Thirteen working apps, built by one person in spare time. I'm a <b>medical student</b> and <b>military officer</b>, and AI wrote most of the code with me. <b>Everything here is live</b>, and this page checks that for you the moment it loads.">
-           Operator's manual for <b>thirteen working systems</b> built at the intersection of all three, by a <b>medical student</b> and <b>military officer</b> using frontier AI as the engineering tool. <b>150,906 lines</b> across 247 files, every system live, every one measured from your browser as you read this.</p>
+        <p class="sub" data-tech="Operator's manual for <b>fourteen working systems</b> built at the intersection of all three, by a <b>medical student</b> and <b>military officer</b> using frontier AI as the engineering tool. <b>150,906 lines</b> across 247 files, every system live, every one measured from your browser as you read this."
+           data-simple="Fourteen working apps, built by one person in spare time. I'm a <b>medical student</b> and <b>military officer</b>, and AI wrote most of the code with me. <b>Everything here is live</b>, and this page checks that for you the moment it loads.">
+           Operator's manual for <b>fourteen working systems</b> built at the intersection of all three, by a <b>medical student</b> and <b>military officer</b> using frontier AI as the engineering tool. <b>150,906 lines</b> across 247 files, every system live, every one measured from your browser as you read this.</p>
         <div class="byline"><span>Prepared by <b>Sean Sooch</b></span><span>Designed by <b>Claude Fable 5.1</b>, with <b>OpenAI Astra</b> as co-author</span><span>Supersedes <b>Vol. 02</b>, Claude Fable 5, June 2026</span></div>
         <p class="hint">↑ hover a world to tint the page · click to filter the systems · press / for the index</p>
       </div>
@@ -405,7 +405,7 @@
 
     <!-- Figure 1-1: live deployment topology -->
     <div class="fig" id="fig11">
-      <div class="figcap"><span><b>Figure 1-1.</b> Deployment topology. One static origin, nineteen systems, six domains.</span><span id="probeStamp">status: probing from your browser…</span></div>
+      <div class="figcap"><span><b>Figure 1-1.</b> Deployment topology. One static origin, twenty systems, six domains.</span><span id="probeStamp">status: probing from your browser…</span></div>
       <div class="figbody"><svg class="topo" id="topo" viewBox="0 0 1180 400" role="img" aria-label="Schematic of every deployed system, with live reachability"></svg></div>
       <div class="legend"><span><i class="up"></i>reachable</span><span><i class="wake"></i>waking (free tier cold start)</span><span><i class="down"></i>no response</span><span><i></i>probing</span><span>round trip in milliseconds, measured by an opaque fetch from this tab; it proves the host answers, not that the page is correct</span></div>
     </div>
@@ -416,7 +416,7 @@
     <div class="ch-head"><span class="lbl">Chapter 1</span><h2>Purpose and scope</h2></div>
     <div class="para"><span class="pn">1-1.<small>Purpose</small></span>
       <p data-tech="This manual documents five months of learning and building in spare hours. These projects were made possible by tools that lowered the technical barrier between an idea and working software. Others will bring different experience and build better things."
-         data-simple="This page documents five months of learning and building thirteen working projects in spare time. New tools made it easier to turn ideas into software. Other people will bring different experience and build better things.">
+         data-simple="This page documents five months of learning and building fourteen working projects in spare time. New tools made it easier to turn ideas into software. Other people will bring different experience and build better things.">
          This manual documents five months of learning and building in spare hours. These projects were made possible by tools that lowered the technical barrier between an idea and working software. Others will bring different experience and build better things.</p></div>
     <div class="para"><span class="pn">1-2.<small>Scope</small></span>
       <p data-tech="Everything listed is deployed and public. Chapter 2 does not take that on faith: when this page loads, your browser pings every host in Figure 1-1 and records what came back. Chapter 3 lists the systems by domain, Chapter 4 collects the written doctrine, Chapter 5 the smaller equipment. Appendix A is the change record for the manual itself."
@@ -459,12 +459,12 @@
 
   <!-- ============ CHAPTER 3 ============ -->
   <section id="ch3" class="wrap ch">
-    <div class="ch-head"><span class="lbl">Chapter 3</span><h2>Systems</h2><span class="meta">thirteen systems and a film, figures 3-1 through 3-14 · each figure is a link</span></div>
+    <div class="ch-head"><span class="lbl">Chapter 3</span><h2>Systems</h2><span class="meta">fourteen systems and a film, figures 3-1 through 3-15 · each figure is a link</span></div>
     <div class="filters" role="group" aria-label="Filter systems by domain">
-      <button class="chip on" data-f="all">Section 3-1 · All · 14</button>
+      <button class="chip on" data-f="all">Section 3-1 · All · 15</button>
       <button class="chip" data-f="med">Medicine · 5</button>
       <button class="chip" data-f="mil">Military · 1</button>
-      <button class="chip" data-f="mac">Machines · 2</button>
+      <button class="chip" data-f="mac">Machines · 3</button>
       <button class="chip" data-f="spt">Sports · 4</button>
       <button class="chip" data-f="hum">Humanities · 1</button>
       <button class="chip" data-f="mus">Music · 1</button>
@@ -596,6 +596,12 @@
         <span class="fn"><span class="dom">Music · Film</span><span>Fig. 3-14</span></span><h3>LAST LIGHT</h3>
         <p data-tech="Soundgarden's Black Hole Sun, taken literally. When the Sun collapses, its light keeps coming for 8 minutes and 20 seconds. A grunge song counts them down, sung three ways." data-simple="Inspired by Soundgarden's Black Hole Sun: if the Sun turned into a black hole, the sky would stay bright for 8 more minutes. This song counts them down. Three singers, one film.">Soundgarden's Black Hole Sun, taken literally. When the Sun collapses, its light keeps coming for 8 minutes and 20 seconds. A grunge song counts them down, sung three ways.</p>
         <span class="stats"><span><b>3</b> takes</span><span><b>2:19</b> runtime</span><span><b>33</b> sourced facts</span></span><span class="ft"><span class="sdot" data-sys="music"><i></i>Live</span><span class="go">Watch →</span></span>
+      </a>
+
+      <a class="card mac" data-d="mac" data-sys="situation" data-index="Monitoring the Situation" data-kw="machines ai internet viral posts x twitter news pulse desks grok claude echo chamber" href="https://situation.seansooch.dev" target="_blank" rel="noopener">
+        <span class="fn"><span class="dom">Machines · The Internet</span><span>Fig. 3-15</span></span><h3>Monitoring the Situation<span class="new">New</span></h3>
+        <p data-tech="One record of what every corner of the internet is passing around. Grok reads X each hour across twenty desks; Claude confirms every post with X, writes a line on what it is, and researches the larger stories, setting out how each world describes them and what is on the record." data-simple="Shows what is going viral across the whole internet, not just your own feed. Each post gets a plain sentence saying what it is, and the bigger stories show how different groups see them and what is actually established.">One record of what every corner of the internet is passing around. Grok reads X each hour across twenty desks; Claude confirms every post with X, writes a line on what it is, and researches the larger stories, setting out how each world describes them and what is on the record.</p>
+        <span class="stats"><span><b>20</b> desks</span><span><b>2</b> AI agents</span><span><b>2</b> checks per post</span></span><span class="ft"><span class="sdot" data-sys="situation"><i></i>Live</span><span class="go">Open →</span></span>
       </a>
 
     </div>
@@ -875,7 +881,8 @@
     {id:'detroit',   name:'Detroit Sports Hub',     host:'detroit-sports.pages.dev',           url:'https://detroit-sports.pages.dev/',           w:'spt', ref:'3-11'},
     {id:'greatbooks',name:'Great Books',            host:'great-books.pages.dev',              url:'https://great-books.pages.dev/',              w:'hum', ref:'3-12'},
     {id:'admissions',name:'AdmissionsAcademy',      host:'admissionsacademy.org',              url:'https://admissionsacademy.org/',              w:'med', ref:'3-13'},
-    {id:'music',     name:'Music',                  host:'seansooch.dev/music',                url:'https://seansooch.dev/music/',                w:'mus', ref:'3-14'}
+    {id:'music',     name:'Music',                  host:'seansooch.dev/music',                url:'https://seansooch.dev/music/',                w:'mus', ref:'3-14'},
+    {id:'situation', name:'Monitoring the Situation', host:'situation.seansooch.dev',           url:'https://situation.seansooch.dev/',            w:'mac', ref:'3-15'}
   ];
   var byId = {}; SYSTEMS.forEach(function(s){ byId[s.id] = s; s.status = 'probing'; s.ms = null; });
   $('#sysTotal').textContent = SYSTEMS.length;
