@@ -28,5 +28,20 @@
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
     }
+  },
+  {
+    "slug": "frank-starling-cardiac-output",
+    "title": "Frank\u2013Starling and Cardiac Output",
+    "date": "2026-10-09",
+    "description": "Why a fuller heart pumps harder, and how filling, heart rate and contraction strength add up to cardiac output.",
+    "category": "medicine",
+    "builder": {
+      "tool": "OpenAI Codex",
+      "model": "gpt-6.1-sol"
+    },
+    "reviewer": {
+      "tool": "OpenAI Codex",
+      "model": "gpt-6.1-sol"
+    }
   }
 ]

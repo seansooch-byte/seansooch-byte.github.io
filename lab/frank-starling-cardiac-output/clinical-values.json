@@ -1,0 +1,131 @@
+{
+  "disclaimer": "Typical adult reference ranges; labs vary; not for clinical decisions.",
+  "sources": {
+    "guyton": "Hall JE, Hall ME. Guyton and Hall Textbook of Medical Physiology. 14th edition. Philadelphia: Elsevier; 2021.",
+    "costanzo": "Costanzo LS. Physiology. 6th edition. Philadelphia: Elsevier; 2018.",
+    "esc2021": "McDonagh TA, Metra M, Adamo M, et al. 2021 ESC Guidelines for the diagnosis and treatment of acute and chronic heart failure. European Heart Journal. 2021;42(36):3599–3726. Oxford University Press.",
+    "esc2005": "Nieminen MS et al. Executive summary of the guidelines on the diagnosis and treatment of acute heart failure. European Heart Journal. 2005;26:384–416. European Society of Cardiology. https://doi.org/10.1093/eurheartj/ehi044"
+  },
+  "values": [
+    {
+      "id": "edv",
+      "label": "End-diastolic volume (LV)",
+      "unit": "mL",
+      "low": 110,
+      "high": 120,
+      "typical": null,
+      "source": "guyton",
+      "where": "Chapter 9, p. 119, The Heart as a Pump: 'End-Diastolic Volume, End-Systolic Volume, and Stroke Volume Output' (about 110 to 120 mL)",
+      "modelKey": "edv"
+    },
+    {
+      "id": "sv",
+      "label": "Stroke volume",
+      "unit": "mL",
+      "low": null,
+      "high": null,
+      "typical": 70,
+      "source": "guyton",
+      "where": "Chapter 9, p. 119, 'End-Diastolic Volume, End-Systolic Volume, and Stroke Volume Output' (about 70 mL)",
+      "modelKey": "sv",
+      "note": "Single typical value; the source gives no range."
+    },
+    {
+      "id": "co",
+      "label": "Cardiac output (resting)",
+      "unit": "L/min",
+      "low": null,
+      "high": null,
+      "typical": 5,
+      "source": "guyton",
+      "where": "Chapter 20, p. 245, Cardiac Output, Venous Return, and Their Regulation: 'Normal Values for Cardiac Output at Rest and During Activity' (about 5 L/min in the resting adult)",
+      "modelKey": "co",
+      "note": "Single typical value stated by the source in round numbers; it varies with body composition, activity and age."
+    },
+    {
+      "id": "hr",
+      "label": "Heart rate",
+      "unit": "beats/min",
+      "low": null,
+      "high": null,
+      "typical": 72,
+      "source": "guyton",
+      "where": "Chapter 9, p. 118, 'Cardiac Cycle': duration of the cycle at a normal heart rate of 72 beats/min",
+      "modelKey": "hr"
+    }
+  ],
+  "states": [
+    {
+      "id": "fluids",
+      "label": "Intravenous (IV) fluids",
+      "kind": "physiologic",
+      "summary": "More circulating fluid can increase filling.",
+      "shifts": {
+        "edv": "up"
+      },
+      "source": "costanzo",
+      "where": "Chapter 4, pp. 160–162, Combining Cardiac and Vascular Function Curves; Effects of Changes in Blood Volume, Figure 4.29A: increased volume raises right atrial pressure; the cardiac function relationship links filling pressure with end-diastolic volume. Filling increase is the isolated model mechanism."
+    },
+    {
+      "id": "diuretics",
+      "label": "Diuretics",
+      "kind": "drug",
+      "summary": "Salt and water removal reduces filling.",
+      "shifts": {
+        "edv": "down"
+      },
+      "source": "esc2005",
+      "where": "Section 10.5.2, Diuretics: Effects and mechanisms of action: increased excretion of water and sodium reduces plasma and extracellular fluid volume and right and left ventricular filling pressures."
+    },
+    {
+      "id": "inotropes",
+      "label": "Positive inotropes",
+      "kind": "drug",
+      "summary": "Stronger contraction raises blood per beat at the same filling.",
+      "shifts": {
+        "sv": "up"
+      },
+      "source": "costanzo",
+      "where": "Chapter 4, p. 161, Inotropic Effects, Figure 4.28A: positive inotropic agents increase stroke volume at any right atrial pressure; p. 150, Figure 4.22: increase at a given end-diastolic volume."
+    },
+    {
+      "id": "beta",
+      "label": "Beta-blockers",
+      "kind": "drug",
+      "summary": "Immediate reduction in stress-signal stimulation slows the heart and weakens contraction.",
+      "shifts": {
+        "hr": "down",
+        "sv": "down"
+      },
+      "source": "costanzo",
+      "where": "Chapter 4, Cardiac Electrophysiology, p. 142, Box 4.1: beta antagonists slow SA-node firing (heart rate down). Cardiac Muscle, p. 146, Effects of the Autonomic Nervous System on Contractility: beta-1 activation increases contractility; Chapter 2, p. 53, Table 2.2 lists beta antagonists. Figure 4.22, p. 150: negative inotropy lowers stroke volume at fixed end-diastolic volume. The stroke-volume decrease is an inference for immediate blockade at fixed filling and afterload, not a universal clinical response."
+    },
+    {
+      "id": "nitrates",
+      "label": "Venodilators (nitrates)",
+      "kind": "drug",
+      "summary": "Relaxing veins reduces blood returning to the heart.",
+      "shifts": {
+        "edv": "down"
+      },
+      "source": "esc2021",
+      "where": "Section 11.3.4, Vasodilators: nitrates act mainly on peripheral veins; vasodilators reduce venous return. The illustrated filling reduction isolates this venous effect."
+    },
+    {
+      "id": "failure",
+      "label": "Heart failure (weakened contraction)",
+      "kind": "disease",
+      "summary": "Weaker pumping lowers blood per beat at the same filling.",
+      "shifts": {
+        "sv": "down"
+      },
+      "source": "costanzo",
+      "where": "Chapter 4, pp. 147–148, Effect of Cardiac Glycosides on Contractility: ventricular failure reduces contractility and prevents normal stroke-volume ejection; p. 150, Figure 4.22: negative inotropy lowers stroke volume at given end-diastolic volume."
+    }
+  ],
+  "sourceLinks": {
+    "guyton": "https://studylib.net/doc/28591763/guyton-physiology",
+    "costanzo": "https://studylib.net/doc/27798268/costanzo---physiology-6th-edition-2018",
+    "esc2005": "https://www.escardio.org/static-file/Escardio/Guidelines/guidelines-AHF-ES-2005.pdf"
+  }
+}
