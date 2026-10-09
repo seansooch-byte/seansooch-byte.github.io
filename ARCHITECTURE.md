@@ -45,7 +45,7 @@ flowchart LR
 | Path | What | Edit here? |
 |---|---|---|
 | `index.html`, `two-stories/` | Homepage and essay, view A (OpenAI Astra) | No. Generated. |
-| `designs/fable/`, `designs/opus/` | The same two pages in views F and O, and each view's Lab course page (`lab/`) | No. Generated. |
+| `designs/fable/`, `designs/opus/` | The same two pages in views F and O, and each view's Lab course page (`lab/`) and Monitoring page (`monitor/`) | No. Generated (see the note on `monitor/` under Three views of the course). |
 | `design-switcher.css`, `design-switcher.js` | The fixed bar that switches views | No. Copied from the preview. |
 | `lab-course.js` | Draws lesson rows from the lab ledger on the three home pages and on the Lab pages of views F and O | No. Copied from the preview. |
 | `antibiotic-coverage/`, `calculators/`, `clinical-calculators/`, `differentials/`, `lab-values/index.html`, `tccc/`, `toolkit/` | Field Toolkit, Edition 2 "Pocket Cards" | No. Generated. |
@@ -56,6 +56,7 @@ flowchart LR
 | `music/last-light/media/` | HLS video segments (most of the repo's size) | No. Rendered elsewhere. |
 | `videos/`, `screenshots/`, `*.pdf`, `favicon.svg` | Films, card images, papers | Yes |
 | `lab/` | The Lab: one small app a day, its index and ledger (see The Lab below) | Yes |
+| `monitor/` | Monitoring the Situation: the daily briefing page and its saved copy (see Monitoring the Situation below) | Yes |
 | `_headers`, `_redirects`, `robots.txt`, `sitemap.xml` | Edge behaviour and crawl rules | Yes |
 | `CNAME` | Left over from GitHub Pages; still ships | Leave it |
 | `*.md`, `tools/`, `.gitattributes`, `.gitignore` | Never shipped | Yes |
@@ -63,8 +64,8 @@ flowchart LR
 A generated page is overwritten the next time its source is rebuilt, so a hand edit to one does not last. Its source is
 on Sean's laptop, outside this repo:
 
-- **Homepage, three views of one text.** The home page and essay of each view, the Lab course page of views F and O,
-  the switcher and `lab-course.js` are assembled in `~/seansooch-astra-preview` and copied here. View A's content is built in `~/app-redesign/work/home-astra`; view O is built by
+- **Homepage, three views of one text.** The home page and essay of each view, the Lab course and Monitoring pages of
+  views F and O, the switcher and `lab-course.js` are assembled in `~/seansooch-astra-preview` and copied here. View A's content is built in `~/app-redesign/work/home-astra`; view O is built by
   `~/app-redesign/work/home-opus/build.py`, which writes into the preview; `build-designs.py` in the preview generates
   view F and stamps the shared record (`sources/editions.json`, `sources/corrections.json`) into views A and F, and the
   view O build applies the same record, so a fact changes in one place and agrees in every view. The preview's own `ARCHITECTURE.md` is the authority on the build order.
@@ -77,13 +78,15 @@ To change a generated page from a pull request, describe the change and name the
 
 ### Three views of the course
 
-Three pages exist in every view, and the switcher moves between them: the home page, the Two Stories essay and the Lab
-course page. A lesson is an app with one page, the same in every view.
+Four pages exist in every view, and the switcher moves between them: the home page, the Two Stories essay, the Lab
+course page and Monitoring the Situation. A lesson is an app with one page, the same in every view.
 
 | | View A (Astra) | View F (Fable 5.1) | View O (Opus 5.5) |
 |---|---|---|---|
 | Lab course page | `/lab/` (`lab/index.html`, written by the lab pipeline) | `/designs/fable/lab/` | `/designs/opus/lab/` |
 | Where its lesson list comes from | Written into the page by `tools/lab-index.mjs` | Drawn in the browser by `lab-course.js` | Drawn in the browser by `lab-course.js` |
+| Monitoring the Situation | `/monitor/` (`monitor/index.html`, hand-written here) | `/designs/fable/monitor/` | `/designs/opus/monitor/` |
+| Where its briefing comes from | Drawn in the browser by `/monitor/monitor.js` from the feed | The same script, the same feed | The same script, the same feed |
 
 - **No generated page holds a lesson.** The Lab section of each home page and the Lab pages of views F and O carry a row
   template in that view's own markup. `lab-course.js` reads `/lab/syllabus.json` and `/lab/apps.json` in the reader's
@@ -102,6 +105,20 @@ course page. A lesson is an app with one page, the same in every view.
   `<head>`, the bar before `</body>`). The pipeline's own copy of that page must hold the same three or its next sync
   removes them. From this repo's root, `python3 ~/seansooch-astra-preview/build-designs.py --stamp lab/index.html`
   puts them back and is safe to repeat.
+- **Monitoring exists in all three views.** `design-switcher.js` routes `/monitor` like `/lab`, so the bar moves
+  between `/monitor/`, `/designs/fable/monitor/` and `/designs/opus/monitor/`, and each page's switcher block points at
+  the other two without JavaScript. `monitor/index.html` carries `data-design="astra"` and the two blocks, copied from
+  `lab/index.html` with the hrefs pointed at the Monitoring pages (Sean approved the copy, since `build-designs.py` was
+  not at hand); `python3 ~/seansooch-astra-preview/build-designs.py --stamp monitor/index.html` replaces the blocks
+  between their markers once the preview routes `/monitor`. The F and O pages are modelled on those views' Lab pages
+  and hold no briefing: each loads `/monitor/monitor.js`, the same script as `/monitor/`, which draws the feed into
+  ids the page provides and falls back to `/monitor/feed.json`. Their styles are in the page, as on the other F and O
+  pages.
+- **Off-repo source caveat.** The F and O Monitoring pages, the `/monitor` route in `design-switcher.js` (and its
+  `?v=` bump on the three Monitoring pages), and the Monitoring links in the bars of `/designs/fable/lab/`,
+  `/designs/opus/` and `/designs/opus/lab/` were first written in this repo (PR #13), not in the preview. Until the
+  same changes are made at their sources (`~/seansooch-astra-preview`, `~/app-redesign/work/home-opus`), the next
+  rebuild of the generated pages removes them. The bars of `/` and `/designs/fable/` have no Monitoring link yet.
 - The opening paragraphs of the two generated Lab pages are copies of the ones on `/lab/`. If the pipeline's wording
   changes, they change at their sources (`sources/fable-lab.html` in the preview, `src/lab.template.html` in
   `~/app-redesign/work/home-opus`).
@@ -148,6 +165,36 @@ each app). Nothing in it is generated from a source on Sean's laptop.
   live in one file, `lab/<slug>/clinical-values.json`, so they can be audited in one place; the second-opinion
   reviewer must verify each against its source.
 
+## Monitoring the Situation
+
+`/monitor/` shows Sean's daily news briefing (finance, politics, pop culture, sports, tech and AI, medicine). It is
+written by hand here; nothing in `monitor/` is generated. The briefing itself is **not** in this repo's deploys: the page
+fetches it at runtime, so a new briefing goes live without a site deploy.
+
+- `monitor/index.html`, `monitor/monitor.css`, `monitor/monitor.js`: the page. Self-hosted script, no inline JavaScript,
+  no third-party scripts. It opens with the site's shared top bar (as on `/lab/`), with a Monitoring item marked
+  `aria-current="page"`; the bar's CSS is copied at the end of `monitor/monitor.css`. The homepage's own nav is
+  generated off-repo and has no Monitoring link yet. `monitor/monitor.js` also runs on the F and O Monitoring pages;
+  it finds its places by id (`status`, `status-time`, `status-stale`, `status-saved`, `announce`, `feed`) and draws
+  plain class names that each page styles, so a change to those ids or classes must be made on all three pages.
+- `/monitor/` is view A's Monitoring page; views F and O have their own at `/designs/fable/monitor/` and
+  `/designs/opus/monitor/` (see Three views of the course). It carries `data-design="astra"` on `<html>` and the two
+  `design-switcher` blocks. Those blocks are generated; leave them between their markers so `build-designs.py --stamp`
+  can replace them. Nothing in `monitor/monitor.css` targets them.
+- The page fetches `https://feed.seansooch.dev/v1/feed.json` and renders it with `textContent` and `createElement`
+  only, never `innerHTML`: the briefing is gathered from X and the web and is treated as untrusted. Only `https:` links
+  are rendered. It shows "Updated … ago" from `generated_at` and flags the briefing as stale after about 30 hours.
+- `monitor/feed.json` is a saved copy of one briefing. If the feed cannot be reached (or returns something unusable),
+  the page shows that copy with a visible "Showing saved copy" note. Refresh it now and then by copying a newer
+  briefing over it; it only ships with a site deploy.
+- **The feed** is a Cloudflare Worker, `monitor-feed`, on the Workers Custom Domain `feed.seansooch.dev`, backed by
+  the KV namespace `monitor-feed` (keys `latest`, `prev`, `archive:YYYY-MM-DD` kept 30 days). Its source lives outside
+  this repo (`/workspace/monitor-feed` on the agent box, with its own README). `GET /v1/feed.json` is public, cached 60
+  seconds, with an ETag; CORS is allowed only for `https://seansooch.dev` and `https://sean-sooch-portfolio.pages.dev`,
+  so the page reads the feed on those hosts and falls back to the saved copy elsewhere (local previews, archive
+  hosts). Publishing is `PUT /v1/feed` with a bearer secret that is not in this repo; the Worker validates the schema
+  and rejects non-`https` links.
+
 ## Edge behaviour
 
 - `_redirects` sends `/sims`, `/simulators`, `/cpr`, `/codeblue`, `/alignment` and `/alignment-simulator` to the
@@ -157,15 +204,20 @@ each app). Nothing in it is generated from a source on Sean's laptop.
 - `_headers` also sets security headers on every path and host: HSTS (one year, no `includeSubDomains`, no `preload`),
   `nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy`, a `Permissions-Policy`, and a **report-only**
   Content-Security-Policy that logs violations to the console and blocks nothing. Its `connect-src` names every host the
-  homepage probes: a new probed host needs an entry there. Cloudflare injects Web Analytics
+  homepage probes: a new probed host needs an entry there. It also names `https://feed.seansooch.dev`, the briefing
+  feed that the Monitoring pages read; that entry is written as if the policy were enforced. Cloudflare injects Web Analytics
   (`static.cloudflareinsights.com`) into live HTML, so the policy allows that script too.
 - `www.seansooch.dev` redirects to the apex by a Cloudflare Redirect Rule, not by anything in this repo.
 - An unknown path answers **200 with the homepage**. A status code proves nothing about a deploy; compare bytes.
 
 ## Third-party requests at runtime
 
-Google Fonts on most pages, and `hls.js` from cdn.jsdelivr.net (pinned by integrity hash) on `/music/last-light/`.
-Nothing else is loaded from another origin (the homepage host probes are requests whose responses are never read), and no page posts data anywhere.
+Google Fonts on most pages, `hls.js` from cdn.jsdelivr.net (pinned by integrity hash) on `/music/last-light/`, and
+the briefing JSON from `https://feed.seansooch.dev/v1/feed.json` on the three Monitoring pages (data only, rendered as text; see
+Monitoring the Situation). That feed is the one place a page reads data from another origin (`lab-course.js` reads
+`/lab/syllabus.json` and `/lab/apps.json` from this origin); nothing else is loaded
+from another origin (the homepage host probes are requests whose responses are never read), and no page posts data
+anywhere.
 
 ## Other hosts
 
