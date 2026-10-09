@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anki | Field Toolkit | Sean Sooch</title>
+<meta name="description" content="How Anki and its FSRS scheduler work: the three numbers behind every card, the desired retention dial, and how to write cards that survive.">
+<link rel="canonical" href="https://seansooch.dev/toolkit/anki/">
+<meta name="theme-color" content="#A9C6D8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://seansooch.dev/toolkit/anki/">
+<meta property="og:title" content="Anki | Field Toolkit | Sean Sooch">
+<meta property="og:description" content="How Anki and its FSRS scheduler work: the three numbers behind every card, the desired retention dial, and how to write cards that survive.">
+<meta property="og:image" content="https://seansooch.dev/screenshots/space.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="800">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Anki | Field Toolkit | Sean Sooch">
+<meta name="twitter:description" content="How Anki and its FSRS scheduler work: the three numbers behind every card, the desired retention dial, and how to write cards that survive.">
+<meta name="twitter:image" content="https://seansooch.dev/screenshots/space.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@400;700&family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/toolkit/pocket.css">
+</head>
+<body data-tool="anki">
+<!--pc:chrome--><header class="pc-bar"><div class="in"><a class="pc-home" href="/">&larr; seansooch.dev</a><a class="pc-kit" href="/toolkit/">Field Toolkit</a><nav class="pc-tools" aria-label="Force Multipliers"><a href="/toolkit/graph-vs-loop/"><i style="background:#0F7F87"></i>Graph vs Loop</a><a href="/toolkit/obsidian-reader/"><i style="background:#6B7A1A"></i>Obsidian Reader</a><a href="/toolkit/anki/" aria-current="page"><i style="background:#5B7286"></i>Anki</a></nav></div></header><!--/pc:chrome-->
+<main class="wrap brief">
+<header>
+  <div class="label">Force Multiplier 03 · Memory</div>
+  <h1>Anki</h1>
+  <p>A flashcard program that decides when to ask, so each fact comes back just before you would have lost it.</p>
+</header>
+
+<div class="bluf">
+  <span class="k">Bottom line</span>
+  <p>Two findings carry the whole method: pulling a fact out of memory strengthens it more than reading it again, and reviews spread out over time beat the same reviews packed together. Anki does the bookkeeping for both. Your job is to write small cards and show up every day.</p>
+</div>
+
+<section id="plain">
+  <h2><span class="no">1 · In plain words</span>Watering on a schedule</h2>
+  <p>A new seedling needs water every day. An established plant needs it once a week, and a tree hardly at all. Water everything daily and you waste the day. Water everything monthly and the seedlings die.</p>
+  <p>Facts in memory behave the same way. A fact you met this morning needs to come back tomorrow. One you have recalled correctly five times can wait months. Anki keeps a separate schedule for every card, so the fragile ones return soon and the sturdy ones stay out of your way.</p>
+  <p>That is why a deck of several thousand cards is workable. On any one day you see only the small share that is about to fade.</p>
+</section>
+
+<section id="mechanism">
+  <h2><span class="no">2 · The mechanism</span>Three numbers per card</h2>
+  <p>You are shown a question. You answer from memory, reveal the card, and grade yourself: Again, Hard, Good or Easy. The scheduler turns that grade into the next due date. Current versions of Anki ship a scheduler called FSRS, which tracks three numbers for every card.</p>
+  <dl class="rows">
+    <div><dt>Retrievability</dt><dd>The chance you could recall the card right now. It starts near 100% after a review and falls every day.</dd></div>
+    <div><dt>Stability</dt><dd>How slowly it falls: the number of days until that chance drops to 90%. A good review raises it, so the next gap is longer.</dd></div>
+    <div><dt>Difficulty</dt><dd>How stubborn this card is for you, on a scale of 1 to 10. Hard cards gain stability more slowly.</dd></div>
+  </dl>
+  <p>You set one dial, called <b>desired retention</b>: how likely you want to be to remember a card at the moment it comes due. The default is 90%. The scheduler then waits until a card's retrievability has fallen to that line, and asks.</p>
+
+  <h3>Try the dial</h3>
+  <figure class="fig wide">
+    <div class="fm-bench" id="bench">
+      <svg viewBox="0 0 520 300" role="img" aria-labelledby="d-curve-t">
+        <title id="d-curve-t">A forgetting curve: the chance of recall falls over days, and the review is due where it crosses the desired retention line.</title>
+        <path class="ax" d="M56 20V250H500"/>
+        <path class="ax" id="b-grid" d=""/>
+        <text class="d-s" x="50" y="24" text-anchor="end">100%</text>
+        <text class="d-s" x="50" y="139" text-anchor="end">75%</text>
+        <text class="d-s" x="50" y="254" text-anchor="end">50%</text>
+        <text class="d-s" x="56" y="270" text-anchor="middle">0</text>
+        <text class="d-s" id="b-xmax" x="500" y="270" text-anchor="end"></text>
+        <text class="d-m" x="278" y="292" text-anchor="middle">DAYS SINCE THE LAST REVIEW</text>
+        <path class="curve" id="b-curve" d=""/>
+        <path class="due" id="b-due" d=""/>
+        <circle class="dot" id="b-dot" r="6" cx="-20" cy="-20"/>
+      </svg>
+      <div class="ctl">
+        <label>Desired retention: <output id="b-r-out">90%</output>
+          <input type="range" id="b-r" min="70" max="97" step="1" value="90">
+        </label>
+        <label>Stability of this card: <output id="b-s-out">10 days</output>
+          <input type="range" id="b-s" min="1" max="120" step="1" value="10">
+        </label>
+        <div class="readout" aria-live="polite"><b id="b-days">10 days</b><span id="b-note">until this card is due.</span></div>
+      </div>
+    </div>
+    <figcaption>Figure 1. The forgetting curve FSRS uses, in its published FSRS-4.5 and FSRS-5 form. The newest version also fits the steepness of the curve to your own review history. Move the dials: asking for more retention pulls the due date in.</figcaption>
+  </figure>
+  <p>The same relationship as a table. At 90% the gap equals the card's stability. Everything else is a multiple of it.</p>
+  <dl class="rows" id="mults">
+    <div data-r="0.80" data-m="2.40"><dt>80%</dt><dd>Wait 2.40 times the stability. Fewer reviews, more forgetting.</dd></div>
+    <div data-r="0.85" data-m="1.64"><dt>85%</dt><dd>Wait 1.64 times the stability.</dd></div>
+    <div data-r="0.90" data-m="1.00"><dt>90%</dt><dd>Wait exactly the stability. The default.</dd></div>
+    <div data-r="0.95" data-m="0.46"><dt>95%</dt><dd>Wait 0.46 times the stability: every gap is less than half as long.</dd></div>
+    <div data-r="0.97" data-m="0.27"><dt>97%</dt><dd>Wait 0.27 times the stability: every gap is about a quarter as long.</dd></div>
+  </dl>
+  <p>This is why the Anki manual warns that above 90% the workload rises very quickly, and that above 97% it can be overwhelming. The last few points of retention are the most expensive ones.</p>
+</section>
+
+<section id="setup">
+  <h2><span class="no">3 · Set it up</span>Six settings and habits</h2>
+  <ol class="steps">
+    <li><b>Turn FSRS on.</b> It is at the bottom of the deck options page, and it is switched on for the whole collection, not per deck.</li>
+    <li><b>Leave desired retention at 90%</b> unless you have a reason. Raise it a little for an exam you cannot afford to miss, and expect more reviews.</li>
+    <li><b>Press Optimize about once a month.</b> It fits the scheduler to your own review history. The manual says not to edit the parameters by hand or copy someone else's.</li>
+    <li><b>Keep learning steps short.</b> The manual advises against steps of a day or longer when FSRS is on, and against having many of them.</li>
+    <li><b>Do reviews before new cards.</b> Every new card is a promise of future reviews. If the pile is growing, add fewer new cards. Do not skip the reviews.</li>
+    <li><b>Grade honestly.</b> The schedule is built from your grades. Pressing Good on a card you missed tells the scheduler to wait longer for a fact you do not have.</li>
+  </ol>
+  <p>The desktop program is free, and so are AnkiWeb sync and the Android app. The iPhone app is paid.</p>
+</section>
+
+<section id="cards">
+  <h2><span class="no">4 · The half the software cannot do</span>Writing cards that survive</h2>
+  <dl class="rows">
+    <div><dt>One fact</dt><dd>One card asks for one thing. If the answer has three parts, it is three cards.</dd></div>
+    <div><dt>Understand first</dt><dd>Make the card after you understand the idea. A card is for keeping something, not for meeting it.</dd></div>
+    <div><dt>Cloze</dt><dd>A sentence with one piece blanked out is the fastest way to turn a line of notes into a card.</dd></div>
+    <div><dt>Pictures</dt><dd>For anatomy, films and diagrams, hide a label on the image and ask for it. Anki has this built in as image occlusion.</dd></div>
+    <div><dt>Your words</dt><dd>A shared deck saves weeks of typing. Reword any card you keep missing so it asks the question the way you think about it.</dd></div>
+  </dl>
+  <h3>A deck is a database</h3>
+  <p>An Anki deck exports as a single file, and inside it is an ordinary database of notes, fields and tags. That is what makes it a multiplier beyond flashcards: the same facts can be read by a program and turned into something else.</p>
+  <p>The study site linked from this portfolio was built that way: seven question banks derived from Anki decks, 12,357 guide facts, and 12,972 board-style questions written from them. Building it surfaced about 100 factual errors in the source decks, which were corrected. Treat any deck, shared or your own, as a draft that can be wrong.</p>
+</section>
+
+<section id="traps">
+  <h2><span class="no">5 · What most people get wrong</span>Five traps</h2>
+  <ol class="traps">
+    <li><b>Making cards and calling it studying.</b> Building a deck feels productive. The learning is in the reviews.</li>
+    <li><b>Cards that hold a paragraph.</b> One grade cannot describe six memories. You pass the card while losing half of it, or fail it for one slip and see the whole thing far too often.</li>
+    <li><b>Chasing 99%.</b> Past the default, each extra point of retention costs more reviews than the last. The time is usually better spent on new material or practice questions.</li>
+    <li><b>Knowing the card and not the fact.</b> After enough repetitions you can recognise a card by its shape and answer without thinking. A fact you can only produce for its own card is not much use on a ward or an exam. Pair the deck with practice questions that ask for the same fact a different way.</li>
+    <li><b>Skipping days, then quitting.</b> Reviews you skip do not go away. They arrive together. A short session every day beats a long one on Sunday.</li>
+  </ol>
+</section>
+
+<section id="check">
+  <h2><span class="no">6 · Check yourself</span>Three questions</h2>
+  <div class="quiz">
+    <fieldset class="q" data-answer="a">
+      <legend><span class="qk">Recall</span>In FSRS, what does a card's stability measure?</legend>
+      <div class="opts">
+        <button type="button" data-o="a">The number of days until your chance of recalling it falls to 90%.</button>
+        <button type="button" data-o="b">How many times you have reviewed it.</button>
+        <button type="button" data-o="c">How hard the card is, from 1 to 10.</button>
+      </div>
+      <details class="why"><summary>Show the answer</summary><p>Days until recall falls to 90%. The 1 to 10 number is difficulty, and the review count is not one of the three numbers at all: two cards reviewed five times each can have very different stability.</p></details>
+    </fieldset>
+    <fieldset class="q" data-answer="c">
+      <legend><span class="qk">Apply it</span>Your exam is in six weeks and reviews are taking longer every day. What do you change?</legend>
+      <div class="opts">
+        <button type="button" data-o="a">Raise desired retention to 97% to be safe.</button>
+        <button type="button" data-o="b">Skip reviews for a week and catch up later.</button>
+        <button type="button" data-o="c">Add fewer new cards and keep doing the reviews.</button>
+      </div>
+      <details class="why"><summary>Show the answer</summary><p>Fewer new cards. New cards are what feed the review pile, so that is the dial that brings it down. Raising retention to 97% shortens every gap to about a quarter and makes the pile worse. Skipping moves the same reviews to one bad day.</p></details>
+    </fieldset>
+    <fieldset class="q" data-answer="b">
+      <legend><span class="qk">What would break</span>You put a whole table of eight values on one card. What breaks?</legend>
+      <div class="opts">
+        <button type="button" data-o="a">Nothing. It is faster to review one card than eight.</button>
+        <button type="button" data-o="b">The grade. One button press cannot say which of the eight you forgot.</button>
+        <button type="button" data-o="c">Sync. Large cards cannot be synced.</button>
+      </div>
+      <details class="why"><summary>Show the answer</summary><p>The grade. The scheduler keeps one stability for the card, so it cannot bring back the two values you missed without also bringing back the six you know. Eight small cards each get their own schedule.</p></details>
+    </fieldset>
+    <p class="quiz-score" aria-live="polite"></p>
+  </div>
+</section>
+
+<section id="sources">
+  <h2><span class="no">Sources</span>Where this comes from</h2>
+  <ul class="srcs">
+    <li>Anki Manual, <a href="https://docs.ankiweb.net/deck-options.html">Deck Options</a>: FSRS, desired retention, Optimize and learning steps. Checked 9 October 2026.</li>
+    <li>Open Spaced Repetition, <a href="https://github.com/open-spaced-repetition/awesome-fsrs/wiki/The-Algorithm">The Algorithm</a>: the three memory variables and the forgetting curve drawn above.</li>
+    <li>Roediger and Karpicke, "Test-Enhanced Learning", Psychological Science, 2006: retrieval practice against rereading.</li>
+    <li>Cepeda and colleagues, "Distributed Practice in Verbal Recall Tasks", Psychological Bulletin, 2006: spaced against massed practice.</li>
+    <li>Wozniak, "Effective Learning: Twenty Rules of Formulating Knowledge", 1999: the case for small cards.</li>
+    <li>The study site figures are the ones published on <a href="/">the home page</a>.</li>
+  </ul>
+</section>
+
+<script>
+/* The forgetting-curve bench (#bench). Expected behaviour, since this page has no test rig:
+   - Curve: R(t) = (1 + F*t/S)^D with F = 19/81 and D = -0.5, so R(S) = 0.90 exactly.
+   - Due date: t = (S/F) * (r^(1/D) - 1). At r = 0.90 that is S. The #mults table states the same
+     multiples and build.py recomputes them from this formula.
+   - Both sliders redraw the curve, the dashed drop line, the dot and the readout. The x axis runs to
+     1.25 times the due date at the lowest retention on the slider, so the dot never leaves the plot.
+   - No script: the axes and the table still carry the lesson; the sliders are inert. */
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var rIn = $('b-r'), sIn = $('b-s'); if (!rIn || !sIn) return;
+  var F = 19 / 81, D = -0.5, X0 = 56, X1 = 500, Y0 = 20, Y1 = 250;
+  var R = function (t, S) { return Math.pow(1 + F * t / S, D); };
+  var due = function (r, S) { return S / F * (Math.pow(r, 1 / D) - 1); };
+  var y = function (p) { return Y1 - (p - 0.5) / 0.5 * (Y1 - Y0); };
+  var days = function (n) { var v = n < 10 ? Math.round(n * 10) / 10 : Math.round(n); return v + (v === 1 ? ' day' : ' days'); };
+  function draw() {
+    var r = +rIn.value / 100, S = +sIn.value, tDue = due(r, S), tMax = due(+rIn.min / 100, S) * 1.25;
+    var x = function (t) { return X0 + t / tMax * (X1 - X0); };
+    var d = '', i, t;
+    for (i = 0; i <= 80; i++) { t = tMax * i / 80; d += (i ? 'L' : 'M') + x(t).toFixed(1) + ' ' + y(Math.max(0.5, R(t, S))).toFixed(1); }
+    $('b-curve').setAttribute('d', d);
+    $('b-grid').setAttribute('d', 'M' + X0 + ' ' + y(0.75) + 'H' + X1);
+    $('b-due').setAttribute('d', 'M' + X0 + ' ' + y(r).toFixed(1) + 'H' + x(tDue).toFixed(1) + 'V' + Y1);
+    $('b-dot').setAttribute('cx', x(tDue).toFixed(1)); $('b-dot').setAttribute('cy', y(r).toFixed(1));
+    $('b-xmax').textContent = days(tMax);
+    $('b-r-out').textContent = Math.round(r * 100) + '%';
+    $('b-s-out').textContent = days(S);
+    $('b-days').textContent = days(tDue);
+    $('b-note').textContent = 'until this card is due, when you would recall it about ' + Math.round(r * 100) + ' times in 100.';
+  }
+  rIn.addEventListener('input', draw); sIn.addEventListener('input', draw); draw();
+})();
+</script>
+<div class="more"><span class="k">More Force Multipliers</span><div class="related"><a href="/toolkit/graph-vs-loop/">Graph vs Loop</a><a href="/toolkit/obsidian-reader/">Obsidian Reader</a><a href="/toolkit/#force-multipliers">The whole set</a></div></div>
+</main>
+<!--pc:chrome--><div class="pc-foot"><span>Field notes, not doctrine. Check the linked sources before you rely on them.</span><span>Written with Claude Opus 5.5 · <a href="/toolkit/#force-multipliers">All Force Multipliers</a></span></div><!--/pc:chrome-->
+<script src="/toolkit/brief.js" defer></script>
+</body>
+</html>

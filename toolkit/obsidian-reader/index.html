@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Obsidian Reader | Field Toolkit | Sean Sooch</title>
+<meta name="description" content="Obsidian Web Clipper and its Reader mode: read a page clean, highlight what matters, and keep it as a plain text file your notes and tools can find.">
+<link rel="canonical" href="https://seansooch.dev/toolkit/obsidian-reader/">
+<meta name="theme-color" content="#A9C6D8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://seansooch.dev/toolkit/obsidian-reader/">
+<meta property="og:title" content="Obsidian Reader | Field Toolkit | Sean Sooch">
+<meta property="og:description" content="Obsidian Web Clipper and its Reader mode: read a page clean, highlight what matters, and keep it as a plain text file your notes and tools can find.">
+<meta property="og:image" content="https://seansooch.dev/screenshots/space.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="800">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Obsidian Reader | Field Toolkit | Sean Sooch">
+<meta name="twitter:description" content="Obsidian Web Clipper and its Reader mode: read a page clean, highlight what matters, and keep it as a plain text file your notes and tools can find.">
+<meta name="twitter:image" content="https://seansooch.dev/screenshots/space.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@400;700&family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/toolkit/pocket.css">
+</head>
+<body data-tool="obsidian-reader">
+<!--pc:chrome--><header class="pc-bar"><div class="in"><a class="pc-home" href="/">&larr; seansooch.dev</a><a class="pc-kit" href="/toolkit/">Field Toolkit</a><nav class="pc-tools" aria-label="Force Multipliers"><a href="/toolkit/graph-vs-loop/"><i style="background:#0F7F87"></i>Graph vs Loop</a><a href="/toolkit/obsidian-reader/" aria-current="page"><i style="background:#6B7A1A"></i>Obsidian Reader</a><a href="/toolkit/anki/"><i style="background:#5B7286"></i>Anki</a></nav></div></header><!--/pc:chrome-->
+<main class="wrap brief">
+<header>
+  <div class="label">Force Multiplier 02 · Reading</div>
+  <h1>Obsidian Reader</h1>
+  <p>Read a page clean, mark what mattered, and keep it as a plain file that you, your notes and your tools can all find again.</p>
+</header>
+
+<div class="bluf">
+  <span class="k">Bottom line</span>
+  <p>Reader is the reading mode inside Obsidian Web Clipper, a free browser extension. The multiplier is not the clean page. It is that what you read ends up as a text file on your own disk, with its source and date attached, where a search, a link or an AI agent can reach it.</p>
+</div>
+
+<section id="plain">
+  <h2><span class="no">1 · In plain words</span>A photocopier with a highlighter</h2>
+  <p>Picture reading a magazine at a desk with a photocopier beside it. You tear out the ads, read the article, run a highlighter over the three lines that matter, and file the copy in a labelled folder with the date and where it came from written on top.</p>
+  <p>Reader and the clipper do that for web pages. Reader removes the clutter. The highlighter marks the lines. Clipping files the copy, and it writes the label for you.</p>
+  <p>A bookmark only remembers where a page was. This keeps what it said, including after the page changes or disappears.</p>
+</section>
+
+<section id="mechanism">
+  <h2><span class="no">2 · The mechanism</span>Four moves, one file</h2>
+  <figure class="fig wide">
+    <div class="scroll">
+    <svg viewBox="0 0 760 132" role="img" aria-labelledby="d-flow-t">
+      <title id="d-flow-t">A web page goes through Reader, the highlighter and the clip button, and becomes a Markdown file in a vault folder.</title>
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="d-head" d="M0 0L10 5L0 10z"/></marker>
+      </defs>
+      <rect class="d-box" x="8" y="26" width="128" height="62" rx="10"/><text class="d-t" x="72" y="53" text-anchor="middle">Web page</text><text class="d-s" x="72" y="71" text-anchor="middle">ads, menus, popups</text>
+      <rect class="d-box" x="164" y="26" width="128" height="62" rx="10"/><text class="d-t" x="228" y="53" text-anchor="middle">Reader</text><text class="d-s" x="228" y="71" text-anchor="middle">the article only</text>
+      <rect class="d-box" x="320" y="26" width="128" height="62" rx="10"/><text class="d-t" x="384" y="53" text-anchor="middle">Highlighter</text><text class="d-s" x="384" y="71" text-anchor="middle">the lines that matter</text>
+      <rect class="d-box" x="476" y="26" width="128" height="62" rx="10"/><text class="d-t" x="540" y="53" text-anchor="middle">Clip</text><text class="d-s" x="540" y="71" text-anchor="middle">Add to Obsidian</text>
+      <rect class="d-key" x="632" y="26" width="120" height="62" rx="10"/><text class="d-t" x="692" y="53" text-anchor="middle">A text file</text><text class="d-s" x="692" y="71" text-anchor="middle">in your vault</text>
+      <path class="d-line" d="M136 57H160" marker-end="url(#ah)"/>
+      <path class="d-line" d="M292 57H316" marker-end="url(#ah)"/>
+      <path class="d-line" d="M448 57H472" marker-end="url(#ah)"/>
+      <path class="d-line" d="M604 57H628" marker-end="url(#ah)"/>
+      <text class="d-m" x="228" y="112" text-anchor="middle">IN THE BROWSER</text>
+      <text class="d-m" x="692" y="112" text-anchor="middle">ON YOUR DISK</text>
+    </svg>
+    </div>
+    <figcaption>Figure 1. Three steps happen in the browser. The fourth leaves a file that no longer depends on the browser, the extension or the website.</figcaption>
+  </figure>
+  <dl class="rows">
+    <div><dt>Reader</dt><dd>Strips the page down to the article and shows the title, author, date and source. Long pieces get an outline in a sidebar, code blocks get syntax colouring, and footnotes open in place. You set the font, size, line height, line width and a light or dark look.</dd></div>
+    <div><dt>Highlighter</dt><dd>Marks selected text, images or whole elements. Highlights are saved, so they are still there when you return to the page.</dd></div>
+    <div><dt>Clip</dt><dd>The Add to Obsidian button saves the page into the vault and folder you choose. By default it keeps the main article. If you selected text first, it keeps the selection.</dd></div>
+    <div><dt>The file</dt><dd>Markdown, with a short block of properties at the top. Obsidian reads it, and so does any text editor, search tool or script.</dd></div>
+  </dl>
+
+  <h3>What a clipping looks like</h3>
+  <p>This is the shape of every clipped page: seven properties, then the text. Highlights arrive wrapped in double equals signs.</p>
+<pre class="note"><span class="p">---
+title: "Two Stories About the Beginning | Sean Sooch"
+source: "https://seansooch.dev/two-stories/"
+author:
+  - "[[Sean Sooch]]"
+published: 2026-09-16
+created: 2026-10-09
+description: "The Big Bang and a generated origin are the same kind of story: a starting condition plus a rule, with the evidence only ever reaching the rule."
+tags:
+  - "clippings"
+---</span>
+The page text, as Markdown. Headings, links and images survive.
+
+<mark>==A line you highlighted before clipping.==</mark></pre>
+  <p>Those seven lines are why the folder stays useful. <code>source</code> lets you cite it. <code>published</code> and <code>created</code> tell you how old the claim is and when you met it. <code>tags</code> lets you pull every clipping at once.</p>
+
+  <h3>Why it multiplies</h3>
+  <p>The vault is a folder of text files. That sounds like a detail and it is the whole point. A note you can only open inside one app helps one person, one page at a time. A folder of dated, sourced text files can be searched in one pass, linked into your own notes, and read by an AI agent that has access to the folder, so a question like "what have I saved about this, and who said it" gets answered from your own reading with the sources attached.</p>
+  <p>The vault behind this site holds 56 clipped pages, saved between April and September 2026, and every one carries the same seven properties. One is a recorded lecture saved together with its transcript. None of them contains a highlight yet, which is the honest state of most vaults: clipping is the easy half.</p>
+</section>
+
+<section id="setup">
+  <h2><span class="no">3 · Set it up</span>Five steps</h2>
+  <ol class="steps">
+    <li><b>Install Obsidian and the Web Clipper extension.</b> The clipper is offered for Chrome and other Chromium browsers, Firefox, Edge, and Safari on Mac, iPhone and iPad.</li>
+    <li><b>Clip one page.</b> Open the clipper with <kbd>Cmd</kbd> <kbd>Shift</kbd> <kbd>O</kbd> (<kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>O</kbd> on Windows and Linux), pick the vault and folder at the bottom of the panel, and press Add to Obsidian. Quick clip, which skips the panel, is <kbd>Opt</kbd> <kbd>Shift</kbd> <kbd>O</kbd> or <kbd>Alt</kbd> <kbd>Shift</kbd> <kbd>O</kbd>.</li>
+    <li><b>Make Reader one press away.</b> Reader opens from the book icon in the panel, from the right-click menu, or from a shortcut you choose. In settings you can also make the toolbar button open Reader directly.</li>
+    <li><b>Decide what highlights do.</b> In the highlighter settings, choose whether a clip keeps the page with your highlights marked, keeps only the highlights, or ignores them. For long articles, only the highlights is usually the right default.</li>
+    <li><b>Give your most-clipped site its own template.</b> A template sets the folder, the tags and the properties for pages from one site, so threads land in one folder and papers in another without you filing anything.</li>
+  </ol>
+  <p>There is also an optional feature called Interpreter that runs a prompt over the page as it is clipped, such as a three-line summary. It needs a model provider and usually an API key, and it sends the page text to that provider. It can be pointed at a model running on your own machine.</p>
+</section>
+
+<section id="traps">
+  <h2><span class="no">4 · What most people get wrong</span>Five traps</h2>
+  <ol class="traps">
+    <li><b>Clipping instead of reading.</b> Saving a page feels like progress and teaches you nothing. If you would not highlight a single line, you probably do not need the page.</li>
+    <li><b>Keeping everything.</b> A vault with every page you opened is a second browser history. Search returns all of it and nothing says why you kept it. Keep the highlights, or one line in your own words at the top.</li>
+    <li><b>Leaving highlights in the browser.</b> Until you clip, highlights live in the extension. They can be exported, but the durable copy is the file in the vault.</li>
+    <li><b>Treating a clipping as yours to republish.</b> A clipped article is a personal copy of someone else's work. Keep it private, and share the link and your own notes.</li>
+    <li><b>Trusting an old clipping.</b> The file records the day the page was published and the day you saved it. Read both before you repeat what it says.</li>
+  </ol>
+</section>
+
+<section id="check">
+  <h2><span class="no">5 · Check yourself</span>Three questions</h2>
+  <div class="quiz">
+    <fieldset class="q" data-answer="c">
+      <legend><span class="qk">Recall</span>Where does a clipped page end up?</legend>
+      <div class="opts">
+        <button type="button" data-o="a">In an account on Obsidian's servers.</button>
+        <button type="button" data-o="b">In the browser's bookmarks.</button>
+        <button type="button" data-o="c">As a Markdown file in a folder of your vault.</button>
+      </div>
+      <details class="why"><summary>Show the answer</summary><p>A file in your vault, which is a folder on your own disk. Obsidian's help page for the clipper says the extension does not collect your data or gather usage metrics.</p></details>
+    </fieldset>
+    <fieldset class="q" data-answer="b">
+      <legend><span class="qk">Apply it</span>You are reading a 6,000 word article and three paragraphs matter. What should the clip keep?</legend>
+      <div class="opts">
+        <button type="button" data-o="a">The whole page, so nothing is lost.</button>
+        <button type="button" data-o="b">Only the highlights, with the source link in the properties.</button>
+        <button type="button" data-o="c">Nothing. Bookmark it.</button>
+      </div>
+      <details class="why"><summary>Show the answer</summary><p>Only the highlights. The source property still points at the full article if you need it, and the note you will actually reread is three paragraphs long. A bookmark keeps none of the text and breaks when the page moves.</p></details>
+    </fieldset>
+    <fieldset class="q" data-answer="a">
+      <legend><span class="qk">What would break</span>Suppose clippings were saved inside the extension instead of as files. What is lost?</legend>
+      <div class="opts">
+        <button type="button" data-o="a">Everything that is not the extension can no longer read them: search, links, scripts, an AI agent.</button>
+        <button type="button" data-o="b">Nothing important. You could still read them in the browser.</button>
+        <button type="button" data-o="c">Only the reading font.</button>
+      </div>
+      <details class="why"><summary>Show the answer</summary><p>You could still read each one, one at a time, in one app. What goes is the multiplier: a plain file is reachable by every other tool you have, now and later, and a note locked in one program is not.</p></details>
+    </fieldset>
+    <p class="quiz-score" aria-live="polite"></p>
+  </div>
+</section>
+
+<section id="sources">
+  <h2><span class="no">Sources</span>Where this comes from</h2>
+  <ul class="srcs">
+    <li>Obsidian Help, <a href="https://obsidian.md/help/web-clipper">Web Clipper</a>, with its pages on <a href="https://obsidian.md/help/web-clipper/reader">Reader</a>, <a href="https://obsidian.md/help/web-clipper/highlight">Highlighter</a>, <a href="https://obsidian.md/help/web-clipper/capture">clipping</a> and <a href="https://obsidian.md/help/web-clipper/interpreter">Interpreter</a>. Features and shortcuts on this card were checked against them on 9 October 2026 and will drift as the extension changes.</li>
+    <li>The vault counts are from the vault behind this site, counted the same day.</li>
+  </ul>
+</section>
+<div class="more"><span class="k">More Force Multipliers</span><div class="related"><a href="/toolkit/graph-vs-loop/">Graph vs Loop</a><a href="/toolkit/anki/">Anki</a><a href="/toolkit/#force-multipliers">The whole set</a></div></div>
+</main>
+<!--pc:chrome--><div class="pc-foot"><span>Field notes, not doctrine. Check the linked sources before you rely on them.</span><span>Written with Claude Opus 5.5 · <a href="/toolkit/#force-multipliers">All Force Multipliers</a></span></div><!--/pc:chrome-->
+<script src="/toolkit/brief.js" defer></script>
+</body>
+</html>

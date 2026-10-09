@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Graph vs Loop | Field Toolkit | Sean Sooch</title>
+<meta name="description" content="Loop engineering and graph engineering for AI agents: what each is made of, how to choose, and a real delivery graph read stop by stop.">
+<link rel="canonical" href="https://seansooch.dev/toolkit/graph-vs-loop/">
+<meta name="theme-color" content="#A9C6D8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://seansooch.dev/toolkit/graph-vs-loop/">
+<meta property="og:title" content="Graph vs Loop | Field Toolkit | Sean Sooch">
+<meta property="og:description" content="Loop engineering and graph engineering for AI agents: what each is made of, how to choose, and a real delivery graph read stop by stop.">
+<meta property="og:image" content="https://seansooch.dev/screenshots/space.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="800">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Graph vs Loop | Field Toolkit | Sean Sooch">
+<meta name="twitter:description" content="Loop engineering and graph engineering for AI agents: what each is made of, how to choose, and a real delivery graph read stop by stop.">
+<meta name="twitter:image" content="https://seansooch.dev/screenshots/space.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@400;700&family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/toolkit/pocket.css">
+</head>
+<body data-tool="graph-vs-loop">
+<!--pc:chrome--><header class="pc-bar"><div class="in"><a class="pc-home" href="/">&larr; seansooch.dev</a><a class="pc-kit" href="/toolkit/">Field Toolkit</a><nav class="pc-tools" aria-label="Force Multipliers"><a href="/toolkit/graph-vs-loop/" aria-current="page"><i style="background:#0F7F87"></i>Graph vs Loop</a><a href="/toolkit/obsidian-reader/"><i style="background:#6B7A1A"></i>Obsidian Reader</a><a href="/toolkit/anki/"><i style="background:#5B7286"></i>Anki</a></nav></div></header><!--/pc:chrome-->
+<main class="wrap brief">
+<header>
+  <div class="label">Force Multiplier 01 · Method</div>
+  <h1>Graph vs Loop</h1>
+  <p>Two ways to wire the work of an AI agent, and how to tell which one a job needs.</p>
+</header>
+
+<div class="bluf">
+  <span class="k">Bottom line</span>
+  <p>Start with a loop. Draw a graph when the work is parallel, when someone other than the author has to check it, or when it has to survive being interrupted. A graph is not the opposite of a loop. It is what decides where loops are allowed and what stops them.</p>
+</div>
+
+<section id="plain">
+  <h2><span class="no">1 · In plain words</span>One cook, or a kitchen</h2>
+  <p>A <b>loop</b> is one cook making one dish: taste, adjust, taste again, stop when it is right. Everything the cook knows is in one head, and that is the strength. Nothing has to be explained to anyone.</p>
+  <p>A <b>graph</b> is a kitchen during service. There are stations, a ticket that says exactly what each station owes, and a pass where one person checks every plate before it leaves. The stations do not share a head, so the ticket has to carry what matters.</p>
+  <p>With AI agents the cook is a model working in one conversation, and the kitchen is several of them handing each other written work. The question on this card is when one cook is enough.</p>
+</section>
+
+<section id="mechanism">
+  <h2><span class="no">2 · The mechanism</span>What each one is made of</h2>
+  <h3>The loop</h3>
+  <p>An agent loop fits in one line: read the state of the work, take one action, check the result, repeat until the check passes. One context holds the goal, the history and the judgement.</p>
+  <figure class="fig">
+    <div class="scroll">
+    <svg viewBox="0 0 640 170" role="img" aria-labelledby="d-loop-t">
+      <title id="d-loop-t">A loop: read the state, act, check, and repeat in the same context until the check passes.</title>
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="d-head" d="M0 0L10 5L0 10z"/></marker>
+        <marker id="aht" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="d-head-t" d="M0 0L10 5L0 10z"/></marker>
+      </defs>
+      <rect class="d-box" x="16" y="30" width="160" height="58" rx="10"/>
+      <text class="d-t" x="96" y="56" text-anchor="middle">Read the state</text>
+      <text class="d-s" x="96" y="74" text-anchor="middle">files, errors, the goal</text>
+      <rect class="d-box" x="226" y="30" width="140" height="58" rx="10"/>
+      <text class="d-t" x="296" y="56" text-anchor="middle">Act</text>
+      <text class="d-s" x="296" y="74" text-anchor="middle">one edit, one command</text>
+      <rect class="d-box" x="416" y="30" width="140" height="58" rx="10"/>
+      <text class="d-t" x="486" y="56" text-anchor="middle">Check</text>
+      <text class="d-s" x="486" y="74" text-anchor="middle">run it, read the result</text>
+      <path class="d-line" d="M176 59H222" marker-end="url(#ah)"/>
+      <path class="d-line" d="M366 59H412" marker-end="url(#ah)"/>
+      <path class="d-line" d="M556 59H590" marker-end="url(#ah)"/>
+      <text class="d-t" x="614" y="64" text-anchor="middle">Done</text>
+      <text class="d-m" x="574" y="46" text-anchor="middle">PASS</text>
+      <path class="d-back" d="M486 88V132H96V92" marker-end="url(#aht)"/>
+      <text class="d-m" x="291" y="152" text-anchor="middle">NOT YET: SAME CONTEXT, NEXT TURN</text>
+    </svg>
+    </div>
+    <figcaption>Figure 1. The loop. Its whole state lives in one conversation.</figcaption>
+  </figure>
+  <p>It is the right tool when one context can hold the whole task and a wrong turn is cheap to undo. It runs out in three ways. The context fills, so early details fall out. The author grades its own work, so a confident mistake passes. And if the session dies, the state dies with it.</p>
+
+  <h3>The graph</h3>
+  <p>A graph breaks the work into nodes and says, in writing, what passes between them.</p>
+  <dl class="rows">
+    <div><dt>Node</dt><dd>One nameable job with a stated input, a structured output, and a named way to fail.</dd></div>
+    <div><dt>Edge</dt><dd>An arrow that means "this step reads what that step produced". Nothing else earns an arrow.</dd></div>
+    <div><dt>Fan-out</dt><dd>One node hands independent work to several. They can run at once because none of them reads another.</dd></div>
+    <div><dt>Join</dt><dd>Where branches meet. A strict join waits for all of them. A lenient join takes what landed and says what is missing.</dd></div>
+    <div><dt>Gate</dt><dd>A check that can say no. It sits between the work and everything downstream of it.</dd></div>
+    <div><dt>Back-edge</dt><dd>An arrow that points upstream. It is a loop inside the graph, so it needs an owner and a limit.</dd></div>
+    <div><dt>Ledger</dt><dd>One record per node per run: what happened, why, and what it wrote. It is how a failed run gets read afterwards.</dd></div>
+  </dl>
+
+  <h3>Choosing</h3>
+  <div class="table-wrap">
+    <table class="cmp">
+      <thead><tr><th scope="col">Ask</th><th scope="col">Loop</th><th scope="col">Graph</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Who holds the task?</th><td>One context holds all of it.</td><td>No single context can, or should.</td></tr>
+        <tr><th scope="row">What does a mistake cost?</th><td>Little. You run it again.</td><td>A lot, or the author cannot see it.</td></tr>
+        <tr><th scope="row">Who checks the work?</th><td>The context that made it.</td><td>A context that did not write it.</td></tr>
+        <tr><th scope="row">Can parts run at once?</th><td>No. Each step needs the last.</td><td>Yes. Branches do not read each other.</td></tr>
+        <tr><th scope="row">What if it is interrupted?</th><td>Start over.</td><td>The record says where it stopped.</td></tr>
+        <tr><th scope="row">What do you pay?</th><td>Almost nothing to set up.</td><td>Contracts, joins and gates to design and keep true.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="audit">
+  <h2><span class="no">3 · A small example</span>The arrow audit</h2>
+  <p>Most pipelines are written as a line, because code runs top to bottom. That makes every step look as if it depends on the one before it. The audit is one test, applied to each arrow in turn.</p>
+  <p class="rule"><b>An edge is real only if the next step reads what the previous step produced.</b> Sequence is not dependency.</p>
+  <p>The fantasy football tool on this site refreshes its data with a script of twelve steps. Written down, it was a line with eleven arrows. Checked against the source, six of the eleven failed the test. The real shape was four levels deep.</p>
+  <figure class="fig wide">
+    <div class="scroll">
+    <svg viewBox="0 0 760 270" role="img" aria-labelledby="d-dag-t">
+      <title id="d-dag-t">The twelve steps drawn by what each one reads: six fetches, then a snapshot and a board, then three derived layers, then one explanation layer.</title>
+      <text class="d-m" x="12" y="16">LEVEL 1 · SIX FETCHES</text>
+      <text class="d-m" x="212" y="16">LEVEL 2</text>
+      <text class="d-m" x="412" y="16">LEVEL 3</text>
+      <text class="d-m" x="632" y="16">LEVEL 4</text>
+      <rect class="d-box" x="12" y="30" width="150" height="30" rx="8"/><text class="d-s" x="87" y="50" text-anchor="middle">Draft rankings</text>
+      <rect class="d-box" x="12" y="68" width="150" height="30" rx="8"/><text class="d-s" x="87" y="88" text-anchor="middle">Projections</text>
+      <rect class="d-box" x="12" y="106" width="150" height="30" rx="8"/><text class="d-s" x="87" y="126" text-anchor="middle">Player prop lines</text>
+      <rect class="d-box" x="12" y="144" width="150" height="30" rx="8"/><text class="d-s" x="87" y="164" text-anchor="middle">Game lines</text>
+      <rect class="d-box" x="12" y="182" width="150" height="30" rx="8"/><text class="d-s" x="87" y="202" text-anchor="middle">Player list</text>
+      <rect class="d-box" x="12" y="220" width="150" height="30" rx="8"/><text class="d-s" x="87" y="240" text-anchor="middle">Finished weeks</text>
+      <rect class="d-key" x="212" y="52" width="150" height="50" rx="10"/><text class="d-t" x="287" y="74" text-anchor="middle">Daily snapshot</text><text class="d-s" x="287" y="91" text-anchor="middle">takes what landed</text>
+      <rect class="d-key" x="212" y="166" width="150" height="50" rx="10"/><text class="d-t" x="287" y="188" text-anchor="middle">The board</text><text class="d-s" x="287" y="205" text-anchor="middle">gated before it writes</text>
+      <rect class="d-box" x="412" y="40" width="170" height="40" rx="10"/><text class="d-t" x="497" y="65" text-anchor="middle">Movers</text>
+      <rect class="d-box" x="412" y="112" width="170" height="40" rx="10"/><text class="d-t" x="497" y="137" text-anchor="middle">Projections, vendor 2</text>
+      <rect class="d-box" x="412" y="184" width="170" height="40" rx="10"/><text class="d-t" x="497" y="209" text-anchor="middle">Projections, vendor 1</text>
+      <rect class="d-box" x="632" y="172" width="116" height="64" rx="10"/><text class="d-t" x="690" y="200" text-anchor="middle">Explanations</text><text class="d-s" x="690" y="218" text-anchor="middle">built last</text>
+      <path class="d-line" d="M162 45L208 66" marker-end="url(#ah)"/>
+      <path class="d-line" d="M162 83L208 74" marker-end="url(#ah)"/>
+      <path class="d-line" d="M162 121L208 84" marker-end="url(#ah)"/>
+      <path class="d-line" d="M162 159L208 94" marker-end="url(#ah)"/>
+      <path class="d-line" d="M162 52C192 60 184 172 208 180" marker-end="url(#ah)"/>
+      <path class="d-line" d="M162 197L208 197" marker-end="url(#ah)"/>
+      <path class="d-line" d="M362 70L408 58" marker-end="url(#ah)"/>
+      <path class="d-line" d="M362 180L408 70" marker-end="url(#ah)"/>
+      <path class="d-line" d="M362 190L408 136" marker-end="url(#ah)"/>
+      <path class="d-line" d="M362 200L408 204" marker-end="url(#ah)"/>
+      <path class="d-line" d="M582 204L628 204" marker-end="url(#ah)"/>
+      <path class="d-line" d="M362 210C430 262 560 262 628 226" marker-end="url(#ah)"/>
+      <path class="d-line" d="M362 60C440 14 610 20 672 168" marker-end="url(#ah)"/>
+    </svg>
+    </div>
+    <figcaption>Figure 2. The same twelve steps, drawn by what each one reads. Six fetches never look at each other. One of them feeds nothing downstream at all.</figcaption>
+  </figure>
+  <p>What landed afterwards was smaller than the drawing. Each of the twelve steps now writes one record to a ledger for the run, and each derived file names the inputs it read and the day of each one. The steps still run in a line. The whole run takes about two minutes, so speed was never the argument. The gain was that "which layer is stale, and why" became something you look up.</p>
+</section>
+
+<section id="tour">
+  <h2><span class="no">4 · A real one, stop by stop</span>Reading a delivery graph</h2>
+  <p>This is a working diagram for how projects on this site get built across three AI subscriptions. It is a good graph to learn on because it has almost every part from section 2, and because it contains loops. Step through it, or tap any box.</p>
+  <figure class="fm-tour wide" id="tourfig">
+    <div class="fm-stage"><svg viewBox="0 0 1599 2554" role="img" aria-label="Subscription delivery system: a person briefs one driver, which routes work to three pools of models through a shared contract into four parallel streams, a join, two gates and a callable loop. Each part is described in the numbered stops beside this drawing.">
+<g class="graph" transform="scale(1 1) rotate(0) translate(36 2518.12)">
+<polygon fill="#181818" stroke="none" points="-36,36 -36,-2518.12 1563,-2518.12 1563,36 -36,36"/>
+<text xml:space="preserve" text-anchor="middle" x="763.5" y="-2458.32" font-family="Arial" font-size="22.00" fill="#e1e1e1">SUBSCRIPTION DELIVERY SYSTEM</text>
+<text xml:space="preserve" text-anchor="middle" x="763.5" y="-2431.92" font-family="Arial" font-size="22.00" fill="#e1e1e1">Opus leads · Grok executes and challenges · ChatGPT by agent preference</text>
+<text xml:space="preserve" text-anchor="middle" x="763.5" y="-2405.52" font-family="Arial" font-size="22.00" fill="#e1e1e1"> </text>
+<g class="cluster" data-n="cluster_claude">
+<polygon fill="#202020" stroke="#454545" points="222,-1852.88 222,-2293.32 506,-2293.32 506,-1852.88 222,-1852.88"/>
+<text xml:space="preserve" text-anchor="middle" x="364" y="-2276.72" font-family="Arial" font-size="14.00" fill="#e1e1e1">01 · CLAUDE SUBSCRIPTION · $100/mo</text>
+<text xml:space="preserve" text-anchor="middle" x="364" y="-2259.92" font-family="Arial" font-size="14.00" fill="#e1e1e1">Primary pool · approximately 70% of work</text>
+</g>
+<g class="cluster" data-n="cluster_grok">
+<polygon fill="#202020" stroke="#454545" points="514,-1703.96 514,-2065 796,-2065 796,-1703.96 514,-1703.96"/>
+<text xml:space="preserve" text-anchor="middle" x="655" y="-2048.4" font-family="Arial" font-size="14.00" fill="#e1e1e1">02 · SUPERGROK PLUS · $100/mo</text>
+<text xml:space="preserve" text-anchor="middle" x="655" y="-2031.6" font-family="Arial" font-size="14.00" fill="#e1e1e1">Second pool · approximately 25% of work</text>
+</g>
+<g class="cluster" data-n="cluster_gpt">
+<polygon fill="#202020" stroke="#454545" points="804,-1711.76 804,-2057.2 1143,-2057.2 1143,-1711.76 804,-1711.76"/>
+<text xml:space="preserve" text-anchor="middle" x="973.5" y="-2040.6" font-family="Arial" font-size="14.00" fill="#e1e1e1">03 · CHATGPT SUBSCRIPTION · $20/mo</text>
+<text xml:space="preserve" text-anchor="middle" x="973.5" y="-2023.8" font-family="Arial" font-size="14.00" fill="#e1e1e1">Optional pool · approximately 5% of work</text>
+</g>
+<g class="cluster" data-n="cluster_delivery">
+<polygon fill="#1e1e1e" stroke="#3a3a3a" points="8,-1141.08 8,-1572.44 1276,-1572.44 1276,-1141.08 8,-1141.08"/>
+<text xml:space="preserve" text-anchor="middle" x="642" y="-1555.84" font-family="Arial" font-size="14.00" fill="#e1e1e1">REQUIRED PROJECT DELIVERY · Opus owns the whole; workers own bounded changes</text>
+</g>
+<g class="cluster" data-n="cluster_security">
+<polygon fill="#242424" stroke="#3a3a3a" points="32,-1172.88 32,-1521.24 324,-1521.24 324,-1172.88 32,-1172.88"/>
+<text xml:space="preserve" text-anchor="middle" x="178" y="-1506.44" font-family="Arial" font-size="12.00" fill="#e1e1e1">Continuous security</text>
+</g>
+<g class="cluster" data-n="cluster_backend">
+<polygon fill="#242424" stroke="#3a3a3a" points="348,-1172.88 348,-1521.24 630,-1521.24 630,-1172.88 348,-1172.88"/>
+<text xml:space="preserve" text-anchor="middle" x="489" y="-1506.44" font-family="Arial" font-size="12.00" fill="#e1e1e1">Backend</text>
+</g>
+<g class="cluster" data-n="cluster_frontend">
+<polygon fill="#242424" stroke="#3a3a3a" points="654,-1172.88 654,-1521.24 948,-1521.24 948,-1172.88 654,-1172.88"/>
+<text xml:space="preserve" text-anchor="middle" x="801" y="-1506.44" font-family="Arial" font-size="12.00" fill="#e1e1e1">Frontend</text>
+</g>
+<g class="cluster" data-n="cluster_qa">
+<polygon fill="#242424" stroke="#3a3a3a" points="972,-1165.08 972,-1521.24 1252,-1521.24 1252,-1165.08 972,-1165.08"/>
+<text xml:space="preserve" text-anchor="middle" x="1112" y="-1506.44" font-family="Arial" font-size="12.00" fill="#e1e1e1">Verification</text>
+</g>
+<g class="cluster" data-n="cluster_leverage">
+<polygon fill="#202020" stroke="#454545" points="552,-151.8 552,-535.68 1519,-535.68 1519,-151.8 552,-151.8"/>
+<text xml:space="preserve" text-anchor="middle" x="1035.5" y="-519.08" font-family="Arial" font-size="14.00" fill="#e1e1e1">CALLABLE LEVERAGE LOOP · only on explicit request · 5-10× is a target to test</text>
+</g>
+<g class="node" data-n="you">
+<path fill="#383838" stroke="#424242" d="M491.76,-2391.08C491.76,-2391.08 236.24,-2391.08 236.24,-2391.08 230.24,-2391.08 224.24,-2385.08 224.24,-2379.08 224.24,-2379.08 224.24,-2353.16 224.24,-2353.16 224.24,-2347.16 230.24,-2341.16 236.24,-2341.16 236.24,-2341.16 491.76,-2341.16 491.76,-2341.16 497.76,-2341.16 503.76,-2347.16 503.76,-2353.16 503.76,-2353.16 503.76,-2379.08 503.76,-2379.08 503.76,-2385.08 497.76,-2391.08 491.76,-2391.08"/>
+<text xml:space="preserve" text-anchor="middle" x="364" y="-2370.02" font-family="Arial" font-size="13.00" fill="#e3e3e3">You</text>
+<text xml:space="preserve" text-anchor="middle" x="364" y="-2354.42" font-family="Arial" font-size="13.00" fill="#e3e3e3">Outcome · constraints · acceptance criteria</text>
+</g>
+<g class="node" data-n="budget">
+<path fill="#303030" stroke="none" d="M834.75,-2394.92C834.75,-2394.92 569.25,-2394.92 569.25,-2394.92 563.25,-2394.92 557.25,-2388.92 557.25,-2382.92 557.25,-2382.92 557.25,-2349.32 557.25,-2349.32 557.25,-2343.32 563.25,-2337.32 569.25,-2337.32 569.25,-2337.32 834.75,-2337.32 834.75,-2337.32 840.75,-2337.32 846.75,-2343.32 846.75,-2349.32 846.75,-2349.32 846.75,-2382.92 846.75,-2382.92 846.75,-2388.92 840.75,-2394.92 834.75,-2394.92"/>
+<text xml:space="preserve" text-anchor="middle" x="702" y="-2384.12" font-family="Arial" font-size="12.00" fill="#aaaaaa">CURRENT SUBSCRIPTIONS · $220 / MONTH</text>
+<text xml:space="preserve" text-anchor="middle" x="702" y="-2369.72" font-family="Arial" font-size="12.00" fill="#aaaaaa">Claude $100 &#160;/ &#160;SuperGrok Plus $100 &#160;/ &#160;ChatGPT $20</text>
+<text xml:space="preserve" text-anchor="middle" x="702" y="-2355.32" font-family="Arial" font-size="12.00" fill="#aaaaaa">Suggested work allocation: 70% / 25% / 5%</text>
+<text xml:space="preserve" text-anchor="middle" x="702" y="-2340.92" font-family="Arial" font-size="12.00" fill="#aaaaaa">Allocation is flexible; subscription spend is fixed.</text>
+</g>
+<g class="node" data-n="opus">
+<path fill="#3a3a3a" stroke="#999999" stroke-width="1.5" d="M474.42,-2190.12C474.42,-2190.12 253.58,-2190.12 253.58,-2190.12 247.58,-2190.12 241.58,-2184.12 241.58,-2178.12 241.58,-2178.12 241.58,-2121 241.58,-2121 241.58,-2115 247.58,-2109 253.58,-2109 253.58,-2109 474.42,-2109 474.42,-2109 480.42,-2109 486.42,-2115 486.42,-2121 486.42,-2121 486.42,-2178.12 486.42,-2178.12 486.42,-2184.12 480.42,-2190.12 474.42,-2190.12"/>
+<text xml:space="preserve" text-anchor="middle" x="364" y="-2169.06" font-family="Arial" font-size="13.00" fill="#e3e3e3">OPUS 5.5</text>
+<text xml:space="preserve" text-anchor="middle" x="364" y="-2153.46" font-family="Arial" font-size="13.00" fill="#e3e3e3">Primary driver and final integrator</text>
+<text xml:space="preserve" text-anchor="middle" x="364" y="-2137.86" font-family="Arial" font-size="13.00" fill="#e3e3e3">Product judgment · architecture · risk</text>
+<text xml:space="preserve" text-anchor="middle" x="364" y="-2122.26" font-family="Arial" font-size="13.00" fill="#e3e3e3">Owns plan, routing and acceptance</text>
+</g>
+<g class="edge" data-n="you-&gt;opus">
+<path fill="none" stroke="#777777" d="M364,-2340.92C364,-2306.5 364,-2242.65 364,-2198.45"/>
+<polygon fill="#777777" stroke="#777777" points="366.28,-2198.73 364,-2192.23 361.73,-2198.73 366.28,-2198.73"/>
+<text xml:space="preserve" text-anchor="middle" x="440.71" y="-2304.32" font-family="Arial" font-size="10.00" fill="#c1c1c1">One brief · one accountable driver</text>
+</g>
+<g class="node" data-n="sonnet">
+<path fill="#303030" stroke="#424242" d="M470.45,-1954C470.45,-1954 257.55,-1954 257.55,-1954 251.55,-1954 245.55,-1948 245.55,-1942 245.55,-1942 245.55,-1884.88 245.55,-1884.88 245.55,-1878.88 251.55,-1872.88 257.55,-1872.88 257.55,-1872.88 470.45,-1872.88 470.45,-1872.88 476.45,-1872.88 482.45,-1878.88 482.45,-1884.88 482.45,-1884.88 482.45,-1942 482.45,-1942 482.45,-1948 476.45,-1954 470.45,-1954"/>
+<text xml:space="preserve" text-anchor="middle" x="364" y="-1932.94" font-family="Arial" font-size="13.00" fill="#e3e3e3">Sonnet 5.5</text>
+<text xml:space="preserve" text-anchor="middle" x="364" y="-1917.34" font-family="Arial" font-size="13.00" fill="#e3e3e3">Bounded implementation · UI polish</text>
+<text xml:space="preserve" text-anchor="middle" x="364" y="-1901.74" font-family="Arial" font-size="13.00" fill="#e3e3e3">Tests · fixes · documentation</text>
+<text xml:space="preserve" text-anchor="middle" x="364" y="-1886.14" font-family="Arial" font-size="13.00" fill="#e3e3e3">Medium by default; raise for difficulty</text>
+</g>
+<g class="edge" data-n="opus-&gt;sonnet">
+<path fill="none" stroke="#777777" d="M364,-2108.31C364,-2067.7 364,-2004.99 364,-1961.96"/>
+<polygon fill="#777777" stroke="#777777" points="366.28,-1962.17 364,-1955.68 361.73,-1962.18 366.28,-1962.17"/>
+<text xml:space="preserve" text-anchor="middle" x="437.65" y="-2076" font-family="Arial" font-size="10.00" fill="#c1c1c1">Keep context&#45;sensitive work here</text>
+</g>
+<g class="node" data-n="grok">
+<path fill="#353535" stroke="#777777" d="M764.34,-1961.8C764.34,-1961.8 545.66,-1961.8 545.66,-1961.8 539.66,-1961.8 533.66,-1955.8 533.66,-1949.8 533.66,-1949.8 533.66,-1877.08 533.66,-1877.08 533.66,-1871.08 539.66,-1865.08 545.66,-1865.08 545.66,-1865.08 764.34,-1865.08 764.34,-1865.08 770.34,-1865.08 776.34,-1871.08 776.34,-1877.08 776.34,-1877.08 776.34,-1949.8 776.34,-1949.8 776.34,-1955.8 770.34,-1961.8 764.34,-1961.8"/>
+<text xml:space="preserve" text-anchor="middle" x="655" y="-1940.74" font-family="Arial" font-size="13.00" fill="#e3e3e3">SUPERGROK</text>
+<text xml:space="preserve" text-anchor="middle" x="655" y="-1925.14" font-family="Arial" font-size="13.00" fill="#e3e3e3">Default second execution lane</text>
+<text xml:space="preserve" text-anchor="middle" x="655" y="-1909.54" font-family="Arial" font-size="13.00" fill="#e3e3e3">Underlying model selected by service</text>
+<text xml:space="preserve" text-anchor="middle" x="655" y="-1893.94" font-family="Arial" font-size="13.00" fill="#e3e3e3">Services · migrations · test coverage</text>
+<text xml:space="preserve" text-anchor="middle" x="655" y="-1878.34" font-family="Arial" font-size="13.00" fill="#e3e3e3">Research and independent challenge</text>
+</g>
+<g class="edge" data-n="opus-&gt;grok">
+<path fill="none" stroke="#777777" d="M460.9,-2108.31C491.26,-2095.69 517,-2085 517,-2085 517,-2085 571.23,-2017.98 611.7,-1967.96"/>
+<polygon fill="#777777" stroke="#777777" points="613.29,-1969.61 615.61,-1963.13 609.75,-1966.75 613.29,-1969.61"/>
+<text xml:space="preserve" text-anchor="middle" x="585.95" y="-2076" font-family="Arial" font-size="10.00" fill="#c1c1c1">Default external delegation</text>
+</g>
+<g class="node" data-n="gpt">
+<path fill="#303030" stroke="#424242" stroke-dasharray="5,2" d="M1067.51,-1954C1067.51,-1954 836.49,-1954 836.49,-1954 830.49,-1954 824.49,-1948 824.49,-1942 824.49,-1942 824.49,-1884.88 824.49,-1884.88 824.49,-1878.88 830.49,-1872.88 836.49,-1872.88 836.49,-1872.88 1067.51,-1872.88 1067.51,-1872.88 1073.51,-1872.88 1079.51,-1878.88 1079.51,-1884.88 1079.51,-1884.88 1079.51,-1942 1079.51,-1942 1079.51,-1948 1073.51,-1954 1067.51,-1954"/>
+<text xml:space="preserve" text-anchor="middle" x="952" y="-1932.94" font-family="Arial" font-size="13.00" fill="#e3e3e3">AGENT&#45;PREFERRED SPECIALIST</text>
+<text xml:space="preserve" text-anchor="middle" x="952" y="-1917.34" font-family="Arial" font-size="13.00" fill="#e3e3e3">GPT&#45;6.1 Sol / Astra when available</text>
+<text xml:space="preserve" text-anchor="middle" x="952" y="-1901.74" font-family="Arial" font-size="13.00" fill="#e3e3e3">Use the model exposed by the account</text>
+<text xml:space="preserve" text-anchor="middle" x="952" y="-1886.14" font-family="Arial" font-size="13.00" fill="#e3e3e3">Debugging · alternate solution · tooling</text>
+</g>
+<g class="edge" data-n="opus-&gt;gpt">
+<path fill="none" stroke="#777777" stroke-dasharray="5,2" d="M486.88,-2125.12C616.44,-2100.4 802,-2065 802,-2065 802,-2065 862.47,-2004.3 906.63,-1959.98"/>
+<polygon fill="#777777" stroke="#777777" points="908.15,-1961.67 911.13,-1955.46 904.93,-1958.46 908.15,-1961.67"/>
+<text xml:space="preserve" text-anchor="middle" x="823.15" y="-2076" font-family="Arial" font-size="10.00" fill="#c1c1c1">Only when the agent prefers it</text>
+</g>
+<g class="node" data-n="packet">
+<path fill="#252525" stroke="#424242" d="M859,-1670.96C859,-1670.96 451,-1670.96 451,-1670.96 445,-1670.96 439,-1664.96 439,-1658.96 439,-1658.96 439,-1617.44 439,-1617.44 439,-1611.44 445,-1605.44 451,-1605.44 451,-1605.44 859,-1605.44 859,-1605.44 865,-1605.44 871,-1611.44 871,-1617.44 871,-1617.44 871,-1658.96 871,-1658.96 871,-1664.96 865,-1670.96 859,-1670.96"/>
+<text xml:space="preserve" text-anchor="middle" x="655" y="-1649.9" font-family="Arial" font-size="13.00" fill="#e3e3e3">SHARED WORK CONTRACT</text>
+<text xml:space="preserve" text-anchor="middle" x="655" y="-1634.3" font-family="Arial" font-size="13.00" fill="#e3e3e3">Task · file ownership · interface · acceptance checks · budget</text>
+<text xml:space="preserve" text-anchor="middle" x="655" y="-1618.7" font-family="Arial" font-size="13.00" fill="#e3e3e3">Workers return changes + commands + results + unresolved risks</text>
+</g>
+<g class="edge" data-n="sonnet-&gt;packet">
+<path fill="none" stroke="#777777" d="M391.42,-1872.74C433.2,-1812.25 508,-1703.96 508,-1703.96 508,-1703.96 540.55,-1689.62 575.02,-1674.43"/>
+<polygon fill="#777777" stroke="#777777" points="575.51,-1676.7 580.55,-1672 573.68,-1672.54 575.51,-1676.7"/>
+</g>
+<g class="node" data-n="grokbot">
+<path fill="#303030" stroke="#424242" d="M756.03,-1805.08C756.03,-1805.08 553.97,-1805.08 553.97,-1805.08 547.97,-1805.08 541.97,-1799.08 541.97,-1793.08 541.97,-1793.08 541.97,-1735.96 541.97,-1735.96 541.97,-1729.96 547.97,-1723.96 553.97,-1723.96 553.97,-1723.96 756.03,-1723.96 756.03,-1723.96 762.03,-1723.96 768.03,-1729.96 768.03,-1735.96 768.03,-1735.96 768.03,-1793.08 768.03,-1793.08 768.03,-1799.08 762.03,-1805.08 756.03,-1805.08"/>
+<text xml:space="preserve" text-anchor="middle" x="655" y="-1784.02" font-family="Arial" font-size="13.00" fill="#e3e3e3">Grok Bot · available frontier model</text>
+<text xml:space="preserve" text-anchor="middle" x="655" y="-1768.42" font-family="Arial" font-size="13.00" fill="#e3e3e3">Delegated app and site operations</text>
+<text xml:space="preserve" text-anchor="middle" x="655" y="-1752.82" font-family="Arial" font-size="13.00" fill="#e3e3e3">Research · recurring maintenance</text>
+<text xml:space="preserve" text-anchor="middle" x="655" y="-1737.22" font-family="Arial" font-size="13.00" fill="#e3e3e3">Within the assigned task scope</text>
+</g>
+<g class="edge" data-n="grok-&gt;grokbot">
+<path fill="none" stroke="#777777" d="M655,-1864.74C655,-1848.18 655,-1829.62 655,-1813.07"/>
+<polygon fill="#777777" stroke="#777777" points="657.28,-1813.14 655,-1806.64 652.73,-1813.14 657.28,-1813.14"/>
+<text xml:space="preserve" text-anchor="middle" x="710.85" y="-1832.08" font-family="Arial" font-size="10.00" fill="#c1c1c1">When persistent work fits</text>
+</g>
+<g class="edge" data-n="grokbot-&gt;packet">
+<path fill="none" stroke="#777777" d="M655,-1723.5C655,-1709.25 655,-1693.21 655,-1678.97"/>
+<polygon fill="#777777" stroke="#777777" points="657.28,-1679.29 655,-1672.79 652.73,-1679.29 657.28,-1679.29"/>
+</g>
+<g class="node" data-n="gptresult">
+<path fill="#303030" stroke="#424242" stroke-dasharray="5,2" d="M1050.67,-1797.28C1050.67,-1797.28 841.33,-1797.28 841.33,-1797.28 835.33,-1797.28 829.33,-1791.28 829.33,-1785.28 829.33,-1785.28 829.33,-1743.76 829.33,-1743.76 829.33,-1737.76 835.33,-1731.76 841.33,-1731.76 841.33,-1731.76 1050.67,-1731.76 1050.67,-1731.76 1056.67,-1731.76 1062.67,-1737.76 1062.67,-1743.76 1062.67,-1743.76 1062.67,-1785.28 1062.67,-1785.28 1062.67,-1791.28 1056.67,-1797.28 1050.67,-1797.28"/>
+<text xml:space="preserve" text-anchor="middle" x="946" y="-1776.22" font-family="Arial" font-size="13.00" fill="#e3e3e3">Small, bounded work packet</text>
+<text xml:space="preserve" text-anchor="middle" x="946" y="-1760.62" font-family="Arial" font-size="13.00" fill="#e3e3e3">Return patch, findings and evidence</text>
+<text xml:space="preserve" text-anchor="middle" x="946" y="-1745.02" font-family="Arial" font-size="13.00" fill="#e3e3e3">No mandatory invocation or quota</text>
+</g>
+<g class="edge" data-n="gpt-&gt;gptresult">
+<path fill="none" stroke="#777777" stroke-dasharray="5,2" d="M950.38,-1872.68C949.52,-1851.73 948.47,-1826.12 947.62,-1805.18"/>
+<polygon fill="#777777" stroke="#777777" points="949.9,-1805.32 947.36,-1798.92 945.36,-1805.51 949.9,-1805.32"/>
+</g>
+<g class="edge" data-n="gptresult-&gt;packet">
+<path fill="none" stroke="#777777" stroke-dasharray="5,2" d="M870.68,-1731.34C829.93,-1713.93 779.52,-1692.4 737.68,-1674.52"/>
+<polygon fill="#777777" stroke="#777777" points="738.77,-1672.51 731.9,-1672.05 736.98,-1676.7 738.77,-1672.51"/>
+</g>
+<g class="node" data-n="s1">
+<path fill="#303030" stroke="#424242" d="M279.72,-1452.44C279.72,-1452.44 94.28,-1452.44 94.28,-1452.44 88.28,-1452.44 82.28,-1446.44 82.28,-1440.44 82.28,-1440.44 82.28,-1414.52 82.28,-1414.52 82.28,-1408.52 88.28,-1402.52 94.28,-1402.52 94.28,-1402.52 279.72,-1402.52 279.72,-1402.52 285.72,-1402.52 291.72,-1408.52 291.72,-1414.52 291.72,-1414.52 291.72,-1440.44 291.72,-1440.44 291.72,-1446.44 285.72,-1452.44 279.72,-1452.44"/>
+<text xml:space="preserve" text-anchor="middle" x="187" y="-1431.38" font-family="Arial" font-size="13.00" fill="#e3e3e3">Threat model and risk decisions</text>
+<text xml:space="preserve" text-anchor="middle" x="187" y="-1415.78" font-family="Arial" font-size="13.00" fill="#e3e3e3">Opus 5.5</text>
+</g>
+<g class="edge" data-n="packet-&gt;s1">
+<path fill="none" stroke="#777777" d="M499.42,-1605.01C420.86,-1588.76 342,-1572.44 342,-1572.44 342,-1572.44 264.3,-1500.28 218.93,-1458.14"/>
+<polygon fill="#777777" stroke="#777777" points="220.71,-1456.69 214.4,-1453.93 217.62,-1460.02 220.71,-1456.69"/>
+</g>
+<g class="node" data-n="b1">
+<path fill="#303030" stroke="#424242" d="M583.72,-1452.44C583.72,-1452.44 450.28,-1452.44 450.28,-1452.44 444.28,-1452.44 438.28,-1446.44 438.28,-1440.44 438.28,-1440.44 438.28,-1414.52 438.28,-1414.52 438.28,-1408.52 444.28,-1402.52 450.28,-1402.52 450.28,-1402.52 583.72,-1402.52 583.72,-1402.52 589.72,-1402.52 595.72,-1408.52 595.72,-1414.52 595.72,-1414.52 595.72,-1440.44 595.72,-1440.44 595.72,-1446.44 589.72,-1452.44 583.72,-1452.44"/>
+<text xml:space="preserve" text-anchor="middle" x="517" y="-1431.38" font-family="Arial" font-size="13.00" fill="#e3e3e3">API and data contracts</text>
+<text xml:space="preserve" text-anchor="middle" x="517" y="-1415.78" font-family="Arial" font-size="13.00" fill="#e3e3e3">Opus 5.5</text>
+</g>
+<g class="edge" data-n="packet-&gt;b1">
+<path fill="none" stroke="#777777" d="M633.74,-1605.04C607.51,-1565.37 563.23,-1498.4 537.4,-1459.33"/>
+<polygon fill="#777777" stroke="#777777" points="539.43,-1458.27 533.94,-1454.11 535.63,-1460.78 539.43,-1458.27"/>
+</g>
+<g class="node" data-n="f1">
+<path fill="#303030" stroke="#424242" d="M895.33,-1452.44C895.33,-1452.44 694.67,-1452.44 694.67,-1452.44 688.67,-1452.44 682.67,-1446.44 682.67,-1440.44 682.67,-1440.44 682.67,-1414.52 682.67,-1414.52 682.67,-1408.52 688.67,-1402.52 694.67,-1402.52 694.67,-1402.52 895.33,-1402.52 895.33,-1402.52 901.33,-1402.52 907.33,-1408.52 907.33,-1414.52 907.33,-1414.52 907.33,-1440.44 907.33,-1440.44 907.33,-1446.44 901.33,-1452.44 895.33,-1452.44"/>
+<text xml:space="preserve" text-anchor="middle" x="795" y="-1431.38" font-family="Arial" font-size="13.00" fill="#e3e3e3">UX and interface implementation</text>
+<text xml:space="preserve" text-anchor="middle" x="795" y="-1415.78" font-family="Arial" font-size="13.00" fill="#e3e3e3">Sonnet 5.5 · Opus for hard design</text>
+</g>
+<g class="edge" data-n="packet-&gt;f1">
+<path fill="none" stroke="#777777" d="M676.57,-1605.04C703.18,-1565.37 748.1,-1498.4 774.3,-1459.33"/>
+<polygon fill="#777777" stroke="#777777" points="776.08,-1460.77 777.81,-1454.1 772.3,-1458.23 776.08,-1460.77"/>
+</g>
+<g class="node" data-n="q1">
+<path fill="#303030" stroke="#424242" d="M1211.41,-1452.44C1211.41,-1452.44 1008.59,-1452.44 1008.59,-1452.44 1002.59,-1452.44 996.59,-1446.44 996.59,-1440.44 996.59,-1440.44 996.59,-1414.52 996.59,-1414.52 996.59,-1408.52 1002.59,-1402.52 1008.59,-1402.52 1008.59,-1402.52 1211.41,-1402.52 1211.41,-1402.52 1217.41,-1402.52 1223.41,-1408.52 1223.41,-1414.52 1223.41,-1414.52 1223.41,-1440.44 1223.41,-1440.44 1223.41,-1446.44 1217.41,-1452.44 1211.41,-1452.44"/>
+<text xml:space="preserve" text-anchor="middle" x="1110" y="-1431.38" font-family="Arial" font-size="13.00" fill="#e3e3e3">Acceptance cases and edge cases</text>
+<text xml:space="preserve" text-anchor="middle" x="1110" y="-1415.78" font-family="Arial" font-size="13.00" fill="#e3e3e3">SuperGrok · critique the plan</text>
+</g>
+<g class="edge" data-n="packet-&gt;q1">
+<path fill="none" stroke="#777777" d="M734.98,-1605.01C766.8,-1592.19 796,-1580.44 796,-1580.44 796,-1580.44 954,-1572.44 954,-1572.44 954,-1572.44 1032.2,-1500.28 1077.86,-1458.14"/>
+<polygon fill="#777777" stroke="#777777" points="1079.19,-1460.01 1082.42,-1453.93 1076.1,-1456.66 1079.19,-1460.01"/>
+</g>
+<g class="node" data-n="s2">
+<path fill="#303030" stroke="#424242" d="M287,-1353.52C287,-1353.52 69,-1353.52 69,-1353.52 63,-1353.52 57,-1347.52 57,-1341.52 57,-1341.52 57,-1315.6 57,-1315.6 57,-1309.6 63,-1303.6 69,-1303.6 69,-1303.6 287,-1303.6 287,-1303.6 293,-1303.6 299,-1309.6 299,-1315.6 299,-1315.6 299,-1341.52 299,-1341.52 299,-1347.52 293,-1353.52 287,-1353.52"/>
+<text xml:space="preserve" text-anchor="middle" x="178" y="-1332.46" font-family="Arial" font-size="13.00" fill="#e3e3e3">Auth, privacy and dependency review</text>
+<text xml:space="preserve" text-anchor="middle" x="178" y="-1316.86" font-family="Arial" font-size="13.00" fill="#e3e3e3">SuperGrok · independent challenge</text>
+</g>
+<g class="edge" data-n="s1-&gt;s2">
+<path fill="none" stroke="#777777" d="M184.73,-1402.02C183.6,-1389.86 182.22,-1374.99 181,-1361.89"/>
+<polygon fill="#777777" stroke="#777777" points="183.28,-1361.78 180.41,-1355.52 178.75,-1362.2 183.28,-1361.78"/>
+</g>
+<g class="node" data-n="s3">
+<path fill="#303030" stroke="#424242" d="M287.69,-1246.8C287.69,-1246.8 68.31,-1246.8 68.31,-1246.8 62.31,-1246.8 56.31,-1240.8 56.31,-1234.8 56.31,-1234.8 56.31,-1208.88 56.31,-1208.88 56.31,-1202.88 62.31,-1196.88 68.31,-1196.88 68.31,-1196.88 287.69,-1196.88 287.69,-1196.88 293.69,-1196.88 299.69,-1202.88 299.69,-1208.88 299.69,-1208.88 299.69,-1234.8 299.69,-1234.8 299.69,-1240.8 293.69,-1246.8 287.69,-1246.8"/>
+<text xml:space="preserve" text-anchor="middle" x="178" y="-1225.74" font-family="Arial" font-size="13.00" fill="#e3e3e3">Remediation and regression tests</text>
+<text xml:space="preserve" text-anchor="middle" x="178" y="-1210.14" font-family="Arial" font-size="13.00" fill="#e3e3e3">Assigned worker · Opus resolves risk</text>
+</g>
+<g class="edge" data-n="s2-&gt;s3">
+<path fill="none" stroke="#777777" d="M178,-1303.27C178,-1288.87 178,-1270.43 178,-1254.85"/>
+<polygon fill="#777777" stroke="#777777" points="180.28,-1255.01 178,-1248.51 175.73,-1255.01 180.28,-1255.01"/>
+</g>
+<g class="node" data-n="integration">
+<path fill="#3a3a3a" stroke="#999999" stroke-width="1.5" d="M863.15,-1108.08C863.15,-1108.08 450.85,-1108.08 450.85,-1108.08 444.85,-1108.08 438.85,-1102.08 438.85,-1096.08 438.85,-1096.08 438.85,-1054.56 438.85,-1054.56 438.85,-1048.56 444.85,-1042.56 450.85,-1042.56 450.85,-1042.56 863.15,-1042.56 863.15,-1042.56 869.15,-1042.56 875.15,-1048.56 875.15,-1054.56 875.15,-1054.56 875.15,-1096.08 875.15,-1096.08 875.15,-1102.08 869.15,-1108.08 863.15,-1108.08"/>
+<text xml:space="preserve" text-anchor="middle" x="657" y="-1087.02" font-family="Arial" font-size="13.00" fill="#e3e3e3">OPUS 5.5 · INTEGRATION AND ACCEPTANCE</text>
+<text xml:space="preserve" text-anchor="middle" x="657" y="-1071.42" font-family="Arial" font-size="13.00" fill="#e3e3e3">Resolve cross&#45;stream contracts · review evidence · verify the outcome</text>
+<text xml:space="preserve" text-anchor="middle" x="657" y="-1055.82" font-family="Arial" font-size="13.00" fill="#e3e3e3">High for difficult work; highest effort only for unresolved hard decisions</text>
+</g>
+<g class="edge" data-n="s3-&gt;integration">
+<path fill="none" stroke="#777777" d="M228.1,-1196.48C276.33,-1173.02 342,-1141.08 342,-1141.08 342,-1141.08 415.32,-1126.01 491.21,-1110.4"/>
+<polygon fill="#777777" stroke="#777777" points="491.65,-1112.64 497.56,-1109.1 490.73,-1108.18 491.65,-1112.64"/>
+</g>
+<g class="node" data-n="b2">
+<path fill="#303030" stroke="#424242" d="M593.66,-1353.52C593.66,-1353.52 384.34,-1353.52 384.34,-1353.52 378.34,-1353.52 372.34,-1347.52 372.34,-1341.52 372.34,-1341.52 372.34,-1315.6 372.34,-1315.6 372.34,-1309.6 378.34,-1303.6 384.34,-1303.6 384.34,-1303.6 593.66,-1303.6 593.66,-1303.6 599.66,-1303.6 605.66,-1309.6 605.66,-1315.6 605.66,-1315.6 605.66,-1341.52 605.66,-1341.52 605.66,-1347.52 599.66,-1353.52 593.66,-1353.52"/>
+<text xml:space="preserve" text-anchor="middle" x="489" y="-1332.46" font-family="Arial" font-size="13.00" fill="#e3e3e3">Services, migrations and tests</text>
+<text xml:space="preserve" text-anchor="middle" x="489" y="-1316.86" font-family="Arial" font-size="13.00" fill="#e3e3e3">SuperGrok first · Sonnet as needed</text>
+</g>
+<g class="edge" data-n="b1-&gt;b2">
+<path fill="none" stroke="#777777" d="M509.93,-1402.02C506.39,-1389.74 502.04,-1374.71 498.23,-1361.52"/>
+<polygon fill="#777777" stroke="#777777" points="500.47,-1361.08 496.48,-1355.46 496.1,-1362.34 500.47,-1361.08"/>
+</g>
+<g class="node" data-n="b3">
+<path fill="#303030" stroke="#424242" d="M587.36,-1246.8C587.36,-1246.8 428.64,-1246.8 428.64,-1246.8 422.64,-1246.8 416.64,-1240.8 416.64,-1234.8 416.64,-1234.8 416.64,-1208.88 416.64,-1208.88 416.64,-1202.88 422.64,-1196.88 428.64,-1196.88 428.64,-1196.88 587.36,-1196.88 587.36,-1196.88 593.36,-1196.88 599.36,-1202.88 599.36,-1208.88 599.36,-1208.88 599.36,-1234.8 599.36,-1234.8 599.36,-1240.8 593.36,-1246.8 587.36,-1246.8"/>
+<text xml:space="preserve" text-anchor="middle" x="508" y="-1225.74" font-family="Arial" font-size="13.00" fill="#e3e3e3">Reliability and observability</text>
+<text xml:space="preserve" text-anchor="middle" x="508" y="-1210.14" font-family="Arial" font-size="13.00" fill="#e3e3e3">SuperGrok</text>
+</g>
+<g class="edge" data-n="b2-&gt;b3">
+<path fill="none" stroke="#777777" d="M493.41,-1303.27C496.02,-1288.87 499.36,-1270.43 502.19,-1254.85"/>
+<polygon fill="#777777" stroke="#777777" points="504.42,-1255.29 503.35,-1248.49 499.95,-1254.48 504.42,-1255.29"/>
+</g>
+<g class="edge" data-n="b3-&gt;integration">
+<path fill="none" stroke="#777777" d="M532.94,-1196.65C556.14,-1174.15 591.08,-1140.25 617.98,-1114.17"/>
+<polygon fill="#777777" stroke="#777777" points="619.42,-1115.94 622.5,-1109.78 616.25,-1112.67 619.42,-1115.94"/>
+</g>
+<g class="node" data-n="f2">
+<path fill="#303030" stroke="#424242" d="M881.63,-1353.52C881.63,-1353.52 716.37,-1353.52 716.37,-1353.52 710.37,-1353.52 704.37,-1347.52 704.37,-1341.52 704.37,-1341.52 704.37,-1315.6 704.37,-1315.6 704.37,-1309.6 710.37,-1303.6 716.37,-1303.6 716.37,-1303.6 881.63,-1303.6 881.63,-1303.6 887.63,-1303.6 893.63,-1309.6 893.63,-1315.6 893.63,-1315.6 893.63,-1341.52 893.63,-1341.52 893.63,-1347.52 887.63,-1353.52 881.63,-1353.52"/>
+<text xml:space="preserve" text-anchor="middle" x="799" y="-1332.46" font-family="Arial" font-size="13.00" fill="#e3e3e3">Components and integration</text>
+<text xml:space="preserve" text-anchor="middle" x="799" y="-1316.86" font-family="Arial" font-size="13.00" fill="#e3e3e3">Sonnet 5.5 / SuperGrok</text>
+</g>
+<g class="edge" data-n="f1-&gt;f2">
+<path fill="none" stroke="#777777" d="M796.01,-1402.02C796.51,-1389.86 797.13,-1374.99 797.67,-1361.89"/>
+<polygon fill="#777777" stroke="#777777" points="799.93,-1362.11 797.93,-1355.52 795.39,-1361.92 799.93,-1362.11"/>
+</g>
+<g class="node" data-n="f3">
+<path fill="#303030" stroke="#424242" d="M911.98,-1246.8C911.98,-1246.8 690.02,-1246.8 690.02,-1246.8 684.02,-1246.8 678.02,-1240.8 678.02,-1234.8 678.02,-1234.8 678.02,-1208.88 678.02,-1208.88 678.02,-1202.88 684.02,-1196.88 690.02,-1196.88 690.02,-1196.88 911.98,-1196.88 911.98,-1196.88 917.98,-1196.88 923.98,-1202.88 923.98,-1208.88 923.98,-1208.88 923.98,-1234.8 923.98,-1234.8 923.98,-1240.8 917.98,-1246.8 911.98,-1246.8"/>
+<text xml:space="preserve" text-anchor="middle" x="801" y="-1225.74" font-family="Arial" font-size="13.00" fill="#e3e3e3">Accessibility, performance, visual QA</text>
+<text xml:space="preserve" text-anchor="middle" x="801" y="-1210.14" font-family="Arial" font-size="13.00" fill="#e3e3e3">Independent worker + browser checks</text>
+</g>
+<g class="edge" data-n="f2-&gt;f3">
+<path fill="none" stroke="#777777" d="M799.46,-1303.27C799.74,-1288.87 800.09,-1270.43 800.39,-1254.85"/>
+<polygon fill="#777777" stroke="#777777" points="802.66,-1255.05 800.51,-1248.51 798.11,-1254.96 802.66,-1255.05"/>
+</g>
+<g class="edge" data-n="f3-&gt;integration">
+<path fill="none" stroke="#777777" d="M776.9,-1196.65C754.47,-1174.15 720.7,-1140.25 694.71,-1114.17"/>
+<polygon fill="#777777" stroke="#777777" points="696.56,-1112.8 690.36,-1109.8 693.34,-1116.01 696.56,-1112.8"/>
+</g>
+<g class="node" data-n="q2">
+<path fill="#303030" stroke="#424242" d="M1216.28,-1353.52C1216.28,-1353.52 1007.72,-1353.52 1007.72,-1353.52 1001.72,-1353.52 995.72,-1347.52 995.72,-1341.52 995.72,-1341.52 995.72,-1315.6 995.72,-1315.6 995.72,-1309.6 1001.72,-1303.6 1007.72,-1303.6 1007.72,-1303.6 1216.28,-1303.6 1216.28,-1303.6 1222.28,-1303.6 1228.28,-1309.6 1228.28,-1315.6 1228.28,-1315.6 1228.28,-1341.52 1228.28,-1341.52 1228.28,-1347.52 1222.28,-1353.52 1216.28,-1353.52"/>
+<text xml:space="preserve" text-anchor="middle" x="1112" y="-1332.46" font-family="Arial" font-size="13.00" fill="#e3e3e3">Tests · types · build · scans · E2E</text>
+<text xml:space="preserve" text-anchor="middle" x="1112" y="-1316.86" font-family="Arial" font-size="13.00" fill="#e3e3e3">Run tools; capture actual results</text>
+</g>
+<g class="edge" data-n="q1-&gt;q2">
+<path fill="none" stroke="#777777" d="M1110.5,-1402.02C1110.76,-1389.86 1111.06,-1374.99 1111.33,-1361.89"/>
+<polygon fill="#777777" stroke="#777777" points="1113.6,-1362.07 1111.46,-1355.52 1109.06,-1361.97 1113.6,-1362.07"/>
+</g>
+<g class="node" data-n="q3">
+<path fill="#303030" stroke="#424242" d="M1211.41,-1254.6C1211.41,-1254.6 1008.59,-1254.6 1008.59,-1254.6 1002.59,-1254.6 996.59,-1248.6 996.59,-1242.6 996.59,-1242.6 996.59,-1201.08 996.59,-1201.08 996.59,-1195.08 1002.59,-1189.08 1008.59,-1189.08 1008.59,-1189.08 1211.41,-1189.08 1211.41,-1189.08 1217.41,-1189.08 1223.41,-1195.08 1223.41,-1201.08 1223.41,-1201.08 1223.41,-1242.6 1223.41,-1242.6 1223.41,-1248.6 1217.41,-1254.6 1211.41,-1254.6"/>
+<text xml:space="preserve" text-anchor="middle" x="1110" y="-1233.54" font-family="Arial" font-size="13.00" fill="#e3e3e3">Independent review of changes</text>
+<text xml:space="preserve" text-anchor="middle" x="1110" y="-1217.94" font-family="Arial" font-size="13.00" fill="#e3e3e3">Cross&#45;provider when useful</text>
+<text xml:space="preserve" text-anchor="middle" x="1110" y="-1202.34" font-family="Arial" font-size="13.00" fill="#e3e3e3">ChatGPT only by agent preference</text>
+</g>
+<g class="edge" data-n="q2-&gt;q3">
+<path fill="none" stroke="#777777" d="M1111.54,-1303.27C1111.31,-1291.25 1111.02,-1276.43 1110.76,-1262.79"/>
+<polygon fill="#777777" stroke="#777777" points="1113.04,-1262.9 1110.64,-1256.45 1108.49,-1262.99 1113.04,-1262.9"/>
+</g>
+<g class="edge" data-n="q3-&gt;integration">
+<path fill="none" stroke="#777777" d="M1047,-1188.63C1003.7,-1166.49 954,-1141.08 954,-1141.08 954,-1141.08 820,-1133.08 820,-1133.08 820,-1133.08 790.83,-1122.92 757.17,-1111.2"/>
+<polygon fill="#777777" stroke="#777777" points="758.24,-1109.17 751.36,-1109.18 756.75,-1113.46 758.24,-1109.17"/>
+</g>
+<g class="node" data-n="checks">
+<polygon fill="#303030" stroke="#424242" points="657,-993.56 542.87,-949.4 657,-905.24 771.13,-949.4 657,-993.56"/>
+<text xml:space="preserve" text-anchor="middle" x="657" y="-953.3" font-family="Arial" font-size="13.00" fill="#e3e3e3">Mechanical gates</text>
+<text xml:space="preserve" text-anchor="middle" x="657" y="-937.7" font-family="Arial" font-size="13.00" fill="#e3e3e3">pass?</text>
+</g>
+<g class="edge" data-n="integration-&gt;checks">
+<path fill="none" stroke="#777777" d="M657,-1042.08C657,-1029.74 657,-1015.32 657,-1001.63"/>
+<polygon fill="#777777" stroke="#777777" points="659.28,-1001.69 657,-995.19 654.73,-1001.69 659.28,-1001.69"/>
+</g>
+<g class="node" data-n="exceptions">
+<polygon fill="#303030" stroke="#424242" points="551,-845.24 423.14,-786.92 551,-728.6 678.86,-786.92 551,-845.24"/>
+<text xml:space="preserve" text-anchor="middle" x="551" y="-798.62" font-family="Arial" font-size="13.00" fill="#e3e3e3">Unresolved product,</text>
+<text xml:space="preserve" text-anchor="middle" x="551" y="-783.02" font-family="Arial" font-size="13.00" fill="#e3e3e3">architecture or risk</text>
+<text xml:space="preserve" text-anchor="middle" x="551" y="-767.42" font-family="Arial" font-size="13.00" fill="#e3e3e3">exception?</text>
+</g>
+<g class="edge" data-n="checks-&gt;exceptions">
+<path fill="none" stroke="#777777" d="M634.26,-913.97C619.8,-892.08 600.81,-863.33 584.62,-838.83"/>
+<polygon fill="#777777" stroke="#777777" points="586.67,-837.8 581.19,-833.63 582.88,-840.31 586.67,-837.8"/>
+<text xml:space="preserve" text-anchor="middle" x="618.96" y="-872.24" font-family="Arial" font-size="10.00" fill="#c1c1c1">Yes</text>
+</g>
+<g class="node" data-n="repair">
+<path fill="#303030" stroke="#424242" d="M876,-811.88C876,-811.88 718,-811.88 718,-811.88 712,-811.88 706,-805.88 706,-799.88 706,-799.88 706,-773.96 706,-773.96 706,-767.96 712,-761.96 718,-761.96 718,-761.96 876,-761.96 876,-761.96 882,-761.96 888,-767.96 888,-773.96 888,-773.96 888,-799.88 888,-799.88 888,-805.88 882,-811.88 876,-811.88"/>
+<text xml:space="preserve" text-anchor="middle" x="797" y="-790.82" font-family="Arial" font-size="13.00" fill="#e3e3e3">Return BLOCK to owner</text>
+<text xml:space="preserve" text-anchor="middle" x="797" y="-775.22" font-family="Arial" font-size="13.00" fill="#e3e3e3">Reproduce · repair · rerun</text>
+</g>
+<g class="edge" data-n="checks-&gt;repair">
+<path fill="none" stroke="#777777" d="M685.33,-915.92C710.39,-887.19 746.66,-845.62 771,-817.72"/>
+<polygon fill="#777777" stroke="#777777" points="772.45,-819.52 775.01,-813.13 769.02,-816.53 772.45,-819.52"/>
+<text xml:space="preserve" text-anchor="middle" x="729.19" y="-872.24" font-family="Arial" font-size="10.00" fill="#c1c1c1">No</text>
+</g>
+<g class="node" data-n="decision">
+<path fill="#303030" stroke="#424242" d="M561.6,-668.6C561.6,-668.6 336.4,-668.6 336.4,-668.6 330.4,-668.6 324.4,-662.6 324.4,-656.6 324.4,-656.6 324.4,-630.68 324.4,-630.68 324.4,-624.68 330.4,-618.68 336.4,-618.68 336.4,-618.68 561.6,-618.68 561.6,-618.68 567.6,-618.68 573.6,-624.68 573.6,-630.68 573.6,-630.68 573.6,-656.6 573.6,-656.6 573.6,-662.6 567.6,-668.6 561.6,-668.6"/>
+<text xml:space="preserve" text-anchor="middle" x="449" y="-647.54" font-family="Arial" font-size="13.00" fill="#e3e3e3">User decision packet</text>
+<text xml:space="preserve" text-anchor="middle" x="449" y="-631.94" font-family="Arial" font-size="13.00" fill="#e3e3e3">Evidence · tradeoff · recommendation</text>
+</g>
+<g class="edge" data-n="exceptions-&gt;decision">
+<path fill="none" stroke="#777777" d="M519.84,-742.76C504.16,-721.04 485.5,-695.2 471.28,-675.5"/>
+<polygon fill="#777777" stroke="#777777" points="473.17,-674.23 467.52,-670.29 469.48,-676.89 473.17,-674.23"/>
+<text xml:space="preserve" text-anchor="middle" x="499.48" y="-695.6" font-family="Arial" font-size="10.00" fill="#c1c1c1">Yes</text>
+</g>
+<g class="node" data-n="ship">
+<path fill="#3a3a3a" stroke="#999999" d="M695.42,-668.6C695.42,-668.6 612.58,-668.6 612.58,-668.6 606.58,-668.6 600.58,-662.6 600.58,-656.6 600.58,-656.6 600.58,-630.68 600.58,-630.68 600.58,-624.68 606.58,-618.68 612.58,-618.68 612.58,-618.68 695.42,-618.68 695.42,-618.68 701.42,-618.68 707.42,-624.68 707.42,-630.68 707.42,-630.68 707.42,-656.6 707.42,-656.6 707.42,-662.6 701.42,-668.6 695.42,-668.6"/>
+<text xml:space="preserve" text-anchor="middle" x="654" y="-647.54" font-family="Arial" font-size="13.00" fill="#e3e3e3">SHIP</text>
+<text xml:space="preserve" text-anchor="middle" x="654" y="-631.94" font-family="Arial" font-size="13.00" fill="#e3e3e3">User approval</text>
+</g>
+<g class="edge" data-n="exceptions-&gt;ship">
+<path fill="none" stroke="#777777" d="M582.46,-742.76C598.3,-721.04 617.14,-695.2 631.5,-675.5"/>
+<polygon fill="#777777" stroke="#777777" points="633.31,-676.88 635.3,-670.29 629.64,-674.2 633.31,-676.88"/>
+<text xml:space="preserve" text-anchor="middle" x="629.7" y="-695.6" font-family="Arial" font-size="10.00" fill="#c1c1c1">None</text>
+</g>
+<g class="edge" data-n="repair-&gt;packet">
+<path fill="none" stroke="#777777" d="M797.84,-812.17C799.89,-871.38 805,-1018.56 805,-1018.56 805,-1018.56 889,-1042.56 889,-1042.56 889,-1042.56 889,-1108.08 889,-1108.08 889,-1108.08 874,-1132.08 874,-1132.08 874,-1132.08 874,-1133.08 874,-1133.08 874,-1133.08 1258,-1141.08 1258,-1141.08 1258,-1141.08 1258,-1572.44 1258,-1572.44 1258,-1572.44 837,-1580.44 837,-1580.44 837,-1580.44 803.6,-1590.86 765.41,-1602.77"/>
+<polygon fill="#777777" stroke="#777777" points="765.2,-1600.45 759.68,-1604.56 766.56,-1604.79 765.2,-1600.45"/>
+<text xml:space="preserve" text-anchor="middle" x="1294.41" y="-1218.84" font-family="Arial" font-size="10.00" fill="#c1c1c1">Bounded rework</text>
+</g>
+<g class="edge" data-n="decision-&gt;opus">
+<path fill="none" stroke="#777777" d="M574.01,-667.86C707.79,-692.71 901,-728.6 901,-728.6 901,-728.6 1337,-1141.08 1337,-1141.08 1337,-1141.08 1337,-1254.6 1337,-1254.6 1337,-1254.6 1278,-1572.44 1278,-1572.44 1278,-1572.44 1149,-2065 1149,-2065 1149,-2065 718.29,-2110.85 494.94,-2134.62"/>
+<polygon fill="#777777" stroke="#777777" points="494.82,-2132.35 488.59,-2135.3 495.3,-2136.87 494.82,-2132.35"/>
+<text xml:space="preserve" text-anchor="middle" x="1378.44" y="-1325.56" font-family="Arial" font-size="10.00" fill="#c1c1c1">Decision back to driver</text>
+</g>
+<g class="node" data-n="l0">
+<path fill="#303030" stroke="#424242" d="M724.33,-466.08C724.33,-466.08 583.67,-466.08 583.67,-466.08 577.67,-466.08 571.67,-460.08 571.67,-454.08 571.67,-454.08 571.67,-428.16 571.67,-428.16 571.67,-422.16 577.67,-416.16 583.67,-416.16 583.67,-416.16 724.33,-416.16 724.33,-416.16 730.33,-416.16 736.33,-422.16 736.33,-428.16 736.33,-428.16 736.33,-454.08 736.33,-454.08 736.33,-460.08 730.33,-466.08 724.33,-466.08"/>
+<text xml:space="preserve" text-anchor="middle" x="654" y="-445.02" font-family="Arial" font-size="13.00" fill="#e3e3e3">Invoke leverage loop</text>
+<text xml:space="preserve" text-anchor="middle" x="654" y="-429.42" font-family="Arial" font-size="13.00" fill="#e3e3e3">Opus owns the program</text>
+</g>
+<g class="node" data-n="l1">
+<path fill="#303030" stroke="#424242" d="M943.68,-466.08C943.68,-466.08 802.32,-466.08 802.32,-466.08 796.32,-466.08 790.32,-460.08 790.32,-454.08 790.32,-454.08 790.32,-428.16 790.32,-428.16 790.32,-422.16 796.32,-416.16 802.32,-416.16 802.32,-416.16 943.68,-416.16 943.68,-416.16 949.68,-416.16 955.68,-422.16 955.68,-428.16 955.68,-428.16 955.68,-454.08 955.68,-454.08 955.68,-460.08 949.68,-466.08 943.68,-466.08"/>
+<text xml:space="preserve" text-anchor="middle" x="873" y="-445.02" font-family="Arial" font-size="13.00" fill="#e3e3e3">1 · Baseline</text>
+<text xml:space="preserve" text-anchor="middle" x="873" y="-429.42" font-family="Arial" font-size="13.00" fill="#e3e3e3">Measure current system</text>
+</g>
+<g class="edge" data-n="l0-&gt;l1">
+<path fill="none" stroke="#777777" d="M736.54,-441.12C748.17,-441.12 768.05,-441.12 782.47,-441.12"/>
+<polygon fill="#777777" stroke="#777777" points="782.21,-443.4 788.71,-441.12 782.21,-438.85 782.21,-443.4"/>
+</g>
+<g class="node" data-n="l2">
+<path fill="#303030" stroke="#424242" d="M1217.15,-466.08C1217.15,-466.08 1020.85,-466.08 1020.85,-466.08 1014.85,-466.08 1008.85,-460.08 1008.85,-454.08 1008.85,-454.08 1008.85,-428.16 1008.85,-428.16 1008.85,-422.16 1014.85,-416.16 1020.85,-416.16 1020.85,-416.16 1217.15,-416.16 1217.15,-416.16 1223.15,-416.16 1229.15,-422.16 1229.15,-428.16 1229.15,-428.16 1229.15,-454.08 1229.15,-454.08 1229.15,-460.08 1223.15,-466.08 1217.15,-466.08"/>
+<text xml:space="preserve" text-anchor="middle" x="1119" y="-445.02" font-family="Arial" font-size="13.00" fill="#e3e3e3">2 · Target + audit</text>
+<text xml:space="preserve" text-anchor="middle" x="1119" y="-429.42" font-family="Arial" font-size="13.00" fill="#e3e3e3">One metric · dominant bottleneck</text>
+</g>
+<g class="edge" data-n="l1-&gt;l2">
+<path fill="none" stroke="#777777" d="M956.16,-441.12C961.19,-441.12 981.73,-441.12 1000.85,-441.12"/>
+<polygon fill="#777777" stroke="#777777" points="1000.61,-443.4 1007.11,-441.12 1000.61,-438.85 1000.61,-443.4"/>
+</g>
+<g class="node" data-n="l3">
+<path fill="#303030" stroke="#424242" d="M881.23,-367.16C881.23,-367.16 682.77,-367.16 682.77,-367.16 676.77,-367.16 670.77,-361.16 670.77,-355.16 670.77,-355.16 670.77,-329.24 670.77,-329.24 670.77,-323.24 676.77,-317.24 682.77,-317.24 682.77,-317.24 881.23,-317.24 881.23,-317.24 887.23,-317.24 893.23,-323.24 893.23,-329.24 893.23,-329.24 893.23,-355.16 893.23,-355.16 893.23,-361.16 887.23,-367.16 881.23,-367.16"/>
+<text xml:space="preserve" text-anchor="middle" x="782" y="-346.1" font-family="Arial" font-size="13.00" fill="#e3e3e3">3 · Redesign hypothesis</text>
+<text xml:space="preserve" text-anchor="middle" x="782" y="-330.5" font-family="Arial" font-size="13.00" fill="#e3e3e3">Opus proposes · Grok challenges</text>
+</g>
+<g class="edge" data-n="l2-&gt;l3">
+<path fill="none" stroke="#777777" d="M1033.96,-415.66C985.37,-401.69 924.39,-384.15 874.59,-369.83"/>
+<polygon fill="#777777" stroke="#777777" points="875.34,-367.68 868.47,-368.07 874.08,-372.05 875.34,-367.68"/>
+</g>
+<g class="node" data-n="l4">
+<path fill="#303030" stroke="#424242" d="M1153.42,-367.16C1153.42,-367.16 958.58,-367.16 958.58,-367.16 952.58,-367.16 946.58,-361.16 946.58,-355.16 946.58,-355.16 946.58,-329.24 946.58,-329.24 946.58,-323.24 952.58,-317.24 958.58,-317.24 958.58,-317.24 1153.42,-317.24 1153.42,-317.24 1159.42,-317.24 1165.42,-323.24 1165.42,-329.24 1165.42,-329.24 1165.42,-355.16 1165.42,-355.16 1165.42,-361.16 1159.42,-367.16 1153.42,-367.16"/>
+<text xml:space="preserve" text-anchor="middle" x="1056" y="-346.1" font-family="Arial" font-size="13.00" fill="#e3e3e3">4 · Bounded rebuild</text>
+<text xml:space="preserve" text-anchor="middle" x="1056" y="-330.5" font-family="Arial" font-size="13.00" fill="#e3e3e3">Same delivery streams and gates</text>
+</g>
+<g class="edge" data-n="l3-&gt;l4">
+<path fill="none" stroke="#777777" d="M893.6,-342.2C906.78,-342.2 924.1,-342.2 938.34,-342.2"/>
+<polygon fill="#777777" stroke="#777777" points="938.3,-344.48 944.8,-342.2 938.3,-339.93 938.3,-344.48"/>
+</g>
+<g class="node" data-n="l5">
+<path fill="#303030" stroke="#424242" d="M1386.92,-367.16C1386.92,-367.16 1231.08,-367.16 1231.08,-367.16 1225.08,-367.16 1219.08,-361.16 1219.08,-355.16 1219.08,-355.16 1219.08,-329.24 1219.08,-329.24 1219.08,-323.24 1225.08,-317.24 1231.08,-317.24 1231.08,-317.24 1386.92,-317.24 1386.92,-317.24 1392.92,-317.24 1398.92,-323.24 1398.92,-329.24 1398.92,-329.24 1398.92,-355.16 1398.92,-355.16 1398.92,-361.16 1392.92,-367.16 1386.92,-367.16"/>
+<text xml:space="preserve" text-anchor="middle" x="1309" y="-346.1" font-family="Arial" font-size="13.00" fill="#e3e3e3">5 · Benchmark</text>
+<text xml:space="preserve" text-anchor="middle" x="1309" y="-330.5" font-family="Arial" font-size="13.00" fill="#e3e3e3">Compare with the baseline</text>
+</g>
+<g class="edge" data-n="l4-&gt;l5">
+<path fill="none" stroke="#777777" d="M1165.64,-342.2C1180.47,-342.2 1198.64,-342.2 1210.87,-342.2"/>
+<polygon fill="#777777" stroke="#777777" points="1210.58,-344.48 1217.08,-342.2 1210.58,-339.93 1210.58,-344.48"/>
+</g>
+<g class="node" data-n="l6">
+<polygon fill="#303030" stroke="#424242" points="643,-257.24 572.21,-214.52 643,-171.8 713.79,-214.52 643,-257.24"/>
+<text xml:space="preserve" text-anchor="middle" x="643" y="-218.42" font-family="Arial" font-size="13.00" fill="#e3e3e3">Target</text>
+<text xml:space="preserve" text-anchor="middle" x="643" y="-202.82" font-family="Arial" font-size="13.00" fill="#e3e3e3">achieved?</text>
+</g>
+<g class="edge" data-n="l5-&gt;l6">
+<path fill="none" stroke="#777777" d="M1218.71,-324.56C1196.53,-320.47 1179,-317.24 1179,-317.24 1179,-317.24 1003,-293.24 1003,-293.24 1003,-293.24 753,-257.24 753,-257.24 753,-257.24 722.18,-245.55 693.16,-234.54"/>
+<polygon fill="#777777" stroke="#777777" points="694.14,-232.48 687.26,-232.31 692.53,-236.74 694.14,-232.48"/>
+</g>
+<g class="node" data-n="l7">
+<path fill="#303030" stroke="#424242" d="M1487.48,-239.48C1487.48,-239.48 1334.52,-239.48 1334.52,-239.48 1328.52,-239.48 1322.52,-233.48 1322.52,-227.48 1322.52,-227.48 1322.52,-201.56 1322.52,-201.56 1322.52,-195.56 1328.52,-189.56 1334.52,-189.56 1334.52,-189.56 1487.48,-189.56 1487.48,-189.56 1493.48,-189.56 1499.48,-195.56 1499.48,-201.56 1499.48,-201.56 1499.48,-227.48 1499.48,-227.48 1499.48,-233.48 1493.48,-239.48 1487.48,-239.48"/>
+<text xml:space="preserve" text-anchor="middle" x="1411" y="-218.42" font-family="Arial" font-size="13.00" fill="#e3e3e3">Evidence&#45;backed upgrade</text>
+<text xml:space="preserve" text-anchor="middle" x="1411" y="-202.82" font-family="Arial" font-size="13.00" fill="#e3e3e3">User approval before ship</text>
+</g>
+<g class="edge" data-n="l6-&gt;l7">
+<path fill="none" stroke="#777777" d="M686.47,-231.4C717.22,-243.35 753,-257.24 753,-257.24 753,-257.24 1009.38,-284.45 1009.38,-284.45 1009.38,-284.45 1026.62,-284.45 1026.62,-284.45 1026.62,-284.45 1309,-257.24 1309,-257.24 1309,-257.24 1324.49,-250.75 1343.39,-242.84"/>
+<polygon fill="#777777" stroke="#777777" points="1343.97,-245.06 1349.09,-240.45 1342.22,-240.86 1343.97,-245.06"/>
+<text xml:space="preserve" text-anchor="middle" x="1018" y="-284.24" font-family="Arial" font-size="10.00" fill="#c1c1c1">Yes</text>
+</g>
+<g class="node" data-n="l8">
+<polygon fill="#303030" stroke="#424242" points="873,-257.24 766.82,-214.52 873,-171.8 979.18,-214.52 873,-257.24"/>
+<text xml:space="preserve" text-anchor="middle" x="873" y="-218.42" font-family="Arial" font-size="13.00" fill="#e3e3e3">Two hypotheses</text>
+<text xml:space="preserve" text-anchor="middle" x="873" y="-202.82" font-family="Arial" font-size="13.00" fill="#e3e3e3">attempted?</text>
+</g>
+<g class="edge" data-n="l6-&gt;l8">
+<path fill="none" stroke="#777777" d="M714.51,-214.52C728.32,-214.52 743.12,-214.52 757.91,-214.52"/>
+<polygon fill="#777777" stroke="#777777" points="757.63,-216.8 764.13,-214.52 757.63,-212.25 757.63,-216.8"/>
+<text xml:space="preserve" text-anchor="middle" x="740.3" y="-220.52" font-family="Arial" font-size="10.00" fill="#c1c1c1">No</text>
+</g>
+<g class="edge" data-n="l8-&gt;l3">
+<path fill="none" stroke="#777777" d="M849.31,-248.23C835.32,-267.56 817.72,-291.86 804.03,-310.78"/>
+<polygon fill="#777777" stroke="#777777" points="802.4,-309.14 800.43,-315.74 806.09,-311.81 802.4,-309.14"/>
+<text xml:space="preserve" text-anchor="middle" x="875.35" y="-284.24" font-family="Arial" font-size="10.00" fill="#c1c1c1">No · revise hypothesis</text>
+</g>
+<g class="node" data-n="l9">
+<path fill="#303030" stroke="#424242" d="M1283.47,-239.48C1283.47,-239.48 1044.53,-239.48 1044.53,-239.48 1038.53,-239.48 1032.53,-233.48 1032.53,-227.48 1032.53,-227.48 1032.53,-201.56 1032.53,-201.56 1032.53,-195.56 1038.53,-189.56 1044.53,-189.56 1044.53,-189.56 1283.47,-189.56 1283.47,-189.56 1289.47,-189.56 1295.47,-195.56 1295.47,-201.56 1295.47,-201.56 1295.47,-227.48 1295.47,-227.48 1295.47,-233.48 1289.47,-239.48 1283.47,-239.48"/>
+<text xml:space="preserve" text-anchor="middle" x="1164" y="-218.42" font-family="Arial" font-size="13.00" fill="#e3e3e3">Stop and present decision packet</text>
+<text xml:space="preserve" text-anchor="middle" x="1164" y="-202.82" font-family="Arial" font-size="13.00" fill="#e3e3e3">Baseline · attempts · evidence · options</text>
+</g>
+<g class="edge" data-n="l8-&gt;l9">
+<path fill="none" stroke="#777777" d="M980.12,-214.52C994.61,-214.52 1009.65,-214.52 1024.6,-214.52"/>
+<polygon fill="#777777" stroke="#777777" points="1024.39,-216.8 1030.89,-214.52 1024.39,-212.25 1024.39,-216.8"/>
+<text xml:space="preserve" text-anchor="middle" x="1005.86" y="-220.52" font-family="Arial" font-size="10.00" fill="#c1c1c1">Yes</text>
+</g>
+<g class="node" data-n="foot">
+<path fill="#303030" stroke="none" d="M1407.28,-118.8C1407.28,-118.8 920.72,-118.8 920.72,-118.8 914.72,-118.8 908.72,-112.8 908.72,-106.8 908.72,-106.8 908.72,-12 908.72,-12 908.72,-6 914.72,0 920.72,0 920.72,0 1407.28,0 1407.28,0 1413.28,0 1419.28,-6 1419.28,-12 1419.28,-12 1419.28,-106.8 1419.28,-106.8 1419.28,-112.8 1413.28,-118.8 1407.28,-118.8"/>
+<text xml:space="preserve" text-anchor="middle" x="1164" y="-108.9" font-family="Arial" font-size="11.00" fill="#aaaaaa">ROUTING POLICY</text>
+<text xml:space="preserve" text-anchor="middle" x="1164" y="-95.7" font-family="Arial" font-size="11.00" fill="#aaaaaa">Keep critical decisions and final integration with Opus. Send independent, well&#45;scoped work to Grok.</text>
+<text xml:space="preserve" text-anchor="middle" x="1164" y="-82.5" font-family="Arial" font-size="11.00" fill="#aaaaaa">Use ChatGPT only for a concrete capability, tool fit or alternate perspective the agent prefers.</text>
+<text xml:space="preserve" text-anchor="middle" x="1164" y="-69.3" font-family="Arial" font-size="11.00" fill="#aaaaaa">At limits: checkpoint and redistribute eligible work; preserve Opus capacity for integration.</text>
+<text xml:space="preserve" text-anchor="middle" x="1164" y="-56.1" font-family="Arial" font-size="11.00" fill="#aaaaaa">Rebalance by accepted output, rework and remaining limits, not by matching subscription dollars.</text>
+<text xml:space="preserve" text-anchor="middle" x="1164" y="-42.9" font-family="Arial" font-size="11.00" fill="#aaaaaa"> </text>
+<text xml:space="preserve" text-anchor="middle" x="1164" y="-29.7" font-family="Arial" font-size="11.00" fill="#aaaaaa">MODEL / SERVICE SNAPSHOT · 07 OCT 2026</text>
+<text xml:space="preserve" text-anchor="middle" x="1164" y="-16.5" font-family="Arial" font-size="11.00" fill="#aaaaaa">Claude Opus 5.5 · Sonnet 5.5 · SuperGrok (model&#45;agnostic) · ChatGPT available models.</text>
+<text xml:space="preserve" text-anchor="middle" x="1164" y="-3.3" font-family="Arial" font-size="11.00" fill="#aaaaaa">Use subscription&#45;supported surfaces. API billing and unattended cross&#45;provider routing are not assumed.</text>
+</g>
+</g>
+</svg>
+</div>
+    <div class="fm-side">
+      <ol class="fm-stops" start="0">
+        <li data-box="0 0 1599 2554" data-lit="">
+          <h3>The whole graph</h3>
+          <p>Read it top to bottom: a person, a driver, three pools of workers, one contract, four streams, one join, two gates, and a loop that sits apart at the bottom.</p>
+          <p>Solid arrows are always taken. Dashed arrows and dashed boxes are optional. Diamonds are decisions. A box drawn around other boxes is a pool or a stream. The heavier outlines are the driver's own nodes.</p>
+        </li>
+        <li data-box="221 103 700 330" data-lit="you opus budget you->opus">
+          <h3>One brief, one driver</h3>
+          <p>The graph starts with a person, not a model. You hand over an outcome, constraints and acceptance criteria once, to one accountable driver (Opus 5.5 in this snapshot). Everything downstream traces back to that brief, and there is exactly one place to ask why something was done.</p>
+          <p>The box beside it is a note, not a step: three subscriptions, a fixed monthly spend, and a suggested split of the work.</p>
+        </li>
+        <li data-box="241 213 955 610" data-lit="cluster_claude cluster_grok cluster_gpt opus sonnet grok grokbot gpt gptresult opus->sonnet opus->grok opus->gpt grok->grokbot gpt->gptresult">
+          <h3>Three pools, one router</h3>
+          <p>The driver fans work out to three pools. Claude takes most of it and keeps anything that depends on context the driver already holds. SuperGrok is the default outside lane for well-scoped work and for an independent challenge, with Grok Bot under it for work that persists.</p>
+          <p>The dashed lane is ChatGPT: a path the driver may take when it wants a specific capability. Its box says so in plain words: no mandatory invocation or quota.</p>
+        </li>
+        <li data-box="416 703 700 225" data-lit="packet sonnet grokbot gptresult sonnet->packet grokbot->packet gptresult->packet">
+          <h3>The shared work contract</h3>
+          <p>Every lane, whoever runs it, meets at the same contract. It states the task, which files the worker owns, the interface it must keep, the checks it must pass and the budget. It also states what comes back: the changes, the commands that were run, their results, and the risks left open.</p>
+          <p>This is the node contract from section 2 made into one box. It is why a worker on another vendor's model can be handed a slice of the job without being handed the whole conversation.</p>
+        </li>
+        <li data-box="31 933 1295 455" data-lit="cluster_delivery cluster_security cluster_backend cluster_frontend cluster_qa s1 s2 s3 b1 b2 b3 f1 f2 f3 q1 q2 q3 packet->s1 packet->b1 packet->f1 packet->q1 s1->s2 s2->s3 b1->b2 b2->b3 f1->f2 f2->f3 q1->q2 q2->q3">
+          <h3>Four streams, side by side</h3>
+          <p>Under the contract the work splits into security, backend, frontend and verification. No arrow crosses from one stream to another, so all four can start at once. Inside each stream the three steps are a short chain, and those arrows are real: the review reads the threat model, the fix reads the review.</p>
+          <p>The header says who owns what: Opus owns the whole, workers own bounded changes.</p>
+        </li>
+        <li data-box="991 983 315 385" data-lit="cluster_qa q1 q2 q3 q1->q2 q2->q3">
+          <h3>Checked by someone else</h3>
+          <p>Look at verification on its own. Adjacent steps change hands all over this graph: the driver writes the threat model and a different model challenges it, and here a different model writes the acceptance cases and critiques the driver's plan. The middle box says to run the tools and capture actual results, which rules out reporting that tests pass without running them. The last review crosses providers when that is useful.</p>
+          <p>Run the arrow audit on the drawing itself and it finds something. Acceptance cases can be written from the contract alone, but running the tests means reading what backend and frontend built, and no arrow shows that. The dependency is real. On this graph it is paid at the join.</p>
+        </li>
+        <li data-box="236 1248 920 240" data-lit="integration s3 b3 f3 q3 s3->integration b3->integration f3->integration q3->integration">
+          <h3>The join</h3>
+          <p>Four streams converge on one node, and it is a strict join: integration needs all four. This is where contracts between streams get resolved, such as the frontend's idea of the API against the backend's, and where the evidence is reviewed.</p>
+          <p>Notice what the driver is doing here. It is not rewriting the work. It is reading results against the brief.</p>
+        </li>
+        <li data-box="456 828 910 940" data-lit="packet integration->checks checks checks->repair repair repair->packet">
+          <h3>Gate one: the machines decide</h3>
+          <p>Do the mechanical gates pass? If not, the work goes back to the owner of the failing piece with a BLOCK: reproduce, repair, rerun. Follow the arrow up the right-hand side. It returns to the contract.</p>
+          <p>That arrow is a loop. It is safe because it is bounded rework: it goes back in through the contract, with an owner and a scope, and not through an open-ended "try again".</p>
+        </li>
+        <li data-box="336 1508 630 410" data-lit="checks->exceptions exceptions exceptions->decision decision decision->opus exceptions->ship ship">
+          <h3>Gate two: a person decides</h3>
+          <p>Passing every test is not the same as being right. The second gate asks whether anything is left that a machine should not settle: a product call, an architecture call, a risk.</p>
+          <p>If so, the user gets a decision packet (evidence, tradeoff, recommendation) and the answer travels all the way back up to the driver. If nothing is open the work ships, and the ship box still says user approval.</p>
+        </li>
+        <li data-box="576 1968 990 410" data-lit="cluster_leverage l0 l1 l2 l3 l4 l5 l6 l7 l8 l9 l0->l1 l1->l2 l2->l3 l3->l4 l4->l5 l5->l6 l6->l7 l6->l8 l8->l3 l8->l9">
+          <h3>A loop you call on purpose</h3>
+          <p>The box at the bottom is a loop, drawn as one: measure a baseline, pick one metric and the dominant bottleneck, propose a redesign (one model proposes, another challenges), rebuild through the same streams and gates, benchmark against the baseline.</p>
+          <p>If the target is missed, revise and go again, but only until two hypotheses have been tried. Then it stops and presents a decision packet. The header is careful twice over: the loop runs only on explicit request, and its multiplier is a target to test, not a result.</p>
+        </li>
+        <li data-box="931 2388 540 140" data-lit="foot budget">
+          <h3>The fine print</h3>
+          <p>The footer holds the routing policy that arrows cannot show. Critical decisions and final integration stay with the driver. Independent, well-scoped work goes out. Near a usage limit, checkpoint and move the eligible work, and save the driver's capacity for integration.</p>
+          <p>The split is rebalanced by accepted output and rework, not by trying to get equal value out of each subscription.</p>
+        </li>
+      </ol>
+    </div>
+    <figcaption>Figure 3. The delivery graph as drawn, re-inked to match this card: 36 working boxes, 42 arrows, 4 decisions. Snapshot 7 October 2026; model names and prices are of that date. <a href="/toolkit/graph-vs-loop/delivery-graph.svg">Open the full drawing</a>.</figcaption>
+  </figure>
+  <h3>Three arrows point backwards</h3>
+  <p>Count them: rework back to the contract, a decision back to the driver, and the revise arrow inside the leverage loop. Each one names who owns the next pass and what ends it: an owner and a rerun, a person's answer, a limit of two attempts.</p>
+  <p>That is the relationship between the two ideas on this card. The graph does not replace the loop. Every node here is still a model working in a loop. The graph decides where a loop may run again, and what stops it.</p>
+</section>
+
+<section id="traps">
+  <h2><span class="no">5 · What most people get wrong</span>Six traps</h2>
+  <ol class="traps">
+    <li><b>Treating order as dependency.</b> A script looks like a chain because code runs top to bottom. Audit the arrows before you believe the shape.</li>
+    <li><b>Drawing the graph first.</b> A graph costs contracts, joins and gates. If one context can hold the job and a mistake is cheap, the loop is the better engineering. Start there, and draw the graph when the dependencies force it.</li>
+    <li><b>Running things at once for speed.</b> On the script in section 3, running the six fetches together would save about a minute of a two-minute run. What was worth having was the record. The usual case for a graph is that you can read it and resume it, not that it is fast.</li>
+    <li><b>Letting the author grade the work.</b> A check belongs between the work and everything downstream, and it has to be a different context. Written, approved and published by one context is one opinion counted three times.</li>
+    <li><b>A back-edge with no limit.</b> "Retry until it passes" is an endless loop with good intentions. Give each one an owner, a bound and an exit, like the three on the graph above.</li>
+    <li><b>Trusting the graph's own suggestions.</b> The audit in section 3 found the real shape, and it also produced three fixes that were wrong. One added a gate after a step that already refuses to write when its checks fail. One skipped a rebuild when a vendor was down, where rebuilding on yesterday's data and saying so on the page was the deliberate design. One skipped any step that had already succeeded that day, which sounds free: the script runs twice a day into the same dated folder, so it would have quietly kept the morning's numbers all evening. The method finds real gaps and also invents fixes for problems the code already solved. Check each one against the source.</li>
+  </ol>
+</section>
+
+<section id="check">
+  <h2><span class="no">6 · Check yourself</span>Three questions</h2>
+  <div class="quiz">
+    <fieldset class="q" data-answer="b">
+      <legend><span class="qk">Recall</span>What makes an arrow between two steps real?</legend>
+      <div class="opts">
+        <button type="button" data-o="a">The second step runs after the first.</button>
+        <button type="button" data-o="b">The second step reads what the first produced.</button>
+        <button type="button" data-o="c">The same model handles both steps.</button>
+      </div>
+      <details class="why"><summary>Show the answer</summary><p>Reading is the test. Order is an accident of how code is written, and dependency is about data. If step two would produce the same output with step one deleted, there is no arrow between them.</p></details>
+    </fieldset>
+    <fieldset class="q" data-answer="b">
+      <legend><span class="qk">Apply it</span>You need 2,000 practice questions written from a list of facts, each checked for accuracy before it is published. Loop or graph?</legend>
+      <div class="opts">
+        <button type="button" data-o="a">Loop. One long session writes them and checks them.</button>
+        <button type="button" data-o="b">Graph. Writers fan out, and a separate context checks each question before the join.</button>
+        <button type="button" data-o="c">Loop, but with a longer prompt.</button>
+      </div>
+      <details class="why"><summary>Show the answer</summary><p>Graph. No question reads another, so the work is parallel, and it needs a checker that is not the author. Those are two of the three reasons on this card. The question bank on this site was built that way: authors, an independent review, then a second pass whose only job was to find faults.</p></details>
+    </fieldset>
+    <fieldset class="q" data-answer="b">
+      <legend><span class="qk">What would break</span>On the delivery graph, delete the "Two hypotheses attempted?" diamond from the leverage loop. What breaks?</legend>
+      <div class="opts">
+        <button type="button" data-o="a">Nothing. The loop still ends when the target is hit.</button>
+        <button type="button" data-o="b">The loop loses its only way out when the target is never hit.</button>
+        <button type="button" data-o="c">The four streams can no longer run side by side.</button>
+      </div>
+      <details class="why"><summary>Show the answer</summary><p>With the diamond gone, a missed target has one way out: revise and go again. A target that cannot be reached would keep the loop running and spending, with no point at which a person is asked. The diamond is the bound.</p></details>
+    </fieldset>
+    <p class="quiz-score" aria-live="polite"></p>
+  </div>
+</section>
+
+<section id="sources">
+  <h2><span class="no">Sources</span>Where this comes from</h2>
+  <ul class="srcs">
+    <li>Hanako (@hanakoxbt), "Graph Engineering: from 1 prompt to 100 agents", an article on X, 11 August 2026. The arrow test and the loop-or-graph rule on this card follow it.</li>
+    <li>The delivery graph is a working diagram for this site's projects, drawn with Graphviz. It is a plan and a snapshot (7 October 2026), not a measured result.</li>
+    <li>The twelve-step audit is from the decision record of <a href="https://edge-7yj.pages.dev/">Edge</a>, the fantasy football tool on this site, 17 August 2026.</li>
+  </ul>
+</section>
+
+<script>
+/* The graph tour (#tourfig). Expected behaviour, since this page has no test rig:
+   - No script: the whole graph is shown at full height, then every stop as a numbered list. Nothing is hidden.
+   - Script: the figure gets .is-live. The stage becomes a square that pans and zooms to each stop's data-box
+     (root SVG units), lights the groups named in data-lit and dims the rest. One stop's text shows at a time.
+   - Back and Next move one stop and are disabled at the ends. The numbered chips jump to any stop. Left and
+     right arrow keys work while focus is inside the figure. Tapping a box or arrow jumps to the first stop
+     that lights it.
+   - prefers-reduced-motion: the view changes without the pan. */
+(function () {
+  var tour = document.getElementById('tourfig'); if (!tour) return;
+  var svg = tour.querySelector('.fm-stage svg'), side = tour.querySelector('.fm-side'), list = tour.querySelector('.fm-stops');
+  if (!svg || !side || !list) return;
+  var stops = Array.prototype.slice.call(list.children);
+  var groups = Array.prototype.slice.call(svg.querySelectorAll('[data-n]'));
+  var byName = {}; groups.forEach(function (g) { byName[g.getAttribute('data-n')] = g; });
+  var full = svg.getAttribute('viewBox').trim().split(/\s+/).map(Number), cur = full.slice(), at = 0, raf = 0;
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var pad = function (i) { return (i < 10 ? '0' : '') + i; };
+  var names = stops.map(function (li) { return (li.getAttribute('data-lit') || '').split(/\s+/).filter(Boolean); });
+  var boxes = stops.map(function (li) {
+    var b = (li.getAttribute('data-box') || '').trim().split(/\s+/).map(Number);
+    return b.length === 4 && b.every(isFinite) ? b : full;
+  });
+
+  var ctl = document.createElement('div'); ctl.className = 'fm-ctl';
+  var back = document.createElement('button'), next = document.createElement('button'), count = document.createElement('span');
+  back.type = next.type = 'button'; back.textContent = 'Back'; next.textContent = 'Next stop'; count.className = 'fm-count';
+  ctl.appendChild(back); ctl.appendChild(next); ctl.appendChild(count); side.insertBefore(ctl, list);
+  var map = document.createElement('ol'); map.className = 'fm-map';
+  var chips = stops.map(function (li, i) {
+    var item = document.createElement('li'), b = document.createElement('button');
+    b.type = 'button'; b.textContent = pad(i); b.setAttribute('aria-label', 'Stop ' + i + ': ' + li.querySelector('h3').textContent);
+    b.addEventListener('click', function () { go(i); });
+    item.appendChild(b); map.appendChild(item); return b;
+  });
+  side.appendChild(map);
+  stops.forEach(function (li, i) { li.querySelector('h3').setAttribute('data-no', pad(i)); });
+  list.setAttribute('aria-live', 'polite');
+  tour.classList.add('is-live');
+
+  function paint(v) { svg.setAttribute('viewBox', v.map(function (n) { return n.toFixed(1); }).join(' ')); }
+  function pan(to) {
+    cancelAnimationFrame(raf);
+    if (still) { cur = to.slice(); paint(cur); return; }
+    var from = cur.slice(), t0 = null, ms = 520;
+    raf = requestAnimationFrame(function step(t) {
+      if (t0 === null) t0 = t;
+      var k = Math.min(1, (t - t0) / ms), e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+      cur = from.map(function (a, i) { return a + (to[i] - a) * e; }); paint(cur);
+      if (k < 1) raf = requestAnimationFrame(step);
+    });
+  }
+  function go(i) {
+    at = Math.max(0, Math.min(stops.length - 1, i));
+    stops.forEach(function (li, j) { li.classList.toggle('on', j === at); });
+    chips.forEach(function (b, j) { if (j === at) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current'); });
+    back.disabled = at === 0; next.disabled = at === stops.length - 1;
+    count.textContent = pad(at) + ' / ' + pad(stops.length - 1);
+    groups.forEach(function (g) { g.classList.remove('lit'); });
+    names[at].forEach(function (n) { if (byName[n]) byName[n].classList.add('lit'); });
+    svg.classList.toggle('focus', names[at].length > 0);
+    pan(boxes[at]);
+  }
+  back.addEventListener('click', function () { go(at - 1); });
+  next.addEventListener('click', function () { go(at + 1); });
+  tour.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight') { go(at + 1); e.preventDefault(); }
+    else if (e.key === 'ArrowLeft') { go(at - 1); e.preventDefault(); }
+  });
+  groups.forEach(function (g) {
+    if (g.getAttribute('class').indexOf('cluster') !== -1) return;
+    g.style.cursor = 'pointer';
+    g.addEventListener('click', function () {
+      var n = g.getAttribute('data-n');
+      for (var i = 1; i < names.length; i++) if (names[i].indexOf(n) !== -1) { go(i); return; }
+    });
+  });
+  go(0);
+})();
+</script>
+<div class="more"><span class="k">More Force Multipliers</span><div class="related"><a href="/toolkit/obsidian-reader/">Obsidian Reader</a><a href="/toolkit/anki/">Anki</a><a href="/toolkit/#force-multipliers">The whole set</a></div></div>
+</main>
+<!--pc:chrome--><div class="pc-foot"><span>Field notes, not doctrine. Check the linked sources before you rely on them.</span><span>Written with Claude Opus 5.5 · <a href="/toolkit/#force-multipliers">All Force Multipliers</a></span></div><!--/pc:chrome-->
+<script src="/toolkit/brief.js" defer></script>
+</body>
+</html>
