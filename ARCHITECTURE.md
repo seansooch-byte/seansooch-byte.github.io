@@ -11,13 +11,14 @@ flowchart LR
     A["~/app-redesign/work/home-astra<br>homepage view A"]
     O["~/app-redesign/work/home-opus<br>homepage view O"]
     V["~/seansooch-astra-preview<br>shared record, view F, switcher, lab-course.js"]
-    T["~/app-redesign/work/toolkit<br>seven tool pages, three briefing cards"]
+    T["~/app-redesign/work/toolkit<br>seven tool pages"]
+    FM["~/app-redesign/work/force-multipliers<br>hub and three briefing cards"]
     L["~/lab-decoder<br>CBC and CMP decoder"]
     E["~/app-redesign/work/ekg<br>Read This"]
     M["~/mv-last-light<br>LAST LIGHT video segments"]
   end
   A & O -->|written into| V
-  V & T & L & E & M -->|built output copied in| Repo["this repo, branch main"]
+  V & T & FM & L & E & M -->|built output copied in| Repo["this repo, branch main"]
   Hand["pages written by hand here"] --> Repo
   Repo -->|git push| GH["GitHub, private"]
   Repo -->|"tools/stage.sh<br>git archive minus export-ignore"| Bundle["/tmp/seansooch-bundle"]
@@ -48,8 +49,8 @@ flowchart LR
 | `designs/fable/`, `designs/opus/` | The same two pages in views F and O, and each view's Lab course page (`lab/`) | No. Generated. |
 | `design-switcher.css`, `design-switcher.js` | The fixed bar that switches views | No. Copied from the preview. |
 | `lab-course.js` | Draws lesson rows from the lab ledger on the three home pages and on the Lab pages of views F and O | No. Copied from the preview. |
-| `antibiotic-coverage/`, `calculators/`, `clinical-calculators/`, `differentials/`, `lab-values/index.html`, `tccc/`, `toolkit/` | Field Toolkit, Edition 2 "Pocket Cards": the hub, its stylesheet and the reference cards | No. Generated. |
-| `toolkit/graph-vs-loop/`, `toolkit/obsidian-reader/`, `toolkit/anki/`, `toolkit/brief.js` | The Force Multipliers set: three briefing cards under the hub, and the script behind their check questions | No. Generated. |
+| `antibiotic-coverage/`, `calculators/`, `clinical-calculators/`, `differentials/`, `lab-values/index.html`, `tccc/`, `toolkit/` | Field Toolkit, Edition 2 "Pocket Cards" | No. Generated. |
+| `force-multipliers/` | Force Multipliers: a hub and three briefing cards (Graph vs Loop, Obsidian Reader, Anki), with their own stylesheet and script | No. Generated. |
 | `lab-values/cbc-cmp/` | CBC and CMP decoder | No. Copied from `~/lab-decoder`. |
 | `ekg/index.html` | Read This, Edition 2 | No. Generated. |
 | `ekg/*.js`, `ekg/films/` | Read This data and chest films; `ekg/ARCHITECTURE.md` describes them | Yes, with care |
@@ -69,15 +70,19 @@ on Sean's laptop, outside this repo:
   `~/app-redesign/work/home-opus/build.py`, which writes into the preview; `build-designs.py` in the preview generates
   view F and stamps the shared record (`sources/editions.json`, `sources/corrections.json`) into views A and F, and the
   view O build applies the same record, so a fact changes in one place and agrees in every view. The preview's own `ARCHITECTURE.md` is the authority on the build order.
-- **Field Toolkit.** `~/app-redesign/work/toolkit/build.py` writes the seven pages from `src/<page>/index.html`, and
-  copies `toolkit/pocket.css` and `toolkit/brief.js` unchanged from the files beside it. The same build writes the
-  Force Multipliers set (2026-10-09): each briefing card is `src/toolkit/<slug>/body.html` wrapped in the shared head
-  and chrome, and the hub's ring is one list: five reference rows, then one row per entry of `BRIEFS`, the registry
-  the brief pages are written from, so a briefing card cannot exist without appearing on the ring. The drawing on Graph vs Loop is one
-  Graphviz file, `src/toolkit/graph-vs-loop/graph.source.svg`, written twice: inline in the page (re-coloured by
-  `pocket.css`, stepped through by the page's own script) and as `toolkit/graph-vs-loop/delivery-graph.svg`. The
-  build refuses to write a brief whose script names an id the markup lacks, whose tour lights a name the drawing does
-  not have, or whose check questions are malformed. A hub filter is linkable by hash (`/toolkit/#force-multipliers`).
+- **Field Toolkit.** `~/app-redesign/work/toolkit/build.py` writes the seven pages and `toolkit/pocket.css` from
+  `src/<page>/index.html`.
+- **Force Multipliers.** `~/app-redesign/work/force-multipliers/build.py` writes `force-multipliers/`: the hub and one
+  briefing card per entry of its `BRIEFS` registry, each card being `src/<slug>/body.html` wrapped in the shared head
+  and chrome, plus `brief.css` and `brief.js` copied unchanged from beside it. The section is drawn in the toolkit's
+  Pocket Cards grammar and shares no file with it. A card's tab colour lives only in the registry (the build writes
+  it on the page and on its hub card). The drawing on Graph vs Loop is one Graphviz file,
+  `src/graph-vs-loop/graph.source.svg`, written twice: inline in the page (re-coloured by `brief.css`, stepped through
+  by the page's own script) and as `force-multipliers/graph-vs-loop/delivery-graph.svg`. The build refuses to write a
+  card whose script names an id the markup lacks, whose tour lights a name the drawing does not have, or whose check
+  questions are malformed, and fails if any page links to the toolkit or to a site path it did not write. The section
+  is a row of its own on the three home pages (5-4 under the smaller experiments in views A and F, an unnumbered
+  Lesser works row in view O) and an entry in their system registry.
 - **Read This.** `~/app-redesign/work/ekg/build.py` assembles `ekg/index.html` from its parts.
 - **CBC and CMP decoder.** `lab-values/cbc-cmp/index.html` is a copy of `~/lab-decoder/index.html`.
 
@@ -175,6 +180,8 @@ Worker is not part of this repo and nothing here reads it any more.
 
 - `_redirects` sends `/sims`, `/simulators`, `/cpr`, `/codeblue`, `/alignment` and `/alignment-simulator` to the
   simulators site, a separate Pages project, and the three old Monitoring addresses to situation.seansooch.dev (301).
+  The three briefing cards were at `/toolkit/<slug>/` for a few hours on 2026-10-09; those addresses go to
+  `/force-multipliers/<slug>/` (301).
 - `_headers` marks every `*.pages.dev` host of this project `noindex`. Only the custom domain is indexable. Keep the file
   in every deploy; it never appears in the upload receipt.
 - `_headers` also sets security headers on every path and host: HSTS (one year, no `includeSubDomains`, no `preload`),
@@ -192,14 +199,15 @@ Nothing else is loaded from another origin (the homepage host probes are request
 
 ## Other hosts
 
-The systems on the homepage (Step 2 CK, Detroit Sports, the simulators, the AGI tracker and the rest) are separate
-Cloudflare Pages projects with their own sources. None of them live in this repo. The homepage probes each host from the
-browser to show whether it is up.
+Most of the systems on the homepage (Step 2 CK, Detroit Sports, the simulators, the AGI tracker and the rest) are
+separate Cloudflare Pages projects with their own sources. Read This, the Field Toolkit, Force Multipliers and Music
+are paths on this origin; the rest live outside this repo. The homepage probes each host from the browser to show
+whether it is up.
 
 ## Clinical content
 
 The toolkit and Read This are reference and training tools written by a medical student. Several items carry a visible
 "flagged for clinician review" note. A change to a clinical value, threshold, dose or grading rule needs Sean's sign-off
-and goes in at the source, never in the generated page. The briefing cards of the Force Multipliers set are about
+and goes in at the source, never in the generated page. The briefing cards of Force Multipliers are about
 working methods (agent workflows, reading, spaced repetition) and state no clinical values; each cites its sources at
 its foot.

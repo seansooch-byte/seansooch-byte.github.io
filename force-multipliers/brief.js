@@ -1,4 +1,4 @@
-/* Field Toolkit briefing cards: the "Check yourself" block. Shipped at /toolkit/brief.js, loaded by every brief.
+/* Force Multipliers briefing cards: the "Check yourself" block. Shipped at /force-multipliers/brief.js, loaded by every card.
 
    Expected behaviour (no test rig on these static pages, so this comment is the spec):
    - Markup: .quiz holds fieldset.q[data-answer], each with .opts button[data-o] and a details.why.

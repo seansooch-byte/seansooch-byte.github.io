@@ -16,3 +16,9 @@
 /designs/fable/monitor/*  https://situation.seansooch.dev/  301
 /designs/opus/monitor  https://situation.seansooch.dev/  301
 /designs/opus/monitor/*  https://situation.seansooch.dev/  301
+/toolkit/graph-vs-loop  /force-multipliers/graph-vs-loop/  301
+/toolkit/graph-vs-loop/*  /force-multipliers/graph-vs-loop/:splat  301
+/toolkit/obsidian-reader  /force-multipliers/obsidian-reader/  301
+/toolkit/obsidian-reader/*  /force-multipliers/obsidian-reader/:splat  301
+/toolkit/anki  /force-multipliers/anki/  301
+/toolkit/anki/*  /force-multipliers/anki/:splat  301

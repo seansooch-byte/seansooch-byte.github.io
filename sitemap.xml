@@ -9,9 +9,10 @@
   <url><loc>https://seansooch.dev/differentials/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://seansooch.dev/tccc/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://seansooch.dev/toolkit/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://seansooch.dev/toolkit/graph-vs-loop/</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://seansooch.dev/toolkit/obsidian-reader/</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://seansooch.dev/toolkit/anki/</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://seansooch.dev/force-multipliers/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://seansooch.dev/force-multipliers/graph-vs-loop/</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://seansooch.dev/force-multipliers/obsidian-reader/</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://seansooch.dev/force-multipliers/anki/</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://seansooch.dev/two-stories/</loc><changefreq>yearly</changefreq><priority>0.7</priority></url>
   <url><loc>https://seansooch.dev/designs/fable/</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://seansooch.dev/designs/fable/two-stories/</loc><changefreq>yearly</changefreq><priority>0.5</priority></url>
