@@ -43,5 +43,20 @@
       "tool": "Claude Code",
       "model": "claude-opus-5-5"
     }
+  },
+  {
+    "slug": "blood-pressure-regulation",
+    "title": "Blood Pressure Regulation",
+    "date": "2026-10-11",
+    "description": "Blood pressure as flow times resistance, and how the baroreflex keeps it steady from one moment to the next.",
+    "category": "medicine",
+    "builder": {
+      "tool": "Claude Code",
+      "model": "claude-opus-5-5"
+    },
+    "reviewer": {
+      "tool": "OpenAI Codex",
+      "model": "gpt-6.1-sol"
+    }
   }
 ]

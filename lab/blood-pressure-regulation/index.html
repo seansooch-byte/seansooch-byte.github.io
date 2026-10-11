@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blood Pressure Regulation · The Lab · Sean Sooch</title>
+<meta name="description" content="A guided visual lesson: blood pressure as flow meeting resistance, and how the baroreflex keeps it steady from one moment to the next.">
+<link rel="canonical" href="https://seansooch.dev/lab/blood-pressure-regulation/">
+<meta property="og:title" content="Blood Pressure Regulation">
+<meta property="og:description" content="Blood pressure as flow times resistance, and how the baroreflex keeps it steady, one picture at a time.">
+<meta property="og:url" content="https://seansooch.dev/lab/blood-pressure-regulation/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the lesson</a>
+<header class="site-top">
+  <div class="site-top-in">
+    <a class="site-brand" href="/" aria-label="Sean Sooch, home">SS<span aria-hidden="true">—</span>03</a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="site-nav-home" href="/#ch3">Work</a>
+      <a href="/#ch4">Writing</a>
+      <a href="/#appb">Films</a>
+      <a href="/#appa">Editions</a>
+      <a class="site-nav-lab" href="/lab/" aria-current="true">The Lab</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+  <div class="intro">
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / Core medicine / Lesson 4</p>
+    <h1>Blood pressure<br><span>&amp; how it holds steady.</span></h1>
+    <p class="lede">Pressure is what you get when the heart pushes blood into narrow vessels that hold it back. Follow how a fast nerve reflex keeps it steady from one moment to the next.</p>
+    <p class="note">Educational, not for clinical use</p>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Lesson views">
+    <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
+    <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
+  </div>
+
+  <section id="lesson" role="tabpanel" aria-labelledby="tab-lesson">
+    <article data-step="1" data-step-title="Blood travels in a loop" data-kind="loop">
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Blood travels in a loop</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The heart pumps blood into <dfn>arteries</dfn>, the vessels that carry blood away from the heart. Blood passes through the body’s tissues and comes back through <dfn>veins</dfn>, the vessels that return it to the heart.</p>
+    </article>
+    <article data-step="2" data-step-title="Pressure is the push" data-kind="pressure" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Pressure is the push</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Blood pressure</dfn> is the push of blood against the artery walls. That push is what drives blood on through the tissues. The dial shows it: further right means a stronger push.</p>
+    </article>
+    <article data-step="3" data-step-title="It rises and falls with every beat" data-kind="wave" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">It rises and falls with every beat</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Each squeeze sends a surge into the arteries. The peak push is the <dfn>systolic pressure</dfn>; the low point just before the next beat is the <dfn>diastolic pressure</dfn>. The average over time is the <dfn>mean pressure</dfn>.</p>
+    </article>
+    <article data-step="4" data-step-title="Flow: what the heart sends out" data-kind="flow" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Flow: what the heart sends out</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Cardiac output</dfn> is the blood the heart pumps each minute: how often it beats, times how much leaves with each beat. <a href="/lab/frank-starling-cardiac-output/">The Frank–Starling lesson</a> shows what sets each beat.</p>
+    </article>
+    <article data-step="5" data-step-title="Resistance: the narrow ends" data-kind="resist" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Resistance: the narrow ends</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Arterioles</dfn> are the smallest arteries, wrapped in muscle. When that muscle tightens they narrow and raise <dfn>resistance</dfn>: how hard it is for blood to get through. When it relaxes they widen and resistance falls.</p>
+    </article>
+    <article data-step="6" data-step-title="Pressure comes from flow meeting resistance" data-kind="hose" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Pressure comes from flow meeting resistance</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Think of a garden hose. Turn the tap up, or pinch the nozzle, and the pressure inside rises. Blood pressure works the same way: more flow, or more resistance, means more pressure. This is the key idea of the lesson.</p>
+    </article>
+    <article data-step="7" data-step-title="Volume fills the system" data-kind="volume" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Volume fills the system</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Blood volume</dfn> is how much blood the circulation holds. More volume fills the veins, more blood returns to the heart, and each beat can pump more. Over days the kidneys set it: see <a href="/lab/nephron-diuretics/">the nephron lesson</a>.</p>
+    </article>
+    <article data-step="8" data-step-title="Sensors in the artery wall" data-kind="sensor" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Sensors in the artery wall</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Baroreceptors</dfn> are stretch sensors in the walls of the large arteries in the neck and chest. Higher pressure stretches them more, so they send faster signals along a nerve to the <dfn>brainstem</dfn>, the base of the brain.</p>
+    </article>
+    <article data-step="9" data-step-title="The brain answers through nerves" data-kind="nerves" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">The brain answers through nerves</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The brainstem sets the <dfn>sympathetic nerves</dfn>, the body’s “speed up” nerves. More of their signal makes the heart beat faster and squeeze harder, and tightens arterioles and veins. Another nerve, the <dfn>vagus nerve</dfn>, slows the heart.</p>
+    </article>
+    <article data-step="10" data-step-title="A reflex that steadies pressure" data-kind="reflex" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">A reflex that steadies pressure</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The <dfn>baroreflex</dfn> is this sensor-to-nerve loop working by itself. Stand up and blood pools in the legs, so pressure dips. The sensors fire less, sympathetic signals rise, and within seconds pressure recovers most of the way.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="11" data-step-title="The whole picture" data-kind="whole" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">The whole picture</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Pressure comes from flow meeting resistance. Flow depends on heart rate, each beat and blood volume. The baroreflex steadies pressure from moment to moment; the kidneys set its long-term level. Key measures: mean pressure, cardiac output and resistance.</p>
+    </article>
+    <article data-step="12" data-step-title="Calcium channel blockers: arterioles relax" data-kind="ccb" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Calcium channel blockers: arterioles relax</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Calcium channel blockers cut the calcium that arteriole muscle needs to tighten. Arterioles widen, resistance falls and pressure drops. The baroreflex speeds the heart a little; some drugs in this class instead slow the heart.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="13" data-step-title="Alpha-1 blockers: nerve signals lose their grip" data-kind="alpha1" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Alpha-1 blockers: nerve signals lose their grip</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Alpha-1 blockers stop sympathetic signals from tightening arterioles and veins. Resistance falls and less blood is pushed back to the heart, so pressure drops, especially on standing up. The heart speeds up a little as the reflex responds.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="14" data-step-title="Central alpha-2 agonists: a quieter brainstem" data-kind="alpha2" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Central alpha-2 agonists: a quieter brainstem</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">An <dfn>agonist</dfn> is a drug that switches on a <dfn>receptor</dfn>, a cell’s docking site for a signal. Central alpha-2 agonists switch on receptors in the brainstem that turn sympathetic signals down. The heart slows, arterioles relax and flow falls, so pressure drops.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="15" data-step-title="Beta-blockers: a slower, gentler heart" data-kind="beta" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Beta-blockers: a slower, gentler heart</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Beta-blockers block sympathetic signals at the heart, so it beats more slowly and squeezes less. Flow falls, and so does pressure. At first the reflex tightens arterioles a little, which is why resistance rises in this picture.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="16" data-step-title="Direct vasodilators: arterioles wide open" data-kind="vasodilator" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Direct vasodilators: arterioles wide open</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Direct vasodilators relax arteriole muscle directly. Resistance falls a lot and pressure drops, so the baroreflex turns sympathetic signals up: the heart races and flow rises. Over days the kidneys also hold on to salt and water.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="17" data-step-title="Hemorrhage: less blood to pump" data-kind="hemorrhage" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Hemorrhage: less blood to pump</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Hemorrhage</dfn> means losing blood. Less blood returns to the heart, so each beat carries less and flow falls. The baroreflex speeds the heart and tightens arterioles, so pressure falls less than flow does.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+
+    <div class="step-nav">
+      <button type="button" data-step-back disabled>← Back</button>
+      <span data-step-progress aria-live="polite">Step 1 of 17</span>
+      <button type="button" data-step-next>Next →</button>
+    </div>
+    <p class="hint">Start with Next, or use the arrow keys. Pictures are illustrative, not to scale.</p>
+  </section>
+
+  <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
+    <h2>Reference values, beside the model.</h2>
+    <p id="disclaimer" class="disclaimer">Loading reference values…</p>
+    <div class="cv-controls">
+      <div>
+        <label for="clinical-state">Compare a drug or condition</label>
+        <select id="clinical-state"><option value="normal">Normal teaching baseline</option></select>
+      </div>
+      <div>
+        <label for="clinical-volume">Blood volume in the model <output id="clinical-volume-label" for="clinical-volume">normal</output></label>
+        <input id="clinical-volume" type="range" min="0.6" max="1.3" step="0.05" value="1">
+      </div>
+      <div class="check">
+        <input id="clinical-reflex" type="checkbox" checked>
+        <label for="clinical-reflex">Baroreflex working</label>
+      </div>
+    </div>
+    <p id="state-summary" class="state-summary" aria-live="polite">Normal teaching baseline.</p>
+    <p class="model-note">Blue markers are an illustrative teaching model, not patient measurements. The black line is the textbook typical value; these sources give single values, not ranges. Arrows show the expected direction from the cited source; real responses vary. Markers show the immediate response only: the model has no kidneys or hormones.</p>
+    <p id="baseline-note" class="model-note"></p>
+    <div id="value-rows"></div>
+    <p id="cv-live" class="visually-hidden" aria-live="polite"></p>
+    <h3>Sources</h3>
+    <ul id="sources"></ul>
+    <p id="load-error" class="load-error" hidden></p>
+  </section>
+
+  <section id="explore" role="tabpanel" aria-labelledby="tab-explore" hidden>
+    <h2>Run the loop yourself.</h2>
+    <p class="model-intro">An illustrative teaching model of the whole picture. Change one thing and watch the baroreflex answer. The faint dashed picture is the normal state.</p>
+    <div class="explore-grid">
+      <div id="explore-visual" class="visual"></div>
+      <div class="controls">
+        <label for="vol">Blood volume <output id="vol-label" for="vol">normal</output></label>
+        <input id="vol" type="range" min="0.6" max="1.3" step="0.05" value="1">
+        <label for="art">Arteriole muscle tone <output id="art-label" for="art">normal</output></label>
+        <input id="art" type="range" min="0.5" max="1.6" step="0.05" value="1">
+        <label for="central">Brainstem sympathetic output <output id="central-label" for="central">normal</output></label>
+        <input id="central" type="range" min="0.5" max="1.4" step="0.05" value="1">
+        <label for="beta">Heart’s response to sympathetic signals <output id="beta-label" for="beta">normal</output></label>
+        <input id="beta" type="range" min="0.3" max="1" step="0.05" value="1">
+        <label for="alpha">Vessels’ response to sympathetic signals <output id="alpha-label" for="alpha">normal</output></label>
+        <input id="alpha" type="range" min="0.3" max="1" step="0.05" value="1">
+        <div class="check"><input id="reflex" type="checkbox" checked><label for="reflex">Baroreflex working</label></div>
+        <button type="button" id="reset">Reset model</button>
+      </div>
+    </div>
+    <p id="model-results" class="model-results" aria-live="polite"></p>
+    <details>
+      <summary>How this teaching model works</summary>
+      <p>Everything is relative to a normal resting state. A sympathetic signal leaves the brainstem; with the baroreflex working it rises when pressure is below normal and falls when it is above. The heart’s share of that signal sets heart rate and contraction strength; the vessels’ share tightens arterioles (resistance) and firms up veins, which pushes more blood back to the heart. Blood per beat rises with filling and levels off. Flow is heart rate times blood per beat, and mean pressure is flow times resistance. The model finds the steady state where the reflex and the circulation agree. It omits the kidneys, hormones, pulse-wave shape and anything slower than minutes. The numbers shown are in physical units built from the textbook heart rate, stroke volume and mean pressure in the Clinical values tab: flow in mL/s is heart rate (beats per minute) times stroke volume (mL per beat), divided by 60 seconds per minute, and mean pressure is that flow times resistance (venous pressure taken as zero). The Clinical values tab explains where this baseline differs from the textbook references.</p>
+    </details>
+  </section>
+
+  <footer>Lesson 4 of The Lab · Added 2026-10-11 · <a href="/lab/">All lessons</a></footer>
+</main>
+</body>
+</html>
