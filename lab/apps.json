@@ -40,8 +40,8 @@
       "model": "gpt-6.1-sol"
     },
     "reviewer": {
-      "tool": "OpenAI Codex",
-      "model": "gpt-6.1-sol"
+      "tool": "Claude Code",
+      "model": "claude-opus-5-5"
     }
   }
 ]

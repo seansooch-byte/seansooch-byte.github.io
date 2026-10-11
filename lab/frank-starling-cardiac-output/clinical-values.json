@@ -3,8 +3,8 @@
   "sources": {
     "guyton": "Hall JE, Hall ME. Guyton and Hall Textbook of Medical Physiology. 14th edition. Philadelphia: Elsevier; 2021.",
     "costanzo": "Costanzo LS. Physiology. 6th edition. Philadelphia: Elsevier; 2018.",
-    "esc2021": "McDonagh TA, Metra M, Adamo M, et al. 2021 ESC Guidelines for the diagnosis and treatment of acute and chronic heart failure. European Heart Journal. 2021;42(36):3599–3726. Oxford University Press.",
-    "esc2005": "Nieminen MS et al. Executive summary of the guidelines on the diagnosis and treatment of acute heart failure. European Heart Journal. 2005;26:384–416. European Society of Cardiology. https://doi.org/10.1093/eurheartj/ehi044"
+    "esc2021": "McDonagh TA, Metra M, Adamo M, et al. 2021 ESC Guidelines for the diagnosis and treatment of acute and chronic heart failure. European Heart Journal. 2021;42(36):3599-3726.",
+    "esc2005": "Nieminen MS, et al. Executive summary of the guidelines on the diagnosis and treatment of acute heart failure: the Task Force on Acute Heart Failure of the European Society of Cardiology. European Heart Journal. 2005;26(4):384-416."
   },
   "values": [
     {
@@ -59,12 +59,14 @@
       "id": "fluids",
       "label": "Intravenous (IV) fluids",
       "kind": "physiologic",
-      "summary": "More circulating fluid can increase filling.",
+      "summary": "More circulating fluid can increase filling and, on the rising part of the curve, blood per beat.",
       "shifts": {
-        "edv": "up"
+        "edv": "up",
+        "sv": "up",
+        "co": "up"
       },
       "source": "costanzo",
-      "where": "Chapter 4, pp. 160–162, Combining Cardiac and Vascular Function Curves; Effects of Changes in Blood Volume, Figure 4.29A: increased volume raises right atrial pressure; the cardiac function relationship links filling pressure with end-diastolic volume. Filling increase is the isolated model mechanism."
+      "where": "Chapter 4, pp. 160-162, Combining Cardiac and Vascular Function Curves; Effects of Changes in Blood Volume, Figure 4.29A: increased volume raises right atrial pressure; the cardiac function relationship links filling pressure with end-diastolic volume. The same figure shows cardiac output increased at the new intersection, and stroke volume rising with end-diastolic volume is the Frank-Starling relationship of the same chapter; both hold on the rising part of the curve. Filling increase is the isolated model mechanism."
     },
     {
       "id": "diuretics",
@@ -83,22 +85,24 @@
       "kind": "drug",
       "summary": "Stronger contraction raises blood per beat at the same filling.",
       "shifts": {
-        "sv": "up"
+        "sv": "up",
+        "co": "up"
       },
       "source": "costanzo",
-      "where": "Chapter 4, p. 161, Inotropic Effects, Figure 4.28A: positive inotropic agents increase stroke volume at any right atrial pressure; p. 150, Figure 4.22: increase at a given end-diastolic volume."
+      "where": "Chapter 4, p. 161, Inotropic Effects, Figure 4.28A: positive inotropic agents increase stroke volume at any right atrial pressure; p. 150, Figure 4.22: increase at a given end-diastolic volume. Figure 4.28A plots cardiac output against right atrial pressure: the curve shifts upward, so cardiac output is increased."
     },
     {
       "id": "beta",
       "label": "Beta-blockers",
       "kind": "drug",
-      "summary": "Immediate reduction in stress-signal stimulation slows the heart and weakens contraction.",
+      "summary": "Reduced stress-signal stimulation slows the heart and weakens contraction. Slower beats fill for longer, so blood per beat changes little; the flow over a minute falls mainly because there are fewer beats.",
       "shifts": {
         "hr": "down",
-        "sv": "down"
+        "sv": "variable",
+        "co": "down"
       },
       "source": "costanzo",
-      "where": "Chapter 4, Cardiac Electrophysiology, p. 142, Box 4.1: beta antagonists slow SA-node firing (heart rate down). Cardiac Muscle, p. 146, Effects of the Autonomic Nervous System on Contractility: beta-1 activation increases contractility; Chapter 2, p. 53, Table 2.2 lists beta antagonists. Figure 4.22, p. 150: negative inotropy lowers stroke volume at fixed end-diastolic volume. The stroke-volume decrease is an inference for immediate blockade at fixed filling and afterload, not a universal clinical response."
+      "where": "Chapter 4, Cardiac Electrophysiology, p. 142, Box 4.1: beta antagonists slow SA-node firing (heart rate down). Cardiac Muscle, p. 146, Effects of the Autonomic Nervous System on Contractility: beta-1 activation increases contractility; Chapter 2, p. 53, Table 2.2 lists beta antagonists. Figure 4.22, p. 150: negative inotropy lowers stroke volume at fixed end-diastolic volume. Stroke volume is marked variable: a slower rate also lengthens filling, which raises end-diastolic volume and offsets the weaker contraction. That offset is an inference from the Frank-Starling relationship and from the ventricle model of the pressure-volume loop lesson, where stroke volume is unchanged in this state; it is not a quoted finding. Cardiac output down: Guyton and Hall, Chapter 9, 'Control of the Heart by the Sympathetic and Parasympathetic Nerves' (less sympathetic drive lowers heart rate and strength of contraction, reducing cardiac pumping by as much as 30% below normal)."
     },
     {
       "id": "nitrates",
@@ -120,12 +124,11 @@
         "sv": "down"
       },
       "source": "costanzo",
-      "where": "Chapter 4, pp. 147–148, Effect of Cardiac Glycosides on Contractility: ventricular failure reduces contractility and prevents normal stroke-volume ejection; p. 150, Figure 4.22: negative inotropy lowers stroke volume at given end-diastolic volume."
+      "where": "Chapter 4, pp. 147-148, Effect of Cardiac Glycosides on Contractility: ventricular failure reduces contractility and prevents normal stroke-volume ejection; p. 150, Figure 4.22: negative inotropy lowers stroke volume at given end-diastolic volume."
     }
   ],
   "sourceLinks": {
-    "guyton": "https://studylib.net/doc/28591763/guyton-physiology",
-    "costanzo": "https://studylib.net/doc/27798268/costanzo---physiology-6th-edition-2018",
-    "esc2005": "https://www.escardio.org/static-file/Escardio/Guidelines/guidelines-AHF-ES-2005.pdf"
+    "esc2021": "https://doi.org/10.1093/eurheartj/ehab368",
+    "esc2005": "https://doi.org/10.1093/eurheartj/ehi044"
   }
 }
