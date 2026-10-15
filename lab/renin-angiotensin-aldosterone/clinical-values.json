@@ -1,0 +1,52 @@
+{
+  "disclaimer": "Typical adult reference ranges; labs vary; not for clinical decisions.",
+  "sources": {
+    "guyton13": "Hall JE. Guyton and Hall Textbook of Medical Physiology. 13th edition. Philadelphia: Elsevier; 2016.",
+    "ahahf2022": "Heidenreich PA, Bozkurt B, Aguilar D, et al. 2022 AHA/ACC/HFSA Guideline for the Management of Heart Failure: A Report of the American College of Cardiology/American Heart Association Joint Committee on Clinical Practice Guidelines. Circulation. 2022;145(18):e895-e1032.",
+    "accaha2017": "Whelton PK, Carey RM, Aronow WS, et al. 2017 ACC/AHA/AAPA/ABC/ACPM/AGS/APhA/ASH/ASPC/NMA/PCNA Guideline for the Prevention, Detection, Evaluation, and Management of High Blood Pressure in Adults: A Report of the American College of Cardiology/American Heart Association Task Force on Clinical Practice Guidelines. Hypertension. 2018;71(6):e13-e115."
+  },
+  "sourceLinks": {
+    "accaha2017": "https://doi.org/10.1161/HYP.0000000000000065",
+    "ahahf2022": "https://doi.org/10.1161/CIR.0000000000001063"
+  },
+  "values": [
+    { "id": "map", "label": "Mean arterial pressure", "unit": "mmHg",
+      "low": null, "high": null, "typical": 100,
+      "source": "guyton13", "where": "Chapter 14, Overview of the Circulation; Biophysics of Pressure, Flow, and Resistance: 'Pressures in the Various Portions of the Circulation' (mean pressure in the aorta averages about 100 mm Hg)",
+      "modelKey": "map", "note": "Single typical value; the source gives no range." },
+    { "id": "na", "label": "Plasma sodium", "unit": "mmol/L",
+      "low": 138, "high": 146, "typical": 142,
+      "source": "guyton13", "where": "Chapter 1, Functional Organization of the Human Body and Control of the 'Internal Environment': Table 1-1, Important Constituents and Physical Characteristics of Extracellular Fluid (sodium ion: normal value 142, normal range 138 to 146 mmol/L)",
+      "modelKey": "na" },
+    { "id": "k", "label": "Plasma potassium", "unit": "mmol/L",
+      "low": 3.8, "high": 5.0, "typical": 4.2,
+      "source": "guyton13", "where": "Chapter 1, Functional Organization of the Human Body and Control of the 'Internal Environment': Table 1-1, Important Constituents and Physical Characteristics of Extracellular Fluid (potassium ion: normal value 4.2, normal range 3.8 to 5.0 mmol/L)",
+      "modelKey": "k" }
+  ],
+  "states": [
+    { "id": "ace", "label": "ACE inhibitors", "kind": "drug",
+      "summary": "They block angiotensin-converting enzyme, so less angiotensin I becomes angiotensin II; vessels relax, less aldosterone is released, and pressure falls.",
+      "shifts": { "map": "down", "k": "up" },
+      "source": "accaha2017",
+      "where": "Section 8.1.6, Choice of Initial Medication, Table 18 (Oral Antihypertensive Drugs), primary agents: ACE inhibitors are listed as blood-pressure-lowering agents, and the table's comment notes an increased risk of hyperkalemia (high plasma potassium).",
+      "modelNote": "In the model the kidney releases extra renin as pressure falls, so angiotensin I builds up; blood volume falls a little. Those are model behaviour, not listed directions." },
+    { "id": "arb", "label": "Angiotensin receptor blockers (ARBs)", "kind": "drug",
+      "summary": "They block the angiotensin II receptor through which it narrows vessels and calls for aldosterone, so those effects fade and pressure falls.",
+      "shifts": { "map": "down", "k": "up" },
+      "source": "accaha2017",
+      "where": "Section 8.1.6, Choice of Initial Medication, Table 18 (Oral Antihypertensive Drugs), primary agents: ARBs are listed as blood-pressure-lowering agents, and the table's comment notes an increased risk of hyperkalemia (high plasma potassium).",
+      "modelNote": "In the model the kidney releases extra renin as pressure falls, so the blood holds more angiotensin II than normal even though little of it can act through the blocked receptor. That is model behaviour, not a listed direction." },
+    { "id": "mra", "label": "Aldosterone antagonists (spironolactone)", "kind": "drug",
+      "summary": "They block aldosterone's receptor in the kidney's late distal tubule and collecting duct, so less sodium is taken back and less potassium is secreted into the urine.",
+      "shifts": { "map": "down", "k": "up" },
+      "source": "ahahf2022",
+      "where": "Potassium: Section 7.3.3, Mineralocorticoid Receptor Antagonists (MRAs): the recommendations and supportive text call for monitoring serum potassium in patients taking an MRA such as spironolactone and stopping it to avoid life-threatening hyperkalemia (high plasma potassium). Pressure: ACC/AHA 2017 guideline, Section 8.1.6, Table 18 (Oral Antihypertensive Drugs), secondary agents, which lists aldosterone antagonists among blood-pressure-lowering agents.",
+      "modelNote": "In the model blood volume falls, so the kidney releases more renin and the adrenal glands release more aldosterone, which now has little effect. Those are model behaviour, not listed directions." },
+    { "id": "dri", "label": "Direct renin inhibitors", "kind": "drug",
+      "summary": "They block renin itself, the first link, so less angiotensin I, angiotensin II and aldosterone are made, and pressure falls.",
+      "shifts": { "map": "down", "k": "up" },
+      "source": "accaha2017",
+      "where": "Section 8.1.6, Choice of Initial Medication, Table 18 (Oral Antihypertensive Drugs), secondary agents: the direct renin inhibitor is listed as a blood-pressure-lowering agent, and the table's comment notes an increased risk of hyperkalemia (high plasma potassium).",
+      "modelNote": "In the model the kidney releases more renin as pressure falls, but the drug keeps it from working, so every later link stays low. That is model behaviour, not a listed direction." }
+  ]
+}

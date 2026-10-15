@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Renin–Angiotensin–Aldosterone System · The Lab · Sean Sooch</title>
+<meta name="description" content="A guided visual lesson: the hormone chain the kidney uses to raise blood pressure and hold on to salt, and the drugs that cut it at each link.">
+<link rel="canonical" href="https://seansooch.dev/lab/renin-angiotensin-aldosterone/">
+<meta property="og:title" content="The Renin–Angiotensin–Aldosterone System">
+<meta property="og:description" content="The hormone chain the kidney uses to raise blood pressure and hold on to salt, and the drugs that cut it at each link, one picture at a time.">
+<meta property="og:url" content="https://seansooch.dev/lab/renin-angiotensin-aldosterone/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the lesson</a>
+<header class="site-top">
+  <div class="site-top-in">
+    <a class="site-brand" href="/" aria-label="Sean Sooch, home">SS<span aria-hidden="true">—</span>03</a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="site-nav-home" href="/#ch3">Work</a>
+      <a href="/#ch4">Writing</a>
+      <a href="/#appb">Films</a>
+      <a href="/#appa">Editions</a>
+      <a class="site-nav-lab" href="/lab/" aria-current="true">The Lab</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+  <div class="intro">
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / Core medicine / Lesson 5</p>
+    <h1>Renin, angiotensin<br><span>&amp; aldosterone.</span></h1>
+    <p class="lede">Three chemical messengers passed along like a relay: the kidney’s way of raising blood pressure and holding on to salt. Build the chain one link at a time, then see where four kinds of drugs cut it.</p>
+    <p class="note">Educational, not for clinical use</p>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Lesson views">
+    <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
+    <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
+  </div>
+
+  <section id="lesson" role="tabpanel" aria-labelledby="tab-lesson">
+    <article data-step="1" data-step-title="The kidneys keep watch on pressure" data-kind="watch">
+      <p class="eyebrow">Build the chain</p>
+      <h2 tabindex="-1">The kidneys keep watch on pressure</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Your two <dfn>kidneys</dfn> clean the blood and make urine. They also feel the <dfn>blood pressure</dfn>, the push of blood against artery walls, in the vessel that feeds them. The dotted line shows that sensing; the dial shows the push. <a href="/lab/blood-pressure-regulation/">Lesson 4</a> covers pressure itself.</p>
+    </article>
+    <article data-step="2" data-step-title="Low pressure releases renin" data-kind="renin" hidden>
+      <p class="eyebrow">Build the chain</p>
+      <h2 tabindex="-1">Low pressure releases renin</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">When pressure falls, or less salt reaches them, cells in the kidney release more <dfn>renin</dfn> into the blood. Renin is an <dfn>enzyme</dfn>: a protein that makes one chemical change happen, here cutting another protein. The bar shows how much renin is released.</p>
+    </article>
+    <article data-step="3" data-step-title="Renin cuts angiotensinogen" data-kind="cut" hidden>
+      <p class="eyebrow">Build the chain</p>
+      <h2 tabindex="-1">Renin cuts angiotensinogen</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The liver keeps <dfn>angiotensinogen</dfn>, a long protein, in the blood all the time. Renin snips a short piece off its end. That piece is <dfn>angiotensin I</dfn> (“angiotensin one”), which does very little by itself. More renin means more angiotensin I.</p>
+    </article>
+    <article data-step="4" data-step-title="An enzyme in the lungs makes the active messenger" data-kind="ace-step" hidden>
+      <p class="eyebrow">Build the chain</p>
+      <h2 tabindex="-1">An enzyme in the lungs makes the active messenger</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">In the lungs, <dfn>angiotensin-converting enzyme</dfn> (<dfn>ACE</dfn> for short), on the inner lining of the vessels, trims angiotensin I shorter. The result is <dfn>angiotensin II</dfn> (“angiotensin two”), a <dfn>hormone</dfn>: a chemical messenger carried in the blood that changes what distant organs do.</p>
+    </article>
+    <article data-step="5" data-step-title="A messenger needs a receptor" data-kind="receptor" hidden>
+      <p class="eyebrow">Build the chain</p>
+      <h2 tabindex="-1">A messenger needs a receptor</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Angiotensin II only works where it can dock. A <dfn>receptor</dfn> is a cell’s docking site for one particular messenger, shaped to fit it like a lock fits a key. When angiotensin II docks, the cell answers. Cells without the receptor ignore it.</p>
+    </article>
+    <article data-step="6" data-step-title="It squeezes the smallest arteries" data-kind="squeeze" hidden>
+      <p class="eyebrow">Build the chain</p>
+      <h2 tabindex="-1">It squeezes the smallest arteries</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Arterioles</dfn> are the smallest arteries, wrapped in muscle. Angiotensin II docks on their receptors and the muscle tightens, so they narrow. Blood finds it harder to get through, called higher <dfn>resistance</dfn>, and the pressure behind it rises within minutes.</p>
+    </article>
+    <article data-step="7" data-step-title="It calls out aldosterone" data-kind="adrenal" hidden>
+      <p class="eyebrow">Build the chain</p>
+      <h2 tabindex="-1">It calls out aldosterone</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Angiotensin II also reaches the <dfn>adrenal glands</dfn>, two small glands sitting on top of the kidneys. Docking on their receptors makes them release <dfn>aldosterone</dfn>, the third messenger in the relay. Aldosterone travels in the blood back to the kidneys.</p>
+    </article>
+    <article data-step="8" data-step-title="Aldosterone holds on to salt" data-kind="salt" hidden>
+      <p class="eyebrow">Build the chain</p>
+      <h2 tabindex="-1">Aldosterone holds on to salt</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Each kidney makes urine in tiny tubes called <dfn>nephrons</dfn>. Near their end, aldosterone makes them take more <dfn>sodium</dfn>, the main part of table salt, back into the blood, and send more <dfn>potassium</dfn>, another mineral carried in the blood, out in the urine. <a href="/lab/nephron-diuretics/">Lesson 2</a> follows the nephron.</p>
+    </article>
+    <article data-step="9" data-step-title="Water follows the salt" data-kind="volume" hidden>
+      <p class="eyebrow">Build the chain</p>
+      <h2 tabindex="-1">Water follows the salt</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Where sodium goes, water follows. Keeping salt keeps water, so <dfn>blood volume</dfn>, the amount of blood in the circulation, grows. A fuller circulation pushes harder on artery walls, so pressure rises. This is the slow arm: it works over hours to days.</p>
+    </article>
+    <article data-step="10" data-step-title="The chain switches itself off" data-kind="feedback" hidden>
+      <p class="eyebrow">Build the chain</p>
+      <h2 tabindex="-1">The chain switches itself off</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">As pressure climbs back, the kidney feels the push and releases less renin, so each later link makes less. This is <dfn>negative feedback</dfn>: a result that turns down its own cause. It holds pressure steady even when you eat more or less salt.</p>
+    </article>
+    <article data-step="11" data-step-title="The whole chain" data-kind="whole" hidden>
+      <p class="eyebrow">Build the chain</p>
+      <h2 tabindex="-1">The whole chain</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Low pressure releases renin. Renin cuts angiotensinogen into angiotensin I; ACE makes angiotensin II. It squeezes arterioles and calls out aldosterone, which keeps salt and water. Pressure rises, and feedback eases renin. Key measures: blood pressure, blood volume and potassium.</p>
+    </article>
+    <article data-step="12" data-step-title="ACE inhibitors: no conversion" data-kind="ace" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">ACE inhibitors: no conversion</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">An <dfn>inhibitor</dfn> is a drug that stops an enzyme working. ACE inhibitors stop ACE, so little angiotensin II is made: arterioles relax, aldosterone falls and pressure drops. The kidney answers with more renin, so angiotensin I piles up unused. Potassium rises.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="13" data-step-title="Angiotensin receptor blockers: the main dock is taken" data-kind="arb" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Angiotensin receptor blockers: the main dock is taken</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Angiotensin receptor blockers (<dfn>ARBs</dfn>) block the receptor angiotensin II uses to squeeze arterioles and call out aldosterone. Arterioles relax, aldosterone falls and pressure drops. The kidney releases more renin, so the blood holds more angiotensin II, but it cannot use that receptor. Potassium rises.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="14" data-step-title="Aldosterone antagonists: salt lets go" data-kind="mra" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Aldosterone antagonists: salt lets go</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">An <dfn>antagonist</dfn> blocks a receptor without switching it on. Aldosterone antagonists, such as spironolactone, block aldosterone’s receptor in the nephron. Less sodium and water are kept, so volume and pressure fall, and potassium builds up. The body makes more aldosterone, to little effect.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="15" data-step-title="Direct renin inhibitors: the first link cut" data-kind="dri" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Direct renin inhibitors: the first link cut</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Direct renin inhibitors stop renin itself, so angiotensinogen is barely cut. Every later link falls: less angiotensin I, less angiotensin II, less aldosterone, and pressure drops. The kidney releases even more renin, but the drug keeps it from working. Potassium rises.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+
+    <div class="step-nav">
+      <button type="button" data-step-back disabled>← Back</button>
+      <span data-step-progress aria-live="polite">Step 1 of 15</span>
+      <button type="button" data-step-next>Next →</button>
+    </div>
+    <p class="hint">Start with Next, or use the arrow keys. Bars are illustrative amounts, not measurements.</p>
+  </section>
+
+  <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
+    <h2>Reference values, beside the model.</h2>
+    <p id="disclaimer" class="disclaimer">Loading reference values…</p>
+    <div class="cv-controls">
+      <div>
+        <label for="clinical-state">Compare a drug or condition</label>
+        <select id="clinical-state"><option value="normal">Normal teaching baseline</option></select>
+      </div>
+      <div>
+        <label for="clinical-salt">Salt in the diet (model) <output id="clinical-salt-label" for="clinical-salt">normal</output></label>
+        <input id="clinical-salt" type="range" min="0.3" max="2" step="0.05" value="1">
+      </div>
+      <div>
+        <button type="button" id="clinical-reset">Back to baseline</button>
+      </div>
+    </div>
+    <p id="state-summary" class="state-summary" aria-live="polite">Normal teaching baseline.</p>
+    <p class="model-note">The blue line on each bar is an illustrative teaching model, not a patient measurement. A shaded band is the textbook normal range; a black line is a textbook typical value where the source gives no range. Arrows show the expected direction from the cited source; real responses vary.</p>
+    <p id="baseline-note" class="model-note"></p>
+    <div id="value-rows"></div>
+    <p id="cv-live" class="visually-hidden" aria-live="polite"></p>
+    <h3>Sources</h3>
+    <ul id="sources"></ul>
+    <p id="load-error" class="load-error" hidden></p>
+  </section>
+
+  <section id="explore" role="tabpanel" aria-labelledby="tab-explore" hidden>
+    <h2>Pull on any link yourself.</h2>
+    <p class="model-intro">An illustrative teaching model of the whole chain. Weaken one link, change the salt you eat, or switch the feedback off, and watch the rest of the chain answer. The faint dashed outlines are the normal state.</p>
+    <div class="explore-grid">
+      <div id="explore-visual" class="visual"></div>
+      <div class="controls">
+        <label for="salt">Salt in the diet <output id="salt-label" for="salt">normal</output></label>
+        <input id="salt" type="range" min="0.3" max="2" step="0.05" value="1">
+        <label for="dri">Renin able to cut <output id="dri-label" for="dri">normal</output></label>
+        <input id="dri" type="range" min="0.1" max="1" step="0.05" value="1">
+        <label for="ace">ACE able to convert <output id="ace-label" for="ace">normal</output></label>
+        <input id="ace" type="range" min="0.1" max="1" step="0.05" value="1">
+        <label for="arb">Angiotensin II receptors free <output id="arb-label" for="arb">normal</output></label>
+        <input id="arb" type="range" min="0.1" max="1" step="0.05" value="1">
+        <label for="mra">Aldosterone receptors free <output id="mra-label" for="mra">normal</output></label>
+        <input id="mra" type="range" min="0.1" max="1" step="0.05" value="1">
+        <label for="tumor">Aldosterone released without being asked <output id="tumor-label" for="tumor">none</output></label>
+        <input id="tumor" type="range" min="0" max="3" step="0.1" value="0">
+        <div class="check"><input id="feedback" type="checkbox" checked><label for="feedback">Kidney feedback working (pressure turns renin down)</label></div>
+        <button type="button" id="reset">Reset model</button>
+      </div>
+    </div>
+    <p id="model-results" class="model-results" aria-live="polite"></p>
+    <details>
+      <summary>How this teaching model works</summary>
+      <p>Everything is relative to a normal resting state, where every quantity equals 1. The kidney releases renin; with feedback working, the amount rises steeply when pressure is below normal and falls when it is above. Renin’s working share (set by the renin slider) cuts angiotensinogen, which the model treats as never running out, so angiotensin I follows working renin. ACE’s working share turns angiotensin I into angiotensin II, and the free share of angiotensin II receptors sets the signal reaching cells. That signal tightens arterioles (resistance) and, with a resting floor, sets aldosterone release; an adrenal tumor can add aldosterone on top. Aldosterone’s free receptors set its effect. Salt kept is the average of aldosterone’s effect and the angiotensin II signal (angiotensin II also helps the kidney keep sodium directly). Blood volume rises gently with salt kept and with salt eaten, and pressure rises with the square of volume times resistance. Potassium falls as aldosterone’s effect rises, and sodium moves only very slightly, because water follows the salt. The model finds the steady state where the pressure the kidney senses equals the pressure the chain produces. It omits thirst, the brain’s water-holding hormone, nerves, kidney filtering and anything about timing. In the Clinical values tab the relative results are multiplied by the textbook typical values to show illustrative numbers.</p>
+    </details>
+  </section>
+
+  <footer>Lesson 5 of The Lab · Added 2026-10-15 · <a href="/lab/">All lessons</a></footer>
+</main>
+</body>
+</html>
