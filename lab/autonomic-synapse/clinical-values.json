@@ -1,0 +1,72 @@
+{
+  "disclaimer": "Typical adult reference ranges; labs vary; not for clinical decisions.",
+  "sources": {
+    "accaha2017": "Whelton PK, Carey RM, Aronow WS, et al. 2017 ACC/AHA/AAPA/ABC/ACPM/AGS/APhA/ASH/ASPC/NMA/PCNA Guideline for the Prevention, Detection, Evaluation, and Management of High Blood Pressure in Adults: A Report of the American College of Cardiology/American Heart Association Task Force on Clinical Practice Guidelines. J Am Coll Cardiol. 2018;71(19):e127-e248.",
+    "brady2018": "Kusumoto FM, Schoenfeld MH, Barrett C, et al. 2018 ACC/AHA/HRS Guideline on the Evaluation and Management of Patients With Bradycardia and Cardiac Conduction Delay: A Report of the American College of Cardiology/American Heart Association Task Force on Clinical Practice Guidelines and the Heart Rhythm Society. Circulation. 2019;140(8):e382-e482."
+  },
+  "sourceLinks": {
+    "accaha2017": "https://www.jacc.org/doi/full/10.1016/j.jacc.2017.11.006",
+    "brady2018": "https://www.hrsonline.org/wp-content/uploads/2025/02/2018-ACC-AHA-HRS-Bradycardia-Full-Text.pdf"
+  },
+  "sourceDois": {
+    "accaha2017": "10.1016/j.jacc.2017.11.006",
+    "brady2018": "10.1161/CIR.0000000000000628"
+  },
+  "values": [
+    { "id": "hr", "label": "Resting heart rate (sinus rhythm)", "unit": "beats/min",
+      "low": 50, "high": null, "typical": null,
+      "kind": "threshold",
+      "thresholdMeaning": "the guideline defines a sinus rate below this as sinus bradycardia",
+      "source": "brady2018",
+      "where": "Definitions table for sinus node dysfunction, 'Sinus bradycardia' row.",
+      "quotes": [ { "source": "brady2018", "text": "Sinus bradycardia: Sinus rate <50 bpm" } ],
+      "modelKey": "hr",
+      "note": "This is a diagnostic definition, not a reference range: a rate above it is not thereby normal. The guideline gives no normal range or typical value here, so none is shown. 'low' holds the threshold." },
+    { "id": "sbp", "label": "Systolic blood pressure", "unit": "mmHg",
+      "low": null, "high": 120, "typical": null,
+      "source": "accaha2017",
+      "where": "Classification of BP, Definition of High BP: Table 6, Categories of BP in Adults, 'Normal' row (systolic column).",
+      "quotes": [ { "source": "accaha2017", "text": "Normal: <120 mm Hg and <80 mm Hg" } ],
+      "modelKey": "sbp",
+      "note": "Upper limit of the guideline's 'normal' category only; the guideline gives no lower limit or typical value." },
+    { "id": "dbp", "label": "Diastolic blood pressure", "unit": "mmHg",
+      "low": null, "high": 80, "typical": null,
+      "source": "accaha2017",
+      "where": "Classification of BP, Definition of High BP: Table 6, Categories of BP in Adults, 'Normal' row (diastolic column).",
+      "quotes": [ { "source": "accaha2017", "text": "Normal: <120 mm Hg and <80 mm Hg" } ],
+      "modelKey": "dbp",
+      "note": "Upper limit of the guideline's 'normal' category only; the guideline gives no lower limit or typical value." }
+  ],
+  "states": [
+    { "id": "mant", "label": "Muscarinic antagonists (atropine)", "kind": "drug",
+      "summary": "They block muscarinic receptors, so acetylcholine from the parasympathetic nerves can no longer slow the heart, and the sinus rate rises.",
+      "shifts": { "hr": "up" },
+      "source": "brady2018",
+      "where": "Section 5.3.2.1, acute medical therapy for bradycardia attributable to sinus node dysfunction: the recommendation that atropine is reasonable to increase sinus rate in patients with symptoms or hemodynamic compromise.",
+      "modelNote": "In the model, pressure also rises a little and the pressure reflex then trims the rise in heart rate; no pressure direction is listed." },
+    { "id": "che", "label": "Cholinesterase inhibitors (donepezil)", "kind": "drug",
+      "summary": "They slow the enzyme that clears acetylcholine, so more acetylcholine reaches the heart's muscarinic receptors and the heart slows.",
+      "shifts": { "hr": "down" },
+      "source": "brady2018",
+      "where": "Table 4, medications that can induce bradycardia or conduction disorders, which lists donepezil, a cholinesterase inhibitor.",
+      "modelNote": "In the model the slower heart lowers pressure a little and the reflex answers; only the heart-rate direction is cited." },
+    { "id": "ablock", "label": "Alpha-1 blockers", "kind": "drug",
+      "summary": "They keep noradrenaline off the alpha-1 receptors of arteriole walls, which relax, so blood pressure falls.",
+      "shifts": {},
+      "source": "accaha2017",
+      "where": "Section 8.1.6, Choice of Initial Medication: Table 18, Oral Antihypertensive Drugs, secondary agents, 'Alpha-1 blockers' (listed as blood-pressure-lowering agents; comment: associated with orthostatic hypotension, especially in older adults).",
+      "modelNote": "The cited table speaks of blood pressure as a whole and does not separate systolic from diastolic pressure, so no arrow is shown on either pressure row. In the model the reflex also speeds the heart; that is model behaviour, not a listed direction." },
+    { "id": "bag", "label": "Isoproterenol (nonselective beta agonist)", "kind": "drug",
+      "summary": "It switches on beta receptors, including those in the heart, which beats faster.",
+      "shifts": { "hr": "up" },
+      "source": "brady2018",
+      "where": "Section 5.3.2.1, acute medical therapy for bradycardia attributable to sinus node dysfunction: the recommendation that beta-adrenergic agonists, isoproterenol among them, may be considered to increase heart rate in patients with symptoms or hemodynamic compromise.",
+      "modelNote": "The model simulates isoproterenol alone: a pure beta agonist with no alpha action. It also relaxes some blood vessels through their beta receptors, so pressure changes little. Other agents in that recommendation, such as epinephrine, also act on alpha receptors and are not what this preset shows. No pressure direction is listed." },
+    { "id": "bblock", "label": "Beta blockers", "kind": "drug",
+      "summary": "They keep noradrenaline off the heart's beta receptors, so it beats more slowly and less forcefully.",
+      "shifts": { "hr": "down" },
+      "source": "brady2018",
+      "where": "Table 4, medications that can induce bradycardia or conduction disorders, which lists beta-adrenergic receptor blockers.",
+      "modelNote": "Beta blockers are also listed among blood-pressure-lowering agents in the 2017 ACC/AHA guideline [accaha2017], Section 8.1.6, Table 18, but that table speaks of blood pressure as a whole, so no arrow is shown on either pressure row. The model shows pressure falling." }
+  ]
+}
