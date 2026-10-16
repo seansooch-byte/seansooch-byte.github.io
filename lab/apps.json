@@ -73,5 +73,20 @@
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
     }
+  },
+  {
+    "slug": "autonomic-synapse",
+    "title": "The Autonomic Synapse",
+    "date": "2026-10-16",
+    "description": "How sympathetic and parasympathetic nerves talk to organs through receptors, and how drugs mimic or block that signal.",
+    "category": "medicine",
+    "builder": {
+      "tool": "Claude Code",
+      "model": "claude-opus-5-5"
+    },
+    "reviewer": {
+      "tool": "OpenAI Codex",
+      "model": "gpt-6.1-sol"
+    }
   }
 ]
