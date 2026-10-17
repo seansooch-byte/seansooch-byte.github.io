@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claudia Bench · Music · Sean Sooch</title>
+<meta name="description" content="Music videos by anabology starring Claudia, an AI idol with the Claude spark in her hair, kept as the bar the music on this site is measured against.">
+<link rel="canonical" href="https://seansooch.dev/music/claudia-bench/">
+<meta property="og:type" content="video.other">
+<meta property="og:title" content="Claudia Bench">
+<meta property="og:description" content="anabology's Claudia films, and why they set the bar for the music on this site.">
+<meta property="og:url" content="https://seansooch.dev/music/claudia-bench/">
+<meta property="og:image" content="https://seansooch.dev/music/claudia-bench/media/downforce/poster.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#F2ECDD">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&family=Oswald:wght@700&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+/* Same paper, inks and player as /music/last-light/, so the category reads as one shelf. */
+:root{--paper:#F2ECDD;--ink:#1A1A1A;--orange:#FF6E40;--blue:#3D5588;--rule:rgba(26,26,26,.18);--soft:#4a4740;
+  --hero:"Futura Condensed ExtraBold","Futura-CondensedExtraBold","Oswald",Impact,sans-serif;--note:"American Typewriter","Special Elite","Courier New",monospace;
+  color-scheme:light}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.6 "Archivo",system-ui,sans-serif;
+  background-image:radial-gradient(rgba(26,26,26,.05) 1px,transparent 1.2px);background-size:5px 5px}
+a{color:var(--ink);text-decoration-color:var(--orange);text-decoration-thickness:2px;text-underline-offset:3px}
+a:hover{text-decoration-color:var(--blue)}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+.top{border-bottom:2px solid var(--ink)}
+.top .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:12px;padding-bottom:12px;font:15px var(--note)}
+.kicker{font:14px var(--note);letter-spacing:.04em;margin:40px 0 6px;color:var(--soft)}
+h1{font-family:var(--hero);font-weight:800;font-stretch:condensed;font-size:clamp(64px,15vw,168px);line-height:.86;margin:0;letter-spacing:-.01em;text-transform:uppercase;
+  text-shadow:6px 5px 0 var(--blue)}
+.lede{font-size:clamp(18px,2.4vw,22px);max-width:760px;margin:22px 0 28px}
+/* player: one screen, one tab per film, as many tabs as FILMS has */
+.player{border:2px solid var(--ink);background:var(--ink);box-shadow:8px 8px 0 var(--orange)}
+.screen{position:relative;aspect-ratio:16/9;background:#111}
+.screen video{position:absolute;inset:0;width:100%;height:100%;display:block;background:#111}
+.nohls{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;padding:20px;color:var(--paper);font:15px var(--note)}
+.tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2px;background:var(--ink);border-top:2px solid var(--ink)}
+.tab{appearance:none;border:0;background:var(--paper);color:var(--ink);text-align:left;padding:12px 14px;cursor:pointer;font:inherit}
+.tab b{display:block;font-family:var(--hero);font-weight:800;font-stretch:condensed;font-size:24px;line-height:1.05;text-transform:uppercase}
+.tab span{display:block;font:13px var(--note);color:var(--soft)}
+.tab[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.tab[aria-pressed="true"] span{color:#d9d2c0}
+.tab[aria-pressed="true"] b{text-shadow:3px 2px 0 var(--orange)}
+.now{max-width:760px;margin:18px 0 0}
+.now p{margin:0 0 8px}
+.now .credit{font:14px var(--note);color:var(--soft)}
+section{padding:56px 0 8px}
+h2{font-family:var(--hero);font-weight:800;font-stretch:condensed;text-transform:uppercase;font-size:clamp(34px,5.5vw,54px);line-height:.95;margin:0 0 18px}
+h2 small{display:block;font:14px var(--note);text-transform:none;letter-spacing:.04em;color:var(--soft);margin-bottom:8px}
+ol.steps{margin:0;padding:0;list-style:none;counter-reset:s;border-top:2px solid var(--ink)}
+ol.steps li{counter-increment:s;display:grid;grid-template-columns:56px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--rule)}
+ol.steps li::before{content:counter(s,decimal-leading-zero);font-family:var(--hero);font-weight:800;font-stretch:condensed;font-size:30px;line-height:1;color:var(--blue)}
+ol.steps b{display:block}
+.note{font:14px var(--note);color:var(--soft);margin-top:18px}
+footer{margin-top:56px;border-top:2px solid var(--ink)}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:14px;padding-bottom:40px;font:14px var(--note)}
+@media (max-width:760px){.player{box-shadow:5px 5px 0 var(--orange)}h1{text-shadow:4px 3px 0 var(--blue)}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><a href="/">seansooch.dev</a><a href="/music/">Music</a></div></header>
+<main class="wrap">
+  <p class="kicker">Music · Bench · films by anabology</p>
+  <h1>Claudia Bench</h1>
+  <p class="lede">Music videos by anabology starring Claudia, an AI idol with the Claude spark in her hair. Bench as in benchmark: the reference the music on this site gets measured against.</p>
+
+  <div class="player" id="player">
+    <div class="screen">
+      <video id="v" controls playsinline preload="metadata" aria-label="Claudia Bench, music video"></video>
+      <div class="nohls" id="nohls">This browser cannot stream the video. Try Safari, Chrome, Firefox or Edge.</div>
+    </div>
+    <div class="tabs" id="tabs" role="group" aria-label="Choose a film"></div>
+  </div>
+  <div class="now" id="now" aria-live="polite"><noscript><p>The player needs JavaScript.</p></noscript></div>
+
+  <section id="why" aria-labelledby="h-why">
+    <h2 id="h-why"><small>Why this page exists</small>Why a bench</h2>
+    <ol class="steps">
+      <li><div><b>They set the bar.</b>ESCAPE VELOCITY is the strongest music video made with Claude that this site has seen, and every film after it here comes from the same director with the same star. LAST LIGHT and whatever follows it get measured against them, not against nothing.</div></li>
+      <li><div><b>She sings.</b>In ESCAPE VELOCITY, Claudia lip-syncs the real vocal: every moving shot was generated from a still and the exact slice of the song it sits under. LAST LIGHT has no people on screen, so its pipeline never had to solve a singing character. This is what solving it looks like.</div></li>
+      <li><div><b>The method is public.</b>ESCAPE VELOCITY's making-of is published in full: every prompt, the director's notes and the agent prompts. One director, about 50 messages, about 19 hours. A bench is only useful if you can see how the reference was made.</div></li>
+      <li><div><b>One character, dated runs.</b>The same idol, film after film, with the same spark in her hair. Like the editions on this site's home page, each new film is a dated run of the same test, so the change between runs is the thing to watch.</div></li>
+    </ol>
+    <p class="note">Every film here is anabology's work, shown with credit and a link back. Nothing on this page was made by this site except the page. Streams are 720p.</p>
+  </section>
+</main>
+<footer><div class="wrap"><a href="/music/">← Music</a><span>seansooch.dev · 2026</span></div></footer>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.7.3/dist/hls.light.min.js" integrity="sha384-y8wQxRLtNclrHbMBLBLTEkgUrdFu6uWzZiobE1wBE09nt2wHIZlBPvPepdZU4+MM" crossorigin="anonymous"></script>
+<script>
+(function () {
+  // THE LIST. Adding a film: tools/bench-film.sh <master> <slug> <poster-seconds>, then one entry here.
+  // Oldest first; the last entry is the latest and plays first. Only write what the film or its maker published.
+  var FILMS = [
+    {slug: "escape-velocity", title: "Escape Velocity", date: "September 2026", len: "5:06",
+     about: "A techwear fashion show where each look is a Silicon Valley meme. A split-flap board counts down eighteen months to escape the permanent underclass, until it flips over and the catwalk lifts off.",
+     credit: "Directed by anabology. Claude, in Claude Code, as the production team; Midjourney, Suno and Seedance for images, song and moving shots.",
+     link: {text: "making-of folder", href: "https://drive.google.com/drive/folders/1OKYaR5Kv5lOeIROUtigpPZtCWauUJ01y"}},
+    {slug: "downforce", title: "Downforce", date: "October 2026", len: "3:10",
+     about: "Claudia in the driver's seat of the new Tesla Roadster, cut with real footage from Tesla's live reveal: up a wall, upside down under a loop, over a Semi, with a heads-up display reading the stunt off the footage.",
+     credit: "By anabology. The end card credits real footage from Tesla Live, 15 October 2026, and reads 4,709 kg of downforce at 69.1 ft.",
+     link: {text: "anabology on X", href: "https://x.com/anabology"}}
+  ];
+
+  // One player, one film at a time. hls.js where the browser has Media Source; native HLS (Safari, iOS) otherwise.
+  // A switch starts the other film from the top: they are different songs, so a shared playhead means nothing.
+  var v = document.getElementById("v"), tabs = document.getElementById("tabs"), now = document.getElementById("now");
+  var hls = null, current = null, bySlug = {};
+  function el(tag, text) { var e = document.createElement(tag); if (text != null) e.textContent = text; return e; }
+  FILMS.forEach(function (f, i) {
+    f.no = String(i + 1).padStart(2, "0");
+    bySlug[f.slug] = f;
+    var b = el("button"); b.className = "tab"; b.dataset.film = f.slug; b.setAttribute("aria-pressed", "false");
+    b.appendChild(el("b", f.no + " · " + f.title)); b.appendChild(el("span", f.len + " · " + f.date));
+    b.addEventListener("click", function () { load(f.slug); });
+    tabs.appendChild(b);
+  });
+  function has(id) { return Object.prototype.hasOwnProperty.call(bySlug, id); }   // "#constructor" is not a film
+  function play() { var p = v.play(); if (p && p.catch) p.catch(function () {}); }   // a refused autoplay is not an error
+  function attach(src) {
+    if (hls) { hls.destroy(); hls = null; }
+    if (window.Hls && Hls.isSupported()) { hls = new Hls(); hls.loadSource(src); hls.attachMedia(v); return true; }
+    if (v.canPlayType("application/vnd.apple.mpegurl")) { v.src = src; return true; }
+    document.getElementById("nohls").style.display = "flex";
+    return false;
+  }
+  function load(id) {
+    if (!has(id) || id === current) return;
+    var wasPlaying = current && !v.paused, f = bySlug[id];
+    current = id;
+    v.poster = "media/" + id + "/poster.jpg";
+    if (!attach("media/" + id + "/index.m3u8")) return;
+    if (wasPlaying) v.addEventListener("loadedmetadata", function once() { v.removeEventListener("loadedmetadata", once); play(); });
+    tabs.querySelectorAll(".tab").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.film === id ? "true" : "false"); });
+    now.textContent = "";
+    now.appendChild(el("p", f.about));
+    var c = el("p", f.no + " · " + f.title.toUpperCase() + " · " + f.credit + " "); c.className = "credit";
+    var a = el("a", f.link.text); a.href = f.link.href; a.target = "_blank"; a.rel = "noopener"; c.appendChild(a);
+    now.appendChild(c);
+    if (history.replaceState) history.replaceState(null, "", "#" + id);
+  }
+  var start = (location.hash || "").slice(1).toLowerCase();
+  load(has(start) ? start : FILMS[FILMS.length - 1].slug);
+})();
+</script>
+</body>
+</html>

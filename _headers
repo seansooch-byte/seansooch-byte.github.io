@@ -18,7 +18,7 @@ https://:version.:project.pages.dev/*
 # DENY and frame-ancestors 'none'.
 # CSP is Report-Only: violations log to the browser console, nothing is
 # blocked, and there is no report endpoint. It allows what the pages use:
-# Google Fonts, hls.js 1.7.3 from jsDelivr (/music/last-light/), blob: media
+# Google Fonts, hls.js 1.7.3 from jsDelivr (the /music/ players), blob: media
 # and workers for HLS, inline <style>/<script> in the generated pages, the
 # homepage's host probes (connect-src, one origin per probed host plus the
 # www.admissionsacademy.org redirect target), and Cloudflare Web Analytics
