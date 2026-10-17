@@ -88,5 +88,20 @@
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
     }
+  },
+  {
+    "slug": "cardiac-action-potential",
+    "title": "The Cardiac Action Potential",
+    "date": "2026-10-17",
+    "description": "The ion currents behind each heartbeat, in pacemaker and muscle cells, and how antiarrhythmic drugs change their shape.",
+    "category": "medicine",
+    "builder": {
+      "tool": "Claude Code",
+      "model": "claude-opus-5-5"
+    },
+    "reviewer": {
+      "tool": "OpenAI Codex",
+      "model": "gpt-6.1-sol"
+    }
   }
 ]
