@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Cardiac Action Potential · The Lab · Sean Sooch</title>
+<meta name="description" content="A guided visual lesson: the ion currents behind each heartbeat, in pacemaker and muscle cells, and how antiarrhythmic drugs change their shape.">
+<link rel="canonical" href="https://seansooch.dev/lab/cardiac-action-potential/">
+<meta property="og:title" content="The Cardiac Action Potential">
+<meta property="og:description" content="Sodium up, calcium flat, potassium down: the ion currents behind each heartbeat, and how antiarrhythmic drugs reshape them, one picture at a time.">
+<meta property="og:url" content="https://seansooch.dev/lab/cardiac-action-potential/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the lesson</a>
+<header class="site-top">
+  <div class="site-top-in">
+    <a class="site-brand" href="/" aria-label="Sean Sooch, home">SS<span aria-hidden="true">—</span>03</a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="site-nav-home" href="/#ch3">Work</a>
+      <a href="/#ch4">Writing</a>
+      <a href="/#appb">Films</a>
+      <a href="/#appa">Editions</a>
+      <a class="site-nav-lab" href="/lab/" aria-current="true">The Lab</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+  <div class="intro">
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / Core medicine / Lesson 7</p>
+    <h1>The cardiac<br><span>action potential.</span></h1>
+    <p class="lede">Every heartbeat begins as a tiny voltage swing inside each heart cell. Watch three kinds of charged particle draw that swing, in the cells that set the pace and the cells that squeeze, then see how four classes of heart-rhythm drugs reshape it.</p>
+    <p class="note">Educational, not for clinical use</p>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Lesson views">
+    <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
+    <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
+  </div>
+
+  <section id="lesson" role="tabpanel" aria-labelledby="tab-lesson">
+    <article data-step="1" data-step-title="Every heartbeat starts as an electrical signal" data-kind="heart">
+      <p class="eyebrow">Build the signal</p>
+      <h2 tabindex="-1">Every heartbeat starts as an electrical signal</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Your heart is built from millions of <dfn>heart muscle cells</dfn>, joined end to end. Before each beat, a tiny electrical signal sweeps from cell to cell, and each cell squeezes as it passes. This lesson follows that signal inside one cell.</p>
+    </article>
+    <article data-step="2" data-step-title="Each cell is a tiny battery" data-kind="battery" hidden>
+      <p class="eyebrow">Build the signal</p>
+      <h2 tabindex="-1">Each cell is a tiny battery</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Each cell is wrapped in a thin skin, the <dfn>cell membrane</dfn>. The inside carries a different electrical charge from the outside, like a tiny battery. That difference is the cell’s <dfn>voltage</dfn>. At rest, the inside is negative.</p>
+    </article>
+    <article data-step="3" data-step-title="Three charged particles do the work" data-kind="ions" hidden>
+      <p class="eyebrow">Build the signal</p>
+      <h2 tabindex="-1">Three charged particles do the work</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Salts dissolved in body water split into charged particles called <dfn>ions</dfn>. Three matter here: sodium and calcium, crowded mostly outside the cell, and potassium, crowded mostly inside. Each tends to spread toward where it is scarce, carrying its charge.</p>
+    </article>
+    <article data-step="4" data-step-title="Doors in the membrane set the voltage" data-kind="channels" hidden>
+      <p class="eyebrow">Build the signal</p>
+      <h2 tabindex="-1">Doors in the membrane set the voltage</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Ion channels</dfn> are doors in the membrane, each letting one kind of ion through when open. In a resting heart muscle cell, potassium doors are the main ones open. Potassium seeps out, taking positive charge with it: that leaves the <dfn>resting potential</dfn>, negative inside.</p>
+    </article>
+    <article data-step="5" data-step-title="One beat, drawn as a line" data-kind="outline" hidden>
+      <p class="eyebrow">Build the signal</p>
+      <h2 tabindex="-1">One beat, drawn as a line</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Plot the muscle cell’s voltage against time, and each beat draws one shape: a sharp rise, a long flat top, then a fall back to rest. That shape is the <dfn>action potential</dfn>. The next three steps build it, piece by piece.</p>
+    </article>
+    <article data-step="6" data-step-title="Sodium rushes in: the upswing" data-kind="na" hidden>
+      <p class="eyebrow">Build the signal</p>
+      <h2 tabindex="-1">Sodium rushes in: the upswing</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">When the signal arrives from a neighbouring cell, fast sodium channels snap open. Sodium floods in, and the voltage leaps from negative to slightly positive in a blink. This upswing is <dfn>depolarization</dfn>, and it passes the signal on to the next cell.</p>
+    </article>
+    <article data-step="7" data-step-title="Calcium holds it up: the plateau" data-kind="ca" hidden>
+      <p class="eyebrow">Build the signal</p>
+      <h2 tabindex="-1">Calcium holds it up: the plateau</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The sodium doors shut almost at once, but slower calcium channels open. Calcium trickles in and holds the voltage up in a long, nearly flat stretch: the <dfn>plateau</dfn>. That calcium also triggers the squeeze, so the cell contracts during the plateau.</p>
+    </article>
+    <article data-step="8" data-step-title="Potassium brings it back: the fall" data-kind="k" hidden>
+      <p class="eyebrow">Build the signal</p>
+      <h2 tabindex="-1">Potassium brings it back: the fall</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">As the calcium doors close, more potassium doors open. Potassium flows out, carrying positive charge away, and the voltage falls back to rest. This return is <dfn>repolarization</dfn>. Sodium, calcium, potassium: up, flat, down.</p>
+    </article>
+    <article data-step="9" data-step-title="A built-in pause" data-kind="refractory" hidden>
+      <p class="eyebrow">Build the signal</p>
+      <h2 tabindex="-1">A built-in pause</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">While the voltage is high, the sodium doors stay locked and no new upswing can start: the <dfn>refractory period</dfn>. Late in the fall, only a stronger-than-usual signal can start one. This pause keeps the muscle from being driven into one long, unbroken squeeze.</p>
+    </article>
+    <article data-step="10" data-step-title="Pacemaker cells start each beat on their own" data-kind="pm" hidden>
+      <p class="eyebrow">Build the signal</p>
+      <h2 tabindex="-1">Pacemaker cells start each beat on their own</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Pacemaker cells</dfn>, gathered in a small patch called the <dfn>sinoatrial node</dfn>, never settle at rest. Sodium leaks in, so their voltage drifts slowly upward. When it reaches a trigger level, the <dfn>threshold</dfn>, they fire, and the signal spreads to the muscle.</p>
+    </article>
+    <article data-step="11" data-step-title="A gentler upswing, powered by calcium" data-kind="pm-ca" hidden>
+      <p class="eyebrow">Build the signal</p>
+      <h2 tabindex="-1">A gentler upswing, powered by calcium</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Pacemaker cells have few working fast sodium channels. Their upswing is carried by calcium channels instead, so it rises gently rather than leaping. Potassium then brings the voltage back down, and the slow drift starts again.</p>
+    </article>
+    <article data-step="12" data-step-title="Nerves set the pace" data-kind="nerves" hidden>
+      <p class="eyebrow">Build the signal</p>
+      <h2 tabindex="-1">Nerves set the pace</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The <dfn>heart rate</dfn> is the number of beats each minute. Noradrenaline, from the body’s accelerator nerves, steepens the drift, so beats come sooner. Acetylcholine, from the brake nerves, lowers and flattens it, so they come later. <a href="/lab/autonomic-synapse/">Lesson 6</a> covers these nerves.</p>
+    </article>
+    <article data-step="13" data-step-title="The signal spreads through the heart" data-kind="spread" hidden>
+      <p class="eyebrow">Build the signal</p>
+      <h2 tabindex="-1">The signal spreads through the heart</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">From the sinoatrial node the signal spreads cell to cell, each upswing setting off the next. Fast wiring carries it to the <dfn>ventricles</dfn>, the two big pumping chambers, and it sweeps through their muscle. Quicker upswings mean quicker spread.</p>
+    </article>
+    <article data-step="14" data-step-title="A trace on the skin: the electrocardiogram" data-kind="ecg" hidden>
+      <p class="eyebrow">Build the signal</p>
+      <h2 tabindex="-1">A trace on the skin: the electrocardiogram</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">An <dfn>electrocardiogram</dfn> records the heart’s signal through skin pads. Its spike, the <dfn>QRS complex</dfn>, is the signal sweeping through the ventricles; slower spread widens it. The <dfn>Q-T interval</dfn> runs on to the end of the next bump, when ventricle cells finish their fall.</p>
+    </article>
+    <article data-step="15" data-step-title="The whole picture" data-kind="whole" hidden>
+      <p class="eyebrow">Build the signal</p>
+      <h2 tabindex="-1">The whole picture</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A pacemaker cell drifts to threshold and fires; the signal spreads, and each muscle cell rises with sodium, holds with calcium and falls with potassium. Two key measures: the heart rate, set by the drift, and the action potential’s length, seen as the Q-T interval.</p>
+    </article>
+    <article data-step="16" data-step-title="Class IA: sodium blockers that also stretch the beat" data-kind="class1a" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Class IA: sodium blockers that also stretch the beat</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Antiarrhythmic drugs</dfn> calm abnormal heart rhythms by reshaping the action potential. Class I drugs block fast sodium channels. Class IA slows the upswing, so the QRS complex widens, and also lengthens the plateau and the Q-T interval.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="17" data-step-title="Class IB: a light touch on sodium" data-kind="class1b" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Class IB: a light touch on sodium</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Class IB drugs also block sodium channels, but let go quickly between beats, so at a normal heart rate the upswing and the QRS complex barely change. The plateau gets a little shorter, and the Q-T interval shortens.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="18" data-step-title="Class IC: a strong sodium block" data-kind="class1c" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Class IC: a strong sodium block</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Class IC drugs block sodium channels strongly and let go slowly. The upswing becomes slower and lower, the signal spreads more slowly, and the QRS complex widens. The plateau and fall are untouched, so the Q-T interval stays about the same.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="19" data-step-title="Class II: beta-blockers slow the pacemaker" data-kind="class2" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Class II: beta-blockers slow the pacemaker</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Noradrenaline acts on pacemaker cells through <dfn>beta receptors</dfn>, docking sites on the cell. Beta-blockers (class II) cover them, so the drift to threshold flattens, each beat comes later, and the heart rate falls. Muscle cells also squeeze less hard.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="20" data-step-title="Class III: potassium blockers stretch the plateau" data-kind="class3" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Class III: potassium blockers stretch the plateau</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Class III drugs block potassium channels, so potassium leaves the muscle cell more slowly. The plateau lasts longer and the fall comes later, so the refractory period and the Q-T interval both lengthen, giving stray signals less chance to restart a beat.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="21" data-step-title="Class IV: calcium channel blockers" data-kind="class4" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Class IV: calcium channel blockers</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Class IV drugs block the calcium channels that power the pacemaker’s upswing and help its drift. Pacemaker cells reach threshold later and rise more slowly, so the heart rate falls. In muscle cells, the plateau sits lower and the squeeze weakens.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+
+    <div class="step-nav">
+      <button type="button" data-step-back disabled>← Back</button>
+      <span data-step-progress aria-live="polite">Step 1 of 21</span>
+      <button type="button" data-step-next>Next →</button>
+    </div>
+    <p class="hint">Start with Next, or use the arrow keys. Shapes and timings are illustrative, not measurements.</p>
+  </section>
+
+  <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
+    <h2>Reference values, beside the model.</h2>
+    <p id="disclaimer" class="disclaimer">Loading reference values…</p>
+    <div class="cv-controls">
+      <div>
+        <label for="clinical-state">Compare a drug class or nerve state</label>
+        <select id="clinical-state"><option value="normal">Normal teaching baseline</option></select>
+      </div>
+      <div>
+        <label for="clinical-k">Potassium channels blocked (model) <output id="clinical-k-label" for="clinical-k">none</output></label>
+        <input id="clinical-k" type="range" min="0" max="0.8" step="0.05" value="0">
+      </div>
+      <div>
+        <label for="clinical-symp">Sympathetic drive (model) <output id="clinical-symp-label" for="clinical-symp">normal</output></label>
+        <input id="clinical-symp" type="range" min="0.3" max="2" step="0.05" value="1">
+      </div>
+      <div>
+        <button type="button" id="clinical-reset">Back to baseline</button>
+      </div>
+    </div>
+    <p id="state-summary" class="state-summary" aria-live="polite">Normal teaching baseline.</p>
+    <p id="state-source" class="model-note"></p>
+    <p class="model-note">The blue line on each bar is an illustrative teaching model, not a patient measurement. A shaded band is the textbook range; a single black tick is a textbook typical value where the book gives no range. Arrows come from the cited source for the selected state.</p>
+    <p id="baseline-note" class="model-note"></p>
+    <div id="value-rows"></div>
+    <p id="cv-live" class="visually-hidden" aria-live="polite"></p>
+    <h3>Sources</h3>
+    <ul id="sources"></ul>
+    <p id="load-error" class="load-error" hidden></p>
+  </section>
+
+  <section id="explore" role="tabpanel" aria-labelledby="tab-explore" hidden>
+    <h2>Reshape the beat yourself.</h2>
+    <p class="model-intro">An illustrative teaching model of one pacemaker cell, one ventricular muscle cell and the electrocardiogram they make. Turn the nerves up or down, block each kind of channel, and watch the shapes change. The faint dashed lines are the normal state.</p>
+    <div class="explore-grid">
+      <div id="explore-visual" class="visual"></div>
+      <div class="controls">
+        <fieldset>
+          <legend>Nerves</legend>
+          <label for="symp">Sympathetic (accelerator) drive <output id="symp-label" for="symp">normal</output></label>
+          <input id="symp" type="range" min="0.3" max="2" step="0.05" value="1">
+          <label for="para">Vagal (brake) drive <output id="para-label" for="para">normal</output></label>
+          <input id="para" type="range" min="0.3" max="2" step="0.05" value="1">
+        </fieldset>
+        <fieldset>
+          <legend>Drug actions</legend>
+          <label for="na">Fast sodium channels blocked (class I) <output id="na-label" for="na">none</output></label>
+          <input id="na" type="range" min="0" max="0.8" step="0.05" value="0">
+          <label for="naLate">Late sodium current blocked (class IB-like) <output id="naLate-label" for="naLate">none</output></label>
+          <input id="naLate" type="range" min="0" max="1" step="0.05" value="0">
+          <label for="beta">Beta receptors blocked (class II) <output id="beta-label" for="beta">none</output></label>
+          <input id="beta" type="range" min="0" max="0.9" step="0.05" value="0">
+          <label for="k">Potassium channels blocked (class III) <output id="k-label" for="k">none</output></label>
+          <input id="k" type="range" min="0" max="0.8" step="0.05" value="0">
+          <label for="ca">Calcium channels blocked (class IV) <output id="ca-label" for="ca">none</output></label>
+          <input id="ca" type="range" min="0" max="0.8" step="0.05" value="0">
+        </fieldset>
+        <button type="button" id="reset">Reset model</button>
+      </div>
+    </div>
+    <p id="model-results" class="model-results" aria-live="polite"></p>
+    <details>
+      <summary>How this teaching model works</summary>
+      <p>The shapes are drawn from a few settings, not solved from ion-current equations, and every result is relative to a normal state. The muscle cell’s upswing time grows with the fraction of fast sodium channels blocked, and its peak drops a little. The plateau lengthens with potassium block, shortens a little with late sodium block, and sits lower with calcium block; the fall slows with potassium block. The refractory period ends when the voltage has fallen most of the way back to rest. The QRS width stands for the time the signal takes to spread through the ventricles, which grows as the upswing slows; the Q-T interval stands for the plateau plus the fall. In the pacemaker cell, the voltage between beats rises with the beta signal (sympathetic drive minus beta block) and falls with vagal drive; the drift slope rises with the beta signal and falls with vagal drive and calcium block; calcium block also slows its upswing, and potassium block slows its fall. The heart rate is one over the time from one beat to the next. Squeeze strength rises with calcium entry and the beta signal. Class IB is shown as a very light fast-sodium block (its quick release between beats leaves little block at a normal rate) plus late sodium block. Real drugs often have more than one action, which the model leaves out, along with the atria, the conduction wiring, blood potassium and heart-rate effects on the action potential. In the Clinical values tab, relative results are scaled from the textbook values, as that tab explains.</p>
+    </details>
+  </section>
+
+  <footer>Lesson 7 of The Lab · Added 2026-10-17 · <a href="/lab/">All lessons</a></footer>
+</main>
+</body>
+</html>
