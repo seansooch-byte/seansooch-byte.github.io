@@ -103,5 +103,20 @@
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
     }
+  },
+  {
+    "slug": "neuromuscular-junction",
+    "title": "The Neuromuscular Junction",
+    "date": "2026-10-18",
+    "description": "How a nerve signal becomes a muscle contraction, and how paralytic and reversal drugs act at the junction.",
+    "category": "medicine",
+    "builder": {
+      "tool": "Claude Code",
+      "model": "claude-opus-5-5"
+    },
+    "reviewer": {
+      "tool": "OpenAI Codex",
+      "model": "gpt-6.1-sol"
+    }
   }
 ]
