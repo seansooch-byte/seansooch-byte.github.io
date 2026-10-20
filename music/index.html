@@ -17,11 +17,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&family=Oswald:wght@700&family=Special+Elite&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/music/music.css">
 <style>
-/* a song with no film: its cover on dark, the player under the words */
-.work.song .art{display:flex;align-items:center;justify-content:center;background:var(--ink);border-right:2px solid var(--ink);padding:24px}
-.work.song .art img{width:auto;height:auto;max-height:220px;border:0;aspect-ratio:auto;image-rendering:auto}
+/* a song with no film: the art column hugs its cover, the player sits under the words */
+.work.song{grid-template-columns:auto 1fr}
+.work.song .art{display:flex;align-items:center;justify-content:center;background:var(--ink);border-right:2px solid var(--ink);padding:20px 28px}
+.work.song .art img{width:122px;height:164px;border:0;aspect-ratio:auto}
 .work.song audio{width:100%;margin-top:4px}
-@media (max-width:760px){.work.song .art{border-right:0;border-bottom:2px solid var(--ink)}}
+@media (max-width:760px){.work.song{grid-template-columns:1fr}.work.song .art{border-right:0;border-bottom:2px solid var(--ink)}}
 </style>
 </head>
 <body>
@@ -39,6 +40,25 @@
     <div class="tabs" id="tabs" role="group" aria-label="Choose a film"></div>
   </div>
   <div class="now" id="now" aria-live="polite"><noscript><p>The player needs JavaScript.</p></noscript></div>
+
+  <section id="instructions" aria-labelledby="h-instructions">
+    <h2 id="h-instructions"><small>anabology's making-of, the recipe behind The Glass</small>The instructions</h2>
+    <div class="prose">
+      <p>anabology published everything behind ESCAPE VELOCITY in a public Google Drive folder. It is what we read to make The Glass, and anyone can follow it. Five documents:</p>
+    </div>
+    <ol class="steps">
+      <li><div><b>README: how it was made.</b>The stack (Midjourney for the stills, Suno for the song, Seedance 2.5 for the moving shots, a JavaScript engine for the type and graphics, Claude in Claude Code as the production team), the steps in order, and what worked.</div></li>
+      <li><div><b>Orchestration: the prompts that ran the production.</b>The original one prompt, how the work was split, and the research, lyrics, storyboard and animation workflows.</div></li>
+      <li><div><b>Direction log.</b>anabology's notes at every checkpoint, in order and nearly verbatim: how one director steered with a handful of decisive notes.</div></li>
+      <li><div><b>Midjourney prompts.</b>Every prompt, batch by batch, for the stills the film is built on.</div></li>
+      <li><div><b>Seedance prompts.</b>Every clip: the still as the image, the exact slice of the vocal as the audio, and how lip-sync was measured and cut just before it drifted.</div></li>
+    </ol>
+    <div class="prose" style="margin-top:22px">
+      <p><b>What The Glass took:</b> a singer generated from a still and the exact slice of vocal she sits under; sync measured, never eyeballed; meaning drawn in code on top of the footage; and the lead herself, credited. <b>What it changed:</b> Seedance would not take a photoreal face as its reference, so her shots run through a lip-sync model on closed-mouth stills, and our own meter checks the mouth against the voice.</p>
+      <p><a href="https://drive.google.com/drive/folders/1OKYaR5Kv5lOeIROUtigpPZtCWauUJ01y" target="_blank" rel="noopener"><b>Open anabology's folder (Google Drive)</b></a></p>
+      <p class="note">The documents are anabology's and stay in their folder: this is a map to them, not a copy.</p>
+    </div>
+  </section>
 
   <section id="music" aria-labelledby="h-music">
     <h2 id="h-music"><small>Ours, measured against the bench</small>Music</h2>
@@ -66,7 +86,7 @@
         <span class="no">03 · Song · 2:06 · October 2026</span>
         <h3>Til It's Over</h3>
         <p>The extended outro. Sean's newest, made with Suno. No video yet: the song and its cover.</p>
-        <audio controls preload="none" src="/music/media/til-its-over/song.m4a" aria-label="Til It's Over (Extended Outro), song"></audio>
+        <audio controls preload="metadata" src="/music/media/til-its-over/song.m4a" aria-label="Til It's Over (Extended Outro), song"></audio>
       </div>
     </div>
     <p class="more">More to come.</p>
