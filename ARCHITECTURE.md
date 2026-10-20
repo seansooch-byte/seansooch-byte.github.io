@@ -54,9 +54,10 @@ flowchart LR
 | `lab-values/cbc-cmp/` | CBC and CMP decoder | No. Copied from `~/lab-decoder`. |
 | `ekg/index.html` | Read This, Edition 2 | No. Generated. |
 | `ekg/*.js`, `ekg/films/` | Read This data and chest films; `ekg/ARCHITECTURE.md` describes them | Yes, with care |
-| `music/index.html`, `music/last-light/index.html`, `music/claudia-bench/index.html` | Music category, the LAST LIGHT page, and the Claudia Bench (anabology's films, kept as the reference) | Yes |
+| `music/index.html`, `music/last-light/index.html`, `music/three-roads/index.html` | `/music/` is the Claudia Bench (anabology's films, kept as the reference) above the Music list (our songs); LAST LIGHT; The Glass (track 4 of Three Roads From Here). `/music/claudia-bench/` 301s to `/music/` | Yes |
 | `music/last-light/media/` | HLS video segments (most of the repo's size) | No. Rendered elsewhere. |
-| `music/claudia-bench/media/<slug>/` | One 720p HLS stream and a poster per film, made by `tools/bench-film.sh` (the film list itself is `FILMS` in the page). Masters: `escape-velocity` from `89165c1594d7ed851b90ca8168eb12f62682e926.MP4`, `downforce` from `MCotCiHVmKVscGXC.mp4`, both in Sean's `~/Downloads` | No. Regenerate with `tools/bench-film.sh`. |
+| `music/films.js`, `music/music.css` | The shared player (reads the page's `<script id="films">` list, streams `media/<slug>/` beside the page) and stylesheet of `/music/` and `/music/three-roads/`. LAST LIGHT keeps its own | Yes |
+| `music/media/<slug>/`, `music/three-roads/media/<slug>/` | One 720p HLS stream and poster per film, made by `tools/music-film.sh` (segments an H.264 720p master as is, re-encodes anything else); a song with no film is `song.m4a` + `cover.jpg` | No. Regenerate with `tools/music-film.sh`. |
 | `videos/`, `screenshots/`, `*.pdf`, `favicon.svg` | Films, card images, papers | Yes |
 | `lab/` | The Lab: one small app a day, its index and ledger (see The Lab below) | Yes |
 | `_headers`, `_redirects`, `robots.txt`, `sitemap.xml` | Edge behaviour and crawl rules | Yes |
@@ -195,7 +196,7 @@ Worker is not part of this repo and nothing here reads it any more.
 
 ## Third-party requests at runtime
 
-Google Fonts on most pages, and `hls.js` from cdn.jsdelivr.net (pinned by integrity hash) on `/music/last-light/` and `/music/claudia-bench/`.
+Google Fonts on most pages, and `hls.js` from cdn.jsdelivr.net (pinned by integrity hash) on `/music/`, `/music/last-light/` and `/music/three-roads/`.
 Nothing else is loaded from another origin (the homepage host probes are requests whose responses are never read), and no page posts data anywhere.
 
 ## Other hosts

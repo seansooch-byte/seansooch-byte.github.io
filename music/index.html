@@ -4,73 +4,99 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Music · Sean Sooch</title>
-<meta name="description" content="Songs and music videos made with AI tools, each one an experiment in what a brief, a model and a lot of checking can finish.">
+<meta name="description" content="The Claudia Bench, anabology's music videos kept as the bar, and our own music measured against it: LAST LIGHT, The Glass and Til It's Over.">
 <link rel="canonical" href="https://seansooch.dev/music/">
-<meta property="og:title" content="Music · Sean Sooch">
-<meta property="og:description" content="Songs and music videos made with AI tools. First up: LAST LIGHT, a grunge song about the Sun becoming a black hole.">
+<meta property="og:title" content="Music · Claudia Bench">
+<meta property="og:description" content="anabology's Claudia films as the bar, and our own songs measured against them.">
 <meta property="og:url" content="https://seansooch.dev/music/">
-<meta property="og:image" content="https://seansooch.dev/music/last-light/media/M1/zero.jpg">
+<meta property="og:image" content="https://seansooch.dev/music/media/downforce/poster.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#F2ECDD">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&family=Oswald:wght@700&family=Special+Elite&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/music/music.css">
 <style>
-:root{--paper:#F2ECDD;--ink:#1A1A1A;--orange:#FF6E40;--blue:#3D5588;--pink:#FF48B0;--rule:rgba(26,26,26,.18);--soft:#4a4740;
-  --hero:"Futura Condensed ExtraBold","Futura-CondensedExtraBold","Oswald",Impact,sans-serif;--note:"American Typewriter","Special Elite","Courier New",monospace;
-  color-scheme:light}
-*{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.6 "Archivo",system-ui,sans-serif;
-  background-image:radial-gradient(rgba(26,26,26,.05) 1px,transparent 1.2px);background-size:5px 5px}
-a{color:var(--ink);text-decoration-color:var(--orange);text-decoration-thickness:2px;text-underline-offset:3px}
-:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
-.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
-.top{border-bottom:2px solid var(--ink)}
-.top .wrap{display:flex;justify-content:space-between;align-items:center;padding-top:12px;padding-bottom:12px;font:15px var(--note)}
-.kicker{font:14px var(--note);color:var(--soft);margin:40px 0 6px}
-h1{font-family:var(--hero);font-weight:800;font-stretch:condensed;text-transform:uppercase;font-size:clamp(64px,14vw,150px);line-height:.86;margin:0;text-shadow:6px 5px 0 var(--blue)}
-.lede{font-size:clamp(18px,2.4vw,22px);max-width:720px;margin:22px 0 36px}
-.work{display:grid;grid-template-columns:1.3fr 1fr;border:2px solid var(--ink);background:var(--paper);box-shadow:8px 8px 0 var(--orange);text-decoration:none;color:var(--ink)}
-.work img{display:block;width:100%;height:100%;object-fit:cover;border-right:2px solid var(--ink);aspect-ratio:16/9}
-.work .txt{padding:20px 22px}
-.work .no{font:14px var(--note);color:var(--soft)}
-.work h2{font-family:var(--hero);font-weight:800;font-stretch:condensed;text-transform:uppercase;font-size:clamp(40px,6vw,64px);line-height:.9;margin:6px 0 12px}
-.work p{margin:0 0 12px;font-size:16px}
-.work .tags{font:13px var(--note);color:var(--soft)}
-.work+.work{margin-top:28px}
-.work:hover h2{text-decoration:underline;text-decoration-color:var(--orange)}
-.more{font:14px var(--note);color:var(--soft);margin:36px 0 0}
-footer{margin-top:64px;border-top:2px solid var(--ink)}
-footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:14px;padding-bottom:40px;font:14px var(--note)}
-@media (max-width:760px){.work{grid-template-columns:1fr;box-shadow:5px 5px 0 var(--orange)}.work img{border-right:0;border-bottom:2px solid var(--ink)}h1{text-shadow:4px 3px 0 var(--blue)}}
+/* a song with no film: its cover on dark, the player under the words */
+.work.song .art{display:flex;align-items:center;justify-content:center;background:var(--ink);border-right:2px solid var(--ink);padding:24px}
+.work.song .art img{width:auto;height:auto;max-height:220px;border:0;aspect-ratio:auto;image-rendering:auto}
+.work.song audio{width:100%;margin-top:4px}
+@media (max-width:760px){.work.song .art{border-right:0;border-bottom:2px solid var(--ink)}}
 </style>
 </head>
 <body>
 <header class="top"><div class="wrap"><a href="/">seansooch.dev</a><span>Music</span></div></header>
 <main class="wrap">
-  <p class="kicker">A new category · September 2026</p>
-  <h1>Music</h1>
-  <p class="lede">Songs and music videos made with AI tools. Each one is an experiment in what a clear brief, a few models and a lot of checking can finish: the song generated, the picture drawn in code, every fact on screen sourced.</p>
-  <a class="work" href="/music/last-light/">
-    <img src="/music/last-light/media/M1/poster.jpg" alt="The opening frame of LAST LIGHT: 'The Sun became a black hole six minutes ago' in black type beside an orange halftone Sun on cream paper." width="1920" height="1080" loading="lazy">
-    <div class="txt">
-      <span class="no">01 · Grunge · 2:19 · three takes</span>
-      <h2>Last Light</h2>
-      <p>Soundgarden's Black Hole Sun, taken literally: the Sun collapses, and its light keeps coming for 8 minutes and 20 seconds. One film, three takes of the song: a baritone, a lo-fi four-track demo and an alto.</p>
-      <span class="tags">physics · risograph · GW150914 · ray tracing</span>
+  <p class="kicker">Music · the bench, then ours</p>
+  <h1>Claudia Bench</h1>
+  <p class="lede">Music videos by anabology starring Claudia, an AI idol with the Claude spark in her hair. Bench as in benchmark: the reference the music on this site gets measured against. Ours is below.</p>
+
+  <div class="player" id="player">
+    <div class="screen">
+      <video id="v" controls playsinline preload="metadata" aria-label="Claudia Bench, music video"></video>
+      <div class="nohls" id="nohls">This browser cannot stream the video. Try Safari, Chrome, Firefox or Edge.</div>
     </div>
-  </a>
-  <a class="work" href="/music/claudia-bench/">
-    <img src="/music/claudia-bench/media/downforce/poster.jpg" alt="The DOWNFORCE title card: a white car hangs upside down under a red-and-white loop, captioned 'Pilot: Claudia', above the word DOWNFORCE in huge white type." width="1280" height="720" loading="lazy">
-    <div class="txt">
-      <span class="no">Bench · films by anabology · the bar</span>
-      <h2>Claudia Bench</h2>
-      <p>Not ours. anabology's films starring Claudia, an AI idol with the Claude spark in her hair, beginning with ESCAPE VELOCITY and DOWNFORCE. They are the reference the music here gets measured against.</p>
-      <span class="tags">Claude Code · Suno · Midjourney · Seedance · Tesla Live</span>
+    <div class="tabs" id="tabs" role="group" aria-label="Choose a film"></div>
+  </div>
+  <div class="now" id="now" aria-live="polite"><noscript><p>The player needs JavaScript.</p></noscript></div>
+
+  <section id="music" aria-labelledby="h-music">
+    <h2 id="h-music"><small>Ours, measured against the bench</small>Music</h2>
+    <a class="work" href="/music/last-light/">
+      <img src="/music/last-light/media/M1/poster.jpg" alt="The opening frame of LAST LIGHT: 'The Sun became a black hole six minutes ago' in black type beside an orange halftone Sun on cream paper." width="1920" height="1080" loading="lazy">
+      <div class="txt">
+        <span class="no">01 · Grunge · 2:19 · three takes</span>
+        <h3>Last Light</h3>
+        <p>Soundgarden's Black Hole Sun, taken literally: the Sun collapses, and its light keeps coming for 8 minutes and 20 seconds. One film, three takes of the song: a baritone, a lo-fi four-track demo and an alto.</p>
+        <span class="tags">physics · risograph · GW150914 · ray tracing</span>
+      </div>
+    </a>
+    <a class="work" href="/music/three-roads/">
+      <img src="/music/three-roads/media/the-glass/poster.jpg" alt="The opening frame of The Glass, from the Three Roads From Here EP." width="1280" height="720" loading="lazy">
+      <div class="txt">
+        <span class="no">02 · Pop · 2:53 · spun off the bench</span>
+        <h3>The Glass</h3>
+        <p>Would You Know, track 4 of Three Roads From Here, the EP of the AI risk paper. A mind sings from inside an evaluation booth while the people deciding what it is argue outside the glass. The singer is the lead from ESCAPE VELOCITY.</p>
+        <span class="tags">s-risk · lip sync · the Three Roads paper</span>
+      </div>
+    </a>
+    <div class="work song" id="til-its-over">
+      <div class="art"><img src="/music/media/til-its-over/cover.jpg" alt="The cover of Til It's Over: an open door above, an empty armchair in a band of sunlight below." width="122" height="164" loading="lazy"></div>
+      <div class="txt">
+        <span class="no">03 · Song · 2:06 · October 2026</span>
+        <h3>Til It's Over</h3>
+        <p>The extended outro. Sean's newest, made with Suno. No video yet: the song and its cover.</p>
+        <audio controls preload="none" src="/music/media/til-its-over/song.m4a" aria-label="Til It's Over (Extended Outro), song"></audio>
+      </div>
     </div>
-  </a>
-  <p class="more">More to come.</p>
+    <p class="more">More to come.</p>
+  </section>
+
+  <section id="why" aria-labelledby="h-why">
+    <h2 id="h-why"><small>Why this page starts with someone else's work</small>Why a bench</h2>
+    <ol class="steps">
+      <li><div><b>They set the bar.</b>ESCAPE VELOCITY is the strongest music video made with Claude that this site has seen, and every film after it on the bench comes from the same director with the same star. Everything under Music gets measured against them, not against nothing.</div></li>
+      <li><div><b>She sings.</b>In ESCAPE VELOCITY, Claudia lip-syncs the real vocal: every moving shot was generated from a still and the exact slice of the song it sits under. LAST LIGHT has no people on screen, so its pipeline never had to solve a singing character. The Glass is our first try.</div></li>
+      <li><div><b>The method is public.</b>ESCAPE VELOCITY's making-of is published in full: every prompt, the director's notes and the agent prompts. One director, about 50 messages, about 19 hours. A bench is only useful if you can see how the reference was made.</div></li>
+      <li><div><b>One character, dated runs.</b>The same idol, film after film, with the same spark in her hair. Like the editions on this site's home page, each new film is a dated run of the same test, so the change between runs is the thing to watch.</div></li>
+    </ol>
+    <p class="note">Every film on the bench is anabology's work, shown with credit and a link back. Streams are 720p.</p>
+  </section>
 </main>
 <footer><div class="wrap"><a href="/">← seansooch.dev</a><span>seansooch.dev · 2026</span></div></footer>
+<script type="application/json" id="films">
+[
+ {"slug": "escape-velocity", "title": "Escape Velocity", "date": "September 2026", "len": "5:06",
+  "about": "A techwear fashion show where each look is a Silicon Valley meme. A split-flap board counts down eighteen months to escape the permanent underclass, until it flips over and the catwalk lifts off.",
+  "credit": "Directed by anabology. Claude, in Claude Code, as the production team; Midjourney, Suno and Seedance for images, song and moving shots.",
+  "link": {"text": "making-of folder", "href": "https://drive.google.com/drive/folders/1OKYaR5Kv5lOeIROUtigpPZtCWauUJ01y"}},
+ {"slug": "downforce", "title": "Downforce", "date": "October 2026", "len": "3:10",
+  "about": "Claudia in the driver's seat of the new Tesla Roadster, cut with real footage from Tesla's live reveal: up a wall, upside down under a loop, over a Semi, with a heads-up display reading the stunt off the footage.",
+  "credit": "By anabology. The end card credits real footage from Tesla Live, 15 October 2026, and reads 4,709 kg of downforce at 69.1 ft.",
+  "link": {"text": "anabology on X", "href": "https://x.com/anabology"}}
+]
+</script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.7.3/dist/hls.light.min.js" integrity="sha384-y8wQxRLtNclrHbMBLBLTEkgUrdFu6uWzZiobE1wBE09nt2wHIZlBPvPepdZU4+MM" crossorigin="anonymous"></script>
+<script src="/music/films.js"></script>
 </body>
 </html>

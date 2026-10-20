@@ -1,0 +1,62 @@
+/* The /music/ pages (not LAST LIGHT, which prints its own): paper, inks, the player, cards and numbered lists. */
+:root{--paper:#F2ECDD;--ink:#1A1A1A;--orange:#FF6E40;--blue:#3D5588;--rule:rgba(26,26,26,.18);--soft:#4a4740;
+  --hero:"Futura Condensed ExtraBold","Futura-CondensedExtraBold","Oswald",Impact,sans-serif;--note:"American Typewriter","Special Elite","Courier New",monospace;
+  color-scheme:light}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.6 "Archivo",system-ui,sans-serif;
+  background-image:radial-gradient(rgba(26,26,26,.05) 1px,transparent 1.2px);background-size:5px 5px}
+a{color:var(--ink);text-decoration-color:var(--orange);text-decoration-thickness:2px;text-underline-offset:3px}
+a:hover{text-decoration-color:var(--blue)}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+.top{border-bottom:2px solid var(--ink)}
+.top .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:12px;padding-bottom:12px;font:15px var(--note)}
+.kicker{font:14px var(--note);letter-spacing:.04em;margin:40px 0 6px;color:var(--soft)}
+h1{font-family:var(--hero);font-weight:800;font-stretch:condensed;font-size:clamp(64px,15vw,168px);line-height:.86;margin:0;letter-spacing:-.01em;text-transform:uppercase;
+  text-shadow:6px 5px 0 var(--blue)}
+.lede{font-size:clamp(18px,2.4vw,22px);max-width:760px;margin:22px 0 28px}
+/* player: one screen, one tab per film (no tabs for one film) */
+.player{border:2px solid var(--ink);background:var(--ink);box-shadow:8px 8px 0 var(--orange)}
+.screen{position:relative;aspect-ratio:16/9;background:#111}
+.screen video{position:absolute;inset:0;width:100%;height:100%;display:block;background:#111}
+.nohls{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;padding:20px;color:var(--paper);font:15px var(--note)}
+.tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2px;background:var(--ink);border-top:2px solid var(--ink)}
+.tab{appearance:none;border:0;background:var(--paper);color:var(--ink);text-align:left;padding:12px 14px;cursor:pointer;font:inherit}
+.tab b{display:block;font-family:var(--hero);font-weight:800;font-stretch:condensed;font-size:24px;line-height:1.05;text-transform:uppercase}
+.tab span{display:block;font:13px var(--note);color:var(--soft)}
+.tab[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.tab[aria-pressed="true"] span{color:#d9d2c0}
+.tab[aria-pressed="true"] b{text-shadow:3px 2px 0 var(--orange)}
+.now{max-width:760px;margin:18px 0 0}
+.now p{margin:0 0 8px}
+.now .credit,.note{font:14px var(--note);color:var(--soft)}
+section{padding:56px 0 8px}
+h2{font-family:var(--hero);font-weight:800;font-stretch:condensed;text-transform:uppercase;font-size:clamp(34px,5.5vw,54px);line-height:.95;margin:0 0 18px}
+h2 small{display:block;font:14px var(--note);text-transform:none;letter-spacing:.04em;color:var(--soft);margin-bottom:8px}
+.prose{max-width:720px}
+.prose p{margin:0 0 16px}
+ol.steps{margin:0;padding:0;list-style:none;counter-reset:s;border-top:2px solid var(--ink)}
+ol.steps li{counter-increment:s;display:grid;grid-template-columns:56px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--rule)}
+ol.steps li::before{content:counter(s,decimal-leading-zero);font-family:var(--hero);font-weight:800;font-stretch:condensed;font-size:30px;line-height:1;color:var(--blue)}
+ol.steps b{display:block}
+/* a work card: picture left, words right */
+.work{display:grid;grid-template-columns:1.3fr 1fr;border:2px solid var(--ink);background:var(--paper);box-shadow:8px 8px 0 var(--orange);text-decoration:none;color:var(--ink)}
+.work+.work{margin-top:28px}
+.work img{display:block;width:100%;height:100%;object-fit:cover;border-right:2px solid var(--ink);aspect-ratio:16/9}
+.work .txt{padding:20px 22px}
+.work .no{font:14px var(--note);color:var(--soft)}
+.work h3{font-family:var(--hero);font-weight:800;font-stretch:condensed;text-transform:uppercase;font-size:clamp(40px,6vw,64px);line-height:.9;margin:6px 0 12px}
+.work p{margin:0 0 12px;font-size:16px}
+.work .tags{font:13px var(--note);color:var(--soft)}
+.work:hover h3{text-decoration:underline;text-decoration-color:var(--orange)}
+.more{font:14px var(--note);color:var(--soft);margin:36px 0 0}
+footer{margin-top:56px;border-top:2px solid var(--ink)}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:14px;padding-bottom:40px;font:14px var(--note)}
+@media (max-width:760px){
+  .player,.work{box-shadow:5px 5px 0 var(--orange)}
+  h1{text-shadow:4px 3px 0 var(--blue)}
+  .work{grid-template-columns:1fr}
+  .work img{border-right:0;border-bottom:2px solid var(--ink)}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
