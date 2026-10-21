@@ -133,5 +133,20 @@
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
     }
+  },
+  {
+    "slug": "ventilation-perfusion",
+    "title": "Ventilation, Perfusion and the Alveolus",
+    "date": "2026-10-21",
+    "description": "How air and blood meet in the lung, and what happens to oxygen when the two are mismatched.",
+    "category": "medicine",
+    "builder": {
+      "tool": "Claude Code",
+      "model": "claude-opus-5-5"
+    },
+    "reviewer": {
+      "tool": "OpenAI Codex",
+      "model": "gpt-6.1-sol"
+    }
   }
 ]

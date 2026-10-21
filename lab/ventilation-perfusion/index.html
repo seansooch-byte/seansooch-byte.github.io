@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ventilation, Perfusion and the Alveolus · The Lab · Sean Sooch</title>
+<meta name="description" content="A guided visual lesson: how air and blood meet in the alveoli, why they have to match, and what supplemental oxygen, bronchodilators, a pulmonary embolism and pneumonia do to the oxygen in your blood.">
+<link rel="canonical" href="https://seansooch.dev/lab/ventilation-perfusion/">
+<meta property="og:title" content="Ventilation, Perfusion and the Alveolus">
+<meta property="og:description" content="How air and blood meet in the lung, and what happens to oxygen when the two are mismatched, one picture at a time.">
+<meta property="og:url" content="https://seansooch.dev/lab/ventilation-perfusion/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the lesson</a>
+<header class="site-top">
+  <div class="site-top-in">
+    <a class="site-brand" href="/" aria-label="Sean Sooch, home">SS<span aria-hidden="true">—</span>03</a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="site-nav-home" href="/#ch3">Work</a>
+      <a href="/#ch4">Writing</a>
+      <a href="/#appb">Films</a>
+      <a href="/#appa">Editions</a>
+      <a class="site-nav-lab" href="/lab/" aria-current="true">The Lab</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+  <div class="intro">
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / Core medicine / Lesson 10</p>
+    <h1>Air meets<br><span>blood.</span></h1>
+    <p class="lede">Every breath only matters if blood is there to meet it. Build up how air and blood share each tiny air sac in the lung, then watch what extra oxygen, airway drugs, a clot and an infection do to the match.</p>
+    <p class="note">Educational, not for clinical use</p>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Lesson views">
+    <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
+    <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
+  </div>
+
+  <section id="lesson" role="tabpanel" aria-labelledby="tab-lesson">
+    <article data-step="1" data-step-title="Air and blood meet in the lungs" data-kind="overview">
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Air and blood meet in the lungs</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Each breath carries air down branching tubes, the <dfn>airways</dfn>, to millions of tiny air sacs called <dfn>alveoli</dfn> (one is an <dfn>alveolus</dfn>). Blood pumped from the heart flows past them. This is where your body picks up oxygen.</p>
+    </article>
+    <article data-step="2" data-step-title="Each air sac is wrapped in tiny blood vessels" data-kind="unit" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Each air sac is wrapped in tiny blood vessels</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Each alveolus is wrapped in a mesh of <dfn>capillaries</dfn>: blood vessels so narrow that red blood cells pass in single file. Only an extremely thin wall separates the air from the blood, so gases cross it easily.</p>
+    </article>
+    <article data-step="3" data-step-title="Oxygen goes in, carbon dioxide comes out" data-kind="swap" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Oxygen goes in, carbon dioxide comes out</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Gas exchange</dfn> happens across that wall. Oxygen moves from the air into the blood. <dfn>Carbon dioxide</dfn>, the waste gas cells make, moves from the blood into the air to be breathed out. Each gas moves from more to less.</p>
+    </article>
+    <article data-step="4" data-step-title="Ventilation: fresh air in, used air out" data-kind="vent" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Ventilation: fresh air in, used air out</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Ventilation</dfn> is the flow of air in and out of the alveoli. Each breath brings in oxygen-rich air and carries carbon dioxide away. The more air a sac gets, the closer its gas stays to fresh air.</p>
+    </article>
+    <article data-step="5" data-step-title="Perfusion: blood flowing past" data-kind="perf" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Perfusion: blood flowing past</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Perfusion</dfn> is the flow of blood past the alveoli. Blood arrives from the body low in oxygen and high in carbon dioxide, and leaves topped up with oxygen. The more blood flows past a sac, the more oxygen it takes from that sac.</p>
+    </article>
+    <article data-step="6" data-step-title="Air and blood need to match" data-kind="match" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Air and blood need to match</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Each alveolus works best when its air and its blood are in balance. The <dfn>ventilation–perfusion ratio</dfn> compares the two: air delivered against blood flowing past. When they balance, the match is good and blood leaves full of oxygen.</p>
+    </article>
+    <article data-step="7" data-step-title="Too little air: blood leaves short of oxygen" data-kind="lowair" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Too little air: blood leaves short of oxygen</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">If a sac gets too little air for its blood, its oxygen runs low and blood leaves only partly loaded. With no air at all, blood passes through unchanged: a <dfn>shunt</dfn>, blood that crosses the lungs without meeting air.</p>
+    </article>
+    <article data-step="8" data-step-title="Too little blood: air is wasted" data-kind="lowblood" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Too little blood: air is wasted</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">If a sac gets plenty of air but little blood, most of that air is not used. With no blood at all, air goes in and out for nothing: <dfn>dead space</dfn>, air that reaches the lungs but never meets blood.</p>
+    </article>
+    <article data-step="9" data-step-title="Blood from every sac mixes" data-kind="mix" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Blood from every sac mixes</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Blood from every alveolus mixes into <dfn>arterial blood</dfn>, which the heart pumps to the body. Well-aired sacs cannot make up for a poorly aired one: their blood is already nearly full of oxygen (<a href="/lab/oxygen-hemoglobin-dissociation/">Lesson 9</a>). So a little oxygen-poor blood drags the whole mix down.</p>
+    </article>
+    <article data-step="10" data-step-title="The lung steers blood toward air" data-kind="steer" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">The lung steers blood toward air</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">When an alveolus runs low on oxygen, the small blood vessels around it tighten. This <dfn>hypoxic vasoconstriction</dfn>, meaning vessels narrowing where oxygen is low, steers blood toward better-aired sacs, so the mismatch shrinks.</p>
+    </article>
+    <article data-step="11" data-step-title="The whole picture" data-kind="whole" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">The whole picture</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Ventilation brings air, perfusion brings blood, and each alveolus needs the two in balance. Two key measures: the ventilation–perfusion ratio, which says how well air and blood match, and the oxygen in arterial blood, the result of every sac mixed together.</p>
+    </article>
+    <article data-step="12" data-step-title="Supplemental oxygen: richer air" data-kind="oxygen" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Supplemental oxygen: richer air</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Supplemental oxygen</dfn> means breathing air with extra oxygen added, through a mask or soft nasal tubes. Every ventilated sac fills with more oxygen, so arterial blood carries more. It cannot reach blood in a shunt, because that blood never meets the air.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="13" data-step-title="Beta-2 agonists: switching on the relax signal" data-kind="beta2" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Beta-2 agonists: switching on the relax signal</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">In <dfn>asthma</dfn>, the muscle around the airways tightens, so some sacs get too little air. <dfn>Bronchodilators</dfn> widen airways. <dfn>Beta-2 agonists</dfn>, one kind, switch on the muscle’s relaxing signal (<a href="/lab/autonomic-synapse/">Lesson 6</a>), so the airway opens and air reaches the sacs again.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="14" data-step-title="Muscarinic antagonists: blocking the tighten signal" data-kind="antimusc" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Muscarinic antagonists: blocking the tighten signal</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Nerves tighten airway muscle by releasing a messenger that lands on <dfn>muscarinic receptors</dfn>, the muscle’s receiving sites for it. <dfn>Muscarinic antagonists</dfn>, the other kind of bronchodilator, block those receptors, so the tightening signal cannot land. The muscle eases and air returns to the sacs.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="15" data-step-title="Pulmonary embolism: blood flow blocked" data-kind="pe" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Pulmonary embolism: blood flow blocked</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A <dfn>pulmonary embolism</dfn> is a blood clot, often from a leg vein, stuck in a lung artery. Sacs beyond it keep their air but lose their blood: dead space. Their blood is pushed to other sacs, which now get too little air, so oxygen falls.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="16" data-step-title="Pneumonia: air sacs fill with fluid" data-kind="pneumonia" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Pneumonia: air sacs fill with fluid</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Pneumonia</dfn> is a lung infection. Infected alveoli fill with fluid and pus, so no air reaches them, yet blood still flows past: a shunt. That blood leaves without fresh oxygen, and extra oxygen in the air cannot reach it.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+
+    <div class="step-nav">
+      <button type="button" data-step-back disabled>← Back</button>
+      <span data-step-progress aria-live="polite">Step 1 of 16</span>
+      <button type="button" data-step-next>Next →</button>
+    </div>
+    <p class="hint">Start with Next, or use the arrow keys. Pictures are illustrative, not measurements.</p>
+  </section>
+
+  <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
+    <h2>Reference values, beside the model.</h2>
+    <p id="disclaimer" class="disclaimer">Loading reference values…</p>
+    <div class="cv-top">
+      <div id="clinical-visual" class="visual"></div>
+      <div class="cv-controls">
+        <div>
+          <label for="clinical-state">Compare a disease, drug or state</label>
+          <select id="clinical-state"><option value="normal">Normal teaching baseline</option></select>
+        </div>
+        <div>
+          <label for="clinical-fio2">Oxygen in the air breathed in (model) <output id="clinical-fio2-label" for="clinical-fio2">room air</output></label>
+          <input id="clinical-fio2" type="range" min="1" max="3" step="0.1" value="1">
+        </div>
+        <div>
+          <label for="clinical-airway">Airway to the right sac (model) <output id="clinical-airway-label" for="clinical-airway">open</output></label>
+          <input id="clinical-airway" type="range" min="0" max="1" step="0.05" value="1">
+        </div>
+        <div>
+          <label for="clinical-flow">Blood flow to the right sac (model) <output id="clinical-flow-label" for="clinical-flow">normal</output></label>
+          <input id="clinical-flow" type="range" min="0.05" max="1" step="0.05" value="1">
+        </div>
+        <div>
+          <label for="clinical-fill">Right sac filled with fluid (model) <output id="clinical-fill-label" for="clinical-fill">none</output></label>
+          <input id="clinical-fill" type="range" min="0" max="1" step="0.05" value="0">
+        </div>
+        <div>
+          <button type="button" id="clinical-reset">Back to baseline</button>
+        </div>
+      </div>
+    </div>
+    <p id="state-summary" class="state-summary" aria-live="polite">Normal teaching baseline.</p>
+    <p id="state-source" class="model-note"></p>
+    <p class="model-note">The blue line on each bar is an illustrative two-air-sac teaching model, not a patient measurement. Where a source gives a range, the bar shades it; where it gives a single value, the bar shows that value as a black tick and the model is called close when it is within a tenth of it. Arrows come from the cited source for the selected state. Every number in the rows comes from the open textbook and StatPearls passages quoted under each row.</p>
+    <p id="baseline-note" class="model-note"></p>
+    <div id="value-rows"></div>
+    <p id="cv-live" class="visually-hidden" aria-live="polite"></p>
+    <h3>Sources</h3>
+    <ul id="sources"></ul>
+    <p id="load-error" class="load-error" hidden></p>
+  </section>
+
+  <section id="explore" role="tabpanel" aria-labelledby="tab-explore" hidden>
+    <h2>Mismatch the lung yourself.</h2>
+    <p class="model-intro">An illustrative teaching model with two air sacs sharing one blood supply. The left sac stays healthy; change the air breathed in, the right sac’s airway, its blood flow and how much of it is filled with fluid. The faint dashed shapes and ticks are the normal state.</p>
+    <div class="explore-grid">
+      <div id="explore-visual" class="visual"></div>
+      <div class="controls">
+        <fieldset>
+          <legend>Air</legend>
+          <label for="fio2">Oxygen in the air breathed in <output id="fio2-label" for="fio2">room air</output></label>
+          <input id="fio2" type="range" min="1" max="3" step="0.1" value="1">
+          <label for="airway">Airway to the right sac <output id="airway-label" for="airway">open</output></label>
+          <input id="airway" type="range" min="0" max="1" step="0.05" value="1">
+        </fieldset>
+        <fieldset>
+          <legend>Blood and fluid</legend>
+          <label for="flow">Blood flow to the right sac <output id="flow-label" for="flow">normal</output></label>
+          <input id="flow" type="range" min="0.05" max="1" step="0.05" value="1">
+          <label for="fill">Right sac filled with fluid <output id="fill-label" for="fill">none</output></label>
+          <input id="fill" type="range" min="0" max="1" step="0.05" value="0">
+        </fieldset>
+        <fieldset>
+          <legend>The lung’s own fix</legend>
+          <label class="check"><input id="hpv" type="checkbox"> Let vessels narrow where oxygen is low (hypoxic vasoconstriction)</label>
+        </fieldset>
+        <button type="button" id="reset">Reset model</button>
+      </div>
+    </div>
+    <p id="model-results" class="model-results" aria-live="polite"></p>
+    <h3 class="chart-title">Where each sac sits on the ventilation–perfusion line</h3>
+    <div id="vq-chart" class="visual chart"></div>
+    <details>
+      <summary>How this teaching model works</summary>
+      <p>Two air sacs share the blood that leaves the heart, after a small bypass that skips them both. Each sac normally gets half the air and half the remaining blood. Its ventilation–perfusion ratio is scaled so that a normal sac has the whole-lung ratio from the Clinical values data file. For each sac, alveolar carbon dioxide follows a simple balance, PACO2 = PvCO2 ÷ (1 + k × ratio), and alveolar oxygen is solved by bisection from the oxygen balance k′ × ratio × (PIO2 − PAO2) = content(PAO2) − content(venous). The two constants k and k′ are set so that a normal sac reproduces OpenStax’s alveolar gas exactly, so a sac with no air holds the gas of blood arriving from the body and a sac with no blood holds the air breathed in.</p>
+      <p>Oxygen content here is hemoglobin saturation only, on a Hill-shaped curve. Its steepness is an illustrative choice of the model; its position is set so that blood at OpenStax’s pulmonary-vein oxygen pressure sits at the middle of OpenStax’s saturation range. Oxygen dissolved directly in the blood is left out, so with supplemental oxygen the model understates how far the oxygen pressure of blood leaving the lungs rises. The bypass is sized at load time so that the healthy model’s mixed blood lands exactly on OpenStax’s pulmonary-vein value; it stands in for the small mismatches of a real lung and is not a reference value. Blood leaving each sac is fully equilibrated with that sac’s gas, and carbon dioxide content is treated as proportional to its pressure.</p>
+      <p>A clot sends blood away from the right sac to the left one, so total blood flow stays the same. Fluid fills part of the right sac, taking away its air and turning the blood past it into shunt. With hypoxic vasoconstriction switched on, blood flow to the right sac shrinks toward three tenths of its set value as that sac’s oxygen falls toward the level of arriving blood (an illustrative rule, found by repeated adjustment until it settles).</p>
+      <p>Left out: breathing harder to compensate, the heart and the tissues (blood always arrives with the same gases), diffusion limits, gravity and the many sacs of a real lung. The sizes of the drug and disease changes are illustrative; only their directions are meant to teach.</p>
+    </details>
+  </section>
+
+  <footer>Lesson 10 of The Lab · Added 2026-10-21 · <a href="/lab/">All lessons</a></footer>
+</main>
+</body>
+</html>
