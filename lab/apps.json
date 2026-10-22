@@ -148,5 +148,20 @@
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
     }
+  },
+  {
+    "slug": "acid-base",
+    "title": "Acid\u2013Base Balance",
+    "date": "2026-10-22",
+    "description": "The bicarbonate buffer, the lungs and the kidneys working together to hold blood pH steady, and the four ways it goes wrong.",
+    "category": "medicine",
+    "builder": {
+      "tool": "Claude Code",
+      "model": "claude-opus-5-5"
+    },
+    "reviewer": {
+      "tool": "OpenAI Codex",
+      "model": "gpt-6.1-sol"
+    }
   }
 ]
