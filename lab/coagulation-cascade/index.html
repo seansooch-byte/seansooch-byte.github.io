@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Coagulation Cascade · The Lab · Sean Sooch</title>
+<meta name="description" content="A guided visual lesson: how a clot is built, from the platelet plug to the fibrin mesh, and where heparins, warfarin, factor Xa inhibitors, direct thrombin inhibitors, antiplatelet drugs and thrombolytics act.">
+<link rel="canonical" href="https://seansooch.dev/lab/coagulation-cascade/">
+<meta property="og:title" content="The Coagulation Cascade">
+<meta property="og:description" content="How a clot is built, from platelet plug to fibrin mesh, and where each anticoagulant and clot-busting drug acts, one picture at a time.">
+<meta property="og:url" content="https://seansooch.dev/lab/coagulation-cascade/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the lesson</a>
+<header class="site-top">
+  <div class="site-top-in">
+    <a class="site-brand" href="/" aria-label="Sean Sooch, home">SS<span aria-hidden="true">—</span>03</a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="site-nav-home" href="/#ch3">Work</a>
+      <a href="/#ch4">Writing</a>
+      <a href="/#appb">Films</a>
+      <a href="/#appa">Editions</a>
+      <a class="site-nav-lab" href="/lab/" aria-current="true">The Lab</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+  <div class="intro">
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / Core medicine / Lesson 12</p>
+    <h1>The <span class="red">coagulation</span><br><span>cascade.</span></h1>
+    <p class="lede">A torn blood vessel seals itself in three moves: it squeezes, plugs the hole, then knits the plug into a tough patch. <dfn>Coagulation</dfn> means clotting; the <dfn>cascade</dfn> is the chain reaction that builds the clot. Build it one picture at a time, then see where blood thinners and clot-busting drugs step in.</p>
+    <p class="note">Educational, not for clinical use</p>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Lesson views">
+    <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
+    <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
+  </div>
+
+  <section id="lesson" role="tabpanel" aria-labelledby="tab-lesson">
+    <article data-step="1" data-step-title="Blood must flow, and leaks must seal" data-kind="leak">
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Blood must flow, and leaks must seal</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Blood flows through tubes called vessels. It must stay liquid to keep flowing, yet stop leaking the moment a vessel tears. <dfn>Hemostasis</dfn> is the body’s way of sealing that leak. It has three steps, built up here one at a time.</p>
+    </article>
+    <article data-step="2" data-step-title="Step one: the vessel squeezes" data-kind="spasm" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Step one: the vessel squeezes</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Muscle in the vessel wall clamps down around the tear. This <dfn>vascular spasm</dfn> narrows the tube so less blood escapes, buying time. It is set off by chemicals from the damaged lining and by pain sensors.</p>
+    </article>
+    <article data-step="3" data-step-title="Platelets: tiny fragments on patrol" data-kind="platelets" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Platelets: tiny fragments on patrol</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Platelets</dfn> are tiny fragments of cells, much smaller than red blood cells, carried in the blood in huge numbers. Normally they slide past the smooth vessel lining without sticking to anything.</p>
+    </article>
+    <article data-step="4" data-step-title="Platelets grab the torn edge" data-kind="stick" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Platelets grab the torn edge</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A tear exposes <dfn>collagen</dfn>, tough fibres under the smooth lining. Platelets that touch it turn spiky and sticky and cling on, helped by <dfn>von Willebrand factor</dfn>, a blood protein that acts like double-sided tape between platelet and collagen.</p>
+    </article>
+    <article data-step="5" data-step-title="Step two: a platelet plug" data-kind="plug" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Step two: a platelet plug</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Stuck platelets release chemicals that call in more platelets, which pile on. Together they form a <dfn>platelet plug</dfn>: a soft, temporary seal over a small tear, like the wooden bung a ship’s crew hammers into a leak.</p>
+    </article>
+    <article data-step="6" data-step-title="Step three: the plug needs a net" data-kind="needmesh" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Step three: the plug needs a net</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A plug of platelets alone is soft. Clotting knits it into a tough patch. Blood carries <dfn>fibrinogen</dfn>, a dissolved protein. Turned into <dfn>fibrin</dfn>, long sticky threads, it weaves a net through the plug. Something has to flip that switch.</p>
+    </article>
+    <article data-step="7" data-step-title="Clotting factors: a chain of switches" data-kind="switches" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Clotting factors: a chain of switches</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Clotting factors</dfn> are proteins, most made by the liver, that float in blood switched off. One switched on turns on the next, and that one the next: a <dfn>cascade</dfn>, like water dropping down a waterfall. Each step turns on more.</p>
+    </article>
+    <article data-step="8" data-step-title="Two ways in, one shared path" data-kind="paths" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Two ways in, one shared path</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Damaged tissue outside the vessel releases <dfn>tissue factor</dfn>, starting the fast <dfn>extrinsic pathway</dfn>. Contact inside the vessel starts the slower <dfn>intrinsic pathway</dfn>. Both switch on <dfn>factor ten</dfn>, the first step of a shared <dfn>common pathway</dfn>.</p>
+    </article>
+    <article data-step="9" data-step-title="Factor ten makes the net-builder" data-kind="thrombin" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Factor ten makes the net-builder</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Switched-on factor ten, written <dfn>Xa</dfn> (say “ten-a”), works with calcium on the platelets’ surface to turn <dfn>prothrombin</dfn>, an idle blood protein, into <dfn>thrombin</dfn>: an <dfn>enzyme</dfn>, a protein that speeds up a chemical reaction.</p>
+    </article>
+    <article data-step="10" data-step-title="Thrombin spins the fibrin net" data-kind="mesh" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Thrombin spins the fibrin net</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Thrombin turns fibrinogen into fibrin threads. They weave through the platelet plug and trap red blood cells, and <dfn>factor thirteen</dfn> ties the threads together into a firm net. Platelets then pull the threads tight, like lacing a shoe.</p>
+    </article>
+    <article data-step="11" data-step-title="A natural brake: antithrombin" data-kind="brake" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">A natural brake: antithrombin</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Antithrombin</dfn> is a blood protein that acts as a brake. It switches off factor ten and holds back the making of thrombin, so the clot stays at the wound instead of spreading along the vessel.</p>
+    </article>
+    <article data-step="12" data-step-title="Clean-up: plasmin cuts the net away" data-kind="cleanup" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Clean-up: plasmin cuts the net away</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">As the wall heals, the clot must go. <dfn>Plasminogen</dfn>, an idle blood protein, is switched on into <dfn>plasmin</dfn>, an enzyme that gradually breaks down the fibrin threads. This slow clean-up is called <dfn>fibrinolysis</dfn>.</p>
+    </article>
+    <article data-step="13" data-step-title="The whole picture: plug and net" data-kind="whole" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">The whole picture: plug and net</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Squeeze, plug, net. Platelets plug the tear; the cascade switches on factor ten, then thrombin, which spins fibrin through the plug. Two things to watch: how many platelets there are, the <dfn>platelet count</dfn>, and how much thrombin gets made.</p>
+    </article>
+    <article data-step="14" data-step-title="Heparins: less prothrombin becomes thrombin" data-kind="heparin" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Heparins: less prothrombin becomes thrombin</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Heparins</dfn> are <dfn>anticoagulants</dfn>, drugs that oppose clotting. The body makes a natural heparin too, found on the vessel lining. Heparin opposes prothrombin, so less of it is turned into thrombin, and with less thrombin the fibrin net thins.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="15" data-step-title="Vitamin K antagonists: faulty switches" data-kind="vka" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Vitamin K antagonists: faulty switches</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The liver needs <dfn>vitamin K</dfn> to finish several clotting factors. <dfn>Vitamin K antagonists</dfn> such as warfarin block that last step, so the liver releases factors that cannot work. With fewer working switches, less thrombin and less fibrin are made.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="16" data-step-title="Factor Xa inhibitors: jamming factor ten" data-kind="xa" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Factor Xa inhibitors: jamming factor ten</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Factor Xa inhibitors</dfn> act on switched-on factor ten. The shared path stalls at its first step, so less thrombin is generated and the fibrin net stays thin.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="17" data-step-title="Direct thrombin inhibitors: blocking thrombin" data-kind="dti" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Direct thrombin inhibitors: blocking thrombin</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Direct thrombin inhibitors</dfn> act on thrombin itself. Factor ten still switches on, but thrombin’s work is held back, so fibrinogen is not turned into fibrin and the net barely forms. The platelet plug is left without its net.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="18" data-step-title="Antiplatelet drugs: less sticky platelets" data-kind="antiplatelet" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Antiplatelet drugs: less sticky platelets</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Antiplatelet drugs</dfn>, such as aspirin, stop platelets clumping together. Fewer pile on, so the plug is smaller and looser, and the cascade has less platelet surface to work on, so a little less thrombin is made.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="19" data-step-title="Thrombolytics: dissolving the net" data-kind="lytic" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Thrombolytics: dissolving the net</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Thrombolytics</dfn> are clot-busting drugs. One, <dfn>tissue plasminogen activator</dfn>, is an enzyme the vessel lining releases naturally; given as a drug, it turns plasminogen into plasmin, which speeds up the breakdown of an unwanted clot blocking a vessel.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+
+    <div class="step-nav">
+      <button type="button" data-step-back disabled>← Back</button>
+      <span data-step-progress aria-live="polite">Step 1 of 19</span>
+      <button type="button" data-step-next>Next →</button>
+    </div>
+    <p class="hint">Start with Next, or use the arrow keys. Pictures are illustrative, not measurements. For how blood flow is driven, see <a href="/lab/blood-pressure-regulation/">Lesson 4</a>.</p>
+  </section>
+
+  <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
+    <h2>Reference values, beside the model.</h2>
+    <p id="disclaimer" class="disclaimer">Loading reference values…</p>
+    <div class="cv-top">
+      <div id="clinical-visual" class="visual"></div>
+      <div class="cv-controls">
+        <div>
+          <label for="clinical-state">Compare a disease state</label>
+          <select id="clinical-state"><option value="normal">Normal teaching baseline</option></select>
+        </div>
+        <div>
+          <label for="clinical-plt">Platelets in the model <output id="clinical-plt-label" for="clinical-plt">typical</output></label>
+          <input id="clinical-plt" type="range" min="0.2" max="2.5" step="0.05" value="1">
+        </div>
+        <div>
+          <button type="button" id="clinical-reset">Back to baseline</button>
+        </div>
+      </div>
+    </div>
+    <p id="state-summary" class="state-summary" aria-live="polite">Normal teaching baseline.</p>
+    <p id="state-source" class="model-note"></p>
+    <p class="model-note">The blue line on the bar is an illustrative teaching model, not a patient measurement. The shaded band is the range quoted from the source under the row; the bar’s end points are an illustrative choice. Arrows come from the quoted source for the selected state.</p>
+    <p id="baseline-note" class="model-note"></p>
+    <div id="value-rows"></div>
+    <p id="cv-live" class="visually-hidden" aria-live="polite"></p>
+    <h3 class="cv-head">Where each drug acts</h3>
+    <p id="omitted" class="model-note"></p>
+    <ul id="drug-actions" class="drug-actions"></ul>
+    <h3 class="cv-head">Sources</h3>
+    <ul id="sources"></ul>
+    <p id="load-error" class="load-error" hidden></p>
+  </section>
+
+  <section id="explore" role="tabpanel" aria-labelledby="tab-explore" hidden>
+    <h2>Build a clot yourself.</h2>
+    <p class="model-intro">An illustrative teaching model of the wound and the cascade. Change how many platelets there are, then add drugs one at a time or together. The faint dashed shapes and ticks are the normal clot.</p>
+    <div class="explore-grid">
+      <div id="explore-visual" class="visual"></div>
+      <div class="controls">
+        <fieldset>
+          <legend>Platelets</legend>
+          <label for="plt">How many platelets <output id="plt-label" for="plt">typical</output></label>
+          <input id="plt" type="range" min="0.2" max="2.5" step="0.05" value="1">
+        </fieldset>
+        <fieldset>
+          <legend>Drugs on board</legend>
+          <label class="check"><input type="checkbox" data-drug="hep"> Heparins</label>
+          <label class="check"><input type="checkbox" data-drug="vka"> Vitamin K antagonists</label>
+          <label class="check"><input type="checkbox" data-drug="xai"> Factor Xa inhibitors</label>
+          <label class="check"><input type="checkbox" data-drug="dti"> Direct thrombin inhibitors</label>
+          <label class="check"><input type="checkbox" data-drug="apl"> Antiplatelet drugs</label>
+          <label class="check"><input type="checkbox" data-drug="lys"> Thrombolytics</label>
+        </fieldset>
+        <button type="button" id="reset">Reset model</button>
+      </div>
+    </div>
+    <p id="model-results" class="model-results" aria-live="polite"></p>
+    <details>
+      <summary>How this teaching model works</summary>
+      <p>Everything is relative to a normal clot, which scores 1 on every part. The platelet plug grows with the platelet count but levels off (count × 1.5 ÷ (count + 0.5)), and antiplatelet drugs shrink it. Factor ten’s activity falls when vitamin K antagonists leave fewer working factors and when a factor Xa inhibitor jams it. Thrombin follows factor ten, scaled by how much platelet surface the plug offers, and falls further with heparins (which oppose prothrombin) and direct thrombin inhibitors. The fibrin net follows thrombin, and thrombolytics then cut most of it away.</p>
+      <p>The sizes of every effect are illustrative choices; only their directions are meant to teach. Left out: vascular spasm’s timing, factor thirteen, the protein C system and tissue factor pathway inhibitor (two more natural brakes), time, and every drug amount.</p>
+    </details>
+  </section>
+
+  <footer>Lesson 12 of The Lab · Added 2026-10-23 · <a href="/lab/">All lessons</a></footer>
+</main>
+</body>
+</html>
