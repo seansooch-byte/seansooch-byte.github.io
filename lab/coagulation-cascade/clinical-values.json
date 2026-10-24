@@ -1,0 +1,103 @@
+{
+  "disclaimer": "Typical adult reference ranges; labs vary; not for clinical decisions.",
+  "sources": {
+    "openstax-18.4": "J. Gordon Betts, Kelly A. Young, James A. Wise, Eddie Johnson, Brandon Poe, Dean H. Kruse, Oksana Korol, Jody E. Johnson, Mark Womble, Peter DeSaix. OpenStax Anatomy and Physiology 2e (2022), section 18-4-leukocytes-and-platelets (18.4 Leukocytes and Platelets). Houston, Texas: OpenStax; publication date Apr 20, 2022. https://openstax.org/books/anatomy-and-physiology-2e/pages/18-4-leukocytes-and-platelets",
+    "openstax-18.5": "J. Gordon Betts, Kelly A. Young, James A. Wise, Eddie Johnson, Brandon Poe, Dean H. Kruse, Oksana Korol, Jody E. Johnson, Mark Womble, Peter DeSaix. OpenStax Anatomy and Physiology 2e (2022), section 18-5-hemostasis (18.5 Hemostasis). Houston, Texas: OpenStax; publication date Apr 20, 2022. https://openstax.org/books/anatomy-and-physiology-2e/pages/18-5-hemostasis",
+    "statpearls-NBK560651": "Rauf N, Riya FNU. Anticoagulation Therapy In: StatPearls [Internet]. Treasure Island (FL): StatPearls Publishing; 2026 (updated 2026-09-14). NCBI Bookshelf NBK560651, PMID 32809486. https://www.ncbi.nlm.nih.gov/books/NBK560651/ (quoted from the abstract as indexed by Europe PMC, https://europepmc.org/article/MED/32809486)",
+    "statpearls-NBK537062": "Iqbal AM, Lopez RA, Hai O. Antiplatelet Medications In: StatPearls [Internet]. Treasure Island (FL): StatPearls Publishing; 2022 (updated 2022-11-07). NCBI Bookshelf NBK537062, PMID 30725747. https://www.ncbi.nlm.nih.gov/books/NBK537062/ (quoted from the abstract as indexed by Europe PMC, https://europepmc.org/article/MED/30725747)",
+    "statpearls-NBK470328": "Denault D, Launico MV. Physiology, Platelet In: StatPearls [Internet]. Treasure Island (FL): StatPearls Publishing; 2026 (updated 2026-09-14). NCBI Bookshelf NBK470328, PMID 29262002. https://www.ncbi.nlm.nih.gov/books/NBK470328/ (quoted from the abstract as indexed by Europe PMC, https://europepmc.org/article/MED/29262002)",
+    "statpearls-NBK557411": "Baig MU, Patel P. Thrombolytic Therapy In: StatPearls [Internet]. Treasure Island (FL): StatPearls Publishing; 2026 (updated 2026-07-05). NCBI Bookshelf NBK557411, PMID 32491343. https://www.ncbi.nlm.nih.gov/books/NBK557411/ (quoted from the abstract as indexed by Europe PMC, https://europepmc.org/article/MED/32491343)"
+  },
+  "values": [
+    { "id": "platelets", "label": "Platelet count", "unit": "per µL",
+      "low": 150000, "high": 160000, "typical": null,
+      "scale": [0, 400000],
+      "source": "openstax-18.4",
+      "where": "OpenStax Anatomy and Physiology 2e, section 18.4 Leukocytes and Platelets, under the heading “Platelets”: “Platelets are relatively small, 2–4 µ m in diameter, but numerous, with typically 150,000–160,000 per µ L of blood.”",
+      "modelKey": "platelets",
+      "note": "OpenStax states this as a typical count (“typically”), so it is shown as given rather than widened; the saved text writes the unit as “µ L” (per microlitre)." }
+  ],
+  "states": [
+    { "id": "thrombocytopenia", "label": "Thrombocytopenia (too few platelets)", "kind": "disease",
+      "summary": "Too few platelets circulate, so blood may not clot properly and excessive bleeding may result.",
+      "shifts": { "platelets": "down" },
+      "shiftNotes": { "platelets": "fewer platelets than typical" },
+      "shiftEvidence": {
+        "platelets": {
+          "quote": "If there is an insufficient number of platelets, called thrombocytopenia , blood may not clot properly, and excessive bleeding may result.",
+          "source": "openstax-18.4",
+          "where": "OpenStax Anatomy and Physiology 2e, section 18.4 Leukocytes and Platelets, under the heading “Disorders of Platelets”"
+        }
+      },
+      "source": "openstax-18.4",
+      "where": "OpenStax Anatomy and Physiology 2e, section 18.4 Leukocytes and Platelets, under the heading “Disorders of Platelets”: “If there is an insufficient number of platelets, called thrombocytopenia , blood may not clot properly, and excessive bleeding may result.” Also section 18.5 Hemostasis, under the heading “Disorders of Clotting”: “As discussed earlier, an insufficient number of platelets, called thrombocytopenia, typically results in the inability of blood to form clots.”",
+      "modelNote": "The model lowers its platelet count, so the plug it builds is smaller." },
+    { "id": "thrombocytosis", "label": "Thrombocytosis (too many platelets)", "kind": "disease",
+      "summary": "Too many platelets circulate, which may trigger unwanted blood clots (thrombosis).",
+      "shifts": { "platelets": "up" },
+      "shiftNotes": { "platelets": "more platelets than typical" },
+      "shiftEvidence": {
+        "platelets": {
+          "quote": "Thrombocytosis is a condition in which there are too many platelets. This may trigger formation of unwanted blood clots (thrombosis), a potentially fatal disorder.",
+          "source": "openstax-18.4",
+          "where": "OpenStax Anatomy and Physiology 2e, section 18.4 Leukocytes and Platelets, under the heading “Disorders of Platelets”"
+        }
+      },
+      "source": "openstax-18.4",
+      "where": "OpenStax Anatomy and Physiology 2e, section 18.4 Leukocytes and Platelets, under the heading “Disorders of Platelets”: “Thrombocytosis is a condition in which there are too many platelets. This may trigger formation of unwanted blood clots (thrombosis), a potentially fatal disorder.” Also section 18.5 Hemostasis, under the heading “Disorders of Clotting”: “In contrast to the disorders characterized by coagulation failure is thrombocytosis, also mentioned earlier, a condition characterized by excessive numbers of platelets that increases the risk for excessive clot formation, a condition known as thrombosis .”",
+      "modelNote": "The model raises its platelet count, so the plug it builds is larger." }
+  ],
+  "omitted": "Drug states are not in the table: none of the saved source passages gives a direction for any of these drug classes on platelet count, so no direction is guessed. Fibrinogen also has a quotable range (OpenStax section 18.1), but no saved passage gives its direction in any state here, so it is left out rather than shown with gaps.",
+  "drugActions": [
+    { "id": "heparins", "label": "Heparins", "step": 14,
+      "summary": "A short-acting anticoagulant that opposes prothrombin; a pharmaceutical form is given to people at risk of clots.",
+      "evidence": [
+        { "quote": "And as noted earlier, basophils release heparin , a short-acting anticoagulant that also opposes prothrombin. Heparin is also found on the surfaces of cells lining the blood vessels. A pharmaceutical form of heparin is often administered therapeutically, for example, in surgical patients at risk for blood clots.",
+          "source": "openstax-18.5", "where": "OpenStax Anatomy and Physiology 2e, section 18.5 Hemostasis, under the heading “Plasma Anticoagulants”" }
+      ] },
+    { "id": "vka", "label": "Vitamin K antagonists (warfarin)", "step": 15,
+      "summary": "Blocks the liver’s vitamin K step, so vitamin K–dependent clotting factors are made in a form that does not work.",
+      "evidence": [
+        { "quote": "Other anticoagulant mechanisms include inhibition of vitamin K–dependent clotting factors by blocking hepatic γ-carboxylation, resulting in the production of functionally inactive factors with reduced calcium-binding capacity.",
+          "source": "statpearls-NBK560651", "where": "StatPearls, Anticoagulation Therapy (NBK560651), abstract, under the heading “Anticoagulation”" },
+        { "quote": "Clotting factors are secreted primarily by the liver and the platelets. The liver requires the fat-soluble vitamin K to produce many of them.",
+          "source": "openstax-18.5", "where": "OpenStax Anatomy and Physiology 2e, section 18.5 Hemostasis, under the heading “Clotting Factors Involved in Coagulation”" }
+      ] },
+    { "id": "xa", "label": "Factor Xa inhibitors", "step": 16,
+      "summary": "Block switched-on factor ten, which reduces thrombin generation and prevents fibrin clot formation.",
+      "evidence": [
+        { "quote": "Direct thrombin inhibitors and direct factor Xa inhibitors reduce thrombin generation and prevent fibrin clot formation.",
+          "source": "statpearls-NBK560651", "where": "StatPearls, Anticoagulation Therapy (NBK560651), abstract, under the heading “Anticoagulation”" },
+        { "quote": "Factor Xa converts prothrombin to thrombin as part of the prothrombinase complex, which includes factor V (cofactor), calcium, and platelet phospholipids.",
+          "source": "statpearls-NBK560651", "where": "StatPearls, Anticoagulation Therapy (NBK560651), abstract, under the heading “Coagulation Cascade”" }
+      ] },
+    { "id": "dti", "label": "Direct thrombin inhibitors", "step": 17,
+      "summary": "Block thrombin itself, so fibrinogen is not turned into fibrin and the clot’s mesh does not form.",
+      "evidence": [
+        { "quote": "Direct thrombin inhibitors and direct factor Xa inhibitors reduce thrombin generation and prevent fibrin clot formation.",
+          "source": "statpearls-NBK560651", "where": "StatPearls, Anticoagulation Therapy (NBK560651), abstract, under the heading “Anticoagulation”" },
+        { "quote": "Thrombin converts fibrinogen to fibrin and activates factor XIII, which cross-links fibrin to form a stable clot.",
+          "source": "statpearls-NBK560651", "where": "StatPearls, Anticoagulation Therapy (NBK560651), abstract, under the heading “Coagulation Cascade”" }
+      ] },
+    { "id": "antiplatelet", "label": "Antiplatelet drugs", "step": 18,
+      "summary": "Stop platelets from clumping together (aggregation), through several different platelet signalling targets.",
+      "evidence": [
+        { "quote": "Aspirin (acetylsalicylic acid) is very effective at inhibiting the aggregation of platelets.",
+          "source": "openstax-18.5", "where": "OpenStax Anatomy and Physiology 2e, section 18.5 Hemostasis, under the heading “Disorders of Clotting”" },
+        { "quote": "Aspirin was the first antiplatelet medication and is a cyclooxygenase inhibitor.",
+          "source": "statpearls-NBK537062", "where": "StatPearls, Antiplatelet Medications (NBK537062), abstract (the indexed abstract has no section headings)" },
+        { "quote": "The complexity of platelet signaling pathways provides multiple pharmacologic targets and underpins diverse antithrombotic therapies.",
+          "source": "statpearls-NBK470328", "where": "StatPearls, Physiology, Platelet (NBK470328), abstract (the indexed abstract has no section headings)" }
+      ] },
+    { "id": "thrombolytic", "label": "Thrombolytics", "step": 19,
+      "summary": "Speed up the breakdown of an abnormal clot: tissue plasminogen activator turns plasminogen into plasmin, which breaks down fibrin.",
+      "evidence": [
+        { "quote": "A class of drugs collectively known as thrombolytic agents can help speed up the degradation of an abnormal clot.",
+          "source": "openstax-18.5", "where": "OpenStax Anatomy and Physiology 2e, section 18.5 Hemostasis, under the heading “Disorders of Clotting”" },
+        { "quote": "Tissue plasminogen activator is an enzyme that catalyzes the conversion of plasminogen to plasmin, the primary enzyme that breaks down clots.",
+          "source": "openstax-18.5", "where": "OpenStax Anatomy and Physiology 2e, section 18.5 Hemostasis, under the heading “Disorders of Clotting”" },
+        { "quote": "Thrombolytic therapy plays a critical role in the rapid management of acute thromboembolic disorders by restoring blood flow, limiting ischemic tissue injury, and improving clinical outcomes.",
+          "source": "statpearls-NBK557411", "where": "StatPearls, Thrombolytic Therapy (NBK557411), abstract (the indexed abstract has no section headings)" }
+      ] }
+  ]
+}
