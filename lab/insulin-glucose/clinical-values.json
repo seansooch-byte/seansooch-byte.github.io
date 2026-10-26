@@ -1,0 +1,130 @@
+{
+  "disclaimer": "Typical adult reference ranges; labs vary; not for clinical decisions.",
+  "sources": {
+    "openstax-ap-17.9": "OpenStax Anatomy and Physiology 2e, section 17.9 The Endocrine Pancreas. Betts JG, Young KA, Wise JA, Johnson E, Poe B, Kruse DH, Korol O, Johnson JE, Womble M, DeSaix P. Anatomy and Physiology 2e. Houston, Texas: OpenStax; 2022. https://openstax.org/books/anatomy-and-physiology-2e/pages/17-9-the-endocrine-pancreas",
+    "openstax-pharm-28.1": "OpenStax Pharmacology for Nurses, section 28.1 Introduction to Diabetes. OpenStax (Rice University), Pharmacology for Nurses, 1st edition. Houston, Texas: OpenStax; 2024. https://openstax.org/books/pharmacology/pages/28-1-introduction-to-diabetes",
+    "openstax-pharm-28.2": "OpenStax Pharmacology for Nurses, section 28.2 Insulin and Non-Insulin Injectable Diabetes Drugs. OpenStax (Rice University), Pharmacology for Nurses, 1st edition. Houston, Texas: OpenStax; 2024. https://openstax.org/books/pharmacology/pages/28-2-insulin-and-non-insulin-injectable-diabetes-drugs",
+    "openstax-pharm-28.3": "OpenStax Pharmacology for Nurses, section 28.3 Oral Antidiabetic Drugs. OpenStax (Rice University), Pharmacology for Nurses, 1st edition. Houston, Texas: OpenStax; 2024. https://openstax.org/books/pharmacology/pages/28-3-oral-antidiabetic-drugs"
+  },
+  "values": [
+    { "id": "glucose", "label": "Blood glucose", "unit": "mg/dL",
+      "low": 70, "high": 100,
+      "scale": [40, 320],
+      "source": "openstax-ap-17.9",
+      "where": "OpenStax Anatomy and Physiology 2e, section 17.9 The Endocrine Pancreas, Figure 17.19 Homeostatic Regulation of Blood Glucose Levels (caption): “Blood glucose concentration is tightly maintained between 70 mg/dL and 100 mg/dL.”",
+      "modelKey": "glucoseAt",
+      "note": "The same caption goes on: “If blood glucose concentration rises above this range, insulin is released, which stimulates body cells to remove glucose from the blood.” The model marker shows the chosen time after a meal, so it can rise above the band for a while after eating." },
+    { "id": "fasting", "label": "Fasting blood glucose", "unit": "mg/dL",
+      "low": 70, "high": 100,
+      "scale": [40, 320],
+      "source": "openstax-pharm-28.1",
+      "where": "OpenStax Pharmacology for Nurses, section 28.1 Introduction to Diabetes, Hypoglycemia: “The expected values for normal fasting blood glucose concentration are between 70 mg/dL and 100 mg/dL (World Health Organization [WHO], n.d.).”",
+      "modelKey": "fasting",
+      "note": "Fasting means after an overnight fast; the same section says: “A fasting blood glucose test measures the blood sugar level after an overnight fasting period.” The model marker is the model's settled level before the meal." }
+  ],
+  "states": [
+    { "id": "meal", "label": "After a meal", "kind": "physiologic",
+      "summary": "Glucose absorbed from a meal raises blood glucose, and the rise triggers insulin release, which brings it back down.",
+      "comparedWith": "the same person before the meal",
+      "shifts": { "glucose": "up" },
+      "evidence": {
+        "glucose": "OpenStax Anatomy and Physiology 2e, section 17.9 The Endocrine Pancreas, Insulin: “Once nutrient absorption occurs, the resulting surge in blood glucose levels further stimulates insulin secretion.” Figure 17.19 caption: “If blood glucose concentration rises above this range, insulin is released, which stimulates body cells to remove glucose from the blood.”"
+      },
+      "source": "openstax-ap-17.9",
+      "where": "OpenStax Anatomy and Physiology 2e, section 17.9 The Endocrine Pancreas, Insulin: “Once nutrient absorption occurs, the resulting surge in blood glucose levels further stimulates insulin secretion.”",
+      "modelNote": "The model moves the time slider to soon after the meal; it has no fasting row direction for a meal, since a fasting level is measured before eating." },
+    { "id": "type1", "label": "Type 1 diabetes (untreated)", "kind": "disease",
+      "summary": "The immune system destroys the beta cells that make insulin, so without insulin glucose cannot get into cells and builds up in the blood.",
+      "comparedWith": "normal",
+      "shifts": { "glucose": "up", "fasting": "up" },
+      "evidence": {
+        "glucose": "OpenStax Pharmacology for Nurses, section 28.1 Introduction to Diabetes, Type 1 Diabetes: “Without insulin, glucose homeostasis is disrupted, resulting in glucose not being able to get into the cells of the body, thus causing elevated glucose levels in the blood.”",
+        "fasting": "OpenStax Pharmacology for Nurses, section 28.1 Introduction to Diabetes, Type 1 Diabetes: “Without insulin, glucose homeostasis is disrupted, resulting in glucose not being able to get into the cells of the body, thus causing elevated glucose levels in the blood.” Diagnostic Testing for Diabetes: “A fasting blood glucose test measures the blood sugar level after an overnight fasting period.” OpenStax Anatomy and Physiology 2e, section 17.9: “Diabetes is diagnosed when lab tests reveal that blood glucose levels are higher than normal, a condition called hyperglycemia”"
+      },
+      "source": "openstax-pharm-28.1",
+      "where": "OpenStax Pharmacology for Nurses, section 28.1 Introduction to Diabetes, Type 1 Diabetes: “Type 1 diabetes is an autoimmune disorder that causes the body’s immune system to attack and destroy the β cells in the pancreas that make insulin.” and “Without insulin, glucose homeostasis is disrupted, resulting in glucose not being able to get into the cells of the body, thus causing elevated glucose levels in the blood.”",
+      "modelNote": "The model turns the beta cells almost off." },
+    { "id": "type2", "label": "Type 2 diabetes (untreated)", "kind": "disease",
+      "summary": "Cells respond weakly to insulin (insulin resistance) and the beta cells cannot keep up, so blood glucose stays high.",
+      "comparedWith": "normal",
+      "shifts": { "glucose": "up", "fasting": "up" },
+      "evidence": {
+        "glucose": "OpenStax Pharmacology for Nurses, section 28.1 Introduction to Diabetes, Type 2 Diabetes: “The β cells in the pancreas continue to have some degree of functionality with varying amounts of insulin secretion, resulting in elevated blood glucose levels and insulin resistance.”",
+        "fasting": "OpenStax Pharmacology for Nurses, section 28.1 Introduction to Diabetes, Type 2 Diabetes: “The β cells in the pancreas continue to have some degree of functionality with varying amounts of insulin secretion, resulting in elevated blood glucose levels and insulin resistance.” Diagnostic Testing for Diabetes: “A fasting blood glucose test measures the blood sugar level after an overnight fasting period.” OpenStax Anatomy and Physiology 2e, section 17.9: “Diabetes is diagnosed when lab tests reveal that blood glucose levels are higher than normal, a condition called hyperglycemia”"
+      },
+      "source": "openstax-ap-17.9",
+      "where": "OpenStax Anatomy and Physiology 2e, section 17.9 The Endocrine Pancreas, Diabetes Mellitus: “In type 2 diabetes, cells become resistant to the effects of insulin. In response, the pancreas increases its insulin secretion, but over time, the beta cells become exhausted.” OpenStax Pharmacology for Nurses, section 28.1, Type 2 Diabetes: “The β cells in the pancreas continue to have some degree of functionality with varying amounts of insulin secretion, resulting in elevated blood glucose levels and insulin resistance.”",
+      "modelNote": "The model makes cells answer insulin weakly and lowers what the tired beta cells can release." },
+    { "id": "insulin", "label": "Insulin (the medicine)", "kind": "drug",
+      "summary": "Injected insulin replaces the missing hormone, helping cells absorb glucose so blood glucose falls.",
+      "comparedWith": "untreated type 1 diabetes",
+      "shifts": { "glucose": "down", "fasting": "down" },
+      "evidence": {
+        "glucose": "OpenStax Pharmacology for Nurses, section 28.2, Table 28.3 Drug Prototype Table: Insulin, Mechanism of Action: “Lowers the level of glucose in the blood and provides cells with glucose for energy by helping cells to absorb glucose” and Therapeutic Effects: “Lowers blood glucose levels Promotes use of glucose by cells”",
+        "fasting": "OpenStax Pharmacology for Nurses, section 28.2, Long-Acting Insulin: “It has no peak time and acts to lower blood glucose levels up to 24 hours.” Table 28.2 Types of Insulin, intermediate-acting insulin: “Covers insulin needs for 12 hours or longer, or overnight.”"
+      },
+      "source": "openstax-pharm-28.2",
+      "where": "OpenStax Pharmacology for Nurses, section 28.2 Insulin and Non-Insulin Injectable Diabetes Drugs, Table 28.3 Drug Prototype Table: Insulin, Mechanism of Action: “Lowers the level of glucose in the blood and provides cells with glucose for energy by helping cells to absorb glucose” Section 28.1, Type 1 Diabetes: “Because the body is destroying the β cells in the pancreas, clients with type 1 diabetes will need to take insulin for the rest of their lives to survive”",
+      "modelNote": "The model adds insulin from outside the body, steady all day with an extra rise around the meal, to untreated type 1 diabetes; the beta cells stay destroyed." },
+    { "id": "metformin", "label": "Metformin (a biguanide)", "kind": "drug",
+      "summary": "Reduces the glucose the liver makes, improves the body's sensitivity to insulin and reduces the glucose absorbed by the intestines.",
+      "comparedWith": "untreated type 2 diabetes",
+      "shifts": { "glucose": "down", "fasting": "down" },
+      "evidence": {
+        "glucose": "OpenStax Pharmacology for Nurses, section 28.3 Oral Antidiabetic Drugs, introduction: “These drugs lower blood glucose levels in various ways, such as stimulating insulin production from β cells, decreasing insulin resistance, slowing glucose absorption from the gastrointestinal tract, and altering the release of glucose by the liver” Table 28.8 Drug Prototype Table: Metformin, Indications: “To control hyperglycemia in those with type 2 diabetes”",
+        "fasting": "OpenStax Pharmacology for Nurses, section 28.3, Table 28.8 Drug Prototype Table: Metformin, Therapeutic Effects: “Decreases glucose production in the liver by reducing gluconeogenesis” OpenStax Anatomy and Physiology 2e, section 17.9, Glucagon: “Receptors in the pancreas can sense the decline in blood glucose levels, such as during periods of fasting or during prolonged labor or exercise” and “It stimulates the liver to take up amino acids from the blood and convert them into glucose. This response is known as gluconeogenesis.”"
+      },
+      "shiftNotes": { "fasting": "less glucose made by the liver, which is what supplies the blood during fasting" },
+      "source": "openstax-pharm-28.3",
+      "where": "OpenStax Pharmacology for Nurses, section 28.3 Oral Antidiabetic Drugs, Non-Sulfonylurea Biguanides: “Non-sulfonylurea biguanides are a group of oral diabetes drugs that prevent the production of glucose in the liver. They improve the body’s sensitivity to insulin and reduce the amount of glucose absorbed by the intestines.”",
+      "modelNote": "The model applies it to untreated type 2 diabetes: less liver glucose, slightly less absorbed from the gut, and a slightly better response to insulin." },
+    { "id": "sulfonylurea", "label": "Sulfonylureas", "kind": "drug",
+      "summary": "Bind to potassium channels on beta cells and stimulate them to release more insulin; they need beta cells that still work.",
+      "comparedWith": "untreated type 2 diabetes",
+      "shifts": { "glucose": "down", "fasting": "down" },
+      "evidence": {
+        "glucose": "OpenStax Pharmacology for Nurses, section 28.3 Oral Antidiabetic Drugs, Glipizide: “Glipizide is a second-generation sulfonylurea that stimulates the pancreas to produce insulin, thereby lowering blood glucose levels.”",
+        "fasting": "OpenStax Pharmacology for Nurses, section 28.3, Safety Alert Sulfonylureas: “Also, when taken with a sulfonylurea, a nonselective beta blocker can prevent the body from compensating for hypoglycemia, resulting in critically low levels especially when the client is sleeping” Section 28.1, Hypoglycemia: “Hypoglycemia occurs when the blood glucose level in the body falls below the normal range.”"
+      },
+      "shiftNotes": { "fasting": "the source warns that sulfonylureas can push glucose too low overnight, during sleep" },
+      "source": "openstax-pharm-28.3",
+      "where": "OpenStax Pharmacology for Nurses, section 28.3 Oral Antidiabetic Drugs, Sulfonylureas: “Sulfonylureas are a group of diabetes drugs that bind to potassium channels on β cells and stimulate them to produce more insulin. They are effective in clients with diabetes who have functioning β cells.”",
+      "modelNote": "The model applies it to untreated type 2 diabetes: the remaining beta cells release more insulin, partly whatever the glucose level." },
+    { "id": "sglt2", "label": "SGLT2 inhibitors", "kind": "drug",
+      "summary": "Block the reabsorption of glucose in the kidneys, so more glucose leaves the body in urine.",
+      "comparedWith": "untreated type 2 diabetes",
+      "shifts": { "glucose": "down", "fasting": "down" },
+      "evidence": {
+        "glucose": "OpenStax Pharmacology for Nurses, section 28.3 Oral Antidiabetic Drugs, Selective Sodium Glucose Transporter 2 (SGLT2): “SGLT2 drugs lower blood glucose levels by blocking the reabsorption of glucose in the kidneys and promoting the excretion of glucose in the urine (Padda et al., 2022).”",
+        "fasting": "OpenStax Pharmacology for Nurses, section 28.3, Dapagliflozin: “Dapagliflozin is an SGLT2 drug that reduces reabsorption of filtered glucose and thereby promotes urinary glucose excretion.” OpenStax Anatomy and Physiology 2e, section 17.9, Diabetes Mellitus: “The kidneys are responsible for filtering glucose from the blood.”"
+      },
+      "shiftNotes": { "fasting": "the kidneys filter glucose all the time, not only after meals" },
+      "source": "openstax-pharm-28.3",
+      "where": "OpenStax Pharmacology for Nurses, section 28.3 Oral Antidiabetic Drugs, Selective Sodium Glucose Transporter 2 (SGLT2): “SGLT2 drugs lower blood glucose levels by blocking the reabsorption of glucose in the kidneys and promoting the excretion of glucose in the urine (Padda et al., 2022).”",
+      "modelNote": "The model applies it to untreated type 2 diabetes: the kidneys stop carrying back glucose at a much lower blood level, so some leaves in urine." },
+    { "id": "glp1", "label": "GLP-1 receptor agonists", "kind": "drug",
+      "summary": "Act on the incretin system to increase insulin release when glucose is high, limit glucagon and slow stomach emptying.",
+      "comparedWith": "untreated type 2 diabetes",
+      "shifts": { "glucose": "down", "fasting": "down" },
+      "evidence": {
+        "glucose": "OpenStax Pharmacology for Nurses, section 28.2, Table 28.5 Drug Prototype Table: Dulaglutide, Mechanism of Action: “Increases insulin secretion when glucose levels are elevated, decreases glucagon secretion, and delays gastric emptying in an effort to lower postprandial glucose levels”",
+        "fasting": "OpenStax Pharmacology for Nurses, section 28.2, Glucagon-Like Peptide-1 (GLP-1) Receptor Agonists: “These drugs help the pancreas release insulin after eating, limit glucagon, and slow down digestion.” OpenStax Anatomy and Physiology 2e, section 17.9: “Glucagon plays an important role in blood glucose regulation; low blood glucose levels stimulate its release.” and “Taken together, these actions increase blood glucose levels.”"
+      },
+      "shiftNotes": { "fasting": "through less glucagon, the hormone that raises glucose between meals" },
+      "source": "openstax-pharm-28.2",
+      "where": "OpenStax Pharmacology for Nurses, section 28.2 Insulin and Non-Insulin Injectable Diabetes Drugs, Glucagon-Like Peptide-1 (GLP-1) Receptor Agonists: “GLP-1 receptor agonists are a class of non-insulin injectable drugs that impact the gut hormone incretin, which works to increase insulin secretion in response to meals.” and Table 28.5: “Increases insulin secretion when glucose levels are elevated, decreases glucagon secretion, and delays gastric emptying in an effort to lower postprandial glucose levels”",
+      "modelNote": "The model applies it to untreated type 2 diabetes: a stronger glucose-dependent insulin response, less glucagon and a slower stomach." },
+    { "id": "dpp4", "label": "DPP-4 inhibitors", "kind": "drug",
+      "summary": "Block the enzyme that destroys incretin, so the body's own incretin lasts longer and helps release insulin when it is needed.",
+      "comparedWith": "untreated type 2 diabetes",
+      "shifts": { "glucose": "down", "fasting": "down" },
+      "evidence": {
+        "glucose": "OpenStax Pharmacology for Nurses, section 28.3 Oral Antidiabetic Drugs, introduction: “These drugs lower blood glucose levels in various ways, such as stimulating insulin production from β cells, decreasing insulin resistance, slowing glucose absorption from the gastrointestinal tract, and altering the release of glucose by the liver” Dipeptidyl Peptidase 4 (DDP 4) Inhibitors: “Incretin helps the body produce insulin only when it is needed to reduce the excess amount of glucose being produced by the liver.”",
+        "fasting": "OpenStax Pharmacology for Nurses, section 28.3, Dipeptidyl Peptidase 4 (DDP 4) Inhibitors: “Incretin helps the body produce insulin only when it is needed to reduce the excess amount of glucose being produced by the liver.” OpenStax Anatomy and Physiology 2e, section 17.9, Glucagon: “Receptors in the pancreas can sense the decline in blood glucose levels, such as during periods of fasting or during prolonged labor or exercise”"
+      },
+      "shiftNotes": { "fasting": "by curbing the liver's excess glucose output, which supplies the blood during fasting; a small change in the model" },
+      "source": "openstax-pharm-28.3",
+      "where": "OpenStax Pharmacology for Nurses, section 28.3 Oral Antidiabetic Drugs, Dipeptidyl Peptidase 4 (DDP 4) Inhibitors: “Dipeptidyl peptidase 4 inhibitors block the action of dipeptidyl peptidase 4, an enzyme that destroys incretin. Incretin helps the body produce insulin only when it is needed to reduce the excess amount of glucose being produced by the liver.”",
+      "modelNote": "The model applies it to untreated type 2 diabetes: the body's own incretin signal is stronger, so insulin release rises more when glucose is high." }
+  ]
+}
