@@ -1,0 +1,99 @@
+{
+  "disclaimer": "Typical adult reference ranges; labs vary; not for clinical decisions.",
+  "sources": {
+    "openstax-pharm-27.1": "OpenStax Pharmacology for Nurses, section 27.1 Introduction to the Thyroid and Parathyroid. OpenStax (Rice University), Pharmacology for Nurses, 1st edition. Houston, Texas: OpenStax; 2024. https://openstax.org/books/pharmacology/pages/27-1-introduction-to-the-thyroid-and-parathyroid",
+    "openstax-pharm-27.2": "OpenStax Pharmacology for Nurses, section 27.2 Thyroid and Antithyroid Drugs. OpenStax (Rice University), Pharmacology for Nurses, 1st edition. Houston, Texas: OpenStax; 2024. https://openstax.org/books/pharmacology/pages/27-2-thyroid-and-antithyroid-drugs",
+    "openstax-ap-17.4": "OpenStax Anatomy and Physiology 2e, section 17.4 The Thyroid Gland. Betts JG, Young KA, Wise JA, Johnson E, Poe B, Kruse DH, Korol O, Johnson JE, Womble M, DeSaix P. Anatomy and Physiology 2e. Houston, Texas: OpenStax; 2022. https://openstax.org/books/anatomy-and-physiology-2e/pages/17-4-the-thyroid-gland"
+  },
+  "values": [
+    { "id": "tsh", "label": "TSH (thyroid-stimulating hormone)", "unit": "mIU/L",
+      "low": 0.5, "high": 4.0,
+      "source": "openstax-pharm-27.1",
+      "where": "OpenStax Pharmacology for Nurses, section 27.1 Introduction to the Thyroid and Parathyroid, Diagnostic Testing, Table 27.1 Thyroid and Parathyroid Diagnostic Testing, Thyroid Function Test Interpretation: “TSH (Reference range: 0.5–4.0 mU/mL)”",
+      "modelKey": "tsh",
+      "note": "The table prints the unit as mU/mL; a TSH range of these numbers is per litre (mU/L, the same as mIU/L), so it is shown here as mIU/L." },
+    { "id": "t4", "label": "T4 (thyroxine), total", "unit": "µg/dL",
+      "low": 5, "high": 12,
+      "source": "openstax-pharm-27.1",
+      "where": "OpenStax Pharmacology for Nurses, section 27.1 Introduction to the Thyroid and Parathyroid, Diagnostic Testing, Table 27.1 Thyroid and Parathyroid Diagnostic Testing, Thyroid Function Test Interpretation: “T4 (Reference range: 5–12 ug/dL)”",
+      "modelKey": "t4",
+      "note": "The table writes micrograms as ug; µg/dL is the same unit." },
+    { "id": "t3", "label": "T3 (triiodothyronine), total", "unit": "ng/dL",
+      "low": 80, "high": 180,
+      "source": "openstax-pharm-27.1",
+      "where": "OpenStax Pharmacology for Nurses, section 27.1 Introduction to the Thyroid and Parathyroid, Diagnostic Testing, Table 27.1 Thyroid and Parathyroid Diagnostic Testing, Thyroid Function Test Interpretation: “T3 (Reference range: 80–180 ng/dL)”",
+      "modelKey": "t3" }
+  ],
+  "states": [
+    { "id": "hypo", "label": "Hypothyroidism (Hashimoto thyroiditis, untreated)", "kind": "disease",
+      "summary": "The immune system destroys thyroid tissue, so the gland secretes too little T4 and T3, and the pituitary answers by releasing more TSH.",
+      "comparedWith": "normal",
+      "shifts": { "tsh": "up", "t4": "down", "t3": "down" },
+      "evidence": {
+        "tsh": "OpenStax Pharmacology for Nurses, section 27.1, Table 27.1 Thyroid Function Test Interpretation (columns TSH, T4, T3, Condition): “High Low Low Hypothyroidism” Hypothyroidism: “Hypothyroidism arises from an inadequate secretion of T3 and T4 into the bloodstream, prompting the pituitary gland to release TSH.”",
+        "t4": "OpenStax Pharmacology for Nurses, section 27.1, Table 27.1 Thyroid Function Test Interpretation (columns TSH, T4, T3, Condition): “High Low Low Hypothyroidism” Hypothyroidism: “This condition is caused by an autoimmune-mediated destruction of the thyroid gland, which leads to a dysfunctional thyroid gland and decreased secretion of thyroid hormones.”",
+        "t3": "OpenStax Pharmacology for Nurses, section 27.1, Table 27.1 Thyroid Function Test Interpretation (columns TSH, T4, T3, Condition): “High Low Low Hypothyroidism” Hypothyroidism: “Hypothyroidism arises from an inadequate secretion of T3 and T4 into the bloodstream, prompting the pituitary gland to release TSH.”"
+      },
+      "source": "openstax-pharm-27.1",
+      "where": "OpenStax Pharmacology for Nurses, section 27.1 Introduction to the Thyroid and Parathyroid, Hypothyroidism: “Hashimoto thyroiditis is the most common cause of hypothyroidism.” and “This condition is caused by an autoimmune-mediated destruction of the thyroid gland, which leads to a dysfunctional thyroid gland and decreased secretion of thyroid hormones.”",
+      "modelNote": "The model keeps less than a third of the working thyroid tissue." },
+    { "id": "graves", "label": "Hyperthyroidism (Graves’ disease, untreated)", "kind": "disease",
+      "summary": "Antibodies against the TSH receptor stimulate the gland to grow and secrete extra T4 and T3, and the raised hormone holds TSH down.",
+      "comparedWith": "normal",
+      "shifts": { "tsh": "down", "t4": "up", "t3": "up" },
+      "evidence": {
+        "tsh": "OpenStax Pharmacology for Nurses, section 27.1, Table 27.1 Thyroid Function Test Interpretation (columns TSH, T4, T3, Condition): “Low High High Hyperthyroidism” and: “Excessive levels of T4 and T3 instruct the anterior pituitary and hypothalamus to restrain the release of their respective hormones.”",
+        "t4": "OpenStax Pharmacology for Nurses, section 27.1, Table 27.1 Thyroid Function Test Interpretation (columns TSH, T4, T3, Condition): “Low High High Hyperthyroidism” Hyperthyroidism: “Hyperthyroidism occurs when the body secretes too much T3 and T4 into the blood.”",
+        "t3": "OpenStax Pharmacology for Nurses, section 27.1, Table 27.1 Thyroid Function Test Interpretation (columns TSH, T4, T3, Condition): “Low High High Hyperthyroidism” Hyperthyroidism: “Hyperthyroidism occurs when the body secretes too much T3 and T4 into the blood.”"
+      },
+      "source": "openstax-pharm-27.1",
+      "where": "OpenStax Pharmacology for Nurses, section 27.1 Introduction to the Thyroid and Parathyroid, Hyperthyroidism: “The autoimmune disorder Graves’ disease is the most common cause of hyperthyroidism. In Graves’ disease, the production of TSH receptor antibodies stimulate the thyroid gland to grow and secrete additional thyroid hormone.”",
+      "modelNote": "The model enlarges the gland and adds an antibody push on top of TSH." },
+    { "id": "levothyroxine", "label": "Levothyroxine (thyroid hormone replacement)", "kind": "drug",
+      "summary": "A synthetic hormone identical to the body's own T4 replaces what the gland cannot make, restoring thyroid hormone levels.",
+      "comparedWith": "untreated hypothyroidism",
+      "shifts": { "tsh": "down", "t4": "up", "t3": "up" },
+      "evidence": {
+        "tsh": "OpenStax Pharmacology for Nurses, section 27.2, Levothyroxine Sodium: “It comes in tablet and injectable forms and is used to treat hypothyroidism and pituitary TSH suppression.” Section 27.1, Hypothyroidism: “Hypothyroidism arises from an inadequate secretion of T3 and T4 into the bloodstream, prompting the pituitary gland to release TSH.”",
+        "t4": "OpenStax Pharmacology for Nurses, section 27.2, Levothyroxine Sodium: “Levothyroxine sodium is a synthetic thyroid hormone that is identical to T4 produced in the body.” Table 27.3 Drug Prototype Table: Levothyroxine Sodium, Therapeutic Effects: “Restores thyroid hormone levels to normal”",
+        "t3": "OpenStax Pharmacology for Nurses, section 27.2, Thyroid Drugs: “These drugs act by replacing the body’s natural thyroid hormone when the levels are low or absent within the body.” Table 27.3, Therapeutic Effects: “Restores thyroid hormone levels to normal”"
+      },
+      "shiftNotes": { "tsh": "as the replaced hormone strengthens the feedback brake", "t3": "body cells make T3 from the replaced T4" },
+      "source": "openstax-pharm-27.2",
+      "where": "OpenStax Pharmacology for Nurses, section 27.2 Thyroid and Antithyroid Drugs, Table 27.3 Drug Prototype Table: Levothyroxine Sodium, Mechanism of Action: “Replaces the amount of hormone the thyroid is unable to produce, helping to restore thyroid hormone homeostasis within the body”",
+      "modelNote": "The model adds T4 from outside the gland to untreated hypothyroidism; the lost thyroid tissue stays lost." },
+    { "id": "thionamide", "label": "Thionamides (methimazole, propylthiouracil)", "kind": "drug",
+      "summary": "Taken up into the gland, they block the attaching of iodine to thyroglobulin and the joining of the pieces into hormone, so the gland makes less T4 and T3.",
+      "comparedWith": "untreated hyperthyroidism",
+      "shifts": { "tsh": "up", "t4": "down", "t3": "down" },
+      "evidence": {
+        "tsh": "OpenStax Pharmacology for Nurses, section 27.1: “When thyroid hormone levels are insufficient within the body, a series of responses is initiated.” and “In response to TRH, the anterior pituitary gland releases thyrotropin, also known as thyroid-stimulating hormone (TSH).”",
+        "t4": "OpenStax Pharmacology for Nurses, section 27.2, Thionamides: “Thionamides are compounds that effectively hinder the synthesis of thyroid hormones.” and “leading to lower serum levels of thyroid hormones.” Table 27.5 Drug Prototype Table: Methimazole, Therapeutic Effects: “Lowers thyroid hormone levels”",
+        "t3": "OpenStax Pharmacology for Nurses, section 27.2, Thionamides: “leading to lower serum levels of thyroid hormones.” Table 27.5 Drug Prototype Table: Methimazole, Therapeutic Effects: “Lowers thyroid hormone levels”"
+      },
+      "shiftNotes": { "tsh": "back up through the feedback loop, as the excess hormone falls" },
+      "source": "openstax-pharm-27.2",
+      "where": "OpenStax Pharmacology for Nurses, section 27.2 Thyroid and Antithyroid Drugs, Thionamides: “Thionamides are compounds that effectively hinder the synthesis of thyroid hormones.” and “Thionamides include methimazole and propylthiouracil.”",
+      "modelNote": "The model applies it to untreated hyperthyroidism: the gland builds less hormone; the antibodies are still there." },
+    { "id": "rai", "label": "Radioactive iodine", "kind": "drug",
+      "summary": "The gland takes up iodine from the blood, so radioactive iodine collects there and ablates (destroys) overactive thyroid tissue, lowering hormone production.",
+      "comparedWith": "untreated hyperthyroidism",
+      "shifts": { "tsh": "up", "t4": "down", "t3": "down" },
+      "evidence": {
+        "tsh": "OpenStax Pharmacology for Nurses, section 27.1: “When thyroid hormone levels are insufficient within the body, a series of responses is initiated.” and “In response to TRH, the anterior pituitary gland releases thyrotropin, also known as thyroid-stimulating hormone (TSH).”",
+        "t4": "OpenStax Pharmacology for Nurses, section 27.2, Potassium Iodide: “Additional use includes radioactive iodine to ablate a hyperactive thyroid gland.” Antithyroid Drugs: “Antithyroid drugs are used to inhibit production of the thyroid hormone so that the body can maintain normal thyroid homeostasis.”",
+        "t3": "OpenStax Pharmacology for Nurses, section 27.2, Potassium Iodide: “Additional use includes radioactive iodine to ablate a hyperactive thyroid gland.” Antithyroid Drugs: “Antithyroid drugs are used to inhibit production of the thyroid hormone so that the body can maintain normal thyroid homeostasis.”"
+      },
+      "shiftNotes": { "tsh": "back up through the feedback loop, as the excess hormone falls" },
+      "source": "openstax-pharm-27.2",
+      "where": "OpenStax Pharmacology for Nurses, section 27.2 Thyroid and Antithyroid Drugs, Potassium Iodide: “Additional use includes radioactive iodine to ablate a hyperactive thyroid gland.” Section 27.1, Thyroid and Parathyroid Glands (follicular cells): “They absorb iodine from the blood and combine it with T3 and T4.” Section 27.2, adverse effects of antithyroid drugs: “Hypothyroidism—increased fatigue, weight gain, cold intolerance, constipation”",
+      "modelNote": "The model applies it to untreated hyperthyroidism: about three quarters of the gland's tissue is destroyed. Destroying more would leave the gland underactive." },
+    { "id": "betablocker", "label": "Beta-blockers (for symptoms)", "kind": "drug",
+      "summary": "Blunt the heart's response to catecholamines, which excess thyroid hormone amplifies, easing a racing heartbeat; they do not change what the gland makes.",
+      "comparedWith": "untreated hyperthyroidism",
+      "shifts": {},
+      "source": "openstax-ap-17.4",
+      "where": "OpenStax Anatomy and Physiology 2e, section 17.4 The Thyroid Gland, Functions of Thyroid Hormones: “Finally, thyroid hormones increase the body’s sensitivity to catecholamines (epinephrine and norepinephrine) from the adrenal medulla by upregulation of receptors in the blood vessels.” and, when the hormones are excessive, “this effect accelerates the heart rate, strengthens the heartbeat, and increases blood pressure.” OpenStax Pharmacology for Nurses, section 27.2, Table 27.5 Drug Prototype Table: Methimazole: “Drug Interactions Anticoagulants Beta-adrenergic blockers Digitalis glycosides Theophylline”",
+      "modelNote": "The cited sections give no direction for beta-blockers on TSH, T4 or T3, so no arrows are shown. In the teaching model only the heartbeat slows; the three levels stay where untreated hyperthyroidism put them." }
+  ]
+}
