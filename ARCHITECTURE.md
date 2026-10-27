@@ -58,7 +58,6 @@ flowchart LR
 | `music/last-light/media/` | HLS video segments (most of the repo's size) | No. Rendered elsewhere. |
 | `music/films.js`, `music/music.css` | The shared player (reads the page's `<script id="films">` list, streams `media/<slug>/` beside the page) and stylesheet of `/music/` and `/music/three-roads/`. LAST LIGHT keeps its own | Yes |
 | `music/media/<slug>/`, `music/three-roads/media/<slug>/` | One 720p HLS stream and poster per film, made by `tools/music-film.sh` (segments an H.264 720p master as is, re-encodes anything else); a song with no film is `song.m4a` + `cover.jpg` | No. Regenerate with `tools/music-film.sh`. |
-| `lions/simulator/` | Lions Simulator: a static page (`index.html`, `sim.css`, `sim.js`) that replays and charts `data/sim.json`. The JSON is made offline by `tools/lions-sim/build.py` from the nflverse 2026 play-by-play (Monte Carlo of the next Lions game; see `tools/lions-sim/README.md`). Rebuild each week with the new pbp file and the next opponent; never edit `sim.json` by hand | Page: yes. `data/sim.json`: regenerate |
 | `videos/`, `screenshots/`, `*.pdf`, `favicon.svg` | Films, card images, papers | Yes |
 | `lab/` | The Lab: one small app a day, its index and ledger (see The Lab below) | Yes |
 | `_headers`, `_redirects`, `robots.txt`, `sitemap.xml` | Edge behaviour and crawl rules | Yes |
