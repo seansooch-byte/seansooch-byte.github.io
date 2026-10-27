@@ -1,12 +1,12 @@
 /* Expected: real edition routes, same reading section, working links without JS,
-   no app routing, all four editions (Opus 5.5 pages built by ~/app-redesign/work/home-opus/build.py),
+   no app routing, all five editions (Opus 5.5 pages built by ~/app-redesign/work/home-opus/build.py),
    and no motion when requested. Three pages exist in every view: the home page, the Two Stories essay and
    the Lab course page (/lab/, which the lab pipeline writes, is view A's). A lesson is an app: one page. */
 (function () {
   'use strict';
   function routeFor(pathname, design, hash = '') {
-    const roots = {astra: '/', fable: '/designs/fable/', opus: '/designs/opus/', composer: '/designs/composer/'};
-    const page = pathname.replace(/^\/designs\/(?:fable|opus|composer)(?=\/)/, '').replace(/index\.html$/, '').replace(/\/$/, '') || '/';
+    const roots = {astra: '/', fable: '/designs/fable/', opus: '/designs/opus/', composer: '/designs/composer/', grok: '/designs/grok/'};
+    const page = pathname.replace(/^\/designs\/(?:fable|opus|composer|grok)(?=\/)/, '').replace(/index\.html$/, '').replace(/\/$/, '') || '/';
     if (!roots[design] || !['/', '/two-stories', '/lab'].includes(page)) return null;
     return roots[design] + (page === '/' ? '' : page.slice(1) + '/') + hash;
   }
@@ -16,7 +16,8 @@
     astra: ['ASTRA', 'THE PERSONAL INDEX'],
     fable: ['FABLE 5.1', 'THE FIELD MANUAL'],
     opus: ['OPUS 5.5', 'THE COMMENTARY'],
-    composer: ['COMPOSER 2.5', 'THE LIVE STACK']
+    composer: ['COMPOSER 2.5', 'THE LIVE STACK'],
+    grok: ['GROK', 'THE NIGHT ORBIT']
   };
   const key = 'sooch-design-transition';
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;

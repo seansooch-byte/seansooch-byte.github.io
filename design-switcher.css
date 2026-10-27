@@ -61,6 +61,13 @@ html[data-design="astra"][data-design-phase="arrive"] { background: #254dff; }
 html[data-design="fable"][data-design-phase="arrive"] { background: #e9e3d4; }
 html[data-design="opus"][data-design-phase="arrive"] { background: #14120f; }
 html[data-design="composer"][data-design-phase="arrive"] { background: #0a1210; }
+/* grok-view:start */
+.design-switcher[data-selected="grok"] { --i: 4; --view: #241c3d; }
+.design-curtain[data-destination="grok"] { background: #0b0a12; color: #f4efe6; }
+.design-curtain[data-destination="grok"] strong { font: 500 clamp(42px, 11vw, 148px)/.9 system-ui, sans-serif; letter-spacing: .16em; }
+.design-curtain[data-destination="grok"] span { color: #e2a15c; letter-spacing: .28em; }
+html[data-design="grok"][data-design-phase="arrive"] { background: #0b0a12; }
+/* grok-view:end */
 [data-design-phase="reveal"] .design-curtain { visibility: visible; animation: design-reveal 500ms cubic-bezier(.65,0,.35,1) both; }
 @keyframes design-cover { from { transform: translateY(101%); } to { transform: translateY(0); } }
 @keyframes design-reveal { from { transform: translateY(0); } to { transform: translateY(-101%); } }
