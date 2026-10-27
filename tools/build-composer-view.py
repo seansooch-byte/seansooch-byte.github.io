@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -225,6 +226,13 @@ def patch_fable_views3(text: str) -> str:
     )
 
 def main() -> None:
+    # Retired 2026-10-27. This script made the first draft of view C, and the pages were then finished by hand: a
+    # rerun on the current tree does not reproduce them (it brings back view A's light palette under the dark one),
+    # it widens two unrelated grids on the Fable home page to four columns, and it writes the switcher without the
+    # content stamps, which is how returning readers got a three-view bar with Composer wrapped under it. The pages in
+    # designs/composer/ are now edited by hand (see ARCHITECTURE.md); the switcher comes from the preview.
+    if '--i-know' not in sys.argv:
+        raise SystemExit(__doc__.strip() + '\nRetired: edit designs/composer/ by hand. See the note in main().')
     patch_switchers(ROOT / 'index.html', 'astra', '')
     patch_switchers(ROOT / 'lab/index.html', 'astra', 'lab')
     patch_switchers(ROOT / 'two-stories/index.html', 'astra', 'two-stories')

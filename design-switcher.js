@@ -62,9 +62,11 @@
       const target = new URL(to, location.href);
       try { sessionStorage.setItem(key, JSON.stringify({...position, path: target.pathname, time: Date.now(), keyboard: event.detail === 0})); } catch (_) {}
       const curtain = document.querySelector('.design-curtain');
+      // A view this script has no curtain for still switches: it never strands the click it already took.
+      const [title, subtitle] = CURTAINS[link.dataset.design] || [link.textContent.toUpperCase(), ''];
       curtain.dataset.destination = link.dataset.design;
-      curtain.querySelector('strong').textContent = CURTAINS[link.dataset.design][0];
-      curtain.querySelector('span').textContent = CURTAINS[link.dataset.design][1];
+      curtain.querySelector('strong').textContent = title;
+      curtain.querySelector('span').textContent = subtitle;
       switcher.dataset.selected = link.dataset.design;
       root.dataset.designPhase = 'leave';
       setTimeout(() => location.assign(to), reduced ? 0 : 340);

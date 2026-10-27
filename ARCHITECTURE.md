@@ -26,7 +26,7 @@ flowchart LR
   Check -->|"wrangler pages deploy<br>direct upload"| CF["Cloudflare Pages<br>project sean-sooch-portfolio"]
   CF --> Live["https://seansooch.dev"]
   Pipe["lab pipeline<br>(outside this repo)"] -->|"pull request per lesson:<br>lab/, the ledger, lab lines of sitemap.xml"| Repo
-  Live -.->|"in the reader's browser, lab-course.js reads<br>/lab/syllabus.json and /lab/apps.json"| Rows["lesson rows on the three home pages<br>and on the Lab pages of views F and O"]
+  Live -.->|"in the reader's browser, lab-course.js reads<br>/lab/syllabus.json and /lab/apps.json"| Rows["lesson rows on the four home pages<br>and on the Lab pages of views F, O and C"]
 ```
 
 - **Hosting.** Cloudflare Pages project `sean-sooch-portfolio`, production branch `main`, deployed by direct upload with
@@ -36,7 +36,8 @@ flowchart LR
   ships because it always has.
 - **The bundle** is a commit minus everything marked `export-ignore` in `.gitattributes` (Markdown, `tools/`, git
   plumbing). That file is the only definition of the difference between the repo and the site. Nothing ships from an
-  uncommitted working tree, and nothing ships from a commit that holds a symlink: `tools/stage.sh` refuses both.
+  uncommitted working tree, nothing ships from a commit that holds a symlink, and nothing ships from a commit in which a
+  page asks for a shared asset by a stale `?v=` stamp: `tools/stage.sh` refuses all three.
 - **The audit.** `tools/audit.sh` compares every served file in the bundle with the live site by hash (`_headers` and
   `_redirects` are consumed by Pages, not served, so their effect is checked by behaviour). Before a deploy its DIFF
   list should be exactly the files you meant to change; after, it should be empty.
@@ -47,8 +48,9 @@ flowchart LR
 |---|---|---|
 | `index.html`, `two-stories/` | Homepage and essay, view A (OpenAI Astra) | No. Generated. |
 | `designs/fable/`, `designs/opus/` | The same two pages in views F and O, and each view's Lab course page (`lab/`) | No. Generated. |
-| `design-switcher.css`, `design-switcher.js` | The fixed bar that switches views | No. Copied from the preview. |
-| `lab-course.js` | Draws lesson rows from the lab ledger on the three home pages and on the Lab pages of views F and O | No. Copied from the preview. |
+| `designs/composer/` | View C (Cursor Composer 2.5, "The Live Stack", added 2026-10-27): the home page and essay are view A's pages and the Lab page is view F's, each with a dark theme block (`The Live Stack theme`) | Yes, by hand: nothing generates it. `tools/build-composer-view.py` made the first draft and must not be rerun (see the note in it) |
+| `design-switcher.css`, `design-switcher.js` | The fixed bar that switches views. Every page asks for them (and `lab-course.js`) by a content stamp, `?v=` plus the first 10 hex digits of the file's MD5 | No. Copied from the preview, then every view page restamped (the preview's `edition_views.switcher_head`) |
+| `lab-course.js` | Draws lesson rows from the lab ledger on the four home pages and on the Lab pages of views F, O and C | No. Copied from the preview. |
 | `antibiotic-coverage/`, `calculators/`, `clinical-calculators/`, `differentials/`, `lab-values/index.html`, `tccc/`, `toolkit/` | Field Toolkit, Edition 2 "Pocket Cards" | No. Generated. |
 | `force-multipliers/` | Force Multipliers: a hub and three briefing cards (Graph vs Loop, Obsidian Reader, Anki), with their own stylesheet and script | No. Generated. |
 | `lab-values/cbc-cmp/` | CBC and CMP decoder | No. Copied from `~/lab-decoder`. |
@@ -95,10 +97,10 @@ To change a generated page from a pull request, describe the change and name the
 Three pages exist in every view, and the switcher moves between them: the home page, the Two Stories essay and the Lab
 course page. A lesson is an app with one page, the same in every view.
 
-| | View A (Astra) | View F (Fable 5.1) | View O (Opus 5.5) |
-|---|---|---|---|
-| Lab course page | `/lab/` (`lab/index.html`, written by the lab pipeline) | `/designs/fable/lab/` | `/designs/opus/lab/` |
-| Where its lesson list comes from | Written into the page by `tools/lab-index.mjs` | Drawn in the browser by `lab-course.js` | Drawn in the browser by `lab-course.js` |
+| | View A (Astra) | View F (Fable 5.1) | View O (Opus 5.5) | View C (Composer 2.5) |
+|---|---|---|---|---|
+| Lab course page | `/lab/` (`lab/index.html`, written by the lab pipeline) | `/designs/fable/lab/` | `/designs/opus/lab/` | `/designs/composer/lab/` |
+| Where its lesson list comes from | Written into the page by `tools/lab-index.mjs` | Drawn in the browser by `lab-course.js` | Drawn in the browser by `lab-course.js` | Drawn in the browser by `lab-course.js` |
 
 - **No generated page holds a lesson.** The Lab section of each home page and the Lab pages of views F and O carry a row
   template in that view's own markup. `lab-course.js` reads `/lab/syllabus.json` and `/lab/apps.json` in the reader's
