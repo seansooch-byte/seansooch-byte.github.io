@@ -193,5 +193,20 @@
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
     }
+  },
+  {
+    "slug": "thyroid-axis",
+    "title": "The Thyroid Axis",
+    "date": "2026-10-27",
+    "description": "The brain-to-thyroid feedback loop that sets the body's metabolic pace, and the drugs that replace or suppress thyroid hormone.",
+    "category": "medicine",
+    "builder": {
+      "tool": "Claude Code",
+      "model": "claude-opus-5-5"
+    },
+    "reviewer": {
+      "tool": "OpenAI Codex",
+      "model": "gpt-6.1-sol"
+    }
   }
 ]
