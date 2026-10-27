@@ -17,7 +17,7 @@
     fable: ['FABLE 5.1', 'THE FIELD MANUAL'],
     opus: ['OPUS 5.5', 'THE COMMENTARY'],
     composer: ['COMPOSER 2.5', 'THE LIVE STACK'],
-    grok: ['GROK', 'THE NIGHT ORBIT']
+    grok: ['GROK 4.7', 'THE NIGHT ORBIT']
   };
   const key = 'sooch-design-transition';
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
