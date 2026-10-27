@@ -1,5 +1,5 @@
 /* Expected: real edition routes, same reading section, working links without JS,
-   no app routing, all five editions (Opus 5.5 pages built by ~/app-redesign/work/home-opus/build.py),
+   no app routing, every view's pages (Opus 5.5 pages built by ~/app-redesign/work/home-opus/build.py),
    and no motion when requested. Three pages exist in every view: the home page, the Two Stories essay and
    the Lab course page (/lab/, which the lab pipeline writes, is view A's). A lesson is an app: one page. */
 (function () {

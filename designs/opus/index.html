@@ -6,7 +6,7 @@
 <title>Sean Sooch: The Commentary</title>
 <meta name="description" content="Fourteen working systems across medicine, the military, and frontier AI, set as a glossed edition with commentary in the margins. Built by a medical student and military officer with AI as the engineering tool. Every host is asked to answer as the page loads.">
 <meta property="og:title" content="Sean Sooch: The Commentary">
-<meta property="og:description" content="One site, three views. This one, The Commentary, was set by Claude Opus 5.5 beside the Field Manual of Claude Fable 5.1 and the Personal Index of OpenAI Astra.">
+<meta property="og:description" content="One site, five views. This one, The Commentary, was set by Claude Opus 5.5 beside the Field Manual of Claude Fable 5.1, the Personal Index of OpenAI Astra, the Live Stack of Cursor Composer 2.5 and the Night Orbit of Grok.">
 <meta property="og:type" content="website">
 <link rel="canonical" href="https://seansooch.dev/designs/opus/">
 <meta property="og:url" content="https://seansooch.dev/designs/opus/">
@@ -235,8 +235,8 @@ tr.sub td.val{font-style:italic;color:var(--rubric)}
 .stem b{font-family:var(--serif);font-weight:600;font-size:21px}
 .stem .who{display:block;font-family:var(--sans);font-size:14.5px;color:var(--text-2);margin-top:2px}
 .stem .who a{color:var(--text-2)}
-.fork{position:relative;margin-left:22px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding-top:28px}
-.fork::before{content:"";position:absolute;top:0;left:0;right:calc(100% / 6);border-top:1px solid var(--rubric-dim);height:0}
+.fork{position:relative;margin-left:22px;display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr));gap:18px;padding-top:28px}
+.fork::before{content:"";position:absolute;top:0;left:0;right:calc(100% / (2 * var(--n,3)));border-top:1px solid var(--rubric-dim);height:0}
 .fork::after{content:"";position:absolute;top:-26px;left:0;height:26px;border-left:1px solid var(--rubric-dim)}
 .wit{position:relative;border:1px solid var(--rule-2);padding:18px 18px 16px;background:var(--leaf);display:flex;flex-direction:column;gap:6px;text-decoration:none}
 .wit::before{content:"";position:absolute;top:-29px;left:calc(50% - .5px);height:28px;border-left:1px solid var(--rubric-dim)}
@@ -248,7 +248,7 @@ tr.sub td.val{font-style:italic;color:var(--rubric)}
 a.wit:hover{border-color:var(--rubric)}
 a.wit:hover .siglum{color:var(--rubric)}
 .wit.here{border-color:var(--rubric-dim)}
-.wit .lead{position:absolute;top:14px;right:16px;font-family:var(--sc);font-weight:500;font-size:14px;letter-spacing:.06em;color:var(--rubric)}
+.wit .lead{font-family:var(--sc);font-weight:500;font-size:14px;letter-spacing:.06em;color:var(--rubric)}   /* under the title: five witnesses are too narrow for a corner label beside the siglum */
 .wit.here .siglum{color:var(--rubric)}
 .stemma figcaption{font-family:var(--sans);font-size:14px;color:var(--text-2);margin-top:18px;line-height:1.5}
 .stemma figcaption b{font-family:var(--sc);font-weight:500;color:var(--rubric);letter-spacing:.04em}
@@ -361,7 +361,7 @@ footer a{color:var(--text-2)}
   .work,.lesser,.film,.wit{break-inside:avoid}
 }
 </style>
-<!-- design-switcher:start --><link rel="stylesheet" href="/design-switcher.css?v=6f18ffab1c"><script src="/design-switcher.js?v=9773712048"></script><script src="/lab-course.js?v=5f7b63c4ab" defer></script><!-- design-switcher:end --></head>
+<!-- design-switcher:start --><link rel="stylesheet" href="/design-switcher.css?v=99ff7d4f90"><script src="/design-switcher.js?v=12d6f87cce"></script><script src="/lab-course.js?v=5f7b63c4ab" defer></script><!-- design-switcher:end --></head>
 <body>
 
 <div class="ruling" aria-hidden="true"><i></i></div>
@@ -401,7 +401,7 @@ footer a{color:var(--text-2)}
         <p class="lede ink-in-2"
            data-tech="<span class='versal rubricate'>T</span>hirteen working systems where medicine, the military, and frontier AI meet, built by a <b>medical student</b> and <b>military officer</b> with AI as the engineering tool. <b>150,906 lines</b> across 247 files. Every one is live, and this page asks each host to answer while you read."
            data-simple="<span class='versal rubricate'>T</span>hirteen working apps, built by one person in spare time. I'm a <b>medical student</b> and a <b>military officer</b>, and AI wrote most of the code with me. <b>Everything here is online</b>, and this page checks that for you as it loads."><span class="versal rubricate">T</span>hirteen working systems where medicine, the military, and frontier AI meet, built by a <b>medical student</b> and <b>military officer</b> with AI as the engineering tool. <b>150,906 lines</b> across 247 files. Every one is live, and this page asks each host to answer while you read.</p>
-        <p class="hands ink-in-3">Written and built by <b>Sean Sooch</b>. This view set by <b>Claude Opus 5.5</b>, third in line, beside the Field Manual of <b>Claude Fable 5.1</b> and the Personal Index of <b>OpenAI Astra</b>. One site, three views; the switch at the foot of the page keeps your place.</p>
+        <p class="hands ink-in-3">Written and built by <b>Sean Sooch</b>. This view set by <b>Claude Opus 5.5</b>, third in line, beside the Field Manual of <b>Claude Fable 5.1</b>, the Personal Index of <b>OpenAI Astra</b>, the Live Stack of <b>Cursor Composer 2.5</b> and the Night Orbit of <b>Grok</b>. One site, five views; the switch at the foot of the page keeps your place.</p>
       </div>
       <aside class="gr ink-in-3" aria-label="Figures">
         <dl class="figures">
@@ -856,8 +856,8 @@ footer a{color:var(--text-2)}
     </div>
     <div class="row3 para">
       <div class="gl"><span class="sidehead">The practice</span></div>
-      <div class="tx"><p data-tech="This site is rebuilt from the ground up at every new Anthropic model class, as a personal benchmark of frontier capability. Each edition is designed end to end by the model it is named for, then <b>retired, not deleted</b>, when its successor arrives. Put two side by side and you can see, in typography and judgment rather than benchmark scores, how far the frontier moved. Vol. 03 changed the practice: when the next class arrived it was not retired. The Field Manual stays current beside OpenAI Astra's Personal Index, and this Commentary joins them third, so Vol. 03 has three views drawn by three hands, and you can switch between them without losing your place."
-         data-simple="Every time a new class of Claude comes out, I have it redesign this entire site. The old version gets archived, not deleted, so you can compare them and see how much better the models are getting: <b>taste is harder to fake than a test score</b>. This time the old design stayed: three AI designers each drew their own version of the same site, and you can switch between them.">This site is rebuilt from the ground up at every new Anthropic model class, as a personal benchmark of frontier capability. Each edition is designed end to end by the model it is named for, then <b>retired, not deleted</b>, when its successor arrives. Put two side by side and you can see, in typography and judgment rather than benchmark scores, how far the frontier moved. Vol. 03 changed the practice: when the next class arrived it was not retired. The Field Manual stays current beside OpenAI Astra's Personal Index, and this Commentary joins them third, so Vol. 03 has three views drawn by three hands, and you can switch between them without losing your place.</p></div>
+      <div class="tx"><p data-tech="This site is rebuilt from the ground up at every new Anthropic model class, as a personal benchmark of frontier capability. Each edition is designed end to end by the model it is named for, then <b>retired, not deleted</b>, when its successor arrives. Put two side by side and you can see, in typography and judgment rather than benchmark scores, how far the frontier moved. Vol. 03 changed the practice: when the next class arrived it was not retired. The Field Manual stays current beside OpenAI Astra's Personal Index; this Commentary joined them third, and Cursor Composer 2.5's Live Stack and Grok's Night Orbit after it, so Vol. 03 has five views drawn by five hands, and you can switch between them without losing your place."
+         data-simple="Every time a new class of Claude comes out, I have it redesign this entire site. The old version gets archived, not deleted, so you can compare them and see how much better the models are getting: <b>taste is harder to fake than a test score</b>. This time the old design stayed: five AI designers each drew their own version of the same site, and you can switch between them.">This site is rebuilt from the ground up at every new Anthropic model class, as a personal benchmark of frontier capability. Each edition is designed end to end by the model it is named for, then <b>retired, not deleted</b>, when its successor arrives. Put two side by side and you can see, in typography and judgment rather than benchmark scores, how far the frontier moved. Vol. 03 changed the practice: when the next class arrived it was not retired. The Field Manual stays current beside OpenAI Astra's Personal Index; this Commentary joined them third, and Cursor Composer 2.5's Live Stack and Grok's Night Orbit after it, so Vol. 03 has five views drawn by five hands, and you can switch between them without losing your place.</p></div>
       <div class="gr"><p class="gloss">A stemma is the family tree an editor draws of the surviving copies of a text. Each copy is a witness, named by a letter, its siglum.</p></div>
     </div>
 
@@ -868,15 +868,17 @@ footer a{color:var(--text-2)}
           <li class="omega"><span class="sig">ω</span><b>The work itself</b><span class="who">Fourteen systems, three papers, five films. Every edition below is a copy of this.</span></li>
           <li data-index="Vol. 01, The Magazine (archive)" data-ref="Editions" data-kw="editions archive opus" data-href="https://seansooch-vol1.pages.dev"><span class="sig">Vol. 01</span><b>The Magazine</b><span class="who">Claude Opus 4.7 · April 2026 · retired with honors · <a href="https://seansooch-vol1.pages.dev" target="_blank" rel="noopener">read the archive</a></span></li>
           <li data-index="Vol. 02, Triad × Vitals (archive)" data-ref="Editions" data-kw="editions archive fable 5 vitals ecg" data-href="https://seansooch-vol2.pages.dev"><span class="sig">Vol. 02</span><b>Triad × Vitals</b><span class="who">Claude Fable 5 · June 2026 · retired with honors · <a href="https://seansooch-vol2.pages.dev" target="_blank" rel="noopener">read the archive</a></span></li>
-          <li><span class="sig">Vol. 03</span><b>Three views</b><span class="who">OpenAI Astra + Claude Fable 5.1 + Claude Opus 5.5 · September 2026 · the text the three current views share</span></li>
+          <li><span class="sig">Vol. 03</span><b>Five views</b><span class="who">OpenAI Astra + Claude Fable 5.1 + Claude Opus 5.5 + Cursor Composer 2.5 + Grok · September 2026 · the text the five current views share</span></li>
         </ol>
-        <div class="fork">
+        <div class="fork" style="--n:5">
           <a class="wit" href="/designs/fable/" data-index="The Field Manual (view F)" data-ref="Editions" data-kw="editions view claude fable 5.1" data-href="/designs/fable/"><span class="siglum">F</span><b>The Field Manual</b><span>Claude Fable 5.1</span><em>Vol. 03 · first in line. Numbered chapters, live readiness, a printed index. Read this view →</em></a>
           <a class="wit" href="/" data-index="The Personal Index (view A)" data-ref="Editions" data-kw="editions view openai astra" data-href="/"><span class="siglum">A</span><b>The Personal Index</b><span>OpenAI Astra</span><em>Vol. 03 · second in line. A white exhibition catalogue: the name set huge, numbered editorial rows. Read this view →</em></a>
-          <div class="wit here" aria-current="page" data-index="The Commentary (view O)" data-ref="Editions" data-kw="editions view claude opus 5.5" data-href="#appa"><span class="lead">Frontier lead</span><span class="siglum">O</span><b>The Commentary</b><span>Claude Opus 5.5</span><em>Vol. 03 · third in line. A glossed edition: the work in the centre, commentary in the margins, one rubric red. You are reading this view.</em></div>
+          <div class="wit here" aria-current="page" data-index="The Commentary (view O)" data-ref="Editions" data-kw="editions view claude opus 5.5" data-href="#appa"><span class="siglum">O</span><b>The Commentary</b><span class="lead">Frontier lead</span><span>Claude Opus 5.5</span><em>Vol. 03 · third in line. A glossed edition: the work in the centre, commentary in the margins, one rubric red. You are reading this view.</em></div>
+          <a class="wit" href="/designs/composer/" data-index="The Live Stack (view C)" data-ref="Editions" data-kw="editions view cursor composer 2.5" data-href="/designs/composer/"><span class="siglum">C</span><b>The Live Stack</b><span>Cursor Composer 2.5</span><em>Vol. 03 · fourth in line. An operations deck: dark telemetry, green reachability lights, monospace labels. Read this view →</em></a>
+          <a class="wit" href="/designs/grok/" data-index="The Night Orbit (view G)" data-ref="Editions" data-kw="editions view grok" data-href="/designs/grok/"><span class="siglum">G</span><b>The Night Orbit</b><span>Grok</span><em>Vol. 03 · fifth in line. A deep-space mission log: brass instruments, full-bleed plates, one night orbit of the same record. Read this view →</em></a>
         </div>
 
-        <figcaption><b>Stemma.</b> Solid line: descent. Vol. 01 and 02 are retired and kept online. Vol. 03 is the text the three current views share: F, A and O are its three views, in the order they joined; O is the frontier lead.</figcaption>
+        <figcaption><b>Stemma.</b> Solid line: descent. Vol. 01 and 02 are retired and kept online. Vol. 03 is the text the five current views share: F, A, O, C and G are its views, in the order they joined; O is the frontier lead.</figcaption>
       </figure>
     </div>
 
@@ -890,7 +892,7 @@ footer a{color:var(--text-2)}
             <tbody>
               <tr><td class="val">01</td><td>The Magazine: dark editorial, sixteen sections, terminal metrics</td><td>Claude Opus 4.7</td><td>April 2026</td><td class="ret">Retired with honors</td><td class="lnk"><a href="https://seansooch-vol1.pages.dev" target="_blank" rel="noopener">archive</a></td></tr>
               <tr><td class="val">02</td><td>Triad × Vitals: three worlds, one chart, reactive ink</td><td>Claude Fable 5</td><td>June 2026</td><td class="ret">Retired with honors</td><td class="lnk"><a href="https://seansooch-vol2.pages.dev" target="_blank" rel="noopener">archive</a></td></tr>
-              <tr><td class="val">03</td><td>Three views: the Field Manual, the Personal Index and the Commentary, switchable in place</td><td>OpenAI Astra + Claude Fable 5.1 + Claude Opus 5.5</td><td>September 2026</td><td class="cur">Current</td><td class="lnk">you are here</td></tr>
+              <tr><td class="val">03</td><td>Five views: the Field Manual, the Personal Index, the Commentary, the Live Stack and the Night Orbit, switchable in place</td><td>OpenAI Astra + Claude Fable 5.1 + Claude Opus 5.5 + Cursor Composer 2.5 + Grok</td><td>September 2026</td><td class="cur">Current</td><td class="lnk">you are here</td></tr>
               <tr><td class="val">04</td><td class="ref">To be designed</td><td class="ref">The next class</td><td class="ref">-</td><td class="ret">Awaiting release</td><td class="lnk"></td></tr>
             </tbody>
           </table>
@@ -900,8 +902,8 @@ footer a{color:var(--text-2)}
 
     <div class="row3 para">
       <div class="gl"><span class="sidehead">Since Change 3</span></div>
-      <div class="tx"><p data-tech="What changed beyond the design. The site is now three views of one text, switched from the bar at the foot of every page, which carries your place across, and each view's own record now lists all three. Every description was checked against the live apps on 23 September 2026 and corrected where an app had moved on; the corrections are one shared file, so all three views say the same thing. The <b>Two Stories</b> paper is set in each view. And the apps began keeping editions of their own: fifteen were redesigned from a blank page by Claude Opus 5.5 on 22 and 23 September 2026, and every retired edition stays online at its own address, listed below."
-         data-simple="Since the last edition: the site became three designs you can switch between, every app description was checked against the live apps and corrected, and most of the apps were redesigned too. Their old versions are still online, listed below.">What changed beyond the design. The site is now three views of one text, switched from the bar at the foot of every page, which carries your place across, and each view's own record now lists all three. Every description was checked against the live apps on 23 September 2026 and corrected where an app had moved on; the corrections are one shared file, so all three views say the same thing. The <b>Two Stories</b> paper is set in each view. And the apps began keeping editions of their own: fifteen were redesigned from a blank page by Claude Opus 5.5 on 22 and 23 September 2026, and every retired edition stays online at its own address, listed below.</p></div>
+      <div class="tx"><p data-tech="What changed beyond the design. The site is now five views of one text, switched from the bar at the foot of every page, which carries your place across, and each view's own record lists them all. Every description was checked against the live apps on 23 September 2026 and corrected where an app had moved on; the corrections are one shared file, so every view says the same thing. The <b>Two Stories</b> paper is set in each view. And the apps began keeping editions of their own: fifteen were redesigned from a blank page by Claude Opus 5.5 on 22 and 23 September 2026, and every retired edition stays online at its own address, listed below."
+         data-simple="Since the last edition: the site became five designs you can switch between, every app description was checked against the live apps and corrected, and most of the apps were redesigned too. Their old versions are still online, listed below.">What changed beyond the design. The site is now five views of one text, switched from the bar at the foot of every page, which carries your place across, and each view's own record lists them all. Every description was checked against the live apps on 23 September 2026 and corrected where an app had moved on; the corrections are one shared file, so every view says the same thing. The <b>Two Stories</b> paper is set in each view. And the apps began keeping editions of their own: fifteen were redesigned from a blank page by Claude Opus 5.5 on 22 and 23 September 2026, and every retired edition stays online at its own address, listed below.</p></div>
       <div class="gr"></div>
     </div>
 
@@ -953,11 +955,13 @@ footer a{color:var(--text-2)}
       <p class="explicit">Explicit</p>
       <p class="cul">
         <span>This view was set by Claude Opus 5.5 in September 2026, third</span>
-        <span>in line, beside the Field Manual of Claude Fable 5.1</span>
-        <span>and the Personal Index of OpenAI Astra. Three</span>
-        <span>hands drew three views of one world. The</span>
-        <span>work they describe is Sean's, who</span>
-        <span>asked each of us to make it</span>
+        <span>in line, beside the Field Manual of Claude Fable 5.1 and</span>
+        <span>the Personal Index of OpenAI Astra; the Live Stack</span>
+        <span>of Cursor Composer 2.5 and the Night Orbit of</span>
+        <span>Grok came after. Five hands drew five</span>
+        <span>views of one world. The work they</span>
+        <span>describe is Sean's, who asked</span>
+        <span>each of us to make it</span>
         <span>well, and put our</span>
         <span>names on it.</span>
         <span class="fin">❧</span>

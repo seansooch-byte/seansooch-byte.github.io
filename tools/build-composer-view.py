@@ -337,7 +337,7 @@ kbd{font:500 var(--s-2)/1 var(--mono);padding:3px 5px;border:1px solid currentCo
 @keyframes ping{0%{box-shadow:0 0 0 0 rgba(95,227,161,.55)}70%,100%{box-shadow:0 0 0 7px rgba(95,227,161,0)}}
 
 @media (max-width:1000px){
-  .console{grid-template-columns:1fr}
+  .console{grid-template-columns:minmax(0,1fr)}   /* not 1fr: a column that grows to its widest content widens the page */
   .rail{position:sticky;z-index:40;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:12px var(--gut);
     border-right:0;border-bottom:1px solid var(--line);overflow:visible}
   .rail-id{flex-direction:row;align-items:baseline;gap:12px;margin-right:auto}
@@ -345,7 +345,10 @@ kbd{font:500 var(--s-2)/1 var(--mono);padding:3px 5px;border:1px solid currentCo
   .rail-live,.rail-head{display:none}
   .rail-ctl{flex-direction:row;margin:0}
   .rail-btn{width:auto;padding:8px 10px}
-  .rail-nav{order:3;flex:1 0 100%;flex-direction:row;gap:4px;overflow-x:auto;scrollbar-width:none;margin:0 calc(var(--gut) * -1);padding:0 var(--gut)}
+  /* the rail's flex item is the <nav>, not its list: it takes the row of its own, and min-width:0 lets the list scroll
+     sideways inside it instead of setting the page's width (the unwrapped row is 784px on the home page) */
+  .rail>nav{order:3;flex:1 0 100%;min-width:0}
+  .rail-nav{flex-direction:row;gap:4px;overflow-x:auto;scrollbar-width:none;margin:0 calc(var(--gut) * -1);padding:0 var(--gut)}
   .rail-link{grid-template-columns:auto auto;gap:6px;white-space:nowrap;padding:6px 9px}
   .rail-link::before{left:9px;right:9px;top:auto;bottom:0;width:auto;height:2px;transform:scaleX(0)}
   .rail-link[aria-current]::before{transform:scaleX(1)}
@@ -513,7 +516,7 @@ HOME_CSS = r"""
 .note-key small{display:block;margin-top:4px;font-weight:400;font-size:var(--s-2);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
 .note-row p{margin:0;font-size:var(--s1);line-height:1.55}
 
-/* changelog and the four views */
+/* changelog and the views: one column per view, from view A's band */
 .changelog .cl-vol{font:600 var(--s-1)/1.3 var(--mono);color:var(--accent);white-space:nowrap}
 .changelog .cl-dim,.changelog .cl-retired{color:var(--ink-2)}
 .changelog .cl-current{color:var(--ok);font-weight:600}
@@ -523,7 +526,7 @@ HOME_CSS = r"""
 .quad-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 24px;margin:0;padding:16px 20px;border-bottom:1px solid var(--line)}
 .quad-head span:first-child{font:600 var(--s2)/1.1 var(--sans);letter-spacing:-.03em}
 .quad-head span:last-child{font:400 var(--s-1)/1.5 var(--mono);color:var(--ink-2)}
-.quad-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.quad-grid{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr)}
 .quad-cell{position:relative;display:flex;flex-direction:column;gap:10px;min-height:250px;padding:20px;border-right:1px solid var(--line);text-decoration:none;
   transition:background .2s}
 .quad-cell:last-child{border-right:0}
@@ -610,9 +613,10 @@ a.quad-cell:hover{background:var(--pane)}
   .entry{grid-template-columns:4rem minmax(0,1fr) auto}
   .entry-meta{grid-column:2;grid-row:3}
   .entry-act{grid-column:3}
-  .quad-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .quad-cell:nth-child(2){border-right:0}
-  .quad-cell:nth-child(-n+2){border-bottom:1px solid var(--line)}
+  .quad-grid{grid-auto-flow:row;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .quad-cell{border-bottom:1px solid var(--line)}
+  .quad-cell:nth-child(2n){border-right:0}
+  .quad-cell:last-child:nth-child(odd){grid-column:1 / -1;border-right:0}
 }
 @media (max-width:860px){
   .boot-grid,.brief,.annex,.hosts{grid-template-columns:1fr}
@@ -634,6 +638,9 @@ a.quad-cell:hover{background:var(--pane)}
   .quad-cell{min-height:0;border-right:0;border-bottom:1px solid var(--line)}
   .quad-cell:last-child{border-bottom:0}
   .boot-bar{font-size:var(--s-2)}
+}
+@media (max-width:380px){
+  .boot-name{font-size:13.4vw}   /* the 52px floor of its clamp is wider than a 320px phone; 13.4vw is 52px at 388px */
 }
 """
 
@@ -970,12 +977,10 @@ def build_home():
         if tr.get('data-index') is not None and tr.get('data-ref') is None:
             tr.attrs['data-ref'] = 'Table A-1'
     body = table_rows(P, table, {'val': 'cl-vol', 'ref': 'cl-dim', 'ed-retired': 'cl-retired', 'ed-current': 'cl-current', 'ed-link': 'cl-link'})
-    body = body.replace('Four views: the Field Manual, the Personal Index and the Commentary, switchable in place',
-                        'Four views: the Field Manual, the Personal Index, the Commentary and the Live Stack, switchable in place')
     band = P.one(by_cls('views-band'), s)
     cap = kids(P.one(by_cls('views-cap'), band), 'span')
     cells = []
-    for cell in P.need(kids(P.one(by_cls('views-row'), band)), 'view cells', 4):
+    for cell in P.need(kids(P.one(by_cls('views-row'), band)), 'view cells', 2):   # however many views view A's band lists
         part = {c.get('class'): c for c in kids(cell, 'span')}
         name = P.inner(part['view-name'])
         new = P.all(by_cls('new'), part['view-name'])
@@ -990,6 +995,8 @@ def build_home():
             cells.append(f'<div class="quad-cell" aria-current="page" data-href="#appa"{common}>{inner}<span class="quad-here">You are here</span></div>')
         else:
             cells.append(f'<a class="quad-cell" href="{href}"{common}>{inner}<span class="quad-go" aria-hidden="true">↗︎</span></a>')
+    if sum('aria-current="page"' in c for c in cells) != 1:
+        raise SystemExit('index.html: view A\'s views band must list view C once (add it to the editions record and rebuild view A)')
     boxes = [b for b in kids(s, 'div') if b.has('box')]
     out.append(
         f'<section id="appa" class="pane">{pane_head(P, P.one(by_cls("ch-head"), s))}{tech(P, note, "pane-note")}'

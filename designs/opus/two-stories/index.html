@@ -235,8 +235,8 @@ tr.sub td.val{font-style:italic;color:var(--rubric)}
 .stem b{font-family:var(--serif);font-weight:600;font-size:21px}
 .stem .who{display:block;font-family:var(--sans);font-size:14.5px;color:var(--text-2);margin-top:2px}
 .stem .who a{color:var(--text-2)}
-.fork{position:relative;margin-left:22px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding-top:28px}
-.fork::before{content:"";position:absolute;top:0;left:0;right:calc(100% / 6);border-top:1px solid var(--rubric-dim);height:0}
+.fork{position:relative;margin-left:22px;display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr));gap:18px;padding-top:28px}
+.fork::before{content:"";position:absolute;top:0;left:0;right:calc(100% / (2 * var(--n,3)));border-top:1px solid var(--rubric-dim);height:0}
 .fork::after{content:"";position:absolute;top:-26px;left:0;height:26px;border-left:1px solid var(--rubric-dim)}
 .wit{position:relative;border:1px solid var(--rule-2);padding:18px 18px 16px;background:var(--leaf);display:flex;flex-direction:column;gap:6px;text-decoration:none}
 .wit::before{content:"";position:absolute;top:-29px;left:calc(50% - .5px);height:28px;border-left:1px solid var(--rubric-dim)}
@@ -248,7 +248,7 @@ tr.sub td.val{font-style:italic;color:var(--rubric)}
 a.wit:hover{border-color:var(--rubric)}
 a.wit:hover .siglum{color:var(--rubric)}
 .wit.here{border-color:var(--rubric-dim)}
-.wit .lead{position:absolute;top:14px;right:16px;font-family:var(--sc);font-weight:500;font-size:14px;letter-spacing:.06em;color:var(--rubric)}
+.wit .lead{font-family:var(--sc);font-weight:500;font-size:14px;letter-spacing:.06em;color:var(--rubric)}   /* under the title: five witnesses are too narrow for a corner label beside the siglum */
 .wit.here .siglum{color:var(--rubric)}
 .stemma figcaption{font-family:var(--sans);font-size:14px;color:var(--text-2);margin-top:18px;line-height:1.5}
 .stemma figcaption b{font-family:var(--sc);font-weight:500;color:var(--rubric);letter-spacing:.04em}
@@ -392,7 +392,7 @@ footer a{color:var(--text-2)}
 }
 @media (max-width:1180px){ .essay-p > .gl{display:block} .bar nav .tools a.btn{display:inline-block} }
 </style>
-<!-- design-switcher:start --><link rel="stylesheet" href="/design-switcher.css?v=6f18ffab1c"><script src="/design-switcher.js?v=9773712048"></script><!-- design-switcher:end -->
+<!-- design-switcher:start --><link rel="stylesheet" href="/design-switcher.css?v=99ff7d4f90"><script src="/design-switcher.js?v=12d6f87cce"></script><!-- design-switcher:end -->
 </head>
 <body>
 

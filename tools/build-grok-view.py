@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
-"""Generate the Grok view ("The Night Orbit") and register it on the design switcher.
+"""Generate the Grok view ("The Night Orbit") from view A's pages.
 
-Safe to re-run. It rewrites designs/grok/, patches only the shared switcher
-nav and the ?v= stamps on pages that already carry the switcher, and updates
-design-switcher.js / design-switcher.css. It does not edit lesson apps.
+Reads    index.html, two-stories/index.html (view A: the words, figures and data hooks, the views band, Table A-1 and
+         the switcher) and designs/fable/lab/index.html (the switcher of the Lab page, with lab-course.js)
+Writes   designs/grok/index.html, designs/grok/two-stories/index.html, designs/grok/lab/index.html,
+         designs/grok/nasa-plates.js, and this view's row in ARCHITECTURE.md; nothing else.
+
+Every page of this view carries view A's switcher with this view selected, and lists the views and editions view A
+lists. View A renders both from the shared editions record, so a new view or edition needs no edit here: rebuild view
+A, copy it in, rerun this. Safe to re-run; a rerun on an unchanged tree changes nothing. It does not edit lesson apps,
+other views' pages or the switcher's assets.
 """
 from __future__ import annotations
 
@@ -18,48 +24,16 @@ PLATES_JS = ROOT / 'designs' / 'grok' / 'nasa-plates.js'
 # slots per page: home 0-4 (0 is the hero), Two Stories 5-7, Lab 8-9; nasa-plates.js maps slot N to the Nth picture day
 SLOTS = {'index.html': range(0, 5), 'two-stories/index.html': range(5, 8), 'lab/index.html': range(8, 10)}
 
-VIEWS = [
-    ('astra', 'Astra'),
-    ('fable', 'Fable 5.1'),
-    ('opus', 'Opus 5.5'),
-    ('composer', 'Composer 2.5'),
-    ('grok', 'Grok'),
-]
-CURTAINS = {
-    'astra': ('ASTRA', 'THE PERSONAL INDEX'),
-    'fable': ('FABLE 5.1', 'THE FIELD MANUAL'),
-    'opus': ('OPUS 5.5', 'THE COMMENTARY'),
-    'composer': ('COMPOSER 2.5', 'THE LIVE STACK'),
-    'grok': ('GROK', 'THE NIGHT ORBIT'),
-}
-PAGES = [
-    ('index.html', 'astra', ''),
-    ('two-stories/index.html', 'astra', 'two-stories'),
-    ('lab/index.html', 'astra', 'lab'),
-    ('designs/fable/index.html', 'fable', ''),
-    ('designs/fable/two-stories/index.html', 'fable', 'two-stories'),
-    ('designs/fable/lab/index.html', 'fable', 'lab'),
-    ('designs/opus/index.html', 'opus', ''),
-    ('designs/opus/two-stories/index.html', 'opus', 'two-stories'),
-    ('designs/opus/lab/index.html', 'opus', 'lab'),
-    ('designs/composer/index.html', 'composer', ''),
-    ('designs/composer/two-stories/index.html', 'composer', 'two-stories'),
-    ('designs/composer/lab/index.html', 'composer', 'lab'),
-    ('designs/grok/index.html', 'grok', ''),
-    ('designs/grok/two-stories/index.html', 'grok', 'two-stories'),
-    ('designs/grok/lab/index.html', 'grok', 'lab'),
-]
-SWITCHER_NAV_RE = re.compile(
-    r'<!-- design-switcher:start --><nav class="design-switcher"[^>]*>.*?</nav><div class="design-curtain"[^>]*>.*?</div><!-- design-switcher:end -->',
-    re.DOTALL,
-)
-GROK_SWITCH_CSS = """/* grok-view:start */
-.design-switcher[data-selected="grok"] { --i: 4; --view: #241c3d; }
-.design-curtain[data-destination="grok"] { background: #0b0a12; color: #f4efe6; }
-.design-curtain[data-destination="grok"] strong { font: 500 clamp(42px, 11vw, 148px)/.9 system-ui, sans-serif; letter-spacing: .16em; }
-.design-curtain[data-destination="grok"] span { color: #e2a15c; letter-spacing: .28em; }
-html[data-design="grok"][data-design-phase="arrive"] { background: #0b0a12; }
-/* grok-view:end */"""
+# The switcher is view A's: each page of this view takes the head block of view A's page at the same address byte for
+# byte (its ?v= stamps are what tools/stage.sh checks) and its nav with this view selected. View A's switcher is made
+# from the shared editions record, so this view offers the same views in the same order. The switcher's assets
+# (design-switcher.css/.js) and the other views' pages are not this builder's to write.
+SWITCH_HEAD = re.compile(r'<!-- design-switcher:start --><link.*?<!-- design-switcher:end -->', re.S)
+SWITCH_NAV = re.compile(r'<!-- design-switcher:start --><nav class="design-switcher".*?<!-- design-switcher:end -->', re.S)
+# The Lab page takes view F's: view A's /lab/ is the course page itself and loads no lab-course.js, which this view's
+# Lab page needs to draw its lessons.
+SWITCH_SOURCE = {'': 'index.html', 'two-stories': 'two-stories/index.html', 'lab': 'designs/fable/lab/index.html'}
+CURTAIN = ('GROK', 'THE NIGHT ORBIT')
 
 PAGE_CSS = r"""
 :root { --void:#0b0a12; --panel:#141221; --ink:#f4efe6; --muted:#c9c3d4; --brass:#e2a15c; --line:rgba(244,239,230,.16); --serif:Georgia,"Iowan Old Style",Palatino,"Palatino Linotype","Times New Roman",serif; --sans:system-ui,"Segoe UI",sans-serif; --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace; }
@@ -434,36 +408,22 @@ def must(pattern: str, text: str, flags: int = re.S) -> re.Match[str]:
     return found
 
 
-def switcher_href(design: str, page: str) -> str:
-    bases = {
-        'astra': {'': '/', 'lab': '/lab/', 'two-stories': '/two-stories/'},
-        'fable': {'': '/designs/fable/', 'lab': '/designs/fable/lab/', 'two-stories': '/designs/fable/two-stories/'},
-        'opus': {'': '/designs/opus/', 'lab': '/designs/opus/lab/', 'two-stories': '/designs/opus/two-stories/'},
-        'composer': {'': '/designs/composer/', 'lab': '/designs/composer/lab/', 'two-stories': '/designs/composer/two-stories/'},
-        'grok': {'': '/designs/grok/', 'lab': '/designs/grok/lab/', 'two-stories': '/designs/grok/two-stories/'},
-    }
-    return bases[design][page]
+def switcher(page: str) -> tuple[str, str]:
+    rel = SWITCH_SOURCE[page]
+    src = (ROOT / rel).read_text(encoding='utf-8')
+    head_block, nav = SWITCH_HEAD.search(src), SWITCH_NAV.search(src)
+    if not head_block or not nav:
+        raise SystemExit(f'build-grok-view: {rel} has no design-switcher block')
+    nav = re.sub(r'data-selected="[a-z]+"', 'data-selected="grok"', nav.group(0), count=1).replace(' aria-current="page"', '')
+    nav, found = re.subn(r'(<a class="design-choice" data-design="grok" href="[^"]*")>', r'\1 aria-current="page">', nav)
+    if found != 1:
+        raise SystemExit(f'build-grok-view: the switcher on {rel} has no Grok link (add view G to the editions record and rebuild view A)')
+    nav = re.sub(r'<div class="design-curtain" data-destination="[a-z]+" aria-hidden="true"><strong>[^<]*</strong><span>[^<]*</span></div>',
+                 f'<div class="design-curtain" data-destination="grok" aria-hidden="true"><strong>{CURTAIN[0]}</strong><span>{CURTAIN[1]}</span></div>', nav)
+    return head_block.group(0), nav
 
 
-def build_switcher_nav(selected: str, page: str) -> str:
-    parts = []
-    for design, label in VIEWS:
-        href = switcher_href(design, page)
-        current = ' aria-current="page"' if design == selected else ''
-        parts.append(f'<a class="design-choice" data-design="{design}" href="{href}"{current}>{label}</a>')
-    title, subtitle = CURTAINS[selected]
-    return (
-        f'<!-- design-switcher:start --><nav class="design-switcher" aria-label="Website design" data-selected="{selected}">'
-        f'<span class="design-caption">SAME WORLD.<br>FIVE VIEWS.</span><div class="design-options">'
-        + ''.join(parts)
-        + '</div></nav>'
-        f'<div class="design-curtain" data-destination="{selected}" aria-hidden="true">'
-        f'<strong>{title}</strong><span>{subtitle}</span></div><!-- design-switcher:end -->'
-    )
-
-
-def head(title: str, description: str, canonical: str, css_v: str, js_v: str, lab: bool) -> str:
-    lab_tag = f'<script src="/lab-course.js?v={md5_10(ROOT / "lab-course.js")}" defer></script>' if lab else ''
+def head(title: str, description: str, canonical: str, switch_head: str) -> str:
     plates_tag = f'<script src="/designs/grok/nasa-plates.js?v={md5_10(PLATES_JS)}" defer></script>'
     return f'''<!DOCTYPE html>
 <html lang="en" data-design="grok">
@@ -481,7 +441,7 @@ def head(title: str, description: str, canonical: str, css_v: str, js_v: str, la
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <style>{PAGE_CSS}</style>
 {plates_tag}
-<!-- design-switcher:start --><link rel="stylesheet" href="/design-switcher.css?v={css_v}"><script src="/design-switcher.js?v={js_v}"></script>{lab_tag}<!-- design-switcher:end -->
+{switch_head}
 </head>
 '''
 
@@ -648,6 +608,47 @@ def parse_experiments(home: str) -> list[dict]:
     return rows
 
 
+def parse_views(home: str) -> dict:
+    """The current views, read from view A's views band and Table A-1 (both rendered there from the shared editions
+    record), so this view lists the same views, in the same order, under the same count, and a new view needs no
+    edit here. Each cell: (number, name, designer, note, href, is this view)."""
+    band = must(r'<div class="views-band">(.*?)<!-- edition-views:end -->', home).group(1)
+    caption = plain(must(r'<p class="views-cap"><span>(.*?)</span>', band).group(1))
+    cells = []
+    for m in re.finditer(r'<(?:a|div) class="view-cell[^"]*"(?: href="([^"]*)")?[^>]*>\s*<span class="view-no">(\d+)</span>'
+                         r'<span class="view-by">(.*?) · Vol\. \d+</span><span class="view-name">(.*?)</span><span class="view-note">(.*?)</span>', band, re.S):
+        href = m.group(1) or '/'   # view A's own cell is the one without a link
+        name = plain(re.sub(r'<span class="new">.*?</span>', '', m.group(4)))
+        cells.append((m.group(2), name, plain(m.group(3)), plain(m.group(5)), href, href == '/designs/grok/'))
+    if len(cells) < 2 or sum(c[5] for c in cells) != 1:
+        raise SystemExit('build-grok-view: view A\'s views band must list this view once (add it to the editions record and rebuild view A)')
+    return {'caption': caption, 'cells': cells}
+
+
+def parse_record(home: str) -> str:
+    """Table A-1, every row of view A's, in this view's cells: the volume in ink, the credits as a list, the status
+    in words, one link per retired edition."""
+    body = must(r'<table class="ed">.*?<tbody>(.*?)</tbody>', home).group(1)
+    rows = []
+    for tr in re.finditer(r'<tr([^>]*)>(.*?)</tr>', body, re.S):
+        cells = re.findall(r'<td([^>]*)>(.*?)</td>', tr.group(2), re.S)
+        if len(cells) != 6:
+            raise SystemExit(f'build-grok-view: a Table A-1 row in index.html has {len(cells)} cells, expected 6')
+        attrs = ''.join(f' {k}="{v}"' for k, v in re.findall(r'(data-(?:index|kw|href))="([^"]*)"', tr.group(1)))
+        vol, design, by, issued, status, link = (plain(c) for _, c in cells)
+        archive = re.search(r'<a href="(https://[^"]+)"', cells[5][1])
+        awaiting = status == 'Awaiting release'
+        names = by.split(' + ')
+        credits = names[0] if len(names) < 3 else ', '.join(names[:-1]) + ', and ' + names[-1]
+        end = (f'<a href="{esc(archive.group(1))}" target="_blank" rel="noopener">View archive</a>' if archive
+               else 'You are here' if link == 'You are here' else '')
+        rows.append(f'<tr{attrs}><td{"" if awaiting else " class=\"gk-ink\""}>{esc(vol)}</td><td>{esc(design)}</td><td>{esc(credits)}</td>'
+                    f'<td>{esc(issued)}</td><td>{esc(status)}</td><td>{end}</td></tr>')
+    if len(rows) < 2:
+        raise SystemExit('build-grok-view: Table A-1 in index.html has fewer than two editions')
+    return '\n          '.join(rows)
+
+
 def parse_home(home: str) -> dict:
     bio_tech, bio_simple = must(r'<p data-tech="(.*?)"\s+data-simple="(.*?)">', home).groups()
     if not plain(bio_tech).startswith('Medical student'):
@@ -666,10 +667,13 @@ def parse_home(home: str) -> dict:
         'bio': (bio_tech, bio_simple), 'person': person, 'person_note': person_note,
         'lab': (lab_tech, lab_simple), 'appa': appa_pairs, 'caution': caution,
         'systems': must(r'var SYSTEMS = (\[[\s\S]*?\]);', home).group(1),
+        'views': parse_views(home),
+        'record': parse_record(home),
     }
 
 
-def render_home(data: dict, css_v: str, js_v: str) -> str:
+def render_home(data: dict) -> str:
+    switch_head, switch_nav = switcher('')
     counts: dict[str, int] = {}
     for card in data['cards']:
         counts[card['domain']] = counts.get(card['domain'], 0) + 1
@@ -741,15 +745,9 @@ def render_home(data: dict, css_v: str, js_v: str) -> str:
     bio_tech, bio_simple = data['bio']
     lab_tech, lab_simple = data['lab']
     edition_intro, change_note = data['appa']
-    views = [
-        ('01', 'The Field Manual', 'Claude Fable 5.1', 'Numbered chapters, live readiness, a printed index.', '/designs/fable/', False),
-        ('02', 'The Personal Index', 'OpenAI Astra', 'A white exhibition catalogue: the name set huge, numbered editorial rows.', '/', False),
-        ('03', 'The Commentary', 'Claude Opus 5.5', 'A glossed edition: the work in the centre, commentary in the margins, one rubric red.', '/designs/opus/', False),
-        ('04', 'The Live Stack', 'Cursor Composer 2.5', 'An operations deck: dark telemetry, green reachability lights, monospace labels.', '/designs/composer/', False),
-        ('05', 'The Night Orbit', 'Grok', 'A deep-space mission log: brass instruments, full-bleed plates, one night orbit of the same record.', '/designs/grok/', True),
-    ]
+    views = data['views']
     view_html = []
-    for num, name, by, note, href, here in views:
+    for num, name, by, note, href, here in views['cells']:
         cls = 'gk-view is-here' if here else 'gk-view'
         tag = 'div' if here else 'a'
         href_attr = '' if here else f' href="{href}"'
@@ -777,7 +775,7 @@ def render_home(data: dict, css_v: str, js_v: str) -> str:
     return head(
         'Sean Sooch | The Night Orbit',
         'A night-orbit log of the same record: fourteen working systems across medicine, the military, and machines, the writing, the films, and a course in core medicine.',
-        'https://seansooch.dev/designs/grok/', css_v, js_v, True,
+        'https://seansooch.dev/designs/grok/', switch_head,
     ) + f'''<body>
 {bar('')}
 <main id="top">
@@ -872,14 +870,11 @@ def render_home(data: dict, css_v: str, js_v: str) -> str:
       <table>
         <thead><tr><th>Change</th><th>Edition</th><th>Designed by</th><th>Issued</th><th>Status</th><th></th></tr></thead>
         <tbody>
-          <tr data-index="Vol. 01, The Magazine (archive)" data-kw="editions archive opus" data-href="https://seansooch-vol1.pages.dev"><td class="gk-ink">Vol. 01</td><td>The Magazine: dark editorial, sixteen sections, terminal metrics</td><td>Claude Opus 4.7</td><td>April 2026</td><td>Retired with honors</td><td><a href="https://seansooch-vol1.pages.dev" target="_blank" rel="noopener">View archive</a></td></tr>
-          <tr data-index="Vol. 02, Triad × Vitals (archive)" data-kw="editions archive fable 5 vitals" data-href="https://seansooch-vol2.pages.dev"><td class="gk-ink">Vol. 02</td><td>Triad × Vitals: three worlds, one chart, reactive ink</td><td>Claude Fable 5</td><td>June 2026</td><td>Retired with honors</td><td><a href="https://seansooch-vol2.pages.dev" target="_blank" rel="noopener">View archive</a></td></tr>
-          <tr><td class="gk-ink">Vol. 03</td><td>Five views: the Field Manual, the Personal Index, the Commentary, the Live Stack, and the Night Orbit, switchable in place</td><td>OpenAI Astra, Claude Fable 5.1, Claude Opus 5.5, Cursor Composer 2.5, and Grok</td><td>September 2026</td><td>Current</td><td>You are here</td></tr>
-          <tr><td>Vol. 04</td><td>To be designed</td><td>The next class</td><td>-</td><td>Awaiting release</td><td></td></tr>
+          {data['record']}
         </tbody>
       </table>
     </div>
-    <p class="gk-kicker" style="margin-top:28px">Same world. Five views.</p>
+    <p class="gk-kicker" style="margin-top:28px">{esc(views['caption'])}</p>
     <div class="gk-views">{''.join(view_html)}</div>
     <div class="gk-note"><strong>Note</strong><p{pair_attr(change_note[0], change_note[1])}>{rich(change_note[0])}</p></div>
   </div></section>
@@ -907,12 +902,13 @@ def render_home(data: dict, css_v: str, js_v: str) -> str:
 <div class="gk-stage" id="gk-stage" hidden role="dialog" aria-modal="true" aria-label="Film"><div class="gk-panel"><button type="button" class="gk-x" id="gk-close" aria-label="Close film">×</button><p id="gk-cap" class="gk-kicker"></p><video id="gk-film" controls playsinline preload="none"></video></div></div>
 <div class="gk-find" id="gk-find" hidden role="dialog" aria-modal="true" aria-label="Index"><div class="gk-panel"><label class="gk-kicker" for="gk-q">Index</label><input id="gk-q" type="text" placeholder="A system, paper, film, or station" autocomplete="off" spellcheck="false"><div id="gk-hits"></div><p class="gk-meta">Arrow keys move. Enter opens. Escape closes.</p></div></div>
 <script>{script}</script>
-{build_switcher_nav('grok', '')}
+{switch_nav}
 </body></html>
 '''
 
 
-def render_essay(css_v: str, js_v: str) -> str:
+def render_essay() -> str:
+    switch_head, switch_nav = switcher('two-stories')
     src = (ROOT / 'two-stories/index.html').read_text(encoding='utf-8')
     title = plain(must(r'<h1>(.*?)</h1>', src).group(1))
     sub = must(r'<p class="sub">(.*?)</p>', src).group(1).strip()
@@ -972,7 +968,7 @@ def render_essay(css_v: str, js_v: str) -> str:
     return head(
         'Two Stories About the Beginning | Sean Sooch',
         'The Big Bang and a generated origin are the same kind of story: a starting condition plus a rule, with the evidence only ever reaching the rule.',
-        'https://seansooch.dev/designs/grok/two-stories/', css_v, js_v, False,
+        'https://seansooch.dev/designs/grok/two-stories/', switch_head,
     ) + f'''<body>
 {nav}
 <main id="top" class="gk-essay">
@@ -1002,12 +998,13 @@ def render_essay(css_v: str, js_v: str) -> str:
   </div></section>
 </main>
 <footer class="gk-foot"><span>© 2026 Sean Sooch · Table 4-3 · The Night Orbit</span><a href="/designs/grok/#ch4">Back to the writing</a></footer>
-{build_switcher_nav('grok', 'two-stories')}
+{switch_nav}
 </body></html>
 '''
 
 
-def render_lab(css_v: str, js_v: str) -> str:
+def render_lab() -> str:
+    switch_head, switch_nav = switcher('lab')
     nav = (
         '<a class="gk-skip" href="#course">Skip to the course</a>'
         '<header class="gk-bar"><a class="gk-brand" href="/designs/grok/"><i>●</i>SOOCH</a><nav class="gk-nav" aria-label="The Lab">'
@@ -1018,7 +1015,7 @@ def render_lab(css_v: str, js_v: str) -> str:
     return head(
         'The Lab | Sean Sooch, The Night Orbit',
         'The Lab: a course in core medicine, taught one picture at a time. Step-by-step visual lessons in plain language. Educational only, not for clinical use.',
-        'https://seansooch.dev/designs/grok/lab/', css_v, js_v, True,
+        'https://seansooch.dev/designs/grok/lab/', switch_head,
     ) + f'''<body>
 {nav}
 <main id="top">
@@ -1057,107 +1054,29 @@ def render_lab(css_v: str, js_v: str) -> str:
   </div></section>
 </main>
 <footer class="gk-foot"><span>© 2026 Sean Sooch · The Night Orbit · educational only, not for clinical use</span><a href="/designs/grok/">The Night Orbit</a></footer>
-{build_switcher_nav('grok', 'lab')}
+{switch_nav}
 </body></html>
 '''
-
-
-def patch_switcher_files() -> None:
-    js_path = ROOT / 'design-switcher.js'
-    js = js_path.read_text(encoding='utf-8')
-    if "grok: '/designs/grok/'" not in js:
-        js = js.replace(
-            "composer: '/designs/composer/'}",
-            "composer: '/designs/composer/', grok: '/designs/grok/'}",
-        )
-    if '(?:fable|opus|composer|grok)' not in js:
-        js = js.replace('(?:fable|opus|composer)', '(?:fable|opus|composer|grok)', 1)
-    if 'THE NIGHT ORBIT' not in js:
-        js = js.replace(
-            "composer: ['COMPOSER 2.5', 'THE LIVE STACK']",
-            "composer: ['COMPOSER 2.5', 'THE LIVE STACK'],\n    grok: ['GROK', 'THE NIGHT ORBIT']",
-        )
-    js = js.replace('all four editions', 'all five editions')
-    js_path.write_text(js, encoding='utf-8')
-
-    css_path = ROOT / 'design-switcher.css'
-    css = css_path.read_text(encoding='utf-8')
-    css = re.sub(r'/\* grok-view:start \*/.*?/\* grok-view:end \*/\n?', '', css, flags=re.S)
-    anchor = 'html[data-design="composer"][data-design-phase="arrive"] { background: #0a1210; }'
-    if anchor not in css:
-        raise SystemExit('composer arrive rule missing from design-switcher.css')
-    css = css.replace(anchor, anchor + '\n' + GROK_SWITCH_CSS)
-    css_path.write_text(css, encoding='utf-8')
-
-
-def restamp(text: str, css_v: str, js_v: str) -> str:
-    text = re.sub(r'/design-switcher\.css\?v=[0-9a-f]+', f'/design-switcher.css?v={css_v}', text)
-    text = re.sub(r'/design-switcher\.js\?v=[0-9a-f]+', f'/design-switcher.js?v={js_v}', text)
-    return text
-
-
-def patch_pages(css_v: str, js_v: str) -> None:
-    for rel, selected, page in PAGES:
-        path = ROOT / rel
-        if not path.exists():
-            raise SystemExit(f'missing page {rel}')
-        text = path.read_text(encoding='utf-8')
-        count = len(SWITCHER_NAV_RE.findall(text))
-        if count != 1:
-            raise SystemExit(f'{rel} has {count} switcher navs')
-        text = SWITCHER_NAV_RE.sub(build_switcher_nav(selected, page), text, count=1)
-        text = restamp(text, css_v, js_v)
-        path.write_text(text, encoding='utf-8')
 
 
 def patch_architecture() -> None:
     path = ROOT / 'ARCHITECTURE.md'
     text = path.read_text(encoding='utf-8')
     row = (
-        '| `designs/grok/` | View G (Grok, "The Night Orbit", added 2026-10-27): the home page, the Two Stories essay, and the Lab course page. Generated by `tools/build-grok-view.py`. A deep-space mission log in system fonts. Every picture is a NASA Astronomy Picture of the Day, chosen in the browser by `designs/grok/nasa-plates.js` (written by the same builder) from APOD\'s WordPress feed on science.nasa.gov: today\'s on the home hero, recent days on the plates, a fixed set of public-domain NASA days when the feed cannot be read. Check with `node tools/grok-nasa.walk.mjs <base>`. | Yes. Regenerate with `tools/build-grok-view.py` |\n'
+        '| `designs/grok/` | View G (Grok, "The Night Orbit", added 2026-10-27): the home page, the Two Stories essay, and the Lab course page. Generated by `tools/build-grok-view.py` from view A\'s pages; its views band and Vol. 03 row are read from view A\'s home page, so it lists the same views. A deep-space mission log in system fonts. Every picture is a NASA Astronomy Picture of the Day, chosen in the browser by `designs/grok/nasa-plates.js` (written by the same builder) from APOD\'s WordPress feed on science.nasa.gov: today\'s on the home hero, recent days on the plates, a fixed set of public-domain NASA days when the feed cannot be read. Check with `node tools/grok-nasa.walk.mjs <base>`. | No. Generated by `tools/build-grok-view.py`, which writes only this folder and this row. Rerun it after view A changes and commit the result; do not hand-edit |\n'
     )
     lines = text.splitlines(keepends=True)
     own = [i for i, line in enumerate(lines) if line.startswith('| `designs/grok/` |')]
-    if own:  # the builder owns this row: keep it current
-        lines[own[0]] = row
-        text = ''.join(lines)
-    if '`designs/grok/`' not in text.split('### Three views')[0]:
-        lines = text.splitlines(keepends=True)
-        out = []
-        inserted = False
-        for line in lines:
-            out.append(line)
-            if not inserted and line.startswith('| `designs/composer/` |'):
-                out.append(row)
-                inserted = True
-        if not inserted:
-            raise SystemExit('could not find the composer row in ARCHITECTURE.md')
-        text = ''.join(out)
-    if 'View G (Grok)' not in text:
-        text = text.replace(
-            '| View C (Composer 2.5) |\n',
-            '| View C (Composer 2.5) | View G (Grok) |\n',
-            1,
-        )
-        text = text.replace(
-            '| `/designs/composer/lab/` |\n',
-            '| `/designs/composer/lab/` | `/designs/grok/lab/` |\n',
-            1,
-        )
-        text = text.replace(
-            '| Drawn in the browser by `lab-course.js` | Drawn in the browser by `lab-course.js` | Drawn in the browser by `lab-course.js` |\n',
-            '| Drawn in the browser by `lab-course.js` | Drawn in the browser by `lab-course.js` | Drawn in the browser by `lab-course.js` | Drawn in the browser by `lab-course.js` |\n',
-            1,
-        )
+    if len(own) != 1:
+        raise SystemExit('ARCHITECTURE.md needs exactly one `designs/grok/` row in "What is in here"; this builder keeps it current')
+    lines[own[0]] = row   # the builder owns this row; the rest of the file is edited by hand
+    text = ''.join(lines)
     path.write_text(text, encoding='utf-8')
 
 
 def main() -> None:
     home_src = (ROOT / 'index.html').read_text(encoding='utf-8')
     data = parse_home(home_src)
-    patch_switcher_files()
-    css_v = md5_10(ROOT / 'design-switcher.css')
-    js_v = md5_10(ROOT / 'design-switcher.js')
     out_dir = ROOT / 'designs' / 'grok'
     (out_dir / 'two-stories').mkdir(parents=True, exist_ok=True)
     (out_dir / 'lab').mkdir(parents=True, exist_ok=True)
@@ -1166,9 +1085,9 @@ def main() -> None:
     if len(APOD_FALLBACK) < max(max(r) for r in SLOTS.values()) + 1:
         raise SystemExit('APOD_FALLBACK needs one picture per slot')
     pages = {
-        out_dir / 'index.html': render_home(data, css_v, js_v),
-        out_dir / 'two-stories' / 'index.html': render_essay(css_v, js_v),
-        out_dir / 'lab' / 'index.html': render_lab(css_v, js_v),
+        out_dir / 'index.html': render_home(data),
+        out_dir / 'two-stories' / 'index.html': render_essay(),
+        out_dir / 'lab' / 'index.html': render_lab(),
     }
     for path, text in pages.items():
         if 'fonts.googleapis' in text or 'api.x.ai' in text:
@@ -1185,18 +1104,10 @@ def main() -> None:
         if '\N{EM DASH}' in text:
             raise SystemExit(f'{rel}: an em dash')
         path.write_text(text, encoding='utf-8')
-    patch_pages(css_v, js_v)
     patch_architecture()
-    # Stamps inside the freshly written grok pages were correct, then patch_pages
-    # rewrote the nav and the same stamps. Confirm they still match.
-    for rel, _selected, _page in PAGES:
-        text = (ROOT / rel).read_text(encoding='utf-8')
-        if f'/design-switcher.css?v={css_v}' not in text or f'/design-switcher.js?v={js_v}' not in text:
-            raise SystemExit(f'stamp missing on {rel}')
-        if 'data-design="grok"' not in text and rel.startswith('designs/grok/'):
-            raise SystemExit(f'data-design missing on {rel}')
-        if '>Grok</a>' not in text:
-            raise SystemExit(f'Grok switcher link missing on {rel}')
+    for path, text in pages.items():
+        if 'aria-current="page">Grok</a>' not in text or 'data-destination="grok"' not in text:
+            raise SystemExit(f'{path}: the switcher does not select this view')
     home = pages[out_dir / 'index.html']
     for needed in ('id="ch3"', 'id="lab"', 'id="ch4"', 'id="appb"', 'id="plate1"', 'id="ch1"', 'id="ch5"', 'id="appa"', 'id="ch2"', 'id="fig11"', 'id="indexsec"', 'data-lab-list="ready"', 'data-apod="0"'):
         if needed not in home:
@@ -1209,7 +1120,7 @@ def main() -> None:
     for needed in ('id="course"', 'data-lab-list="all"', 'data-lab-row="ready"', 'data-lab-row="soon"', 'data-lab-wait'):
         if needed not in lab:
             raise SystemExit('lab missing ' + needed)
-    print(f'Grok view written. switcher css {css_v} js {js_v}')
+    print('Grok view written.')
 
 
 if __name__ == '__main__':

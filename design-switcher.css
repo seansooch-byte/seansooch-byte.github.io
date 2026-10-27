@@ -29,6 +29,7 @@ body { padding-bottom: 104px; }
 .design-switcher[data-selected="fable"] { --i: 1; --view: #274e50; }
 .design-switcher[data-selected="opus"] { --i: 2; --view: #9c3824; }
 .design-switcher[data-selected="composer"] { --i: 3; --view: #0d3b2e; }
+.design-switcher[data-selected="grok"] { --i: 4; --view: #241c3d; }
 .design-switcher .design-choice {
   position: relative; display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 46px;
   margin: 0; padding: 6px; border: 0; border-radius: 4px; background: transparent; color: #454a42;
@@ -52,6 +53,9 @@ body { padding-bottom: 104px; }
 .design-curtain[data-destination="composer"] { background: #0a1210; color: #d4f5e8; }
 .design-curtain[data-destination="composer"] strong { font: 600 clamp(40px, 10vw, 140px)/1 'IBM Plex Mono', 'Courier New', monospace; letter-spacing: -.04em; }
 .design-curtain[data-destination="composer"] span { color: #3dd9c4; letter-spacing: .28em; }
+.design-curtain[data-destination="grok"] { background: #0b0a12; color: #f4efe6; }
+.design-curtain[data-destination="grok"] strong { font: 500 clamp(42px, 11vw, 148px)/.9 system-ui, sans-serif; letter-spacing: .16em; }
+.design-curtain[data-destination="grok"] span { color: #e2a15c; letter-spacing: .28em; }
 [data-design-phase="leave"] .design-curtain { visibility: visible; pointer-events: auto; animation: design-cover 340ms cubic-bezier(.65,0,.35,1) both; }
 [data-design-phase="arrive"] .design-curtain { visibility: visible; transform: translateY(0); pointer-events: auto; }
 /* Arriving: the page paints before the curtain element is parsed (it closes the body), so hide the page and fill
@@ -61,19 +65,20 @@ html[data-design="astra"][data-design-phase="arrive"] { background: #254dff; }
 html[data-design="fable"][data-design-phase="arrive"] { background: #e9e3d4; }
 html[data-design="opus"][data-design-phase="arrive"] { background: #14120f; }
 html[data-design="composer"][data-design-phase="arrive"] { background: #0a1210; }
-/* grok-view:start */
-.design-switcher[data-selected="grok"] { --i: 4; --view: #241c3d; }
-.design-curtain[data-destination="grok"] { background: #0b0a12; color: #f4efe6; }
-.design-curtain[data-destination="grok"] strong { font: 500 clamp(42px, 11vw, 148px)/.9 system-ui, sans-serif; letter-spacing: .16em; }
-.design-curtain[data-destination="grok"] span { color: #e2a15c; letter-spacing: .28em; }
 html[data-design="grok"][data-design-phase="arrive"] { background: #0b0a12; }
-/* grok-view:end */
 [data-design-phase="reveal"] .design-curtain { visibility: visible; animation: design-reveal 500ms cubic-bezier(.65,0,.35,1) both; }
 @keyframes design-cover { from { transform: translateY(101%); } to { transform: translateY(0); } }
 @keyframes design-reveal { from { transform: translateY(0); } to { transform: translateY(-101%); } }
 @media (max-width: 540px) {
   .design-switcher { padding: 6px; gap: 0; bottom: max(12px, env(safe-area-inset-bottom)); }
   .design-switcher .design-caption { display: none; }
+}
+/* The narrowest phones: five columns leave "Composer" (about 58px at 12px) a 54px column, so the bar takes more of
+   the width, the columns sit closer and the labels set a size down. */
+@media (max-width: 380px) {
+  .design-switcher { max-width: calc(100% - 12px); }
+  .design-options { --gap: 2px; }
+  .design-switcher .design-choice { padding: 6px 2px; font-size: 10.5px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .design-switcher *, .design-options::before { transition: none !important; }
