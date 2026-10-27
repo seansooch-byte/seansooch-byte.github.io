@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" data-design="composer">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sean Sooch · The Workbench</title>
+<meta name="description" content="Twenty-one live systems across medicine, the military, and machines — composed as a workbench by Cursor Composer 2.5.">
+<link rel="canonical" href="https://seansooch.dev/designs/composer/">
+<meta property="og:title" content="Sean Sooch · The Workbench">
+<meta property="og:description" content="Twenty-one live systems across medicine, the military, and machines — composed as a workbench by Cursor Composer 2.5.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://seansooch.dev/designs/composer/">
+<meta name="theme-color" content="#0d1117">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d1117;--panel:#161b22;--panel2:#1c2128;--line:#30363d;--line2:#21262d;
+  --text:#e6edf3;--muted:#8b949e;--accent:#79c0ff;--accent2:#ffa657;--ok:#3fb950;--bad:#f85149;
+  --mono:'JetBrains Mono',ui-monospace,monospace;--sans:'IBM Plex Sans',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:72px;background:var(--bg)}
+body{font:16px/1.55 var(--sans);color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased;padding-bottom:120px}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+::selection{background:#388bfd66}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.shell{min-height:100vh;display:grid;grid-template-columns:240px minmax(0,1fr);grid-template-rows:auto 1fr auto}
+@media(max-width:900px){.shell{grid-template-columns:1fr}.side{border-right:0;border-bottom:1px solid var(--line)}}
+.topbar{grid-column:1/-1;display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--panel2);border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12px}
+.topbar .logo{color:var(--text);font-weight:600;text-decoration:none}
+.topbar .logo b{color:var(--accent2)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs a{padding:6px 10px;border:1px solid var(--line);border-radius:6px;color:var(--muted);text-decoration:none}
+.tabs a:hover{border-color:var(--accent);color:var(--text)}
+.tabs a.on{background:var(--panel);color:var(--accent);border-color:var(--accent)}
+.side{background:var(--panel);border-right:1px solid var(--line);padding:18px 14px;font-size:13px}
+.side h2{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--muted);margin-bottom:12px}
+.side nav{display:grid;gap:4px}
+.side a{color:var(--muted);padding:6px 8px;border-radius:6px;text-decoration:none}
+.side a:hover{background:var(--panel2);color:var(--text)}
+.side a.on{background:#388bfd1a;color:var(--accent)}
+.main{padding:28px 24px 40px;max-width:1100px}
+.hero{border:1px solid var(--line);border-radius:10px;background:linear-gradient(135deg,#161b22,#0d1117 55%);padding:28px 26px;margin-bottom:28px}
+.hero .kicker{font-family:var(--mono);font-size:11px;color:var(--accent2);letter-spacing:.06em}
+.hero h1{font-size:clamp(32px,5vw,52px);line-height:1.05;margin:10px 0 14px;letter-spacing:-.03em}
+.hero .lede{color:var(--muted);max-width:52ch;font-size:17px}
+.hero .lede b{color:var(--text);font-weight:500}
+.metrics{display:flex;flex-wrap:wrap;gap:18px;margin-top:22px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.metrics b{display:block;color:var(--text);font-size:20px;font-weight:500}
+.sec{margin-top:40px}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:14px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.sec-h h2{font-family:var(--mono);font-size:13px;letter-spacing:.06em;color:var(--accent2)}
+.sec-h span{font-size:12px;color:var(--muted)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.filters button{font:12px var(--mono);padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.filters button.on{border-color:var(--accent);color:var(--accent);background:#388bfd14}
+.modules{display:grid;gap:8px}
+.module{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) auto;gap:12px 16px;align-items:center;padding:14px 16px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:inherit;text-decoration:none;transition:border-color .15s,transform .15s}
+.module:hover{border-color:var(--accent);transform:translateY(-1px)}
+.module.hide{display:none}
+.path{font-family:var(--mono);font-size:11px;color:var(--c,var(--muted));overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.name{font-weight:600;font-size:15px}
+.desc{font-size:13px;color:var(--muted);line-height:1.45}
+.status{font-family:var(--mono);font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.status i{width:7px;height:7px;border-radius:50%;background:var(--muted);display:inline-block}
+.status.up{color:var(--ok)}.status.up i{background:var(--ok)}
+.status.down{color:var(--bad)}.status.down i{background:var(--bad)}
+.status.wake i{animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.35}}
+.writing,.editions{display:grid;gap:10px}
+.tile{border:1px solid var(--line);border-radius:8px;padding:16px 18px;background:var(--panel2);text-decoration:none;color:inherit}
+.tile:hover{border-color:var(--accent)}
+.tile h3{font-size:17px;margin-bottom:6px}
+.tile p{font-size:13px;color:var(--muted);line-height:1.5}
+.editions{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.editions .here{outline:2px solid var(--accent);outline-offset:-2px}
+.lab-wait{font-size:13px;color:var(--muted);padding:12px 0}
+.lab-row{display:grid;grid-template-columns:56px 1fr auto;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:8px;margin-bottom:8px;background:var(--panel);text-decoration:none;color:inherit}
+.lab-row:hover{border-color:var(--accent)}
+.lab-row.soon{opacity:.75}
+.lab-row .no{font-family:var(--mono);font-size:12px;color:var(--accent2)}
+.lab-row .meta{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.statusbar{grid-column:1/-1;display:flex;justify-content:space-between;gap:12px;padding:8px 16px;border-top:1px solid var(--line);background:var(--panel2);font-family:var(--mono);font-size:11px;color:var(--muted)}
+@media(max-width:720px){.module{grid-template-columns:1fr;gap:6px}}
+@media print{.topbar,.side,.statusbar,.filters{display:none}.shell{display:block}}
+</style>
+<!-- design-switcher:start --><link rel="stylesheet" href="/design-switcher.css?v=f0ec4a2cfd"><script src="/design-switcher.js?v=d8ab4df6ff"></script><script src="/lab-course.js?v=5f7b63c4ab" defer></script><!-- design-switcher:end -->
+</head>
+
+<body>
+<div class="shell">
+<header class="topbar">
+  <a class="logo" href="/designs/composer/" aria-label="Sean Sooch, The Workbench">seansooch<b>.dev</b></a>
+  <nav class="tabs" aria-label="Open files">
+    <a class="on" href="/designs/composer/">index.tsx</a>
+    <a href="/designs/composer/two-stories/">two-stories.md</a>
+    <a href="/designs/composer/lab/">lab.course</a>
+  </nav>
+</header>
+<aside class="side">
+  <h2>OUTLINE</h2>
+  <nav aria-label="Sections">
+    <a class="on" href="#intro">// intro</a>
+    <a href="#systems">// systems</a>
+    <a href="#writing">// writing</a>
+    <a href="#lab">// lab</a>
+    <a href="#editions">// editions</a>
+  </nav>
+</aside>
+<main class="main">
+  <section class="hero" id="intro">
+    <p class="kicker">Vol. 03 · View C · Cursor Composer 2.5</p>
+    <h1>Sean Sooch</h1>
+    <p class="lede">Medical student, military officer, builder. <b>The same world as the other three views</b>, arranged like a workbench: files for navigation, a status line for reachability, and panels that stay out of the way until you need them.</p>
+    <div class="metrics">
+      <div><b id="sysTotal">21</b>systems in registry</div>
+      <div><b>150,906</b>lines counted</div>
+      <div><b id="probeStamp">probing…</b>reachability</div>
+    </div>
+  </section>
+
+  <section class="sec" id="systems">
+    <div class="sec-h"><h2>// systems</h2><span>Figure 1-1 · live probe from your browser</span></div>
+    <div class="filters" role="group" aria-label="Filter by world">
+      <button type="button" class="on" data-filter="all">all</button>
+      <button type="button" data-filter="med">medicine</button>
+      <button type="button" data-filter="mil">military</button>
+      <button type="button" data-filter="mac">machines</button>
+      <button type="button" data-filter="spt">sports</button>
+      <button type="button" data-filter="hum">humanities</button>
+      <button type="button" data-filter="mus">music</button>
+    </div>
+    <div class="modules" id="modules">
+<a class="module" data-world="med" data-sys="step2" href="https://step2-ck.pages.dev/" target="_blank" rel="noopener"><span class="path" style="--c:#3fb950">systems/medicine/step2.tsx</span><span class="name">Step 2 CK Qbank</span><span class="desc">Public question bank for boards prep.</span><span class="status" data-sys="step2"><i></i>probing</span></a>
+<a class="module" data-world="med" data-sys="handoff" href="https://patient-handoff-tracker.onrender.com/" target="_blank" rel="noopener"><span class="path" style="--c:#3fb950">systems/medicine/handoff.tsx</span><span class="name">Handoff Tracker</span><span class="desc">I-PASS handoffs with a quality loop.</span><span class="status" data-sys="handoff"><i></i>probing · cold start</span></a>
+<a class="module" data-world="med" data-sys="ekg" href="https://seansooch.dev/ekg/" target="_blank" rel="noopener"><span class="path" style="--c:#3fb950">systems/medicine/ekg.tsx</span><span class="name">Read This</span><span class="desc">EKG rhythms and chest films, taught stepwise.</span><span class="status" data-sys="ekg"><i></i>probing</span></a>
+<a class="module" data-world="med" data-sys="microtd" href="https://micro-td.pages.dev/" target="_blank" rel="noopener"><span class="path" style="--c:#3fb950">systems/medicine/microtd.tsx</span><span class="name">MICRO TD</span><span class="desc">Tower defense that teaches antibiotic classes.</span><span class="status" data-sys="microtd"><i></i>probing</span></a>
+<a class="module" data-world="mil" data-sys="warrior" href="https://warrior-ready.pages.dev/" target="_blank" rel="noopener"><span class="path" style="--c:#d29922">systems/military/warrior.tsx</span><span class="name">Warrior Ready</span><span class="desc">PT test calculators and ruck planning.</span><span class="status" data-sys="warrior"><i></i>probing</span></a>
+<a class="module" data-world="mil" data-sys="toolkit" href="https://seansooch.dev/toolkit/" target="_blank" rel="noopener"><span class="path" style="--c:#d29922">systems/military/toolkit.tsx</span><span class="name">Field Toolkit</span><span class="desc">Pocket cards for hospital and field reference.</span><span class="status" data-sys="toolkit"><i></i>probing</span></a>
+<a class="module" data-world="mac" data-sys="agi" href="https://differential-c57.pages.dev/" target="_blank" rel="noopener"><span class="path" style="--c:#79c0ff">systems/machines/agi.tsx</span><span class="name">AGI Capability Tracker</span><span class="desc">Frontier model benchmarks in one ledger.</span><span class="status" data-sys="agi"><i></i>probing</span></a>
+<a class="module" data-world="mac" data-sys="sims" href="https://seansooch.dev/simulators" target="_blank" rel="noopener"><span class="path" style="--c:#79c0ff">systems/machines/sims.tsx</span><span class="name">Simulators</span><span class="desc">Alignment, CPR, and curiosity toys.</span><span class="status" data-sys="sims"><i></i>probing</span></a>
+<a class="module" data-world="mac" data-sys="forge" href="https://forge-8ce.pages.dev/" target="_blank" rel="noopener"><span class="path" style="--c:#79c0ff">systems/machines/forge.tsx</span><span class="name">Forge</span><span class="desc">Metal casting workflow as software.</span><span class="status" data-sys="forge"><i></i>probing</span></a>
+<a class="module" data-world="mac" data-sys="space" href="https://cic-dashboard.pages.dev/" target="_blank" rel="noopener"><span class="path" style="--c:#79c0ff">systems/machines/space.tsx</span><span class="name">Space Explorer</span><span class="desc">Orbital mechanics and mission planning.</span><span class="status" data-sys="space"><i></i>probing</span></a>
+<a class="module" data-world="mac" data-sys="multipliers" href="https://seansooch.dev/force-multipliers/" target="_blank" rel="noopener"><span class="path" style="--c:#79c0ff">systems/machines/multipliers.tsx</span><span class="name">Force Multipliers</span><span class="desc">Briefing cards on agent workflows.</span><span class="status" data-sys="multipliers"><i></i>probing</span></a>
+<a class="module" data-world="hum" data-sys="reading" href="https://reading-room.pages.dev/" target="_blank" rel="noopener"><span class="path" style="--c:#a371f7">systems/humanities/reading.tsx</span><span class="name">Reading Room</span><span class="desc">A quiet shelf for long reads.</span><span class="status" data-sys="reading"><i></i>probing</span></a>
+<a class="module" data-world="hum" data-sys="philosophy" href="https://philosophy-room.pages.dev/" target="_blank" rel="noopener"><span class="path" style="--c:#a371f7">systems/humanities/philosophy.tsx</span><span class="name">Philosophy Room</span><span class="desc">Primary texts with margin notes.</span><span class="status" data-sys="philosophy"><i></i>probing</span></a>
+<a class="module" data-world="spt" data-sys="edge" href="https://edge-7yj.pages.dev/" target="_blank" rel="noopener"><span class="path" style="--c:#f778ba">systems/sports/edge.tsx</span><span class="name">Edge Draft Terminal</span><span class="desc">Fantasy football draft wire.</span><span class="status" data-sys="edge"><i></i>probing</span></a>
+<a class="module" data-world="spt" data-sys="ncaat" href="https://ncaat-bracket-2026.pages.dev/" target="_blank" rel="noopener"><span class="path" style="--c:#f778ba">systems/sports/ncaat.tsx</span><span class="name">NCAAT Bracket</span><span class="desc">March Madness archive and model grades.</span><span class="status" data-sys="ncaat"><i></i>probing</span></a>
+<a class="module" data-world="spt" data-sys="masters" href="https://masters-2026.pages.dev/" target="_blank" rel="noopener"><span class="path" style="--c:#f778ba">systems/sports/masters.tsx</span><span class="name">Masters 2026 Hub</span><span class="desc">Augusta leaderboard and yardage book.</span><span class="status" data-sys="masters"><i></i>probing</span></a>
+<a class="module" data-world="spt" data-sys="detroit" href="https://detroit-sports.pages.dev/" target="_blank" rel="noopener"><span class="path" style="--c:#f778ba">systems/sports/detroit.tsx</span><span class="name">Detroit Sports Hub</span><span class="desc">Scores and stories for Detroit teams.</span><span class="status" data-sys="detroit"><i></i>probing</span></a>
+<a class="module" data-world="hum" data-sys="greatbooks" href="https://great-books.pages.dev/" target="_blank" rel="noopener"><span class="path" style="--c:#a371f7">systems/humanities/greatbooks.tsx</span><span class="name">Great Books</span><span class="desc">Canon texts with tri-band reading.</span><span class="status" data-sys="greatbooks"><i></i>probing</span></a>
+<a class="module" data-world="med" data-sys="admissions" href="https://admissionsacademy.org/" target="_blank" rel="noopener"><span class="path" style="--c:#3fb950">systems/medicine/admissions.tsx</span><span class="name">AdmissionsAcademy</span><span class="desc">Medical school admissions guidance.</span><span class="status" data-sys="admissions"><i></i>probing</span></a>
+<a class="module" data-world="mus" data-sys="music" href="https://seansooch.dev/music/" target="_blank" rel="noopener"><span class="path" style="--c:#ffa657">systems/music/music.tsx</span><span class="name">Music</span><span class="desc">Films and songs built with code.</span><span class="status" data-sys="music"><i></i>probing</span></a>
+<a class="module" data-world="mac" data-sys="situation" href="https://situation.seansooch.dev/" target="_blank" rel="noopener"><span class="path" style="--c:#79c0ff">systems/machines/situation.tsx</span><span class="name">Monitoring the Situation</span><span class="desc">Daily briefing, now its own site.</span><span class="status" data-sys="situation"><i></i>probing</span></a>
+    </div>
+  </section>
+
+  <section class="sec" id="writing">
+    <div class="sec-h"><h2>// writing</h2><span>Doctrine · independent research</span></div>
+    <div class="writing">
+      <a class="tile" href="/designs/composer/two-stories/">
+        <h3>Two Stories About the Beginning</h3>
+        <p>Origin as a start plus a rule — why a run world and a world that simply began look the same from inside.</p>
+      </a>
+      <a class="tile" href="/#ch4">
+        <h3>More papers on the shared record</h3>
+        <p>The Frontier AI Risk Stack, Three Roads From Here, and the rest of Chapter 4 use the same text in every view.</p>
+      </a>
+    </div>
+  </section>
+
+  <section class="sec" id="lab">
+    <div class="sec-h"><h2>// lab</h2><span data-lab-text="21 modules · {ready} shipped">course ledger</span></div>
+    <div data-lab-list="ready">
+      <template data-lab-row="ready">
+        <a class="lab-row" data-lab-link>
+          <span class="no">L-<span data-lab="no"></span></span>
+          <span><strong data-lab="title"></strong><br><span class="meta" data-lab="description"></span></span>
+          <span class="meta" data-lab="date"></span>
+        </a>
+      </template>
+      <p class="lab-wait" data-lab-wait>Loading lessons from /lab/syllabus.json…</p>
+    </div>
+    <p style="margin-top:12px;font-size:13px;color:var(--muted)">Full course · <a href="/designs/composer/lab/">open lab.course</a> · lessons are the same single-page apps in every view.</p>
+  </section>
+
+  <section class="sec" id="editions">
+    <div class="sec-h"><h2>// editions</h2><span>four views · one text</span></div>
+    <div class="editions">
+      <a class="tile" href="/designs/fable/"><h3>F · Field Manual</h3><p>Claude Fable 5.1</p></a>
+      <a class="tile" href="/"><h3>A · Personal Index</h3><p>OpenAI Astra</p></a>
+      <a class="tile" href="/designs/opus/"><h3>O · Commentary</h3><p>Claude Opus 5.5 · frontier lead</p></a>
+      <div class="tile here" aria-current="page"><h3>C · Workbench</h3><p>Cursor Composer 2.5 · you are here</p></div>
+    </div>
+  </section>
+</main>
+<footer class="statusbar">
+  <span>© 2026 seansooch.dev · educational tools · not for clinical use</span>
+  <span id="statusLine">Workbench view · Composer 2.5</span>
+</footer>
+</div>
+<script>
+(function(){
+  var SYSTEMS = [{'id': 'step2', 'host': 'step2-ck.pages.dev', 'wake': false}, {'id': 'handoff', 'host': 'patient-handoff-tracker.onrender.com', 'wake': true}, {'id': 'ekg', 'host': 'seansooch.dev', 'wake': false}, {'id': 'microtd', 'host': 'micro-td.pages.dev', 'wake': false}, {'id': 'warrior', 'host': 'warrior-ready.pages.dev', 'wake': false}, {'id': 'toolkit', 'host': 'seansooch.dev', 'wake': false}, {'id': 'agi', 'host': 'differential-c57.pages.dev', 'wake': false}, {'id': 'sims', 'host': 'seansooch.dev', 'wake': false}, {'id': 'forge', 'host': 'forge-8ce.pages.dev', 'wake': false}, {'id': 'space', 'host': 'cic-dashboard.pages.dev', 'wake': false}, {'id': 'multipliers', 'host': 'seansooch.dev', 'wake': false}, {'id': 'reading', 'host': 'reading-room.pages.dev', 'wake': false}, {'id': 'philosophy', 'host': 'philosophy-room.pages.dev', 'wake': false}, {'id': 'edge', 'host': 'edge-7yj.pages.dev', 'wake': false}, {'id': 'ncaat', 'host': 'ncaat-bracket-2026.pages.dev', 'wake': false}, {'id': 'masters', 'host': 'masters-2026.pages.dev', 'wake': false}, {'id': 'detroit', 'host': 'detroit-sports.pages.dev', 'wake': false}, {'id': 'greatbooks', 'host': 'great-books.pages.dev', 'wake': false}, {'id': 'admissions', 'host': 'admissionsacademy.org', 'wake': false}, {'id': 'music', 'host': 'seansooch.dev', 'wake': false}, {'id': 'situation', 'host': 'situation.seansooch.dev', 'wake': false}];
+  function paint(s, st, ms) {
+    var el = document.querySelector('.status[data-sys="'+s.id+'"]');
+    if (!el) return;
+    el.className = 'status ' + st + (s.wake ? ' wake' : '');
+    var note = st === 'up' ? (ms ? ms+'ms' : 'up') : st === 'down' ? 'down' : 'probing';
+    el.innerHTML = '<i></i>'+note;
+  }
+  function probe(s) {
+    var img = new Image();
+    var t0 = performance.now();
+    img.onload = img.onerror = function() {
+      paint(s, img.height ? 'up' : 'down', Math.round(performance.now()-t0));
+      summarize();
+    };
+    img.src = 'https://'+s.host+'/favicon.ico?'+Date.now();
+  }
+  function summarize() {
+    var ups = document.querySelectorAll('.status.up').length;
+    var done = document.querySelectorAll('.status.up, .status.down').length;
+    var stamp = document.getElementById('probeStamp');
+    if (stamp) stamp.textContent = ups+'/'+SYSTEMS.length+' up';
+    var line = document.getElementById('statusLine');
+    if (line && done === SYSTEMS.length) line.textContent = 'probe complete · '+ups+' reachable';
+  }
+  SYSTEMS.forEach(function(s,i){ setTimeout(function(){ probe(s); }, i*55); });
+  document.querySelectorAll('.filters button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.filters button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      var f = b.dataset.filter;
+      document.querySelectorAll('.module').forEach(function(m){
+        m.classList.toggle('hide', f !== 'all' && m.dataset.world !== f);
+      });
+    });
+  });
+})();
+</script>
+<!-- design-switcher:start --><nav class="design-switcher" aria-label="Website design" data-selected="composer"><span class="design-caption">SAME WORLD.<br>FOUR VIEWS.</span><div class="design-options"><a class="design-choice" data-design="astra" href="/">Astra</a><a class="design-choice" data-design="fable" href="/designs/fable/">Fable 5.1</a><a class="design-choice" data-design="opus" href="/designs/opus/">Opus 5.5</a><a class="design-choice" data-design="composer" href="/designs/composer/" aria-current="page">Composer 2.5</a></div></nav><div class="design-curtain" data-destination="composer" aria-hidden="true"><strong>COMPOSER 2.5</strong><span>THE WORKBENCH</span></div><!-- design-switcher:end -->
+</body></html>
