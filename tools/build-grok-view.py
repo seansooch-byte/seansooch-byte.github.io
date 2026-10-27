@@ -9,10 +9,14 @@ from __future__ import annotations
 
 import hashlib
 import html as htmlmod
+import json
 import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+PLATES_JS = ROOT / 'designs' / 'grok' / 'nasa-plates.js'
+# slots per page: home 0-4 (0 is the hero), Two Stories 5-7, Lab 8-9; nasa-plates.js maps slot N to the Nth picture day
+SLOTS = {'index.html': range(0, 5), 'two-stories/index.html': range(5, 8), 'lab/index.html': range(8, 10)}
 
 VIEWS = [
     ('astra', 'Astra'),
@@ -67,11 +71,12 @@ PAGE_CSS = r"""
 .gk-wrap{max-width:1120px;margin:0 auto;padding:0 28px} .gk-station{padding:72px 0 12px;scroll-margin-top:76px} #fig11,#plate1{scroll-margin-top:76px}
 .gk-kicker{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--brass);margin:0}
 .gk-station h2,.gk-hero h1{font-family:var(--serif);font-weight:400;letter-spacing:-.03em;margin:8px 0 12px} .gk-station h2{font-size:clamp(36px,5vw,64px);line-height:1} .gk-lead{color:var(--muted);max-width:66ch;margin:0 0 8px}
-.gk-hero{display:grid;grid-template-columns:1.35fr .9fr;min-height:calc(100svh - 62px)} .gk-hero-media{position:relative;overflow:hidden;min-height:46vw;background:var(--panel)} .gk-hero-media img,.gk-hero-media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.gk-hero{display:grid;grid-template-columns:1.35fr .9fr;min-height:calc(100svh - 62px)} .gk-hero-media{position:relative;overflow:hidden;min-height:46vw;margin:0;background:var(--panel)} .gk-hero-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.gk-hero-media figcaption{position:absolute;left:0;right:0;bottom:0;padding:40px 22px 14px;background:linear-gradient(rgba(11,10,18,0),rgba(11,10,18,.86));font-family:var(--mono);font-size:11px;line-height:1.5;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)} .gk-hero-media figcaption a,.gk-plate figcaption a{color:var(--ink);text-decoration:none} .gk-hero-media figcaption a:hover,.gk-plate figcaption a:hover{color:var(--brass)}
 .gk-hero-copy{padding:clamp(28px,5vw,64px) clamp(28px,5vw,64px) 132px;display:flex;flex-direction:column;justify-content:flex-end;gap:16px;border-left:1px solid rgba(226,161,92,.45)} .gk-hero h1{font-size:clamp(64px,8vw,112px);line-height:.86;margin:0} .gk-hero h1 span{display:block}
 .gk-ring{animation:gk-spin 90s linear infinite;transform-origin:center} @keyframes gk-spin{to{transform:rotate(360deg)}}
 .gk-triad{display:flex;flex-wrap:wrap;gap:10px 18px;margin:0} .gk-triad button{background:none;border:0;color:var(--ink);font-family:var(--sans);font-size:16px;cursor:pointer;padding:0} .gk-triad button span{color:var(--brass);font-family:var(--mono);font-size:12px;margin-left:6px}
-.gk-plate{margin:0} .gk-plate img{width:100%;height:auto;max-height:82vh;object-fit:cover;display:block} .gk-plate figcaption{max-width:1120px;margin:0 auto;padding:10px 28px 0;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.gk-plate{margin:0} .gk-plate img{width:100%;height:auto;max-height:82vh;object-fit:cover;display:block} .gk-plate img[data-apod]{aspect-ratio:16/9;background:var(--panel)}.gk-plate figcaption{max-width:1120px;margin:0 auto;padding:10px 28px 0;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .gk-freq{display:flex;flex-wrap:wrap;gap:8px 18px;margin:22px 0 6px} .gk-freq button{background:none;border:0;border-bottom:1px solid transparent;color:var(--muted);font-family:var(--mono);font-size:12px;letter-spacing:.08em;padding:6px 0;cursor:pointer} .gk-freq button[aria-pressed="true"]{color:var(--ink);border-bottom-color:var(--brass)}
 .gk-manifest,.gk-lesson{display:grid;grid-template-columns:4.5rem minmax(0,1fr) auto;gap:8px 22px;align-items:start;padding:22px 0;border-top:1px solid var(--line);text-decoration:none;color:inherit;background:none;width:100%;text-align:left;cursor:pointer;font:inherit}
 button.gk-manifest{border-left:0;border-right:0;border-bottom:0} .gk-manifest[hidden],.gk-lesson[hidden]{display:none !important}
@@ -87,10 +92,10 @@ button.gk-manifest{border-left:0;border-right:0;border-bottom:0} .gk-manifest[hi
 .gk-foot{margin-top:56px;padding:28px;border-top:1px solid rgba(226,161,92,.45);display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:12px;letter-spacing:.04em;color:var(--muted)} .gk-foot a{color:var(--ink);text-decoration:none}
 .gk-para{display:grid;grid-template-columns:3.2rem 1fr;gap:12px;margin:0 0 22px} .gk-para p{margin:0;max-width:68ch} .gk-para.is-key p{font-size:21px;line-height:1.55} .gk-pn{font-family:var(--mono);color:var(--brass);font-size:12px;padding-top:6px} .gk-essay h1{font-family:var(--serif);font-weight:400;font-size:clamp(46px,7vw,84px);line-height:.95;letter-spacing:-.03em;margin:12px 0} .gk-abstract{background:var(--panel);border-left:2px solid var(--brass);padding:18px 20px;color:var(--muted)} .gk-abstract p{margin:0 0 12px} .gk-abstract p:last-child{margin:0} .gk-topics{display:block;margin-top:6px;font-family:var(--mono);font-size:12px;color:var(--muted);line-height:1.5} .gk-lesson.is-soon .gk-name{color:var(--muted);font-weight:500}
 .gk-soon{color:var(--muted)} .gk-meta{color:var(--muted);font-family:var(--mono);font-size:12px;letter-spacing:.06em}
-@media(max-width:860px){.gk-hero{grid-template-columns:1fr;min-height:0}.gk-hero-media{min-height:58vw}.gk-hero-copy{border-left:0;border-top:1px solid rgba(226,161,92,.45)}.gk-layers,.gk-index{grid-template-columns:1fr;columns:1}}
+@media(max-width:860px){.gk-hero{grid-template-columns:1fr;min-height:0}.gk-hero-media{min-height:58vw}.gk-hero-media figcaption{padding:24px 18px 8px;font-size:10px}.gk-hero-copy{border-left:0;border-top:1px solid rgba(226,161,92,.45)}.gk-layers,.gk-index{grid-template-columns:1fr;columns:1}}
 @media(max-width:700px){.gk-wrap{padding:0 18px}.gk-manifest,.gk-lesson,.gk-view{grid-template-columns:3rem minmax(0,1fr)}.gk-end{grid-column:2;text-align:left}.gk-note,.gk-para{grid-template-columns:1fr}.gk-name{font-size:19px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.gk-ring{animation:none}.gk-video{display:none !important}.gk-manifest,.gk-freq button,.gk-hit{transition:none}}
-@media print{.gk-bar,.gk-video,.gk-find,.gk-stage,.gk-freq{display:none !important}body{background:#fff;color:#111}a,.gk-name,.gk-kicker{color:#111}.gk-plate img{max-height:none}}
+@media print{.gk-bar,.gk-find,.gk-stage,.gk-freq{display:none !important}body{background:#fff;color:#111}a,.gk-name,.gk-kicker{color:#111}.gk-plate img{max-height:none}}
 """
 
 # The home-page script is filled with the system registry from view A.
@@ -307,6 +312,104 @@ PAGE_JS = r"""
 """
 
 
+# Every picture in this view is a NASA Astronomy Picture of the Day, chosen in the browser by
+# designs/grok/nasa-plates.js (written from NASA_JS below). APOD_FALLBACK is what the slots show when
+# science.nasa.gov cannot be read: ten 2026 APOD days credited to NASA missions (public domain), one per slot.
+NASA_JS = r"""/* The Night Orbit's pictures: NASA's Astronomy Picture of the Day. Written by tools/build-grok-view.py.
+   Expected behaviour:
+   - Each <img data-apod="N"> shows the Nth newest picture day of APOD, read from its home on
+     science.nasa.gov (WordPress REST, category 22766 = APOD, no key). Video days are skipped, so slot 0,
+     the home hero, is today's picture, or the latest picture day when today is a video. The pages number
+     their slots so no picture repeats across the view (home 0-4, Two Stories 5-7, Lab 8-9).
+   - Pictures come through NASA's resizer at 960, 1600 and 2400 px wide; the page's CSS crops each slot.
+     The resizer cannot change format, so a PNG day stops at 1280 px (2400 px of PNG is about 8 MB).
+   - A day is used only if its post is on https://science.nasa.gov/ and its image on
+     https://assets.science.nasa.gov/, so a tampered feed cannot put a script link or another host's image here.
+   - Each caption keeps its label and adds the day, the title (a link to the APOD post) and the credit.
+   - The parsed days are kept in localStorage for 30 minutes. If the feed cannot be read within 8 s, the
+     slots use the last days kept, or failing that the fixed public-domain NASA days below.
+   - Text from the feed is set with textContent and attributes only, never as HTML. */
+(function(){
+  'use strict';
+  var FEED = 'https://science.nasa.gov/wp-json/wp/v2/image-article?categories=22766&per_page=14&_fields=date,link,content';
+  var KEY = 'gk-apod-v1', TTL = 30 * 60000;
+  var FALLBACK = %%FALLBACK%%;
+  var slots = Array.prototype.slice.call(document.querySelectorAll('img[data-apod]'));
+  if (!slots.length) return;
+  function text(n){ return n ? n.textContent.replace(/\s+/g, ' ').trim() : ''; }
+  function parse(post){
+    // NASA's media-detail-hero block: the media, an <h1> title, a meta table with a "Credit & Copyright" row
+    var doc = new DOMParser().parseFromString(post.content.rendered, 'text/html'); // inert: nothing loads or runs
+    var img = doc.querySelector('.media-detail-hero__media img'), title = text(doc.querySelector('h1'));
+    var link = String(post.link || ''), src = img ? img.getAttribute('src') || '' : '';
+    if (!title || !/^\d{4}-\d\d-\d\d/.test(post.date || '')) return null;
+    if (link.indexOf('https://science.nasa.gov/') !== 0 || src.indexOf('https://assets.science.nasa.gov/') !== 0) return null;
+    var credit = '';
+    Array.prototype.forEach.call(doc.querySelectorAll('.media-detail-hero__meta-row'), function(row){
+      if (!credit && /credit/i.test(text(row.querySelector('th')))) credit = text(row.querySelector('td'));
+    });
+    var alt = (img.getAttribute('alt') || '').trim();
+    return {
+      date: post.date.slice(0, 10), link: link, title: title,
+      alt: !alt || /^see explanation/i.test(alt) ? title : alt,
+      // /content/dam/ ignores size parameters; the same file under /dynamicimage/assets/ resizes
+      file: src.split('?')[0].replace('/content/dam/', '/dynamicimage/assets/'),
+      credit: credit.replace(/^Image Credit:\s*/i, '').replace(/\s+([,;])/g, '$1')
+    };
+  }
+  function safe(post){ try { return parse(post); } catch (e) { return null; } }
+  function sized(file, w){ return file + '?w=' + w + '&fit=clip'; }
+  function widths(file){ return /\.png$/i.test(file) ? [960, 1280] : [960, 1600, 2400]; }
+  function day(d){ return new Date(d + 'T12:00:00Z').toLocaleDateString('en-GB', { timeZone: 'UTC', day: 'numeric', month: 'short', year: 'numeric' }); }
+  function fill(days){
+    slots.forEach(function(img){
+      var d = days[Number(img.getAttribute('data-apod')) % days.length], ws = widths(d.file);
+      img.alt = d.alt;
+      img.srcset = ws.map(function(w){ return sized(d.file, w) + ' ' + w + 'w'; }).join(', ');
+      img.src = sized(d.file, ws[1]);
+      var fig = img.closest('figure'), cap = fig && fig.querySelector('figcaption');
+      if (!cap) return;
+      var a = document.createElement('a');
+      a.href = d.link; a.target = '_blank'; a.rel = 'noopener'; a.textContent = d.title;
+      cap.textContent = (cap.getAttribute('data-label') || 'Plate') + ' · ' + day(d.date) + ' · ';
+      cap.appendChild(a);
+      if (d.credit) cap.appendChild(document.createTextNode(' · ' + d.credit));
+    });
+  }
+  var kept = null;
+  try { kept = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+  var keptDays = kept && kept.days && kept.days.length ? kept.days : null;
+  if (keptDays && Date.now() - kept.t < TTL) return fill(keptDays);
+  var ctl = window.AbortController ? new AbortController() : null;
+  var timer = setTimeout(function(){ if (ctl) ctl.abort(); }, 8000);
+  fetch(FEED, ctl ? { signal: ctl.signal } : {}).then(function(r){
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  }).then(function(posts){
+    var days = posts.map(safe).filter(Boolean);
+    if (!days.length) throw new Error('no picture days');
+    try { localStorage.setItem(KEY, JSON.stringify({ t: Date.now(), days: days })); } catch (e) {}
+    fill(days);
+  }).catch(function(){
+    fill(keptDays || FALLBACK);
+  }).then(function(){ clearTimeout(timer); });
+})();
+"""
+
+APOD_FALLBACK = [
+    {'date': "2026-06-01", 'link': "https://science.nasa.gov/image-article/apod-2026-june-1-saturn-at-night/", 'title': "Saturn at Night", 'alt': "Saturn at Night", 'file': "https://assets.science.nasa.gov/dynamicimage/assets/science/cds/apod/apod/2026/june/LastRingPortrait_Cassini_4472.jpg", 'credit': "NASA, JPL-Caltech, Space Science Institute, Mindaugas Macijauskas"},
+    {'date': "2026-04-08", 'link': "https://science.nasa.gov/image-article/apod-2026-april-8-earthset/", 'title': "Earthset", 'alt': "Earthset captured through the Orion spacecraft window at 6:41 p.m. EDT, April 6, 2026, during the Artemis II crew’s flyby of the Moon. A muted blue Earth with bright white clouds sets behind the cratered lunar surface. The dark portion of Earth is experiencing nighttime. On Earth’s day side, swirling clouds are visible over the Australia and Oceania region. In the foreground, Ohm crater has terraced edges and a flat floor interrupted by central peaks. Central peaks form in complex craters when the lunar surface, liquefied on impact, splashes upwards during the crater’s formation.", 'file': "https://assets.science.nasa.gov/dynamicimage/assets/science/cds/apod/apod/2026/april/earthset_original.jpg", 'credit': "NASA Text:Keighley Rockcliffe (NASA GSFC, UMBC CSST, CRESST II)"},
+    {'date': "2026-01-11", 'link': "https://science.nasa.gov/image-article/apod-2026-january-11-m104-the-sombrero-galaxy-in-infrared/", 'title': "M104: The Sombrero Galaxy in Infrared", 'alt': "A red-tinged ring of dust is seen nearly on edge. In the ring's center and extending around the frame, blue gas and stars are shown. Please see the explanation for more detailed information.", 'file': "https://assets.science.nasa.gov/dynamicimage/assets/science/cds/apod/apod/2026/january/sombrero_spitzer_3000.jpg", 'credit': "NASA, JPL, Caltech, SSC, R. Kennicutt ( Steward Obs. ) et al.,"},
+    {'date': "2026-10-10", 'link': "https://science.nasa.gov/image-article/apod-2026-october-10-lunar-farside/", 'title': "Lunar Farside", 'alt': "A mosaic image of the farside of the Moon.", 'file': "https://assets.science.nasa.gov/dynamicimage/assets/science/cds/apod/apod/2026/october/farside_lro1600.jpg", 'credit': "NASA / GSFC / Arizona State Univ. / Lunar Reconnaissance Orbiter"},
+    {'date': "2026-02-06", 'link': "https://science.nasa.gov/image-article/apod-2026-february-6-supernova-remnant-cassiopeia-a/", 'title': "Supernova Remnant Cassiopeia A", 'alt': "Supernova Remnant Cassiopeia A", 'file': "https://assets.science.nasa.gov/dynamicimage/assets/science/cds/apod/apod/2026/february/CasA_nircam_4096.jpg", 'credit': "NASA, ESA, CSA, STScI; D. Milisavljevic (Purdue University), T. Temim (Princeton University), I. De Looze (University of Gent)"},
+    {'date': "2026-05-17", 'link': "https://science.nasa.gov/image-article/apod-2026-may-17-ngc-1300-barred-spiral-galaxy/", 'title': "NGC 1300: Barred Spiral Galaxy", 'alt': "The featured image shows a the big beautiful barred spiral galaxy NGC 1300 with encompassing spiral arms tinted blue from young stars. Please see the explanation for more detailed information.", 'file': "https://assets.science.nasa.gov/dynamicimage/assets/science/cds/apod/apod/2026/may/NGC1300_HST_6637.jpg", 'credit': "NASA ESA, Hubble Heritage"},
+    {'date': "2026-04-04", 'link': "https://science.nasa.gov/image-article/apod-2026-april-4-hello-world/", 'title': "Hello World", 'alt': "Hello World", 'file': "https://assets.science.nasa.gov/dynamicimage/assets/science/cds/apod/apod/2026/april/art002e000192.jpg", 'credit': "NASA, Reid Wiseman, Artemis II"},
+    {'date': "2026-01-20", 'link': "https://science.nasa.gov/image-article/apod-2026-january-20-io-in-true-color/", 'title': "Io in True Color", 'alt': "A big ball that is mostly yellow is shown. The ball has many circular and irregular regions that are different colors, typically brown or olive green. Please see the explanation for more detailed information.", 'file': "https://assets.science.nasa.gov/dynamicimage/assets/science/cds/apod/apod/2026/january/iotruecolor_galileo_2796.jpg", 'credit': "NASA, JPL, Galileo Project"},
+    {'date': "2026-09-06", 'link': "https://science.nasa.gov/image-article/apod-2026-september-6-pluto-in-enhanced-color/", 'title': "Pluto in Enhanced Color", 'alt': "The picture shows Pluto in enhanced colors and high resolution and seen by the passing New Horizons spacecraft in 2015. Please see the explanation for more detailed information.", 'file': "https://assets.science.nasa.gov/dynamicimage/assets/science/cds/apod/apod/2021/august/PlutoEnhancedHiRes_NewHorizons_5000.jpg", 'credit': "NASA, Johns Hopkins Univ./APL, Southwest Research Inst."},
+    {'date': "2026-06-27", 'link': "https://science.nasa.gov/image-article/apod-2026-june-27-mars-marathon-by-perseverance/", 'title': "Mars Marathon by Perseverance", 'alt': "Mars Marathon by Perseverance", 'file': "https://assets.science.nasa.gov/dynamicimage/assets/science/cds/apod/apod/2026/june/PIA26726.jpg", 'credit': "NASA, LPL (U. Arizona), MRO, HiRISE"},
+]
+
+
 def md5_10(path: Path) -> str:
     return hashlib.md5(path.read_bytes()).hexdigest()[:10]
 
@@ -361,6 +464,7 @@ def build_switcher_nav(selected: str, page: str) -> str:
 
 def head(title: str, description: str, canonical: str, css_v: str, js_v: str, lab: bool) -> str:
     lab_tag = f'<script src="/lab-course.js?v={md5_10(ROOT / "lab-course.js")}" defer></script>' if lab else ''
+    plates_tag = f'<script src="/designs/grok/nasa-plates.js?v={md5_10(PLATES_JS)}" defer></script>'
     return f'''<!DOCTYPE html>
 <html lang="en" data-design="grok">
 <head>
@@ -376,6 +480,7 @@ def head(title: str, description: str, canonical: str, css_v: str, js_v: str, la
 <meta name="theme-color" content="#0b0a12">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <style>{PAGE_CSS}</style>
+{plates_tag}
 <!-- design-switcher:start --><link rel="stylesheet" href="/design-switcher.css?v={css_v}"><script src="/design-switcher.js?v={js_v}"></script>{lab_tag}<!-- design-switcher:end -->
 </head>
 '''
@@ -404,11 +509,12 @@ def bar(current: str) -> str:
     )
 
 
-def plate(src: str, alt: str, caption: str, eager: bool = False) -> str:
+def plate(slot: int, eager: bool = False) -> str:
+    """A full-bleed picture slot. nasa-plates.js fills it with an APOD day and writes its caption."""
     lazy = '' if eager else ' loading="lazy"'
     return (
-        f'<figure class="gk-plate"><img src="{src}" width="1280" height="720" alt="{esc(alt)}" decoding="async"{lazy}>'
-        f'<figcaption>{esc(caption)}</figcaption></figure>'
+        f'<figure class="gk-plate"><img data-apod="{slot}" width="1280" height="720" alt="" decoding="async"{lazy}>'
+        '<figcaption data-label="Plate">Plate · NASA Astronomy Picture of the Day</figcaption></figure>'
     )
 
 
@@ -669,19 +775,17 @@ def render_home(data: dict, css_v: str, js_v: str) -> str:
         measure_rows.append(f'<tr><td>{esc(name)}</td><td class="gk-ink">{result_html}</td><td>{standard_html}</td></tr>')
     script = PAGE_JS.replace('%%SYSTEMS%%', data['systems'])
     return head(
-        'Sean Sooch — The Night Orbit',
+        'Sean Sooch | The Night Orbit',
         'A night-orbit log of the same record: fourteen working systems across medicine, the military, and machines, the writing, the films, and a course in core medicine.',
         'https://seansooch.dev/designs/grok/', css_v, js_v, True,
     ) + f'''<body>
 {bar('')}
 <main id="top">
   <section class="gk-hero" aria-label="Introduction">
-    <div class="gk-hero-media">
-      <img src="/screenshots/grok/limb.webp" width="1280" height="720" alt="A rust-colored ringed planet seen from orbit, with a copper glow along the limb and pale rings crossing a dark sky." decoding="async">
-      <video class="gk-video" autoplay muted loop playsinline poster="/videos/grok/orbit-poster.webp" width="720" height="404" aria-hidden="true">
-        <source src="/videos/grok/orbit.mp4" type="video/mp4">
-      </video>
-    </div>
+    <figure class="gk-hero-media">
+      <img data-apod="0" width="1280" height="720" sizes="(max-width: 860px) 100vw, 60vw" alt="" decoding="async" fetchpriority="high">
+      <figcaption data-label="Picture of the day">Picture of the day · NASA Astronomy Picture of the Day</figcaption>
+    </figure>
     <div class="gk-hero-copy">
       <svg class="gk-ring" viewBox="0 0 80 80" width="72" height="72" aria-hidden="true"><circle cx="40" cy="40" r="28" fill="none" stroke="#e2a15c" stroke-width="1"></circle><circle cx="40" cy="40" r="16" fill="none" stroke="#b7d4e4" stroke-width="1"></circle><circle cx="68" cy="40" r="2.4" fill="#e2a15c"></circle></svg>
       <p class="gk-kicker" id="domLabel">Medicine / military / machines</p>
@@ -696,8 +800,7 @@ def render_home(data: dict, css_v: str, js_v: str) -> str:
       <p class="gk-meta">Independent work, 2026 · orbit 05</p>
     </div>
   </section>
-  <script>(function(){{if(matchMedia('(prefers-reduced-motion: reduce)').matches){{document.querySelectorAll('video.gk-video').forEach(function(v){{v.removeAttribute('autoplay');v.pause();v.hidden=true;}});}}}})();</script>
-  {plate('/screenshots/grok/starfield.webp', 'A dense starfield crossed by a copper dust lane.', 'Plate · dust lane, crossing the orbit')}
+  {plate(1)}
   <section id="ch3" class="gk-station"><div class="gk-wrap">
     <p class="gk-kicker">Station 01 · the work</p>
     <h2>Built to be used.</h2>
@@ -705,7 +808,7 @@ def render_home(data: dict, css_v: str, js_v: str) -> str:
     <div class="gk-freq" role="group" aria-label="Filter systems by domain">{freq_html}</div>
     {''.join(rows)}
   </div></section>
-  {plate('/screenshots/grok/trail.webp', 'A thin copper light trail arcing up from the night side of a planet and returning toward the horizon.', 'Plate · one arc out and back')}
+  {plate(2)}
   <section id="lab" class="gk-station"><div class="gk-wrap">
     <p class="gk-kicker">Station · the lab</p>
     <h2>Medicine, one step at a time.</h2>
@@ -733,7 +836,7 @@ def render_home(data: dict, css_v: str, js_v: str) -> str:
     {''.join(papers)}
     {''.join(rooms)}
   </div></section>
-  {plate('/screenshots/grok/moons.webp', 'Two crescent moons above a dark ocean horizon, their edges lit copper.', 'Plate · two crescents over a dark sea')}
+  {plate(3)}
   <section id="appb" class="gk-station"><div class="gk-wrap">
     <p class="gk-kicker">Station 03 · the films</p>
     <h2>Press play.</h2>
@@ -747,7 +850,7 @@ def render_home(data: dict, css_v: str, js_v: str) -> str:
     </figure>
     {''.join(film_rows)}
   </div></section>
-  {plate('/screenshots/grok/rings.webp', 'Rocky fragments in a copper-lit ring, with the curve of a rust planet below.', 'Plate · ring debris in copper light')}
+  {plate(4)}
   <section id="ch1" class="gk-station"><div class="gk-wrap">
     <p class="gk-kicker">Station 04 · the person</p>
     <h2>In the spare hours.</h2>
@@ -772,7 +875,7 @@ def render_home(data: dict, css_v: str, js_v: str) -> str:
           <tr data-index="Vol. 01, The Magazine (archive)" data-kw="editions archive opus" data-href="https://seansooch-vol1.pages.dev"><td class="gk-ink">Vol. 01</td><td>The Magazine: dark editorial, sixteen sections, terminal metrics</td><td>Claude Opus 4.7</td><td>April 2026</td><td>Retired with honors</td><td><a href="https://seansooch-vol1.pages.dev" target="_blank" rel="noopener">View archive</a></td></tr>
           <tr data-index="Vol. 02, Triad × Vitals (archive)" data-kw="editions archive fable 5 vitals" data-href="https://seansooch-vol2.pages.dev"><td class="gk-ink">Vol. 02</td><td>Triad × Vitals: three worlds, one chart, reactive ink</td><td>Claude Fable 5</td><td>June 2026</td><td>Retired with honors</td><td><a href="https://seansooch-vol2.pages.dev" target="_blank" rel="noopener">View archive</a></td></tr>
           <tr><td class="gk-ink">Vol. 03</td><td>Five views: the Field Manual, the Personal Index, the Commentary, the Live Stack, and the Night Orbit, switchable in place</td><td>OpenAI Astra, Claude Fable 5.1, Claude Opus 5.5, Cursor Composer 2.5, and Grok</td><td>September 2026</td><td>Current</td><td>You are here</td></tr>
-          <tr><td>Vol. 04</td><td>To be designed</td><td>The next class</td><td>—</td><td>Awaiting release</td><td></td></tr>
+          <tr><td>Vol. 04</td><td>To be designed</td><td>The next class</td><td>-</td><td>Awaiting release</td><td></td></tr>
         </tbody>
       </table>
     </div>
@@ -794,7 +897,7 @@ def render_home(data: dict, css_v: str, js_v: str) -> str:
     </details>
   </div></section>
   <section id="indexsec" class="gk-station"><div class="gk-wrap">
-    <p class="gk-kicker">A—Z</p>
+    <p class="gk-kicker">A to Z</p>
     <h2>The complete index.</h2>
     <p class="gk-lead">Every system, paper, and film on this page. Press / to search it.</p>
     <div class="gk-index" id="indexList"></div>
@@ -873,7 +976,7 @@ def render_essay(css_v: str, js_v: str) -> str:
     ) + f'''<body>
 {nav}
 <main id="top" class="gk-essay">
-  {plate('/screenshots/grok/nebula.webp', 'A pale violet cloud of gas forming a tall ring around a dark center, with a few sharp stars.', 'Plate · the well, before the first page', eager=True)}
+  {plate(5, eager=True)}
   <header class="gk-station"><div class="gk-wrap">
     <p class="gk-kicker">Humanities · independent research · table 4-3 · September 2026</p>
     <h1>{esc(title)}</h1>
@@ -884,7 +987,7 @@ def render_essay(css_v: str, js_v: str) -> str:
     <div class="gk-layers">{''.join(f'<div><span class="gk-no"></span><span><b>{esc(plain(b))}</b><span>{rest.strip()}</span></span></div>' for b, rest in foot_bits)}</div>
   </div></header>
   <section id="part1" class="gk-station"><div class="gk-wrap">{section_head('part1')}{essay_block('I')}</div></section>
-  {plate('/screenshots/grok/rings.webp', 'Rocky fragments in a copper-lit ring, with the curve of a rust planet below.', 'Plate · the same rules, seen up close')}
+  {plate(6)}
   <section id="table43" class="gk-station"><div class="gk-wrap">{section_head('table43')}
     <div class="gk-scroll" tabindex="0"><table>
       <thead><tr><th></th><th>First story: a prior physical state</th><th>Second story: a prior computational state</th></tr></thead>
@@ -892,7 +995,7 @@ def render_essay(css_v: str, js_v: str) -> str:
     </table></div>
     <p class="gk-meta">{esc(cap)}</p>
   </div></section>
-  {plate('/screenshots/grok/moons.webp', 'Two crescent moons above a dark ocean horizon, their edges lit copper.', 'Plate · two stories, one horizon')}
+  {plate(7)}
   <section id="part2" class="gk-station"><div class="gk-wrap">{section_head('part2')}{essay_block('II')}</div></section>
   <section id="sources" class="gk-station"><div class="gk-wrap">{section_head('sources')}{essay_block('S')}
     <div class="gk-note"><strong>Note</strong><p>{note}</p></div>
@@ -919,7 +1022,7 @@ def render_lab(css_v: str, js_v: str) -> str:
     ) + f'''<body>
 {nav}
 <main id="top">
-  {plate('/screenshots/grok/ridge.webp', 'A small copper instrument dome on a rocky ridge, one warm slit of light, under a huge banded planet.', 'Plate · the instrument ridge, where the course is kept', eager=True)}
+  {plate(8, eager=True)}
   <header class="gk-station"><div class="gk-wrap">
     <p class="gk-kicker">Medicine · the lab · since October 2026</p>
     <h1 class="gk-station" style="padding:0">The Lab</h1>
@@ -927,7 +1030,7 @@ def render_lab(css_v: str, js_v: str) -> str:
     <div class="gk-note"><strong>Ground rules</strong><p>Every lesson has a Clinical values tab: typical adult reference ranges from standard physiology textbooks and major guidelines, each one cited, drawn against the lesson as it runs. The lessons are educational only and not for clinical use; they give no drug doses. Everything runs in your browser, with no accounts and no trackers, and works on a phone and with a keyboard.</p></div>
     <p class="gk-meta"><span data-lab-text="{{ready}} of {{total}}">Counted from the course ledger</span> · latest <span data-lab-text="{{latest}}">listed below</span></p>
   </div></header>
-  {plate('/screenshots/grok/starfield.webp', 'A dense starfield crossed by a copper dust lane.', 'Plate · the course, in teaching order')}
+  {plate(9)}
   <section id="course" class="gk-station"><div class="gk-wrap">
     <p class="gk-kicker">The course</p>
     <h2>One idea at a time.</h2>
@@ -1011,8 +1114,13 @@ def patch_architecture() -> None:
     path = ROOT / 'ARCHITECTURE.md'
     text = path.read_text(encoding='utf-8')
     row = (
-        '| `designs/grok/` | View G (Grok, "The Night Orbit", added 2026-10-27): the home page, the Two Stories essay, and the Lab course page. Generated by `tools/build-grok-view.py`. A deep-space mission log in system fonts, with plates in `screenshots/grok/` and a loop in `videos/grok/`. | Yes. Regenerate with `tools/build-grok-view.py` |\n'
+        '| `designs/grok/` | View G (Grok, "The Night Orbit", added 2026-10-27): the home page, the Two Stories essay, and the Lab course page. Generated by `tools/build-grok-view.py`. A deep-space mission log in system fonts. Every picture is a NASA Astronomy Picture of the Day, chosen in the browser by `designs/grok/nasa-plates.js` (written by the same builder) from APOD\'s WordPress feed on science.nasa.gov: today\'s on the home hero, recent days on the plates, a fixed set of public-domain NASA days when the feed cannot be read. Check with `node tools/grok-nasa.walk.mjs <base>`. | Yes. Regenerate with `tools/build-grok-view.py` |\n'
     )
+    lines = text.splitlines(keepends=True)
+    own = [i for i, line in enumerate(lines) if line.startswith('| `designs/grok/` |')]
+    if own:  # the builder owns this row: keep it current
+        lines[own[0]] = row
+        text = ''.join(lines)
     if '`designs/grok/`' not in text.split('### Three views')[0]:
         lines = text.splitlines(keepends=True)
         out = []
@@ -1053,6 +1161,10 @@ def main() -> None:
     out_dir = ROOT / 'designs' / 'grok'
     (out_dir / 'two-stories').mkdir(parents=True, exist_ok=True)
     (out_dir / 'lab').mkdir(parents=True, exist_ok=True)
+    # written first: every page's head stamps it
+    PLATES_JS.write_text(NASA_JS.replace('%%FALLBACK%%', json.dumps(APOD_FALLBACK, ensure_ascii=False)), encoding='utf-8')
+    if len(APOD_FALLBACK) < max(max(r) for r in SLOTS.values()) + 1:
+        raise SystemExit('APOD_FALLBACK needs one picture per slot')
     pages = {
         out_dir / 'index.html': render_home(data, css_v, js_v),
         out_dir / 'two-stories' / 'index.html': render_essay(css_v, js_v),
@@ -1061,6 +1173,17 @@ def main() -> None:
     for path, text in pages.items():
         if 'fonts.googleapis' in text or 'api.x.ai' in text:
             raise SystemExit(f'refused to write a third-party request into {path}')
+        # every picture is an APOD slot: the retired Grok Imagine stills and loop must not come back
+        if '/screenshots/grok/' in text or '/videos/grok/' in text or '<video class="gk-video"' in text:
+            raise SystemExit(f'{path} names a retired Grok Imagine file')
+        rel = path.relative_to(out_dir).as_posix()
+        found = [int(n) for n in re.findall(r'<img data-apod="(\d+)"', text)]
+        if found != list(SLOTS[rel]):
+            raise SystemExit(f'{rel}: picture slots {found}, expected {list(SLOTS[rel])}')
+        if '/designs/grok/nasa-plates.js?v=' not in text:
+            raise SystemExit(f'{rel}: nasa-plates.js missing')
+        if '\N{EM DASH}' in text:
+            raise SystemExit(f'{rel}: an em dash')
         path.write_text(text, encoding='utf-8')
     patch_pages(css_v, js_v)
     patch_architecture()
@@ -1075,7 +1198,7 @@ def main() -> None:
         if '>Grok</a>' not in text:
             raise SystemExit(f'Grok switcher link missing on {rel}')
     home = pages[out_dir / 'index.html']
-    for needed in ('id="ch3"', 'id="lab"', 'id="ch4"', 'id="appb"', 'id="plate1"', 'id="ch1"', 'id="ch5"', 'id="appa"', 'id="ch2"', 'id="fig11"', 'id="indexsec"', 'data-lab-list="ready"', 'video class="gk-video"'):
+    for needed in ('id="ch3"', 'id="lab"', 'id="ch4"', 'id="appb"', 'id="plate1"', 'id="ch1"', 'id="ch5"', 'id="appa"', 'id="ch2"', 'id="fig11"', 'id="indexsec"', 'data-lab-list="ready"', 'data-apod="0"'):
         if needed not in home:
             raise SystemExit('home missing ' + needed)
     essay = pages[out_dir / 'two-stories' / 'index.html']
