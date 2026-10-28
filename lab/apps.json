@@ -208,5 +208,20 @@
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
     }
+  },
+  {
+    "slug": "hpa-axis-steroids",
+    "title": "The HPA Axis and Steroids",
+    "date": "2026-10-28",
+    "description": "How the brain and adrenal glands control cortisol through feedback, and why steroid drugs switch the axis off.",
+    "category": "medicine",
+    "builder": {
+      "tool": "Claude Code",
+      "model": "claude-opus-5-5"
+    },
+    "reviewer": {
+      "tool": "OpenAI Codex",
+      "model": "gpt-6.1-sol"
+    }
   }
 ]
