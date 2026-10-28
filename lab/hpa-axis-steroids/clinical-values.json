@@ -1,0 +1,103 @@
+{
+  "disclaimer": "Typical adult reference ranges; labs vary; not for clinical decisions.",
+  "sources": {
+    "openstax-ap-17.6": "OpenStax Anatomy and Physiology 2e, section 17.6 The Adrenal Glands. Betts JG, Young KA, Wise JA, Johnson E, Poe B, Kruse DH, Korol O, Johnson JE, Womble M, DeSaix P. Anatomy and Physiology 2e. Houston, Texas: OpenStax; 2022. https://openstax.org/books/anatomy-and-physiology-2e/pages/17-6-the-adrenal-glands",
+    "openstax-ap-17.3": "OpenStax Anatomy and Physiology 2e, section 17.3 The Pituitary Gland and Hypothalamus. Betts JG, Young KA, Wise JA, Johnson E, Poe B, Kruse DH, Korol O, Johnson JE, Womble M, DeSaix P. Anatomy and Physiology 2e. Houston, Texas: OpenStax; 2022. https://openstax.org/books/anatomy-and-physiology-2e/pages/17-3-the-pituitary-gland-and-hypothalamus",
+    "openstax-ap-26.3": "OpenStax Anatomy and Physiology 2e, section 26.3 Electrolyte Balance. Betts JG, Young KA, Wise JA, Johnson E, Poe B, Kruse DH, Korol O, Johnson JE, Womble M, DeSaix P. Anatomy and Physiology 2e. Houston, Texas: OpenStax; 2022. https://openstax.org/books/anatomy-and-physiology-2e/pages/26-3-electrolyte-balance",
+    "openstax-pharm-26.1": "OpenStax Pharmacology for Nurses, section 26.1 Introduction to the Adrenal Cortex, Pituitary, and Hypothalamus. OpenStax (Rice University), Pharmacology for Nurses, 1st edition. Houston, Texas: OpenStax; 2024. https://openstax.org/books/pharmacology/pages/26-1-introduction-to-the-adrenal-cortex-pituitary-and-hypothalamus",
+    "openstax-pharm-26.4": "OpenStax Pharmacology for Nurses, section 26.4 Glucocorticoids and Mineralocorticoids. OpenStax (Rice University), Pharmacology for Nurses, 1st edition. Houston, Texas: OpenStax; 2024. https://openstax.org/books/pharmacology/pages/26-4-glucocorticoids-and-mineralocorticoids",
+    "openstax-pharm-28.1": "OpenStax Pharmacology for Nurses, section 28.1 Introduction to Diabetes. OpenStax (Rice University), Pharmacology for Nurses, 1st edition. Houston, Texas: OpenStax; 2024. https://openstax.org/books/pharmacology/pages/28-1-introduction-to-diabetes"
+  },
+  "values": [
+    { "id": "glucose", "label": "Fasting blood glucose", "unit": "mg/dL",
+      "low": 70, "high": 100,
+      "source": "openstax-pharm-28.1",
+      "where": "OpenStax Pharmacology for Nurses, section 28.1 Introduction to Diabetes, Hypoglycemia: “The expected values for normal fasting blood glucose concentration are between 70 mg/dL and 100 mg/dL (World Health Organization [WHO], n.d.).”",
+      "modelKey": "glucose" },
+    { "id": "sodium", "label": "Plasma sodium", "unit": "mM (mmol/L)",
+      "low": 136, "high": 146,
+      "source": "openstax-ap-26.3",
+      "where": "OpenStax Anatomy and Physiology 2e, section 26.3 Electrolyte Balance, Table 26.1 Electrolyte and Ion Reference Values, plasma column: “Sodium Na + 136.00–146.00 (mM)”",
+      "modelKey": "sodium",
+      "note": "The table prints 136.00–146.00 (mM); mM means millimoles per litre (mmol/L)." },
+    { "id": "potassium", "label": "Plasma potassium", "unit": "mM (mmol/L)",
+      "low": 3.5, "high": 5.0,
+      "source": "openstax-ap-26.3",
+      "where": "OpenStax Anatomy and Physiology 2e, section 26.3 Electrolyte Balance, Table 26.1 Electrolyte and Ion Reference Values, plasma column: “Potassium K + 3.50–5.00 (mM)”",
+      "modelKey": "potassium",
+      "note": "The table prints 3.50–5.00 (mM); mM means millimoles per litre (mmol/L)." }
+  ],
+  "states": [
+    { "id": "cushing", "label": "Cushing’s disease (too much cortisol)", "kind": "disease",
+      "summary": "Cortisol is hypersecreted, most often because a pituitary tumor releases ACTH in abnormally high amounts, and the excess cortisol raises blood glucose.",
+      "comparedWith": "normal",
+      "shifts": { "glucose": "up" },
+      "evidence": {
+        "glucose": "OpenStax Anatomy and Physiology 2e, section 17.6, Disorders Involving the Adrenal Glands: “Cushing’s disease is a disorder characterized by high blood glucose levels and the accumulation of lipid deposits on the face and neck. It is caused by hypersecretion of cortisol.”"
+      },
+      "source": "openstax-ap-17.6",
+      "where": "OpenStax Anatomy and Physiology 2e, section 17.6 The Adrenal Glands, Disorders Involving the Adrenal Glands: “It is caused by hypersecretion of cortisol. The most common source of Cushing’s disease is a pituitary tumor that secretes cortisol or ACTH in abnormally high amounts.”",
+      "modelNote": "The model adds ACTH from a pituitary tumor that the feedback brake cannot slow. The cited passage gives no direction for sodium or potassium, so no arrows are shown for them and the model leaves them unchanged." },
+    { "id": "addison", "label": "Addison’s disease (adrenal insufficiency)", "kind": "disease",
+      "summary": "The adrenal cortex hyposecretes its corticosteroids, which lowers blood glucose and blood sodium.",
+      "comparedWith": "normal",
+      "shifts": { "glucose": "down", "sodium": "down" },
+      "evidence": {
+        "glucose": "OpenStax Anatomy and Physiology 2e, section 17.6, Disorders Involving the Adrenal Glands: “In contrast, the hyposecretion of corticosteroids can result in Addison’s disease, a rare disorder that causes low blood glucose levels and low blood sodium levels.”",
+        "sodium": "OpenStax Anatomy and Physiology 2e, section 17.6, Disorders Involving the Adrenal Glands: “In contrast, the hyposecretion of corticosteroids can result in Addison’s disease, a rare disorder that causes low blood glucose levels and low blood sodium levels.”"
+      },
+      "source": "openstax-ap-17.6",
+      "where": "OpenStax Anatomy and Physiology 2e, section 17.6 The Adrenal Glands, Disorders Involving the Adrenal Glands: “In contrast, the hyposecretion of corticosteroids can result in Addison’s disease, a rare disorder that causes low blood glucose levels and low blood sodium levels.”",
+      "modelNote": "The model keeps a fifth of the working cortex, so both cortisol and aldosterone fall. The cited adrenal section lists no potassium direction for Addison’s disease, so no arrow is shown for that row and the model holds potassium where it was." },
+    { "id": "glucocorticoid", "label": "Glucocorticoid drugs (for example prednisone, hydrocortisone)", "kind": "drug",
+      "summary": "Synthetic cortisol relatives bind glucocorticoid receptors to calm inflammation; they raise blood glucose, and long-term use suppresses the HPA axis, so the body’s own cortisol production falls and the drug must be tapered.",
+      "comparedWith": "normal",
+      "shifts": { "glucose": "up" },
+      "evidence": {
+        "glucose": "OpenStax Pharmacology for Nurses, section 26.4, Adverse Effects and Contraindications: “Long-term adverse effects include weight gain, high blood pressure, osteoporosis, hyperglycemia, skin atrophy (topical application), iatrogenic Cushing’s syndrome , and increased risk of infection.” Section 28.1, Hyperglycemia: “Hyperglycemia occurs when the blood glucose level in the body is above the normal range”"
+      },
+      "source": "openstax-pharm-26.4",
+      "where": "OpenStax Pharmacology for Nurses, section 26.4 Glucocorticoids and Mineralocorticoids, Glucocorticoids: “Synthetic glucocorticoids—such as prednisone, dexamethasone, and hydrocortisone—are commonly used in medicine to treat conditions such as asthma, rheumatoid arthritis, and inflammatory bowel disease.” and “Long-term use also requires tapering due to HPA axis suppression resulting in inadequate cortisol production.”",
+      "modelNote": "The model adds a cortisol-like drug to a normal body: the brake reads it as cortisol, CRH and ACTH fall, and the body’s own cortisol falls while the total steroid signal is high." },
+    { "id": "mineralocorticoid", "label": "Mineralocorticoid drugs (fludrocortisone)", "kind": "drug",
+      "summary": "An aldosterone-like steroid binds mineralocorticoid receptors in the kidneys, increasing sodium reabsorption and potassium excretion; it replaces missing aldosterone in Addison’s disease.",
+      "comparedWith": "normal",
+      "shifts": { "sodium": "up", "potassium": "down" },
+      "evidence": {
+        "sodium": "OpenStax Pharmacology for Nurses, section 26.4, Table 26.8 Drug Prototype Table: Fludrocortisone Acetate, Mechanism of Action: “Binds to mineralocorticoid receptors in the cells of the kidneys, which increases the reabsorption of sodium ions and the excretion of potassium ions, helping to regulate fluid and electrolyte balance” Mineralocorticoids: “An excess of aldosterone causes an increase in blood pressure and serum sodium levels along with a decrease in serum potassium levels.”",
+        "potassium": "OpenStax Pharmacology for Nurses, section 26.4, Table 26.8 Drug Prototype Table: Fludrocortisone Acetate, Adverse Effects: “Edema Cardiac enlargement Potassium loss Muscle weakness” Mineralocorticoids: “An excess of aldosterone causes an increase in blood pressure and serum sodium levels along with a decrease in serum potassium levels.”"
+      },
+      "source": "openstax-pharm-26.4",
+      "where": "OpenStax Pharmacology for Nurses, section 26.4 Glucocorticoids and Mineralocorticoids, Fludrocortisone: “Fludrocortisone is a synthetic adrenocortical steroid that binds to mineralocorticoid receptors in the cells of the kidneys and supports fluid and electrolyte balance within the body. This medication is used to treat primary and secondary adrenocortical insufficiency in Addison’s disease .”",
+      "modelNote": "The model adds an aldosterone-like drug to a normal body, so the direction shown is that of extra mineralocorticoid. CRH, ACTH and cortisol stay where they were." },
+    { "id": "hyperaldo", "label": "Hyperaldosteronism (too much aldosterone)", "kind": "disease",
+      "summary": "Excess aldosterone makes the kidneys keep sodium and excrete potassium, so serum sodium rises and serum potassium falls.",
+      "comparedWith": "normal",
+      "shifts": { "sodium": "up", "potassium": "down" },
+      "evidence": {
+        "sodium": "OpenStax Pharmacology for Nurses, section 26.4, Mineralocorticoids: “An excess of aldosterone causes an increase in blood pressure and serum sodium levels along with a decrease in serum potassium levels.”",
+        "potassium": "OpenStax Pharmacology for Nurses, section 26.4, Mineralocorticoids: “An excess of aldosterone causes an increase in blood pressure and serum sodium levels along with a decrease in serum potassium levels.”"
+      },
+      "source": "openstax-pharm-26.4",
+      "where": "OpenStax Pharmacology for Nurses, section 26.4 Glucocorticoids and Mineralocorticoids, Mineralocorticoids: “The first is hyperaldosteronism, which is characterized by excess aldosterone production.”",
+      "modelNote": "The model triples the cortex’s aldosterone output and leaves cortisol alone." },
+    { "id": "hypoaldo", "label": "Hypoaldosteronism (too little aldosterone)", "kind": "disease",
+      "summary": "Too little aldosterone lets sodium escape in the urine and potassium build up, so serum sodium falls and serum potassium rises.",
+      "comparedWith": "normal",
+      "shifts": { "sodium": "down", "potassium": "up" },
+      "evidence": {
+        "sodium": "OpenStax Pharmacology for Nurses, section 26.4, Mineralocorticoids: “Hypoaldosteronism leads to a decrease in blood pressure and serum sodium levels along with an increase in serum potassium levels.”",
+        "potassium": "OpenStax Pharmacology for Nurses, section 26.4, Mineralocorticoids: “Hypoaldosteronism leads to a decrease in blood pressure and serum sodium levels along with an increase in serum potassium levels.”"
+      },
+      "source": "openstax-pharm-26.4",
+      "where": "OpenStax Pharmacology for Nurses, section 26.4 Glucocorticoids and Mineralocorticoids, Mineralocorticoids: “The other condition is hypoaldosteronism, which is characterized by insufficient aldosterone production.”",
+      "modelNote": "The model cuts the cortex’s aldosterone output to a quarter and leaves cortisol alone." },
+    { "id": "inhibitor", "label": "Steroid synthesis inhibitors (feedback effect only)", "kind": "drug",
+      "summary": "Blocking the cortex’s steroid-building steps means less cortisol is made, so negative feedback weakens and CRH and ACTH rise.",
+      "comparedWith": "normal",
+      "shifts": {},
+      "source": "openstax-ap-17.6",
+      "where": "None of the saved sections describes a specific steroid synthesis inhibitor, so this state shows only the feedback consequence of making less cortisol, built on the HPA axis as OpenStax Anatomy and Physiology 2e, section 17.6 The Adrenal Glands, describes it: “The HPA axis involves the stimulation of hormone release of adrenocorticotropic hormone (ACTH) from the pituitary by the hypothalamus. ACTH then stimulates the adrenal cortex to produce the hormone cortisol.” Pharmacology for Nurses, section 26.4, shows the brake the other way round: “Long-term use also requires tapering due to HPA axis suppression resulting in inadequate cortisol production.”",
+      "modelNote": "The cited sections give no direction for glucose, sodium or potassium with these drugs, so no arrows are shown. In the teaching model the cortex builds half its usual cortisol and CRH and ACTH rise; the glucose marker and the inflammation flame are held where they were, because no direction is cited for them." }
+  ]
+}
