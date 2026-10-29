@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stomach Acid and the Parietal Cell · The Lab · Sean Sooch</title>
+<meta name="description" content="A guided visual lesson: how one stomach cell, the parietal cell, pumps acid when messengers call it, how the stomach lining protects itself, and where proton pump inhibitors, H2 blockers, antacids and prostaglandin analogues turn the acid down.">
+<link rel="canonical" href="https://seansooch.dev/lab/gastric-acid-secretion/">
+<meta property="og:title" content="Stomach Acid and the Parietal Cell">
+<meta property="og:description" content="How one stomach cell pumps acid on command, and how acid-reducing drugs turn it down at different steps, one picture at a time.">
+<meta property="og:url" content="https://seansooch.dev/lab/gastric-acid-secretion/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script src="model.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the lesson</a>
+<header class="site-top">
+  <div class="site-top-in">
+    <a class="site-brand" href="/" aria-label="Sean Sooch, home">SS<span aria-hidden="true">—</span>03</a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="site-nav-home" href="/#ch3">Work</a>
+      <a href="/#ch4">Writing</a>
+      <a href="/#appb">Films</a>
+      <a href="/#appa">Editions</a>
+      <a class="site-nav-lab" href="/lab/" aria-current="true">The Lab</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+  <div class="intro">
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / Core medicine / Lesson 16</p>
+    <h1>Stomach acid and the <span>parietal cell</span>.</h1>
+    <p class="lede">One kind of cell in your stomach lining pumps out acid strong enough to break down a meal, but only when it is called. Build that cell one piece at a time, then watch four kinds of acid-reducing drugs turn it down, each at a different step.</p>
+    <p class="note">Educational, not for clinical use</p>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Lesson views">
+    <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
+    <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
+  </div>
+
+  <section id="lesson" role="tabpanel" aria-labelledby="tab-lesson">
+    <article data-step="1" data-step-title="The stomach and its lining" data-kind="stomach">
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">The stomach and its lining</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The <dfn>stomach</dfn> is a stretchy, muscular bag that churns swallowed food. Its inner layer, the <dfn>lining</dfn>, is dotted with tiny openings called <dfn>gastric pits</dfn> (gastric means “of the stomach”). Each pit leads down into <dfn>gastric glands</dfn>, deeper tubes that make the stomach’s juices.</p>
+    </article>
+    <article data-step="2" data-step-title="The parietal cell" data-kind="cell" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">The parietal cell</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The glands of the stomach’s domed top and main body hold large <dfn>parietal cells</dfn>. One face of each looks into the hollow inside of the stomach. The opposite face looks onto the <dfn>blood side</dfn>, where tiny blood vessels bring supplies and messages.</p>
+    </article>
+    <article data-step="3" data-step-title="Its job: making acid" data-kind="acid" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Its job: making acid</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A parietal cell makes <dfn>acid</dfn>. A liquid is acidic when it holds many <dfn>hydrogen ions</dfn>: tiny electrically charged bits of hydrogen. The more hydrogen ions in the stomach, the more acidic it is. The gauge tracks how acidic the stomach is.</p>
+    </article>
+    <article data-step="4" data-step-title="The proton pump" data-kind="pump" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">The proton pump</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">In the stomach-facing surface sit <dfn>proton pumps</dfn>: tiny machines that push hydrogen ions (also called protons) out into the stomach and pull <dfn>potassium</dfn>, another charged mineral, back in, one for one. They burn energy to push against a steep uphill difference.</p>
+    </article>
+    <article data-step="5" data-step-title="Chloride joins: hydrochloric acid" data-kind="chloride" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Chloride joins: hydrochloric acid</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Chloride</dfn>, the charged form of chlorine found in table salt, follows through a <dfn>channel</dfn>, a pore in the cell surface. Hydrogen ions and chloride together make <dfn>hydrochloric acid</dfn>, the stomach’s acid. A second gauge tracks how much acid the cell makes.</p>
+    </article>
+    <article data-step="6" data-step-title="What the acid is for" data-kind="pepsin" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">What the acid is for</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Acid unravels the proteins in food and switches on <dfn>pepsin</dfn>, an <dfn>enzyme</dfn> (a protein that speeds up a chemical change) that cuts proteins into pieces. The acid also kills most germs swallowed with food.</p>
+    </article>
+    <article data-step="7" data-step-title="Pumps wait in storage" data-kind="store" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Pumps wait in storage</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Between meals most pumps rest inside the cell, packed in tiny bubbles called <dfn>vesicles</dfn>. When the cell is called to work, the vesicles merge with the stomach-facing surface and their pumps start. When the call stops, the pumps are pulled back in.</p>
+    </article>
+    <article data-step="8" data-step-title="Histamine calls the pumps up" data-kind="histamine" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Histamine calls the pumps up</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A neighbouring cell releases <dfn>histamine</dfn>, a messenger. It docks on a <dfn>receptor</dfn>, a protein on the cell surface shaped to fit one messenger: the <dfn>H2 receptor</dfn> (histamine type-two receptor). Docked histamine sends an on signal, and stored pumps rise to the surface.</p>
+    </article>
+    <article data-step="9" data-step-title="Two more messengers add their push" data-kind="messengers" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Two more messengers add their push</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Gastrin</dfn>, a <dfn>hormone</dfn> (a messenger carried in the blood) from the lower stomach, and <dfn>acetylcholine</dfn>, released by nerves when you see, smell or eat food (<a href="/lab/autonomic-synapse/">Lesson 6</a>), dock on their own receptors. Histamine also strengthens their push.</p>
+    </article>
+    <article data-step="10" data-step-title="A shield for the lining" data-kind="shield" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">A shield for the lining</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Surface cells coat the lining in <dfn>mucus</dfn>, a thick slippery gel, laced with <dfn>bicarbonate</dfn>, a <dfn>base</dfn>: a substance that soaks up hydrogen ions and so cancels acid. Where this shield fails, acid eats a sore into the lining: an <dfn>ulcer</dfn>.</p>
+    </article>
+    <article data-step="11" data-step-title="Prostaglandins: a brake and a shield" data-kind="prostaglandin" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Prostaglandins: a brake and a shield</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The lining also makes <dfn>prostaglandins</dfn>, local messengers that tell the parietal cell to ease off and the surface cells to make more mucus and bicarbonate. Pain relievers such as aspirin lower prostaglandins, which is one reason they can cause ulcers.</p>
+    </article>
+    <article data-step="12" data-step-title="The whole cell: the key measures" data-kind="whole" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">The whole cell: the key measures</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Messengers call pumps to the surface, the pumps make hydrochloric acid, prostaglandins brake the cell and the shield guards the lining. Two measures sum it up: how much acid the cell makes, and how acidic the stomach is. Drugs can lower either one.</p>
+    </article>
+    <article data-step="13" data-step-title="Proton pump inhibitors: the pumps locked" data-kind="ppi" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Proton pump inhibitors: the pumps locked</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Proton pump inhibitors</dfn>, such as omeprazole, lock working pumps shut for good. The messengers still call, but locked pumps cannot push hydrogen ions, so acid made and stomach acidity fall until the cell builds new pumps.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="14" data-step-title="H2 receptor blockers: histamine shut out" data-kind="h2" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">H2 receptor blockers: histamine shut out</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>H2 receptor blockers</dfn>, such as famotidine, sit in histamine’s receptor without switching it on. Histamine’s push is lost, and so is its boost to gastrin and acetylcholine, so fewer pumps rise: less acid is made and the stomach is less acidic.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="15" data-step-title="Antacids: acid cancelled in the stomach" data-kind="antacid" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Antacids: acid cancelled in the stomach</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Antacids</dfn>, such as calcium carbonate, are bases you swallow. They cancel acid already in the stomach, so it turns less acidic quickly, but only for a while: the cell, its messengers and its pumps carry on making acid as before.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="16" data-step-title="Prostaglandin analogues: brake and shield boosted" data-kind="pga" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Prostaglandin analogues: brake and shield boosted</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Prostaglandin analogues</dfn>, such as misoprostol, are lab-made copies of the lining’s prostaglandins. They press harder on the parietal cell’s brake and thicken the mucus and bicarbonate shield: somewhat less acid is made, and the lining is better guarded.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+
+    <div class="step-nav">
+      <button type="button" data-step-back disabled>← Back</button>
+      <span data-step-progress aria-live="polite">Step 1 of 16</span>
+      <button type="button" data-step-next>Next →</button>
+    </div>
+    <p class="hint">Start with Next, or use the arrow keys. Pictures are illustrative, not measurements.</p>
+  </section>
+
+  <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
+    <h2>Reference values, beside the model.</h2>
+    <p id="disclaimer" class="disclaimer">Loading reference values…</p>
+    <div class="cv-top">
+      <div id="clinical-visual" class="visual"></div>
+      <div class="cv-controls">
+        <div>
+          <label for="clinical-state">Compare a drug or condition</label>
+          <select id="clinical-state"><option value="normal">Normal teaching baseline</option></select>
+        </div>
+        <div>
+          <label for="clinical-signal">Messengers calling the cell (model) <output id="clinical-signal-label" for="clinical-signal"></output></label>
+          <input id="clinical-signal" type="range" min="0.3" max="2.5" step="0.05" value="1">
+        </div>
+        <div>
+          <label for="clinical-vomit">Stomach acid lost by vomiting (model) <output id="clinical-vomit-label" for="clinical-vomit"></output></label>
+          <input id="clinical-vomit" type="range" min="0" max="1" step="0.05" value="0">
+        </div>
+        <div>
+          <button type="button" id="clinical-reset">Back to baseline</button>
+        </div>
+      </div>
+    </div>
+    <p id="state-summary" class="state-summary" aria-live="polite">Normal teaching baseline.</p>
+    <p id="state-source" class="model-note"></p>
+    <p class="model-note">The blue line on each bar, and the large number beside it, show where an illustrative teaching model sits: not a patient measurement and not a sourced value. The shaded bands are the reference ranges quoted under each row. Selecting a drug or condition shows the expected direction of each value, compared with a normal body, and applies that state to the model. Where no direction is cited, no arrow is shown and the model holds that value where it was.</p>
+    <p id="baseline-note" class="model-note"></p>
+    <div id="value-rows"></div>
+    <p id="cv-live" class="visually-hidden" aria-live="polite"></p>
+    <p class="model-note">Proton pump inhibitors, H2 receptor blockers and prostaglandin analogues are animated in the Lesson and in Explore freely, but they are not listed as states here: no open reference with a checked excerpt for them was available to this page, and every state on this tab must quote its source.</p>
+    <h3>Sources</h3>
+    <ul id="sources"></ul>
+    <p class="model-note">The acid-base links between the stomach and the blood are taught in <a href="/lab/acid-base/">Lesson 11: Acid–Base Balance</a>.</p>
+    <p id="load-error" class="load-error" hidden></p>
+  </section>
+
+  <section id="explore" role="tabpanel" aria-labelledby="tab-explore" hidden>
+    <h2>Run the parietal cell yourself.</h2>
+    <p class="model-intro">An illustrative teaching model of one settled parietal cell. Turn each messenger up or down, add drugs (they combine), and watch the pumps, the acid made and the acid left in the stomach. Dashed marks are the normal cell; solid marks are your settings.</p>
+    <div class="explore-grid">
+      <div id="explore-visual" class="visual"></div>
+      <div class="controls">
+        <fieldset>
+          <legend>Messengers</legend>
+          <label for="hist">Histamine <output id="hist-label" for="hist"></output></label>
+          <input id="hist" type="range" min="0" max="2.5" step="0.05" value="1">
+          <label for="gastrin">Gastrin <output id="gastrin-label" for="gastrin"></output></label>
+          <input id="gastrin" type="range" min="0" max="2.5" step="0.05" value="1">
+          <label for="ach">Acetylcholine <output id="ach-label" for="ach"></output></label>
+          <input id="ach" type="range" min="0" max="2.5" step="0.05" value="1">
+          <label for="pg">The lining’s own prostaglandins <output id="pg-label" for="pg"></output></label>
+          <input id="pg" type="range" min="0.2" max="2.5" step="0.05" value="1">
+        </fieldset>
+        <fieldset>
+          <legend>Drugs</legend>
+          <div class="choice-grid" id="drugs">
+            <label class="choice"><input type="checkbox" value="ppi"> Proton pump inhibitor</label>
+            <label class="choice"><input type="checkbox" value="h2"> H2 receptor blocker</label>
+            <label class="choice"><input type="checkbox" value="antacid"> Antacid</label>
+            <label class="choice"><input type="checkbox" value="pga"> Prostaglandin analogue</label>
+          </div>
+        </fieldset>
+        <button type="button" id="reset">Reset model</button>
+      </div>
+    </div>
+    <p id="model-results" class="model-results" aria-live="polite"></p>
+
+    <details>
+      <summary>How this teaching model works</summary>
+      <p>Everything is worked out relative to the normal cell and settles at once; there is no time course. The on signal is the push of the three messengers, with histamine counted twice over: it pushes on its own (four tenths of the total) and multiplies the push of gastrin and acetylcholine (three tenths each), so losing histamine also weakens the other two. Prostaglandins divide the on signal: the more prostaglandin, the stronger the brake. In the normal cell four in ten pumps are at the surface; the share rises in proportion to the on signal until every pump is up.</p>
+      <p>Acid made is the number of working surface pumps compared with normal. A proton pump inhibitor locks a share of the surface pumps; an H2 receptor blocker plugs a share of histamine’s receptors; a prostaglandin analogue adds to the lining’s own prostaglandin, which also thickens the mucus and bicarbonate shield. An antacid touches none of this: it neutralises a share of the acid already in the stomach, so acid made stays the same while the acid left in the stomach falls. How acidic the stomach is follows the acid left on a ten-fold (logarithmic) scale, as the pH scale does. The sizes of every effect are illustrative; only their directions are meant to teach.</p>
+      <p>Left out: food’s own buffering, the timing of meals, somatostatin and other brakes, pepsin and intrinsic factor, how drugs are absorbed and cleared, and every real-world difference between people. Nothing here is a prediction for a real person, and nothing here is a treatment plan.</p>
+    </details>
+  </section>
+
+  <footer>Lesson 16 of The Lab · Added 2026-10-29 · <a href="/lab/">All lessons</a></footer>
+</main>
+</body>
+</html>
