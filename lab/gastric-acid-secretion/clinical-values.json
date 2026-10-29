@@ -1,0 +1,70 @@
+{
+  "disclaimer": "Typical adult reference ranges; labs vary; not for clinical decisions.",
+  "sources": {
+    "openstax-ap-23.4": "OpenStax Anatomy and Physiology 2e, section 23.4 The Stomach. Betts JG, Young KA, Wise JA, Johnson E, Poe B, Kruse DH, Korol O, Johnson JE, Womble M, DeSaix P. Anatomy and Physiology 2e. Houston, Texas: OpenStax; 2022. https://openstax.org/books/anatomy-and-physiology-2e/pages/23-4-the-stomach",
+    "openstax-ap-26.3": "OpenStax Anatomy and Physiology 2e, section 26.3 Electrolyte Balance. Betts JG, Young KA, Wise JA, Johnson E, Poe B, Kruse DH, Korol O, Johnson JE, Womble M, DeSaix P. Anatomy and Physiology 2e. Houston, Texas: OpenStax; 2022. https://openstax.org/books/anatomy-and-physiology-2e/pages/26-3-electrolyte-balance",
+    "openstax-ap-26.4": "OpenStax Anatomy and Physiology 2e, section 26.4 Acid-Base Balance. Betts JG, Young KA, Wise JA, Johnson E, Poe B, Kruse DH, Korol O, Johnson JE, Womble M, DeSaix P. Anatomy and Physiology 2e. Houston, Texas: OpenStax; 2022. https://openstax.org/books/anatomy-and-physiology-2e/pages/26-4-acid-base-balance",
+    "openstax-ap-26.5": "OpenStax Anatomy and Physiology 2e, section 26.5 Disorders of Acid-Base Balance. Betts JG, Young KA, Wise JA, Johnson E, Poe B, Kruse DH, Korol O, Johnson JE, Womble M, DeSaix P. Anatomy and Physiology 2e. Houston, Texas: OpenStax; 2022. https://openstax.org/books/anatomy-and-physiology-2e/pages/26-5-disorders-of-acid-base-balance"
+  },
+  "values": [
+    { "id": "gastric", "label": "Stomach contents acidity", "unit": "pH",
+      "low": 1.5, "high": 3.5,
+      "source": "openstax-ap-23.4",
+      "where": "OpenStax Anatomy and Physiology 2e, section 23.4 The Stomach, Gastric Secretion, parietal cells: “HCl is responsible for the high acidity (pH 1.5 to 3.5) of the stomach contents and is needed to activate the protein-digesting enzyme, pepsin.”",
+      "modelKey": "gastricPH",
+      "note": "This is the acidity of the stomach’s contents, not a blood test. On the pH scale a lower number means more acidic." },
+    { "id": "bloodph", "label": "Arterial blood pH", "unit": "pH",
+      "low": 7.35, "high": 7.45,
+      "source": "openstax-ap-26.5",
+      "where": "OpenStax Anatomy and Physiology 2e, section 26.5 Disorders of Acid-Base Balance, opening paragraph: “Normal arterial blood pH is restricted to a very narrow range of 7.35 to 7.45.” Table 26.3: “Reference values (arterial): pH: 7.35–7.45”",
+      "modelKey": "bloodPH" },
+    { "id": "bicarbonate", "label": "Plasma bicarbonate", "unit": "mM (mmol/L)",
+      "low": 22, "high": 29,
+      "source": "openstax-ap-26.3",
+      "where": "OpenStax Anatomy and Physiology 2e, section 26.3 Electrolyte Balance, Table 26.1 Electrolyte and Ion Reference Values, plasma column: “Bicarbonate HCO 3 - 22.00–29.00 (mM)”",
+      "modelKey": "bicarb",
+      "note": "The table prints 22.00–29.00 (mM); mM means millimoles per litre (mmol/L)." },
+    { "id": "chloride", "label": "Plasma chloride", "unit": "mM (mmol/L)",
+      "low": 98, "high": 107,
+      "source": "openstax-ap-26.3",
+      "where": "OpenStax Anatomy and Physiology 2e, section 26.3 Electrolyte Balance, Table 26.1 Electrolyte and Ion Reference Values, plasma column: “Chloride Cl - 98.00–107.00 (mM)”",
+      "modelKey": "chloride",
+      "note": "The table prints 98.00–107.00 (mM); mM means millimoles per litre (mmol/L)." }
+  ],
+  "states": [
+    { "id": "antacid", "label": "Antacids", "kind": "drug",
+      "summary": "A swallowed base neutralises hydrochloric acid that is already in the stomach, so the contents become less acidic; the parietal cell and its pumps are not changed.",
+      "comparedWith": "normal",
+      "shifts": { "gastric": "up" },
+      "evidence": {
+        "gastric": "OpenStax Anatomy and Physiology 2e, section 26.4, Bicarbonate-Carbonic Acid Buffer: “When sodium bicarbonate (NaHCO 3 ), comes into contact with a strong acid, such as HCl, carbonic acid (H 2 CO 3 ), which is a weak acid, and NaCl are formed.” A strong acid turned into a weak one leaves the stomach less acidic, so its pH rises."
+      },
+      "source": "openstax-ap-26.5",
+      "where": "OpenStax Anatomy and Physiology 2e, section 26.5 Disorders of Acid-Base Balance, Metabolic Alkalosis: Primary Bicarbonate Excess: “A transient excess of bicarbonate in the blood can follow ingestion of excessive amounts of bicarbonate, citrate, or antacids for conditions such as stomach acid reflux—known as heartburn.”",
+      "modelNote": "The model neutralises most of the acid in the stomach while the cell keeps making acid as before. At ordinary use no blood direction is shown; see the separate excess-antacid state." },
+    { "id": "antacid-excess", "label": "Excessive antacid use", "kind": "drug",
+      "summary": "Swallowing excessive amounts of an absorbable antacid such as bicarbonate neutralises stomach acid and can also leave a transient excess of bicarbonate in the blood, a metabolic alkalosis.",
+      "comparedWith": "normal",
+      "shifts": { "gastric": "up", "bicarbonate": "up", "bloodph": "up" },
+      "evidence": {
+        "gastric": "OpenStax Anatomy and Physiology 2e, section 26.4, Bicarbonate-Carbonic Acid Buffer: “When sodium bicarbonate (NaHCO 3 ), comes into contact with a strong acid, such as HCl, carbonic acid (H 2 CO 3 ), which is a weak acid, and NaCl are formed.”",
+        "bicarbonate": "OpenStax Anatomy and Physiology 2e, section 26.5, Metabolic Alkalosis: “A transient excess of bicarbonate in the blood can follow ingestion of excessive amounts of bicarbonate, citrate, or antacids for conditions such as stomach acid reflux—known as heartburn.”",
+        "bloodph": "OpenStax Anatomy and Physiology 2e, section 26.5, Metabolic Alkalosis: “It occurs when the blood is too alkaline (pH above 7.45) due to too much bicarbonate (called primary bicarbonate excess).”"
+      },
+      "source": "openstax-ap-26.5",
+      "where": "OpenStax Anatomy and Physiology 2e, section 26.5 Disorders of Acid-Base Balance, Metabolic Alkalosis: Primary Bicarbonate Excess: “Metabolic alkalosis is the opposite of metabolic acidosis.” and “A transient excess of bicarbonate in the blood can follow ingestion of excessive amounts of bicarbonate, citrate, or antacids for conditions such as stomach acid reflux—known as heartburn.”",
+      "modelNote": "The model neutralises most stomach acid and adds bicarbonate to the blood, with breathing held fixed. No chloride direction is cited, so the chloride marker stays where it was." },
+    { "id": "vomiting", "label": "Repeated vomiting (stomach acid lost)", "kind": "disease",
+      "summary": "Vomiting throws hydrochloric acid out of the body; the blood is left with too little chloride and too much bicarbonate, a metabolic alkalosis.",
+      "comparedWith": "normal",
+      "shifts": { "bloodph": "up", "bicarbonate": "up", "chloride": "down" },
+      "evidence": {
+        "bloodph": "OpenStax Anatomy and Physiology 2e, section 26.5, Metabolic Alkalosis: “Other causes of metabolic alkalosis include the loss of hydrochloric acid from the stomach through vomiting, potassium depletion due to the use of diuretics for hypertension, and the excessive use of laxatives.” Table 26.3 notes: “Metabolic alkalosis is problematic, as elevated pH and excess bicarbonate are present.”",
+        "bicarbonate": "OpenStax Anatomy and Physiology 2e, section 26.5, Table 26.3 notes: “Metabolic alkalosis is problematic, as elevated pH and excess bicarbonate are present.”",
+        "chloride": "OpenStax Anatomy and Physiology 2e, section 26.3, Chloride: “Vomiting, diarrhea, and metabolic acidosis can also lead to hypochloremia.”"
+      },
+      "source": "openstax-ap-26.5",
+      "where": "OpenStax Anatomy and Physiology 2e, section 26.5 Disorders of Acid-Base Balance, Metabolic Alkalosis: Primary Bicarbonate Excess: “Other causes of metabolic alkalosis include the loss of hydrochloric acid from the stomach through vomiting, potassium depletion due to the use of diuretics for hypertension, and the excessive use of laxatives.”",
+      "modelNote": "The model removes stomach acid from the body: blood bicarbonate rises and chloride falls, with breathing held fixed. Section 26.3 also says severe vomiting can cause a loss of bicarbonate; the arrow shown follows section 26.5, which describes losing stomach acid specifically. No direction is cited for the stomach’s own acidity, so that marker stays where it was." }
+  ]
+}
