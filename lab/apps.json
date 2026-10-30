@@ -238,5 +238,20 @@
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
     }
+  },
+  {
+    "slug": "pharmacokinetics",
+    "title": "Pharmacokinetics: Drug Levels Over Time",
+    "date": "2026-10-30",
+    "description": "How a drug's level rises, plateaus and falls in the blood: absorption, distribution, half-life and steady state, drawn as curves.",
+    "category": "medicine",
+    "builder": {
+      "tool": "Claude Code",
+      "model": "claude-opus-5-5"
+    },
+    "reviewer": {
+      "tool": "OpenAI Codex",
+      "model": "gpt-6.1-sol"
+    }
   }
 ]

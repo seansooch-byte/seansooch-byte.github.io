@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pharmacokinetics: Drug Levels Over Time · The Lab · Sean Sooch</title>
+<meta name="description" content="A guided visual lesson: how a drug's level rises, plateaus and falls in the blood. Absorption, distribution, half-life and steady state drawn as curves, then what enzyme inducers, enzyme inhibitors, weaker kidneys and the intravenous route change.">
+<link rel="canonical" href="https://seansooch.dev/lab/pharmacokinetics/">
+<meta property="og:title" content="Pharmacokinetics: Drug Levels Over Time">
+<meta property="og:description" content="How a drug's level rises, plateaus and falls in the blood: absorption, distribution, half-life and steady state, drawn as curves.">
+<meta property="og:url" content="https://seansooch.dev/lab/pharmacokinetics/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script src="model.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the lesson</a>
+<header class="site-top">
+  <div class="site-top-in">
+    <a class="site-brand" href="/" aria-label="Sean Sooch, home">SS<span aria-hidden="true">—</span>03</a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="site-nav-home" href="/#ch3">Work</a>
+      <a href="/#ch4">Writing</a>
+      <a href="/#appb">Films</a>
+      <a href="/#appa">Editions</a>
+      <a class="site-nav-lab" href="/lab/" aria-current="true">The Lab</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+  <div class="intro">
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / Core medicine / Lesson 17</p>
+    <h1>Drug levels <span>over time</span>.</h1>
+    <p class="lede">Swallow a tablet and its level in your blood climbs, peaks and fades. Take it again and again and the level settles on a plateau. Build that curve one piece at a time, then watch what liver enzymes, weaker kidneys and a vein route do to it.</p>
+    <p class="note">Educational, not for clinical use</p>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Lesson views">
+    <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
+    <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
+  </div>
+
+  <section id="lesson" role="tabpanel" aria-labelledby="tab-lesson">
+    <article data-step="1" data-step-title="A drug's journey through the body" data-kind="journey">
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">A drug's journey through the body</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Pharmacokinetics</dfn> is what the body does to a drug over time. A swallowed drug passes from the <dfn>gut</dfn> (stomach and intestines) into the blood, spreads around the body, and is broken down by the <dfn>liver</dfn> or sent out in urine by the <dfn>kidneys</dfn>.</p>
+    </article>
+    <article data-step="2" data-step-title="The blood level" data-kind="level" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">The blood level</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">What matters is the drug’s <dfn>blood level</dfn>: how much drug there is in each drop of blood. Test a drop now and then, mark each result against time, and the marks trace a curve. Every picture in this lesson is that curve.</p>
+    </article>
+    <article data-step="3" data-step-title="Swallowed: absorption" data-kind="absorb" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Swallowed: absorption</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A swallowed tablet dissolves in the gut, and the drug crosses the gut wall into the blood: <dfn>absorption</dfn>. While drug comes in faster than the body removes it, the level climbs. It peaks when the two balance, then falls.</p>
+    </article>
+    <article data-step="4" data-step-title="The liver's first pass" data-kind="firstpass" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">The liver’s first pass</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Blood from the gut reaches the liver first. Its <dfn>enzymes</dfn>, proteins that speed up chemical changes, break some drug down (<dfn>metabolism</dfn>) on this <dfn>first pass</dfn>. The share that reaches the blood unchanged is the <dfn>bioavailability</dfn>. Dotted curve: none lost.</p>
+    </article>
+    <article data-step="5" data-step-title="Spreading out: distribution" data-kind="spread" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Spreading out: distribution</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">From the blood, drug spreads into the body’s tissues: <dfn>distribution</dfn>. A drug that spreads widely leaves less in the blood, so the same amount peaks lower. Less in the blood also means slower removal, so the dotted curve falls slowly and ends higher.</p>
+    </article>
+    <article data-step="6" data-step-title="Removal: elimination" data-kind="remove" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Removal: elimination</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Drug in the blood keeps passing the liver, which breaks it down by metabolism, and the kidneys, which pass it into urine: <dfn>excretion</dfn>. Together they are <dfn>elimination</dfn>. How quickly they clean drug out of the blood is its <dfn>clearance</dfn>.</p>
+    </article>
+    <article data-step="7" data-step-title="Half-life" data-kind="halflife" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Half-life</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The body removes a fixed share of what is there, not a fixed amount, so the fall slows as the level drops. The <dfn>half-life</dfn> is the time for the level to fall by half. Each half-life halves it again: half, a quarter, an eighth.</p>
+    </article>
+    <article data-step="8" data-step-title="After a few half-lives, almost none is left" data-kind="gone" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">After a few half-lives, almost none is left</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Each bar is the drug left after one more half-life. The bars shrink fast: after a few half-lives so little remains that the drug counts as gone. A longer half-life stretches the whole fall out over more time.</p>
+    </article>
+    <article data-step="9" data-step-title="Taken again and again: build-up" data-kind="buildup" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Taken again and again: build-up</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Many drugs are taken at regular times. Each new amount arrives before the last has gone, so it adds to what is left: <dfn>build-up</dfn>. The level does not climb forever, because more drug in the blood means faster removal.</p>
+    </article>
+    <article data-step="10" data-step-title="Steady state: the plateau" data-kind="steady" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Steady state: the plateau</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">In time, each gap removes as much as each new amount adds. The level then rises and falls around a flat line: <dfn>steady state</dfn>. Getting there takes a few half-lives, so a short half-life gets there sooner; slow absorption adds a little.</p>
+    </article>
+    <article data-step="11" data-step-title="The working range" data-kind="range" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">The working range</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A drug helps only when its level is high enough, and harms when it is too high. Between the two lies its <dfn>working range</dfn>. The aim is a steady state that stays inside it, neither dipping below nor peaking above.</p>
+    </article>
+    <article data-step="12" data-step-title="The whole picture: the key measures" data-kind="whole" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">The whole picture: the key measures</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Absorbed, trimmed by the first pass, spread out, then removed: the curve sums it all up. Three measures tell the story: how much reaches the blood, the half-life, and the steady-state level. Next, see what changes them.</p>
+    </article>
+    <article data-step="13" data-step-title="Enzyme inducers: cleared faster" data-kind="inducer" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Enzyme inducers: cleared faster</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Enzyme inducers</dfn>, such as the herb St John’s wort, switch up the liver enzymes that break other drugs down. Less survives the first pass and the rest is cleared faster: a shorter half-life and a lower steady state that can sink below the working range.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="14" data-step-title="Enzyme inhibitors: cleared slower" data-kind="inhibitor" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Enzyme inhibitors: cleared slower</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Enzyme inhibitors</dfn>, such as grapefruit or the antibiotic erythromycin, slow the liver enzymes that break other drugs down. More survives the first pass and the rest lingers: a longer half-life, a later and higher steady state that can climb above the working range.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="15" data-step-title="Weaker kidneys: less removed in urine" data-kind="kidney" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Weaker kidneys: less removed in urine</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">When kidney disease leaves the kidneys passing less drug into urine, that is <dfn>reduced kidney clearance</dfn>. A drug the kidneys remove gets a longer half-life: it builds for longer, so steady state comes later and higher, and can rise above the working range.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="16" data-step-title="Into a vein instead of by mouth" data-kind="iv" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Into a vein instead of by mouth</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Intravenous</dfn> means into a vein. The drug skips absorption and the liver’s first pass, so all of it reaches the blood at once: each level jumps straight up and peaks higher. Removal is unchanged, so the half-life stays the same.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+
+    <div class="step-nav">
+      <button type="button" data-step-back disabled>← Back</button>
+      <span data-step-progress aria-live="polite">Step 1 of 16</span>
+      <button type="button" data-step-next>Next →</button>
+    </div>
+    <p class="hint">Start with Next, or use the arrow keys. Curves are illustrative shapes, not measurements.</p>
+  </section>
+
+  <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
+    <h2>Reference values, beside the model.</h2>
+    <p id="disclaimer" class="disclaimer">Loading reference values…</p>
+    <div class="cv-top">
+      <div id="clinical-visual" class="visual"></div>
+      <div class="cv-controls">
+        <div>
+          <label for="clinical-state">Compare a drug, condition or route</label>
+          <select id="clinical-state"><option value="normal">Normal teaching baseline (by mouth)</option></select>
+        </div>
+        <div>
+          <label for="clinical-clear">How well the body clears the drug (model) <output id="clinical-clear-label" for="clinical-clear"></output></label>
+          <input id="clinical-clear" type="range" min="0.3" max="2.5" step="0.05" value="1">
+        </div>
+        <div>
+          <button type="button" id="clinical-reset">Back to baseline</button>
+        </div>
+      </div>
+    </div>
+    <p id="state-summary" class="state-summary" aria-live="polite">Normal teaching baseline, by mouth.</p>
+    <p id="state-source" class="model-note"></p>
+    <p class="model-note">The blue line on each bar, and the large number beside it, show where an illustrative teaching model sits: not a patient measurement and not a sourced value. Shaded bands and black typical-value marks are the reference values quoted under each row. Selecting a drug, condition or route shows the expected direction of each value from the quoted text and applies that state to the model.</p>
+    <p class="model-note">How the half-life rows are read: the chapter’s numbers are counted in a drug’s own half-lives in a healthy body (“assuming a physiologically healthy individual”). The model keeps counting time in that usual half-life, so when a drug or disease changes the half-life, the markers show how much more or less is gone by then, and how much sooner or later steady state arrives.</p>
+    <p id="baseline-note" class="model-note"></p>
+    <div id="value-rows"></div>
+    <p id="cv-live" class="visually-hidden" aria-live="polite"></p>
+    <h3>Sources</h3>
+    <ul id="sources"></ul>
+    <p class="model-note">How the kidneys filter the blood is taught in <a href="/lab/nephron-diuretics/">Lesson 2: The Nephron and Diuretics</a>.</p>
+    <p id="load-error" class="load-error" hidden></p>
+  </section>
+
+  <section id="explore" role="tabpanel" aria-labelledby="tab-explore" hidden>
+    <h2>Run the drug level yourself.</h2>
+    <p class="model-intro">An illustrative teaching model, not a real drug. Times are in model hours and levels in model units; nothing here is an amount to give anyone. Change how the drug is given and how the body handles it. The dashed curve is the normal teaching drug; the solid curve is your settings.</p>
+    <div class="explore-grid">
+      <div id="explore-visual" class="visual"></div>
+      <div class="controls">
+        <fieldset>
+          <legend>How it is given</legend>
+          <div class="choice-row" role="radiogroup" aria-label="Route">
+            <label class="choice"><input type="radio" name="route" value="oral" checked> By mouth</label>
+            <label class="choice"><input type="radio" name="route" value="iv"> Into a vein</label>
+          </div>
+          <div class="choice-row" role="radiogroup" aria-label="Schedule">
+            <label class="choice"><input type="radio" name="schedule" value="repeat" checked> At regular intervals</label>
+            <label class="choice"><input type="radio" name="schedule" value="once"> Just once</label>
+          </div>
+          <label for="tau">Time between amounts <output id="tau-label" for="tau"></output></label>
+          <input id="tau" type="range" min="2" max="24" step="1" value="6">
+        </fieldset>
+        <fieldset>
+          <legend>The body</legend>
+          <label for="ka">Absorption speed from the gut <output id="ka-label" for="ka"></output></label>
+          <input id="ka" type="range" min="0.1" max="3" step="0.05" value="0.7">
+          <label for="F">Share surviving the first pass <output id="F-label" for="F"></output></label>
+          <input id="F" type="range" min="0.1" max="1" step="0.05" value="0.6">
+          <label for="Vd">How widely it spreads <output id="Vd-label" for="Vd"></output></label>
+          <input id="Vd" type="range" min="0.4" max="3" step="0.05" value="1">
+          <label for="CLh">Liver clearance <output id="CLh-label" for="CLh"></output></label>
+          <input id="CLh" type="range" min="0" max="2" step="0.05" value="0.5">
+          <label for="CLr">Kidney clearance <output id="CLr-label" for="CLr"></output></label>
+          <input id="CLr" type="range" min="0" max="2" step="0.05" value="0.5">
+        </fieldset>
+        <label for="preset">Start from a lesson state</label>
+        <select id="preset">
+          <option value="normal">Normal teaching drug</option>
+          <option value="inducer">With an enzyme inducer</option>
+          <option value="inhibitor">With an enzyme inhibitor</option>
+          <option value="kidney">With reduced kidney clearance</option>
+          <option value="iv">Into a vein</option>
+        </select>
+        <button type="button" id="reset">Reset model</button>
+      </div>
+    </div>
+    <p id="model-results" class="model-results" aria-live="polite"></p>
+
+    <details>
+      <summary>How this teaching model works</summary>
+      <p>One compartment, first-order everything. After one amount given by mouth, the level is F × ka ÷ (Vd × (ka − k)) × (e<sup>−kt</sup> − e<sup>−ka·t</sup>); straight into a vein it is e<sup>−kt</sup> ÷ Vd. Amounts given at regular intervals simply add up. F is the share surviving the first pass, ka the absorption rate, Vd how widely the drug spreads and k the elimination rate.</p>
+      <p>Clearance is the liver’s part plus the kidneys’ part, CL = CLh + CLr. The half-life is proportional to Vd ÷ CL, the form of Equation 3 in the StatPearls half-life chapter (quoted with its constant in the Clinical values tab), scaled so the normal teaching drug has a half-life of six model hours. The plateau’s average level is F ÷ (k × Vd × interval).</p>
+      <p>Steady state is counted as reached once the level stays within one twentieth of its settled level at every point between amounts, from then on. The model works this out from the repeated curve itself, absorption included: a drug that is absorbed slowly takes longer to settle than its half-life alone suggests. The one-twentieth rule is this model’s choice, not a sourced value.</p>
+      <p>Set both clearances to zero and nothing removes the drug: there is no half-life, a single amount stays in the blood for good, and amounts given at regular intervals keep adding up with no steady state.</p>
+      <p>The working range band is an illustrative zone drawn around the normal teaching drug’s plateau, not a real drug’s range. The lesson states change the model in the cited direction by illustrative amounts: an inducer raises liver clearance and first-pass loss, an inhibitor lowers both, reduced kidney clearance lowers the kidney part, and the vein route gives the whole amount at once. Left out: protein binding, a second tissue compartment, saturable (zero-order) removal, active breakdown products and every real difference between people. Nothing here is a prediction for anyone and nothing here is a treatment plan.</p>
+    </details>
+  </section>
+
+  <footer>Lesson 17 of The Lab · Added 2026-10-30 · <a href="/lab/">All lessons</a></footer>
+</main>
+</body>
+</html>
