@@ -253,5 +253,20 @@
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
     }
+  },
+  {
+    "slug": "arachidonic-acid-nsaids",
+    "title": "Inflammation and the Arachidonic Acid Pathway",
+    "date": "2026-10-31",
+    "description": "How injured cells make prostaglandins and leukotrienes, and where anti-inflammatory drugs block the pathway.",
+    "category": "medicine",
+    "builder": {
+      "tool": "Claude Code",
+      "model": "claude-opus-5-5"
+    },
+    "reviewer": {
+      "tool": "OpenAI Codex",
+      "model": "gpt-6.1-sol"
+    }
   }
 ]
