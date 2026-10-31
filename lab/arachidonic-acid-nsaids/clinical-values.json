@@ -1,0 +1,59 @@
+{
+  "disclaimer": "Typical adult reference ranges; labs vary; not for clinical decisions.",
+  "sources": {
+    "openstax-ap-18.1": "OpenStax Anatomy and Physiology 2e, section 18.1 An Overview of Blood. Betts JG, Young KA, Wise JA, Johnson E, Poe B, Kruse DH, Korol O, Johnson JE, Womble M, DeSaix P. Anatomy and Physiology 2e. Houston, Texas: OpenStax; 2022. https://openstax.org/books/anatomy-and-physiology-2e/pages/18-1-an-overview-of-blood",
+    "openstax-ap-18.5": "OpenStax Anatomy and Physiology 2e, section 18.5 Hemostasis. Betts JG, Young KA, Wise JA, Johnson E, Poe B, Kruse DH, Korol O, Johnson JE, Womble M, DeSaix P. Anatomy and Physiology 2e. Houston, Texas: OpenStax; 2022. https://openstax.org/books/anatomy-and-physiology-2e/pages/18-5-hemostasis",
+    "openstax-ap-26.5": "OpenStax Anatomy and Physiology 2e, section 26.5 Disorders of Acid-Base Balance. Betts JG, Young KA, Wise JA, Johnson E, Poe B, Kruse DH, Korol O, Johnson JE, Womble M, DeSaix P. Anatomy and Physiology 2e. Houston, Texas: OpenStax; 2022. https://openstax.org/books/anatomy-and-physiology-2e/pages/26-5-disorders-of-acid-base-balance",
+    "openstax-ap-17.6": "OpenStax Anatomy and Physiology 2e, section 17.6 The Adrenal Glands. Betts JG, Young KA, Wise JA, Johnson E, Poe B, Kruse DH, Korol O, Johnson JE, Womble M, DeSaix P. Anatomy and Physiology 2e. Houston, Texas: OpenStax; 2022. https://openstax.org/books/anatomy-and-physiology-2e/pages/17-6-the-adrenal-glands",
+    "openstax-ap-17.9": "OpenStax Anatomy and Physiology 2e, section 17.9 The Endocrine Pancreas. Betts JG, Young KA, Wise JA, Johnson E, Poe B, Kruse DH, Korol O, Johnson JE, Womble M, DeSaix P. Anatomy and Physiology 2e. Houston, Texas: OpenStax; 2022. https://openstax.org/books/anatomy-and-physiology-2e/pages/17-9-the-endocrine-pancreas",
+    "statpearls-NBK537062": "Iqbal AM, Lopez RA, Hai O. Antiplatelet Medications. In: StatPearls [Internet]. Treasure Island (FL): StatPearls Publishing; 2022 (updated 2022-11-07). NCBI Bookshelf NBK537062, PMID 30725747. https://www.ncbi.nlm.nih.gov/books/NBK537062/"
+  },
+  "values": [
+    { "id": "temperature", "label": "Internal body temperature", "unit": "°C",
+      "low": null, "high": null, "typical": 37,
+      "source": "openstax-ap-18.1",
+      "where": "OpenStax Anatomy and Physiology 2e, section 18.1 An Overview of Blood, Characteristics of Blood: “The normal temperature of blood is slightly higher than normal body temperature—about 38 °C (or 100.4 °F), compared to 37 °C (or 98.6 °F) for an internal body temperature reading, although daily variations of 0.5 °C are normal.”",
+      "modelKey": "temperature",
+      "note": "The source gives one typical value, not a range, so the bar shows a typical-value marker instead of a band. It adds that daily variations of 0.5 °C are normal." },
+    { "id": "glucose", "label": "Blood glucose", "unit": "mg/dL",
+      "low": 70, "high": 100,
+      "source": "openstax-ap-17.9",
+      "where": "OpenStax Anatomy and Physiology 2e, section 17.9 The Endocrine Pancreas, Regulation of Blood Glucose Levels by Insulin and Glucagon, Figure 17.19 Homeostatic Regulation of Blood Glucose Levels: “Blood glucose concentration is tightly maintained between 70 mg/dL and 100 mg/dL.”",
+      "modelKey": "glucose" },
+    { "id": "bloodph", "label": "Arterial blood pH", "unit": "pH",
+      "low": 7.35, "high": 7.45,
+      "source": "openstax-ap-26.5",
+      "where": "OpenStax Anatomy and Physiology 2e, section 26.5 Disorders of Acid-Base Balance, opening paragraph: “Normal arterial blood pH is restricted to a very narrow range of 7.35 to 7.45.”",
+      "modelKey": "bloodPH",
+      "note": "On the pH scale a lower number means more acidic." }
+  ],
+  "states": [
+    { "id": "glucocorticoid", "label": "Glucocorticoid drugs (for example prednisone)", "kind": "drug",
+      "summary": "Glucocorticoid medicines act like cortisol, which downregulates the immune system and inhibits the inflammatory response; chronically elevated glucocorticoids also raise blood glucose (hyperglycemia).",
+      "comparedWith": "normal",
+      "shifts": { "glucose": "up" },
+      "evidence": {
+        "glucose": "OpenStax Anatomy and Physiology 2e, section 17.6, Disorders Involving the Adrenal Glands: “In addition to hyperglycemia, chronically elevated glucocorticoids compromise immunity, resistance to infection, and memory, and can result in rapid weight gain and hair loss.” Hormones of the Zona Fasciculata: “In conditions of long-term stress, for example, cortisol promotes the catabolism of glycogen to glucose, the catabolism of stored triglycerides into fatty acids and glycerol, and the catabolism of muscle proteins into amino acids.”"
+      },
+      "source": "openstax-ap-17.6",
+      "where": "OpenStax Anatomy and Physiology 2e, section 17.6 The Adrenal Glands, Hormones of the Zona Fasciculata: “You are probably familiar with prescription and over-the-counter medications containing glucocorticoids, such as cortisone injections into inflamed joints, prednisone tablets and steroid-based inhalers used to manage severe asthma, and hydrocortisone creams applied to relieve itchy rashes. These drugs reflect another role of cortisol—the downregulation of the immune system, which inhibits the inflammatory response.”",
+      "modelNote": "The model slows the phospholipase scissors and the making of COX-2, and raises blood glucose. No temperature or blood pH direction is cited, so those markers stay where they were." },
+    { "id": "aspirin", "label": "Aspirin (as an antiplatelet drug)", "kind": "drug",
+      "summary": "Aspirin is a cyclooxygenase inhibitor that strongly reduces platelet aggregation (clumping).",
+      "comparedWith": "normal",
+      "shifts": {},
+      "source": "openstax-ap-18.5",
+      "where": "OpenStax Anatomy and Physiology 2e, section 18.5 Hemostasis, Disorders of Clotting: “Aspirin (acetylsalicylic acid) is very effective at inhibiting the aggregation of platelets.” StatPearls, Antiplatelet Medications (NBK537062), abstract [statpearls-NBK537062]: “Aspirin was the first antiplatelet medication and is a cyclooxygenase inhibitor.”",
+      "modelNote": "The model tags COX for good, so platelet clumping falls in the picture. None of the three values here has a cited direction for aspirin, so no arrows are shown and every marker stays where it was." },
+    { "id": "aspirin-overdose", "label": "Aspirin overdose", "kind": "drug",
+      "summary": "Aspirin’s acidic active form, salicylic acid, pushes the blood toward acidosis, while overdose can also cause a respiratory alkalosis, so arterial blood pH can move either way.",
+      "comparedWith": "normal",
+      "shifts": { "bloodph": "variable" },
+      "evidence": {
+        "bloodph": "OpenStax Anatomy and Physiology 2e, section 26.5, Metabolic Acidosis: Primary Bicarbonate Deficiency: “The active form of aspirin is its metabolite, salicylic acid. An overdose of aspirin causes acidosis due to the acidity of this metabolite.” Respiratory Alkalosis: Primary Carbonic Acid/CO 2 Deficiency: “Surprisingly, aspirin overdose—salicylate toxicity—can result in respiratory alkalosis as the body tries to compensate for initial acidosis.” The two pull blood pH in opposite directions, so no single direction is shown."
+      },
+      "source": "openstax-ap-26.5",
+      "where": "OpenStax Anatomy and Physiology 2e, section 26.5 Disorders of Acid-Base Balance, Metabolic Acidosis: Primary Bicarbonate Deficiency: “An overdose of aspirin causes acidosis due to the acidity of this metabolite.” and Respiratory Alkalosis: Primary Carbonic Acid/CO 2 Deficiency: “Surprisingly, aspirin overdose—salicylate toxicity—can result in respiratory alkalosis as the body tries to compensate for initial acidosis.”",
+      "modelNote": "The teaching model has no breathing, so it cannot net the acidosis against the alkalosis: the blood pH marker is held where it was and the row reads Variable. The picture shows COX tagged as aspirin does. No temperature or glucose direction is cited, so those markers stay where they were too." }
+  ]
+}
