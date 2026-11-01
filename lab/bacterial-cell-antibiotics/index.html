@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Bacterial Cell and Antibiotic Targets · The Lab · Sean Sooch</title>
+<meta name="description" content="A guided visual lesson: a tour of a bacterium’s wall, ribosomes and DNA machinery, and how beta-lactams, vancomycin, aminoglycosides, macrolides and tetracyclines, fluoroquinolones, sulfonamides and trimethoprim each attack one of them.">
+<link rel="canonical" href="https://seansooch.dev/lab/bacterial-cell-antibiotics/">
+<meta property="og:title" content="The Bacterial Cell and Antibiotic Targets">
+<meta property="og:description" content="A tour of a bacterium’s wall, ribosomes and DNA machinery, and the antibiotic families that attack each one.">
+<meta property="og:url" content="https://seansooch.dev/lab/bacterial-cell-antibiotics/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script src="model.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the lesson</a>
+<header class="site-top">
+  <div class="site-top-in">
+    <a class="site-brand" href="/" aria-label="Sean Sooch, home">SS<span aria-hidden="true">—</span>03</a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="site-nav-home" href="/#ch3">Work</a>
+      <a href="/#ch4">Writing</a>
+      <a href="/#appb">Films</a>
+      <a href="/#appa">Editions</a>
+      <a class="site-nav-lab" href="/lab/" aria-current="true">The Lab</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+  <div class="intro">
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / Core medicine / Lesson 19</p>
+    <h1>The bacterial cell and its <span>antibiotic targets</span>.</h1>
+    <p class="lede">A bacterium is a single cell with a few parts your own cells lack or build differently: a woven wall, its own protein factories, a coiled loop of instructions and a home-made vitamin. Take one apart, piece by piece, then watch six families of antibiotics each break a different piece.</p>
+    <p class="note">Educational, not for clinical use</p>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Lesson views">
+    <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
+    <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
+  </div>
+
+  <section id="lesson" role="tabpanel" aria-labelledby="tab-lesson">
+    <article data-step="1" data-step-title="A bacterium is one tiny living cell" data-kind="cell">
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">A bacterium is one tiny living cell</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A <dfn>bacterium</dfn> (plural <dfn>bacteria</dfn>) is a living thing made of a single cell, far smaller than one of your own cells. Most bacteria are harmless, but some cause <dfn>infections</dfn>: they get into the body and multiply where they should not.</p>
+    </article>
+    <article data-step="2" data-step-title="The membrane holds everything in" data-kind="membrane" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">The membrane holds everything in</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Like your cells, a bacterium is wrapped in a thin, oily skin, its <dfn>cell membrane</dfn>. It keeps the watery inside in, and lets food in and waste out through small gates.</p>
+    </article>
+    <article data-step="3" data-step-title="The wall: a net around the balloon" data-kind="wall" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">The wall: a net around the balloon</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Outside the membrane, most bacteria have a tough <dfn>cell wall</dfn> of <dfn>peptidoglycan</dfn>: sugar chains tied by short bridges, like a woven net. Water keeps pushing in; the wall stops the cell swelling until it bursts. The new bar tracks wall strength. Your cells have none.</p>
+    </article>
+    <article data-step="4" data-step-title="Building the wall, bridge by bridge" data-kind="build" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Building the wall, bridge by bridge</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">New wall bricks keep arriving, each with a two-part tip. <dfn>Proteins</dfn>, chains of small building blocks, do the cell’s work. <dfn>Enzymes</dfn> are proteins that each speed up one job; <dfn>wall-building enzymes</dfn> grab the tip and tie the brick in with a fresh bridge.</p>
+    </article>
+    <article data-step="5" data-step-title="Two kinds of wall" data-kind="gram" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Two kinds of wall</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A purple stain sorts bacteria in two. <dfn>Gram-positive</dfn> bacteria have a thick wall on the outside and stay purple. <dfn>Gram-negative</dfn> bacteria have a thin wall hidden under an extra <dfn>outer membrane</dfn>, a second oily skin that keeps many large drug molecules out.</p>
+    </article>
+    <article data-step="6" data-step-title="DNA: the instruction loop" data-kind="dna" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">DNA: the instruction loop</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Inside floats the bacterium’s <dfn>DNA</dfn>, the long molecule that carries its instructions for building every part. Your DNA sits in a walled-off centre, the nucleus; in most bacteria it is one loop, coiled up tightly and loose in the cell.</p>
+    </article>
+    <article data-step="7" data-step-title="Untangling enzymes let DNA be copied" data-kind="copy" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Untangling enzymes let DNA be copied</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Before it divides, the bacterium copies its DNA. The loop is so tightly coiled that copying would knot it. <dfn>Untangling enzymes</dfn> cut the DNA, pass a strand through the gap and seal it again, over and over, so copying can run.</p>
+    </article>
+    <article data-step="8" data-step-title="Ribosomes build proteins" data-kind="ribosome" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Ribosomes build proteins</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Ribosomes</dfn> are the cell’s protein factories. Each has a small part that reads a copied instruction and a large part that links building blocks into a protein chain. Bacterial ribosomes are shaped differently from yours, so a drug can grip theirs alone.</p>
+    </article>
+    <article data-step="9" data-step-title="Folate: a vitamin it makes itself" data-kind="folate" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Folate: a vitamin it makes itself</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">New DNA needs fresh DNA letters, and making them needs <dfn>folate</dfn>, a vitamin. You get folate from food. Many bacteria cannot take it in, so they build their own on an assembly line, with one enzyme for each step.</p>
+    </article>
+    <article data-step="10" data-step-title="Grow, split, repeat" data-kind="divide" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Grow, split, repeat</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">With its wall, proteins and copied DNA ready, the bacterium pinches in two. Each half grows and splits again, so their numbers double and double. This <dfn>growth</dfn> is what lets an infection spread, and it needs every part you have met.</p>
+    </article>
+    <article data-step="11" data-step-title="The whole bacterium: the key measures" data-kind="whole" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">The whole bacterium: the key measures</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">An <dfn>antibiotic</dfn> is a medicine that harms bacteria by hitting a part your cells lack or build differently. Some kill bacteria; others stop their growth while your <dfn>white blood cells</dfn>, the body’s defence cells (<a href="/lab/arachidonic-acid-nsaids/">Lesson 18</a>), clear them. Key measures: growth, and bacteria alive.</p>
+    </article>
+    <article data-step="12" data-step-title="Beta-lactams: the bridges stop" data-kind="betalactam" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Beta-lactams: the bridges stop</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Beta-lactams</dfn>, such as penicillins and cephalosporins, jam the wall-building enzymes. New bridges stop forming while the bacterium keeps growing, so its wall weakens, water pushes in and the cell bursts. They kill bacteria that are growing.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="13" data-step-title="Vancomycin: the brick tips covered" data-kind="vancomycin" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Vancomycin: the brick tips covered</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Glycopeptides</dfn> such as <dfn>vancomycin</dfn> grab the two-part tip of each new brick, so wall-building enzymes cannot tie it in. The wall weakens and gram-positive bacteria die. The molecule is too big to pass an outer membrane, so gram-negative bacteria escape.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="14" data-step-title="Aminoglycosides: the instructions misread" data-kind="aminoglycoside" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Aminoglycosides: the instructions misread</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Aminoglycosides</dfn>, such as gentamicin, grip the ribosome’s small part so it misreads the instructions. Faulty proteins pile up and punch holes in the membrane, and the bacterium dies. They are aimed mostly at gram-negative bacteria.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="15" data-step-title="Macrolides and tetracyclines: the factory stalls" data-kind="macrolide" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Macrolides and tetracyclines: the factory stalls</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Macrolides</dfn>, such as azithromycin, block the ribosome’s large part, where the chain leaves. <dfn>Tetracyclines</dfn>, such as doxycycline, block the small part, so building blocks cannot dock. Protein making stalls and growth stops, but most bacteria stay alive for white blood cells to clear.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="16" data-step-title="Fluoroquinolones: the DNA left cut" data-kind="fluoroquinolone" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Fluoroquinolones: the DNA left cut</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Fluoroquinolones</dfn>, such as ciprofloxacin, jam the untangling enzymes just after they cut the DNA. The cuts are never sealed, so copying halts and the broken DNA kills the bacterium.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="17" data-step-title="Sulfonamides and trimethoprim: folate cut off" data-kind="sulfa" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Sulfonamides and trimethoprim: folate cut off</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Sulfonamides</dfn> block an early step on the folate line; <dfn>trimethoprim</dfn> blocks a later one. Without folate there are no new DNA letters, so copying and growth stop. Two blocks on one line work better than either alone. Your cells use food folate instead.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+
+    <div class="step-nav">
+      <button type="button" data-step-back disabled>← Back</button>
+      <span data-step-progress aria-live="polite">Step 1 of 17</span>
+      <button type="button" data-step-next>Next →</button>
+    </div>
+    <p class="hint">Start with Next, or use the arrow keys. Pictures are illustrative, not measurements. How long a drug stays in the blood is <a href="/lab/pharmacokinetics/">Lesson 17</a>.</p>
+  </section>
+
+  <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
+    <h2>White blood cells, beside the model.</h2>
+    <p id="disclaimer" class="disclaimer">Loading reference values…</p>
+    <div class="cv-top">
+      <div id="clinical-visual" class="visual"></div>
+      <div class="cv-controls">
+        <div>
+          <label for="clinical-state">Compare a condition</label>
+          <select id="clinical-state"><option value="normal">Normal teaching baseline</option></select>
+        </div>
+        <div>
+          <label for="clinical-bacteria">Bacteria multiplying in the body (model) <output id="clinical-bacteria-label" for="clinical-bacteria"></output></label>
+          <input id="clinical-bacteria" type="range" min="0" max="2" step="0.05" value="0">
+        </div>
+        <div>
+          <label for="clinical-drug">Antibiotic given in the model (bacteria it reaches)</label>
+          <select id="clinical-drug">
+            <option value="">None</option>
+            <option value="betalactam">Beta-lactam</option>
+            <option value="vancomycin">Glycopeptide (vancomycin)</option>
+            <option value="aminoglycoside">Aminoglycoside</option>
+            <option value="macrolide">Macrolide or tetracycline</option>
+            <option value="fluoroquinolone">Fluoroquinolone</option>
+            <option value="sulfa">Sulfonamide with trimethoprim</option>
+          </select>
+        </div>
+        <div>
+          <button type="button" id="clinical-reset">Back to baseline</button>
+        </div>
+      </div>
+    </div>
+    <p id="state-summary" class="state-summary" aria-live="polite">Normal teaching baseline.</p>
+    <p id="state-source" class="model-note"></p>
+    <p class="model-note">The blue line on each bar, and the large number beside it, show where an illustrative teaching model sits: not a patient measurement and not a sourced value. The shaded bands are the reference ranges quoted under each row. The picture and every bar come from the same model. Selecting a condition applies it to the model, and the dashed line shows the model without it. Separately, an arrow labelled “Cited” appears only where the quoted source gives that row’s direction; where it does not, no arrow is shown and the marker is the teaching model alone. The source describes cell counts, so it can give a direction for the total count but not for the shares.</p>
+    <p id="baseline-note" class="model-note"></p>
+    <div id="value-rows"></div>
+    <p id="cv-live" class="visually-hidden" aria-live="polite"></p>
+    <p class="model-note">The six antibiotic families are animated in the Lesson and in Explore freely, and the antibiotic control above lowers the model’s bacteria. They are not listed as states, with arrows, because the reference used on this tab gives no direction for any antibiotic family on these values, and every state here must quote its source.</p>
+    <h3>Sources</h3>
+    <ul id="sources"></ul>
+    <p id="load-error" class="load-error" hidden></p>
+  </section>
+
+  <section id="explore" role="tabpanel" aria-labelledby="tab-explore" hidden>
+    <h2>Treat a culture yourself.</h2>
+    <p class="model-intro">An illustrative teaching model of one kind of bacterium multiplying in the body, with white blood cells clearing a few. Pick the kind of wall, add drugs (they combine) and see how the parts, the growth and the bacteria over time change. Dashed marks are the untreated bacterium, this lesson’s normal; solid marks are your settings.</p>
+    <div class="explore-grid">
+      <div id="explore-visual" class="visual"></div>
+      <div class="controls">
+        <fieldset>
+          <legend>The bacterium</legend>
+          <div class="choice-grid" id="gram">
+            <label class="choice"><input type="radio" name="gram" value="positive" checked> Gram-positive</label>
+            <label class="choice"><input type="radio" name="gram" value="negative"> Gram-negative</label>
+          </div>
+          <div class="choice-grid">
+            <label class="choice"><input type="checkbox" id="betalactamase"> Makes a beta-lactam-cutting enzyme</label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Drugs</legend>
+          <div class="choice-grid" id="drugs">
+            <label class="choice"><input type="checkbox" value="betalactam"> Beta-lactam</label>
+            <label class="choice"><input type="checkbox" value="vancomycin"> Vancomycin</label>
+            <label class="choice"><input type="checkbox" value="aminoglycoside"> Aminoglycoside</label>
+            <label class="choice"><input type="checkbox" value="macrolide"> Macrolide or tetracycline</label>
+            <label class="choice"><input type="checkbox" value="fluoroquinolone"> Fluoroquinolone</label>
+            <label class="choice"><input type="checkbox" value="sulfa"> Sulfonamide with trimethoprim</label>
+          </div>
+        </fieldset>
+        <button type="button" id="reset">Reset model</button>
+      </div>
+    </div>
+    <p id="model-results" class="model-results" aria-live="polite"></p>
+
+    <details>
+      <summary>How this teaching model works</summary>
+      <p>Each drug blocks one piece of the machinery by a fixed illustrative share. Beta-lactams and vancomycin stop new wall bridges; aminoglycosides make the ribosome misread, so proteins come out faulty; macrolides and tetracyclines stall the ribosome; fluoroquinolones leave the DNA cut; sulfonamides with trimethoprim cut off folate, so fewer DNA letters are made. Growth needs working proteins and copied DNA. A weak wall does not stop growth by itself; it makes growing bacteria burst.</p>
+      <p>Killing comes from three routes: a weak wall in a growing cell, faulty proteins, and cut DNA. Because wall drugs need growth to kill, a growth-stopping drug given with them blunts their killing in this model, a well-known teaching point. A drug that only stops growth leaves the bacteria alive; white blood cells then clear them slowly. Vancomycin does not reach the wall of a gram-negative bacterium at all in this model, because it is too big to pass the intact outer membrane, so on its own it leaves that bacterium and its growth curve unchanged; aminoglycosides reach gram-positive bacteria less well; the beta-lactam-cutting enzyme stands for a common kind of resistance.</p>
+      <p>Over time, the bacteria grow toward a ceiling, a few are cleared by white blood cells, and drugs start partway along. Left out: how drugs are absorbed, spread and cleared (<a href="/lab/pharmacokinetics/">Lesson 17</a>), every other kind of resistance, the many differences between bacterial species, side effects, and every real-world difference between people. Nothing here is a prediction for a real infection, and nothing here is a treatment plan.</p>
+    </details>
+  </section>
+
+  <footer>Lesson 19 of The Lab · Added 2026-11-01 · <a href="/lab/">All lessons</a></footer>
+</main>
+</body>
+</html>

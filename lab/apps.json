@@ -268,5 +268,20 @@
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
     }
+  },
+  {
+    "slug": "bacterial-cell-antibiotics",
+    "title": "The Bacterial Cell and Antibiotic Targets",
+    "date": "2026-11-01",
+    "description": "A tour of a bacterium's wall, ribosomes and DNA machinery, and the antibiotic families that attack each one.",
+    "category": "medicine",
+    "builder": {
+      "tool": "Claude Code",
+      "model": "claude-opus-5-5"
+    },
+    "reviewer": {
+      "tool": "OpenAI Codex",
+      "model": "gpt-6.1-sol"
+    }
   }
 ]
