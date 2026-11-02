@@ -283,5 +283,20 @@
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
     }
+  },
+  {
+    "slug": "immune-response",
+    "title": "The Immune Response",
+    "date": "2026-11-02",
+    "description": "How the body recognises an invader, from the first innate response to antibodies and memory, and how immune drugs steer it.",
+    "category": "medicine",
+    "builder": {
+      "tool": "Claude Code",
+      "model": "claude-opus-5-5"
+    },
+    "reviewer": {
+      "tool": "OpenAI Codex",
+      "model": "gpt-6.1-sol"
+    }
   }
 ]
