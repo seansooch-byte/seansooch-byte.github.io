@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Immune Response · The Lab · Sean Sooch</title>
+<meta name="description" content="A guided visual lesson: how the body recognises an invader, from eating cells and alarm signals to T cells, antibodies and memory, and how vaccines, calcineurin inhibitors, anti-TNF biologics and glucocorticoids steer the response.">
+<link rel="canonical" href="https://seansooch.dev/lab/immune-response/">
+<meta property="og:title" content="The Immune Response">
+<meta property="og:description" content="How the body recognises an invader, from the first innate response to antibodies and memory, and how immune drugs steer it.">
+<meta property="og:url" content="https://seansooch.dev/lab/immune-response/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script src="model.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the lesson</a>
+<header class="site-top">
+  <div class="site-top-in">
+    <a class="site-brand" href="/" aria-label="Sean Sooch, home">SS<span aria-hidden="true">—</span>03</a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="site-nav-home" href="/#ch3">Work</a>
+      <a href="/#ch4">Writing</a>
+      <a href="/#appb">Films</a>
+      <a href="/#appa">Editions</a>
+      <a class="site-nav-lab" href="/lab/" aria-current="true">The Lab</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+  <div class="intro">
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / Core medicine / Lesson 20</p>
+    <h1>The immune <span>response</span>.</h1>
+    <p class="lede">A germ slips in through a cut. Watch the body find it, raise the alarm, recognise it by its name tags, build an army made for that one invader and remember it for next time. Then watch four kinds of medicine steer the response up or down.</p>
+    <p class="note">Educational, not for clinical use</p>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Lesson views">
+    <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
+    <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
+  </div>
+
+  <section id="lesson" role="tabpanel" aria-labelledby="tab-lesson">
+    <article data-step="1" data-step-title="An invader gets in" data-kind="invader">
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">An invader gets in</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Your <dfn>immune system</dfn> is the body’s defence force. It wakes when a <dfn>germ</dfn> (or <dfn>pathogen</dfn>: a bacterium, virus or other tiny invader that causes disease) slips past the skin, say through a cut, and multiplies. That is an <dfn>infection</dfn>.</p>
+    </article>
+    <article data-step="2" data-step-title="First responders eat the germs" data-kind="eat" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">First responders eat the germs</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Within hours, <dfn>white blood cells</dfn>, the body’s roaming defence cells, arrive. <dfn>Macrophages</dfn> and <dfn>neutrophils</dfn> are eating cells: they swallow germs whole and break them down. This fast, ready-made first defence, the same for every germ, is the <dfn>innate response</dfn>.</p>
+    </article>
+    <article data-step="3" data-step-title="Alarm signals bring inflammation" data-kind="alarm" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Alarm signals bring inflammation</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Macrophages that meet germs send out <dfn>alarm signals</dfn>, tiny chemical messengers. A loud one is <dfn>TNF</dfn> (tumour necrosis factor). Nearby blood vessels widen and leak, letting in more eating cells. The redness, heat and swelling are <dfn>inflammation</dfn> (<a href="/lab/arachidonic-acid-nsaids/">Lesson 18</a>).</p>
+    </article>
+    <article data-step="4" data-step-title="Name tags: how a germ is recognised" data-kind="tag" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Name tags: how a germ is recognised</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Every germ carries surface shapes of its own, called <dfn>antigens</dfn>: name tags that mark it as foreign. Some eating cells carry a torn-off tag to a <dfn>lymph node</dfn>, a bean-shaped meeting place where the body’s specialist defenders wait.</p>
+    </article>
+    <article data-step="5" data-step-title="A T cell’s on switch" data-kind="switch" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">A T cell’s on switch</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">In the node wait <dfn>T cells</dfn>, white blood cells that each fit just one tag. When a <dfn>helper T cell</dfn> finds its tag, a switch inside flips: <dfn>calcineurin</dfn>, an <dfn>enzyme</dfn> (a tiny machine that does one job). It sends the signal: grow.</p>
+    </article>
+    <article data-step="6" data-step-title="One matching cell becomes an army" data-kind="clone" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">One matching cell becomes an army</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The switched-on T cell copies itself again and again into a <dfn>clone</dfn>: a crowd of identical cells that all fit the same tag. This made-to-measure, slower second defence is the <dfn>adaptive response</dfn>. It takes days to build.</p>
+    </article>
+    <article data-step="7" data-step-title="B cells make antibodies" data-kind="bcell" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">B cells make antibodies</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>B cells</dfn> also fit just one tag. Helped by a matching helper T cell, a B cell turns into a <dfn>plasma cell</dfn>, a factory that pours out <dfn>antibodies</dfn>: Y-shaped grabbers whose two tips grip that one tag.</p>
+    </article>
+    <article data-step="8" data-step-title="Antibodies and killer T cells clear the germs" data-kind="attack" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Antibodies and killer T cells clear the germs</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Antibodies coat germs, clump them together and mark them for the eating cells. <dfn>Killer T cells</dfn> find body cells that a virus has taken over and destroy them, germ and all. Together they finish what the innate response could only hold back.</p>
+    </article>
+    <article data-step="9" data-step-title="The response over time" data-kind="curve" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">The response over time</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Put it on a timeline. Germs climb at first while the innate response slows them and the alarm rings. The adaptive response takes days to build; once antibodies rise, the germs fall fast. Then the alarm quietens and most new cells die off.</p>
+    </article>
+    <article data-step="10" data-step-title="Memory: faster the second time" data-kind="memory" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">Memory: faster the second time</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A few of the new T and B cells stay on for years as <dfn>memory cells</dfn>. If the same germ returns, they wake fast: antibodies rise sooner and higher, and the germ is beaten before it gets far. This is <dfn>immunity</dfn>.</p>
+    </article>
+    <article data-step="11" data-step-title="The whole response: the key measures" data-kind="whole" hidden>
+      <p class="eyebrow">Build the idea</p>
+      <h2 tabindex="-1">The whole response: the key measures</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Germ in; eating cells and alarm signals first; tags to the node; T cells switch on and multiply; B cells make antibodies; memory stays. Key measures: how far the germs climb, and how many antibodies are made. <dfn>Immune drugs</dfn> steer the response at four points.</p>
+    </article>
+    <article data-step="12" data-step-title="Vaccines: memory made ahead of time" data-kind="vaccine" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Vaccines: memory made ahead of time</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A <dfn>vaccine</dfn> shows the body a germ’s tags, or a killed or weakened copy of the germ, without the illness. Memory cells form ahead of time, so when the real germ arrives, antibodies rise early and the germ never climbs far.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="13" data-step-title="Calcineurin inhibitors: the T cell switch blocked" data-kind="cni" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Calcineurin inhibitors: the T cell switch blocked</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Calcineurin inhibitors</dfn>, such as tacrolimus and ciclosporin, block the T cell’s on switch. The grow signal stops, so few T cells multiply and B cells get little help. This stops the body attacking a <dfn>transplant</dfn>, a donated organ, but germs spread more easily.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="14" data-step-title="Anti-TNF biologics: the loudest alarm mopped up" data-kind="antitnf" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Anti-TNF biologics: the loudest alarm mopped up</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Anti-TNF biologics</dfn> are lab-made molecules, grown in living cells, that grab and hold TNF; most are antibodies, some are decoy TNF catchers. Less alarm means less inflammation, calming diseases where the immune system attacks the joints or gut, but germs are held back less.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+    <article data-step="15" data-step-title="Glucocorticoids: many alarms turned down" data-kind="gc" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Glucocorticoids: many alarms turned down</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Glucocorticoids</dfn> are steroid drugs modelled on cortisol, the body’s own stress messenger (<a href="/lab/hpa-axis-steroids/">Lesson 15</a>). They enter immune cells and turn down the instructions for many alarm signals at once. Inflammation falls and fewer T cells multiply, but germs are fought less well.</p>
+      <button type="button" class="replay">Replay ↻</button>
+    </article>
+
+    <div class="step-nav">
+      <button type="button" data-step-back disabled>← Back</button>
+      <span data-step-progress aria-live="polite">Step 1 of 15</span>
+      <button type="button" data-step-next>Next →</button>
+    </div>
+    <p class="hint">Start with Next, or use the arrow keys. Pictures are illustrative, not measurements. White blood cells meet bacteria in <a href="/lab/bacterial-cell-antibiotics/">Lesson 19</a>.</p>
+  </section>
+
+  <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
+    <h2>White blood cells, beside the model.</h2>
+    <p id="disclaimer" class="disclaimer">Loading reference values…</p>
+    <div class="cv-top">
+      <div id="clinical-visual" class="visual"></div>
+      <div class="cv-controls">
+        <div>
+          <label for="clinical-state">Compare a condition</label>
+          <select id="clinical-state"><option value="normal">Normal teaching baseline</option></select>
+        </div>
+        <div>
+          <label for="clinical-infection">Infection in the body (model) <output id="clinical-infection-label" for="clinical-infection"></output></label>
+          <input id="clinical-infection" type="range" min="0" max="2" step="0.05" value="0">
+        </div>
+        <div>
+          <label for="clinical-germ">Kind of germ (model)</label>
+          <select id="clinical-germ">
+            <option value="bacteria">Bacteria</option>
+            <option value="virus">Virus</option>
+          </select>
+        </div>
+        <div>
+          <label for="clinical-drug">Immune drug in the model</label>
+          <select id="clinical-drug">
+            <option value="">None</option>
+            <option value="gc">Glucocorticoid</option>
+            <option value="cni">Calcineurin inhibitor</option>
+            <option value="antitnf">Anti-TNF biologic</option>
+          </select>
+        </div>
+        <div>
+          <button type="button" id="clinical-reset">Back to baseline</button>
+        </div>
+      </div>
+    </div>
+    <p id="state-summary" class="state-summary" aria-live="polite">Normal teaching baseline.</p>
+    <p id="state-source" class="model-note"></p>
+    <p class="model-note">The blue line on each bar, and the large number beside it, show where an illustrative teaching model sits: not a patient measurement and not a sourced value. The shaded bands are the reference ranges quoted under each row. The picture and every bar come from the same model. Selecting a condition applies it to the model, and the dashed line shows the model without it. Separately, an arrow labelled “Cited” appears only where the quoted source gives that row’s direction; where it does not, no arrow is shown and the marker is the teaching model alone. The source describes cell counts, so it can give a direction for the total count but not for the shares.</p>
+    <p id="baseline-note" class="model-note"></p>
+    <div id="value-rows"></div>
+    <p id="cv-live" class="visually-hidden" aria-live="polite"></p>
+    <h3>What the source says about counts</h3>
+    <p class="model-note">The source also describes infections, allergies and steroid drug therapy, but only as changes in the number of one kind of white cell. It gives no reference range for those numbers and no direction for the total or the shares shown above, so these are quoted here instead of being offered as conditions with arrows. Try them on the model with the infection, germ and drug controls; what the model shows is illustrative.</p>
+    <ul id="count-notes" class="count-notes"></ul>
+    <p class="model-note">Vaccines, calcineurin inhibitors and anti-TNF biologics are animated in the Lesson and in Explore freely, and the drug control above applies an illustrative effect to the model. They are not listed as states, with arrows, because the reference used on this tab gives no direction for any of them on these values, and every state here must quote its source.</p>
+    <h3>Sources</h3>
+    <ul id="sources"></ul>
+    <p id="load-error" class="load-error" hidden></p>
+  </section>
+
+  <section id="explore" role="tabpanel" aria-labelledby="tab-explore" hidden>
+    <h2>Run an infection yourself.</h2>
+    <p class="model-intro">An illustrative teaching model of one infection and the immune response to it. Set how fast the germ multiplies, add a vaccine or immune drugs (they combine) and watch the germs, alarm signals, T cells and antibodies over time. Dashed marks are the untreated, unvaccinated response, this lesson’s normal; solid marks are your settings.</p>
+    <div class="explore-grid">
+      <div id="explore-visual" class="visual"></div>
+      <div class="controls">
+        <fieldset>
+          <legend>The germ</legend>
+          <label for="growth">How fast it multiplies <output id="growth-label" for="growth"></output></label>
+          <input id="growth" type="range" min="0.5" max="2" step="0.05" value="1">
+        </fieldset>
+        <fieldset>
+          <legend>Before or during the infection</legend>
+          <div class="choice-grid" id="drugs">
+            <label class="choice"><input type="checkbox" value="vaccine"> Vaccinated beforehand</label>
+            <label class="choice"><input type="checkbox" value="cni"> Calcineurin inhibitor</label>
+            <label class="choice"><input type="checkbox" value="antitnf"> Anti-TNF biologic</label>
+            <label class="choice"><input type="checkbox" value="gc"> Glucocorticoid</label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Timeline</legend>
+          <div class="choice-grid">
+            <label class="choice"><input type="checkbox" id="reinfect"> Same germ returns, long after</label>
+          </div>
+        </fieldset>
+        <button type="button" id="reset">Reset model</button>
+      </div>
+    </div>
+    <p id="model-results" class="model-results" aria-live="polite"></p>
+
+    <details>
+      <summary>How this teaching model works</summary>
+      <p>Germs multiply toward a ceiling at the site. Eating cells kill a few, and more of them arrive when alarm signals are active. Alarm signals are made while germs are present and fade quickly. T cells that fit the germ’s tag multiply while the tag is around, helped a little by the alarm; plasma cells make antibodies with T cell help; antibodies and T cells kill germs. Memory cells build up during the response, wake at far smaller amounts of the tag, and quickly make many antibody factories.</p>
+      <p>A vaccine starts the run with memory cells and a few antibodies already present. A calcineurin inhibitor mostly blocks the T cells’ on switch, which also starves B cells of help. An anti-TNF biologic removes most of the active alarm signal, so fewer eating cells arrive. A glucocorticoid lowers how much alarm signal is made and halves T cell switching on. The bars show how high each measure climbs during the first infection (memory: what is left at its end), relative to the untreated, unvaccinated response.</p>
+      <p>Left out: the many kinds of alarm signal, antibody and white blood cell; fever; the lymph and blood traffic between tissue and node; how drugs are absorbed and cleared (<a href="/lab/pharmacokinetics/">Lesson 17</a>); side effects; every difference between germs and between people. Nothing here predicts a real infection, and nothing here is a treatment plan.</p>
+    </details>
+  </section>
+
+  <footer>Lesson 20 of The Lab · Added 2026-11-02 · <a href="/lab/">All lessons</a></footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,74 @@
+{
+  "disclaimer": "Typical adult reference ranges; labs vary; not for clinical decisions.",
+  "sources": {
+    "openstax-ap-18.4": "OpenStax Anatomy and Physiology 2e, section 18.4 Leukocytes and Platelets. Betts JG, Young KA, Wise JA, Johnson E, Poe B, Kruse DH, Korol O, Johnson JE, Womble M, DeSaix P. Anatomy and Physiology 2e. Houston, Texas: OpenStax; 2022. https://openstax.org/books/anatomy-and-physiology-2e/pages/18-4-leukocytes-and-platelets"
+  },
+  "values": [
+    { "id": "wbc", "label": "White blood cells (leukocytes), total count", "unit": "per µL",
+      "low": 5000, "high": 10000,
+      "source": "openstax-ap-18.4",
+      "where": "OpenStax Anatomy and Physiology 2e, section 18.4 Leukocytes and Platelets, Characteristics of Leukocytes: “For instance, leukocytes are far less numerous than erythrocytes: Typically there are only 5000 to 10,000 per µ L.”",
+      "modelKey": "wbc",
+      "note": "µL is a microlitre, a millionth of a litre of blood." },
+    { "id": "neutrophils", "label": "Neutrophils, share of all white blood cells", "unit": "%",
+      "low": 50, "high": 70,
+      "source": "openstax-ap-18.4",
+      "where": "OpenStax Anatomy and Physiology 2e, section 18.4 Leukocytes and Platelets, Granular Leukocytes: “The most common of all the leukocytes, neutrophils will normally comprise 50–70 percent of total leukocyte count.”",
+      "modelKey": "neutPct",
+      "note": "A share of all white blood cells, not a count. Neutrophils are eating cells of the innate response." },
+    { "id": "lymphocytes", "label": "Lymphocytes, share of all white blood cells", "unit": "%",
+      "low": 20, "high": 30,
+      "source": "openstax-ap-18.4",
+      "where": "OpenStax Anatomy and Physiology 2e, section 18.4 Leukocytes and Platelets, Agranular Leukocytes: “Lymphocytes are the second most common type of leukocyte, accounting for about 20–30 percent of all leukocytes, and are essential for the immune response.”",
+      "modelKey": "lymphPct",
+      "note": "The source says about 20–30 percent. A share, not a count. Lymphocytes include the lesson’s T cells and B cells." },
+    { "id": "monocytes", "label": "Monocytes, share of all white blood cells", "unit": "%",
+      "low": 2, "high": 8,
+      "source": "openstax-ap-18.4",
+      "where": "OpenStax Anatomy and Physiology 2e, section 18.4 Leukocytes and Platelets, Agranular Leukocytes: “Monocytes originate from myeloid stem cells. They normally represent 2–8 percent of the total leukocyte count.”",
+      "modelKey": "monoPct",
+      "note": "A share, not a count. Monocytes that leave the blood become the lesson’s macrophages." },
+    { "id": "eosinophils", "label": "Eosinophils, share of all white blood cells", "unit": "%",
+      "low": 2, "high": 4,
+      "source": "openstax-ap-18.4",
+      "where": "OpenStax Anatomy and Physiology 2e, section 18.4 Leukocytes and Platelets, Granular Leukocytes: “Eosinophils typically represent 2–4 percent of total leukocyte count.”",
+      "modelKey": "eosPct",
+      "note": "A share, not a count." }
+  ],
+  "countNotes": [
+    { "id": "bacterial", "label": "Bacterial infection: neutrophil counts",
+      "source": "openstax-ap-18.4",
+      "where": "OpenStax Anatomy and Physiology 2e, section 18.4 Leukocytes and Platelets, Granular Leukocytes: “Abnormally high counts of neutrophils indicate infection and/or inflammation, particularly triggered by bacteria, but are also found in burn patients and others experiencing unusual stress.”" },
+    { "id": "viral", "label": "Viral infection: lymphocyte and monocyte counts",
+      "source": "openstax-ap-18.4",
+      "where": "OpenStax Anatomy and Physiology 2e, section 18.4 Leukocytes and Platelets, Agranular Leukocytes: “Abnormally high lymphocyte counts are characteristic of viral infections as well as some types of cancer.” and “Abnormally high counts of monocytes are associated with viral or fungal infections, tuberculosis, and some forms of leukemia and other chronic diseases.”" },
+    { "id": "allergy", "label": "Allergies: eosinophil counts",
+      "source": "openstax-ap-18.4",
+      "where": "OpenStax Anatomy and Physiology 2e, section 18.4 Leukocytes and Platelets, Granular Leukocytes: “High counts of eosinophils are typical of patients experiencing allergies, parasitic worm infestations, and some autoimmune diseases.”" },
+    { "id": "steroid", "label": "Steroid drug therapy: lymphocyte counts",
+      "source": "openstax-ap-18.4",
+      "where": "OpenStax Anatomy and Physiology 2e, section 18.4 Leukocytes and Platelets, Agranular Leukocytes: “Abnormally low lymphocyte counts are characteristic of prolonged (chronic) illness or immunosuppression, including that caused by HIV infection and drug therapies that often involve steroids.”" }
+  ],
+  "states": [
+    { "id": "leukocytosis", "label": "Leukocytosis (raised white blood cell count)", "kind": "disease",
+      "summary": "Leukocytosis is excessive leukocyte proliferation: more white blood cells are made, so the total white cell count rises.",
+      "comparedWith": "normal",
+      "shifts": { "wbc": "up" },
+      "evidence": {
+        "wbc": "OpenStax Anatomy and Physiology 2e, section 18.4, Disorders of Leukocytes: “Excessive leukocyte proliferation is known as leukocytosis”"
+      },
+      "source": "openstax-ap-18.4",
+      "where": "OpenStax Anatomy and Physiology 2e, section 18.4 Leukocytes and Platelets, Disorders of Leukocytes: “Excessive leukocyte proliferation is known as leukocytosis”",
+      "modelNote": "The model makes more of every kind of white cell, so the total count rises while the shares stay the same. No direction is cited for the shares, and the model does not move them." },
+    { "id": "leukopenia", "label": "Leukopenia (too few white blood cells made)", "kind": "disease",
+      "summary": "In leukopenia too few leukocytes are produced; if it is pronounced, the person may be unable to ward off disease.",
+      "comparedWith": "normal",
+      "shifts": { "wbc": "down" },
+      "evidence": {
+        "wbc": "OpenStax Anatomy and Physiology 2e, section 18.4, Disorders of Leukocytes: “Leukopenia is a condition in which too few leukocytes are produced.” and “If this condition is pronounced, the individual may be unable to ward off disease.”"
+      },
+      "source": "openstax-ap-18.4",
+      "where": "OpenStax Anatomy and Physiology 2e, section 18.4 Leukocytes and Platelets, Disorders of Leukocytes: “Leukopenia is a condition in which too few leukocytes are produced. If this condition is pronounced, the individual may be unable to ward off disease.”",
+      "modelNote": "The model makes fewer of every kind of white cell, so the shares stay the same. No direction is cited for the shares, and the model does not move them." }
+  ]
+}
