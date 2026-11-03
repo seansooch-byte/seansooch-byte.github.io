@@ -1,0 +1,53 @@
+{
+  "disclaimer": "Typical adult reference ranges; labs vary; not for clinical decisions.",
+  "sources": {
+    "openstax-ap-18.4": "OpenStax Anatomy and Physiology 2e, section 18.4 Leukocytes and Platelets. Betts JG, Young KA, Wise JA, Johnson E, Poe B, Kruse DH, Korol O, Johnson JE, Womble M, DeSaix P. Anatomy and Physiology 2e. Houston, Texas: OpenStax; 2022. https://openstax.org/books/anatomy-and-physiology-2e/pages/18-4-leukocytes-and-platelets",
+    "openstax-ap-18.1": "OpenStax Anatomy and Physiology 2e, section 18.1 An Overview of Blood. Betts JG, Young KA, Wise JA, Johnson E, Poe B, Kruse DH, Korol O, Johnson JE, Womble M, DeSaix P. Anatomy and Physiology 2e. Houston, Texas: OpenStax; 2022. https://openstax.org/books/anatomy-and-physiology-2e/pages/18-1-an-overview-of-blood"
+  },
+  "values": [
+    { "id": "wbc", "label": "White blood cells (leukocytes), total count", "unit": "per µL",
+      "low": 5000, "high": 10000,
+      "source": "openstax-ap-18.4",
+      "where": "OpenStax Anatomy and Physiology 2e, section 18.4 Leukocytes and Platelets, Characteristics of Leukocytes: “For instance, leukocytes are far less numerous than erythrocytes: Typically there are only 5000 to 10,000 per µ L.”",
+      "modelKey": "wbc",
+      "note": "µL is a microlitre, a millionth of a litre of blood. White cells are made by dividing cells in the bone marrow." },
+    { "id": "hct-female", "label": "Hematocrit (share of blood that is red cells), adult females", "unit": "%",
+      "low": 37, "high": 47, "typical": 41,
+      "source": "openstax-ap-18.1",
+      "where": "OpenStax Anatomy and Physiology 2e, section 18.1 An Overview of Blood, Composition of Blood: “Normal hematocrit values for females range from 37 to 47, with a mean value of 41; for males, hematocrit ranges from 42 to 52, with a mean of 47.”",
+      "modelKey": "hctF",
+      "note": "The source describes the hematocrit as “the percentage of RBCs, clinically known as erythrocytes, in a blood sample”." },
+    { "id": "hct-male", "label": "Hematocrit (share of blood that is red cells), adult males", "unit": "%",
+      "low": 42, "high": 52, "typical": 47,
+      "source": "openstax-ap-18.1",
+      "where": "OpenStax Anatomy and Physiology 2e, section 18.1 An Overview of Blood, Composition of Blood: “Normal hematocrit values for females range from 37 to 47, with a mean value of 41; for males, hematocrit ranges from 42 to 52, with a mean of 47.”",
+      "modelKey": "hctM",
+      "note": "The model starts at the source’s mean for each sex." }
+  ],
+  "countNotes": [
+    { "id": "origin", "label": "Where blood cells come from",
+      "source": "openstax-ap-18.4",
+      "where": "OpenStax Anatomy and Physiology 2e, section 18.4 Leukocytes and Platelets, Characteristics of Leukocytes: “Although leukocytes and erythrocytes both originate from hematopoietic stem cells in the bone marrow, they are very different from each other in many significant ways.”" },
+    { "id": "lifespan", "label": "White cells are short-lived",
+      "source": "openstax-ap-18.4",
+      "where": "OpenStax Anatomy and Physiology 2e, section 18.4 Leukocytes and Platelets, Lifecycle of Leukocytes: “Most leukocytes have a relatively short lifespan, typically measured in hours or days.”" },
+    { "id": "drug-toxicity", "label": "Low neutrophil counts",
+      "source": "openstax-ap-18.4",
+      "where": "OpenStax Anatomy and Physiology 2e, section 18.4 Leukocytes and Platelets, Granular Leukocytes: “Low counts may be caused by drug toxicity and other disorders, and may increase an individual’s susceptibility to infection.”" },
+    { "id": "marrow-suppression", "label": "Low monocyte counts",
+      "source": "openstax-ap-18.4",
+      "where": "OpenStax Anatomy and Physiology 2e, section 18.4 Leukocytes and Platelets, Agranular Leukocytes: “Abnormally low counts are typically caused by suppression of the bone marrow.”" }
+  ],
+  "states": [
+    { "id": "leukopenia", "label": "Leukopenia (too few white blood cells made)", "kind": "disease",
+      "summary": "In leukopenia too few leukocytes are produced; if it is pronounced, the person may be unable to ward off disease.",
+      "comparedWith": "normal",
+      "shifts": { "wbc": "down" },
+      "evidence": {
+        "wbc": "OpenStax Anatomy and Physiology 2e, section 18.4, Disorders of Leukocytes: “Leukopenia is a condition in which too few leukocytes are produced.”"
+      },
+      "source": "openstax-ap-18.4",
+      "where": "OpenStax Anatomy and Physiology 2e, section 18.4 Leukocytes and Platelets, Disorders of Leukocytes: “Leukopenia is a condition in which too few leukocytes are produced. If this condition is pronounced, the individual may be unable to ward off disease.”",
+      "modelNote": "The marrow control is set so the model makes half as many new blood cells, and the white cell count falls. The source gives no direction for the hematocrit, so no arrow is shown there." }
+  ]
+}
