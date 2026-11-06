@@ -171,8 +171,12 @@ this section: the pipeline's bootstrap copies must be refreshed from here before
   site's shared top bar (the homepage's view A bar), whose CSS is part of `kit.css`; `/lab/` carries the same bar.
 - **Caching.** `_headers` serves everything under `/lab/` with `Cache-Control: no-cache` (Pages'
   default for scripts and styles is four hours), because lesson pages ask for their files by plain
-  names and are edited often. `/lab/`'s own stylesheet is stamped `?v=` like the shared assets,
-  and `tools/stage.sh` checks that stamp.
+  names and are edited often. That holds on the `*.pages.dev` hosts; on seansooch.dev the
+  Cloudflare zone's Browser Cache TTL (four hours, checked 2026-11-06) rewrites it to
+  `max-age=14400` for scripts and styles, so until that setting is "Respect Existing Headers" an
+  edited lesson script can reach a returning reader up to four hours late. The 21 lessons rebuilt
+  on 2026-11-06 ask for `style.css?v=2`, `app.js?v=2` and `model.js?v=2` to retire older copies.
+  `/lab/`'s own stylesheet is stamped `?v=` like the shared assets, and `tools/stage.sh` checks it.
 - **Checks.** `node tools/lab-check.mjs` checks every lesson against the format (structure, the plan's schema, answer
   keys, that every goal is tested and every change has a prediction, no em dashes, nothing that looks like a dose).
   `node tools/lab-walk.mjs <served base> [slug ...]` walks every step of every lesson in installed Chrome at 1280 x 900
