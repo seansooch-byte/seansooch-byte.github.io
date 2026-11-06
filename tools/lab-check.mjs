@@ -13,7 +13,7 @@ const problems = [];
 const bad = (where, what) => problems.push(`${where}: ${what}`);
 
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
-const EM = '—';
+const EM = String.fromCharCode(0x2014); // a code, so this file holds none
 // A dose: a number with a mass or unit-per-weight. Lab units in clinical-values.json (mg/dL) are not checked here.
 const DOSE = /\b\d+(?:[.,]\d+)?\s?(?:mg|mcg|µg|μg|micrograms?|milligrams?|grams?|IU|units?)\b(?!\s?\/\s?(?:dL|L|mL|min|h)\b)|\/\s?kg\b|\bper kilogram\b/i;
 const LAZY = /\b(all|none|both) of the above\b|\b(?:choice|option|answer) [A-F]\b|\b[A-F] (?:and|or) [A-F]\b/i;
@@ -112,7 +112,6 @@ function checkLesson(slug) {
     const keyed = k => new RegExp(`(^|[\\s{,'"])${k.replace(/[-]/g, '\\-')}['"]?\\s*:`, 'm').test(js)
       || (/^[a-zA-Z_$][\\w$]*$/.test(k) && new RegExp(`[{,]\\s*${k}\\s*[,}]`).test(js));
     for (const k of kinds) if (!keyed(k) && !js.includes(`scenes['${k}']`) && !js.includes(`scenes["${k}"]`) && !js.includes(`[${JSON.stringify(k)}]`)) bad(slug, `app.js seems to have no scene for kind "${k}"`);
-    if (js.includes(EM)) bad(slug, 'app.js contains an em dash');
   }
 
   // plan.json
@@ -159,27 +158,34 @@ function checkLesson(slug) {
     const tk = plan.takeaways || [];
     if (tk.length < 5 || tk.length > 8) bad(p, `${tk.length} takeaways; give 5 to 8`);
     const text = JSON.stringify(plan);
-    if (text.includes(EM)) bad(p, 'contains an em dash');
     const dose = text.match(DOSE);
     if (dose) bad(p, `looks like a dose: "${dose[0]}"`);
   }
 
   // Words on the page
-  if (html.includes(EM.repeat(1)) && html.replace('SS<span aria-hidden="true">—</span>03', '').includes(EM)) bad(slug, 'index.html contains an em dash (other than the site mark)');
   const words = strip(html.replace(/<script[\s\S]*?<\/script>/g, '').replace(/<style[\s\S]*?<\/style>/g, ''));
   const dose = words.match(DOSE);
   if (dose) bad(slug, `index.html: looks like a dose: "${dose[0]}"`);
-  if (exists(`${dir}/style.css`) && read(`${dir}/style.css`).includes(EM)) bad(slug, 'style.css contains an em dash');
-  if (exists(`${dir}/clinical-values.json`)) {
-    const cv = read(`${dir}/clinical-values.json`);
-    if (cv.includes(EM) || cv.includes('\\u2014')) bad(slug, 'clinical-values.json contains an em dash (use a spaced en dash, even inside a quotation)');
-  }
 }
 
 const only = process.argv.slice(2);
 const slugs = only.length ? only : apps.map(a => a.slug);
 for (const s of slugs) checkLesson(s);
-for (const f of ['lab/kit/kit.js', 'lab/kit/kit.css', 'lab/kit/draw.js', 'lab/kit/progress.js', 'lab/syllabus.json', 'lab/FORMAT.md']) if (exists(f) && read(f).includes(EM)) bad(f, 'contains an em dash');
+// No em dash in any Lab file (lab/FORMAT.md, "Rules that bind every lesson"): every text file under
+// lab/ but the lessons this run leaves out, and the Lab's own tools. JSON can also hold one as an escape.
+const JSON_EM = String.fromCharCode(92) + 'u2014';
+const TEXT = /\.(?:html|js|mjs|css|json|md|svg|txt)$/;
+const lessons = new Set(apps.map(a => a.slug));
+const walk = dir => fs.readdirSync(root + dir, { withFileTypes: true }).flatMap(e => {
+  const p = `${dir}/${e.name}`;
+  if (e.isDirectory()) return dir === 'lab' && lessons.has(e.name) && !slugs.includes(e.name) ? [] : walk(p);
+  return TEXT.test(e.name) ? [p] : [];
+});
+const labTools = fs.readdirSync(root + 'tools').filter(n => /^lab-.+\.mjs$/.test(n)).map(n => `tools/${n}`);
+for (const f of [...walk('lab'), ...labTools]) {
+  const s = read(f);
+  if (s.includes(EM) || (f.endsWith('.json') && s.includes(JSON_EM))) bad(f, 'contains an em dash (use a comma, a colon or a spaced en dash)');
+}
 
 if (problems.length) {
   console.log(problems.join('\n'));
