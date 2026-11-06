@@ -4,7 +4,7 @@
 import { lesson } from '/lab/kit/kit.js';
 import { C, f, clamp, lerp, ease as EASE, span, svg, text, lines, circle, rect, path, arrowTo, part, readout, esc } from '/lab/kit/draw.js';
 import { run, calibrate, NO_DRUG, DRUGS, P, CAL, MODEL_NOTES } from './model.js';
-import * as N from './nephron.js';
+import * as N from './nephron.js?v=2';
 
 const ease = EASE.out, easeIO = EASE.inOut;
 const $ = s => document.querySelector(s);

@@ -169,6 +169,10 @@ this section: the pipeline's bootstrap copies must be refreshed from here before
   `plan.json`, `clinical-values.json`, `style.css` (only its pictures' classes) and, where it has one, a model. Static
   files from this origin only, no third-party requests except Google Fonts, no data sent anywhere. Each opens with the
   site's shared top bar (the homepage's view A bar), whose CSS is part of `kit.css`; `/lab/` carries the same bar.
+- **Caching.** `_headers` serves everything under `/lab/` with `Cache-Control: no-cache` (Pages'
+  default for scripts and styles is four hours), because lesson pages ask for their files by plain
+  names and are edited often. `/lab/`'s own stylesheet is stamped `?v=` like the shared assets,
+  and `tools/stage.sh` checks that stamp.
 - **Checks.** `node tools/lab-check.mjs` checks every lesson against the format (structure, the plan's schema, answer
   keys, that every goal is tested and every change has a prediction, no em dashes, nothing that looks like a dose).
   `node tools/lab-walk.mjs <served base> [slug ...]` walks every step of every lesson in installed Chrome at 1280 x 900

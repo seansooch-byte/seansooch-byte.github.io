@@ -56,14 +56,14 @@ function checkLesson(slug) {
   // Head and shell
   const need = [
     ['<link rel="stylesheet" href="/lab/kit/kit.css">', 'the kit stylesheet'],
-    ['<script type="module" src="app.js"></script>', 'app.js as a module'],
+    [/<script type="module" src="app\.js(\?v=[\w.]+)?"><\/script>/, 'app.js as a module'],
     [`<main id="main" data-slug="${slug}">`, `main[data-slug="${slug}"]`],
     ['data-lx-plan', 'the plan box (data-lx-plan)'],
     ['Educational, not for clinical use', 'the "Educational, not for clinical use" note'],
     [`<link rel="canonical" href="https://seansooch.dev/lab/${slug}/">`, 'its canonical address'],
     ['<header class="site-top">', 'the site top bar'],
   ];
-  for (const [s, what] of need) if (!html.includes(s)) bad(slug, `index.html lacks ${what}`);
+  for (const [s, what] of need) if (!(s instanceof RegExp ? s.test(html) : html.includes(s))) bad(slug, `index.html lacks ${what}`);
   const crumb = `<a href="/lab/">The Lab</a> / <a href="/lab/#${mod.unit}">Unit ${unitNo}: ${unit?.title}</a> / Lesson ${n + 1}</p>`;
   if (!html.includes(crumb)) bad(slug, `the eyebrow should read: The Lab / Unit ${unitNo}: ${unit?.title} / Lesson ${n + 1}`);
   if (!html.includes(`Lesson ${n + 1} of The Lab`)) bad(slug, `the footer should say Lesson ${n + 1} of The Lab`);

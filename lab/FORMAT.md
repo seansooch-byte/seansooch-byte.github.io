@@ -85,6 +85,11 @@ reference tabs.
 ```
 
 - The unit and lesson number in the eyebrow match `lab/syllabus.json`.
+- Caching: every file under `/lab/` is served `Cache-Control: no-cache` (see `_headers`), so a
+  browser revalidates it on each load and a new page never runs with an old script. A lesson's
+  own files may carry a version query (the 21 lessons rebuilt on 2026-11-06 ask for
+  `style.css?v=2`, `app.js?v=2`, `model.js?v=2` once, to retire the copies browsers kept from
+  before); a new lesson needs none.
 - The site top bar is copied exactly from any other lesson (`aria-current="true"` on The Lab).
 - Steps are numbered 1 to N in order; `data-step-title` equals the `<h2>` text; every `data-kind`
   is unique and has a scene in `app.js`. No Replay buttons: the kit's player replaces them.
