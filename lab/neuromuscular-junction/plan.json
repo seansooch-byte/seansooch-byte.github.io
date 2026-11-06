@@ -1,0 +1,181 @@
+{
+  "minutes": 24,
+  "prerequisites": [
+    "autonomic-synapse"
+  ],
+  "objectives": [
+    "Trace a nerve impulse across the neuromuscular junction: calcium, acetylcholine release, gates opening, the end plate potential and the fibre's action potential.",
+    "Explain the safety margin, and why a normal train of four gives four equal twitches.",
+    "Tell nondepolarizing blockers apart from succinylcholine by what they do to the gates and to a train of four.",
+    "Predict what cholinesterase inhibitors do after each kind of blocker and in myasthenia gravis."
+  ],
+  "checks": {
+    "ndmb": {
+      "prompt": "A nondepolarizing blocker sits in many gates without opening them. Through a quick burst of four impulses, each releasing a little less acetylcholine, what happens to the twitches?",
+      "choices": [
+        "They weaken and fade: each is smaller than the last",
+        "They stay full and equal",
+        "They weaken but stay equal",
+        "They grow stronger with each impulse"
+      ],
+      "answer": 0,
+      "why": "With fewer gates free, the end plate potential sits near threshold, so the small drop in acetylcholine through a burst pushes more fibres below it: the twitches weaken and fade."
+    },
+    "sux": {
+      "prompt": "Succinylcholine opens the gates and stays in them, because the junction's enzyme cannot break it down. What happens after a brief flurry of twitches?",
+      "choices": [
+        "The end plate stays depolarized, the sodium doors around it lock, and the fibre cannot fire: twitches shrink evenly, without fade",
+        "The twitches grow stronger",
+        "The twitches fade through a burst, as with a nondepolarizing blocker",
+        "Nothing: the gates simply close again"
+      ],
+      "answer": 0,
+      "why": "The gates keep reopening, so the end plate stays depolarized, which locks the sodium doors around it and stops new impulses starting. Every impulse fails alike, so the twitches are small and equal: no fade, unlike a nondepolarizing block."
+    },
+    "che": {
+      "prompt": "After a nondepolarizing blocker, a cholinesterase inhibitor stops acetylcholine being chopped up, so more of it reaches the gates. What happens to the twitches?",
+      "choices": [
+        "Acetylcholine wins gates back and the twitches recover",
+        "The block deepens",
+        "Nothing: the blocker cannot be outcompeted",
+        "The gates are destroyed"
+      ],
+      "answer": 0,
+      "why": "A nondepolarizing blocker competes with acetylcholine for the same gates. More acetylcholine tips the contest back, so end plate potentials clear threshold again and the twitches recover."
+    },
+    "mg": {
+      "prompt": "In myasthenia gravis antibodies destroy many gates, but the nerve releases acetylcholine normally. What happens to the twitches through a quick burst?",
+      "choices": [
+        "They fade: muscles tire with use",
+        "They stay full: the nerve is normal",
+        "They grow: more acetylcholine is released",
+        "They vanish at once and never return"
+      ],
+      "answer": 0,
+      "why": "With fewer gates, each end plate potential only just clears threshold. The normal small drop in release through a burst then pushes some fibres below it, so the twitches fade: the weakness with use of myasthenia."
+    }
+  },
+  "quiz": [
+    {
+      "id": "calcium-release",
+      "objective": 1,
+      "step": "release",
+      "stem": "What makes the nerve ending release acetylcholine when an impulse arrives?",
+      "choices": [
+        "Calcium flows into the ending and makes vesicles merge with its wall",
+        "Sodium flows out of the ending",
+        "Cholinesterase opens the vesicles",
+        "The end plate pulls the vesicles across the gap"
+      ],
+      "answer": 0,
+      "why": "The impulse opens calcium doors in the nerve ending. Calcium flowing in makes vesicles fuse with the wall and spill their acetylcholine into the gap."
+    },
+    {
+      "id": "safety",
+      "objective": 2,
+      "step": "margin",
+      "stem": "Why does every normal impulse fire the muscle fibre?",
+      "choices": [
+        "The end plate potential overshoots threshold by a wide safety margin",
+        "The fibre fires whenever any acetylcholine arrives",
+        "Cholinesterase is too slow to act",
+        "The nerve releases more acetylcholine with each impulse"
+      ],
+      "answer": 0,
+      "why": "A normal end plate potential is far bigger than needed to reach threshold, so small drops in release, as in a quick burst, still fire every fibre."
+    },
+    {
+      "id": "tof-normal",
+      "objective": 2,
+      "step": "burst",
+      "stem": "In a healthy person, the nerve to a hand muscle is stimulated four times in quick succession. What do the four twitches look like?",
+      "choices": [
+        "Four equally strong twitches",
+        "Four twitches that fade",
+        "One twitch, then none",
+        "Four twitches that grow"
+      ],
+      "answer": 0,
+      "why": "Each impulse releases a little less acetylcholine, but the safety margin absorbs it: every end plate potential still clears threshold, so the twitches stay equal."
+    },
+    {
+      "id": "fade-type",
+      "objective": 3,
+      "step": "ndmb",
+      "stem": "During surgery, a train of four shows weaker twitches that fade from the first to the fourth. Which drug best fits?",
+      "choices": [
+        "A nondepolarizing blocker such as rocuronium",
+        "Succinylcholine in its first phase of block",
+        "A cholinesterase inhibitor alone",
+        "No drug: this is normal"
+      ],
+      "answer": 0,
+      "why": "Fade marks a nondepolarizing block: with gates competitively blocked, the margin is gone, so the small drop in release through the burst pushes more fibres below threshold. Succinylcholine's first phase weakens twitches evenly, without fade."
+    },
+    {
+      "id": "sux-mechanism",
+      "objective": 3,
+      "step": "sux",
+      "stem": "Why does succinylcholine cause a brief flurry of small twitches before the muscle goes limp?",
+      "choices": [
+        "It opens the gates like acetylcholine, so fibres fire, then the end plate stays depolarized and the sodium doors around it lock",
+        "It blocks the gates from the start, so no fibre ever fires",
+        "It stops cholinesterase, so acetylcholine floods the gap",
+        "It makes the nerve fire faster"
+      ],
+      "answer": 0,
+      "why": "Succinylcholine first opens the gates, which fires fibres in a disorganized flurry. Because the junction's enzyme cannot break it down, the end plate stays depolarized, the sodium doors around it lock, and the fibre cannot fire again."
+    },
+    {
+      "id": "reversal",
+      "objective": 4,
+      "step": "che",
+      "stem": "At the end of surgery neostigmine, a cholinesterase inhibitor, is given to reverse rocuronium. Why is a muscarinic antagonist such as glycopyrrolate given with it?",
+      "choices": [
+        "The extra acetylcholine also reaches the heart's M receptors and would slow it",
+        "It strengthens the reversal at the gates",
+        "It breaks down the rocuronium",
+        "It stops the nerve releasing acetylcholine"
+      ],
+      "answer": 0,
+      "why": "Stopping cholinesterase raises acetylcholine everywhere it is released, including at the heart's muscarinic receptors (Lesson 6), which would slow the heart. The antagonist blocks that while the junction's nicotinic gates, which it does not touch, recover."
+    },
+    {
+      "id": "sux-che",
+      "objective": 4,
+      "step": "che",
+      "stem": "A patient is still weak from succinylcholine's first phase of block. What would a cholinesterase inhibitor do?",
+      "choices": [
+        "Deepen the block: more acetylcholine adds to the depolarization",
+        "Reverse it, as it reverses a nondepolarizing block",
+        "Have no effect at all",
+        "Break succinylcholine down at the junction"
+      ],
+      "answer": 0,
+      "why": "In phase I the problem is too much depolarization, not too little acetylcholine. Extra acetylcholine adds to it and deepens the block; succinylcholine has to wear off as an enzyme in the blood clears it."
+    },
+    {
+      "id": "mg-treat",
+      "objective": 4,
+      "step": "mg",
+      "stem": "Why does pyridostigmine, a cholinesterase inhibitor, help in myasthenia gravis?",
+      "choices": [
+        "More acetylcholine reaches the gates that are left, so end plate potentials clear threshold again",
+        "It makes new receptors",
+        "It removes the antibodies",
+        "It blocks the remaining gates"
+      ],
+      "answer": 0,
+      "why": "With fewer gates, each end plate potential barely reaches threshold. Letting acetylcholine linger opens more of the remaining gates and restores some margin, though too much causes weakness of its own."
+    }
+  ],
+  "takeaways": [
+    "A motor nerve impulse opens calcium doors in the nerve ending, and calcium makes vesicles spill acetylcholine into the synaptic gap.",
+    "Acetylcholine docks in nicotinic receptors on the end plate: gates that open when two molecules dock and let sodium in, making the end plate potential.",
+    "A normal end plate potential overshoots threshold by a wide safety margin, so every impulse fires the fibre and a train of four gives four equal twitches.",
+    "Cholinesterase in the folds chops acetylcholine within moments, so each impulse gives one twitch.",
+    "Nondepolarizing blockers compete with acetylcholine for the gates: twitches weaken and fade through a train of four. Cholinesterase inhibitors reverse them, given with a muscarinic antagonist to protect the heart.",
+    "Succinylcholine opens the gates and lingers: a flurry of twitches, then the fibre cannot reset. Its phase I block does not fade, cholinesterase inhibitors deepen it, and an enzyme in the blood clears it.",
+    "In most myasthenia gravis, antibodies destroy acetylcholine receptors, so the margin is thin and muscles tire with use. Cholinesterase inhibitors ease it, but too much causes weakness of its own."
+  ]
+}

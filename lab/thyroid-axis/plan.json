@@ -1,0 +1,202 @@
+{
+  "minutes": 27,
+  "prerequisites": [
+    "insulin-glucose"
+  ],
+  "objectives": [
+    "Trace the thyroid axis from the brain to the body: TRH, TSH, then T4 and T3.",
+    "Explain how the brake, negative feedback, turns TSH down when T4 runs high and up when it runs low.",
+    "Read TSH, T4 and T3 in hypothyroidism and in Graves’ disease.",
+    "Tell apart how levothyroxine, thionamides, radioactive iodine and beta-blockers act, and predict which levels each one moves."
+  ],
+  "checks": {
+    "hypo": {
+      "prompt": "In Hashimoto thyroiditis the immune system damages the gland, so it releases less hormone and T4 in the blood falls. The brake on the hypothalamus and pituitary depends on that level. What happens to TSH?",
+      "choices": [
+        "It rises, because the weaker brake lets the pituitary release more",
+        "It falls, because the gland is making less",
+        "It stays the same, because the pituitary itself is healthy",
+        "It drops to almost nothing"
+      ],
+      "answer": 0,
+      "why": "Less T4 means less brake on the hypothalamus and pituitary, so TRH and TSH rise. A high TSH with a low T4 is the pattern of a failing gland; T3 may still be normal for a while."
+    },
+    "graves": {
+      "prompt": "In Graves’ disease, antibodies switch on the gland’s TSH docking sites, so it pours out T4 and T3 whatever TSH says. What happens to TSH?",
+      "choices": [
+        "It falls, because the high hormone tightens the brake",
+        "It rises, to keep up with the busy gland",
+        "It stays normal, because the antibodies do its job",
+        "It rises, because the antibodies are made of TSH"
+      ],
+      "answer": 0,
+      "why": "The extra T4 and T3 press the brake hard, so the hypothalamus and pituitary release less TRH and TSH. The antibodies ignore the brake, so the gland keeps working even with TSH low."
+    },
+    "levothyroxine": {
+      "prompt": "Levothyroxine is T4 in a tablet. Someone with hypothyroidism starts taking it; their gland is still damaged. What happens to their high TSH?",
+      "choices": [
+        "It falls back toward normal, as the added T4 tightens the brake",
+        "It rises further, to wake up the damaged gland",
+        "It stays high, because the gland is still damaged",
+        "It falls to almost nothing within a day"
+      ],
+      "answer": 0,
+      "why": "The brake answers T4 in the blood wherever it comes from. Tablet T4 restores the level, the brake tightens and TSH falls back into its band, which is why TSH is the test used to check the treatment."
+    },
+    "thionamide": {
+      "prompt": "Methimazole and PTU stop the gland fixing iodine and building new hormone. In Graves’ disease the antibodies are still there, and TSH has been held down for a long time. What happens to T4 first, and to TSH later?",
+      "choices": [
+        "T4 falls first; TSH may stay low for a while and rises back later",
+        "T4 falls and TSH falls further",
+        "T4 rises and TSH rises",
+        "Nothing changes while the antibodies remain"
+      ],
+      "answer": 0,
+      "why": "With less hormone built, T4 and T3 fall even though the antibodies remain. A pituitary held down for a long time can take months to recover, so TSH rises back late; early on, T4 and T3 are the tests to follow. PTU also slows T4 to T3 in body cells."
+    },
+    "rai": {
+      "prompt": "Radioactive iodine collects in the thyroid, because the gland pulls iodine from the blood, and it destroys some of the overactive tissue. What happens to T4 and TSH over the following months?",
+      "choices": [
+        "T4 falls, and TSH rises back once the pituitary recovers",
+        "T4 and TSH both fall",
+        "T4 rises and TSH falls further"
+      ],
+      "answer": 0,
+      "why": "With less working tissue, less T4 and T3 are made, the brake eases and TSH rises back, often only after a delay. If too much tissue is destroyed, T4 ends up too low and TSH high, and levothyroxine is needed."
+    },
+    "betablocker": {
+      "prompt": "A beta-blocker blocks the docking sites for alarm signals, on the heart and elsewhere. In Graves’ disease, what does it change?",
+      "choices": [
+        "The racing heart and shaky hands settle, while the gland and TSH stay as they were",
+        "T4 and T3 fall back into their bands, so TSH rises",
+        "The gland shrinks back to normal",
+        "TSH rises and the heart slows"
+      ],
+      "answer": 0,
+      "why": "Beta-blockers quickly ease alarm symptoms such as a racing heart and tremor, but they do not stop the gland making hormone, so TSH and T4 keep the Graves’ pattern. Propranolol can slightly lower T3 by slowing the T4-to-T3 step."
+    }
+  },
+  "quiz": [
+    {
+      "id": "chain",
+      "objective": 1,
+      "step": "hypothalamus",
+      "stem": "Which list puts the thyroid axis in order, from the top of the chain down?",
+      "choices": [
+        "Hypothalamus (TRH), then pituitary (TSH), then thyroid (T4 and T3)",
+        "Pituitary (TRH), then hypothalamus (TSH), then thyroid (T4 and T3)",
+        "Thyroid (TSH), then pituitary (TRH), then hypothalamus (T4)",
+        "Hypothalamus (TSH), then thyroid (TRH), then pituitary (T4)"
+      ],
+      "answer": 0,
+      "why": "The hypothalamus sends TRH to the pituitary, the pituitary sends TSH to the thyroid, and the thyroid releases T4 and T3. The tempting mistake swaps which gland makes TRH and which makes TSH."
+    },
+    {
+      "id": "brake",
+      "objective": 2,
+      "step": "brake",
+      "stem": "Why does TSH fall when T4 and T3 in the blood run high?",
+      "choices": [
+        "High T4 and T3 tell the hypothalamus and pituitary to release less TRH and TSH",
+        "The thyroid uses up TSH faster when it is busy",
+        "TSH is turned into T4 inside the gland",
+        "The kidneys clear more TSH when T4 is high"
+      ],
+      "answer": 0,
+      "why": "That is negative feedback: the result, more hormone, switches off its own cause. It keeps the levels steady, and it makes TSH a sensitive test of the gland."
+    },
+    {
+      "id": "levo-check",
+      "objective": 2,
+      "step": "levothyroxine",
+      "stem": "A person with hypothyroidism takes levothyroxine. Which blood test best shows whether they are taking the right amount?",
+      "choices": [
+        "TSH, because the brake brings it back into its band once T4 is right",
+        "TRH, because it starts the chain",
+        "T3 alone, because levothyroxine is T3",
+        "The antibodies, because they cause the disease"
+      ],
+      "answer": 0,
+      "why": "Levothyroxine is T4. When T4 is replaced well, the brake tightens and TSH returns to its band, so TSH is the sensitive check. Levothyroxine is not T3; body cells make T3 from it."
+    },
+    {
+      "id": "high-tsh",
+      "objective": 3,
+      "step": "lowbrake",
+      "stem": "A blood test shows a high TSH and a low T4. Which explains the pattern best?",
+      "choices": [
+        "The thyroid is underactive, and the eased brake lets TSH climb",
+        "The pituitary is overactive and drives the gland too hard",
+        "The thyroid is overactive",
+        "The result must be an error, because TSH and T4 always move together"
+      ],
+      "answer": 0,
+      "why": "When the gland itself fails, T4 falls and the brake eases, so TSH rises: the two move in opposite directions. A pituitary driving the gland too hard would push T4 up, not down."
+    },
+    {
+      "id": "graves-tests",
+      "objective": 3,
+      "step": "graves",
+      "stem": "Which set of blood tests is typical of untreated Graves’ disease?",
+      "choices": [
+        "TSH low, T4 high, T3 high",
+        "TSH high, T4 high, T3 high",
+        "TSH high, T4 low, T3 low",
+        "TSH low, T4 low, T3 low"
+      ],
+      "answer": 0,
+      "why": "The antibodies drive the gland to make too much hormone, so T4 and T3 are usually both high (sometimes only T3), and the tightened brake pushes TSH down. A high TSH with a low T4 is the pattern of hypothyroidism instead."
+    },
+    {
+      "id": "ptu",
+      "objective": 4,
+      "step": "thionamide",
+      "stem": "Methimazole and PTU both stop the gland building hormone. What does PTU also do that methimazole does not?",
+      "choices": [
+        "Slows the T4-to-T3 step in body cells",
+        "Destroys thyroid tissue with radiation",
+        "Blocks the heart’s docking sites for alarm signals",
+        "Replaces missing T4"
+      ],
+      "answer": 0,
+      "why": "Both block hormone building inside the gland. PTU also slows the conversion of T4 to T3 in body cells, so T3 falls faster. Radiation is radioactive iodine; blocking the heart is a beta-blocker; replacing T4 is levothyroxine."
+    },
+    {
+      "id": "beta-week",
+      "objective": 4,
+      "step": "betablocker",
+      "stem": "Someone with Graves’ disease starts a beta-blocker alone. A week later, which is most likely?",
+      "choices": [
+        "Their heart rate is lower, but TSH is still low and T4 still high",
+        "Their TSH and T4 are both back in their bands",
+        "Their gland has shrunk to normal",
+        "Their T4 is now too low and TSH too high"
+      ],
+      "answer": 0,
+      "why": "A beta-blocker eases the racing heart and tremor but does not stop the gland making hormone, so TSH and T4 still show Graves’ disease until a thionamide or radioactive iodine treats the gland."
+    },
+    {
+      "id": "after-rai",
+      "objective": 4,
+      "step": "rai",
+      "stem": "A year after radioactive iodine for Graves’ disease, a person feels cold and tired, with a high TSH and a low T4. What most likely happened?",
+      "choices": [
+        "Too much of the gland was destroyed, so it became underactive",
+        "The antibodies came back and pushed the gland harder",
+        "The radioactive iodine raised T4 for good",
+        "The radiation damaged the pituitary"
+      ],
+      "answer": 0,
+      "why": "Radioactive iodine works by destroying thyroid tissue. If too much is lost, the gland cannot make enough T4: low T4, high TSH, and levothyroxine is needed. A damaged pituitary would leave TSH low, not high."
+    }
+  ],
+  "takeaways": [
+    "The thyroid axis is a chain: the hypothalamus sends TRH to the pituitary, the pituitary sends TSH to the thyroid, and the thyroid releases T4 and T3.",
+    "Thyroid hormone is built from iodine. The gland makes mostly T4; body cells snip off one iodine to make T3, the stronger form.",
+    "Thyroid hormone sets the metabolic rate and makes the heart answer alarm signals more strongly: more hormone, a faster pace and heartbeat.",
+    "Negative feedback is the brake: high T4 and T3 turn TRH and TSH down, low levels turn them up. When the gland is the problem, TSH moves opposite to T4, and a failing gland may not catch up.",
+    "Primary hypothyroidism, usually Hashimoto thyroiditis where diets have enough iodine: low T4 and high TSH; T3 may stay normal. Graves’ disease: antibodies drive the gland, so TSH is low and T4, T3 or both are high.",
+    "Levothyroxine replaces T4, and TSH falls back as the brake returns. Thionamides, methimazole and PTU, block hormone building in the gland, so T4 falls first and TSH rises back later; PTU also slows T4 to T3 in body cells.",
+    "Radioactive iodine collects in the gland and destroys overactive tissue, and can leave it underactive. Beta-blockers ease the alarm symptoms without stopping the gland: TSH and T4 keep the disease pattern, though propranolol slightly lowers T3."
+  ]
+}

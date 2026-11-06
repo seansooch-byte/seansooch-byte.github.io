@@ -1,311 +1,449 @@
-'use strict';
+// Lesson 4: Blood pressure regulation. The kit (/lab/kit/kit.js) runs the page: tabs, steps, the picture
+// player, predictions, quiz and summary. This file holds the lesson's teaching model, one picture (scene)
+// per step, and the code behind the Clinical values and Explore freely tabs.
+import { lesson } from '/lab/kit/kit.js';
+import { C, svg, text, line, circle, rect, path, arrow, arrowTo, part, readout, f, clamp, lerp, ease, span } from '/lab/kit/draw.js';
+
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
-const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
-const f = n => Number(n.toFixed(1));
-const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ---------- Teaching model ----------
-   Every quantity is relative: 1 means the normal resting state. No clinical numbers live here;
-   the Clinical values tab scales these ratios by the textbook values in clinical-values.json. */
+   Every quantity is relative: 1 means the normal resting state. No clinical numbers live here; the
+   Clinical values tab scales these ratios by the textbook values in clinical-values.json.
+   Dials: vol (blood volume), art (arteriole muscle tone), alpha (how strongly vessels answer sympathetic
+   signals), central (the brainstem's sympathetic setting), beta (how strongly the heart answers them),
+   reflex (the baroreflex on or off). */
 const NORMAL = { vol: 1, art: 1, alpha: 1, central: 1, beta: 1, reflex: true };
 const CHANGES = {
-  ccb: { art: .72 },          // arteriole muscle relaxes
-  alpha1: { alpha: .5 },      // vessels respond less to sympathetic signals
-  alpha2: { central: .62 },   // the brainstem sends less sympathetic signal
-  beta: { beta: .5 },         // the heart responds less to sympathetic signals
+  ccb: { art: .72 },          // arteriole muscle relaxes (the artery-relaxing, dihydropyridine kind)
+  alpha1: { alpha: .5 },      // vessels answer sympathetic signals less
+  alpha2: { central: .8 },    // the brainstem's sympathetic setting is turned down
+  beta: { beta: .5 },         // the heart answers sympathetic signals less
   vasodilator: { art: .55 },  // arteriole muscle relaxes strongly
-  hemorrhage: { vol: .7 }     // blood is lost
+  hemorrhage: { vol: .7 },    // blood is lost
 };
 const REFLEX_GAIN = 1.6;
-// Blood per beat rises with filling and levels off (the Frank–Starling curve, scaled so normal filling gives 1).
+// Blood per beat rises with filling and levels off (Lesson 3's Frank–Starling curve, normal filling gives 1).
 const fillCurve = x => (1 - Math.exp(-1.35 * x)) / (1 - Math.exp(-1.35));
+// How long each beat has to fill, relative to normal: a slower heart fills a little longer, a faster one
+// less (the same rule as Lesson 3), so a beta-blocker's slower heart keeps about the same blood per beat.
+const fillTime = rate => rate > 1 ? 1 / (1 + 1.8 * Math.pow(rate - 1, 2)) : 1 + .5 * (1 - rate);
 
-// The circulation for a given arterial pressure as the baroreceptors sense it.
-function circulate(p, sensedPressure) {
-  const reflex = p.reflex ? clamp(1 + REFLEX_GAIN * (1 - sensedPressure), .25, 2.4) : 1;
-  const drive = p.central * reflex;               // sympathetic signal leaving the brainstem
+// The circulation, given the arterial pressure the baroreceptors sense.
+function circulate(p, sensed) {
+  // The brainstem compares the sensed pressure with the level it defends. Turning its sympathetic setting
+  // down (a central alpha-2 agonist) lowers that level too, so the reflex holds the new, lower pressure
+  // instead of fighting it: no reflex speeding of the heart.
+  const reflex = p.reflex ? clamp(1 + REFLEX_GAIN * (p.central - sensed), .25, 2.4) : 1;
+  const drive = p.central * reflex;                    // sympathetic signal leaving the brainstem
   const heartDrive = drive * p.beta, vesselDrive = drive * p.alpha;
-  const hr = .35 + .65 * heartDrive;              // the vagus alone would leave a slow rate
-  const squeeze = .75 + .25 * heartDrive;
-  const filling = p.vol * (.85 + .15 * vesselDrive); // firmer veins push more blood back to the heart
+  const hr = .35 + .65 * heartDrive;                   // the vagus alone would leave a slow rate
+  const squeeze = .85 + .15 * heartDrive;              // sympathetic signals add a little strength
+  const filling = p.vol * (.85 + .15 * vesselDrive) * fillTime(hr);   // firmer veins push more blood back
   const sv = squeeze * fillCurve(filling);
-  const co = hr * sv;
-  const tpr = p.art * (.6 + .4 * vesselDrive);
+  const co = hr * sv;                                  // flow: heart rate × blood per beat
+  const tpr = p.art * (.6 + .4 * vesselDrive);         // resistance: arteriole tone, tightened by nerves
   return { drive, hr, sv, co, tpr, vol: p.vol, filling, map: co * tpr };
 }
-// Steady state: the pressure the circulation produces equals the pressure the reflex senses.
-// Produced pressure never rises as sensed pressure rises, so bisection finds the single crossing.
+// Steady state: the pressure the circulation produces equals the pressure the reflex senses. Produced
+// pressure never rises as sensed pressure rises, so bisection finds the single crossing.
 function steady(p) {
   let lo = .02, hi = 4;
   for (let i = 0; i < 60; i++) { const mid = (lo + hi) / 2; if (circulate(p, mid).map > mid) lo = mid; else hi = mid; }
   return circulate(p, (lo + hi) / 2);
 }
 const BASE = steady(NORMAL);
-const mix = (a, b, t) => { const out = { ...a }; for (const k in b) if (typeof b[k] === 'number') out[k] = a[k] + (b[k] - a[k]) * t; return out; };
+const mix = (a, b, t) => { const out = { ...a }; for (const k in b) if (typeof b[k] === 'number') out[k] = lerp(a[k], b[k], t); return out; };
 
-/* ---------- Drawing ---------- */
-const RED = '#b3261e', BLUE = '#254dff', INK = '#171916', VEIN = '#5d6270', HEART_FILL = '#f6dcd8';
-const HEART = 'M0 -42 C-80 -130 -145 -25 -90 42 L0 126 L90 42 C145 -25 80 -130 0 -42Z';
-const BRANCHES = [490, 540, 590];
-const ALL = ['loop', 'gauge', 'beats', 'sensor', 'nerves'];
-const svg = (label, body) => `<svg viewBox="0 0 640 450" role="img" aria-label="${label}">${body}</svg>`;
-const text = (x, y, s, cls = '', anchor = 'middle') => `<text x="${x}" y="${y}" text-anchor="${anchor}" class="${cls}">${s}</text>`;
+/* ---------- Drawing ----------
+   Every picture is 480 wide and at most 420 tall; type uses the kit's classes (20, .sm 18, .xs 17). */
+const BLOOD = '#c4453a', VEIN = '#4f5f86', WALL = '#f0cfc7', VEIN_WALL = '#d9deea', TISSUE = '#efe6d8';
+const fade = a => `opacity="${f(clamp(a, 0, 1))}"`;
+const HEART = 'M0 -30 C-10 -48 -44 -48 -44 -16 C-44 10 -16 26 0 44 C16 26 44 10 44 -16 C44 -48 10 -48 0 -30Z';
+const heart = (x, y, k = 1, extra = '') => `<g transform="translate(${f(x)} ${f(y)}) scale(${f(k * 100) / 100})" ${extra}><path d="${HEART}" fill="${C.redWash}" stroke="${C.red}" stroke-width="3" vector-effect="non-scaling-stroke"/></g>`;
+// A pressure dial: a half-disc with a needle; angle runs -70 (low) to +70 (high).
+function dial(cx, cy, r, angle, { ghostAngle = null, labels = true } = {}) {
+  let s = `<path d="M${f(cx - r)} ${f(cy)} A${r} ${r} 0 0 1 ${f(cx + r)} ${f(cy)} Z" fill="#fff" stroke="${C.ink}" stroke-width="2"/>`;
+  for (const a of [-60, -30, 0, 30, 60]) { const q = a * Math.PI / 180; s += line(cx + (r - 9) * Math.sin(q), cy - (r - 9) * Math.cos(q), cx + (r - 2) * Math.sin(q), cy - (r - 2) * Math.cos(q), C.ink, 2); }
+  if (ghostAngle !== null) s += `<path d="M${f(cx)} ${f(cy)} V${f(cy - r + 8)}" transform="rotate(${f(ghostAngle)} ${f(cx)} ${f(cy)})" stroke="${C.ink}" stroke-width="3" stroke-dasharray="4 4" stroke-linecap="round" class="ghost"/>`;
+  s += `<path d="M${f(cx)} ${f(cy)} V${f(cy - r + 8)}" transform="rotate(${f(angle)} ${f(cx)} ${f(cy)})" stroke="${C.blue}" stroke-width="5" stroke-linecap="round"/>`;
+  s += circle(cx, cy, 5, C.ink);
+  if (labels) s += text(cx - r - 6, cy + 2, 'low', 'xs muted', 'end') + text(cx + r + 6, cy + 2, 'high', 'xs muted', 'start');
+  return s;
+}
+// Dots that travel along a polyline, looping: u is the moment (0 to 1), n dots evenly spaced.
+function along(pts, u) {
+  const seg = []; let total = 0;
+  for (let i = 1; i < pts.length; i++) { const l = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); seg.push(l); total += l; }
+  let d = (((u % 1) + 1) % 1) * total, i = 0;
+  while (i < seg.length - 1 && d > seg[i]) { d -= seg[i]; i++; }
+  const q = clamp(d / seg[i], 0, 1);
+  return [lerp(pts[i][0], pts[i + 1][0], q), lerp(pts[i][1], pts[i + 1][1], q)];
+}
+const dotsAlong = (pts, u, n, r, col) => Array.from({ length: n }, (_, j) => { const [x, y] = along(pts, u + j / n); return circle(x, y, r, col); }).join('');
 
-// How the model's state is drawn. Exponents exaggerate differences so they read at a glance.
-function look(o) {
-  return {
-    angle: clamp((o.map - 1) * 2.6, -1, 1) * 80,
-    aw: clamp(11 * Math.pow(o.tpr, -1.8), 3, 24),
-    vw: clamp(22 * Math.pow(o.vol, 1.6), 8, 34),
-    flow: clamp(Math.pow(o.co, 1.6), .5, 1.6),
-    heart: .55 * Math.pow(o.sv, .6),
-    spacing: clamp(44 / Math.pow(o.hr, 1.6), 20, 90),
-    nerve: clamp(1 + 2.6 * o.drive, 1.2, 7),
-    sense: clamp(1 + 2.6 * o.map, 1.2, 7)
-  };
+/* ---------- The build steps' pictures ---------- */
+// Step 1: the loop. Red blood leaves the heart in the arteries, crosses the tissues in small vessels, and
+// returns, darker, in the veins.
+const LOOP_ART = [[118, 118], [118, 56], [372, 56], [372, 98]];
+const LOOP_VEIN = [[420, 236], [420, 268], [60, 268], [60, 178], [84, 178]];
+function loopPicture(t) {
+  let s = rect(352, 98, 112, 138, TISSUE, C.rule, 2, 'rx="14"');
+  // small vessels across the tissue, red turning dark as the tissue takes oxygen
+  for (const x of [372, 396, 420, 444]) s += path(`M372 98 C${x} 120 ${x} 150 ${x} 168 S420 220 420 236`, '#9b4a5a', 3);
+  s += part('arteries', path(`M118 118 V56 H372 V98`, BLOOD, 16));
+  s += part('veins', path(`M420 236 V268 H60 V178 H84`, VEIN, 20));
+  s += heart(118, 168, 1.15);
+  s += dotsAlong(LOOP_ART, t, 6, 4.5, '#fbe3df') + dotsAlong(LOOP_VEIN, t, 7, 4.5, '#cfd6ea');
+  for (let j = 0; j < 4; j++) { const [x, y] = along([[372, 98], [396, 140], [420, 200], [420, 236]], t * 2 + j / 4); s += circle(x, y, 3.5, '#fbe3df'); }
+  s += text(118, 176, 'heart', 'sm b on-heart', 'middle');
+  s += text(140, 34, 'arteries: away from the heart', 'sm b', 'start');
+  s += text(340, 132, 'small', 'xs b', 'end') + text(340, 152, 'vessels', 'xs b', 'end') + text(340, 172, 'in tissue', 'xs', 'end');
+  s += text(240, 302, 'veins: back to the heart', 'sm b', 'middle');
+  return s;
 }
-const chevron = (x, y, dir, s) => `<path d="M${f(x - dir * 7 * s)} ${f(y - 7 * s)} L${x} ${y} L${f(x - dir * 7 * s)} ${f(y + 7 * s)}" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>`;
-function beatRow(y, spacing, stroke, extra = '') {
-  let d = '';
-  for (let x = 150; x <= 612; x += spacing) d += `M${f(x)} ${y} l5 -9 l6 18 l5 -9 `;
-  return `<path ${extra} d="${d}" fill="none" stroke="${stroke}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+// Step 2: a stretch of artery, cut open. With each beat the blood pushes outward on the wall, the wall
+// bulges, and the dial on the artery swings; the push drives blood on toward the tissues.
+function pressurePicture(t) {
+  const surge = Math.pow(Math.sin(Math.PI * clamp(t / .45, 0, 1)), 2);   // a beat early in each cycle
+  const b = 5 * surge, top = 128 - b, bot = 212 + b;
+  let s = rect(24, top - 16, 432, 16, WALL, '#8f3a30', 2) + rect(24, bot, 432, 16, WALL, '#8f3a30', 2);
+  s += rect(24, top, 432, bot - top, '#e88c80');
+  s += arrowTo(60, 170, 440, 170, BLOOD, 5);
+  let push = '';
+  for (const x of [84, 172, 260, 348]) push += arrowTo(x, 150, x, f(top + 5 - 6 * surge), C.blue, 3) + arrowTo(x, 190, x, f(bot - 5 + 6 * surge), C.blue, 3);
+  s += part('pressure', push);
+  s += text(30, 270, 'blood pushes on the wall', 'sm b blue', 'start');
+  s += text(30, 294, 'and is driven on, toward the tissues →', 'xs', 'start');
+  s += part('pressure', dial(330, 84, 40, lerp(-8, 34, surge)));
+  s += text(30, 52, 'pressure', 'sm b', 'start') + text(30, 76, 'the push, shown', 'xs', 'start') + text(30, 96, 'on a dial', 'xs', 'start');
+  return s;
 }
-function ring(m, color = BLUE) {
-  return `<ellipse cx="${m.x}" cy="${m.y}" rx="${m.rx}" ry="${m.ry}" fill="none" stroke="${color}" stroke-width="3" stroke-dasharray="8 6"/>${text(m.tx, m.ty, m.text, 'sm blue', m.anchor || 'middle')}`;
-}
-const SPOTS = {
-  arterioles: { x: 540, y: 226, rx: 80, ry: 66, tx: 628, ty: 136, anchor: 'end' },
-  brainstem: { x: 300, y: 229, rx: 90, ry: 40, tx: 300, ty: 182 },
-  heart: { x: 110, y: 245, rx: 76, ry: 84, tx: 110, ty: 352 },
-  veins: { x: 470, y: 380, rx: 84, ry: 30, tx: 470, ty: 344 },
-  flow: { x: 420, y: 110, rx: 54, ry: 24, tx: 420, ty: 152 }
-};
-const spot = (name, label) => ({ ...SPOTS[name], text: label });
-
-function gauge(angle) {
-  const ticks = [-60, -30, 0, 30, 60].map(a => { const r = a * Math.PI / 180; return `<path d="M${f(300 + 46 * Math.sin(r))} ${f(92 - 46 * Math.cos(r))} L${f(300 + 54 * Math.sin(r))} ${f(92 - 54 * Math.cos(r))}" stroke="${INK}" stroke-width="2"/>`; }).join('');
-  return `${text(300, 26, 'pressure', 'sm')}<path d="M246 92 A54 54 0 0 1 354 92 Z" fill="#fff" stroke="${INK}" stroke-width="2"/>${ticks}${text(240, 98, 'low', 'sm', 'end')}${text(360, 98, 'high', 'sm', 'start')}<rect x="296" y="92" width="8" height="12" fill="${INK}"/><path d="M300 92 V48" transform="rotate(${f(angle)} 300 92)" stroke="${BLUE}" stroke-width="5" stroke-linecap="round"/><circle cx="300" cy="92" r="6" fill="${INK}"/>`;
-}
-
-// The whole circulation: heart, arteries, arterioles, veins, plus optional gauge, beats, sensor and nerves.
-function circuit(o, { parts = ALL, ghost = null, legend = '', marks = [], early = false } = {}) {
-  const has = k => parts.includes(k), L = look(o);
-  let b = `<rect x="455" y="140" width="170" height="160" rx="16" fill="#f3ece2" stroke="#babeb3"/>`;
-  b += `<path d="M600 300 V380 H40 V250 H62" fill="none" stroke="${VEIN}" stroke-width="${f(L.vw)}" stroke-linejoin="round"/>`;
-  b += `<path d="M110 222 V110 H540 V150" fill="none" stroke="${RED}" stroke-width="18" stroke-linejoin="round"/>`;
-  for (const x of BRANCHES) {
-    b += `<path d="M540 150 L${x} 182" stroke="${RED}" stroke-width="8" stroke-linecap="round"/><path d="M${x} 270 L600 300" stroke="${VEIN}" stroke-width="6" stroke-linecap="round"/><path d="M${x} 180 V272" stroke="${RED}" stroke-width="${f(L.aw)}" stroke-linecap="round"/>`;
-    b += [204, 228, 252].map(y => `<path d="M${f(x - L.aw / 2 - 5)} ${y} H${f(x + L.aw / 2 + 5)}" stroke="${INK}" stroke-width="2"/>`).join('');
-  }
-  b += `<g transform="translate(110 245) scale(${f(L.heart * 100) / 100})"><path d="${HEART}" fill="${HEART_FILL}" stroke="${RED}" stroke-width="4" vector-effect="non-scaling-stroke"/></g>`;
-  b += text(110, 262, 'heart', 'sm on-heart');
-  const c = .6 + .4 * L.flow;
-  b += chevron(390, 110, 1, c) + chevron(450, 110, 1, c) + chevron(270, 380, -1, c) + chevron(170, 380, -1, c);
-  // "Arterioles" is defined in step 5; earlier pictures call them small vessels.
-  b += text(300, 150, 'arteries') + text(222, 362, 'veins') + text(450, 284, early ? 'small vessels' : 'arterioles', '', 'end');
-  if (has('gauge')) b += gauge(L.angle);
-  if (has('sensor')) {
-    b += `<path d="M160 121 C160 175 238 168 252 205" fill="none" stroke="${BLUE}" stroke-width="${f(L.sense)}" stroke-dasharray="2 7" stroke-linecap="round"/>`;
-    b += `<circle cx="160" cy="110" r="12" fill="#fff" stroke="${BLUE}" stroke-width="4"/><path d="M142 92 q18 -14 36 0 M136 84 q24 -20 48 0" fill="none" stroke="${BLUE}" stroke-width="2.5"/>`;
-    b += text(178, 150, 'sensor', 'sm blue', 'start');
-    b += `<rect x="230" y="205" width="140" height="48" rx="24" fill="#fff" stroke="${INK}" stroke-width="2"/>${text(300, 236, 'brainstem', 'sm on-box')}`;
-  }
-  if (has('nerves')) {
-    const w = f(L.nerve);
-    b += `<g fill="none" stroke="${BLUE}" stroke-width="${w}" stroke-linecap="round"><path d="M230 229 C195 229 182 238 166 244"/><path d="M370 222 C410 206 445 210 474 222"/><path d="M300 253 V356"/></g>`;
-    b += `<g fill="${BLUE}"><circle cx="166" cy="244" r="6"/><circle cx="474" cy="222" r="6"/><circle cx="300" cy="358" r="6"/></g>${text(316, 320, 'nerves', 'sm blue', 'start')}`;
-  }
-  if (has('beats')) {
-    b += ghost ? '' : text(20, 436, 'beats', 'sm', 'start');
-    b += beatRow(ghost ? 438 : 430, L.spacing, BLUE);
-  }
-  let out = `<g data-new-state="${legend || 'current'}" data-pressure="${o.map.toFixed(4)}" data-rate="${o.hr.toFixed(4)}" data-flow="${o.co.toFixed(4)}" data-resistance="${o.tpr.toFixed(4)}" data-volume="${o.vol.toFixed(4)}">${b}</g>`;
-  if (ghost) {
-    const G = look(ghost);
-    let g = '';
-    if (has('gauge')) g += `<path d="M300 92 V48" transform="rotate(${f(G.angle)} 300 92)" stroke="${INK}" stroke-width="3" stroke-dasharray="5 4" stroke-linecap="round"/>`;
-    for (const x of BRANCHES) g += `<path d="M${f(x - G.aw / 2)} 180 V272 M${f(x + G.aw / 2)} 180 V272" stroke="${INK}" stroke-width="2" stroke-dasharray="5 4"/>`;
-    g += `<path d="M70 ${f(380 - G.vw / 2)} H590 M70 ${f(380 + G.vw / 2)} H590" stroke="${INK}" stroke-width="2" stroke-dasharray="5 4"/>`;
-    g += `<g transform="translate(110 245) scale(${f(G.heart * 100) / 100})"><path d="${HEART}" fill="none" stroke="${INK}" stroke-width="2" stroke-dasharray="5 4" vector-effect="non-scaling-stroke"/></g>`;
-    if (has('beats')) g += beatRow(414, G.spacing, INK, 'stroke-dasharray="3 3"');
-    out += `<g class="ghost" data-ghost="normal" data-pressure="${ghost.map.toFixed(4)}" data-rate="${ghost.hr.toFixed(4)}">${g}</g>`;
-    out += `<g class="ghost"><path d="M20 22 H54" stroke="${INK}" stroke-width="3" stroke-dasharray="5 4"/></g>${text(62, 29, 'normal', 'sm', 'start')}<path d="M20 50 H54" stroke="${BLUE}" stroke-width="5"/>${text(62, 57, legend, 'sm blue', 'start')}`;
-    if (has('beats')) out += text(20, 420, 'normal', 'sm', 'start') + text(20, 444, 'beats', 'sm blue', 'start');
-  }
-  for (const m of marks) out += ring(m);
-  return out;
-}
-
-// Step 3: the pressure wave over three beats.
-function wave() {
-  const v = ph => ph < .18 ? Math.sin(ph / .18 * Math.PI / 2) : ph < .38 ? 1 - .55 * (ph - .18) / .2 : ph < .46 ? .45 + .06 * Math.sin((ph - .38) / .08 * Math.PI) : .45 * Math.pow(1 - (ph - .46) / .54, 1.3);
-  const y = val => 300 - val * 190;
+// Step 3: the pressure wave over three beats: up to the systolic peak, down to the diastolic low, never to
+// zero, because the stretched arteries recoil between beats. The mean line sits nearer the low point.
+const wave = ph => ph < .18 ? Math.sin(ph / .18 * Math.PI / 2) : ph < .38 ? 1 - .55 * (ph - .18) / .2 : ph < .46 ? .45 + .06 * Math.sin((ph - .38) / .08 * Math.PI) : .45 * Math.pow(1 - (ph - .46) / .54, 1.3);
+function wavePicture(t) {
+  const X0 = 58, X1 = 330, yOf = v => 214 - v * 136, upTo = Math.max(.01, ease.inOut(span(t, .04, .8)));
   let d = '', sum = 0;
-  for (let i = 0; i <= 360; i++) { const val = v((i % 120) / 120); if (i < 360) sum += val; d += `${i ? 'L' : 'M'}${f(80 + i * 1.45)} ${f(y(val))}`; }
-  const mean = f(y(sum / 360));
-  const dash = yy => `<path d="M72 ${yy} H620" stroke="${INK}" stroke-width="1.5" stroke-dasharray="6 5"/>`;
-  return `<path d="M70 50 V340 H624" fill="none" stroke="#53584d" stroke-width="2"/>${text(32, 200, 'pressure ↑', 'sm', 'middle').replace('<text ', '<text transform="rotate(-90 32 200)" ')}${text(620, 372, 'time →', 'sm', 'end')}${dash(110)}${dash(300)}<path d="M72 ${mean} H620" stroke="${BLUE}" stroke-width="2.5" stroke-dasharray="10 5"/><path d="${d}" fill="none" stroke="${RED}" stroke-width="5" stroke-linejoin="round"/>${text(150, 98, 'systolic: the peak', '', 'start')}${text(82, 330, 'diastolic: the low point', '', 'start')}${text(612, mean - 12, 'mean: the average', 'blue', 'end')}${text(80, 420, 'One surge per heartbeat.', 'sm', 'start')}`;
+  const N = 300;
+  for (let i = 0; i <= N; i++) { const v = wave((i * 3 / N) % 1); if (i < N) sum += v; if (i / N <= upTo) d += `${i ? 'L' : 'M'}${f(X0 + 6 + (X1 - X0 - 12) * i / N)} ${f(yOf(v))}`; }
+  const mean = yOf(sum / N), LX = 350;
+  let s = path(`M${X0} 36 V262 H${X1 + 6}`, C.ink, 2) + text(16, 24, 'pressure ↑', 'xs b', 'start') + text(X1 + 6, 290, 'time →', 'xs b', 'end');
+  s += part('systolic', path(`M${X0 + 2} ${yOf(1)} H${LX - 8}`, C.ink, 1.5, 'stroke-dasharray="6 5"'));
+  s += part('diastolic', path(`M${X0 + 2} ${yOf(0)} H${LX - 8}`, C.ink, 1.5, 'stroke-dasharray="6 5"'));
+  s += path(d, BLOOD, 5);
+  s += part('mean', path(`M${X0 + 2} ${f(mean)} H${LX - 8}`, C.blue, 3, `stroke-dasharray="10 6" ${fade(span(t, .8, .9))}`));
+  const name = (y, a, b, cls, dpart, alpha) => part(dpart, `<g ${fade(alpha)}>${text(LX, y - 4, a, `sm b ${cls}`, 'start')}${text(LX, y + 18, b, 'xs', 'start')}</g>`);
+  s += name(yOf(1), 'systolic:', 'the peak', '', 'systolic', span(upTo, .1, .2));
+  s += name(mean, 'mean:', 'the average', 'blue', 'mean', span(t, .82, .92));
+  s += name(yOf(0) + 8, 'diastolic:', 'the low point', '', 'diastolic', span(upTo, .3, .4));
+  return s;
 }
-
-// Step 6: the garden hose. Left: more flow in. Right: a narrower outlet. Both push the dial up.
-function hose() {
-  const panel = (x0, line1, line2, more) => {
-    const cy = 250, gx = x0 + 140, gy = cy - 22;
-    const needle = (a, ghost) => `<path d="M${gx} ${gy} V${gy - 38}" transform="rotate(${a} ${gx} ${gy})" stroke="${ghost ? INK : BLUE}" stroke-width="${ghost ? 3 : 5}" ${ghost ? 'stroke-dasharray="5 4" class="ghost"' : ''} stroke-linecap="round"/>`;
-    const outlet = more ? 9 : 4;
-    let s = `<path d="M${gx - 46} ${gy} A46 46 0 0 1 ${gx + 46} ${gy} Z" fill="#fff" stroke="${INK}" stroke-width="2"/>`;
-    s += `<rect x="${x0 + 40}" y="${cy - 22}" width="200" height="44" rx="22" fill="${HEART_FILL}" stroke="${RED}" stroke-width="3"/>`;
-    s += `<path d="M${x0 + 238} ${cy - 20} L${x0 + 278} ${cy - outlet} V${cy + outlet} L${x0 + 238} ${cy + 20} Z" fill="${HEART_FILL}" stroke="${RED}" stroke-width="3"/>`;
-    if (!more) s += `<path class="ghost" d="M${x0 + 240} ${cy - 20} L${x0 + 278} ${cy - 9} M${x0 + 240} ${cy + 20} L${x0 + 278} ${cy + 9}" stroke="${INK}" stroke-width="2" stroke-dasharray="5 4"/>`;
-    s += `<path d="M${x0 + 4} ${cy} H${x0 + 36}" stroke="${BLUE}" stroke-width="${more ? 18 : 9}" />`;
-    if (more) s += `<path class="ghost" d="M${x0 + 4} ${cy - 4.5} H${x0 + 36} M${x0 + 4} ${cy + 4.5} H${x0 + 36}" stroke="${INK}" stroke-width="2" stroke-dasharray="5 4"/>`;
-    s += needle(0, true) + needle(48, false) + `<circle cx="${gx}" cy="${gy}" r="5" fill="${INK}"/>`;
-    s += text(x0 + 150, 110, more ? 'Turn up the flow' : 'Narrow the outlet');
-    s += text(x0 + 150, 330, line1, 'sm') + text(x0 + 150, 356, line2, 'sm blue');
-    return s;
+// Step 4: the heart sends a stroke volume into the artery with each beat; how often, times how much, is
+// the flow: the cardiac output.
+function flowPicture(t) {
+  const beatPhase = (t * 2) % 1, squeeze = beatPhase < .18 ? Math.sin(beatPhase / .18 * Math.PI) : 0;
+  let s = rect(150, 122, 314, 40, '#e88c80', '#8f3a30', 2, 'rx="6"');
+  let marked = null;
+  for (let k = 0; k < 3; k++) {
+    const ph = ((t * 2 + k) / 3) % 1, x = 156 + ph * 300;
+    s += part('flow', rect(x, 128, 34, 28, BLOOD, 'none', 0, 'rx="10"'));
+    if (x >= 200 && x < 300) marked = x;
+  }
+  if (marked !== null) s += path(`M${f(marked)} 112 V104 H${f(marked + 34)} V112`, C.ink, 2);
+  s += heart(86, 140, 1.05 - .12 * squeeze);
+  s += text(86, 148, 'heart', 'sm b on-heart', 'middle');
+  s += text(250, 88, 'blood per beat', 'xs b', 'middle');
+  s += text(86, 222, 'beats:', 'xs b', 'middle') + text(86, 242, 'how often', 'xs', 'middle');
+  s += text(470, 214, 'flow = cardiac output', 'sm b blue', 'end');
+  s += text(470, 240, 'heart rate × blood per beat', 'xs b', 'end');
+  s += text(470, 262, 'the blood pumped each minute', 'xs muted', 'end');
+  return s;
+}
+// Step 5: two arterioles. Tight muscle narrows one: blood squeezes through slowly and resistance is high.
+// Relaxed muscle lets the other widen: blood flows easily and resistance is low.
+function resistPicture(t) {
+  let s = '';
+  const row = (cy, half, band, speed, title, sub, meter, word) => {
+    let r = text(16, cy - half - 34, title, 'sm b', 'start') + text(16, cy - half - 14, sub, 'xs', 'start');
+    r += rect(16, cy - half - 6, 314, 6, C.rule) + rect(16, cy + half, 314, 6, C.rule);
+    r += rect(16, cy - half, 314, half * 2, '#e88c80');
+    let rings = '';
+    for (let x = 206; x <= 306; x += 20) rings += rect(x, cy - half - 6 - band, 16, band, '#c98b6b', '#7a4a32', 1.5, 'rx="3"') + rect(x, cy + half + 6, 16, band, '#c98b6b', '#7a4a32', 1.5, 'rx="3"');
+    r += part('arterioles', rings);
+    for (let j = 0; j < 7; j++) { const x = 20 + ((t * speed + j / 7) % 1) * 306; r += circle(x, cy + ((j % 3) - 1) * half * .45, Math.min(4.5, half * .45), '#fbe3df'); }
+    r += part('resistance', rect(352, cy - 12, 110, 24, '#fff', C.ink, 1.5) + rect(352, cy - 12, 110 * meter, 24, C.ink));
+    r += text(352, cy - 22, 'resistance', 'xs b', 'start') + text(352, cy + 38, word, 'xs b', 'start');
+    return r;
   };
-  return panel(10, 'more flow in', '→ higher pressure', true) + panel(330, 'more resistance', '→ higher pressure', false) +
-    `<path d="M320 70 V380" stroke="#babeb3" stroke-width="2"/><g class="ghost"><path d="M30 418 H64" stroke="${INK}" stroke-width="3" stroke-dasharray="5 4"/></g>${text(72, 425, 'before', 'sm', 'start')}<path d="M190 418 H224" stroke="${BLUE}" stroke-width="5"/>${text(232, 425, 'after', 'sm blue', 'start')}`;
+  s += row(112, 9, 18, 1, 'muscle tightens', 'the arteriole narrows', .85, '↑ high');
+  s += row(262, 24, 7, 3, 'muscle relaxes', 'the arteriole widens', .3, '↓ low');
+  return s;
 }
-
-// Step 10: standing up, with and without the baroreflex. t (0–1) is how much of the time line is drawn.
+// Step 6: the garden hose. First the tap opens (more flow), then the nozzle narrows (more resistance);
+// either way the pressure dial on the hose rises.
+function hosePicture(t) {
+  let s = '';
+  const panel = (y0, n, title, flowUp, resistUp, a, sub) => {
+    const cy = y0 + 104, flowW = lerp(8, 16, flowUp), out = lerp(10, 4.5, resistUp);
+    let p = text(16, y0 + 22, `${n}  ${title}`, 'sm b', 'start');
+    // the tap: a valve wheel on the inlet pipe, turning as it opens
+    p += rect(16, cy - 9, 46, 18, '#cfd4c8', C.ink, 2) + circle(40, cy - 26, 13, '#fff', C.ink, 2.5) + line(40, cy - 13, 40, cy - 9, C.ink, 3);
+    p += `<g transform="rotate(${f(90 * flowUp)} 40 ${f(cy - 26)})">${line(28, cy - 26, 52, cy - 26, C.ink, 3)}</g>`;
+    p += rect(62, cy - flowW / 2, 24, flowW, C.blue);
+    // the hose and its nozzle
+    p += rect(86, cy - 16, 250, 32, '#bcd0f5', C.ink, 2, 'rx="12"');
+    p += `<path d="M336 ${f(cy - 16)} L388 ${f(cy - out)} V${f(cy + out)} L336 ${f(cy + 16)} Z" fill="#bcd0f5" stroke="${C.ink}" stroke-width="2"/>`;
+    for (let j = 0; j < 3; j++) { const x = 396 + ((t * 4 + j / 3) % 1) * 60; p += line(x, cy + (j - 1) * out * .6, x + 10, cy + (j - 1) * out * .6 * 1.4, C.blue, 2.5); }
+    // the dial on the hose
+    p += line(212, cy - 16, 212, cy - 30, C.ink, 3);
+    p += dial(212, cy - 30, 34, lerp(-10, 42, Math.max(flowUp, resistUp)), { ghostAngle: -10 });
+    p += text(470, y0 + 22, sub, 'xs b blue', 'end', fade(a));
+    return p;
+  };
+  const a1 = ease.inOut(span(t, .08, .38)), a2 = ease.inOut(span(t, .56, .86));
+  s += panel(4, '1', 'turn up the flow', a1, 0, a1, '↑ higher pressure');
+  s += line(16, 186, 464, 186, C.rule, 2);
+  s += panel(190, '2', 'narrow the outlet', 0, a2, a2, '↑ higher pressure');
+  s += text(240, 396, 'pressure = flow × resistance', 'lg b', 'middle', fade(span(t, .88, .98)));
+  return s;
+}
+// Step 7: more blood volume fills the stretchy veins; more returns to the heart, each beat pumps more.
+function volumePicture(t) {
+  const u = ease.inOut(span(t, .1, .85)), v = lerp(1, 1.3, u);
+  const cy = 274, bagH = 34 * v;
+  let s = '';
+  // the veins, a stretchy store holding most of the blood, over a dashed outline of their normal fullness
+  s += part('volume', `<path d="M70 ${f(cy - bagH)} Q240 ${f(cy - 14 - bagH * 1.6)} 410 ${f(cy - bagH)} V${f(cy + bagH)} Q240 ${f(cy + 14 + bagH * 1.6)} 70 ${f(cy + bagH)} Z" fill="${VEIN}" opacity=".85"/>`);
+  s += `<path d="M70 ${cy - 34} Q240 ${f(cy - 14 - 54.4)} 410 ${cy - 34} V${cy + 34} Q240 ${f(cy + 14 + 54.4)} 70 ${cy + 34} Z" fill="none" stroke="${C.ink}" stroke-width="2" stroke-dasharray="6 5" class="ghost"/>`;
+  s += text(240, cy + 7, 'veins', 'sm b on-vein', 'middle');
+  // the return to the heart, the heart, and what it sends out
+  const ret = lerp(8, 16, u), outW = lerp(10, 18, u);
+  s += path(`M72 ${cy} H42 V92 H62`, VEIN, ret);
+  s += heart(104, 92, lerp(.9, 1.05, u));
+  s += path('M148 88 H330', BLOOD, outW) + arrowTo(330, 88, 362, 88, BLOOD, 4);
+  s += text(104, 100, 'heart', 'sm b on-heart', 'middle');
+  s += text(170, 56, 'each beat pumps more', 'xs b', 'start', fade(span(t, .6, .8)));
+  s += text(56, 182, 'more returns to the heart', 'xs b', 'start', fade(span(t, .5, .7)));
+  s += text(410, 206, u > .5 ? '↑ more blood volume' : 'blood volume', `sm b ${u > .5 ? 'blue' : ''}`, 'end');
+  s += text(240, 360, 'over days, the kidneys set it', 'xs muted', 'middle');
+  return s;
+}
+// Step 8: the baroreceptor. Pressure rises and falls with each beat; the more the artery wall stretches,
+// the faster the sensor fires signals up its nerve to the brainstem.
+const SENSOR_PRESSURE = u => .5 + .5 * Math.pow(Math.sin(Math.PI * (u * 2 % 1)), 3);   // two beats a cycle
+// Signal times over one cycle: the firing rate follows the stretch (an integer count per cycle keeps it looping).
+const SPIKES = (() => { const out = []; let acc = 0; const N = 400; const rate = u => 6 + 10 * SENSOR_PRESSURE(u); let tot = 0; for (let i = 0; i < N; i++) tot += rate(i / N) / N; const k = Math.round(tot) / tot; for (let i = 0; i < N; i++) { acc += rate(i / N) * k / N; if (acc >= 1) { acc -= 1; out.push(i / N); } } return out; })();
+const NERVE = [[232, 186], [232, 120], [300, 72], [348, 72]];
+function sensorPicture(t) {
+  const P = SENSOR_PRESSURE(t), b = 10 * P;
+  let s = rect(16, 196 - b, 448, 14, WALL, '#8f3a30', 2) + rect(16, 286 + b, 448, 14, WALL, '#8f3a30', 2);
+  s += rect(16, 210 - b, 448, 76 + 2 * b, '#e88c80');
+  // the sensor: a branched nerve ending in the wall
+  s += part('sensor', path(`M232 196 L232 ${f(186 - b * .2)} M232 202 L214 ${f(206 - b)} M232 202 L250 ${f(206 - b)} M232 202 L232 ${f(210 - b)}`, C.blue, 4) + circle(232, 186, 7, '#fff', C.blue, 3.5));
+  s += part('sensor', path(`M232 180 V120 Q232 72 280 72 H348`, C.blue, 3));
+  for (const ts of SPIKES) { const age = ((t - ts) % 1 + 1) % 1; if (age < .3) { const [x, y] = along(NERVE, age / .3); s += circle(x, y, 6, C.blue); } }
+  s += part('brainstem', rect(348, 46, 116, 52, '#fff', C.ink, 2, 'rx="26"') + text(406, 78, 'brainstem', 'sm b on-white', 'middle'));
+  s += text(16, 44, 'baroreceptor:', 'sm b blue', 'start') + text(16, 68, 'a stretch sensor', 'xs b', 'start') + text(16, 88, 'in the artery wall', 'xs', 'start');
+  s += text(16, 136, 'neck and chest arteries', 'xs muted', 'start');
+  s += text(240, 336, 'more stretch, faster signals', 'sm b', 'middle');
+  return s;
+}
+// Step 9: the brainstem's two outputs. Sympathetic nerves (blue) speed and strengthen the heart, tighten
+// arterioles and firm up veins; the vagus nerve (purple) slows the heart. Signals run down both.
+const SYMP = [[[240, 62], [240, 120], [96, 120], [96, 196]], [[240, 62], [240, 222]], [[240, 62], [240, 120], [400, 120], [400, 212]]];
+const VAGUS = [[180, 38], [40, 38], [40, 238], [58, 238]];
+function nervesPicture(t) {
+  let s = '';
+  s += part('vagus', path('M180 38 H40 V238 H58', C.purple, 4));
+  s += part('sympathetic', path('M240 62 V222 M96 196 V120 H400 V212', C.blue, 4));
+  s += part('brainstem', rect(180, 14, 120, 48, '#fff', C.ink, 2, 'rx="24"') + text(240, 45, 'brainstem', 'sm b on-white', 'middle'));
+  for (const pts of SYMP) s += dotsAlong(pts, t, 2, 6, C.blue);
+  s += dotsAlong(VAGUS, t, 2, 6, C.purple);
+  s += text(300, 108, 'sympathetic nerves', 'xs b blue', 'start') + text(50, 100, 'vagus', 'xs b purple', 'start') + text(50, 120, 'nerve', 'xs b purple', 'start');
+  // the three targets: the heart, an arteriole with its muscle bands, a vein
+  s += heart(96, 244, .92) + text(96, 252, 'heart', 'sm b on-heart', 'middle');
+  s += rect(180, 222, 120, 26, '#e88c80', C.ink, 1.5, 'rx="6"');
+  for (let x = 194; x <= 284; x += 18) s += rect(x, 216, 10, 38, '#c98b6b', '#7a4a32', 1.5, 'rx="3"');
+  s += rect(340, 212, 120, 40, VEIN, C.ink, 1.5, 'rx="12"');
+  s += text(96, 316, 'faster, stronger', 'xs b blue', 'middle') + text(96, 338, 'vagus: slower', 'xs b purple', 'middle');
+  s += text(240, 284, 'arterioles', 'sm b', 'middle') + text(240, 306, 'tighter', 'xs b blue', 'middle');
+  s += text(400, 284, 'veins', 'sm b', 'middle') + text(400, 306, 'firmer', 'xs b blue', 'middle');
+  return s;
+}
+// Step 10: the baroreflex as a loop that runs in seconds. Standing pools blood in the legs and pressure
+// dips; the sensors fire less; the brainstem sends more sympathetic and less vagal signal; the heart speeds
+// up and arterioles tighten; pressure recovers. The trace below runs in step with the loop.
 const STAND = { ...NORMAL, vol: .8 };
-function reflexChart(t) {
-  const m0 = steady({ ...STAND, reflex: false }).map, m1 = steady(STAND).map, t0 = .2;
-  const k = 170 / (1 - m0), xOf = s => 80 + s * 530, yOf = m => 140 + (1 - m) * k;
-  const pressure = (s, reflex) => {
-    if (s < t0) return 1;
-    const x = s - t0, drop = 1 - Math.exp(-x / .025);
-    if (!reflex) return 1 - (1 - m0) * drop;
-    const recover = 1 - Math.exp(-Math.max(0, x - .03) / .09);
+const REFLEX_NODES = [
+  { x: 12, y: 12, rows: ['1  pressure dips', 'on standing up'], from: .12, to: .3 },
+  { x: 268, y: 12, rows: ['2  sensors fire', 'less often'], from: .3, to: .44 },
+  { x: 268, y: 116, rows: ['3  brainstem: more', 'sympathetic signal'], from: .44, to: .58 },
+  { x: 12, y: 116, rows: ['4  heart faster,', 'arterioles tighter'], from: .58, to: .74 },
+];
+function reflexPicture(t) {
+  const m0 = steady({ ...STAND, reflex: false }).map, m1 = steady(STAND).map;
+  const s0 = .16;   // the moment of standing up, on the trace's time line
+  const pressure = (s, withReflex) => {
+    if (s < s0) return 1;
+    const x = s - s0, drop = 1 - Math.exp(-x / .03);
+    if (!withReflex) return 1 - (1 - m0) * drop;
+    const recover = 1 - Math.exp(-Math.max(0, x - .07) / .1);
     return 1 - drop * ((1 - m0) - (m1 - m0) * recover);
   };
-  const path = reflex => { let d = ''; for (let i = 0; i <= 200 && i / 200 <= t + 1e-9; i++) { const s = i / 200; d += `${i ? 'L' : 'M'}${f(xOf(s))} ${f(yOf(pressure(s, reflex)))}`; } return d; };
-  return `<path d="M70 50 V350 H624" fill="none" stroke="#53584d" stroke-width="2"/>${text(32, 200, 'pressure ↑', 'sm').replace('<text ', '<text transform="rotate(-90 32 200)" ')}${text(620, 382, 'time →', 'sm', 'end')}` +
-    `<path d="M72 140 H620" stroke="#babeb3" stroke-width="2"/>${text(616, 128, 'normal level', 'sm', 'end')}` +
-    `<path d="M${xOf(t0)} 60 V346" stroke="${INK}" stroke-width="1.5" stroke-dasharray="2 5"/>${text(xOf(t0) + 8, 76, 'stand up', 'sm', 'start')}` +
-    `<path class="ghost" data-ghost="without reflex" data-low="${m0.toFixed(4)}" d="${path(false)}" fill="none" stroke="${INK}" stroke-width="3" stroke-dasharray="7 5"/>` +
-    `<path data-new-state="with reflex" data-low="${m1.toFixed(4)}" d="${path(true)}" fill="none" stroke="${BLUE}" stroke-width="5" stroke-linejoin="round"/>` +
-    `<g class="ghost"><path d="M80 412 H114" stroke="${INK}" stroke-width="3" stroke-dasharray="7 5"/></g>${text(122, 419, 'without the reflex', 'sm', 'start')}<path d="M80 438 H114" stroke="${BLUE}" stroke-width="5"/>${text(122, 445, 'with the reflex', 'sm blue', 'start')}`;
+  let s = '';
+  // the loop
+  const active = REFLEX_NODES.findIndex(n => t >= n.from && t < n.to);
+  REFLEX_NODES.forEach((n, i) => {
+    const on = i === active;
+    s += part('loop', rect(n.x, n.y, 200, 62, on ? C.blueWash : '#fff', on ? C.blue : C.ink, on ? 3 : 2, 'rx="10"'));
+    s += text(n.x + 14, n.y + 26, n.rows[0], `xs b ${on ? 'on-blue' : 'on-white'}`, 'start') + text(n.x + 14, n.y + 48, n.rows[1], `xs ${on ? 'on-blue' : 'on-white'}`, 'start');
+  });
+  // the arrows between the boxes light up as the signal passes along them
+  const ARROWS = [[216, 43, 262, 43], [368, 78, 368, 110], [264, 147, 218, 147], [112, 112, 112, 80]];
+  ARROWS.forEach(([x1, y1, x2, y2], i) => {
+    const at = REFLEX_NODES[i].to, on = i < 3 ? t > at - .05 && t < at + .05 : t > at - .05;
+    s += arrowTo(x1, y1, x2, y2, on ? C.blue : C.ink, on ? 4.5 : 3);
+  });
+  s += text(126, 101, 'pressure recovers', 'xs b blue', 'start', fade(span(t, .72, .8)));
+  // the trace: pressure over time, with and without the reflex
+  // The trace's clock runs in step with the loop: the dip draws while boxes 1 and 2 are lit, the clock
+  // nearly stops while the brainstem answers (it takes about a second), and the recovery draws with box 4.
+  const clock = t < .3 ? lerp(0, .215, span(t, .02, .3)) : t < .58 ? lerp(.215, .235, span(t, .3, .58)) : lerp(.235, 1, span(t, .58, .96));
+  const X0 = 40, X1 = 456, Y0 = 380, yOf = m => 246 + (1 - m) * (100 / (1 - m0)), upTo = clock;
+  let dNo = '', dYes = '';
+  for (let i = 0; i <= 160 && i / 160 <= upTo + 1e-9; i++) { const q = i / 160, x = f(X0 + 4 + (X1 - X0 - 8) * q); dNo += `${i ? 'L' : 'M'}${x} ${f(yOf(pressure(q, false)))}`; dYes += `${i ? 'L' : 'M'}${x} ${f(yOf(pressure(q, true)))}`; }
+  s += path(`M${X0} 214 V${Y0} H${X1 + 4}`, C.ink, 2) + text(X0 + 8, 228, 'pressure ↑', 'xs b', 'start') + text(X1 + 4, 408, 'time →', 'xs b', 'end');
+  s += line(X0 + 2, yOf(1), X1, yOf(1), C.rule, 2) + text(X1, yOf(1) - 8, 'normal', 'xs muted', 'end');
+  const xs = X0 + 4 + (X1 - X0 - 8) * s0;
+  s += line(xs, 236, xs, Y0 - 2, C.ink, 1.5, 'stroke-dasharray="2 5"') + text(xs + 8, 404, 'stand up', 'xs b', 'start');
+  s += `<g class="ghost" data-ghost="without reflex" data-low="${m0.toFixed(4)}">${path(dNo, C.ink, 3, 'stroke-dasharray="7 5"')}</g>`;
+  s += `<g data-new-state="with reflex" data-low="${m1.toFixed(4)}">${path(dYes, C.blue, 5)}</g>`;
+  s += text(X1, yOf(m0) - 10, 'without the reflex', 'xs b', 'end', fade(span(t, .76, .86)));
+  s += text(X1, yOf(m1) - 10, 'with the reflex', 'xs b blue', 'end', fade(span(t, .78, .9)));
+  return s;
 }
 
-// Plain-word comparison with normal (used for chips and text alternatives).
-function trend(v, b, up, down) { const r = v / b; return r > 1.015 ? [up, 'up'] : r < .985 ? [down, 'down'] : ['about the same', 'same']; }
+/* ---------- The board: flow × resistance = pressure ----------
+   The whole picture and every change share it: three bars over dashed normal levels, the words for what
+   moved under them, and two lines naming what the drug (or bleed) did and how the baroreflex answered. */
+const COL = { flow: 86, tpr: 240, map: 394 }, BAR_W = 84, BASE_Y = 212, UNIT = 104;
+const KEY = { flow: 'co', tpr: 'tpr', map: 'map' };   // the model's name for each bar's measure
+const BAR_STYLE = { flow: [C.redWash, C.red], tpr: ['#e3e0d6', C.ink], map: [C.blueWash, C.blue] };
+// How a measure moved, in a few words: about the same, a little, or plainly.
+function moved(r) {
+  if (r > 1.015) return r < 1.16 ? ['↑ a little', 'blue'] : r < 1.35 ? ['↑ rises', 'blue'] : ['↑ a lot', 'blue'];
+  if (r < .985) return r > .9 ? ['↓ a little', 'blue'] : r > .7 ? ['↓ falls', 'blue'] : ['↓ a lot', 'blue'];
+  return ['↔ the same', 'muted'];
+}
+function bars(o, { ghost = true, words = null } = {}) {
+  let s = '';
+  for (const [k, word] of [['flow', 'flow'], ['tpr', 'resistance'], ['map', 'pressure']]) {
+    const r = o[KEY[k]] / BASE[KEY[k]], x = COL[k] - BAR_W / 2, hgt = UNIT * clamp(r, 0, 1.55), [fill, stroke] = BAR_STYLE[k];
+    s += part(k === 'flow' ? 'flow' : k === 'tpr' ? 'resistance' : 'pressure', rect(x, BASE_Y - hgt, BAR_W, hgt, fill, stroke, 2.5));
+    if (ghost) s += rect(x, BASE_Y - UNIT, BAR_W, UNIT, 'none', C.ink, 1.5, 'stroke-dasharray="6 5" class="ghost"');
+    s += text(COL[k], BASE_Y + 28, word, 'sm b', 'middle');
+    const w = words ? words[k] : moved(r);
+    if (w) s += text(COL[k], BASE_Y + 50, w[0], `xs b ${w[1] || ''}`, 'middle');
+  }
+  s += line(24, BASE_Y, 456, BASE_Y, C.ink, 2);
+  s += text(163, 150, '×', 'lg b', 'middle') + text(317, 150, '=', 'lg b', 'middle');
+  return s;
+}
+// The two story lines under the bars: [tag, words, class] rows, each with its own fade.
+function story(rows) {
+  let s = `<g ${fade(Math.max(...rows.map(r => r[3] ?? 1)))}>${rect(12, 282, 456, 96, '#fff', C.rule, 1.5, 'rx="10"')}</g>`;
+  rows.forEach(([tag, words, cls, a = 1], i) => {
+    const y = 314 + i * 36;
+    s += `<g ${fade(a)}>${text(26, y, tag, 'xs b muted on-white', 'start')}${text(124, y, words, `sm b ${cls} on-white`, 'start')}</g>`;
+  });
+  return s;
+}
+// What each change does, in words for the picture: the direct effect, then the baroreflex's answer.
+const STORY = {
+  ccb: { tag: 'the drug', did: 'relaxes arteriole muscle', reflex: 'speeds the heart a little', acts: ['tpr'] },
+  alpha1: { tag: 'the drug', did: 'blocks the signal to vessels', reflex: 'speeds the heart a little', acts: ['tpr'] },
+  alpha2: { tag: 'the drug', did: 'quiets the brainstem', reflex: 'barely answers: no fast heart', acts: ['flow', 'tpr'] },
+  beta: { tag: 'the drug', did: 'slows and softens the heart', reflex: 'tightens arterioles a little', acts: ['flow'] },
+  vasodilator: { tag: 'the drug', did: 'relaxes arterioles a lot', reflex: 'the heart races', acts: ['tpr'] },
+  hemorrhage: { tag: 'the bleed', did: 'less blood to fill the heart', reflex: 'faster heart, tighter arterioles', acts: ['flow'] },
+};
+// Each change in two stages: first the direct effect (the reflex held off), then the reflex answers.
+const STAGE_1 = [.06, .42], STAGE_2 = [.56, .92];
+function stateAt(kind, t) {
+  const changed = { ...NORMAL, ...CHANGES[kind] };
+  const direct = steady({ ...changed, reflex: false }), full = steady(changed);
+  const u1 = ease.inOut(span(t, ...STAGE_1)), u2 = ease.inOut(span(t, ...STAGE_2));
+  return mix(mix(BASE, direct, u1), full, u2);
+}
+function actsHere(keys, a) {
+  let s = '';
+  for (const k of keys) s += `<g ${fade(a)}>${text(COL[k], 26, 'acts here', 'xs b blue', 'middle')}${arrowTo(COL[k], 34, COL[k], 52, C.blue, 3)}</g>`;
+  return s;
+}
+function boardBody(o, { kind = '', t = 1 } = {}) {
+  let s = `<g data-new-state="${kind || 'these settings'}" data-pressure="${o.map.toFixed(4)}" data-rate="${o.hr.toFixed(4)}" data-flow="${o.co.toFixed(4)}" data-resistance="${o.tpr.toFixed(4)}" data-volume="${o.vol.toFixed(4)}">${bars(o)}</g>`;
+  if (kind) {
+    const st = STORY[kind];
+    s += actsHere(st.acts, span(t, .02, .1));
+    s += story([[st.tag, st.did, 'blue', span(t, .02, .1)], ['the reflex', st.reflex, 'amber', span(t, .5, .58)]]);
+  }
+  return s;
+}
+const wholeBody = () => bars(BASE, { ghost: false, words: { flow: ['rate × per beat', 'muted'], tpr: ['arteriole width', 'muted'], map: ['the push', 'muted'] } })
+  + story([['seconds', 'the baroreflex steadies it', 'blue'], ['days', 'the kidneys set blood volume', 'amber']]);
+
+// Plain-word comparison with normal (for the readout and the text alternatives).
+function trend(v, b, up, down) { const r = v / b; return r > 1.015 ? ['up', up] : r < .985 ? ['down', down] : ['same', 'about the same']; }
 function compare(o) {
   return [
-    ['Pressure', trend(o.map, BASE.map, 'higher', 'lower')],
-    ['Heart rate', trend(o.hr, BASE.hr, 'faster', 'slower')],
-    ['Flow', trend(o.co, BASE.co, 'more', 'less')],
-    ['Resistance', trend(o.tpr, BASE.tpr, 'higher', 'lower')],
-    ['Blood volume', trend(o.vol, BASE.vol, 'more', 'less')]
+    ['Pressure', ...trend(o.map, BASE.map, 'higher', 'lower')],
+    ['Heart rate', ...trend(o.hr, BASE.hr, 'faster', 'slower')],
+    ['Flow', ...trend(o.co, BASE.co, 'more', 'less')],
+    ['Resistance', ...trend(o.tpr, BASE.tpr, 'higher', 'lower')],
+    ['Blood volume', ...trend(o.vol, BASE.vol, 'more', 'less')],
   ];
 }
-const ARROW = { up: '↑', down: '↓', same: '↔' };
-const readout = o => `<ul class="readout" aria-label="Compared with normal">${compare(o).map(([k, [w, d]]) => `<li><b>${k}</b> <span class="${d}">${ARROW[d]} ${w}</span></li>`).join('')}</ul>`;
-const describe = o => compare(o).map(([k, [w]]) => `${k.toLowerCase()} ${w}`).join(', ');
-
-/* ---------- Lesson steps ---------- */
-const BUILD = ['loop', 'gauge', 'beats'];
-const CORE = {
-  loop: () => svg('The circulation as a loop: the heart pumps blood into arteries, through small vessels in the body tissues, and back through veins.', circuit(BASE, { parts: ['loop'], early: true })),
-  pressure: () => svg('A pressure dial sits on the artery leaving the heart; its needle points to the middle, the normal push.', circuit(BASE, { parts: ['loop', 'gauge'], early: true })),
-  wave: () => svg('Arterial pressure over time rises sharply with each heartbeat to a peak, the systolic pressure, then falls to a low point, the diastolic pressure. A line through the middle marks the mean pressure.', wave()),
-  flow: () => svg('The loop with the heartbeat trace beneath it. Arrows in the artery mark the flow the heart sends out with each beat.', circuit(BASE, { parts: BUILD, marks: [spot('flow', 'flow')], early: true })),
-  resist: () => svg('The arterioles, the smallest arteries, ringed with muscle, are circled: their width sets the resistance to flow.', circuit(BASE, { parts: BUILD, marks: [spot('arterioles', 'resistance')] })),
-  hose: () => svg('Two garden hoses. Left: more water flowing in moves the pressure dial up from its dashed starting position. Right: a narrower nozzle also moves the dial up.', hose()),
-  volume: () => svg('The veins returning blood to the heart are circled: blood volume fills them and sets how much blood returns.', circuit(BASE, { parts: BUILD, marks: [spot('veins', 'blood volume')] })),
-  sensor: () => svg('A stretch sensor on the artery sends signals along a dotted nerve to the brainstem.', circuit(BASE, { parts: [...BUILD, 'sensor'] })),
-  nerves: () => svg('From the brainstem, nerves run to the heart, the arterioles and the veins.', circuit(BASE, { parts: ALL })),
-  whole: () => svg('The whole picture: heart, arteries with a pressure dial, arterioles, veins, the beat trace, the pressure sensor, the brainstem and its nerves to the heart and vessels.', circuit(BASE, { parts: ALL }))
+const describe = o => compare(o).map(([k, , w]) => `${k.toLowerCase()} ${w}`).join(', ');
+const CHANGE_LABEL = {
+  ccb: 'Calcium channel blockers. Bars for flow, resistance and pressure over dashed normal levels. First the resistance bar, where the drug acts, falls and the pressure bar falls with it; then the reflex speeds the heart a little, so the flow bar rises a little and pressure recovers part of the way.',
+  alpha1: 'Alpha-1 blockers. First the resistance bar falls, flow dips as relaxed veins hold blood, and pressure falls; then the reflex speeds the heart a little, so flow ends a little above normal while resistance and pressure stay low.',
+  alpha2: 'Central alpha-2 agonists. The drug quiets the brainstem, so the flow and resistance bars both fall, and the pressure bar falls further. The reflex barely answers, because the drug works in its own centre: no fast heart.',
+  beta: 'Beta-blockers. First the flow bar falls as the heart slows, and pressure falls with it; then the reflex tightens arterioles, so the resistance bar rises a little above normal and pressure recovers part of the way.',
+  vasodilator: 'Direct vasodilators. First the resistance bar falls a lot and pressure falls with it; then the reflex makes the heart race, so the flow bar rises well above normal and pressure recovers part of the way.',
+  hemorrhage: 'Hemorrhage. First the flow bar falls, with less blood to fill the heart, and pressure falls with it; then the reflex speeds the heart and tightens arterioles, so resistance rises a little and pressure falls less than flow.',
 };
-const CHANGE_INFO = {
-  ccb: { legend: 'with the drug', marks: [spot('arterioles', 'acts here')] },
-  alpha1: { legend: 'with the drug', marks: [spot('arterioles', 'acts here'), spot('veins', 'and here')] },
-  alpha2: { legend: 'with the drug', marks: [spot('brainstem', 'acts here')] },
-  beta: { legend: 'with the drug', marks: [spot('heart', 'acts here')] },
-  vasodilator: { legend: 'with the drug', marks: [spot('arterioles', 'acts here')] },
-  hemorrhage: { legend: 'after blood loss', marks: [spot('veins', 'less blood')] }
-};
-function changePicture(el, t) {
-  const kind = el.dataset.kind, info = CHANGE_INFO[kind];
-  const ease = 1 - Math.pow(1 - t, 3);
-  const o = steady(mix(NORMAL, { ...NORMAL, ...CHANGES[kind] }, ease));
-  const name = el.dataset.stepTitle.split(':')[0];
-  return svg(`${name}, drawn over a faint dashed picture of normal. Compared with normal: ${describe(o)}.`, circuit(o, { parts: ALL, ghost: BASE, legend: info.legend, marks: t >= 1 || reducedMotion() ? info.marks : [] })) + readout(o);
-}
-
-const steps = $$('[data-step]');
-const backBtn = $('[data-step-back]'), nextBtn = $('[data-step-next]'), progress = $('[data-step-progress]');
-let current = 0, frame = 0;
-const visualOf = el => el.querySelector('[data-visual]');
-const isAnimated = el => el.dataset.kind === 'reflex' || el.dataset.kind in CHANGE_INFO;
-function drawAt(el, t) {
-  visualOf(el).innerHTML = el.dataset.kind === 'reflex'
-    ? svg('Pressure over time after standing up. Without the reflex (dashed) pressure drops and stays low. With the reflex (blue) it dips, then recovers most of the way toward normal within seconds.', reflexChart(t))
-    : changePicture(el, t);
-}
-function animate(el) {
-  cancelAnimationFrame(frame);
-  if (reducedMotion()) { drawAt(el, 1); return; }
-  const duration = el.dataset.kind === 'reflex' ? 2600 : 1400;
-  let start = null;
-  drawAt(el, 0);
-  const tick = now => {
-    if (start === null) start = now;
-    const t = Math.min(1, (now - start) / duration);
-    drawAt(el, t);
-    if (t < 1) frame = requestAnimationFrame(tick);
+function change(kind) {
+  return {
+    duration: 4600,
+    render(t) {
+      const o = stateAt(kind, t);
+      const label = `${CHANGE_LABEL[kind]} Compared with normal: ${describe(o)}.`;
+      return { svg: svg(label, boardBody(o, { kind, t }), { h: 388 }), readout: readout(compare(o)) };
+    }
   };
-  frame = requestAnimationFrame(tick);
 }
-steps.forEach(el => {
-  const kind = el.dataset.kind;
-  if (CORE[kind]) visualOf(el).innerHTML = CORE[kind]();
-  else drawAt(el, 1);
-  el.querySelector('.replay')?.addEventListener('click', () => animate(el));
-});
-function showStep(n, focus = false) {
-  cancelAnimationFrame(frame);
-  current = clamp(n, 0, steps.length - 1);
-  steps.forEach((el, i) => { el.hidden = i !== current; });
-  backBtn.disabled = current === 0;
-  nextBtn.textContent = current === steps.length - 1 ? 'Start again ↻' : 'Next →';
-  progress.textContent = `Step ${current + 1} of ${steps.length}`;
-  if (location.hash !== `#step-${current + 1}`) history.replaceState(null, '', `#step-${current + 1}`);
-  const el = steps[current];
-  if (isAnimated(el)) animate(el);
-  if (focus) { const h = el.querySelector('h2'); h.focus({ preventScroll: true }); h.scrollIntoView({ block: 'start' }); }
-}
-nextBtn.addEventListener('click', () => showStep(current === steps.length - 1 ? 0 : current + 1, true));
-backBtn.addEventListener('click', () => showStep(current - 1, true));
-$('#lesson').addEventListener('keydown', e => {
-  if (e.target.closest('input, select, textarea') || e.altKey || e.ctrlKey || e.metaKey) return;
-  if (e.key === 'ArrowRight' && current < steps.length - 1) { e.preventDefault(); showStep(current + 1, true); }
-  if (e.key === 'ArrowLeft' && current > 0) { e.preventDefault(); showStep(current - 1, true); }
-});
 
-/* ---------- Tabs ---------- */
-const tabs = $$('[role=tab]');
-function activate(tab, focus = false) {
-  tabs.forEach(t => { const on = t === tab; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; document.getElementById(t.getAttribute('aria-controls')).hidden = !on; });
-  if (focus) tab.focus();
-  if (tab.id === 'tab-lesson') { if (isAnimated(steps[current])) drawAt(steps[current], 1); } else cancelAnimationFrame(frame);
-  update();
-}
-tabs.forEach((t, i) => {
-  t.addEventListener('click', () => activate(t));
-  t.addEventListener('keydown', e => {
-    const n = { ArrowRight: (i + 1) % tabs.length, ArrowLeft: (i + tabs.length - 1) % tabs.length, Home: 0, End: tabs.length - 1 }[e.key];
-    if (n !== undefined) { e.preventDefault(); activate(tabs[n], true); }
-  });
-});
-function fromHash() {
-  const m = location.hash.match(/^#step-(\d+)$/);
-  if (m) { if (tabs[0].getAttribute('aria-selected') !== 'true') activate(tabs[0]); showStep(Number(m[1]) - 1); }
-}
-window.addEventListener('hashchange', fromHash);
-if (/^#step-\d+$/.test(location.hash)) fromHash(); else showStep(0);
+/* ---------- The lesson's scenes, one per step kind ---------- */
+const scenes = {
+  loop: { duration: 4800, loop: true, render: t => svg('The circulation as a loop: the heart pumps red blood up into the arteries, across to a block of body tissue where it runs through small vessels, and back, darker, through the veins to the heart. Blood cells keep moving round the loop.', loopPicture(t), { h: 316 }) },
+  pressure: { duration: 1600, loop: true, rest: .22, render: t => svg('A stretch of artery cut open. With each heartbeat, blue arrows show the blood pushing outward on the wall, the wall bulges a little, and a pressure dial on the artery swings toward high. A red arrow shows the blood being driven on toward the tissues.', pressurePicture(t), { h: 306 }) },
+  wave: { duration: 4600, render: t => svg('Arterial pressure over time draws itself across three heartbeats: a sharp rise to the peak, the systolic pressure, then a fall to the low point, the diastolic pressure, which never reaches zero. A blue dashed line, nearer the low point, marks the mean pressure.', wavePicture(t), { h: 300 }) },
+  flow: { duration: 2400, loop: true, render: t => svg('A beating heart sends a slug of blood, one stroke volume, into the artery with every beat, and the slugs travel away along it. Words say that flow, the cardiac output, is heart rate times blood per beat: the blood pumped each minute.', flowPicture(t), { h: 280 }) },
+  resist: { duration: 3200, loop: true, render: t => svg('Two arterioles with blood flowing through. Top: the muscle bands around it are tight, the arteriole is narrow, blood squeezes through slowly, and a resistance meter reads high. Bottom: the muscle is relaxed, the arteriole is wide, blood flows quickly, and resistance reads low.', resistPicture(t), { h: 320 }) },
+  hose: { duration: 6000, render: t => svg('Two garden hoses, each with a pressure dial. Top: the tap turns open, more water flows in, and the dial rises from its dashed starting position: higher pressure. Bottom: the nozzle narrows, and the dial rises too. Below: pressure equals flow times resistance.', hosePicture(t), { h: 410 }) },
+  volume: { duration: 3600, render: t => svg('The veins, drawn as a stretchy store holding most of the blood, swell beyond their dashed normal outline as blood volume rises. More blood returns to the heart, the heart fills more and sends out a thicker stream with each beat. A note says the kidneys set blood volume over days.', volumePicture(t), { h: 372 }) },
+  sensor: { duration: 3200, loop: true, render: t => svg('An artery with a stretch sensor, a baroreceptor, in its wall. With each beat the pressure rises and the wall stretches, and the sensor fires signals faster up its nerve to the brainstem; as pressure falls, the signals slow.', sensorPicture(t), { h: 346 }) },
+  nerves: { duration: 2000, loop: true, render: t => svg('The brainstem sends signals down two kinds of nerve. Blue sympathetic nerves run to the heart, which beats faster and stronger, to an arteriole, which tightens, and to a vein, which firms up. A purple vagus nerve runs to the heart and slows it.', nervesPicture(t), { h: 352 }) },
+  reflex: { duration: 6400, render: t => svg('The baroreflex as a loop of four boxes, lit one after another: pressure dips on standing up; the sensors fire less often; the brainstem sends more sympathetic signal; the heart speeds up and arterioles tighten. Below, a pressure trace: after standing it dips, then recovers most of the way with the reflex, while a dashed line without the reflex stays low.', reflexPicture(t), { h: 416 }) },
+  whole: () => svg('Three bars: flow, which is heart rate times blood per beat, times resistance, set by arteriole width, equals pressure, the push. Below, the baroreflex steadies pressure within seconds, and the kidneys set blood volume over days.', wholeBody(), { h: 388 }),
+  ccb: change('ccb'),
+  alpha1: change('alpha1'),
+  alpha2: change('alpha2'),
+  beta: change('beta'),
+  vasodilator: change('vasodilator'),
+  hemorrhage: change('hemorrhage'),
+};
 
 /* ---------- Shared model state (Clinical values + Explore freely) ---------- */
 let params = { ...NORMAL }, data = null;
@@ -318,10 +456,10 @@ function syncControls() {
   $('#reflex').checked = $('#clinical-reflex').checked = params.reflex;
 }
 const reference = id => { const v = data.values.find(x => x.id === id); return v.typical ?? (v.low + v.high) / 2; };
-// Physical units, consistent with each other: flow (mL/s) = heart rate × stroke volume / 60, and
-// mean pressure (mmHg) = flow × resistance (PRU, mmHg per mL/s), with venous pressure taken as zero.
-// The baseline uses the textbook heart rate, stroke volume and mean pressure; its resistance is whatever
-// those three require (so it differs from the textbook's rounded resistance example, as the tab explains).
+// Physical units, consistent with each other: flow (mL/s) = heart rate × stroke volume / 60, and mean
+// pressure (mmHg) = flow × resistance (PRU, mmHg per mL/s), with venous pressure taken as zero. The baseline
+// uses the textbook heart rate, stroke volume and mean pressure; its resistance is whatever those three
+// require (so it differs from the textbook's rounded resistance example, as the Clinical values tab explains).
 function baselineUnits() {
   const T = reference, flow = T('hr') * T('sv') / 60;
   return { flow, resistance: T('map') / flow, compliance: T('sv') / (T('sbp') - T('dbp')) };
@@ -329,38 +467,43 @@ function baselineUnits() {
 function measures(o) {
   const T = reference, B = baselineUnits();
   const hr = o.hr * T('hr'), sv = o.sv * T('sv'), flow = hr * sv / 60, tpr = o.tpr * B.resistance, map = flow * tpr;
-  const pulse = sv / B.compliance; // the arteries' stretchiness turns each beat's volume into the pressure swing
+  const pulse = sv / B.compliance;   // the arteries' stretchiness turns each beat's volume into the pressure swing
   return { map, sbp: map + pulse / 2, dbp: map - pulse / 2, hr, sv, flow, co: hr * sv / 1000, tpr };
 }
 const DECIMALS = { co: 1, tpr: 2 };
 const fmt = (id, n) => n.toFixed(DECIMALS[id] ?? 0);
 const DIRECTION = { up: '↑ Expected increase', down: '↓ Expected decrease', none: '↔ No direct change', variable: '↕ Variable' };
+const scaleMax = v => (v.high ?? v.typical ?? (v.low + v.high) / 2) * 2;
+const posOf = v => n => f(20 + clamp(n / scaleMax(v), 0, 1) * 360);
 function update() {
   syncControls();
   const o = steady(params);
-  $('#explore-visual').innerHTML = svg(`Illustrative model with your settings, drawn over a faint dashed picture of normal. Compared with normal: ${describe(o)}.`, circuit(o, { parts: ALL, ghost: BASE, legend: 'your settings' })) + readout(o);
+  const label = `Illustrative model with these settings, over dashed normal levels. Compared with normal: ${describe(o)}.`;
+  $('#explore-visual').innerHTML = svg(label, boardBody(o), { h: 274 }) + readout(compare(o));
+  $('#clinical-visual').innerHTML = svg(label, boardBody(o), { h: 274 });
   if (!data) {
-    $('#model-results').textContent = `Illustrative model, relative to normal: pressure ×${o.map.toFixed(2)} · heart rate ×${o.hr.toFixed(2)} · flow ×${o.co.toFixed(2)} · resistance ×${o.tpr.toFixed(2)}`;
+    $('#model-results').textContent = `Illustrative model, relative to normal: pressure ×${o.map.toFixed(2)} · heart rate ×${o.hr.toFixed(2)} · flow ×${o.co.toFixed(2)} · resistance ×${o.tpr.toFixed(2)}.`;
     return;
   }
   const m = measures(o), unit = id => data.values.find(v => v.id === id).unit;
-  $('#model-results').textContent = `Illustrative model: mean pressure ${fmt('map', m.map)} ${unit('map')} = flow ${m.flow.toFixed(1)} mL/s × resistance ${fmt('tpr', m.tpr)} ${unit('tpr')} · heart rate ${fmt('hr', m.hr)} ${unit('hr')} · cardiac output ${fmt('co', m.co)} ${unit('co')}`;
+  $('#model-results').textContent = `Illustrative model: mean pressure ${fmt('map', m.map)} ${unit('map')} = flow ${m.flow.toFixed(1)} mL/s × resistance ${fmt('tpr', m.tpr)} ${unit('tpr')} · heart rate ${fmt('hr', m.hr)} ${unit('hr')} · cardiac output ${fmt('co', m.co)} ${unit('co')}.`;
   const state = data.states.find(s => s.id === $('#clinical-state').value);
   for (const v of data.values) {
     const row = document.querySelector(`[data-cv="${v.id}"]`), val = m[v.modelKey];
     if (!row || val === undefined) continue;
-    const typical = v.typical ?? (v.low + v.high) / 2, max = (v.high ?? typical) * 2, pos = n => f(20 + clamp(n / max, 0, 1) * 360);
     row.querySelector('.reading').textContent = `${fmt(v.id, val)} ${v.unit}`;
-    const marker = row.querySelector('.marker'); marker.setAttribute('x1', pos(val)); marker.setAttribute('x2', pos(val));
+    const x = posOf(v)(val), marker = row.querySelector('.marker');
+    marker.setAttribute('x1', x); marker.setAttribute('x2', x);
     let status;
-    if (v.low !== null && v.high !== null) status = val < v.low ? 'below typical range' : val > v.high ? 'above typical range' : 'within typical range';
-    else { const r = val / typical; status = r > 1.015 ? 'above the textbook typical value' : r < .985 ? 'below the textbook typical value' : 'at the textbook typical value'; }
+    if (v.low !== null && v.high !== null) status = val < v.low ? 'below the typical range' : val > v.high ? 'above the typical range' : 'inside the typical range';
+    else { const r = val / v.typical; status = r > 1.015 ? 'above the textbook typical value' : r < .985 ? 'below the textbook typical value' : 'at the textbook typical value'; }
     row.querySelector('.status').textContent = `Model: ${status}`;
-    const d = state?.shifts[v.id];
-    row.querySelector('.direction').textContent = state ? (d ? DIRECTION[d] : 'Not listed for this state') : '';
+    const d = state?.shifts[v.id], dir = row.querySelector('.direction');
+    dir.textContent = state ? (d ? DIRECTION[d] : 'No direction given by the cited source for this row') : '';
+    dir.classList.toggle('quiet', !d);
   }
 }
-for (const k of SLIDERS) $('#' + k).addEventListener('input', e => { params[k] = Number(e.target.value); $('#clinical-state').value = 'normal'; $('#state-summary').textContent = 'Custom model settings.'; update(); });
+for (const k of SLIDERS) $('#' + k).addEventListener('input', e => { params[k] = Number(e.target.value); $('#clinical-state').value = 'normal'; $('#state-summary').textContent = 'Custom model settings.'; $('#state-source').textContent = ''; update(); });
 $('#reflex').addEventListener('change', e => { params.reflex = e.target.checked; update(); });
 $('#clinical-reflex').addEventListener('change', e => { params.reflex = e.target.checked; update(); announce(); });
 $('#clinical-volume').addEventListener('input', e => {
@@ -371,12 +514,15 @@ $('#clinical-volume').addEventListener('input', e => {
     : 'Custom settings: blood volume adjusted by hand.';
   update(); announce();
 });
-$('#reset').addEventListener('click', () => { params = { ...NORMAL }; $('#clinical-state').value = 'normal'; $('#state-summary').textContent = 'Normal teaching baseline.'; update(); });
+const resetAll = () => { params = { ...NORMAL }; $('#clinical-state').value = 'normal'; $('#state-summary').textContent = 'Normal teaching baseline.'; $('#state-source').textContent = ''; update(); };
+$('#reset').addEventListener('click', resetAll);
+$('#clinical-reset').addEventListener('click', () => { resetAll(); announce(); });
 $('#clinical-state').addEventListener('change', e => {
   const id = e.target.value;
   params = { ...NORMAL, ...(CHANGES[id] || {}), reflex: params.reflex };
   const s = data?.states.find(x => x.id === id);
   $('#state-summary').textContent = s ? `${s.label}: ${s.summary} The model now shows this change.${s.modelNote ? ' ' + s.modelNote : ''}` : 'Normal teaching baseline.';
+  $('#state-source').textContent = s ? `Directions: ${s.where} [${s.source}]` : '';
   update(); announce();
 });
 let announceTimer = 0;
@@ -386,7 +532,7 @@ function announce() {
 }
 
 /* ---------- Reference data ---------- */
-const clinicalControls = $$('#clinical select, #clinical input');
+const clinicalControls = $$('#clinical select, #clinical input, #clinical button');
 clinicalControls.forEach(el => { el.disabled = true; });
 async function load() {
   try {
@@ -404,18 +550,18 @@ async function load() {
     $('#baseline-note').textContent = `How the model’s baseline differs from the references: it is built from the textbook heart rate (${reference('hr')} beats/min), stroke volume (${reference('sv')} mL) and mean pressure (${reference('map')} mmHg). That heart rate and stroke volume give ${fmt('co', m0.co)} L/min, or ${B.flow.toFixed(1)} mL/s. Mean pressure always equals flow × resistance here (venous pressure taken as zero), so at that flow the model’s resistance is ${fmt('tpr', B.resistance)} PRU, above the textbook’s ${tprRef.typical} PRU example, which uses a rounded-up resting flow (see the resistance citation). Systolic and diastolic pressures sit half a pulse swing above and below the mean, an illustrative simplification.`;
     for (const s of data.states) { const opt = document.createElement('option'); opt.value = s.id; opt.textContent = `${s.label} (${s.kind})`; $('#clinical-state').append(opt); }
     for (const v of data.values) {
-      const typical = v.typical ?? (v.low + v.high) / 2, max = (v.high ?? typical) * 2, pos = n => f(20 + clamp(n / max, 0, 1) * 360);
+      const pos = posOf(v), range = v.low !== null && v.high !== null;
       const row = document.createElement('div');
       row.className = 'value-row'; row.dataset.cv = v.id;
       const left = document.createElement('div');
       left.innerHTML = '<h3></h3><div class="reading"></div><div class="status"></div><div class="direction"></div>';
       left.querySelector('h3').textContent = v.label;
       const right = document.createElement('div');
-      const band = v.low !== null && v.high !== null ? `<rect class="band" x="${pos(v.low)}" y="12" width="${f(pos(v.high) - pos(v.low))}" height="22"/>` : '';
+      const band = range ? `<rect class="band" x="${pos(v.low)}" y="12" width="${f(pos(v.high) - pos(v.low))}" height="22"/>` : '';
       const typ = v.typical !== null ? `<path class="typical" d="M${pos(v.typical)} 8 V38"/>` : '';
       right.innerHTML = `<svg class="gauge" viewBox="0 0 400 46" role="img"><path class="track" d="M20 23 H380"/>${band}${typ}<line class="marker" x1="20" x2="20" y1="4" y2="42"/></svg><div class="key"></div>`;
-      right.querySelector('svg').setAttribute('aria-label', `${v.label}: textbook typical value and the current illustrative model marker`);
-      right.querySelector('.key').textContent = `Textbook: ${v.low !== null && v.high !== null ? `${v.low}–${v.high}` : `about ${v.typical}`} ${v.unit} (${v.low !== null ? 'shaded band' : 'black line'}) · blue line: model`;
+      right.querySelector('svg').setAttribute('aria-label', `${v.label}: the textbook typical value and the current illustrative model marker`);
+      right.querySelector('.key').textContent = `Textbook: ${range ? `${v.low} to ${v.high}` : `about ${v.typical}`} ${v.unit} (${range ? 'shaded band' : 'black line'}) · blue line: model`;
       const cite = document.createElement('div'); cite.className = 'citation';
       cite.textContent = `${v.where} [${v.source}]${v.note ? ' · ' + v.note : ''}`;
       row.append(left, right, cite);
@@ -423,7 +569,7 @@ async function load() {
     }
     for (const [id, citation] of Object.entries(data.sources)) {
       const li = document.createElement('li'); li.textContent = `[${id}] ${citation}`;
-      if (data.sourceLinks?.[id]) { const a = document.createElement('a'); a.href = data.sourceLinks[id]; a.textContent = 'Source'; li.append(' · ', a); }
+      if (data.sourceLinks?.[id]) { const a = document.createElement('a'); a.href = data.sourceLinks[id]; a.textContent = 'DOI'; li.append(' · ', a); }
       $('#sources').append(li);
     }
     const li = document.createElement('li');
@@ -438,5 +584,5 @@ async function load() {
   }
   update();
 }
-update();
-load();
+
+lesson({ scenes, before: load, onTab: { clinical: update, explore: update } });

@@ -48,7 +48,7 @@
       },
       "source": "openstax-ap-17.6",
       "where": "OpenStax Anatomy and Physiology 2e, section 17.6 The Adrenal Glands, Disorders Involving the Adrenal Glands: “In contrast, the hyposecretion of corticosteroids can result in Addison’s disease, a rare disorder that causes low blood glucose levels and low blood sodium levels.”",
-      "modelNote": "The model keeps a fifth of the working cortex, so both cortisol and aldosterone fall. The cited adrenal section lists no potassium direction for Addison’s disease, so no arrow is shown for that row and the model holds potassium where it was." },
+      "modelNote": "The model keeps a fifth of the working cortex, so both cortisol and aldosterone fall; with less aldosterone the kidneys keep less sodium and pass less potassium, so potassium rises in the model. The cited adrenal section lists no potassium direction for Addison’s disease, so no arrow is shown for that row." },
     { "id": "glucocorticoid", "label": "Glucocorticoid drugs (for example prednisone, hydrocortisone)", "kind": "drug",
       "summary": "Synthetic cortisol relatives bind glucocorticoid receptors to calm inflammation; they raise blood glucose, and long-term use suppresses the HPA axis, so the body’s own cortisol production falls and the drug must be tapered.",
       "comparedWith": "normal",
@@ -57,7 +57,7 @@
         "glucose": "OpenStax Pharmacology for Nurses, section 26.4, Adverse Effects and Contraindications: “Long-term adverse effects include weight gain, high blood pressure, osteoporosis, hyperglycemia, skin atrophy (topical application), iatrogenic Cushing’s syndrome , and increased risk of infection.” Section 28.1, Hyperglycemia: “Hyperglycemia occurs when the blood glucose level in the body is above the normal range”"
       },
       "source": "openstax-pharm-26.4",
-      "where": "OpenStax Pharmacology for Nurses, section 26.4 Glucocorticoids and Mineralocorticoids, Glucocorticoids: “Synthetic glucocorticoids—such as prednisone, dexamethasone, and hydrocortisone—are commonly used in medicine to treat conditions such as asthma, rheumatoid arthritis, and inflammatory bowel disease.” and “Long-term use also requires tapering due to HPA axis suppression resulting in inadequate cortisol production.”",
+      "where": "OpenStax Pharmacology for Nurses, section 26.4 Glucocorticoids and Mineralocorticoids, Glucocorticoids: “Synthetic glucocorticoids – such as prednisone, dexamethasone, and hydrocortisone – are commonly used in medicine to treat conditions such as asthma, rheumatoid arthritis, and inflammatory bowel disease.” and “Long-term use also requires tapering due to HPA axis suppression resulting in inadequate cortisol production.”",
       "modelNote": "The model adds a cortisol-like drug to a normal body: the brake reads it as cortisol, CRH and ACTH fall, and the body’s own cortisol falls while the total steroid signal is high." },
     { "id": "mineralocorticoid", "label": "Mineralocorticoid drugs (fludrocortisone)", "kind": "drug",
       "summary": "An aldosterone-like steroid binds mineralocorticoid receptors in the kidneys, increasing sodium reabsorption and potassium excretion; it replaces missing aldosterone in Addison’s disease.",
@@ -98,6 +98,6 @@
       "shifts": {},
       "source": "openstax-ap-17.6",
       "where": "None of the saved sections describes a specific steroid synthesis inhibitor, so this state shows only the feedback consequence of making less cortisol, built on the HPA axis as OpenStax Anatomy and Physiology 2e, section 17.6 The Adrenal Glands, describes it: “The HPA axis involves the stimulation of hormone release of adrenocorticotropic hormone (ACTH) from the pituitary by the hypothalamus. ACTH then stimulates the adrenal cortex to produce the hormone cortisol.” Pharmacology for Nurses, section 26.4, shows the brake the other way round: “Long-term use also requires tapering due to HPA axis suppression resulting in inadequate cortisol production.”",
-      "modelNote": "The cited sections give no direction for glucose, sodium or potassium with these drugs, so no arrows are shown. In the teaching model the cortex builds half its usual cortisol and CRH and ACTH rise; the glucose marker and the inflammation flame are held where they were, because no direction is cited for them." }
+      "modelNote": "The cited sections give no direction for glucose, sodium or potassium with these drugs, so no arrows are shown. In the teaching model the cortex builds half its usual cortisol, CRH and ACTH rise, and glucose follows the lower cortisol down a little." }
   ]
 }

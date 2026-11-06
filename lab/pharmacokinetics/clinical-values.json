@@ -10,7 +10,7 @@
     { "id": "half1", "label": "Drug removed after one half-life", "unit": "%",
       "low": null, "high": null, "typical": 50,
       "source": "statpearls-half-life",
-      "where": "Elimination Half-Life of Drugs, Definition/Introduction: “Although different drugs have varying half-lives, they all share a common principle—after one half-life, 50% of the initial drug amount is removed from the body.”",
+      "where": "Elimination Half-Life of Drugs, Definition/Introduction: “Although different drugs have varying half-lives, they all share a common principle – after one half-life, 50% of the initial drug amount is removed from the body.”",
       "modelKey": "removedAfter",
       "after": { "halfLives": 1 },
       "note": "The source gives a single value, not a range. The model marker shows how much its drug has lost by the time one usual half-life has passed." },

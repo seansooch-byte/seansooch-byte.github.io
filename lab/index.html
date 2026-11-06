@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Lab · Sean Sooch</title>
-<meta name="description" content="The Lab: a course in core medicine, taught one picture at a time. Step-by-step visual lessons in plain language. Educational only, not for clinical use.">
+<meta name="description" content="The Lab: a course in core medicine in six units, taught one picture at a time. Step-by-step visual lessons in plain language, each with goals, predictions, a quiz and a summary. Educational only, not for clinical use.">
 <link rel="canonical" href="https://seansooch.dev/lab/">
 <meta property="og:title" content="The Lab · Sean Sooch">
 <meta property="og:description" content="A course in core medicine, taught one picture at a time: step-by-step visual lessons in plain language. Educational only, not for clinical use.">
@@ -14,6 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/lab/lab.css">
+<script type="module" src="/lab/kit/course.js"></script>
 <!-- design-switcher:start --><link rel="stylesheet" href="/design-switcher.css?v=99ff7d4f90"><script src="/design-switcher.js?v=f194edb076"></script><!-- design-switcher:end --></head>
 <body>
 <a class="skip" href="#main">Skip to the lessons</a>
@@ -30,121 +31,314 @@
   </div>
 </header>
 <main id="main" class="wrap">
-  <p class="kicker">Medicine, one step at a time · since October 2026</p>
+  <p class="kicker">A course in core medicine · since October 2026</p>
   <h1>The <span>Lab</span></h1>
-  <p class="lede">A course in core medicine, taught one picture at a time. Each lesson takes a single idea, starting with how the heart fills and empties, builds it step by step in plain language with animated visuals, then shows how disease and common drug classes change the picture. New lessons are added in order.</p>
-  <p class="rules">Every lesson has a Clinical values tab: typical adult reference ranges from standard physiology textbooks and major guidelines, each one cited, drawn against the lesson as it runs. The lessons are educational only and not for clinical use; they give no drug doses. Everything runs in your browser, with no accounts and no trackers, and works on a phone and with a keyboard.</p>
+  <p class="lede">Core medicine, one picture at a time. Each lesson takes a single idea, starting with how the heart fills and empties, builds it step by step in plain language with moving pictures, then asks you to predict what each disease and drug class will do before it shows you.</p>
+  <p class="rules">Every lesson opens with what you will be able to do and how long it takes, ends with a quiz and a one-page summary, and has a Clinical values tab: typical adult reference ranges from standard textbooks and guidelines, each one cited, drawn against the lesson as it runs. Educational only and not for clinical use; no drug doses. Your progress stays in this browser: no accounts, no trackers, and it works on a phone and with a keyboard.</p>
   <!-- LAB:LIST:START (written by tools/lab-index.mjs from lab/syllabus.json and lab/apps.json; edit the JSON, not this block) -->
+  <dl class="facts">
+    <div><dt>Lessons</dt><dd>21</dd></div>
+    <div><dt>Units</dt><dd>6</dd></div>
+    <div><dt>To work through</dt><dd>9 hours</dd></div>
+    <div><dt>Practice questions</dt><dd>280</dd></div>
+  </dl>
   <p class="tally"><span>21 of 21 lessons ready</span><span>Latest: Nov 3, 2026</span></p>
-  <ol class="apps course">
-    <li class="app ready"><a class="card" href="/lab/pressure-volume-loop/">
-      <span class="no" aria-hidden="true">01</span>
-      <div><h2>The Pressure–Volume Loop</h2><p>How one heartbeat fills and empties the left ventricle, drawn as a loop, and how fluids, blood pressure and heart drugs reshape it.</p><p class="meta">Lesson 1 · IV fluids (more preload), Arterial vasoconstrictors and hypertension (more afterload), Positive inotropes, Venodilators, Beta-blockers, Heart failure with reduced ejection fraction</p></div>
-      <time class="date" datetime="2026-10-07">Oct 7, 2026</time>
-    </a></li>
-    <li class="app ready"><a class="card" href="/lab/nephron-diuretics/">
-      <span class="no" aria-hidden="true">02</span>
-      <div><h2>The Nephron and Diuretics</h2><p>Follow salt and water along a nephron, segment by segment, and see where each diuretic blocks salt reabsorption and how much water follows it out.</p><p class="meta">Lesson 2 · Loop diuretics (furosemide), Thiazide diuretics, Potassium-sparing diuretics (aldosterone antagonists, ENaC blockers), Carbonic anhydrase inhibitors (acetazolamide), Osmotic diuretics (mannitol)</p></div>
-      <time class="date" datetime="2026-10-08">Oct 8, 2026</time>
-    </a></li>
-    <li class="app ready"><a class="card" href="/lab/frank-starling-cardiac-output/">
-      <span class="no" aria-hidden="true">03</span>
-      <div><h2>Frank–Starling and Cardiac Output</h2><p>Why a fuller heart pumps harder, and how filling, heart rate and contraction strength add up to cardiac output.</p><p class="meta">Lesson 3 · IV fluids, Diuretics (less preload), Positive inotropes, Beta-blockers, Venodilators (nitrates), Heart failure</p></div>
-      <time class="date" datetime="2026-10-09">Oct 9, 2026</time>
-    </a></li>
-    <li class="app ready"><a class="card" href="/lab/blood-pressure-regulation/">
-      <span class="no" aria-hidden="true">04</span>
-      <div><h2>Blood Pressure Regulation</h2><p>Blood pressure as flow times resistance, and how the baroreflex keeps it steady from one moment to the next.</p><p class="meta">Lesson 4 · Calcium channel blockers, Alpha-1 blockers, Central alpha-2 agonists, Beta-blockers, Direct vasodilators, Hemorrhage (volume loss)</p></div>
-      <time class="date" datetime="2026-10-11">Oct 11, 2026</time>
-    </a></li>
-    <li class="app ready"><a class="card" href="/lab/renin-angiotensin-aldosterone/">
-      <span class="no" aria-hidden="true">05</span>
-      <div><h2>The Renin–Angiotensin–Aldosterone System</h2><p>The hormone chain the kidney uses to raise blood pressure and hold on to salt, and the drugs that cut it at each link.</p><p class="meta">Lesson 5 · ACE inhibitors, Angiotensin receptor blockers (ARBs), Aldosterone antagonists (spironolactone), Direct renin inhibitors</p></div>
-      <time class="date" datetime="2026-10-15">Oct 15, 2026</time>
-    </a></li>
-    <li class="app ready"><a class="card" href="/lab/autonomic-synapse/">
-      <span class="no" aria-hidden="true">06</span>
-      <div><h2>The Autonomic Synapse</h2><p>How sympathetic and parasympathetic nerves talk to organs through receptors, and how drugs mimic or block that signal.</p><p class="meta">Lesson 6 · Muscarinic agonists and antagonists, Cholinesterase inhibitors, Alpha agonists and blockers, Beta agonists and blockers</p></div>
-      <time class="date" datetime="2026-10-16">Oct 16, 2026</time>
-    </a></li>
-    <li class="app ready"><a class="card" href="/lab/cardiac-action-potential/">
-      <span class="no" aria-hidden="true">07</span>
-      <div><h2>The Cardiac Action Potential</h2><p>The ion currents behind each heartbeat, in pacemaker and muscle cells, and how antiarrhythmic drugs change their shape.</p><p class="meta">Lesson 7 · Sodium channel blockers (class I), Beta-blockers (class II), Potassium channel blockers (class III), Calcium channel blockers (class IV)</p></div>
-      <time class="date" datetime="2026-10-17">Oct 17, 2026</time>
-    </a></li>
-    <li class="app ready"><a class="card" href="/lab/neuromuscular-junction/">
-      <span class="no" aria-hidden="true">08</span>
-      <div><h2>The Neuromuscular Junction</h2><p>How a nerve signal becomes a muscle contraction, and how paralytic and reversal drugs act at the junction.</p><p class="meta">Lesson 8 · Nondepolarizing neuromuscular blockers, Depolarizing neuromuscular blockers (succinylcholine), Cholinesterase inhibitors (reversal), Myasthenia gravis</p></div>
-      <time class="date" datetime="2026-10-18">Oct 18, 2026</time>
-    </a></li>
-    <li class="app ready"><a class="card" href="/lab/oxygen-hemoglobin-dissociation/">
-      <span class="no" aria-hidden="true">09</span>
-      <div><h2>Oxygen and Hemoglobin</h2><p>Why hemoglobin grabs oxygen in the lungs and lets go in the tissues, drawn as the dissociation curve, and what shifts it.</p><p class="meta">Lesson 9 · Right shift (acid, carbon dioxide, heat, 2,3-BPG), Left shift (fetal hemoglobin, cold, alkalosis), Carbon monoxide poisoning, Anemia</p></div>
-      <time class="date" datetime="2026-10-19">Oct 19, 2026</time>
-    </a></li>
-    <li class="app ready"><a class="card" href="/lab/ventilation-perfusion/">
-      <span class="no" aria-hidden="true">10</span>
-      <div><h2>Ventilation, Perfusion and the Alveolus</h2><p>How air and blood meet in the lung, and what happens to oxygen when the two are mismatched.</p><p class="meta">Lesson 10 · Supplemental oxygen, Bronchodilators (beta-2 agonists, muscarinic antagonists), Pulmonary embolism (dead space), Pneumonia (shunt)</p></div>
-      <time class="date" datetime="2026-10-21">Oct 21, 2026</time>
-    </a></li>
-    <li class="app ready"><a class="card" href="/lab/acid-base/">
-      <span class="no" aria-hidden="true">11</span>
-      <div><h2>Acid–Base Balance</h2><p>The bicarbonate buffer, the lungs and the kidneys working together to hold blood pH steady, and the four ways it goes wrong.</p><p class="meta">Lesson 11 · Carbonic anhydrase inhibitors, Loop and thiazide diuretics (contraction alkalosis), Sodium bicarbonate, Salicylate toxicity</p></div>
-      <time class="date" datetime="2026-10-22">Oct 22, 2026</time>
-    </a></li>
-    <li class="app ready"><a class="card" href="/lab/coagulation-cascade/">
-      <span class="no" aria-hidden="true">12</span>
-      <div><h2>The Coagulation Cascade</h2><p>How a clot is built, from platelet plug to fibrin mesh, and where each anticoagulant and clot-busting drug acts.</p><p class="meta">Lesson 12 · Heparins, Vitamin K antagonists (warfarin), Factor Xa inhibitors, Direct thrombin inhibitors, Antiplatelet drugs, Thrombolytics</p></div>
-      <time class="date" datetime="2026-10-23">Oct 23, 2026</time>
-    </a></li>
-    <li class="app ready"><a class="card" href="/lab/insulin-glucose/">
-      <span class="no" aria-hidden="true">13</span>
-      <div><h2>Insulin and Glucose</h2><p>How insulin moves glucose out of the blood after a meal, what fails in diabetes, and how each diabetes drug helps.</p><p class="meta">Lesson 13 · Insulin, Metformin, Sulfonylureas, SGLT2 inhibitors, GLP-1 receptor agonists, DPP-4 inhibitors</p></div>
-      <time class="date" datetime="2026-10-26">Oct 26, 2026</time>
-    </a></li>
-    <li class="app ready"><a class="card" href="/lab/thyroid-axis/">
-      <span class="no" aria-hidden="true">14</span>
-      <div><h2>The Thyroid Axis</h2><p>The brain-to-thyroid feedback loop that sets the body&#39;s metabolic pace, and the drugs that replace or suppress thyroid hormone.</p><p class="meta">Lesson 14 · Levothyroxine, Thionamides (methimazole, propylthiouracil), Radioactive iodine, Beta-blockers for symptoms</p></div>
-      <time class="date" datetime="2026-10-27">Oct 27, 2026</time>
-    </a></li>
-    <li class="app ready"><a class="card" href="/lab/hpa-axis-steroids/">
-      <span class="no" aria-hidden="true">15</span>
-      <div><h2>The HPA Axis and Steroids</h2><p>How the brain and adrenal glands control cortisol through feedback, and why steroid drugs switch the axis off.</p><p class="meta">Lesson 15 · Glucocorticoids, Mineralocorticoids, Steroid synthesis inhibitors, Cushing syndrome and adrenal insufficiency</p></div>
-      <time class="date" datetime="2026-10-28">Oct 28, 2026</time>
-    </a></li>
-    <li class="app ready"><a class="card" href="/lab/gastric-acid-secretion/">
-      <span class="no" aria-hidden="true">16</span>
-      <div><h2>Stomach Acid and the Parietal Cell</h2><p>How one stomach cell pumps acid on command, and how acid-reducing drugs turn it down at different steps.</p><p class="meta">Lesson 16 · Proton pump inhibitors, H2 receptor blockers, Antacids, Prostaglandin analogues</p></div>
-      <time class="date" datetime="2026-10-29">Oct 29, 2026</time>
-    </a></li>
-    <li class="app ready"><a class="card" href="/lab/pharmacokinetics/">
-      <span class="no" aria-hidden="true">17</span>
-      <div><h2>Pharmacokinetics: Drug Levels Over Time</h2><p>How a drug&#39;s level rises, plateaus and falls in the blood: absorption, distribution, half-life and steady state, drawn as curves.</p><p class="meta">Lesson 17 · Enzyme inducers, Enzyme inhibitors, Reduced kidney clearance, Oral versus intravenous routes</p></div>
-      <time class="date" datetime="2026-10-30">Oct 30, 2026</time>
-    </a></li>
-    <li class="app ready"><a class="card" href="/lab/arachidonic-acid-nsaids/">
-      <span class="no" aria-hidden="true">18</span>
-      <div><h2>Inflammation and the Arachidonic Acid Pathway</h2><p>How injured cells make prostaglandins and leukotrienes, and where anti-inflammatory drugs block the pathway.</p><p class="meta">Lesson 18 · NSAIDs, COX-2 selective inhibitors, Aspirin, Glucocorticoids, Leukotriene modifiers</p></div>
-      <time class="date" datetime="2026-10-31">Oct 31, 2026</time>
-    </a></li>
-    <li class="app ready"><a class="card" href="/lab/bacterial-cell-antibiotics/">
-      <span class="no" aria-hidden="true">19</span>
-      <div><h2>The Bacterial Cell and Antibiotic Targets</h2><p>A tour of a bacterium&#39;s wall, ribosomes and DNA machinery, and the antibiotic families that attack each one.</p><p class="meta">Lesson 19 · Beta-lactams, Glycopeptides (vancomycin), Aminoglycosides, Macrolides and tetracyclines, Fluoroquinolones, Sulfonamides and trimethoprim</p></div>
-      <time class="date" datetime="2026-11-01">Nov 1, 2026</time>
-    </a></li>
-    <li class="app ready"><a class="card" href="/lab/immune-response/">
-      <span class="no" aria-hidden="true">20</span>
-      <div><h2>The Immune Response</h2><p>How the body recognises an invader, from the first innate response to antibodies and memory, and how immune drugs steer it.</p><p class="meta">Lesson 20 · Vaccines, Calcineurin inhibitors, Anti-TNF biologics, Glucocorticoids</p></div>
-      <time class="date" datetime="2026-11-02">Nov 2, 2026</time>
-    </a></li>
-    <li class="app ready"><a class="card" href="/lab/cell-cycle-chemotherapy/">
-      <span class="no" aria-hidden="true">21</span>
-      <div><h2>The Cell Cycle and Chemotherapy</h2><p>How a cell copies itself, phase by phase, and which chemotherapy drugs strike at which phase.</p><p class="meta">Lesson 21 · Antimetabolites (S phase), Vinca alkaloids and taxanes (M phase), Alkylating agents, Topoisomerase inhibitors, CDK4/6 inhibitors</p></div>
-      <time class="date" datetime="2026-11-03">Nov 3, 2026</time>
-    </a></li>
-  </ol>
+  <div class="resume" data-lab-resume></div>
+  <nav class="map" aria-label="The course at a glance">
+    <ol>
+      <li><a class="map-unit" href="#circulation"><span class="map-no">1</span><span class="map-title">The heart, the kidney and blood pressure</span></a>
+        <ol class="map-lessons"><li><a href="/lab/pressure-volume-loop/" data-lab-dot="pressure-volume-loop" title="Lesson 1: The Pressure–Volume Loop"><span class="visually-hidden">Lesson 1: The Pressure–Volume Loop</span></a></li><li><a href="/lab/nephron-diuretics/" data-lab-dot="nephron-diuretics" title="Lesson 2: The Nephron and Diuretics"><span class="visually-hidden">Lesson 2: The Nephron and Diuretics</span></a></li><li><a href="/lab/frank-starling-cardiac-output/" data-lab-dot="frank-starling-cardiac-output" title="Lesson 3: Frank–Starling and Cardiac Output"><span class="visually-hidden">Lesson 3: Frank–Starling and Cardiac Output</span></a></li><li><a href="/lab/blood-pressure-regulation/" data-lab-dot="blood-pressure-regulation" title="Lesson 4: Blood Pressure Regulation"><span class="visually-hidden">Lesson 4: Blood Pressure Regulation</span></a></li><li><a href="/lab/renin-angiotensin-aldosterone/" data-lab-dot="renin-angiotensin-aldosterone" title="Lesson 5: The Renin–Angiotensin–Aldosterone System"><span class="visually-hidden">Lesson 5: The Renin–Angiotensin–Aldosterone System</span></a></li></ol></li>
+      <li><a class="map-unit" href="#signals"><span class="map-no">2</span><span class="map-title">Nerves, rhythm and muscle</span></a>
+        <ol class="map-lessons"><li><a href="/lab/autonomic-synapse/" data-lab-dot="autonomic-synapse" title="Lesson 6: The Autonomic Synapse"><span class="visually-hidden">Lesson 6: The Autonomic Synapse</span></a></li><li><a href="/lab/cardiac-action-potential/" data-lab-dot="cardiac-action-potential" title="Lesson 7: The Cardiac Action Potential"><span class="visually-hidden">Lesson 7: The Cardiac Action Potential</span></a></li><li><a href="/lab/neuromuscular-junction/" data-lab-dot="neuromuscular-junction" title="Lesson 8: The Neuromuscular Junction"><span class="visually-hidden">Lesson 8: The Neuromuscular Junction</span></a></li></ol></li>
+      <li><a class="map-unit" href="#breath-and-blood"><span class="map-no">3</span><span class="map-title">Breath and blood</span></a>
+        <ol class="map-lessons"><li><a href="/lab/oxygen-hemoglobin-dissociation/" data-lab-dot="oxygen-hemoglobin-dissociation" title="Lesson 9: Oxygen and Hemoglobin"><span class="visually-hidden">Lesson 9: Oxygen and Hemoglobin</span></a></li><li><a href="/lab/ventilation-perfusion/" data-lab-dot="ventilation-perfusion" title="Lesson 10: Ventilation, Perfusion and the Alveolus"><span class="visually-hidden">Lesson 10: Ventilation, Perfusion and the Alveolus</span></a></li><li><a href="/lab/acid-base/" data-lab-dot="acid-base" title="Lesson 11: Acid–Base Balance"><span class="visually-hidden">Lesson 11: Acid–Base Balance</span></a></li><li><a href="/lab/coagulation-cascade/" data-lab-dot="coagulation-cascade" title="Lesson 12: The Coagulation Cascade"><span class="visually-hidden">Lesson 12: The Coagulation Cascade</span></a></li></ol></li>
+      <li><a class="map-unit" href="#hormones"><span class="map-no">4</span><span class="map-title">Hormones</span></a>
+        <ol class="map-lessons"><li><a href="/lab/insulin-glucose/" data-lab-dot="insulin-glucose" title="Lesson 13: Insulin and Glucose"><span class="visually-hidden">Lesson 13: Insulin and Glucose</span></a></li><li><a href="/lab/thyroid-axis/" data-lab-dot="thyroid-axis" title="Lesson 14: The Thyroid Axis"><span class="visually-hidden">Lesson 14: The Thyroid Axis</span></a></li><li><a href="/lab/hpa-axis-steroids/" data-lab-dot="hpa-axis-steroids" title="Lesson 15: The HPA Axis and Steroids"><span class="visually-hidden">Lesson 15: The HPA Axis and Steroids</span></a></li></ol></li>
+      <li><a class="map-unit" href="#drug-handling"><span class="map-no">5</span><span class="map-title">The gut and drug handling</span></a>
+        <ol class="map-lessons"><li><a href="/lab/gastric-acid-secretion/" data-lab-dot="gastric-acid-secretion" title="Lesson 16: Stomach Acid and the Parietal Cell"><span class="visually-hidden">Lesson 16: Stomach Acid and the Parietal Cell</span></a></li><li><a href="/lab/pharmacokinetics/" data-lab-dot="pharmacokinetics" title="Lesson 17: Pharmacokinetics: Drug Levels Over Time"><span class="visually-hidden">Lesson 17: Pharmacokinetics: Drug Levels Over Time</span></a></li></ol></li>
+      <li><a class="map-unit" href="#defence"><span class="map-no">6</span><span class="map-title">Inflammation, infection, immunity and cancer</span></a>
+        <ol class="map-lessons"><li><a href="/lab/arachidonic-acid-nsaids/" data-lab-dot="arachidonic-acid-nsaids" title="Lesson 18: Inflammation and the Arachidonic Acid Pathway"><span class="visually-hidden">Lesson 18: Inflammation and the Arachidonic Acid Pathway</span></a></li><li><a href="/lab/bacterial-cell-antibiotics/" data-lab-dot="bacterial-cell-antibiotics" title="Lesson 19: The Bacterial Cell and Antibiotic Targets"><span class="visually-hidden">Lesson 19: The Bacterial Cell and Antibiotic Targets</span></a></li><li><a href="/lab/immune-response/" data-lab-dot="immune-response" title="Lesson 20: The Immune Response"><span class="visually-hidden">Lesson 20: The Immune Response</span></a></li><li><a href="/lab/cell-cycle-chemotherapy/" data-lab-dot="cell-cycle-chemotherapy" title="Lesson 21: The Cell Cycle and Chemotherapy"><span class="visually-hidden">Lesson 21: The Cell Cycle and Chemotherapy</span></a></li></ol></li>
+    </ol>
+  </nav>
+  <section class="unit" id="circulation" aria-labelledby="unit-circulation">
+    <header class="unit-head">
+      <p class="unit-no">Unit 1</p>
+      <h2 id="unit-circulation">The heart, the kidney and blood pressure</h2>
+      <p class="unit-sum">How the heart fills and pumps, how the kidney handles salt and water, and the reflexes and hormones that hold blood pressure steady.</p>
+      <p class="unit-meta">5 lessons · about 2 hours</p>
+    </header>
+    <ol class="lessons">
+      <li class="lesson ready" data-slug="pressure-volume-loop" data-steps="18" data-quiz="8">
+        <span class="no" aria-hidden="true">01</span>
+        <div class="lesson-body">
+          <h3><a href="/lab/pressure-volume-loop/">The Pressure–Volume Loop</a></h3>
+          <p class="desc">How one heartbeat fills and empties the left ventricle, drawn as a loop, and how fluids, blood pressure and heart drugs reshape it.</p>
+          <p class="meta">30 min · 18 steps · 8 questions · A good place to start</p>
+          <details class="goals"><summary>What you will be able to do</summary><ol><li>Trace one heartbeat round the pressure-volume loop: name its four phases and say what each valve is doing.</li><li>Read stroke volume and ejection fraction off a loop.</li><li>Explain which part of the loop preload, afterload and contractility each control.</li><li>Predict how fluids, a vasoconstrictor, a positive inotrope, a venodilator, a beta-blocker and heart failure with reduced ejection fraction change the loop.</li></ol></details>
+          <p class="progress" data-lab-progress><span class="bar" aria-hidden="true"><i></i></span><span class="state">Not started</span></p>
+        </div>
+      </li>
+      <li class="lesson ready" data-slug="nephron-diuretics" data-steps="17" data-quiz="8">
+        <span class="no" aria-hidden="true">02</span>
+        <div class="lesson-body">
+          <h3><a href="/lab/nephron-diuretics/">The Nephron and Diuretics</a></h3>
+          <p class="desc">Follow salt and water along a nephron, segment by segment, and see where each diuretic blocks salt reabsorption and how much water follows it out.</p>
+          <p class="meta">25 min · 17 steps · 8 questions · A good place to start</p>
+          <details class="goals"><summary>What you will be able to do</summary><ol><li>Trace salt and water along a nephron and name what each segment takes back.</li><li>Explain why water follows salt, and how two hormones set what the collecting duct keeps.</li><li>Predict how much each diuretic class adds to the salt and water in the urine, and what that does to blood volume.</li><li>Tell the diuretic classes apart by what they do to blood potassium and bicarbonate.</li></ol></details>
+          <p class="progress" data-lab-progress><span class="bar" aria-hidden="true"><i></i></span><span class="state">Not started</span></p>
+        </div>
+      </li>
+      <li class="lesson ready" data-slug="frank-starling-cardiac-output" data-steps="16" data-quiz="8">
+        <span class="no" aria-hidden="true">03</span>
+        <div class="lesson-body">
+          <h3><a href="/lab/frank-starling-cardiac-output/">Frank–Starling and Cardiac Output</a></h3>
+          <p class="desc">Why a fuller heart pumps harder, and how filling, heart rate and contraction strength add up to cardiac output.</p>
+          <p class="meta">25 min · 16 steps · 8 questions · Builds on Lesson 1</p>
+          <details class="goals"><summary>What you will be able to do</summary><ol><li>Explain how filling stretches heart muscle so the next beat pumps more: the Frank–Starling mechanism.</li><li>Read the Frank–Starling curve, telling a move along it (a change in filling) apart from a shift of the whole curve (a change in contractility).</li><li>Explain how stroke volume and heart rate make cardiac output, and why a very fast heart can pump less.</li><li>Predict how IV fluids, diuretics, positive inotropes, beta-blockers, venodilators and heart failure change blood per beat and cardiac output.</li></ol></details>
+          <p class="progress" data-lab-progress><span class="bar" aria-hidden="true"><i></i></span><span class="state">Not started</span></p>
+        </div>
+      </li>
+      <li class="lesson ready" data-slug="blood-pressure-regulation" data-steps="17" data-quiz="8">
+        <span class="no" aria-hidden="true">04</span>
+        <div class="lesson-body">
+          <h3><a href="/lab/blood-pressure-regulation/">Blood Pressure Regulation</a></h3>
+          <p class="desc">Blood pressure as flow times resistance, and how the baroreflex keeps it steady from one moment to the next.</p>
+          <p class="meta">26 min · 17 steps · 8 questions · Builds on Lessons 1 and 3</p>
+          <details class="goals"><summary>What you will be able to do</summary><ol><li>Explain blood pressure as flow times resistance, and name what sets each: heart rate, blood per beat and blood volume for flow; arteriole width for resistance.</li><li>Read a pressure trace: the systolic peak, the diastolic low point and the mean.</li><li>Trace the baroreflex from the stretch sensors through the brainstem and its nerves, and explain how it steadies pressure on standing up.</li><li>Predict, for each blood pressure drug and for blood loss, whether flow or resistance moves, and how the baroreflex answers.</li></ol></details>
+          <p class="progress" data-lab-progress><span class="bar" aria-hidden="true"><i></i></span><span class="state">Not started</span></p>
+        </div>
+      </li>
+      <li class="lesson ready" data-slug="renin-angiotensin-aldosterone" data-steps="15" data-quiz="8">
+        <span class="no" aria-hidden="true">05</span>
+        <div class="lesson-body">
+          <h3><a href="/lab/renin-angiotensin-aldosterone/">The Renin–Angiotensin–Aldosterone System</a></h3>
+          <p class="desc">The hormone chain the kidney uses to raise blood pressure and hold on to salt, and the drugs that cut it at each link.</p>
+          <p class="meta">25 min · 15 steps · 8 questions · Builds on Lessons 2 and 4</p>
+          <details class="goals"><summary>What you will be able to do</summary><ol><li>Trace the chain from renin to aldosterone: what each link makes, and where.</li><li>Explain the two ways angiotensin II raises blood pressure, and how feedback switches the chain off.</li><li>Predict how a drug changes the links after its cut, the links before it, and blood potassium.</li><li>Tell ACE inhibitors, angiotensin receptor blockers, aldosterone antagonists and direct renin inhibitors apart by where they cut the chain.</li></ol></details>
+          <p class="progress" data-lab-progress><span class="bar" aria-hidden="true"><i></i></span><span class="state">Not started</span></p>
+        </div>
+      </li>
+    </ol>
+  </section>
+  <section class="unit" id="signals" aria-labelledby="unit-signals">
+    <header class="unit-head">
+      <p class="unit-no">Unit 2</p>
+      <h2 id="unit-signals">Nerves, rhythm and muscle</h2>
+      <p class="unit-sum">How nerves pass a signal on to organs and muscle, and the ion currents that set the rhythm of the heart.</p>
+      <p class="unit-meta">3 lessons · about 1 and a half hours</p>
+    </header>
+    <ol class="lessons">
+      <li class="lesson ready" data-slug="autonomic-synapse" data-steps="22" data-quiz="8">
+        <span class="no" aria-hidden="true">06</span>
+        <div class="lesson-body">
+          <h3><a href="/lab/autonomic-synapse/">The Autonomic Synapse</a></h3>
+          <p class="desc">How sympathetic and parasympathetic nerves talk to organs through receptors, and how drugs mimic or block that signal.</p>
+          <p class="meta">30 min · 22 steps · 8 questions · A good place to start</p>
+          <details class="goals"><summary>What you will be able to do</summary><ol><li>Trace one autonomic signal across a synapse: release, crossing the gap, docking on a receptor, and how the gap is cleared.</li><li>Name each branch&#39;s messenger and its receptors: acetylcholine on M receptors; noradrenaline mainly on alpha-1, alpha-2 and beta-1 receptors; and adrenaline, the adrenal glands&#39; hormone, which also reaches beta-2.</li><li>Predict how the heart, arterioles, airways and pupil answer each receptor type.</li><li>Predict what agonists, antagonists and cholinesterase inhibitors do to heart rate, blood pressure, airways and pupils, including the baroreflex&#39;s answer.</li></ol></details>
+          <p class="progress" data-lab-progress><span class="bar" aria-hidden="true"><i></i></span><span class="state">Not started</span></p>
+        </div>
+      </li>
+      <li class="lesson ready" data-slug="cardiac-action-potential" data-steps="21" data-quiz="8">
+        <span class="no" aria-hidden="true">07</span>
+        <div class="lesson-body">
+          <h3><a href="/lab/cardiac-action-potential/">The Cardiac Action Potential</a></h3>
+          <p class="desc">The ion currents behind each heartbeat, in pacemaker and muscle cells, and how antiarrhythmic drugs change their shape.</p>
+          <p class="meta">29 min · 21 steps · 8 questions · Builds on Lesson 6</p>
+          <details class="goals"><summary>What you will be able to do</summary><ol><li>Explain how sodium, calcium and potassium doors draw a heart muscle cell&#39;s action potential, phase by phase from 0 to 4.</li><li>Tell a pacemaker cell&#39;s action potential apart from a muscle cell&#39;s, and explain how nerves change the heart rate through phase 4.</li><li>Read the PR interval, the QRS complex and the QT interval as the AV node&#39;s pause, the ventricles&#39; phase 0 and their whole action potential.</li><li>Predict how class I, II, III and IV drugs reshape the action potential and the electrocardiogram.</li></ol></details>
+          <p class="progress" data-lab-progress><span class="bar" aria-hidden="true"><i></i></span><span class="state">Not started</span></p>
+        </div>
+      </li>
+      <li class="lesson ready" data-slug="neuromuscular-junction" data-steps="16" data-quiz="8">
+        <span class="no" aria-hidden="true">08</span>
+        <div class="lesson-body">
+          <h3><a href="/lab/neuromuscular-junction/">The Neuromuscular Junction</a></h3>
+          <p class="desc">How a nerve signal becomes a muscle contraction, and how paralytic and reversal drugs act at the junction.</p>
+          <p class="meta">24 min · 16 steps · 8 questions · Builds on Lesson 6</p>
+          <details class="goals"><summary>What you will be able to do</summary><ol><li>Trace a nerve impulse across the neuromuscular junction: calcium, acetylcholine release, gates opening, the end plate potential and the fibre&#39;s action potential.</li><li>Explain the safety margin, and why a normal train of four gives four equal twitches.</li><li>Tell nondepolarizing blockers apart from succinylcholine by what they do to the gates and to a train of four.</li><li>Predict what cholinesterase inhibitors do after each kind of blocker and in myasthenia gravis.</li></ol></details>
+          <p class="progress" data-lab-progress><span class="bar" aria-hidden="true"><i></i></span><span class="state">Not started</span></p>
+        </div>
+      </li>
+    </ol>
+  </section>
+  <section class="unit" id="breath-and-blood" aria-labelledby="unit-breath-and-blood">
+    <header class="unit-head">
+      <p class="unit-no">Unit 3</p>
+      <h2 id="unit-breath-and-blood">Breath and blood</h2>
+      <p class="unit-sum">How blood carries oxygen, how the lung matches air to blood, how blood pH is held steady, and how a clot is built.</p>
+      <p class="unit-meta">4 lessons · about 1 and a half hours</p>
+    </header>
+    <ol class="lessons">
+      <li class="lesson ready" data-slug="oxygen-hemoglobin-dissociation" data-steps="16" data-quiz="8">
+        <span class="no" aria-hidden="true">09</span>
+        <div class="lesson-body">
+          <h3><a href="/lab/oxygen-hemoglobin-dissociation/">Oxygen and Hemoglobin</a></h3>
+          <p class="desc">Why hemoglobin grabs oxygen in the lungs and lets go in the tissues, drawn as the dissociation curve, and what shifts it.</p>
+          <p class="meta">25 min · 16 steps · 8 questions · A good place to start</p>
+          <details class="goals"><summary>What you will be able to do</summary><ol><li>Explain how hemoglobin loads oxygen in the lungs and unloads it in the tissues, using the S-shaped curve.</li><li>Say what the half-saturation pressure (P50) marks, and which way a right or a left shift moves it.</li><li>Tell saturation apart from oxygen content, and explain how the two can disagree.</li><li>Predict how carbon dioxide, acid, heat, 2,3-BPG, fetal hemoglobin, carbon monoxide and anemia change the oxygen the tissues get.</li></ol></details>
+          <p class="progress" data-lab-progress><span class="bar" aria-hidden="true"><i></i></span><span class="state">Not started</span></p>
+        </div>
+      </li>
+      <li class="lesson ready" data-slug="ventilation-perfusion" data-steps="16" data-quiz="8">
+        <span class="no" aria-hidden="true">10</span>
+        <div class="lesson-body">
+          <h3><a href="/lab/ventilation-perfusion/">Ventilation, Perfusion and the Alveolus</a></h3>
+          <p class="desc">How air and blood meet in the lung, and what happens to oxygen when the two are mismatched.</p>
+          <p class="meta">25 min · 16 steps · 8 questions · Builds on Lesson 9</p>
+          <details class="goals"><summary>What you will be able to do</summary><ol><li>Explain how ventilation and perfusion meet in each alveolus, and what the ventilation–perfusion ratio compares.</li><li>Tell dead space apart from a shunt, and name a disease that causes each.</li><li>Explain why well-aired sacs cannot make up for poorly aired ones, and how the lung steers blood toward air.</li><li>Predict what supplemental oxygen, bronchodilators, a pulmonary embolism and pneumonia do to the oxygen in arterial blood.</li></ol></details>
+          <p class="progress" data-lab-progress><span class="bar" aria-hidden="true"><i></i></span><span class="state">Not started</span></p>
+        </div>
+      </li>
+      <li class="lesson ready" data-slug="acid-base" data-steps="16" data-quiz="8">
+        <span class="no" aria-hidden="true">11</span>
+        <div class="lesson-body">
+          <h3><a href="/lab/acid-base/">Acid–Base Balance</a></h3>
+          <p class="desc">The bicarbonate buffer, the lungs and the kidneys working together to hold blood pH steady, and the four ways it goes wrong.</p>
+          <p class="meta">25 min · 16 steps · 8 questions · Builds on Lessons 2 and 10</p>
+          <details class="goals"><summary>What you will be able to do</summary><ol><li>Explain how the bicarbonate buffer, the lungs and the kidneys hold blood pH in its narrow band, and how fast each acts.</li><li>Read pH as a balance between carbon dioxide, the acid side, and bicarbonate, the base side.</li><li>Name the four acid-base disorders from the side that changed first, and predict how the other side compensates.</li><li>Predict what carbonic anhydrase inhibitors, loop and thiazide diuretics, sodium bicarbonate and salicylate toxicity do to the balance.</li></ol></details>
+          <p class="progress" data-lab-progress><span class="bar" aria-hidden="true"><i></i></span><span class="state">Not started</span></p>
+        </div>
+      </li>
+      <li class="lesson ready" data-slug="coagulation-cascade" data-steps="19" data-quiz="8">
+        <span class="no" aria-hidden="true">12</span>
+        <div class="lesson-body">
+          <h3><a href="/lab/coagulation-cascade/">The Coagulation Cascade</a></h3>
+          <p class="desc">How a clot is built, from platelet plug to fibrin mesh, and where each anticoagulant and clot-busting drug acts.</p>
+          <p class="meta">27 min · 19 steps · 8 questions · A good place to start</p>
+          <details class="goals"><summary>What you will be able to do</summary><ol><li>Trace how a torn vessel seals itself: vascular spasm, the platelet plug, then the fibrin net.</li><li>Explain how the clotting factors switch each other on, from two ways in through factor X and thrombin to fibrin, and how antithrombin and plasmin hold the clot in check.</li><li>Name exactly where heparins, warfarin, factor Xa inhibitors and direct thrombin inhibitors act on the cascade.</li><li>Tell antiplatelet drugs and thrombolytics apart from anticoagulants by what they act on.</li></ol></details>
+          <p class="progress" data-lab-progress><span class="bar" aria-hidden="true"><i></i></span><span class="state">Not started</span></p>
+        </div>
+      </li>
+    </ol>
+  </section>
+  <section class="unit" id="hormones" aria-labelledby="unit-hormones">
+    <header class="unit-head">
+      <p class="unit-no">Unit 4</p>
+      <h2 id="unit-hormones">Hormones</h2>
+      <p class="unit-sum">Three hormone systems that run on feedback: insulin and glucose, the thyroid, and cortisol.</p>
+      <p class="unit-meta">3 lessons · about 1 and a half hours</p>
+    </header>
+    <ol class="lessons">
+      <li class="lesson ready" data-slug="insulin-glucose" data-steps="19" data-quiz="8">
+        <span class="no" aria-hidden="true">13</span>
+        <div class="lesson-body">
+          <h3><a href="/lab/insulin-glucose/">Insulin and Glucose</a></h3>
+          <p class="desc">How insulin moves glucose out of the blood after a meal, what fails in diabetes, and how each diabetes drug helps.</p>
+          <p class="meta">30 min · 19 steps · 8 questions · A good place to start</p>
+          <details class="goals"><summary>What you will be able to do</summary><ol><li>Trace how glucose enters and leaves the blood, and what insulin and glucagon each do.</li><li>Explain how insulin rises after a meal and falls as blood sugar returns: negative feedback.</li><li>Tell type 1 from type 2 diabetes by what fails and what insulin does.</li><li>Name where each diabetes drug acts, and predict its effect on blood sugar and on the risk of a low.</li></ol></details>
+          <p class="progress" data-lab-progress><span class="bar" aria-hidden="true"><i></i></span><span class="state">Not started</span></p>
+        </div>
+      </li>
+      <li class="lesson ready" data-slug="thyroid-axis" data-steps="16" data-quiz="8">
+        <span class="no" aria-hidden="true">14</span>
+        <div class="lesson-body">
+          <h3><a href="/lab/thyroid-axis/">The Thyroid Axis</a></h3>
+          <p class="desc">The brain-to-thyroid feedback loop that sets the body&#39;s metabolic pace, and the drugs that replace or suppress thyroid hormone.</p>
+          <p class="meta">27 min · 16 steps · 8 questions · Builds on Lesson 13</p>
+          <details class="goals"><summary>What you will be able to do</summary><ol><li>Trace the thyroid axis from the brain to the body: TRH, TSH, then T4 and T3.</li><li>Explain how the brake, negative feedback, turns TSH down when T4 runs high and up when it runs low.</li><li>Read TSH, T4 and T3 in hypothyroidism and in Graves’ disease.</li><li>Tell apart how levothyroxine, thionamides, radioactive iodine and beta-blockers act, and predict which levels each one moves.</li></ol></details>
+          <p class="progress" data-lab-progress><span class="bar" aria-hidden="true"><i></i></span><span class="state">Not started</span></p>
+        </div>
+      </li>
+      <li class="lesson ready" data-slug="hpa-axis-steroids" data-steps="17" data-quiz="8">
+        <span class="no" aria-hidden="true">15</span>
+        <div class="lesson-body">
+          <h3><a href="/lab/hpa-axis-steroids/">The HPA Axis and Steroids</a></h3>
+          <p class="desc">How the brain and adrenal glands control cortisol through feedback, and why steroid drugs switch the axis off.</p>
+          <p class="meta">28 min · 17 steps · 8 questions · Builds on Lessons 5 and 14</p>
+          <details class="goals"><summary>What you will be able to do</summary><ol><li>Trace the HPA axis: CRH from the hypothalamus, ACTH from the pituitary, cortisol from the adrenal cortex; and tell it apart from aldosterone, run mostly by renin and potassium.</li><li>Explain how the cortisol brake turns CRH and ACTH down when cortisol runs high, and up when it runs low.</li><li>Tell primary from secondary adrenal insufficiency by ACTH and potassium, and Cushing’s disease from steroid medicine by ACTH.</li><li>Predict what glucocorticoid drugs, mineralocorticoid drugs and steroid synthesis inhibitors do to the axis and the blood tests.</li></ol></details>
+          <p class="progress" data-lab-progress><span class="bar" aria-hidden="true"><i></i></span><span class="state">Not started</span></p>
+        </div>
+      </li>
+    </ol>
+  </section>
+  <section class="unit" id="drug-handling" aria-labelledby="unit-drug-handling">
+    <header class="unit-head">
+      <p class="unit-no">Unit 5</p>
+      <h2 id="unit-drug-handling">The gut and drug handling</h2>
+      <p class="unit-sum">How the stomach makes acid on command, and how any drug&#39;s level rises and falls in the blood.</p>
+      <p class="unit-meta">2 lessons · about 50 min</p>
+    </header>
+    <ol class="lessons">
+      <li class="lesson ready" data-slug="gastric-acid-secretion" data-steps="16" data-quiz="8">
+        <span class="no" aria-hidden="true">16</span>
+        <div class="lesson-body">
+          <h3><a href="/lab/gastric-acid-secretion/">Stomach Acid and the Parietal Cell</a></h3>
+          <p class="desc">How one stomach cell pumps acid on command, and how acid-reducing drugs turn it down at different steps.</p>
+          <p class="meta">25 min · 16 steps · 8 questions · Builds on Lesson 6</p>
+          <details class="goals"><summary>What you will be able to do</summary><ol><li>Trace how a parietal cell makes hydrochloric acid, from the proton pump to the inside of the stomach.</li><li>Name the three messengers that call the cell, and explain why histamine matters most.</li><li>Explain how mucus, bicarbonate and prostaglandins protect the lining, and how an ulcer can form.</li><li>Predict what proton pump inhibitors, H2 receptor blockers, antacids and prostaglandin analogues change, and which step each acts on.</li></ol></details>
+          <p class="progress" data-lab-progress><span class="bar" aria-hidden="true"><i></i></span><span class="state">Not started</span></p>
+        </div>
+      </li>
+      <li class="lesson ready" data-slug="pharmacokinetics" data-steps="16" data-quiz="8">
+        <span class="no" aria-hidden="true">17</span>
+        <div class="lesson-body">
+          <h3><a href="/lab/pharmacokinetics/">Pharmacokinetics: Drug Levels Over Time</a></h3>
+          <p class="desc">How a drug&#39;s level rises, plateaus and falls in the blood: absorption, distribution, half-life and steady state, drawn as curves.</p>
+          <p class="meta">25 min · 16 steps · 8 questions · A good place to start</p>
+          <details class="goals"><summary>What you will be able to do</summary><ol><li>Explain how absorption, the liver&#39;s first pass, distribution and elimination shape the blood level after one amount.</li><li>Use the half-life to say how fast a level falls and how long a drug takes to clear.</li><li>Explain why amounts taken again and again build up to a steady state, and why getting there takes about 4 to 5 half-lives.</li><li>Predict how enzyme inducers, enzyme inhibitors, weaker kidneys and the intravenous route change the curve.</li></ol></details>
+          <p class="progress" data-lab-progress><span class="bar" aria-hidden="true"><i></i></span><span class="state">Not started</span></p>
+        </div>
+      </li>
+    </ol>
+  </section>
+  <section class="unit" id="defence" aria-labelledby="unit-defence">
+    <header class="unit-head">
+      <p class="unit-no">Unit 6</p>
+      <h2 id="unit-defence">Inflammation, infection, immunity and cancer</h2>
+      <p class="unit-sum">How the body raises inflammation, fights bacteria, mounts an immune response and keeps cell division in check, and the drugs that act at each point.</p>
+      <p class="unit-meta">4 lessons · about 1 and a half hours</p>
+    </header>
+    <ol class="lessons">
+      <li class="lesson ready" data-slug="arachidonic-acid-nsaids" data-steps="15" data-quiz="8">
+        <span class="no" aria-hidden="true">18</span>
+        <div class="lesson-body">
+          <h3><a href="/lab/arachidonic-acid-nsaids/">Inflammation and the Arachidonic Acid Pathway</a></h3>
+          <p class="desc">How injured cells make prostaglandins and leukotrienes, and where anti-inflammatory drugs block the pathway.</p>
+          <p class="meta">24 min · 15 steps · 8 questions · Builds on Lessons 12, 15 and 16</p>
+          <details class="goals"><summary>What you will be able to do</summary><ol><li>Trace how an injury turns membrane fat into arachidonic acid, and arachidonic acid into prostaglandins, thromboxane and leukotrienes.</li><li>Tell COX-1&#39;s everyday jobs apart from COX-2&#39;s job at an injury.</li><li>Explain why aspirin&#39;s effect on platelets lasts for the rest of each platelet&#39;s life.</li><li>Predict what ordinary NSAIDs, COX-2 selective NSAIDs, aspirin, glucocorticoids and leukotriene modifiers change, and the price of each.</li></ol></details>
+          <p class="progress" data-lab-progress><span class="bar" aria-hidden="true"><i></i></span><span class="state">Not started</span></p>
+        </div>
+      </li>
+      <li class="lesson ready" data-slug="bacterial-cell-antibiotics" data-steps="18" data-quiz="8">
+        <span class="no" aria-hidden="true">19</span>
+        <div class="lesson-body">
+          <h3><a href="/lab/bacterial-cell-antibiotics/">The Bacterial Cell and Antibiotic Targets</a></h3>
+          <p class="desc">A tour of a bacterium&#39;s wall, ribosomes and DNA machinery, and the antibiotic families that attack each one.</p>
+          <p class="meta">26 min · 18 steps · 8 questions · A good place to start</p>
+          <details class="goals"><summary>What you will be able to do</summary><ol><li>Name the four parts of a bacterium that antibiotics attack, and say why your own cells are spared.</li><li>Explain how beta-lactams and vancomycin each stop the wall being built, and why vancomycin misses gram-negative bacteria.</li><li>Tell apart the ribosome drugs: aminoglycosides and tetracyclines on the small 30S part, macrolides on the large 50S part.</li><li>Trace how fluoroquinolones, and sulfonamides with trimethoprim, stop a bacterium copying its DNA.</li><li>Tell a drug that kills bacteria (bactericidal) from one that only stops their growth (bacteriostatic).</li></ol></details>
+          <p class="progress" data-lab-progress><span class="bar" aria-hidden="true"><i></i></span><span class="state">Not started</span></p>
+        </div>
+      </li>
+      <li class="lesson ready" data-slug="immune-response" data-steps="15" data-quiz="8">
+        <span class="no" aria-hidden="true">20</span>
+        <div class="lesson-body">
+          <h3><a href="/lab/immune-response/">The Immune Response</a></h3>
+          <p class="desc">How the body recognises an invader, from the first innate response to antibodies and memory, and how immune drugs steer it.</p>
+          <p class="meta">23 min · 15 steps · 8 questions · Builds on Lesson 18</p>
+          <details class="goals"><summary>What you will be able to do</summary><ol><li>Tell the innate response (fast, ready-made, the same each time) from the adaptive response (slow to build, made to measure, with memory).</li><li>Trace how a germ&#39;s tag, its antigen, is carried to a lymph node and switches on a matching helper T cell.</li><li>Explain how B cells, antibodies and memory cells clear a germ, and why a second meeting, or a vaccine, makes the response faster.</li><li>Predict what vaccines, calcineurin inhibitors, anti-TNF biologics and glucocorticoids do to the response.</li></ol></details>
+          <p class="progress" data-lab-progress><span class="bar" aria-hidden="true"><i></i></span><span class="state">Not started</span></p>
+        </div>
+      </li>
+      <li class="lesson ready" data-slug="cell-cycle-chemotherapy" data-steps="17" data-quiz="8">
+        <span class="no" aria-hidden="true">21</span>
+        <div class="lesson-body">
+          <h3><a href="/lab/cell-cycle-chemotherapy/">The Cell Cycle and Chemotherapy</a></h3>
+          <p class="desc">How a cell copies itself, phase by phase, and which chemotherapy drugs strike at which phase.</p>
+          <p class="meta">25 min · 17 steps · 8 questions · Builds on Lesson 20</p>
+          <details class="goals"><summary>What you will be able to do</summary><ol><li>Name the phases of the cell cycle in order, G1, S, G2 and M, say what happens in each, and what G0 is.</li><li>Explain how CDK4 and CDK6 open the G1 checkpoint, and how cancer breaks that control.</li><li>Match each anticancer drug class to where it strikes: antimetabolites in S, vinca alkaloids and taxanes in M, topoisomerase inhibitors in S and G2, CDK4/6 inhibitors holding G1, alkylating agents in any phase.</li><li>Explain why fast-dividing healthy tissues, such as the bone marrow, are harmed by chemotherapy.</li></ol></details>
+          <p class="progress" data-lab-progress><span class="bar" aria-hidden="true"><i></i></span><span class="state">Not started</span></p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="review" id="review" aria-labelledby="review-h">
+    <h2 id="review-h">Mixed review</h2>
+    <p>Ten questions drawn from the lessons you have started, shuffled together, each with its answer explained and a link back to the step that teaches it. Mixing topics is harder than one lesson's quiz, which is what makes it stick.</p>
+    <div class="review-box" data-lab-review><button type="button" data-lab-review-start>Start a mixed review</button></div>
+  </section>
+  <script type="application/json" id="lab-steps">{"pressure-volume-loop":{"heart":1,"axes":2,"fill":3,"contract":4,"eject":5,"relax":6,"loop":7,"sv":8,"ef":9,"preload":10,"afterload":11,"contractility":12,"fluids":13,"constrict":14,"inotrope":15,"venodil":16,"beta":17,"hfref":18},"nephron-diuretics":{"meet":1,"filter":2,"back":3,"osmosis":4,"pt":5,"desc":6,"tal":7,"dct":8,"cd-salt":9,"cd-water":10,"whole":11,"volume":12,"loop":13,"thiazide":14,"ksp":15,"ca":16,"osmotic":17},"frank-starling-cardiac-output":{"heart":1,"fill":2,"stretch":3,"stretchmore":4,"eject":5,"curve":6,"strength":7,"rhythm":8,"output":9,"whole":10,"fluids":11,"diuretics":12,"inotropes":13,"beta":14,"nitrates":15,"failure":16},"blood-pressure-regulation":{"loop":1,"pressure":2,"wave":3,"flow":4,"resist":5,"hose":6,"volume":7,"sensor":8,"nerves":9,"reflex":10,"whole":11,"ccb":12,"alpha1":13,"alpha2":14,"beta":15,"vasodilator":16,"hemorrhage":17},"renin-angiotensin-aldosterone":{"watch":1,"renin":2,"cut":3,"ace-step":4,"receptor":5,"squeeze":6,"adrenal":7,"salt":8,"volume":9,"feedback":10,"whole":11,"ace":12,"arb":13,"mra":14,"dri":15},"autonomic-synapse":{"wiring":1,"branches":2,"synapse":3,"ach":4,"enzyme":5,"ne":6,"reuptake":7,"para-heart":8,"beta":9,"alpha":10,"adrenal":11,"pupil":12,"airway":13,"reflex":14,"whole":15,"mag":16,"mant":17,"che":18,"aag":19,"ablock":20,"bag":21,"bblock":22},"cardiac-action-potential":{"heart":1,"battery":2,"ions":3,"channels":4,"outline":5,"na":6,"ca":7,"k":8,"refractory":9,"pm":10,"pm-ca":11,"nerves":12,"spread":13,"ecg":14,"whole":15,"class1a":16,"class1b":17,"class1c":18,"class2":19,"class3":20,"class4":21},"neuromuscular-junction":{"motor":1,"junctions":2,"gap":3,"packets":4,"release":5,"receptors":6,"voltage":7,"margin":8,"fire":9,"enzyme":10,"burst":11,"whole":12,"ndmb":13,"sux":14,"che":15,"mg":16},"oxygen-hemoglobin-dissociation":{"trip":1,"cell":2,"pressure":3,"fill":4,"team":5,"curve":6,"lungs":7,"tissues":8,"given":9,"half":10,"content":11,"whole":12,"right":13,"left":14,"co":15,"anemia":16},"ventilation-perfusion":{"overview":1,"unit":2,"swap":3,"vent":4,"perf":5,"match":6,"lowair":7,"lowblood":8,"mix":9,"steer":10,"whole":11,"oxygen":12,"beta2":13,"antimusc":14,"pe":15,"pneumonia":16},"acid-base":{"scale":1,"made":2,"buffer":3,"bicarb":4,"swap":5,"balance":6,"lungs":7,"kidneys":8,"speeds":9,"four":10,"compensate":11,"whole":12,"cai":13,"diuretic":14,"sodium":15,"salicylate":16},"coagulation-cascade":{"leak":1,"spasm":2,"platelets":3,"stick":4,"plug":5,"needmesh":6,"switches":7,"paths":8,"thrombin":9,"mesh":10,"brake":11,"cleanup":12,"whole":13,"heparin":14,"vka":15,"xa":16,"dti":17,"antiplatelet":18,"lytic":19},"insulin-glucose":{"fuel":1,"meal":2,"pancreas":3,"incretin":4,"doors":5,"liver":6,"feedback":7,"glucagon":8,"kidney":9,"diabetes":10,"whole":11,"type1":12,"type2":13,"insulin":14,"metformin":15,"sulfonylurea":16,"sglt2":17,"glp1":18,"dpp4":19},"thyroid-axis":{"gland":1,"pace":2,"iodine":3,"forms":4,"pituitary":5,"hypothalamus":6,"brake":7,"lowbrake":8,"heart":9,"whole":10,"hypo":11,"graves":12,"levothyroxine":13,"thionamide":14,"rai":15,"betablocker":16},"hpa-axis-steroids":{"glands":1,"cortisol":2,"fuel":3,"inflam":4,"aldo":5,"pituitary":6,"hypothalamus":7,"stress":8,"brake":9,"lowbrake":10,"whole":11,"cushing":12,"addison":13,"secondary":14,"glucocorticoid":15,"mineralocorticoid":16,"inhibitor":17},"gastric-acid-secretion":{"stomach":1,"cell":2,"acid":3,"pump":4,"chloride":5,"pepsin":6,"store":7,"histamine":8,"messengers":9,"shield":10,"prostaglandin":11,"whole":12,"ppi":13,"h2":14,"antacid":15,"pga":16},"pharmacokinetics":{"journey":1,"level":2,"absorb":3,"firstpass":4,"spread":5,"remove":6,"halflife":7,"gone":8,"buildup":9,"steady":10,"range":11,"whole":12,"inducer":13,"inhibitor":14,"kidney":15,"iv":16},"arachidonic-acid-nsaids":{"membrane":1,"injury":2,"scissors":3,"roads":4,"cox1":5,"platelets":6,"cox2":7,"effects":8,"lox":9,"whole":10,"nsaid":11,"cox2i":12,"aspirin":13,"steroid":14,"ltm":15},"bacterial-cell-antibiotics":{"cell":1,"membrane":2,"wall":3,"build":4,"gram":5,"dna":6,"copy":7,"ribosome":8,"folate":9,"divide":10,"targets":11,"killstop":12,"betalactam":13,"vancomycin":14,"aminoglycoside":15,"macrolide":16,"fluoroquinolone":17,"sulfa":18},"immune-response":{"invader":1,"eat":2,"alarm":3,"tag":4,"switch":5,"clone":6,"bcell":7,"attack":8,"curve":9,"memory":10,"whole":11,"vaccine":12,"cni":13,"antitnf":14,"gc":15},"cell-cycle-chemotherapy":{"divide":1,"dna":2,"cycle":3,"g1":4,"cdk":5,"s":6,"untwist":7,"g2":8,"m":9,"g0":10,"whole":11,"cancer":12,"antimetabolite":13,"spindle":14,"alkylating":15,"topo":16,"cdk46":17}}</script>
   <!-- LAB:LIST:END -->
 </main>
 <footer><div class="wrap"><a href="/">Back to seansooch.dev</a><span>Educational only, not for clinical use.</span></div></footer>
-<!-- design-switcher:start --><nav class="design-switcher" aria-label="Website design" data-selected="astra"><span class="design-caption">SAME WORLD.<br>THREE VIEWS.</span><div class="design-options"><a class="design-choice" data-design="astra" href="/lab/" aria-current="page">Astra</a><a class="design-choice" data-design="fable" href="/designs/fable/lab/">Fable 5.1</a><a class="design-choice" data-design="opus" href="/designs/opus/lab/">Opus 5.5</a></div></nav><div class="design-curtain" data-destination="astra" aria-hidden="true"><strong>ASTRA</strong><span>THE PERSONAL INDEX</span></div><!-- design-switcher:end --></body>
+<!-- design-switcher:start --><nav class="design-switcher" aria-label="Website design" data-selected="astra"><span class="design-caption">SAME WORLD.<br>FIVE VIEWS.</span><div class="design-options"><a class="design-choice" data-design="astra" href="/lab/" aria-current="page">Astra</a><a class="design-choice" data-design="fable" href="/designs/fable/lab/">Fable 5.1</a><a class="design-choice" data-design="opus" href="/designs/opus/lab/">Opus 5.5</a><a class="design-choice" data-design="composer" href="/designs/composer/lab/">Composer 2.5</a><a class="design-choice" data-design="grok" href="/designs/grok/lab/">Grok 4.7</a></div></nav><div class="design-curtain" data-destination="astra" aria-hidden="true"><strong>ASTRA</strong><span>THE PERSONAL INDEX</span></div><!-- design-switcher:end --></body>
 </html>

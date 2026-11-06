@@ -1,212 +1,248 @@
-'use strict';
+// Lesson 18: Inflammation and the arachidonic acid pathway. The kit (/lab/kit/kit.js) runs the page; this file is
+// the pictures, and the Clinical values and Explore freely tabs. The teaching model is model.js (window.AAModel),
+// a classic script loaded before this module.
+//
+// Expected behaviour of the pictures:
+//   - The pathway is drawn as rows: the membrane and its scissors along the top, arachidonic acid running down a
+//     trunk on the left into three enzymes, and one row per signal: COX-1 to the stomach shield, COX-1 to platelet
+//     clumping, COX-2 to pain, swelling and fever, lipoxygenase to the airway squeeze. Each row ends in a meter.
+//   - The pathway moves: arachidonic acid flows down the trunk and each signal flows along its row, faster where
+//     more is made, so a blocked enzyme visibly starves its rows.
+//   - A "What changes it" step starts on the untreated injury (t = 0), morphs to the drug's state over dashed
+//     outlines of normal, names what moved in each row, then keeps flowing in the new state.
+import { lesson } from '/lab/kit/kit.js';
+import { C, svg, text, line, circle, rect, path, arrowTo, part, f, clamp, lerp, ease as EASE, span, esc } from '/lab/kit/draw.js';
+
 const AM = window.AAModel;
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
-const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
-const f = n => Number(n.toFixed(1));
-const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+const ease = EASE.out, inOut = EASE.inOut;
+const fade = a => `opacity="${f(clamp(a, 0, 1))}"`;
+const frac = x => x - Math.floor(x);
 
 const NORMAL_P = AM.build('normal');
 const NV = AM.settle(NORMAL_P);
 
 /* ---------- Drawing ---------- */
-const INK = '#171916', BLUE = '#254dff', AMBER = '#a34700', GREEN = '#1d6b3a', RED = '#b3261e', RULE = '#babeb3', MUTED = '#53584d';
-const HEADC = '#efb562', CELL = '#f5e7cf', MEMB = '#f6ead6', CELLEDGE = '#c98a3a';
-const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
-const text = (x, y, s, cls = '', anchor = 'middle') => `<text x="${f(x)}" y="${f(y)}" text-anchor="${anchor}" class="${cls}">${s}</text>`;
-const svg = (label, body, h) => `<svg viewBox="0 0 480 ${f(h)}" role="img" aria-label="${esc(label)}">${body}</svg>`;
-// A straight arrow with its own head (no markers, so hidden steps never share ids).
-function arrow(x1, y1, x2, y2, w, color, extra = '') {
-  if (w <= 0) return '';
-  const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
-  const hl = Math.min(L * .6, w * 1.1 + 6), hw = w * 1.1 + 4;
-  const bx = x2 - ux * hl, by = y2 - uy * hl;
-  return `<g ${extra}><path d="M${f(x1)} ${f(y1)} L${f(bx)} ${f(by)}" stroke="${color}" stroke-width="${f(w)}" fill="none"/>` +
-    `<path d="M${f(x2)} ${f(y2)} L${f(bx - uy * hw)} ${f(by + ux * hw)} L${f(bx + uy * hw)} ${f(by - ux * hw)} Z" fill="${color}"/></g>`;
-}
-// The ghost of an arrow: a dashed outline at its normal width.
-function ghostArrow(x1, y1, x2, y2, w, color, extra = '') {
-  if (w <= 0) return '';
-  const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
-  const hl = Math.min(L * .6, w * 1.1 + 6), hw = w * 1.1 + 4, bx = x2 - ux * hl, by = y2 - uy * hl, h = w / 2;
-  const pts = [[x1 - uy * h, y1 + ux * h], [bx - uy * h, by + ux * h], [bx - uy * hw, by + ux * hw], [x2, y2], [bx + uy * hw, by - ux * hw], [bx + uy * h, by - ux * h], [x1 + uy * h, y1 - ux * h]];
-  return `<path ${extra} d="M${pts.map(([x, y]) => `${f(x)} ${f(y)}`).join(' L')} Z" fill="none" stroke="${color}" stroke-width="1.6" stroke-dasharray="4 3" opacity=".8"/>`;
-}
-const flowWidth = v => v <= 0.03 ? 0 : clamp(2 + 6 * v, 2, 16);
-
-/* The membrane: two rows of phospholipids, heads out, tails in. Snipped ones in the inner row lose a tail. */
-const HEAD_X = [...Array(30)].map((_, i) => 8 + i * 16);
-const SNIP_ORDER = [14, 15, 13, 16, 12, 17, 11, 18];
-function bilayer(snipped = 0, hl = -1) {
-  const gaps = SNIP_ORDER.slice(0, snipped);
-  let b = `<g data-membrane><rect x="0" y="22" width="480" height="52" fill="${MEMB}"/>`;
-  HEAD_X.forEach((x, i) => {
-    const c = i === hl ? BLUE : INK, head = i === hl ? BLUE : HEADC;
-    b += `<path d="M${x - 2.5} 36 V47 M${x + 2.5} 36 V47" stroke="${c}" stroke-width="1.6"/><circle cx="${x}" cy="31" r="5.5" fill="${head}" stroke="${c}" stroke-width="1.2"/>`;
-    b += `<path d="M${x - 2.5} 60 V50${gaps.includes(i) ? '' : ` M${x + 2.5} 60 V50`}" stroke="${INK}" stroke-width="1.6"/><circle cx="${x}" cy="65" r="5.5" fill="${HEADC}" stroke="${INK}" stroke-width="1.2"${gaps.includes(i) ? ' data-snipped' : ''}/>`;
-  });
-  return b + '</g>';
-}
-const bolt = (x, y, s = 1, extra = 'data-injury') => `<path ${extra} transform="translate(${f(x)} ${f(y)}) scale(${s})" d="M10 0 L-6 30 L6 30 L-10 62 L20 22 L6 22 L18 0 Z" fill="${RED}"/>`;
-const AA_X = [240, 210, 270, 180, 300, 150, 330, 120];
-const chain = (x, y, extra = 'data-aa') => `<path ${extra} d="M${x - 12} ${y} l4 -5 l4 5 l4 -5 l4 5 l4 -5 l4 5" fill="none" stroke="${AMBER}" stroke-width="2.6" stroke-linejoin="round"/>`;
-const scissors = op => `<g data-scissors opacity="${op.toFixed(2)}"><path d="M232 98 L250 74 M248 98 L230 74" stroke="${INK}" stroke-width="3" stroke-linecap="round"/><circle cx="229" cy="102" r="5.5" fill="none" stroke="${INK}" stroke-width="2.4"/><circle cx="251" cy="102" r="5.5" fill="none" stroke="${INK}" stroke-width="2.4"/></g>`;
+const HEADC = '#efb562', CELL = '#f5e7cf', MEMB = '#f6ead6', CELLEDGE = '#c98a3a', GLOW = '#f4d6d1';
 const hexPts = (x, y, r) => [0, 1, 2, 3, 4, 5].map(i => { const a = Math.PI / 3 * i + Math.PI / 6; return `${f(x + r * Math.cos(a))} ${f(y + r * Math.sin(a))}`; }).join(' L');
-const steroidIcon = (x, y, extra = 'data-steroid') => `<g ${extra}><path d="M${hexPts(x, y, 9)} Z" fill="#fff" stroke="${GREEN}" stroke-width="2.4"/><path d="M${hexPts(x + 15.6, y, 9)} Z" fill="#fff" stroke="${GREEN}" stroke-width="2.4"/></g>`;
-const plug = (x, y, col, extra) => `<rect ${extra} x="${f(x)}" y="${f(y)}" width="18" height="26" rx="3" fill="${col}"/>`;
-const tag = (x, y, extra = 'data-tag') => `<path ${extra} d="M${f(x)} ${f(y)} h14 l7 7 l-7 7 h-14 Z" fill="${RED}" stroke="#fff" stroke-width="1.2"/>`;
+const bolt = (x, y, s = 1) => `<path data-injury transform="translate(${f(x)} ${f(y)}) scale(${f(s)})" d="M10 0 L-6 30 L6 30 L-10 62 L20 22 L6 22 L18 0 Z" fill="${C.red}"/>`;
+const chain = (x, y, w = 4) => `<path d="M${f(x - 14)} ${f(y)} l4.7 -5 l4.7 5 l4.7 -5 l4.7 5 l4.7 -5 l4.7 5" fill="none" stroke="${C.amber}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round"/>`;
+const steroidIcon = (x, y) => `<g data-steroid><path d="M${hexPts(x, y, 9)} Z" fill="#fff" stroke="${C.green}" stroke-width="2.6"/><path d="M${hexPts(x + 15.6, y, 9)} Z" fill="#fff" stroke="${C.green}" stroke-width="2.6"/></g>`;
+const plug = (x, y, col, extra = '') => rect(x, y, 18, 28, col, '#fff', 1.4, `rx="4" ${extra}`);
+const tag = (x, y) => `<path data-tag d="M${f(x)} ${f(y)} h17 l8 8 l-8 8 h-17 Z" fill="${C.red}" stroke="#fff" stroke-width="1.4"/>`;
+function scissors(x, y, open = 1, op = 1) {
+  const a = 0.35 + 0.25 * open;
+  return `<g data-scissors ${fade(op)}>${path(`M${f(x - 10 * Math.sin(a))} ${f(y + 6)} L${f(x + 22 * Math.sin(a))} ${f(y - 22)} M${f(x + 10 * Math.sin(a))} ${f(y + 6)} L${f(x - 22 * Math.sin(a))} ${f(y - 22)}`, C.ink, 3.2)}${circle(x - 9, y + 12, 6, 'none', C.ink, 2.6)}${circle(x + 9, y + 12, 6, 'none', C.ink, 2.6)}</g>`;
+}
+// A flow arrow whose width follows the model, with its own head (a marker head would grow with the stroke).
+function flow(x1, y1, x2, y2, w, col, extra = '') {
+  if (w <= 0.05) return '';
+  const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
+  const hl = Math.min(L * .5, w * 1.1 + 8), hw = w * 1.1 + 5, bx = x2 - ux * hl, by = y2 - uy * hl;
+  return `<g ${extra}><path d="M${f(x1)} ${f(y1)} L${f(bx)} ${f(by)}" stroke="${col}" stroke-width="${f(w)}" fill="none"/>`
+    + `<path d="M${f(x2)} ${f(y2)} L${f(bx - uy * hw)} ${f(by + ux * hw)} L${f(bx + uy * hw)} ${f(by - ux * hw)} Z" fill="${col}"/></g>`;
+}
+function flowGhost(x1, y1, x2, y2, w, extra = '') {
+  if (w <= 0.05) return '';
+  const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
+  const hl = Math.min(L * .5, w * 1.1 + 8), hw = w * 1.1 + 5, bx = x2 - ux * hl, by = y2 - uy * hl, h = w / 2;
+  const pts = [[x1 - uy * h, y1 + ux * h], [bx - uy * h, by + ux * h], [bx - uy * hw, by + ux * hw], [x2, y2], [bx + uy * hw, by - ux * hw], [bx + uy * h, by - ux * h], [x1 + uy * h, y1 - ux * h]];
+  return `<path ${extra} d="M${pts.map(([x, y]) => `${f(x)} ${f(y)}`).join(' L')} Z" fill="none" stroke="${C.ink}" stroke-width="1.5" stroke-dasharray="4 3"/>`;
+}
+const flowWidth = v => v <= 0.03 ? 0 : clamp(2 + 5.5 * v, 2, 13);
 
-/* Layout of the pathway picture */
-const AA_Y = 124, ENZ_Y = 196, ENZ_H = 36, PROD_Y = 290, LABEL_Y = 308, BASE = 440;
-const ENZ = { cox1: 100, cox2: 300, lox: 418 };
-const METERS = {
-  shield: [62, GREEN, ['stomach', 'shield'], 'prostaglandins'],
-  clot: [178, RED, ['platelet', 'clumping'], 'thromboxane'],
-  inflam: [300, AMBER, ['pain, swelling', 'and fever'], 'prostaglandins'],
-  airway: [418, BLUE, ['airway', 'squeeze'], 'leukotrienes']
-};
-const meterH = v => clamp(52 * v, 0, 110);
-function meter(k, cur, ghost, key) {
-  const [x, col, [l1, l2]] = METERS[k], h = meterH(cur[k]);
-  let b = `<rect x="${x - 24}" y="${BASE - 114}" width="48" height="114" fill="#fff" stroke="${RULE}"/>`;
-  b += `<rect data-meter="${k}" data-level="${cur[k].toFixed(4)}" x="${x - 18}" y="${f(BASE - h)}" width="36" height="${f(h)}" fill="${col}"/>`;
-  if (ghost) { const g = meterH(ghost[k]); b += `<rect data-ghost-meter="${k}" x="${x - 21}" y="${f(BASE - g)}" width="42" height="${f(g)}" fill="none" stroke="${INK}" stroke-width="2" stroke-dasharray="5 3"/>`; }
-  if (cur[k] > 110 / 52 + 0.01) b += `<path d="M${x} ${BASE - 124} l-8 9 h16 Z" fill="${col}"/>`;
-  b += text(x, BASE + 20, l1, `xs b`) + text(x, BASE + 38, l2, 'xs b');
-  if (key) b += `<rect data-key-measure="${k}" x="${x - 56}" y="${BASE - 122}" width="112" height="172" fill="none" stroke="${BLUE}" stroke-width="3"/>` + text(x, BASE + 70, 'key measure', 'xs b blue');
-  return b;
+/* ---------- The pathway: membrane on top, a trunk of arachidonic acid, one row per signal ---------- */
+const LIPID_X = [...Array(19)].map((_, i) => 14 + i * 24);
+function membrane(snipped = 0) {
+  let s = rect(0, 4, 480, 56, MEMB);
+  LIPID_X.forEach((x, i) => {
+    const gone = i >= 1 && i <= snipped;   // the inner phospholipids nearest the scissors lose a tail first
+    s += path(`M${x - 2.5} 20 V30 M${x + 2.5} 20 V30`, C.ink, 1.6) + circle(x, 13, 6.5, HEADC, C.ink, 1.2);
+    s += path(`M${x - 2.5} 44 V34${gone ? '' : ` M${x + 2.5} 44 V34`}`, C.ink, 1.6) + circle(x, 51, 6.5, HEADC, C.ink, 1.2);
+  });
+  return part('membrane', s);
 }
-function enzymeBox(id, label, cur, ghost, show) {
-  const p = cur.p, x = ENZ[id];
-  let w = id === 'lox' ? 110 : 104;
-  if (id === 'cox2') w = 104 * clamp(0.45 + 0.55 * cur.cox2Made, 0.45, 1.3);
-  let b = '';
-  if (ghost && id === 'cox2' && Math.abs(cur.cox2Made - ghost.cox2Made) > 0.02) b += `<rect data-ghost-enzyme="cox2" x="${f(x - 52)}" y="${ENZ_Y - 3}" width="104" height="${ENZ_H + 6}" rx="7" fill="none" stroke="${INK}" stroke-width="1.6" stroke-dasharray="4 3"/>`;
-  b += `<rect data-enzyme="${id}" data-w="${f(w)}" x="${f(x - w / 2)}" y="${ENZ_Y}" width="${f(w)}" height="${ENZ_H}" rx="6" fill="#fff" stroke="${INK}" stroke-width="2"/>`;
-  b += text(x - (id === 'lox' ? 0 : 6), ENZ_Y + 24, label, id === 'lox' ? 'xs b' : 'sm b');
-  if (!show.includes('drugs') || id === 'lox') return b;
-  const right = x + w / 2 - 22;
-  if (p.nsaid > 0.02) b += plug(right, ENZ_Y + 5, INK, `data-plug="nsaid" opacity="${clamp(p.nsaid / 0.8, 0.2, 1).toFixed(2)}"`);
-  if (id === 'cox2' && p.cox2i > 0.02) b += plug(x - w / 2 + 4, ENZ_Y + 5, BLUE, `data-plug="cox2i" opacity="${clamp(p.cox2i / 0.85, 0.2, 1).toFixed(2)}"`);
-  if (p.aspirin > 0.02) b += `<g opacity="${clamp(p.aspirin / 0.9, 0.2, 1).toFixed(2)}">${tag(x - w / 2 - 8, ENZ_Y - 10)}</g>`;
-  return b;
-}
-const ALL = ['membrane', 'injury', 'scissors', 'enzymes', 'cox1', 'shield', 'clot', 'cox2', 'inflam', 'lox', 'airway', 'drugs'];
-function picture(cur, opt = {}) {
-  const { show = ALL, ghost = null, legend = '', box = false } = opt;
-  const has = k => show.includes(k), p = cur.p;
-  let b = text(12, 16, 'outside the cell', 'xs b muted', 'start');
-  const snipped = has('scissors') ? clamp(Math.round(4 * cur.release), 0, 8) : 0;
-  b += bilayer(snipped);
-  b += text(250, 16, 'cell membrane', 'xs b') + text(12, 140, 'inside the cell', 'xs b muted', 'start');
-  if (has('injury') && p.injury > 0.04) b += bolt(436, 0, clamp(0.55 + 0.45 * p.injury, 0.6, 1.2)) + text(426, 14, 'injury', 'xs b red', 'end');
-  let fl = '';
-  if (has('scissors')) {
-    b += scissors(clamp(cur.release, 0.3, 1)) + text(262, 96, 'phospholipase', 'xs b', 'start');
-    AA_X.slice(0, snipped).forEach(x => { b += chain(x, AA_Y); });
-    b += text(240, 152, 'arachidonic acid', 'xs b amber');
-    if (has('drugs') && p.steroid > 0.02) b += steroidIcon(190, 88) + text(176, 98, 'glucocorticoid', 'xs b green', 'end');
-    if (!has('enzymes')) {
-      // One freed chain, enlarged, so the raw material is easy to see.
-      let z = 'M80 236';
-      for (let i = 0; i < 20; i++) z += ` l16 ${i % 2 ? 14 : -14}`;
-      b += `<circle cx="240" cy="${AA_Y - 2}" r="18" fill="none" stroke="${MUTED}" stroke-width="1.4" stroke-dasharray="4 3"/><path d="M226 136 L120 214 M254 136 L360 214" stroke="${MUTED}" stroke-width="1.2" stroke-dasharray="4 3"/>`;
-      b += `<path data-aa-big d="${z}" fill="none" stroke="${AMBER}" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>`;
-      b += `<circle cx="80" cy="236" r="7" fill="${AMBER}"/>` + text(240, 282, 'one freed arachidonic acid, enlarged', 'xs b amber');
+// Rows: the middle of each, top to bottom.
+const ROW = { shield: 160, clot: 216, inflam: 272, airway: 328 };
+const ROW_ORDER = ['shield', 'clot', 'inflam', 'airway'];
+const ROW_COL = { shield: C.green, clot: C.red, inflam: C.amber, airway: C.blue };
+const ROW_TONE = { shield: 'green', clot: 'red', inflam: 'amber', airway: 'blue' };
+const PRODUCT = { shield: 'prostaglandins', clot: 'thromboxane', inflam: 'prostaglandins', airway: 'leukotrienes' };
+const EFFECT = { shield: ['stomach shield'], clot: ['platelet clumping'], inflam: ['pain, swelling', 'and fever'], airway: ['airway squeeze'] };
+const PRODUCT_PART = { shield: 'pgA', clot: 'tx', inflam: 'pgC', airway: 'lt' };
+const EFFECT_PART = { shield: 'shield', clot: 'clot', inflam: 'inflam', airway: 'airway' };
+const BOX_X = 34, BOX_W = 114, ARROW_X0 = 152, ARROW_X1 = 284, EFFECT_X = 292, METER_X = 446;
+// How strongly each row flows, and how full its meter is (1 = the untreated injury, this lesson's normal).
+const rowFlow = (v, k) => k === 'shield' ? v.shield : k === 'clot' ? v.clot : k === 'inflam' ? v.via2 : v.lt;
+const rowLevel = (v, k) => v[k];
+const meterFrac = x => clamp(0.5 * x, 0.02, 1);
+function enzymes(v, o) {
+  let s = '';
+  const p = v.p;
+  if (o.cox === 'one') {
+    s += part('cox', rect(BOX_X, 140, BOX_W, 152, '#fff', C.ink, 2, 'rx="8"') + text(BOX_X + BOX_W / 2, 214, 'COX', 'sm b') + text(BOX_X + BOX_W / 2, 236, 'cyclo-', 'xs muted') + text(BOX_X + BOX_W / 2, 256, 'oxygenase', 'xs muted'));
+  } else if (o.cox) {
+    s += part('cox cox1', rect(BOX_X, 140, BOX_W, 96, '#fff', C.ink, 2, 'rx="8" data-enzyme="cox1"') + text(BOX_X + 44, 194, 'COX-1', 'sm b'));
+    if (o.rows.includes('inflam')) {
+      const w = BOX_W * clamp(0.4 + 0.6 * v.cox2Made, 0.4, 1.3), x = BOX_X;
+      if (o.ghost && Math.abs(v.cox2Made - o.ghost.cox2Made) > 0.02) s += rect(x, 252, BOX_W, 40, 'none', C.ink, 1.6, 'rx="8" stroke-dasharray="4 3" data-ghost-enzyme="cox2"');
+      s += part('cox cox2', rect(x, 252, w, 40, '#fff', C.ink, 2, `rx="8" data-enzyme="cox2" data-w="${f(w)}"`) + text(x + Math.min(w, BOX_W) / 2 - 8, 279, 'COX-2', 'sm b'));
     }
+    // Drugs on the COX enzymes: an NSAID's plug, a COX-2 selective plug, aspirin's tag.
+    const a1 = p.nsaid > 0.02, a2 = p.cox2i > 0.02, as = p.aspirin > 0.02;
+    if (a1) s += part('plug', plug(BOX_X + BOX_W - 26, 172, C.ink, `data-plug="nsaid" ${fade(clamp(p.nsaid / 0.8, 0.15, 1))}`) + (o.rows.includes('inflam') ? plug(BOX_X + BOX_W - 26, 258, C.ink, `data-plug="nsaid" ${fade(clamp(p.nsaid / 0.8, 0.15, 1))}`) : ''));
+    if (a2 && o.rows.includes('inflam')) s += part('plug', plug(BOX_X + BOX_W - 26, 258, C.blue, `data-plug="cox2i" ${fade(clamp(p.cox2i / 0.85, 0.15, 1))}`));
+    if (as) s += part('tag', `<g ${fade(clamp(p.aspirin / 0.9, 0.15, 1))}>${tag(BOX_X + BOX_W - 30, 178)}${o.rows.includes('inflam') ? tag(BOX_X + BOX_W - 30, 264) : ''}</g>`);
   }
-  if (has('enzymes')) {
-    const lines = [['cox1', cur.via1, ghost?.via1], ...(has('cox2') ? [['cox2', cur.via2, ghost?.via2]] : []), ['lox', cur.lt, ghost?.lt]];
-    for (const [id, v, g] of lines) {
-      if (ghost) fl += ghostArrow(240, 160, ENZ[id], ENZ_Y - 2, flowWidth(g), INK, `data-ghost-flow="to-${id}"`);
-      fl += arrow(240, 160, ENZ[id], ENZ_Y - 2, flowWidth(v), AMBER, `data-flow="to-${id}" data-w="${f(flowWidth(v))}"`);
+  if (o.lox) s += part('lox', rect(BOX_X, 308, BOX_W, 40, '#fff', C.ink, 2, 'rx="8"') + text(BOX_X + BOX_W / 2, 334, 'lipoxygenase', 'xs b'));
+  if (p.steroid > 0.02 && o.cox && o.rows.includes('inflam')) s += `<g ${fade(clamp(p.steroid / 0.8, 0.15, 1))}>${steroidIcon(BOX_X + BOX_W - 18, 272)}</g>`;
+  return s;
+}
+// Arachidonic acid down the trunk, and each signal along its row, moving with phase.
+function trunk(v, o, phase) {
+  const w = clamp(2.5 + 4 * v.release, 2.5, 9);
+  const bottom = o.lox ? ROW.airway : 272;
+  let s = path(`M20 120 V${bottom}`, C.amber, w, 'data-trunk');
+  const into = [o.cox === 'one' ? 216 : 188, ...(o.cox && o.cox !== 'one' && o.rows.includes('inflam') ? [272] : []), ...(o.lox ? [ROW.airway] : [])];
+  if (o.cox) into.forEach(y => { s += arrowTo(20, y, BOX_X - 2, y, C.amber, 3); });
+  else if (o.lox) s += arrowTo(20, ROW.airway, BOX_X - 2, ROW.airway, C.amber, 3);
+  if (phase !== null) {
+    const n = clamp(Math.round(4 * v.release), 0, 6);
+    for (let i = 0; i < n; i++) { const u = frac(phase + i / n), y = lerp(122, bottom - 6, u); s += `<g ${fade(Math.min(1, u / .1, (1 - u) / .15))}>${chain(20, y, 3)}</g>`; }
+  }
+  return part('aa', s);
+}
+function rows(v, o, phase) {
+  let s = '';
+  for (const k of o.rows) {
+    const y = ROW[k], col = ROW_COL[k], fl = rowFlow(v, k), ay = y + 6;
+    const fromCox = k !== 'airway';
+    if (!(fromCox ? o.cox && o.cox !== 'one' : o.lox)) continue;
+    let r = '';
+    if (o.ghost) { const g = flowWidth(rowFlow(o.ghost, k)); if (Math.abs(g - flowWidth(fl)) > 0.4) r += flowGhost(ARROW_X0, ay, ARROW_X1, ay, g, `data-ghost-flow="${k}"`); }
+    r += flow(ARROW_X0, ay, ARROW_X1, ay, flowWidth(fl), col, `data-flow="${k}" data-w="${f(flowWidth(fl))}"`);
+    if (phase !== null) {
+      const n = clamp(Math.round(3 * fl), 0, 6);
+      for (let i = 0; i < n; i++) { const u = frac(phase * 1.5 + i / n), x = lerp(ARROW_X0 + 4, ARROW_X1 - 14, u); r += `<g ${fade(Math.min(1, u / .1, (1 - u) / .15))}>${circle(x, ay, 4.2, '#fff', col, 2.2)}</g>`; }
     }
-    b += enzymeBox('cox1', has('cox1') ? 'COX-1' : 'COX', cur, ghost, show);
-    if (has('cox2')) b += enzymeBox('cox2', 'COX-2', cur, ghost, show);
-    b += enzymeBox('lox', 'lipoxygenase', cur, ghost, show);
-    if (has('drugs') && p.steroid > 0.02 && has('cox2')) b += steroidIcon(196, 214, 'data-steroid="cox2"');
+    s += part(PRODUCT_PART[k], r + text((ARROW_X0 + ARROW_X1) / 2, y - 6, PRODUCT[k], `xs b ${ROW_TONE[k]}`));
+    // A leukotriene modifier blocks the airway receptors: a bar across the row's end.
+    if (k === 'airway' && v.p.ltm > 0.02) s += part('ltm', rect(ARROW_X1 - 2, ay - 18, 8, 36, C.ink, 'none', 0, `rx="2" data-plug="ltm" ${fade(clamp(v.p.ltm / 0.85, 0.15, 1))}`));
+    if (o.effects !== false) s += effect(v, o, k);
   }
-  const out = [];
-  if (has('shield')) out.push(['shield', 84, ENZ_Y + ENZ_H + 2]);
-  if (has('clot')) out.push(['clot', 120, ENZ_Y + ENZ_H + 2]);
-  if (has('cox2')) out.push(['inflam', 300, ENZ_Y + ENZ_H + 2]);
-  if (has('airway')) out.push(['airway', 418, ENZ_Y + ENZ_H + 2]);
-  const flowOf = { shield: v => v.shield, clot: v => v.clot, inflam: v => v.via2, airway: v => v.lt };
-  for (const [k, x0, y0] of out) {
-    const [x, col, , name] = METERS[k];
-    if (ghost) fl += ghostArrow(x0, y0, x, PROD_Y, flowWidth(flowOf[k](ghost)), INK, `data-ghost-flow="${k}"`);
-    fl += arrow(x0, y0, x, PROD_Y, flowWidth(flowOf[k](cur)), col, `data-flow="${k}" data-w="${f(flowWidth(flowOf[k](cur)))}"`);
-    b += text(x, LABEL_Y, name, `xs b ${({ shield: 'green', clot: 'red', inflam: 'amber', airway: 'blue' })[k]}`);
-  }
-  const meters = ['shield', 'clot', has('inflam') ? 'inflam' : null, has('airway') ? 'airway' : null].filter(k => k && has(k));
-  let g = '';
-  for (const k of meters) g += meter(k, cur, ghost, box && (k === 'inflam' || k === 'shield'));
-  if (has('drugs') && p.ltm > 0.02 && has('airway')) g += `<rect data-plug="ltm" x="392" y="314" width="52" height="9" fill="${INK}" opacity="${clamp(p.ltm / 0.85, 0.2, 1).toFixed(2)}"/>`;
-  if (ghost) b += `<g class="ghost" data-ghost="normal" ${attrs(ghost)}></g>`;
-  b += `<g data-new-state="${esc(legend || 'current')}" ${attrs(cur)}>${fl}${g}</g>`;
-  const items = [];
-  if (has('scissors')) items.push(KEY.aa);
-  if (has('drugs')) {
-    if (p.nsaid > 0.02) items.push(KEY.nsaid);
-    if (p.cox2i > 0.02) items.push(KEY.cox2i);
-    if (p.aspirin > 0.02) items.push(KEY.aspirin);
-    if (p.steroid > 0.02) items.push(KEY.steroid);
-    if (p.ltm > 0.02) items.push(KEY.ltm);
-  }
-  if (ghost) items.push(KEY.normal);
-  if (legend) items.push([`<path d="M0 -5 H32 V5 H0 Z" fill="${AMBER}"/>`, legend]);
-  let top = meters.length ? BASE + (box ? 82 : 52) : has('enzymes') ? 248 : has('scissors') ? 296 : 168;
-  if (out.length && !meters.length) top = LABEL_Y + 14;
-  if (!items.length) return { body: b, h: top + 10 };
-  const key = keyRow(items, top + 14);
-  return { body: b + key.body, h: top + 30 + 26 * (key.rows - 1) };
+  return s;
 }
-const KEYS = ['release', 'via1', 'via2', 'cox2Made', 'pg', 'lt', 'inflam', 'shield', 'clot', 'airway'];
-const attrs = v => KEYS.map(k => `data-${k.toLowerCase()}="${v[k].toFixed(4)}"`).join(' ');
-function keyRow(items, y) {
-  let x = 10, row = 0, out = '';
-  for (const [icon, word] of items) {
-    const w = 38 + word.length * 8.2;
-    if (x > 10 && x + w > 474) { x = 10; row++; }
-    out += `<g transform="translate(${f(x)} ${y + row * 26})">${icon}${text(38, 5, word, 'xs', 'start')}</g>`;
-    x += w + 14;
-  }
-  return { body: out, rows: row + 1 };
+function effect(v, o, k) {
+  const y = ROW[k], lines = EFFECT[k], two = lines.length > 1;
+  let s = lines.map((w, i) => text(EFFECT_X, (two ? y - 12 : y - 2) + i * 20, w, 'xs b', 'start')).join('');
+  const delta = o.deltas?.[k];
+  if (delta) s += `<g ${fade(o.a ?? 1)}>${text(EFFECT_X, (two ? y + 28 : y + 19), delta, 'xs b blue', 'start')}</g>`;
+  // The meter: fills from the bottom; a dashed line marks normal.
+  const top = y - 24, h = 48, level = rowLevel(v, k), fh = h * meterFrac(level);
+  let m = rect(METER_X, top, 28, h, '#fff', C.rule, 1.5) + rect(METER_X, top + h - fh, 28, fh, ROW_COL[k], 'none', 0, `data-meter="${k}" data-level="${level.toFixed(4)}"`);
+  if (o.ghost) m += path(`M${METER_X - 5} ${f(top + h - h * meterFrac(rowLevel(o.ghost, k)))} H${METER_X + 33}`, C.ink, 2.2, 'stroke-dasharray="4 3" data-ghost-meter');
+  s += part(EFFECT_PART[k], m);
+  if (o.key && (k === 'shield' || k === 'inflam')) s += rect(EFFECT_X - 6, y - 28, 190, 56, 'none', C.blue, 3, 'data-key-measure');
+  return s;
 }
-const KEY = {
-  aa: [chain(16, 2, ''), 'arachidonic acid'],
-  nsaid: [plug(7, -13, INK, ''), 'NSAID plug'],
-  cox2i: [plug(7, -13, BLUE, ''), 'COX-2 selective plug'],
-  aspirin: [tag(5, -7, ''), 'aspirin tag, for good'],
-  steroid: [steroidIcon(9, 0, ''), 'glucocorticoid'],
-  ltm: [`<rect x="2" y="-4" width="30" height="8" fill="${INK}"/>`, 'leukotriene blocker'],
-  normal: [`<path d="M0 0 H32" stroke="${INK}" stroke-width="2" stroke-dasharray="6 5" opacity=".8"/>`, 'normal']
-};
-const pictureSvg = (label, cur, opt) => { const { body: b, h } = picture(cur, opt); return svg(label, b, h); };
+function top(v, o) {
+  const snipped = o.scissors ? clamp(Math.round(4 * v.release), 0, 6) : 0;
+  let s = membrane(snipped);
+  if (o.scissors) {
+    s += part('scissors', scissors(52, 84, 1, clamp(0.35 + 0.65 * v.release, 0.3, 1)));
+    s += text(78, 90, 'phospholipase A2', 'xs b', 'start');
+    if (v.p.steroid > 0.02) s += `<g ${fade(clamp(v.p.steroid / 0.8, 0.15, 1))}>${steroidIcon(246, 84)}</g>`;
+    const nc = clamp(Math.round(3 * v.release), 0, 3);
+    for (let i = 0; i < nc; i++) s += part('aa', chain(22 + i * 30, 112, 3.4));
+    s += text(116, 118, 'arachidonic acid', 'xs b amber', 'start');
+  }
+  return s;
+}
+function pathway(v, o = {}, phase = 0) {
+  const opt = { cox: true, lox: true, rows: ROW_ORDER, scissors: true, ...o };
+  let s = top(v, opt) + trunk(v, opt, phase) + enzymes(v, opt) + rows(v, opt, phase);
+  if (opt.words) s += `<g ${fade(opt.a ?? 1)}>${opt.words.map((w, i) => text(470, 92 + i * 21, w, `xs b ${opt.tone || 'blue'}`, 'end')).join('')}</g>`;
+  if (opt.ghost) s += text(470, 384, 'dashed: the untreated injury', 'xs muted', 'end');
+  return s;
+}
+const H_PATH = 392;
 
-/* Steps 1 and 2: one whole cell, with its membrane magnified above it. */
-function cellPicture(injured) {
-  let b = text(12, 16, 'outside the cell', 'xs b muted', 'start') + bilayer(0, injured ? -1 : 23);
-  b += text(12, 98, 'the membrane, magnified', 'xs b', 'start');
-  if (!injured) b += `<path d="M376 76 V84" stroke="${BLUE}" stroke-width="2"/>` + text(468, 98, 'one phospholipid', 'xs b blue', 'end');
-  const rx = injured ? 188 : 176, ry = injured ? 124 : 114, cy = 290;
-  b += `<ellipse cx="-30" cy="${cy + 20}" rx="70" ry="100" fill="${CELL}" stroke="${CELLEDGE}" stroke-width="4" opacity=".7"/><ellipse cx="510" cy="${cy + 20}" rx="70" ry="100" fill="${CELL}" stroke="${CELLEDGE}" stroke-width="4" opacity=".7"/>`;
-  if (injured) b += `<ellipse data-glow cx="240" cy="${cy}" rx="${rx + 18}" ry="${ry + 18}" fill="#f4d6d1" stroke="${RED}" stroke-width="2.5" stroke-dasharray="6 5"/>`;
-  b += `<path d="M150 72 L196 ${cy - ry + 6} M330 72 L284 ${cy - ry + 6}" stroke="${MUTED}" stroke-width="1.4" stroke-dasharray="5 4"/>`;
-  b += `<ellipse data-cell cx="240" cy="${cy}" rx="${rx}" ry="${ry}" fill="${CELL}" stroke="${CELLEDGE}" stroke-width="7"/>`;
-  b += `<ellipse cx="240" cy="${cy}" rx="${rx}" ry="${ry}" fill="none" stroke="${INK}" stroke-width="1.4"/>`;
-  b += `<circle cx="240" cy="${cy - ry}" r="16" fill="none" stroke="${MUTED}" stroke-width="1.6" stroke-dasharray="4 3"/>`;
-  [[180, 260, 18, 11], [300, 330, 22, 12], [200, 340, 14, 9], [310, 250, 15, 10]].forEach(([x, y, a, c]) => { b += `<ellipse cx="${x}" cy="${y}" rx="${a}" ry="${c}" fill="#ead3ae"/>`; });
-  b += text(240, cy + 6, 'one cell', 'sm b');
-  b += `<path d="M78 196 L${240 - rx * 0.83} ${f(cy - ry * 0.56)}" stroke="${MUTED}" stroke-width="1.4"/>` + text(20, 190, 'membrane', 'xs b', 'start');
-  if (injured) {
-    b += bolt(400, 150, 1.1);
-    b += text(470, 150, 'injury', 'xs b red', 'end');
-    [[66, 'red'], [176, 'warm'], [300, 'swollen'], [414, 'painful']].forEach(([x, w]) => { b += text(x, 452, w, 'sm b red'); });
+/* ---------- Build the idea: the step pictures ---------- */
+// Step 1: a cell, and its membrane magnified: a double layer of phospholipids, one picked out.
+function membranePicture() {
+  let s = rect(0, 18, 480, 86, MEMB);
+  for (let i = 0; i < 16; i++) {
+    const x = 15 + i * 30, on = i === 10, c = on ? C.blue : C.ink;
+    s += (on ? part('lipid', '') : '') + path(`M${x - 3.5} 40 V58 M${x + 3.5} 40 V58`, c, on ? 2.6 : 1.8) + circle(x, 30, 9, on ? C.blue : HEADC, c, 1.4);
+    s += path(`M${x - 3.5} 64 V82 M${x + 3.5} 64 V82`, C.ink, 1.8) + circle(x, 92, 9, HEADC, C.ink, 1.4);
   }
-  return svg(injured
-    ? 'The same cell, hit by an injury drawn as a red lightning bolt at its upper right. The cell has swollen and a red dashed glow surrounds it. Four words under it name the signs of inflammation: red, warm, swollen, painful. The magnified membrane above it is unchanged.'
-    : 'At the top, a magnified strip of membrane: two rows of phospholipids, round orange heads facing outward on each side and pairs of tails tucked into the middle. One phospholipid, a head and two tails, is coloured blue and labelled. Below, dashed lines lead down to one whole oval cell, its outline labelled membrane, with neighbouring cells at the edges.', b, injured ? 470 : 430);
+  s += part('lipid', circle(315, 30, 13, 'none', C.blue, 2) + path('M318 44 L336 116', C.blue, 1.5));
+  s += text(470, 132, 'one phospholipid:', 'xs b blue', 'end') + text(470, 153, 'a head and two tails', 'xs b blue', 'end');
+  s += text(12, 132, 'the membrane, magnified:', 'xs b', 'start') + text(12, 153, 'a double layer', 'xs b', 'start');
+  s += path('M196 104 L232 194 M284 104 L248 194', C.muted, 1.4, 'stroke-dasharray="5 4"') + circle(240, 196, 9, 'none', C.muted, 1.6, 'stroke-dasharray="3 3"');
+  s += `<ellipse cx="-30" cy="262" rx="60" ry="64" fill="${CELL}" stroke="${CELLEDGE}" stroke-width="4" opacity=".7"/><ellipse cx="510" cy="262" rx="60" ry="64" fill="${CELL}" stroke="${CELLEDGE}" stroke-width="4" opacity=".7"/>`;
+  s += part('membrane', `<ellipse data-cell cx="240" cy="262" rx="160" ry="66" fill="${CELL}" stroke="${CELLEDGE}" stroke-width="7"/>`);
+  s += text(240, 270, 'one cell', 'sm b') + path('M96 300 L72 324', C.ink, 1.5) + text(8, 340, 'membrane', 'xs b', 'start');
+  return s;
+}
+// Step 2, moving: an injury, then the four signs of inflammation one by one.
+function injuryPicture(t) {
+  const k = ease(span(t, .1, .5)), rx = lerp(150, 170, k), ry = lerp(76, 88, k);
+  let s = `<ellipse cx="-20" cy="170" rx="56" ry="78" fill="${CELL}" stroke="${CELLEDGE}" stroke-width="4" opacity=".7"/><ellipse cx="500" cy="170" rx="56" ry="78" fill="${CELL}" stroke="${CELLEDGE}" stroke-width="4" opacity=".7"/>`;
+  s += `<ellipse cx="236" cy="170" rx="${f(rx + 22)}" ry="${f(ry + 20)}" fill="${GLOW}" stroke="${C.red}" stroke-width="2.5" stroke-dasharray="6 5" ${fade(k)}/>`;
+  s += part('membrane', `<ellipse data-cell cx="236" cy="170" rx="${f(rx)}" ry="${f(ry)}" fill="${CELL}" stroke="${CELLEDGE}" stroke-width="7"/>`);
+  s += text(236, 178, 'injured tissue', 'sm b');
+  s += `<g ${fade(span(t, .02, .1))}>${bolt(384, 16, 1.1)}${text(374, 40, 'injury', 'xs b red', 'end')}</g>`;
+  // The first signals, made from the cell membrane itself.
+  for (let i = 0; i < 6; i++) { const a = -2.4 + i * .4, d = 10 + 26 * frac(t * 2 + i / 6); s += `<g ${fade(span(t, .3, .45) * (1 - frac(t * 2 + i / 6)))}>${chain(236 + (rx + d) * Math.cos(a) * .98, 170 + (ry + d) * Math.sin(a), 3)}</g>`; }
+  s += `<g ${fade(span(t, .35, .5))}>${text(12, 34, 'first signals: made', 'xs b amber', 'start')}${text(12, 55, 'from the membrane', 'xs b amber', 'start')}</g>`;
+  [['red', 64], ['warm', 178], ['swollen', 296], ['painful', 414]].forEach(([w, x], i) => { s += part('signs', `<g ${fade(span(t, .5 + i * .1, .58 + i * .1))}>${text(x, 316, w, 'sm b red')}</g>`); });
+  return s;
+}
+// Step 3, moving: phospholipase A2 snips arachidonic acid out of the membrane, one phospholipid after another.
+function scissorsPicture(t) {
+  const L = [...Array(16)].map((_, i) => 15 + i * 30);
+  const travel = span(t, .18, .92), sx = lerp(440, 90, travel);
+  let s = rect(0, 30, 480, 86, MEMB);
+  L.forEach(x => {
+    const cut = x > sx + 6 && x < 452;
+    s += path(`M${x - 3.5} 52 V70 M${x + 3.5} 52 V70`, C.ink, 1.8) + circle(x, 42, 9, HEADC, C.ink, 1.4);
+    s += path(`M${x - 3.5} 76 V94${cut ? '' : ` M${x + 3.5} 76 V94`}`, C.ink, 1.8) + circle(x, 104, 9, HEADC, C.ink, 1.4);
+  });
+  s += part('membrane', path('M0 30 H480 M0 116 H480', C.rule, 1.5));
+  s += `<g ${fade(span(t, 0, .08))}>${bolt(436, -2, .9)}${text(426, 22, 'injury switches it on', 'xs b red', 'end')}</g>`;
+  s += part('scissors', scissors(sx, 140, 0.5 + 0.5 * Math.sin(t * 40), span(t, .1, .2)));
+  s += `<g ${fade(span(t, .12, .22))}>${text(clamp(sx + 26, 110, 300), 156, 'phospholipase A2', 'xs b', 'start')}</g>`;
+  // Freed tails fall away below as arachidonic acid.
+  L.forEach((x, i) => {
+    if (!(x > sx + 6 && x < 452)) return;
+    const age = clamp((x - sx) / 120, 0, 1), y = lerp(126, 196 + (i % 3) * 18, age);
+    s += part('aa', chain(x + 4, y, 4.2));
+  });
+  s += `<g ${fade(span(t, .5, .62))}>${text(240, 268, 'arachidonic acid, freed', 'xs b amber')}</g>`;
+  return s;
+}
+// Step 8, moving: what COX-2's prostaglandins do: widen and loosen vessels, wake pain nerves, raise the thermostat.
+function effectsPicture(t) {
+  const k = ease(span(t, .15, .7));
+  let s = text(240, 24, 'COX-2’s prostaglandins at the injury', 'xs b amber');
+  for (let i = 0; i < 9; i++) { const u = frac(t * 1.5 + i / 9), x = 40 + (i % 3) * 160 + (i * 17) % 60, y = lerp(40, 92, u); s += `<g ${fade(Math.min(1, u / .1, (1 - u) / .2))}>${circle(x, y, 4.2, '#fff', C.amber, 2.2)}</g>`; }
+  // A vessel that widens and leaks.
+  const g = lerp(16, 30, k);
+  s += part('vessel', rect(10, 150 - g, 140, 2 * g, '#f6dcd6', 'none', 0) + path(`M10 ${f(150 - g)} H150 M10 ${f(150 + g)} H150`, C.red, 3));
+  for (let i = 0; i < 3; i++) { const u = frac(t * 1.2 + i / 3); s += `<g ${fade(k * Math.min(1, u / .1, (1 - u) / .2))}>${circle(40 + i * 40, 150 + g + 6 + 26 * u, 5, C.red)}</g>`; }
+  s += text(80, 240, 'vessels widen', 'xs b', 'middle') + text(80, 261, 'and leak: red,', 'xs b', 'middle') + text(80, 282, 'warm, swollen', 'xs b', 'middle');
+  // A pain nerve ending that fires more easily.
+  s += part('nerve', path('M200 200 C210 170 236 160 240 130 M240 130 C236 112 224 104 216 96 M240 130 C246 112 258 104 266 96 M240 130 V100', C.ink, 3));
+  for (let i = 0; i < 3; i++) { const x = [216, 240, 266][i], y = [94, 96, 94][i]; s += `<g ${fade(k * (0.4 + 0.6 * Math.abs(Math.sin(t * 9 + i))))}><path d="M${x} ${y - 4} l5 -10 l-2 8 l7 -1 l-5 10 l2 -8 Z" fill="${C.amber}"/></g>`; }
+  s += text(240, 240, 'pain nerves', 'xs b', 'middle') + text(240, 261, 'more sensitive:', 'xs b', 'middle') + text(240, 282, 'painful', 'xs b', 'middle');
+  // The brain's thermostat, turned up.
+  const lvl = lerp(0.35, 0.8, k);
+  s += part('fever', rect(388, 104, 24, 96, '#fff', C.ink, 2, 'rx="12"') + circle(400, 206, 16, C.red, C.ink, 2) + rect(394, 104 + 96 * (1 - lvl), 12, 96 * lvl, C.red, 'none', 0));
+  s += path('M368 120 H382 M368 152 H382', C.muted, 1.5);
+  s += text(400, 240, 'thermostat up:', 'xs b', 'middle') + text(400, 261, 'fever', 'xs b red', 'middle');
+  return s;
 }
 
 /* ---------- Words: comparisons and text alternatives ---------- */
@@ -216,131 +252,75 @@ function more(a, b, up = 'higher', down = 'lower') {
 }
 const ROWS = [['release', 'Arachidonic acid freed', 'more', 'less'], ['inflam', 'Pain, swelling and fever', 'more', 'less'], ['shield', 'Stomach shield', 'thicker', 'thinner'], ['clot', 'Platelet clumping', 'more', 'less'], ['lt', 'Leukotrienes made', 'more', 'fewer'], ['airway', 'Airway squeeze', 'stronger', 'weaker']];
 const compare = (v, ref) => ROWS.map(([k, name, up, down]) => [name, more(v[k], ref[k], up, down)]);
-const ARROW = { up: '↑', down: '↓', same: '↔' };
-const readout = (v, ref, head) => `<ul class="readout" aria-label="${esc(head)}"><li class="head">${head}</li>${compare(v, ref).map(([k, [w, d]]) => `<li><b>${k}</b> <span class="${d}">${ARROW[d]} ${w}</span></li>`).join('')}</ul>`;
+const SIGN = { up: '↑', down: '↓', same: '↔' };
+const readoutOf = (v, ref, head = 'Compared with the untreated injury') => `<ul class="readout" aria-label="${esc(head)}"><li class="head">${esc(head)}</li>${compare(v, ref).map(([k, [w, d]]) => `<li><b>${esc(k)}</b> <span class="${d}">${SIGN[d]} ${esc(w)}</span></li>`).join('')}</ul>`;
 const describe = (v, ref) => compare(v, ref).map(([k, [w]]) => `${k.toLowerCase()}: ${w}`).join('; ');
-
-/* ---------- Core step pictures ---------- */
-const S3 = ['membrane', 'injury', 'scissors'], S4 = [...S3, 'enzymes'], S5 = [...S4, 'cox1', 'shield'], S6 = [...S5, 'clot'];
-const S7 = [...S6, 'cox2'], S8 = [...S7, 'inflam'], S9 = [...S8, 'lox', 'airway'];
-const CORE = {
-  membrane: () => cellPicture(false),
-  injury: () => cellPicture(true),
-  scissors: () => pictureSvg('The magnified membrane runs across the top, with a red injury bolt at its right end. Just under the membrane, a pair of scissors labelled phospholipase has snipped one tail from four phospholipids in the inner row. The four freed tails float below as amber zigzag chains labelled arachidonic acid, and one of them is shown enlarged underneath: a long amber zigzag.', NV, { show: S3 }),
-  roads: () => pictureSvg('Under the freed amber chains of arachidonic acid, amber arrows fork down two roads: one to the left into a box labelled COX, and one to the right into a box labelled lipoxygenase. Nothing comes out of either box yet.', NV, { show: S4 }),
-  cox1: () => pictureSvg('The left-hand box is now labelled COX-1. Below it, a green arrow carries prostaglandins down to a green meter labelled stomach shield, filled to its everyday level.', NV, { show: S5 }),
-  platelets: () => pictureSvg('A second arrow leaves COX-1: a red one carrying thromboxane to a red meter labelled platelet clumping, beside the green stomach shield meter.', NV, { show: S6 }),
-  cox2: () => pictureSvg('A third box, COX-2, has appeared between COX-1 and lipoxygenase, drawn as large as COX-1 because the injured cell has made plenty of it. A thick amber arrow from arachidonic acid feeds it, and an amber arrow carries its prostaglandins downward.', NV, { show: S7 }),
-  effects: () => pictureSvg('Under COX-2, its prostaglandins now fill an amber meter labelled pain, swelling and fever, beside the stomach shield and platelet clumping meters.', NV, { show: S8 }),
-  lox: () => pictureSvg('On the right, lipoxygenase now sends a blue arrow of leukotrienes down to a blue meter labelled airway squeeze. Leukotrienes also call in white blood cells. Four meters now stand in a row: stomach shield, platelet clumping, pain swelling and fever, and airway squeeze.', NV, { show: S9 }),
-  whole: () => pictureSvg('The whole pathway. The injury frees arachidonic acid from the membrane; it flows to COX-1, COX-2 and lipoxygenase. COX-1 feeds the stomach shield and platelet clumping meters, COX-2 feeds pain, swelling and fever, and lipoxygenase feeds airway squeeze. Blue frames mark the two key measures: pain, swelling and fever, and the stomach shield.', NV, { show: ALL, box: true })
-};
 
 /* ---------- What changes it ---------- */
 const CHANGES = {
-  nsaid: { to: () => AM.build('normal', ['nsaid']), legend: 'with an NSAID' },
-  cox2i: { to: () => AM.build('normal', ['cox2i']), legend: 'with a COX-2 selective inhibitor' },
-  aspirin: { to: () => AM.build('normal', ['aspirin']), legend: 'with aspirin' },
-  steroid: { to: () => AM.build('normal', ['steroid']), legend: 'with a glucocorticoid' },
-  ltm: { to: () => AM.build('normal', ['ltm']), legend: 'with a leukotriene modifier' }
+  nsaid: AM.build('normal', ['nsaid']), cox2i: AM.build('normal', ['cox2i']), aspirin: AM.build('normal', ['aspirin']),
+  steroid: AM.build('normal', ['steroid']), ltm: AM.build('normal', ['ltm'])
+};
+// The row words: how each meter moved, worked out from the model so the words always agree with the picture.
+function rowWord(k, v) {
+  const r = rowLevel(v, k) / rowLevel(NV, k);
+  if (r < 0.35) return k === 'shield' ? '↓ much thinner' : k === 'airway' ? '↓ eases a lot' : '↓ far less';
+  if (r < 0.9) return k === 'shield' ? '↓ thinner' : k === 'airway' ? '↓ eases' : '↓ less';
+  if (r > 1.1) return '↑ a little more';
+  return 'stays';
+}
+const NAMED = {
+  nsaid: ['NSAID: both COX', 'enzymes plugged'],
+  cox2i: ['COX-2 selective:', 'only COX-2 plugged'],
+  aspirin: ['aspirin tags COX', 'for good'],
+  steroid: ['glucocorticoid: scissors', 'slowed, less COX-2 made'],
+  ltm: ['leukotrienes blocked', 'at the airways']
 };
 const CHANGE_WHERE = {
-  nsaid: 'Dark plugs sit in both the COX-1 and COX-2 boxes. The arrows through them shrink inside their dashed normal outlines, and the stomach shield, platelet clumping and pain, swelling and fever meters drop below their dashed normal levels. The arrow to lipoxygenase grows a little.',
-  cox2i: 'A blue plug sits in the COX-2 box only. Its arrows shrink inside their dashed normal outlines and the pain, swelling and fever meter drops, while COX-1, the stomach shield and platelet clumping stay on their dashed normal marks.',
-  aspirin: 'Red tags are stuck onto both COX boxes. COX-1 is almost completely shut, so the platelet clumping and stomach shield meters fall far below their dashed normal levels; COX-2 is partly shut, so pain, swelling and fever fall too.',
-  steroid: 'Green steroid rings sit beside the phospholipase scissors, which fade, and beside a shrunken COX-2 box inside its dashed normal outline. Fewer arachidonic acid chains are freed, every arrow from them thins, and both the pain, swelling and fever meter and the airway squeeze meter drop. Platelet clumping stays at normal.',
-  ltm: 'A dark blocker bar lies across the top of the airway squeeze meter, which drops far below its dashed normal level, though the arrow of leukotriene still flows. COX-1, COX-2 and their meters stay on their dashed normal marks.'
+  nsaid: 'Dark plugs sit in both the COX-1 and COX-2 boxes. The rows through them thin inside their dashed normal outlines, and the stomach shield, platelet clumping and pain, swelling and fever meters drop below their dashed normal lines. The leukotriene row and its airway meter rise a little.',
+  cox2i: 'A blue plug sits in the COX-2 box only. Its row thins and the pain, swelling and fever meter drops, while COX-1, the stomach shield and platelet clumping stay on their dashed normal lines.',
+  aspirin: 'Red tags are stuck onto both COX boxes. COX-1 is almost completely shut, so the platelet clumping and stomach shield meters fall far below their dashed normal lines; COX-2 is partly shut, so pain, swelling and fever fall too.',
+  steroid: 'Green steroid rings sit beside the phospholipase A2 scissors, which fade, and on a shrunken COX-2 box inside its dashed normal outline. Less arachidonic acid is freed, so the trunk thins and the pain, swelling and fever and airway squeeze meters drop; the stomach shield thins a little and platelet clumping stays at normal.',
+  ltm: 'A dark bar blocks the end of the leukotriene row, where leukotrienes act on the airways. The airway squeeze meter drops far below its dashed normal line, though leukotrienes are still made; the COX rows and their meters stay on their dashed normal lines.'
 };
-const DURATION = 2200;
-const ease = x => 1 - Math.pow(1 - clamp(x, 0, 1), 3);
-function changePicture(el, t) {
-  const kind = el.dataset.kind, c = CHANGES[kind];
-  const cur = AM.settle(AM.mix(NORMAL_P, c.to(), ease(t)));
-  const name = el.dataset.stepTitle.split(':')[0];
-  const label = `${name}, drawn over faint dashed marks for normal, the untreated injury. ${CHANGE_WHERE[kind]} Compared with normal: ${describe(cur, NV)}.`;
-  return { pic: pictureSvg(label, cur, { show: ALL, ghost: NV, legend: c.legend }), ro: readout(cur, NV, 'Compared with normal') };
-}
-
-const steps = $$('[data-step]');
-const backBtn = $('[data-step-back]'), nextBtn = $('[data-step-next]'), progress = $('[data-step-progress]');
-let current = 0, frame = 0;
-const visualOf = el => el.querySelector('[data-visual]');
-const isAnimated = el => el.dataset.kind in CHANGES;
-const lastReadout = new WeakMap();
-function drawAt(el, t) {
-  const v = visualOf(el), { pic, ro } = changePicture(el, t), old = v.querySelector('svg');
-  if (!old) { v.innerHTML = pic + ro; lastReadout.set(v, ro); return; }
-  old.outerHTML = pic;
-  if (lastReadout.get(v) !== ro) { v.querySelector('.readout').outerHTML = ro; lastReadout.set(v, ro); }
-}
-function animate(el) {
-  cancelAnimationFrame(frame);
-  if (reducedMotion()) { drawAt(el, 1); return; }
-  let start = null;
-  drawAt(el, 0);
-  const tick = now => {
-    if (start === null) start = now;
-    const t = Math.min(1, (now - start) / DURATION);
-    drawAt(el, t);
-    if (t < 1) frame = requestAnimationFrame(tick);
+const TITLE = { nsaid: 'NSAIDs', cox2i: 'COX-2 selective inhibitors', aspirin: 'Aspirin', steroid: 'Glucocorticoids', ltm: 'Leukotriene modifiers' };
+const HOLD = .08, DONE = .46, LOOP = .5;
+function change(kind) {
+  const end = AM.settle(CHANGES[kind]);
+  const deltas = Object.fromEntries(ROW_ORDER.map(k => [k, rowWord(k, end)]));
+  return {
+    duration: 6400, loop: true, loopFrom: LOOP,
+    render(t) {
+      const u = inOut(span(t, HOLD, DONE)), a = span(t, DONE - .1, DONE);
+      const v = AM.settle(AM.mix(NORMAL_P, CHANGES[kind], u));
+      const phase = t < LOOP ? t / LOOP : (t - LOOP) / (1 - LOOP);
+      const s = pathway(v, { ghost: NV, deltas, a, words: NAMED[kind] }, phase);
+      const label = `${TITLE[kind]}, drawn over dashed marks for the untreated injury. ${CHANGE_WHERE[kind]} Compared with the untreated injury: ${describe(end, NV)}.`;
+      return { svg: svg(label, s, { h: H_PATH }), readout: readoutOf(v, NV) };
+    }
   };
-  frame = requestAnimationFrame(tick);
 }
-let started = false;
-function startLesson() {
-  steps.forEach(el => {
-    const k = el.dataset.kind;
-    if (CORE[k]) visualOf(el).innerHTML = CORE[k]();
-    if (isAnimated(el)) drawAt(el, 1);
-    el.querySelector('.replay')?.addEventListener('click', () => animate(el));
-  });
-  started = true;
-  if (/^#step-\d+$/.test(location.hash)) fromHash(); else showStep(current);
-}
-function showStep(n, focus = false) {
-  if (!started) return;
-  cancelAnimationFrame(frame);
-  if (isAnimated(steps[current])) drawAt(steps[current], 1);   // a step left mid-morph keeps its end state
-  current = clamp(n, 0, steps.length - 1);
-  steps.forEach((el, i) => { el.hidden = i !== current; });
-  backBtn.disabled = current === 0;
-  nextBtn.textContent = current === steps.length - 1 ? 'Start again ↻' : 'Next →';
-  progress.textContent = `Step ${current + 1} of ${steps.length}`;
-  if (location.hash !== `#step-${current + 1}`) history.replaceState(null, '', `#step-${current + 1}`);
-  const el = steps[current];
-  if (isAnimated(el)) animate(el);
-  if (focus) { el.querySelector('h2').focus({ preventScroll: true }); el.scrollIntoView({ block: 'start' }); }
-}
-nextBtn.addEventListener('click', () => showStep(current === steps.length - 1 ? 0 : current + 1, true));
-backBtn.addEventListener('click', () => showStep(current - 1, true));
-$('#lesson').addEventListener('keydown', e => {
-  if (e.target.closest('input, select, textarea') || e.altKey || e.ctrlKey || e.metaKey) return;
-  if (e.key === 'ArrowRight' && current < steps.length - 1) { e.preventDefault(); showStep(current + 1, true); }
-  if (e.key === 'ArrowLeft' && current > 0) { e.preventDefault(); showStep(current - 1, true); }
-});
 
-/* ---------- Tabs ---------- */
-const tabs = $$('[role=tab]');
-function activate(tab, focus = false) {
-  tabs.forEach(t => { const on = t === tab; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; document.getElementById(t.getAttribute('aria-controls')).hidden = !on; });
-  if (focus) tab.focus();
-  cancelAnimationFrame(frame);   // a morph left running must not overwrite the end state drawn below
-  if (tab.id === 'tab-lesson' && started && isAnimated(steps[current])) drawAt(steps[current], 1);
-  if (tab.id === 'tab-clinical') updateClinical();
-  if (tab.id === 'tab-explore') updateExplore();
-}
-tabs.forEach((t, i) => {
-  t.addEventListener('click', () => activate(t));
-  t.addEventListener('keydown', e => {
-    const n = { ArrowRight: (i + 1) % tabs.length, ArrowLeft: (i + tabs.length - 1) % tabs.length, Home: 0, End: tabs.length - 1 }[e.key];
-    if (n !== undefined) { e.preventDefault(); activate(tabs[n], true); }
-  });
-});
-function fromHash() {
-  const m = location.hash.match(/^#step-(\d+)$/);
-  if (m && started) { if (tabs[0].getAttribute('aria-selected') !== 'true') activate(tabs[0]); showStep(Number(m[1]) - 1); }
-}
-window.addEventListener('hashchange', fromHash);
+/* ---------- The lesson's scenes, one per step kind ---------- */
+const moving = (duration, label, draw, h, loop = false) => ({ duration, loop, render: t => svg(label, draw(t), { h }) });
+const flowing = (label, o, h = H_PATH, words) => moving(3200, label, t => pathway(NV, { ...o, words }, t), h, true);
+const scenes = {
+  membrane: () => svg('At the top, a magnified strip of membrane: two rows of phospholipids, round heads facing outward on each side and pairs of tails tucked into the middle. One phospholipid, a head and two tails, is picked out in blue. Below, dashed lines lead down to one whole oval cell, its outline labelled membrane, with neighbouring cells at the edges.', membranePicture(), { h: 350 }),
+  injury: moving(5200, 'A patch of tissue is hit by an injury, drawn as a red lightning bolt. It swells and a red dashed glow spreads round it, and small amber signals made from the cell membrane drift off. Four words appear under it, one by one: red, warm, swollen, painful.', injuryPicture, 330),
+  scissors: moving(5200, 'A magnified strip of membrane with an injury bolt at its right end. A pair of scissors, phospholipase A2, travels along the inner row of phospholipids from right to left, snipping one tail from each; the freed tails fall away below as amber zigzag chains: arachidonic acid.', scissorsPicture, 286),
+  roads: flowing('The pathway begins. Arachidonic acid, freed from the membrane by phospholipase A2, flows down an amber trunk on the left and splits into two roads: one into a tall box labelled COX, cyclooxygenase, and one into a box labelled lipoxygenase.', { cox: 'one', rows: [], effects: false }, H_PATH, ['one raw material,', 'two roads']),
+  cox1: flowing('The COX box is now COX-1. Out of it, a green row of prostaglandins flows to a meter labelled stomach shield, filled to its everyday level. Lipoxygenase waits below.', { rows: ['shield'] }),
+  platelets: flowing('A second row leaves COX-1: red thromboxane, made in platelets, flowing to a meter labelled platelet clumping, beside the stomach shield row.', { rows: ['shield', 'clot'] }),
+  cox2: { duration: 5200, loop: false, render: t => { const v = AM.settle({ ...NORMAL_P, injury: lerp(0.15, 1, ease(span(t, .1, .8))) }); return svg('A third box, COX-2, appears under COX-1. At first small, because healthy tissue holds little of it, it grows as the injured tissue makes more; its amber row of prostaglandins thickens and the pain, swelling and fever meter fills.', pathway(v, { rows: ['shield', 'clot', 'inflam'], words: t > .5 ? ['injured tissue', 'makes more COX-2'] : null, a: span(t, .5, .7) }, t * 3), { h: H_PATH }); } },
+  effects: moving(5200, 'Amber prostaglandin rings from COX-2 drift down onto three things. On the left, a blood vessel widens and leaks red dots: red, warm, swollen. In the middle, a pain nerve ending sparks more easily: painful. On the right, a thermometer rises: the brain’s thermostat turned up, fever.', effectsPicture, 296),
+  lox: flowing('On the bottom row, lipoxygenase sends a blue row of leukotrienes to a meter labelled airway squeeze. Four rows now run side by side: stomach shield, platelet clumping, pain, swelling and fever, and airway squeeze.', {}),
+  whole: flowing('The whole pathway. Phospholipase A2 frees arachidonic acid from the membrane; it flows down to COX-1, COX-2 and lipoxygenase. COX-1 feeds the stomach shield and platelet clumping rows, COX-2 feeds pain, swelling and fever, and lipoxygenase feeds the airway squeeze. Blue frames mark the two key measures: pain, swelling and fever, and the stomach shield.', { key: true }, H_PATH, ['the two key', 'measures, framed']),
+  nsaid: change('nsaid'),
+  cox2i: change('cox2i'),
+  aspirin: change('aspirin'),
+  steroid: change('steroid'),
+  ltm: change('ltm')
+};
 
 /* ---------- Words for the sliders ---------- */
 const injuryWords = v => v < 0.05 ? 'no injury' : v < 0.6 ? 'mild' : v < 0.9 ? 'a little milder' : v <= 1.1 ? 'the lesson’s injury' : v <= 1.6 ? 'worse' : 'severe';
@@ -363,8 +343,8 @@ const PLACE_ARROW = { inside: '↔', at: '↔', above: '↑', below: '↓' };
 const hasRange = v => Number.isFinite(v.low) && Number.isFinite(v.high);
 const decimals = n => (String(n).split('.')[1] || '').length;
 const rangeText = v => { const d = decimals(v.low); return `${v.low.toFixed(d)}–${v.high.toFixed(d)}`; };
-const span = v => hasRange(v) ? [v.low - (v.high - v.low), v.high + (v.high - v.low)] : [v.typical * 0.95, v.typical * 1.05];
-const barX = (v, n) => { const [a, b] = span(v); return f(20 + clamp((n - a) / (b - a), 0, 1) * 360); };
+const spanOf = v => hasRange(v) ? [v.low - (v.high - v.low), v.high + (v.high - v.low)] : [v.typical * 0.95, v.typical * 1.05];
+const barX = (v, n) => { const [a, b] = spanOf(v); return f(20 + clamp((n - a) / (b - a), 0, 1) * 360); };
 const fmt = (v, n) => v.unit === 'pH' ? `pH ${n.toFixed(DEC[v.id])}` : `${n.toFixed(DEC[v.id])} ${v.unit}`;
 function placeOf(v, n) {
   if (hasRange(v)) return n > v.high + 1e-9 ? 'above' : n < v.low - 1e-9 ? 'below' : 'inside';
@@ -378,6 +358,7 @@ function stateParams(id) {
   const drug = { glucocorticoid: 'steroid', aspirin: 'aspirin' }[id];
   return drug ? AM.build('normal', [drug]) : AM.build('normal');
 }
+const tabPicture = (label, cur) => svg(label, pathway(cur, { ghost: NV, deltas: Object.fromEntries(ROW_ORDER.map(k => [k, rowWord(k, cur)])) }, 0.3), { h: H_PATH });
 const cv = { state: 'normal', p: AM.build('normal'), injury: 1, fever: 0, custom: false };
 const cvParams = () => ({ ...cv.p, injury: cv.injury, fever: cv.fever });
 const heldParams = () => ({ ...AM.NORMAL, injury: cv.injury, fever: cv.fever });
@@ -392,9 +373,8 @@ function updateClinical() {
   $('#clinical-injury').value = cv.injury; $('#clinical-injury-label').textContent = injuryWords(cv.injury);
   const cur = AM.settle(cvParams());
   const st = data?.states.find(s => s.id === cv.state);
-  const label = `Illustrative model${st ? `, set to ${st.label}` : ''}${cv.custom ? ' and adjusted by hand' : ''}, drawn over faint dashed marks for normal, the untreated injury. Compared with normal: ${describe(cur, NV)}.`;
-  const legend = cv.custom ? 'these settings' : st ? st.label.split(' (')[0] : '';
-  $('#clinical-visual').innerHTML = pictureSvg(label, cur, { show: ALL, ghost: NV, legend });
+  const label = `Illustrative model${st ? `, set to ${st.label}` : ''}${cv.custom ? ' and adjusted by hand' : ''}, drawn over dashed marks for the untreated injury. Compared with the untreated injury: ${describe(cur, NV)}.`;
+  $('#clinical-visual').innerHTML = tabPicture(label, cur);
   if (!data) return;
   for (const v of data.values) {
     const row = document.querySelector(`[data-cv="${v.id}"]`);
@@ -456,8 +436,8 @@ function updateExplore() {
   const cur = AM.settle(exploreParams());
   const drugs = DRUG_ORDER.filter(d => ex.drugs.has(d)).map(d => DRUG_NAME[d]);
   const who = drugs.length ? `your injury setting with ${drugs.join(', ')}` : 'your injury setting';
-  const label = `Illustrative model of ${who}, drawn over faint dashed marks for normal, the untreated injury. Compared with normal: ${describe(cur, NV)}.`;
-  $('#explore-visual').innerHTML = pictureSvg(label, cur, { show: ALL, ghost: NV, legend: 'your settings' }) + readout(cur, NV, 'Compared with normal');
+  const label = `Illustrative model of ${who}, drawn over dashed marks for the untreated injury. Compared with the untreated injury: ${describe(cur, NV)}.`;
+  $('#explore-visual').innerHTML = tabPicture(label, cur) + readoutOf(cur, NV);
   const res = $('#model-results');
   res.textContent = `Illustrative model output, compared with the untreated injury: arachidonic acid freed ${pct(cur.release)} · pain, swelling and fever ${pct(cur.inflam)} · stomach shield ${pct(cur.shield)} · platelet clumping ${pct(cur.clot)} · leukotrienes made ${pct(cur.lt)} · airway squeeze ${pct(cur.airway)}.`;
   Object.assign(res.dataset, { release: cur.release.toFixed(4), inflam: cur.inflam.toFixed(4), shield: cur.shield.toFixed(4), clot: cur.clot.toFixed(4), lt: cur.lt.toFixed(4), airway: cur.airway.toFixed(4) });
@@ -533,8 +513,8 @@ async function load() {
     $('#load-error').hidden = false;
     $('#load-error').textContent = 'The reference file did not load. Reload the page to try again; the lesson and Explore freely still work on an illustrative model.';
   }
-  startLesson();
   updateClinical();
   updateExplore();
 }
-load();
+
+lesson({ scenes, before: load, onTab: { clinical: updateClinical, explore: updateExplore } });

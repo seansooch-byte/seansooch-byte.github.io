@@ -1,0 +1,202 @@
+{
+  "minutes": 25,
+  "prerequisites": [
+    "immune-response"
+  ],
+  "objectives": [
+    "Name the phases of the cell cycle in order, G1, S, G2 and M, say what happens in each, and what G0 is.",
+    "Explain how CDK4 and CDK6 open the G1 checkpoint, and how cancer breaks that control.",
+    "Match each anticancer drug class to where it strikes: antimetabolites in S, vinca alkaloids and taxanes in M, topoisomerase inhibitors in S and G2, CDK4/6 inhibitors holding G1, alkylating agents in any phase.",
+    "Explain why fast-dividing healthy tissues, such as the bone marrow, are harmed by chemotherapy."
+  ],
+  "checks": {
+    "cancer": {
+      "prompt": "In cancer, changes in the DNA jam the G1 engines on and break the checkpoint. What happens to the share of cells resting in G0?",
+      "choices": [
+        "It falls, as more cells keep going round the loop",
+        "It rises, as the cells tire",
+        "It stays the same; only the speed changes"
+      ],
+      "answer": 0,
+      "why": "With the gate jammed open, cells that should step out to rest keep dividing instead. Fewer rest and more keep cycling, so extra cells build up into a tumour."
+    },
+    "antimetabolite": {
+      "prompt": "Antimetabolites are fake DNA building blocks, or stop the cell making real ones. Which cells do they kill?",
+      "choices": [
+        "Cells in S phase, copying their DNA",
+        "Cells in M phase, splitting",
+        "Resting cells in G0",
+        "Every cell equally, whatever its phase"
+      ],
+      "answer": 0,
+      "why": "Building blocks are only used while DNA is being copied, in S phase. Cells in other phases are spared until they reach S, which is why the deaths pile up there."
+    },
+    "spindle": {
+      "prompt": "Vinca alkaloids stop the spindle's microtubule ropes growing; taxanes freeze them so they cannot shrink. Where do the cells get stuck?",
+      "choices": [
+        "In mitosis, with the chromosomes not pulled apart",
+        "At the G1 checkpoint",
+        "Halfway through copying, in S phase",
+        "Resting, in G0"
+      ],
+      "answer": 0,
+      "why": "The spindle must both grow to reach the chromosomes and shrink to pull them apart. Block either and the cell cannot finish mitosis, so cells pile up in M phase and die there."
+    },
+    "alkylating": {
+      "prompt": "Alkylating agents stick chemical groups onto DNA, whatever the cell is doing. Which cells can they damage?",
+      "choices": [
+        "Cells in every phase, even resting ones, though dividing cells suffer most",
+        "Only cells in S phase",
+        "Only cells in mitosis",
+        "Only cells waiting in G1"
+      ],
+      "answer": 0,
+      "why": "DNA is there in every phase, so alkylating agents are not phase specific. Damage matters most when the cell next tries to copy its DNA, so dividing cells die most, but resting cells are hit too."
+    },
+    "topo": {
+      "prompt": "Topoisomerase inhibitors trap the untwisting enzyme after it has cut the DNA. When do the breaks pile up?",
+      "choices": [
+        "While the cell copies and checks its DNA, in S phase and G2",
+        "Only while it rests in G0",
+        "Only in mitosis",
+        "In G1, before copying begins"
+      ],
+      "answer": 0,
+      "why": "Topoisomerases work hardest while DNA is being copied and readied for splitting. That is when the trapped cuts become breaks, so cells die in S phase and G2."
+    },
+    "cdk46": {
+      "prompt": "A CDK4/6 inhibitor blocks the engines that open the G1 gate. What happens to the tumour cells?",
+      "choices": [
+        "They pile up waiting in G1, and the tumour grows more slowly",
+        "They die in S phase",
+        "They get stuck in mitosis",
+        "They divide faster to get round the block"
+      ],
+      "answer": 0,
+      "why": "With CDK4 and CDK6 blocked, the Rb brake stays on and cells cannot leave G1. Most wait there, so the tumour grows more slowly; some may later stop for good or die."
+    }
+  },
+  "quiz": [
+    {
+      "id": "order",
+      "objective": 1,
+      "step": "cycle",
+      "stem": "In which order does a dividing cell go round the cycle?",
+      "choices": [
+        "G1, S, G2, M",
+        "S, G1, M, G2",
+        "G1, M, S, G2",
+        "M, S, G1, G2"
+      ],
+      "answer": 0,
+      "why": "First it grows (G1), then copies its DNA (S), then checks the copy (G2), then splits (M). Copying always comes before splitting, so each new cell gets a full set."
+    },
+    {
+      "id": "copy-phase",
+      "objective": 1,
+      "step": "s",
+      "stem": "During which phase is all of the DNA copied?",
+      "choices": [
+        "S phase",
+        "G1",
+        "G2",
+        "M phase"
+      ],
+      "answer": 0,
+      "why": "S stands for synthesis, making: the DNA is copied then. G1 and G2 are gaps for growing and checking, and M phase is the split."
+    },
+    {
+      "id": "cdk-job",
+      "objective": 2,
+      "step": "cdk",
+      "stem": "What do CDK4 and CDK6, with their partner cyclin D, do?",
+      "choices": [
+        "Switch off the Rb brake so the cell can leave G1 for S phase",
+        "Pull the copied chromosomes apart",
+        "Cut and rejoin twisted DNA",
+        "Check the copied DNA for breaks"
+      ],
+      "answer": 0,
+      "why": "They are the engines of the G1 checkpoint: switching off Rb opens the gate into S phase. Pulling chromosomes apart is the spindle's job, and cutting and rejoining DNA is the topoisomerases'."
+    },
+    {
+      "id": "what-cancer",
+      "objective": 2,
+      "step": "cancer",
+      "stem": "Which change best describes cancer?",
+      "choices": [
+        "Cells keep dividing because their engines are jammed on or their brakes are broken",
+        "Cells divide only when a wound needs healing",
+        "More cells rest in G0 than usual",
+        "Cells stop copying their DNA"
+      ],
+      "answer": 0,
+      "why": "Cancer is division out of control: DNA changes push the engines on or break the brakes at the checkpoint, so fewer cells rest and a tumour builds up."
+    },
+    {
+      "id": "fake-block",
+      "objective": 3,
+      "step": "antimetabolite",
+      "stem": "A drug acts as a fake DNA building block. In which phase does it strike?",
+      "choices": [
+        "S phase",
+        "M phase",
+        "G1",
+        "G0"
+      ],
+      "answer": 0,
+      "why": "Antimetabolites strike while DNA is copied, in S phase. M phase drugs are the vinca alkaloids and taxanes; G1 is where CDK4/6 inhibitors hold cells."
+    },
+    {
+      "id": "taxane",
+      "objective": 3,
+      "step": "spindle",
+      "stem": "Paclitaxel, a taxane, freezes the spindle's microtubules. What goes wrong?",
+      "choices": [
+        "The ropes cannot shrink and pull, so cells get stuck in mitosis",
+        "The ropes cannot grow, so they never reach the chromosomes",
+        "The cell cannot copy its DNA",
+        "The G1 gate stays shut"
+      ],
+      "answer": 0,
+      "why": "Taxanes stop microtubules shrinking; vinca alkaloids stop them growing. Both trap cells in mitosis, but by opposite faults in the same ropes."
+    },
+    {
+      "id": "any-phase",
+      "objective": 3,
+      "step": "alkylating",
+      "stem": "Which class of chemotherapy is not phase specific, damaging cells in any phase, even resting ones?",
+      "choices": [
+        "Alkylating agents",
+        "Antimetabolites",
+        "Vinca alkaloids",
+        "CDK4/6 inhibitors"
+      ],
+      "answer": 0,
+      "why": "Alkylating agents act on the DNA itself, which is present in every phase. Antimetabolites need S phase, vinca alkaloids need M phase, and CDK4/6 inhibitors act on the G1 gate."
+    },
+    {
+      "id": "infections",
+      "objective": 4,
+      "step": "whole",
+      "stem": "A patient on chemotherapy keeps catching infections. Which explanation fits?",
+      "choices": [
+        "The drugs also hit the fast-dividing bone marrow, so fewer white blood cells are made",
+        "The drugs feed the germs",
+        "The tumour eats the white blood cells",
+        "Resting nerve cells stop making antibodies"
+      ],
+      "answer": 0,
+      "why": "Chemotherapy strikes dividing cells wherever they are, and the bone marrow divides all the time to make blood cells. Short-lived white cells run low first, and with fewer of them germs get in (Lesson 20)."
+    }
+  ],
+  "takeaways": [
+    "The cell cycle runs G1 (grow), S (copy the DNA), G2 (check), then M (split); most body cells rest outside it, in G0.",
+    "At the end of G1, CDK4 and CDK6 with cyclin D switch off the Rb brake, opening the checkpoint into S phase.",
+    "Cancer is cells dividing out of control: engines jammed on or brakes broken, so fewer cells rest and a tumour builds up.",
+    "Antimetabolites strike S phase; vinca alkaloids (stop microtubules growing) and taxanes (stop them shrinking) strike M phase; topoisomerase inhibitors strike S and G2.",
+    "Alkylating agents damage DNA in any phase, even in resting cells: they are not phase specific.",
+    "CDK4/6 inhibitors mostly hold cells in G1, so the tumour grows more slowly; some cells stop for good or die.",
+    "Healthy tissues that divide all the time, such as the bone marrow, gut lining and hair roots, are hit too: fewer white blood cells means more infections."
+  ]
+}

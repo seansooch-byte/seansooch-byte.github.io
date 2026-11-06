@@ -1,0 +1,181 @@
+{
+  "minutes": 25,
+  "prerequisites": [
+    "autonomic-synapse"
+  ],
+  "objectives": [
+    "Trace how a parietal cell makes hydrochloric acid, from the proton pump to the inside of the stomach.",
+    "Name the three messengers that call the cell, and explain why histamine matters most.",
+    "Explain how mucus, bicarbonate and prostaglandins protect the lining, and how an ulcer can form.",
+    "Predict what proton pump inhibitors, H2 receptor blockers, antacids and prostaglandin analogues change, and which step each acts on."
+  ],
+  "checks": {
+    "ppi": {
+      "prompt": "A proton pump inhibitor locks the working pumps shut. Histamine, gastrin and acetylcholine still dock and send their on signal. What happens to the acid the cell makes?",
+      "choices": [
+        "It falls far, because locked pumps cannot push hydrogen ions out",
+        "It stays the same, because the on signal is unchanged",
+        "It rises, as the cell calls up more pumps to make up",
+        "It stays the same, while only the stomach turns less acidic"
+      ],
+      "answer": 0,
+      "why": "The pump is the last step: whatever the messengers say, a locked pump cannot move hydrogen ions. The acid made stays low until the cell builds new pumps."
+    },
+    "h2": {
+      "prompt": "An H2 receptor blocker sits in histamine's receptor without switching it on. Gastrin and acetylcholine still dock on their own receptors. What happens to the on signal and the pumps?",
+      "choices": [
+        "A weaker signal, fewer pumps up, less acid",
+        "No change, because two messengers still push",
+        "A stronger signal, as the other two make up for it",
+        "The pumps are locked shut"
+      ],
+      "answer": 0,
+      "why": "Histamine pushes on its own and strengthens the push of gastrin and acetylcholine, so losing it weakens the whole signal. Fewer pumps rise from their vesicles, and less acid is made."
+    },
+    "antacid": {
+      "prompt": "An antacid is a base you swallow. It cancels acid already in the stomach and does not touch the cell. What happens to the acid the cell makes, and to the stomach's acidity?",
+      "choices": [
+        "The acid made stays the same; the stomach turns less acidic",
+        "Both fall",
+        "The acid made falls; the stomach's acidity stays the same",
+        "Both stay the same"
+      ],
+      "answer": 0,
+      "why": "An antacid works in the stomach, not in the cell: the pumps keep running, so the acid made is unchanged, while the acid already there is cancelled. That is why its relief is quick but short."
+    },
+    "pga": {
+      "prompt": "A prostaglandin analogue copies the lining's own prostaglandins: it presses on the cell's brake and tells the surface cells to make more mucus and bicarbonate. What happens?",
+      "choices": [
+        "Somewhat less acid, and a thicker shield",
+        "More acid, and a thinner shield",
+        "Less acid, but a thinner shield",
+        "The same acid; only the pumps lock"
+      ],
+      "answer": 0,
+      "why": "A harder brake weakens the on signal, so fewer pumps rise and somewhat less acid is made, and the mucus and bicarbonate shield thickens. That double effect helps protect the stomach of people who need NSAIDs."
+    }
+  },
+  "quiz": [
+    {
+      "id": "pump-swap",
+      "objective": 1,
+      "step": "pump",
+      "stem": "What does the proton pump swap across the parietal cell's stomach-facing surface?",
+      "choices": [
+        "A hydrogen ion out for a potassium in",
+        "A chloride out for a bicarbonate in",
+        "A sodium out for a potassium in",
+        "A hydrogen ion in for a chloride out"
+      ],
+      "answer": 0,
+      "why": "The proton pump pushes one hydrogen ion out into the stomach and brings one potassium in, using energy because the stomach side already holds far more hydrogen ions. Chloride leaves separately, through its own channel."
+    },
+    {
+      "id": "hcl",
+      "objective": 1,
+      "step": "chloride",
+      "stem": "Which pair makes hydrochloric acid in the stomach?",
+      "choices": [
+        "Hydrogen ions from the pumps and chloride through its channel",
+        "Hydrogen ions and potassium from the pumps",
+        "Bicarbonate and chloride from the surface cells",
+        "Pepsin and hydrogen ions"
+      ],
+      "answer": 0,
+      "why": "The pumps provide the hydrogen ions, and chloride follows through its own channel; together they are hydrochloric acid. Potassium is only what the pump swaps back in."
+    },
+    {
+      "id": "vesicles",
+      "objective": 1,
+      "step": "store",
+      "stem": "Between meals, where are most of a parietal cell's proton pumps?",
+      "choices": [
+        "Stored inside the cell in vesicles, ready to rise when called",
+        "Working at the surface all the time",
+        "Broken down, then rebuilt at every meal",
+        "Out in the blood, waiting for histamine"
+      ],
+      "answer": 0,
+      "why": "Most pumps wait in vesicles. When messengers call, the vesicles merge with the stomach-facing surface and the pumps start; when the call stops, the pumps are pulled back in."
+    },
+    {
+      "id": "three",
+      "objective": 2,
+      "step": "messengers",
+      "stem": "Which three messengers call the parietal cell to make acid?",
+      "choices": [
+        "Histamine, gastrin and acetylcholine",
+        "Histamine, acetylcholine and prostaglandins",
+        "Gastrin, pepsin and bicarbonate",
+        "Histamine, gastrin and mucus"
+      ],
+      "answer": 0,
+      "why": "Histamine from a neighbouring cell, gastrin from the lower stomach and acetylcholine from nerves each dock on their own receptor. Prostaglandins work the other way, as a brake."
+    },
+    {
+      "id": "h2-wide",
+      "objective": 2,
+      "step": "h2",
+      "stem": "An H2 receptor blocker sits only in histamine's receptor. Why does it also weaken the push of gastrin and acetylcholine?",
+      "choices": [
+        "Histamine strengthens their push, and gastrin works partly by releasing more histamine",
+        "It also blocks the gastrin and acetylcholine receptors",
+        "It locks the proton pumps",
+        "It cancels the acid in the stomach"
+      ],
+      "answer": 0,
+      "why": "Histamine boosts the other two messengers, and gastrin acts largely by making the neighbouring cell release histamine. Shut histamine out and the whole on signal weakens, even though the other receptors are free."
+    },
+    {
+      "id": "ulcer",
+      "objective": 3,
+      "step": "prostaglandin",
+      "stem": "Why can pain relievers such as aspirin and other NSAIDs lead to stomach ulcers?",
+      "choices": [
+        "They lower the lining's prostaglandins, so the brake eases and the mucus shield thins",
+        "They make the parietal cell build more proton pumps",
+        "They are acids that burn the lining, and that is all",
+        "They block the H2 receptor"
+      ],
+      "answer": 0,
+      "why": "Prostaglandins brake acid and keep up the mucus and bicarbonate shield. NSAIDs block the enzyme that makes them (Lesson 18), so more acid meets a weaker shield. Some also irritate the lining directly, but losing the prostaglandins matters most."
+    },
+    {
+      "id": "antacid-fast",
+      "objective": 4,
+      "step": "antacid",
+      "stem": "Someone with heartburn takes an antacid. It works within minutes but soon wears off. Why?",
+      "choices": [
+        "It cancels the acid already there, but the cell keeps making more",
+        "It locks the pumps, which then unlock",
+        "It blocks histamine for a short time",
+        "It thickens the mucus for a while"
+      ],
+      "answer": 0,
+      "why": "An antacid is a base that cancels acid in the stomach. It does nothing to the cell, which carries on making acid, so the relief lasts only while the base remains."
+    },
+    {
+      "id": "ppi-new",
+      "objective": 4,
+      "step": "ppi",
+      "stem": "A proton pump inhibitor locks pumps shut for good. How does the cell's acid making recover?",
+      "choices": [
+        "The cell builds new pumps",
+        "The lock wears off within minutes",
+        "Histamine unlocks the pumps",
+        "It never recovers"
+      ],
+      "answer": 0,
+      "why": "Each locked pump stays locked, so acid making comes back only as the cell builds fresh pumps. That is why the effect outlasts the drug's stay in the blood."
+    }
+  ],
+  "takeaways": [
+    "Parietal cells in the stomach's glands make hydrochloric acid: proton pumps push hydrogen ions out, swapping each for a potassium, and chloride follows through its own channel.",
+    "Most pumps wait in vesicles between meals; histamine, gastrin and acetylcholine call them up to the surface.",
+    "Histamine, from a neighbouring cell, matters most: it pushes on its own and strengthens gastrin and acetylcholine, and gastrin works largely through it.",
+    "Mucus laced with bicarbonate shields the lining, and the lining's prostaglandins brake acid and thicken the shield. Where the shield fails, an ulcer forms.",
+    "Proton pump inhibitors lock the pumps, the last step, so they cut acid whatever calls the cell; acid comes back only as new pumps are made.",
+    "H2 receptor blockers shut histamine out, so fewer pumps rise. Antacids cancel acid already in the stomach: quick, short relief, with the cell untouched.",
+    "Prostaglandin analogues such as misoprostol copy the lining's prostaglandins: a little less acid and a thicker shield, which helps protect people who need NSAIDs. Misoprostol also makes the womb contract, so it must not be used to prevent ulcers in pregnancy; that effect is used on purpose in some births."
+  ]
+}

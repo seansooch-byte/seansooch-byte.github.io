@@ -4,15 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Acid–Base Balance · The Lab · Sean Sooch</title>
-<meta name="description" content="A guided visual lesson: how the bicarbonate buffer, the lungs and the kidneys hold blood pH steady, the four ways it goes wrong, and what carbonic anhydrase inhibitors, diuretics, sodium bicarbonate and salicylate toxicity do to the balance.">
+<meta name="description" content="A guided visual lesson: how the bicarbonate buffer, the lungs and the kidneys hold blood pH steady, the four ways it goes wrong, and what carbonic anhydrase inhibitors, loop and thiazide diuretics, sodium bicarbonate and salicylate toxicity do to the balance.">
 <link rel="canonical" href="https://seansooch.dev/lab/acid-base/">
 <meta property="og:title" content="Acid–Base Balance">
 <meta property="og:description" content="The bicarbonate buffer, the lungs and the kidneys working together to hold blood pH steady, and the four ways it goes wrong, one picture at a time.">
 <meta property="og:url" content="https://seansooch.dev/lab/acid-base/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/lab/kit/kit.css">
 <link rel="stylesheet" href="style.css">
-<script src="app.js" defer></script>
+<script type="module" src="app.js"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to the lesson</a>
@@ -28,16 +29,19 @@
     </nav>
   </div>
 </header>
-<main id="main">
+<main id="main" data-slug="acid-base">
   <div class="intro">
-    <p class="eyebrow"><a href="/lab/">The Lab</a> / Core medicine / Lesson 11</p>
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / <a href="/lab/#breath-and-blood">Unit 3: Breath and blood</a> / Lesson 11</p>
     <h1><span class="acid">Acid</span>, <span>base</span><br>and balance.</h1>
     <p class="lede">Your body makes acid all day, yet the blood barely notices. Build up how a chemical buffer, your lungs and your kidneys share the job, then watch two kinds of diuretic, sodium bicarbonate and an aspirin overdose tip the balance.</p>
     <p class="note">Educational, not for clinical use</p>
+    <div class="lx-plan" data-lx-plan></div>
   </div>
 
   <div class="tabs" role="tablist" aria-label="Lesson views">
     <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-quiz" aria-controls="quiz" aria-selected="false" tabindex="-1">Quiz</button>
+    <button type="button" role="tab" id="tab-summary" aria-controls="summary" aria-selected="false" tabindex="-1">Summary</button>
     <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
     <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
   </div>
@@ -47,37 +51,37 @@
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">Blood has to stay in a narrow band</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>pH</dfn> is a scale of how acidic or alkaline a liquid is. Lemon juice is acidic; soap is <dfn>alkaline</dfn>, the opposite of acidic. Water sits in the middle. Blood sits just on the alkaline side, and the body holds it inside a narrow band.</p>
+      <p class="caption"><dfn data-part="scale">pH</dfn> is a scale of how acidic or alkaline a liquid is. Lemon juice is acidic; soap is <dfn>alkaline</dfn>, the opposite of acidic. Water sits in the middle. Blood sits just on the alkaline side, and the body holds it inside a narrow band.</p>
     </article>
     <article data-step="2" data-step-title="Your body makes acid all day" data-kind="made" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">Your body makes acid all day</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Working cells burn fuel and give off <dfn>carbon dioxide</dfn>, a waste gas, and other acids, such as lactic acid from hard-working muscle. An <dfn>acid</dfn> releases <dfn>hydrogen ions</dfn>: tiny charged particles that push pH toward acidic. Something has to deal with them.</p>
+      <p class="caption">Working cells burn fuel and give off <dfn data-part="co2">carbon dioxide</dfn>, a waste gas, and other acids, such as lactic acid from hard-working muscle. An <dfn data-part="acids">acid</dfn> releases <dfn data-part="h">hydrogen ions</dfn>: tiny charged particles that push pH toward acidic. Something has to deal with them.</p>
     </article>
     <article data-step="3" data-step-title="A buffer soaks up the shock" data-kind="buffer" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">A buffer soaks up the shock</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">A <dfn>buffer</dfn> is a pair of chemicals that grabs extra acid, or extra <dfn>base</dfn> (anything that mops up hydrogen ions), so pH barely moves. Drop acid into plain water and pH swings a long way; drop it into blood and it hardly shifts.</p>
+      <p class="caption">A <dfn data-part="buffer">buffer</dfn> is a pair of chemicals that grabs extra acid, or extra <dfn>base</dfn> (anything that mops up hydrogen ions), so pH barely moves. Drop acid into plain water and pH swings a long way; drop it into blood and it hardly shifts.</p>
     </article>
     <article data-step="4" data-step-title="The bicarbonate buffer" data-kind="bicarb" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">The bicarbonate buffer</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Bicarbonate</dfn> is a base dissolved in blood. When it catches a hydrogen ion it becomes <dfn>carbonic acid</dfn>, a weak acid that holds on to that ion instead of letting it loose. Blood keeps far more bicarbonate than carbonic acid, ready for incoming acid.</p>
+      <p class="caption"><dfn data-part="bicarb">Bicarbonate</dfn> is a base dissolved in blood. When it catches a hydrogen ion it becomes <dfn data-part="carbonic">carbonic acid</dfn>, a weak acid that holds on to that ion instead of letting it loose. Blood keeps far more bicarbonate than carbonic acid, ready for incoming acid.</p>
     </article>
     <article data-step="5" data-step-title="Carbonic acid and carbon dioxide trade places" data-kind="swap" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">Carbonic acid and carbon dioxide trade places</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Carbonic acid easily splits into carbon dioxide and water, and the two can join back. <dfn>Carbonic anhydrase</dfn>, an <dfn>enzyme</dfn> (a protein that speeds up a chemical reaction), makes this swap fast. So carbon dioxide in blood acts as acid, and breathing it out removes acid.</p>
+      <p class="caption">Carbonic acid easily splits into carbon dioxide and water, and the two can join back. <dfn data-part="enzyme">Carbonic anhydrase</dfn>, an <dfn>enzyme</dfn> (a protein that speeds up a chemical reaction), makes this swap fast. So carbon dioxide in blood acts as acid, and breathing it out removes acid.</p>
     </article>
     <article data-step="6" data-step-title="pH is a balance of two sides" data-kind="balance" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">pH is a balance of two sides</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Picture a seesaw. On one side, carbon dioxide, the acid side; on the other, bicarbonate, the base side. pH depends on the balance between them, not on the amount of either. In the right proportion the beam sits level and pH stays in its band.</p>
+      <p class="caption">Picture a seesaw. On one side, carbon dioxide, the <dfn data-part="acid-side">acid side</dfn>; on the other, bicarbonate, the <dfn data-part="base-side">base side</dfn>. pH depends on the balance between them, not on the amount of either. At the normal mix, about twenty bicarbonate to each dissolved carbon dioxide, the beam sits level and pH stays in its band.</p>
     </article>
     <article data-step="7" data-step-title="The lungs set the acid side" data-kind="lungs" hidden>
       <p class="eyebrow">Build the idea</p>
@@ -101,47 +105,43 @@
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">Four ways it goes wrong</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Blood that is too acidic is in <dfn>acidosis</dfn>; too alkaline, <dfn>alkalosis</dfn>. If a breathing problem changed the carbon dioxide, it is <dfn>respiratory</dfn>. If bicarbonate changed first, it is <dfn>metabolic</dfn>. Two directions, two causes: four disorders.</p>
+      <p class="caption">A process that pushes blood toward acid is an <dfn>acidosis</dfn>; toward alkaline, an <dfn>alkalosis</dfn>. Blood that ends up too acidic or too alkaline has <dfn>acidemia</dfn> or <dfn>alkalemia</dfn>. If a breathing problem changed the carbon dioxide first, it is <dfn>respiratory</dfn>. If bicarbonate changed first, it is <dfn>metabolic</dfn>. Two directions, two causes: four disorders.</p>
     </article>
     <article data-step="11" data-step-title="The other side compensates" data-kind="compensate" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">The other side compensates</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">When one side goes wrong, the other side moves the same way to restore the balance. This is <dfn>compensation</dfn>. Here bicarbonate has fallen, so the lungs breathe off extra carbon dioxide. pH comes back toward normal, but compensation never pushes it past normal.</p>
+      <p class="caption">When one side goes wrong, the other side moves the same way, to bring the balance back. This is <dfn data-part="answer">compensation</dfn>. Here bicarbonate fell first, so the lungs breathe off extra carbon dioxide. pH comes back toward normal, but compensation never pushes it past normal.</p>
     </article>
     <article data-step="12" data-step-title="The whole picture: three things to read" data-kind="whole" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">The whole picture: three things to read</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Buffers catch acid at once, the lungs set carbon dioxide, the kidneys set bicarbonate. A blood test reads three key measures: pH says acidosis or alkalosis; carbon dioxide and bicarbonate say whether the cause is respiratory or metabolic, and whether compensation has begun.</p>
+      <p class="caption">Buffers catch acid at once, the lungs set carbon dioxide, the kidneys set bicarbonate. A blood test reads three key measures: pH says whether the blood is too acidic or too alkaline; carbon dioxide and bicarbonate, read against what compensation alone would give, say whether the cause is respiratory or metabolic, whether compensation has begun, or whether a second disorder is hiding.</p>
     </article>
     <article data-step="13" data-step-title="Carbonic anhydrase inhibitors: bicarbonate leaks away" data-kind="cai" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Carbonic anhydrase inhibitors: bicarbonate leaks away</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Carbonic anhydrase inhibitors</dfn> are <dfn>diuretics</dfn>, drugs that make the kidneys pass more urine. They block carbonic anhydrase in the kidney, so less bicarbonate returns to the blood and more is lost in urine. The base side lightens and blood tips toward acidosis.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn data-part="kidney">Carbonic anhydrase inhibitors</dfn>, such as acetazolamide, are <dfn>diuretics</dfn>, drugs that make the kidneys pass more urine. They block carbonic anhydrase in the proximal tubule (<a href="/lab/nephron-diuretics/">Lesson 2</a>), so bicarbonate is lost in urine. Bicarbonate falls first, a metabolic acidosis, and the lungs then partly compensate.</p>
     </article>
-    <article data-step="14" data-step-title="Diuretics for high blood pressure: potassium loss" data-kind="diuretic" hidden>
+    <article data-step="14" data-step-title="Loop and thiazide diuretics: contraction alkalosis" data-kind="diuretic" hidden>
       <p class="eyebrow">What changes it</p>
-      <h2 tabindex="-1">Diuretics for high blood pressure: potassium loss</h2>
+      <h2 tabindex="-1">Loop and thiazide diuretics: contraction alkalosis</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Some diuretics used for high blood pressure drain <dfn>potassium</dfn>, a mineral that competes with hydrogen ions to be swapped for sodium in the kidney (<a href="/lab/nephron-diuretics/">Lesson 2</a>). With less potassium, more hydrogen ions go out and more bicarbonate is kept: blood tips toward alkalosis.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption">Loop and thiazide diuretics make the kidneys pass extra salt and water but little bicarbonate, so the same bicarbonate sits in less fluid: <dfn data-part="kidney">contraction alkalosis</dfn>. The lost volume also calls up angiotensin II and aldosterone, which make the kidney keep bicarbonate and push out hydrogen ions and <dfn>potassium</dfn>; low potassium adds to it (<a href="/lab/nephron-diuretics/">Lesson 2</a>).</p>
     </article>
     <article data-step="15" data-step-title="Sodium bicarbonate: adding base" data-kind="sodium" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Sodium bicarbonate: adding base</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Sodium bicarbonate</dfn>, also found in some antacids for heartburn, is bicarbonate itself. Taken in, it adds straight to the base side, so blood tips toward alkalosis. Breathing slows a little to hold on to carbon dioxide, but the lungs compensate less well for alkalosis.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn data-part="added">Sodium bicarbonate</dfn>, also found in some antacids for heartburn, is bicarbonate itself. Taken in, it adds straight to the base side, so blood tips toward alkalosis. Breathing slows a little, though the lungs answer an alkalosis less well, and healthy kidneys soon pass the extra bicarbonate, so the swing is usually short.</p>
     </article>
-    <article data-step="16" data-step-title="Salicylate toxicity: both sides at once" data-kind="salicylate" hidden>
+    <article data-step="16" data-step-title="Salicylate toxicity: breathing first, then acid" data-kind="salicylate" hidden>
       <p class="eyebrow">What changes it</p>
-      <h2 tabindex="-1">Salicylate toxicity: both sides at once</h2>
+      <h2 tabindex="-1">Salicylate toxicity: breathing first, then acid</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Salicylate toxicity</dfn> means too much aspirin in the body. Its breakdown product, salicylic acid, adds acid that uses up bicarbonate. Breathing also speeds up strongly and blows off carbon dioxide. Both sides lighten, so pH can swing first acidic, then alkaline.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn data-part="drive">Salicylate toxicity</dfn> means too much aspirin in the body. First it drives the brain’s breathing centre hard, blowing off carbon dioxide: a respiratory alkalosis. Then it upsets how cells make energy, so acids such as lactic acid build up and use up bicarbonate: a metabolic acidosis joins in. With both at once, pH can look near normal.</p>
     </article>
 
     <div class="step-nav">
@@ -149,8 +149,12 @@
       <span data-step-progress aria-live="polite">Step 1 of 16</span>
       <button type="button" data-step-next>Next →</button>
     </div>
-    <p class="hint">Start with Next, or use the arrow keys. Pictures are illustrative, not measurements.</p>
+    <p class="hint">Start with Next, or use the arrow keys. Under a moving picture: pause, drag to any moment, or slow it down. Underlined terms light up their part of the picture. On the seesaw, six tokens a side is normal; a dashed ring is a token lost since normal, and a ringed token is one added. Pictures are illustrative, not measurements.</p>
   </section>
+
+  <section id="quiz" role="tabpanel" aria-labelledby="tab-quiz" hidden></section>
+
+  <section id="summary" role="tabpanel" aria-labelledby="tab-summary" hidden></section>
 
   <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
     <h2>Reference values, beside the model.</h2>
@@ -181,8 +185,11 @@
     </div>
     <p id="state-summary" class="state-summary" aria-live="polite">Normal teaching baseline.</p>
     <p id="state-source" class="model-note"></p>
-    <p class="model-note">The blue line on each bar is an illustrative teaching model, not a patient measurement. Where the source gives a range, the bar shades it; where it gives a single value, the bar shows it as a black tick and the model is called close when it is within a tenth of it. Arrows come from the cited source for the selected state. The reference ranges and typical values come from the OpenStax passages quoted under each row; the blue model markers and their printed readings, and the end points of each bar, are illustrative teaching-model choices, not reference values.</p>
-    <p id="baseline-note" class="model-note"></p>
+    <details class="lx-fine">
+      <summary>How to read these bars</summary>
+      <p>The blue line on each bar is an illustrative teaching model, not a patient measurement. Where the source gives a range, the bar shades it; where it gives a single value, the bar shows it as a black tick and the model is called close when it is within a tenth of it. Arrows come from the cited source for the selected state. The reference ranges and typical values come from the OpenStax passages quoted under each row; the blue model markers and their printed readings, and the end points of each bar, are illustrative teaching-model choices, not reference values.</p>
+      <p id="baseline-note" class="model-note"></p>
+    </details>
     <div id="value-rows"></div>
     <p id="cv-live" class="visually-hidden" aria-live="polite"></p>
     <h3>Sources</h3>
@@ -192,7 +199,7 @@
 
   <section id="explore" role="tabpanel" aria-labelledby="tab-explore" hidden>
     <h2>Tip the balance yourself.</h2>
-    <p class="model-intro">An illustrative teaching model of the bicarbonate buffer. Change bicarbonate (a metabolic change) or carbon dioxide (a respiratory change), then let the other side compensate. The faint dashed shapes are the normal state; on the map below, the hollow ring is the state before compensation.</p>
+    <p class="model-intro">An illustrative teaching model of the bicarbonate buffer. Change bicarbonate (a metabolic change) or carbon dioxide (a respiratory change), then let the other side compensate. Six tokens a side is normal; dashed rings are tokens lost since normal. On the map below, the hollow ring is the state before compensation.</p>
     <div class="explore-grid">
       <div id="explore-visual" class="visual"></div>
       <div class="controls">
@@ -217,7 +224,7 @@
     <details>
       <summary>How this teaching model works</summary>
       <p>The buffer reactions, which the lesson draws as pictures: CO2 + H2O ⇌ H2CO3 ⇌ H+ + HCO3–. Carbon dioxide and water form carbonic acid (carbonic anhydrase speeds this up), and carbonic acid dissociates into a hydrogen ion and bicarbonate; every step runs both ways.</p>
-      <p>The model uses the Henderson–Hasselbalch equation for the bicarbonate buffer: pH = 6.1 + log10(HCO3 ÷ (0.03 × PCO2)), with bicarbonate in mM and carbon dioxide in mm Hg. The two constants, 6.1 and 0.03, belong to the equation; they are not from the cited excerpts. Its baseline carbon dioxide sits at the centre of OpenStax’s male and female ranges taken together, and its baseline bicarbonate is set so the bicarbonate to carbonic acid ratio is OpenStax’s 20 to 1, which gives a pH inside OpenStax’s normal range.</p>
+      <p>The model uses the Henderson–Hasselbalch equation for the bicarbonate buffer: pH = 6.1 + log10(HCO3 ÷ (0.03 × PCO2)), with bicarbonate in mM and carbon dioxide in mm Hg. The two constants, 6.1 and 0.03, belong to the equation; they are not from the cited excerpts. Its baseline carbon dioxide sits at the centre of OpenStax’s male and female ranges taken together, and its baseline bicarbonate is set so the bicarbonate to carbonic acid ratio is OpenStax’s 20 to 1, which gives a pH inside OpenStax’s normal range. The seesaw shows each side as six tokens at that normal mix, so a token stands for a sixth of the normal amount, not for single molecules.</p>
       <p>The two top sliders set the first change as a multiple of the baseline. Compensation then moves the other side in the same direction as the first change, a fraction of the way toward the value that would restore the normal ratio: up to three quarters of the way when the lungs answer an acidosis, half when they answer an alkalosis (OpenStax notes they are less efficient at that), and seven tenths when the kidneys answer a respiratory change. Because it never goes all the way, compensation can bring pH back toward normal but never past it. If both sides have been pushed toward the same disorder there is nothing left to compensate with, and if they already pull in opposite directions the model adds nothing more.</p>
       <p>Left out: the protein and phosphate buffers, time (the compensation slider stands in for minutes in the lungs and hours to days in the kidneys), potassium and chloride, and limits on how far real breathing or kidneys can go. The sizes of the drug and disease changes in the lesson are illustrative; only their directions are meant to teach.</p>
     </details>

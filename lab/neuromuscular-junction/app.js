@@ -1,9 +1,10 @@
-'use strict';
+// Lesson 8: The neuromuscular junction. The kit (/lab/kit/kit.js) runs the page; this file is the model,
+// the pictures, and the Clinical values and Explore freely tabs.
+import { lesson } from '/lab/kit/kit.js';
+import { C, svg, text, f, clamp, lerp, span, arrow, readout } from '/lab/kit/draw.js';
+
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
-const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
-const f = n => Number(n.toFixed(1));
-const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ---------- Teaching model ----------
    Every quantity is relative: 1 means a normal junction. No clinical numbers live here;
@@ -56,236 +57,270 @@ function model(p) {
 let BASE = null;  // the normal junction, computed once MARGIN is known
 const mix = (a, b, t) => { const out = { ...a }; for (const k in b) out[k] = a[k] + (b[k] - a[k]) * t; return out; };
 
-/* ---------- Drawing ---------- */
-const INK = '#171916', BLUE = '#254dff', RED = '#b3261e', GREEN = '#1d6b45', AMBER = '#7a5c00', RULE = '#babeb3';
-const ORGAN = '#f1d6d0', WALL = '#a8584c', PLUG = '#5d6270', GATE = '#dfe3d6', BLUE_FILL = '#d1d8fd';
-// Each picture gets its own arrowhead ids: a marker referenced from a hidden step would not draw.
-let pictureId = 0;
-const svg = (label, body, h) => { const id = `p${++pictureId}-`; return `<svg viewBox="0 0 480 ${h}" role="img" aria-label="${label}">${body.replace(/ah-/g, id + 'ah-')}</svg>`; };
-const text = (x, y, s, cls = '', anchor = 'middle') => `<text x="${x}" y="${y}" text-anchor="${anchor}" class="${cls}">${s}</text>`;
-const MARK = { [INK]: 'k', [BLUE]: 'b', [RED]: 'r', [GREEN]: 'g', [AMBER]: 'a' };
-const arrow = (d, color = INK, w = 2.5, extra = '') => `<path d="${d}" fill="none" stroke="${color}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#ah-${MARK[color] || 'k'})" ${extra}/>`;
-const DEFS = `<defs>${Object.entries(MARK).map(([c, k]) => `<marker id="ah-${k}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="${c}"/></marker>`).join('')}</defs>`;
-const g = (dy, body) => `<g transform="translate(0 ${dy})">${body}</g>`;
-const cross = (x, y, r = 9) => `<g data-block="enzyme"><circle cx="${x}" cy="${y}" r="${r}" fill="#fff" stroke="${RED}" stroke-width="2.5"/><path d="M${f(x - r / 2)} ${f(y - r / 2)} L${f(x + r / 2)} ${f(y + r / 2)} M${f(x + r / 2)} ${f(y - r / 2)} L${f(x - r / 2)} ${f(y + r / 2)}" stroke="${RED}" stroke-width="2.5" stroke-linecap="round"/></g>`;
-const diamond = (x, y, r = 6) => `<path d="M${f(x)} ${f(y - r)} L${f(x + r)} ${f(y)} L${f(x)} ${f(y + r)} L${f(x - r)} ${f(y)} Z" fill="${INK}"/>`;
-const plug = (x, y) => `<rect x="${f(x - 9)}" y="${f(y - 6)}" width="18" height="12" rx="3" fill="${PLUG}" stroke="${INK}" stroke-width="1.5"/>`;
-const antibody = (x, y) => `<path d="M${x} ${y - 9} V${y} M${x} ${y} L${x - 7} ${y + 8} M${x} ${y} L${x + 7} ${y + 8}" fill="none" stroke="${RED}" stroke-width="3" stroke-linecap="round"/>`;
-const enzymeShape = (x, y) => `<path d="M${x} ${y} L${x - 4} ${y - 6} A7.2 7.2 0 1 0 ${x + 4} ${y - 6} Z" fill="#c9cdbd" stroke="${INK}" stroke-width="1.5"/>`;
-
-// The close-up, in its own 480-wide frame: nerve ending (y 24–110), gap (110–150), folded end plate below.
-const FOLDS = [130, 200, 280, 350];
-const RECEPTORS = [56, 92, 154, 176, 226, 254, 304, 326, 388, 424];
-const MISSING_ORDER = [1, 8, 4, 6, 2, 9, 0, 5, 3, 7];  // which receptors go first when there are fewer
-const FILL_ORDER = [0, 5, 2, 7, 4, 9, 1, 6, 3, 8];     // spreads docked molecules along the end plate
-const VESICLES = [[150, 62], [196, 50], [244, 60], [292, 50], [338, 64], [174, 88], [312, 88]];
-const GAP_DOTS = Array.from({ length: 40 }, (_, i) => [108 + ((i * .618034) % 1) * 264, 117 + ((i * 7) % 4) * 4]);
-
-function receptorStates(o) {
-  const p = o.p, present = Math.round(10 * clamp(p.receptors, 0, 1));
-  const states = Array(10).fill('empty');
-  MISSING_ORDER.slice(0, 10 - present).forEach(i => { states[i] = 'missing'; });
-  const slots = FILL_ORDER.filter(i => states[i] !== 'missing');
-  let nS = p.sux > .02 ? Math.round(present * Math.min(1, o.depol)) : 0;
-  let nB = Math.min(present - nS, Math.round(present * o.occB));
-  let nA = Math.min(present - nS - nB, Math.round(present * o.occA));
-  for (const i of slots) {
-    if (nS > 0) { states[i] = 'sux'; nS--; } else if (nB > 0) { states[i] = 'blocked'; nB--; } else if (nA > 0) { states[i] = 'ach'; nA--; }
-  }
-  return states;
+/* ---------- Drawing ----------
+   Every picture is 480 wide and at most 420 tall, with the kit's type (20 / .sm 18 / .xs 17).
+   Green is acetylcholine, amber sodium, red calcium and antibodies, purple a drug, blue the end plate's voltage,
+   the twitches, and what a change moved. */
+const INK = C.ink, ACH = C.green, NA = C.amber, CAL = C.red, BLUE = C.blue, DRUG = C.purple, MUTED = C.muted, RULE = C.rule;
+const ORGAN = '#f1d6d0', WALL = '#a8584c', GATE = '#dfe3d6', ENZ = '#d6d9cc', BLUE_FILL = '#d1d8fd';
+const T = text;
+const op = a => { const v = clamp(a, 0, 1); return v < .005 ? 'opacity="0"' : `opacity="${v.toFixed(2)}"`; };
+const fadeIn = (a, body) => a < .005 ? '' : `<g ${op(a)}>${body}</g>`;
+const dot = (x, y, r, col, extra = '') => `<circle cx="${f(x)}" cy="${f(y)}" r="${f(r)}" fill="${col}" ${extra}/>`;
+const ease3 = x => 1 - Math.pow(1 - clamp(x, 0, 1), 3);
+const diamond = (x, y, r = 7) => `<path d="M${f(x)} ${f(y - r)} L${f(x + r)} ${f(y)} L${f(x)} ${f(y + r)} L${f(x - r)} ${f(y)} Z" fill="${DRUG}"/>`;
+const plug = (x, y, w = 20, h = 11) => `<rect x="${f(x - w / 2)}" y="${f(y - h / 2)}" width="${w}" height="${h}" rx="3" fill="${DRUG}"/>`;
+const cross = (x, y, r = 7) => `<path d="M${f(x - r)} ${f(y - r)} L${f(x + r)} ${f(y + r)} M${f(x + r)} ${f(y - r)} L${f(x - r)} ${f(y + r)}" stroke="${DRUG}" stroke-width="3.5" stroke-linecap="round"/>`;
+const antibody = (x, y) => `<path d="M${x} ${y + 10} V${y} M${x} ${y} L${x - 7} ${y - 8} M${x} ${y} L${x + 7} ${y - 8}" fill="none" stroke="${CAL}" stroke-width="3" stroke-linecap="round"/>`;
+const calcium = (x, y, a = 1) => `<rect x="${f(x - 5)}" y="${f(y - 5)}" width="10" height="10" fill="${CAL}" ${op(a)}/>`;
+function enzyme(x, y, r = 11, open = .5) {
+  const a = (.22 + .4 * clamp(open, 0, 1)) * Math.PI / 2, ax = Math.sin(a) * r, ay = Math.cos(a) * r;
+  return `<path d="M${f(x)} ${f(y)} L${f(x - ax)} ${f(y - ay)} A${r} ${r} 0 1 0 ${f(x + ax)} ${f(y - ay)} Z" fill="${ENZ}" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/>`;
 }
 
-function synapse(o, opt = {}) {
-  const { vesicles = true, spill = true, receptors = true, enzyme = true, impulse = false, calcium = false, chopped = false, labels = false } = opt;
-  const p = o.p, depth = 72 * (.35 + .65 * clamp(p.receptors, 0, 1));  // folds flatten when receptors are lost
-  let s = '';
-  // Muscle fibre surface with its folds.
-  let mem = 'M20 150';
-  for (const x of FOLDS) mem += ` H${x - 11} L${x - 5} ${f(150 + depth)} Q${x} ${f(158 + depth)} ${x + 5} ${f(150 + depth)} L${x + 11} 150`;
-  mem += ' H460';
-  s += `<path d="${mem} V250 H20 Z" fill="${ORGAN}"/><path d="${mem}" fill="none" stroke="${WALL}" stroke-width="3"/>`;
-  // Nerve and its ending.
-  s += `<rect x="222" y="-60" width="36" height="88" fill="#fff"/><path d="M222 -60 V26 M258 -60 V26" stroke="${INK}" stroke-width="3"/>`;
-  s += `<path d="M222 24 C150 24 96 34 96 66 V96 Q96 110 110 110 H370 Q384 110 384 96 V66 C384 34 330 24 258 24" fill="#fff" stroke="${INK}" stroke-width="3"/>`;
-  if (impulse) s += arrow('M240 -54 V12', BLUE, 7);
-  if (vesicles) {
-    const full = Math.round(VESICLES.length * clamp(o.release, 0, 1));
-    VESICLES.forEach(([x, y], i) => {
-      s += `<circle cx="${x}" cy="${y}" r="13" fill="#fff" stroke="${GREEN}" stroke-width="1.5"/>`;
-      if (i < full) s += [[-4, -3], [4, -4], [0, 4]].map(([dx, dy]) => `<circle cx="${x + dx}" cy="${y + dy}" r="2.8" fill="${GREEN}"/>`).join('');
-    });
-    if (spill) for (const x of [206, 280]) s += `<path d="M${x - 12} 110 A12 12 0 0 1 ${x + 12} 110" fill="#fff" stroke="${GREEN}" stroke-width="1.5"/>`;
-  }
-  if (calcium) {
-    for (const [x, y] of [[100, 82], [112, 98], [380, 82], [368, 98], [120, 84], [360, 86]]) s += `<circle cx="${x}" cy="${y}" r="3.5" fill="${AMBER}"/>`;
-    s += arrow('M70 92 H92', AMBER, 2.5) + arrow('M410 92 H388', AMBER, 2.5);
-  }
-  // Acetylcholine drifting in the gap.
-  if (spill) {
-    const n = clamp(Math.round((opt.A ?? o.A) * 7), 0, GAP_DOTS.length);
-    s += `<g data-dots="${n}">${GAP_DOTS.slice(0, n).map(([x, y]) => `<circle cx="${f(x)}" cy="${y}" r="3.5" fill="${GREEN}"/>`).join('')}</g>`;
-  }
-  if (receptors) {
-    const states = opt.states || receptorStates(o);
-    RECEPTORS.forEach((x, i) => {
-      const st = states[i];
-      if (st === 'missing') { s += `<g data-receptor="missing"><rect x="${x - 9}" y="139" width="18" height="24" fill="none" stroke="${INK}" stroke-width="1.5" stroke-dasharray="3 3"/>${antibody(x, 126)}</g>`; return; }
-      const open = st === 'ach' || st === 'sux', gap = open ? 4 : 1;
-      s += `<g data-receptor="${st}"><rect x="${x - gap - 7}" y="139" width="7" height="24" rx="2" fill="${GATE}" stroke="${INK}" stroke-width="1.5"/><rect x="${x + gap}" y="139" width="7" height="24" rx="2" fill="${GATE}" stroke="${INK}" stroke-width="1.5"/>`;
-      if (st === 'ach') s += `<circle cx="${x}" cy="132" r="5" fill="${GREEN}"/>`;
-      if (st === 'sux') s += diamond(x, 131, 6);
-      if (st === 'blocked') s += plug(x, 131);
-      if (open) s += arrow(`M${x} 167 V190`, INK, 2);
-      s += '</g>';
-    });
-  }
-  if (enzyme) {
-    for (const x of FOLDS) {
-      const y = f(150 + depth * .45);
-      s += enzymeShape(x, y);
-      if (p.ache < .6) s += cross(x, y - 1, 8);
+/* ---------- The close-up: nerve ending, gap and folded end plate (steps 3 to 6 and 10) ---------- */
+const GAP = 126, PLATE = 176, FOLDS = [170, 242, 314], GATES = [110, 138, 196, 220, 268, 292, 340, 368];
+const VES = [[150, 62], [196, 50], [244, 60], [292, 50], [338, 64], [176, 98], [306, 98]];  // the last two fuse
+const ENDING = 'M222 0 V30 C150 30 96 40 96 70 V112 Q96 126 110 126 H370 Q384 126 384 112 V70 C384 40 330 30 258 30 V0 Z';
+function plate(depth = 60) {
+  let d = `M0 ${PLATE}`;
+  for (const x of FOLDS) d += ` H${x - 11} L${x - 6} ${PLATE + depth} Q${x} ${PLATE + depth + 8} ${x + 6} ${PLATE + depth} L${x + 11} ${PLATE}`;
+  d += ' H480';
+  return `<g data-part="endplate"><path d="${d} V300 H0 Z" fill="${ORGAN}"/><path d="${d}" fill="none" stroke="${WALL}" stroke-width="3"/></g>`;
+}
+// One gate: two pillars that part when two acetylcholine (or one succinylcholine) sit in its two sites.
+function gate(x, st, open = 0) {
+  if (st === 'missing') return `<g data-gate="missing"><rect x="${x - 9}" y="${PLATE - 12}" width="18" height="24" fill="none" stroke="${INK}" stroke-width="1.5" stroke-dasharray="3 3"/>${antibody(x, PLATE - 24)}</g>`;
+  const g = 1.5 + 4 * open;
+  let s = `<rect x="${f(x - g - 6)}" y="${PLATE - 12}" width="6" height="24" rx="2" fill="${GATE}" stroke="${INK}" stroke-width="1.5"/><rect x="${f(x + g)}" y="${PLATE - 12}" width="6" height="24" rx="2" fill="${GATE}" stroke="${INK}" stroke-width="1.5"/>`;
+  if (st === 'ach') s += dot(x - 6, PLATE - 17, 4.5, ACH) + dot(x + 6, PLATE - 17, 4.5, ACH);
+  if (st === 'sux') s += diamond(x, PLATE - 18, 7);
+  if (st === 'blocked') s += plug(x, PLATE - 18);
+  return `<g data-gate="${st}">${s}</g>`;
+}
+const vesicle = (x, y, a = 1) => `<g ${op(a)}><circle cx="${x}" cy="${f(y)}" r="13" fill="#fff" stroke="${ACH}" stroke-width="1.5"/>${[[-4, -3], [4, -4], [0, 4]].map(([dx, dy]) => dot(x + dx, y + dy, 2.8, ACH)).join('')}</g>`;
+// One release, start to finish, for t from 0 to 1 (mode: 'spill' only, 'dock' onto the gates, 'chop' then cleared).
+function closeUp(mode, t) {
+  const anim = mode === 'spill' || mode === 'dock' || mode === 'chop';
+  let b = plate();
+  b += `<g data-part="gap"><rect x="96" y="${GAP + 2}" width="288" height="${PLATE - GAP - 14}" fill="#fff" opacity=".45"/></g>`;
+  b += `<path d="${ENDING}" fill="#fff" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>`;
+  const pulse = span(t, 0, .1);
+  if (anim && pulse > 0 && pulse < 1) b += dot(240, lerp(2, 30, pulse), 9, BLUE, 'opacity=".85"');
+  // Calcium flows in through doors at the ending's lower corners while the impulse arrives.
+  if (anim) {
+    b += `<g data-part="calcium">`;
+    for (const [x, dir] of [[104, 1], [376, -1]]) for (let k = 0; k < 3; k++) {
+      const u = span(t, .06 + k * .03, .2 + k * .03);
+      if (u > 0 && u < 1) b += calcium(x - dir * 22 + dir * 46 * u, 112 - 14 * u, Math.sin(Math.PI * u));
     }
-    if (chopped) for (const x of FOLDS) s += `<path d="M${x - 22} 128 a5 5 0 0 1 10 0 z M${x + 10} 120 a5 5 0 0 0 10 0 z" fill="${GREEN}"/>`;
+    b += `</g>`;
   }
-  if (labels) {
-    s += text(90, 52, 'nerve', 'xs', 'end') + text(90, 68, 'ending', 'xs', 'end');
-    s += text(470, 134, 'gap', 'xs', 'end') + text(468, 240, 'end plate', 'xs on-organ', 'end');
-  }
-  return s;
+  // Vesicles; the last two merge with the wall and spill.
+  let ves = '';
+  VES.forEach(([x, y], i) => {
+    if (mode === 'bare') return;
+    if (i < 5 || !anim) { ves += vesicle(x, y); return; }
+    if (t < .2) ves += vesicle(x, lerp(y, 112, ease3(span(t, .1, .2))));
+    else if (t < .92) ves += `<rect x="${x - 11}" y="${GAP - 3}" width="22" height="6" fill="#fff"/><path d="M${x - 13} ${GAP} A13 13 0 0 1 ${x + 13} ${GAP}" fill="none" stroke="${ACH}" stroke-width="1.5"/>`;
+    else ves += vesicle(x, y, span(t, .92, 1));
+  });
+  b += `<g data-part="vesicles">${ves}</g>`;
+  // Acetylcholine: in 'dock' and 'chop' two molecules land in each gate's sites; the rest stay in the gap.
+  const docks = mode === 'spill' || !anim ? [] : GATES.flatMap(x => [[x - 6, PLATE - 17], [x + 6, PLATE - 17]]);
+  const free = [[124, 146], [150, 138], [232, 144], [254, 136], [328, 146], [356, 138], [286, 150], [176, 150]];
+  let dots = '', open = 0;
+  [...docks, ...free].forEach(([tx, ty], i) => {
+    const sx = tx < 241 ? 176 : 306, lag = (i % 6) * .012, u = ease3(span(t, .2 + lag, .42 + lag));
+    if (!anim || u <= 0) return;
+    let x = lerp(sx, tx, u) + Math.sin(u * Math.PI) * ((i % 3) - 1) * 10, y = lerp(GAP + 4, ty, u), a = 1 - span(t, .78 + lag, .9 + lag), split = 0;
+    if (mode === 'chop') {
+      const ex = FOLDS.reduce((m, e) => Math.abs(e - tx) < Math.abs(m - tx) ? e : m), k = (i % 8) * .012, go = ease3(span(t, .56 + k, .64 + k));
+      x = lerp(x, ex, go); y = lerp(y, PLATE + 18, go); split = span(t, .64 + k, .76 + k); a = 1;
+    }
+    if (a < .01 || split >= 1) return;
+    dots += split > 0 ? `<g ${op(1 - span(split, .5, 1))}><path d="M${f(x - 2 - 9 * split)} ${f(y - 5 - 6 * split)} a5 5 0 0 0 0 10 z" fill="${ACH}"/><path d="M${f(x + 2 + 9 * split)} ${f(y - 5 - 6 * split)} a5 5 0 0 1 0 10 z" fill="${ACH}"/></g>` : dot(x, y, 4.5, ACH, a < 1 ? op(a) : '');
+  });
+  if (docks.length) open = span(t, .4, .46) * (1 - span(t, mode === 'chop' ? .6 : .8, mode === 'chop' ? .68 : .88));
+  if (mode === 'dock' || mode === 'chop') b += `<g data-part="gates">${GATES.map(x => gate(x, 'empty', open)).join('')}</g>`;
+  b += `<g data-part="ach">${dots}</g>`;
+  // Sodium rushes into the fibre through every open gate.
+  if (open > .05) b += `<g data-part="sodium">${GATES.map((x, i) => { const u = (t * 6 + i * .13) % 1; return dot(x, lerp(PLATE - 2, PLATE + 46, u), 4.5, NA, op(open * Math.sin(Math.PI * u))); }).join('')}</g>`;
+  if (mode === 'chop') b += `<g data-part="enzyme">${FOLDS.map(x => enzyme(x, PLATE + 26, 11, mode === 'chop' ? .3 + .7 * Math.abs(Math.sin(Math.PI * 4 * span(t, .56, .78))) : .5)).join('')}</g>`;
+  return b;
 }
 
-// End plate voltage over time for a typical fibre, in a 480 × 180 frame.
-const T_REST = 150, T_UNIT = 30, T_START = 120;
+/* ---------- The end plate's voltage after one impulse (steps 7 and 8) ---------- */
 const traceShape = u => u < 0 ? 0 : (1 - Math.exp(-u / 5)) * Math.exp(-u / 45);
 const T_PEAK = (() => { let best = 0, at = 0; for (let u = 0; u < 200; u += .5) { const v = traceShape(u); if (v > best) { best = v; at = u; } } return { best, at }; })();
-function traceGeom(o) {
-  const held = o.blocked;  // the typical fibre: held depolarized fibres sit higher and barely respond
-  const rest = T_REST - T_UNIT * .95 * held, h = T_UNIT * o.S * Math.pow(1 - held, 2);
-  let d = `M40 ${f(rest)} H${T_START}`;
-  for (let x = T_START + 2; x <= 444; x += 3) d += ` L${x} ${f(rest - h * traceShape(x - T_START) / T_PEAK.best)}`;
-  return { d, rest, peak: rest - h, px: T_START + T_PEAK.at };
-}
-function tracePanel(o, ghost, { threshold = true, status = true } = {}) {
-  let s = `<rect x="16" y="0" width="448" height="180" fill="#fff" stroke="${RULE}"/>`;
-  s += text(28, 22, 'end plate voltage ↑', 'xs', 'start') + text(452, 170, 'time →', 'xs', 'end');
-  const th = T_REST - T_UNIT;
-  if (threshold) s += `<path data-threshold d="M28 ${th} H452" stroke="${RED}" stroke-width="2"/>${text(452, th - 7, 'threshold', 'xs red', 'end')}`;
-  if (ghost) s += `<path class="ghost" d="${traceGeom(ghost).d}" fill="none" stroke="${INK}" stroke-width="2" stroke-dasharray="5 4"/>`;
-  const G = traceGeom(o);
-  s += `<path data-trace="epp" d="${G.d}" fill="none" stroke="${BLUE}" stroke-width="4" stroke-linejoin="round"/>`;
-  if (threshold) {
-    if (G.peak < th - 8 && o.blocked < .4) s += `<path d="M${f(G.px + 14)} ${th - 2} V${f(G.peak + 3)}" stroke="${INK}" stroke-width="2" marker-start="url(#ah-k)" marker-end="url(#ah-k)"/>${text(f(G.px + 26), f((th + G.peak) / 2 + 5), 'safety margin', 'xs b', 'start')}`;
-    if (status) {
-      const t0 = o.twitch[0];
-      const word = o.blocked > .4 ? 'held depolarized: cannot reset' : t0 > .97 ? 'every fibre fires' : t0 > .5 ? 'some fibres miss' : t0 > .03 ? 'most fibres miss' : 'no fibre fires';
-      s += text(452, 22, word, 'xs b blue', 'end');
-    }
+function eppArt(margin, t) {
+  const rest = 232, unit = 40, x0 = 56, start = 120, cursor = lerp(x0, 462, t);
+  const h = unit * (MARGIN || 3);
+  let d = `M${x0} ${rest}`;
+  for (let x = x0 + 4; x <= Math.min(cursor, 462); x += 3) d += ` L${x} ${f(rest - (x < start ? 0 : h * traceShape(x - start) / T_PEAK.best))}`;
+  let b = `<path d="M${x0 - 8} 40 V248" stroke="${MUTED}" stroke-width="1.5"/>${T(x0 - 2, 44, 'end plate voltage ↑', 'xs muted', 'start')}${T(462, 268, 'time →', 'xs muted', 'end')}`;
+  b += arrow(`M${start} 286 V${rest + 12}`, BLUE, 3) + T(start, 306, 'the impulse arrives', 'xs b blue');
+  if (margin) b += `<g data-part="threshold"><path d="M${x0} ${rest - unit} H462" stroke="${CAL}" stroke-width="2.5"/>${T(462, rest - unit - 8, 'threshold', 'xs b red', 'end')}</g>`;
+  b += `<g data-part="trace"><path d="${d}" fill="none" stroke="${BLUE}" stroke-width="4.5" stroke-linejoin="round"/></g>`;
+  const px = start + T_PEAK.at, py = rest - h;
+  if (cursor > px + 6) {
+    if (margin) b += `<g data-part="margin">${arrow(`M${f(px)} ${rest - unit - 4} V${f(py + 8)}`, INK, 2.5, `marker-start="url(#ah-k)"`)}${T(px + 72, py + 24, 'safety margin:', 'xs b', 'start')}${T(px + 72, py + 46, 'far more than needed', 'xs', 'start')}</g>`;
+    else b += `<g data-part="trace">${T(px + 22, py + 6, 'end plate potential', 'sm b blue', 'start')}</g>`;
   }
-  return `<g class="on-white">${s}</g>`;
+  b += T(x0 + 4, rest - 8, 'rest', 'xs muted', 'start');
+  return b;
 }
 
-// Twitch strength for a quick burst of impulses, in a 480 × 150 frame.
-const TW_X = [110, 200, 290, 380], TW_BASE = 124, TW_H = 92;
-const bump = (cx, h, base = TW_BASE, w = 38) => `M${cx - w} ${base} C${cx - w / 2} ${base} ${cx - w * .36} ${f(base - h)} ${cx} ${f(base - h)} C${cx + w * .36} ${f(base - h)} ${cx + w / 2} ${base} ${cx + w} ${base}`;
-function twitchPanel(o, ghost, { flurry = 0, note = true } = {}) {
-  let s = `<rect x="16" y="0" width="448" height="148" fill="#fff" stroke="${RULE}"/>`;
-  s += text(28, 22, 'twitch strength ↑', 'xs', 'start') + text(452, 142, 'a quick burst of impulses →', 'xs', 'end');
-  s += `<path d="M28 ${TW_BASE} H452" stroke="${RULE}" stroke-width="2"/>`;
-  if (ghost) s += `<g class="ghost">${TW_X.map((x, k) => `<path d="${bump(x, TW_H * ghost.twitch[k])}" fill="none" stroke="${INK}" stroke-width="2" stroke-dasharray="5 4"/>`).join('')}</g>`;
-  s += `<g data-twitches>${TW_X.map((x, k) => `<path data-twitch="${k + 1}" d="${bump(x, Math.max(1, TW_H * o.twitch[k]))}" fill="${BLUE_FILL}" stroke="${BLUE}" stroke-width="3"/>`).join('')}</g>`;
+/* ---------- Step 9: the fibre fires and twitches ---------- */
+function fireArt(t) {
+  const u = ease3(span(t, .08, .42)), squeeze = Math.sin(Math.PI * span(t, .3, .9)), shrink = 26 * squeeze;
+  const L = 24 + shrink, R = 456 - shrink;
+  let b = `<g data-part="fibre"><rect x="${f(L)}" y="${f(96 - 4 * squeeze)}" width="${f(R - L)}" height="${f(60 + 8 * squeeze)}" rx="30" fill="${ORGAN}" stroke="${WALL}" stroke-width="3"/></g>`;
+  b += `<path d="M240 20 V86" stroke="${INK}" stroke-width="5"/><ellipse cx="240" cy="92" rx="22" ry="9" fill="${INK}"/>${T(256, 34, 'nerve', 'xs', 'start')}`;
+  if (u > 0 && t < .6) { const l = 240 - (240 - L) * u, r = 240 + (R - 240) * u; b += `<g data-part="wave" ${op(1 - span(t, .45, .6))}><rect x="${f(l)}" y="102" width="${f(r - l)}" height="48" rx="24" fill="${BLUE}" opacity=".22"/><path d="M${f(l)} 104 V148 M${f(r)} 104 V148" stroke="${BLUE}" stroke-width="5"/></g>`; }
+  b += T(240, 136, 'end plate', 'xs b on-organ');
+  b += fadeIn(span(t, .1, .2), `${arrow(`M200 186 H${f(lerp(196, 60, u))}`, BLUE, 3.5)}${arrow(`M280 186 H${f(lerp(284, 420, u))}`, BLUE, 3.5)}${T(240, 218, 'the muscle action potential spreads both ways', 'xs b blue')}`);
+  b += fadeIn(squeeze, `${arrow(`M${f(L - 20)} 126 H${f(L - 4)}`, INK, 3)}${arrow(`M${f(R + 20)} 126 H${f(R + 4)}`, INK, 3)}`) + T(40, 66, 'the fibre shortens', 'xs b', 'start', op(span(t, .3, .4)));
+  // The twitch, drawn as it happens.
+  const g = 250, base = 360, cx = lerp(56, 462, t);
+  b += `<path d="M48 ${g} V${base}" stroke="${MUTED}" stroke-width="1.5"/>${T(54, g + 4, 'strength ↑', 'xs muted', 'start')}<path d="M48 ${base} H462" stroke="${RULE}" stroke-width="2"/>${T(462, base + 22, 'time →', 'xs muted', 'end')}`;
+  let d = `M56 ${base}`;
+  for (let x = 56; x <= cx; x += 4) { const v = Math.sin(Math.PI * span((x - 56) / 406, .3, .9)); d += ` L${x} ${f(base - 82 * v)}`; }
+  b += `<g data-part="twitch"><path d="${d}" fill="none" stroke="${BLUE}" stroke-width="4"/></g>`;
+  if (t > .62) b += T(330, 286, 'one twitch', 'xs b blue', 'start');
+  return b;
+}
+
+/* ---------- Steps 11, 12 and the changes: a quick burst of four impulses ----------
+   Columns are the four impulses. Rows: acetylcholine released (step 11 only) or the gates (the whole picture),
+   the end plate potential against threshold, and the twitch. Over a dashed ghost of normal for a change. */
+const COLS = [200, 270, 340, 410], TH = 30, TW = 62;
+function receptorStates(o) {
+  const p = o.p, present = Math.round(8 * clamp(p.receptors, 0, 1)), states = Array(8).fill('empty');
+  [1, 6, 3, 4, 0, 7, 2, 5].slice(0, 8 - present).forEach(i => { states[i] = 'missing'; });
+  const slots = [0, 4, 2, 6, 1, 5, 3, 7].filter(i => states[i] !== 'missing');
+  let nS = p.sux > .02 ? Math.round(present * Math.min(1, o.depol)) : 0;
+  let nB = Math.min(present - nS, Math.round(present * o.occB)), nA = Math.min(present - nS - nB, Math.round(present * o.occA));
+  for (const i of slots) { if (nS > 0) { states[i] = 'sux'; nS--; } else if (nB > 0) { states[i] = 'blocked'; nB--; } else if (nA > 0) { states[i] = 'ach'; nA--; } }
+  return states;
+}
+// The gates in a row: acetylcholine in the gap above, cholinesterase in the folds below.
+function gateRow(o, y0, note = '', a = 1) {
+  const y = y0 + 64, states = receptorStates(o), xs = [150, 186, 222, 258, 294, 330, 366, 402];
+  let b = T(12, y0 + 22, 'gates on the end plate', 'xs b', 'start') + (note ? fadeIn(a, T(468, y0 + 22, note, 'xs b blue', 'end')) : '');
+  b += `<path d="M130 ${y + 10} H420" stroke="${WALL}" stroke-width="3"/>`;
+  const n = clamp(Math.round(3 * o.A), 1, 14);
+  for (let i = 0; i < n; i++) b += dot(150 + ((i * .618034) % 1) * 252, y0 + 34 + (i % 3) * 5, 4, ACH);
+  xs.forEach((x, i) => {
+    const st = states[i], open = st === 'ach' || st === 'sux' ? 1 : 0, g = 1.5 + 4 * open;
+    if (st === 'missing') { b += `<g data-part="antibody"><rect x="${x - 9}" y="${y - 2}" width="18" height="22" fill="none" stroke="${INK}" stroke-width="1.5" stroke-dasharray="3 3"/>${antibody(x, y - 12)}</g>`; return; }
+    let s = `<rect x="${f(x - g - 6)}" y="${y - 2}" width="6" height="22" rx="2" fill="${GATE}" stroke="${INK}" stroke-width="1.5"/><rect x="${f(x + g)}" y="${y - 2}" width="6" height="22" rx="2" fill="${GATE}" stroke="${INK}" stroke-width="1.5"/>`;
+    if (st === 'ach') s += dot(x - 6, y - 7, 4, ACH) + dot(x + 6, y - 7, 4, ACH);
+    b += `<g data-part="gates">${s}</g>`;
+    if (st === 'sux') b += `<g data-part="drug">${diamond(x, y - 8, 7)}</g>`;
+    if (st === 'blocked') b += `<g data-part="drug">${plug(x, y - 8)}</g>`;
+  });
+  b += `<g data-part="enzyme">${[168, 276, 384].map(x => enzyme(x, y + 24, 9)).join('')}${o.p.ache < .6 ? [168, 276, 384].map(x => cross(x, y + 22, 7)).join('') : ''}</g>`;
+  return b;
+}
+// The end plate potential for each impulse of the burst, as a bar against the threshold line.
+function eppRow(o, ghost, y0, note = '', a = 1) {
+  const base = y0 + 122, thr = base - TH;
+  let b = T(12, y0 + 18, 'end plate potential', 'xs b', 'start') + (note ? fadeIn(a, T(468, y0 + 18, note, 'xs b blue', 'end')) : '');
+  b += `<path d="M150 ${base} H440" stroke="${RULE}" stroke-width="2"/>`;
+  const held = o.blocked;
+  if (held > .05) b += `<g data-part="held"><rect x="160" y="${f(base - TH * 1.25 * held)}" width="276" height="${f(TH * 1.25 * held)}" fill="${BLUE}" opacity=".18"/><path d="M160 ${f(base - TH * 1.25 * held)} H436" stroke="${BLUE}" stroke-width="2.5" stroke-dasharray="8 4"/></g>`;
+  COLS.forEach((x, k) => {
+    if (ghost) b += `<rect class="ghost" x="${x - 17}" y="${f(base - TH * ghost.shots[k].S)}" width="34" height="${f(TH * ghost.shots[k].S)}" fill="none" stroke="${INK}" stroke-width="2" stroke-dasharray="5 4"/>`;
+    const hgt = TH * o.shots[k].S * (1 - .9 * held);
+    b += `<g data-part="trace"><rect x="${x - 13}" y="${f(base - hgt)}" width="26" height="${f(Math.max(hgt, 1))}" fill="${BLUE}"/></g>`;
+  });
+  b += `<g data-part="threshold"><path d="M150 ${thr} H440" stroke="${CAL}" stroke-width="2.5"/>${T(144, thr + 6, 'threshold', 'xs b red', 'end')}</g>`;
+  return b;
+}
+const bump = (cx, h, base, w = 30) => `M${cx - w} ${base} C${cx - w / 2} ${base} ${f(cx - w * .36)} ${f(base - h)} ${cx} ${f(base - h)} C${f(cx + w * .36)} ${f(base - h)} ${cx + w / 2} ${base} ${cx + w} ${base}`;
+function twitchRow(o, ghost, y0, note = '', a = 1, flurry = 0) {
+  const base = y0 + 96;
+  let b = T(12, y0 + 18, 'twitch strength', 'xs b', 'start') + (note ? fadeIn(a, T(468, y0 + 18, note, 'xs b blue', 'end')) : '');
+  b += `<path d="M150 ${base} H440" stroke="${RULE}" stroke-width="2"/>`;
+  COLS.forEach((x, k) => {
+    if (ghost) b += `<path class="ghost" d="${bump(x, TW * ghost.twitch[k], base)}" fill="none" stroke="${INK}" stroke-width="2" stroke-dasharray="5 4"/>`;
+    b += `<g data-part="twitch"><path d="${bump(x, Math.max(1, TW * o.twitch[k]), base)}" fill="${BLUE_FILL}" stroke="${BLUE}" stroke-width="3"/></g>`;
+  });
   if (flurry > .02) {
     let d = '';
-    for (let i = 0; i < 26; i++) { const x = 52 + i * 15, h = (8 + 16 * ((i * .618034 + flurry * 3.7) % 1)) * flurry; d += `M${x} ${TW_BASE} L${x + 3} ${f(TW_BASE - h)} L${x + 6} ${TW_BASE} `; }
-    s += `<path data-flurry d="${d}" fill="none" stroke="${INK}" stroke-width="2"/>`;
-    if (flurry > .15) s += text(452, 22, 'a flurry of small twitches', 'xs b', 'end');
-  } else if (note && o.p.sux > .2) s += text(452, 22, 'after a brief flurry of small twitches', 'xs', 'end');
-  return `<g class="on-white">${s}</g>`;
-}
-
-// The whole picture: close-up, end plate voltage and twitches, with an optional ghost of normal and a legend.
-function picture(o, { ghost = null, legend = '', flurry = 0, tag = '' } = {}) {
-  let b = DEFS + g(64, synapse(o, { labels: !ghost })) + g(326, tracePanel(o, ghost)) + g(518, twitchPanel(o, ghost, { flurry }));
-  if (tag) b += text(470, 22, tag, 'xs b blue', 'end');
-  const h = ghost ? 724 : 680;
-  return withState(o, b, ghost, legend, h);
-}
-function withState(o, b, ghost, legend, h) {
-  const attrs = s => `data-ach="${(s.A / BASE.A).toFixed(4)}" data-opened="${(s.opened / BASE.opened).toFixed(4)}" data-epp="${(s.epp / BASE.epp).toFixed(4)}" data-safety="${(s.safety / BASE.safety).toFixed(4)}" data-twitch1="${s.twitch[0].toFixed(4)}" data-twitch4="${s.twitch[3].toFixed(4)}" data-fade="${s.fade.toFixed(4)}" data-held="${s.blocked.toFixed(4)}"`;
-  let out = `<g data-new-state="${legend || 'current'}" ${attrs(o)}>${b}</g>`;
-  if (ghost) {
-    const y = h - 50;
-    out += `<g class="ghost" data-ghost="normal" ${attrs(ghost)}><path d="M20 ${y} H48" stroke="${INK}" stroke-width="3" stroke-dasharray="5 4"/></g>${text(56, y + 6, 'normal', 'sm', 'start')}`;
-    out += `<path d="M148 ${y} H176" stroke="${BLUE}" stroke-width="6"/>${text(184, y + 6, legend, 'sm blue', 'start')}`;
-    const p = o.p, keys = [];
-    if (p.ndmb > .5) keys.push([plug(28, 0), 'nondepolarizing blocker']);
-    if (p.sux > .05) keys.push([diamond(28, 0, 6), 'succinylcholine']);
-    if (p.ache < .6) keys.push([cross(28, 0, 8), 'cholinesterase stopped']);
-    if (p.receptors < .8) keys.push([antibody(28, -2), 'antibody, lost receptor']);
-    const w = keys.length ? 480 / keys.length : 0;
-    keys.forEach(([icon, word], i) => { out += `<g transform="translate(${f(i * w)} ${h - 20})">${icon}${text(46, 5, word, 'xs', 'start')}</g>`; });
+    for (let i = 0; i < 18; i++) { const x = 158 + i * 15.5, h = (6 + 14 * ((i * .618034 + flurry * 3.7) % 1)) * flurry; d += `M${f(x)} ${base} L${f(x + 3)} ${f(base - h)} L${f(x + 6)} ${base} `; }
+    b += `<path d="${d}" fill="none" stroke="${INK}" stroke-width="2"/>` + T(468, y0 + 40, 'a flurry of small twitches', 'xs b', 'end', op(span(flurry, .1, .3)));
   }
-  return out;
+  return b;
 }
+const IMPULSES = 'four quick impulses →';
+function burstArt(t) {
+  const o = BASE, shown = k => span(t, .06 + k * .22, .16 + k * .22);
+  let b = T(12, 18, 'acetylcholine released', 'xs b', 'start') + `<path d="M150 110 H440" stroke="${RULE}" stroke-width="2"/>`;
+  COLS.forEach((x, k) => { const s = shown(k), h = 78 * o.shots[k].release * s; if (s > 0) b += `<g data-part="ach"><rect x="${x - 13}" y="${f(110 - h)}" width="26" height="${f(h)}" fill="${ACH}"/></g>`; });
+  b += fadeIn(shown(3), T(468, 18, 'a little less each time', 'xs b', 'end'));
+  // Reuse the rows of the whole picture, revealing one impulse at a time.
+  const part = { ...o, shots: o.shots.map((s, k) => ({ ...s, S: s.S * shown(k) })), twitch: o.twitch.map((w, k) => w * shown(k)) };
+  b += eppRow(part, null, 124, shown(3) > .5 ? 'all still above threshold' : '', shown(3));
+  b += twitchRow(part, null, 270, shown(3) > .5 ? 'all equally strong' : '', shown(3));
+  b += T(440, 392, IMPULSES, 'xs muted', 'end');
+  return b;
+}
+const NOTES = {
+  ndmb: ['jammed shut by the blocker', 'many fall below threshold', 'weaker, and fading ↓'],
+  sux: ['opened again and again', 'held up: sodium doors lock', 'small, but no fade ↓'],
+  che: ['acetylcholine wins gates back', 'back above threshold ↑', 'twitches recover ↑'],
+  mg: ['gates lost to antibodies', 'only just above threshold', 'fading with use ↓']
+};
+function tofArt(o, { ghost = null, legend = '', kind = '', a = 1, flurry = 0, tag = '' } = {}) {
+  const [n1, n2, n3] = NOTES[kind] || [];
+  let b = gateRow(o, 0, n1, a) + eppRow(o, ghost, 100, n2, a) + twitchRow(o, ghost, 236, n3, a, flurry);
+  b += T(440, 354, IMPULSES, 'xs muted', 'end');
+  if (tag) b += T(12, 354, tag, 'xs b blue', 'start');
+  let h = 362;
+  if (ghost) {
+    const items = [[`<path d="M0 -6 H28" stroke="${INK}" stroke-width="2.5" stroke-dasharray="6 5"/>`, 'normal', 36]];
+    if (o.p.ndmb > .5) items.push([plug(9, -6, 18, 10), 'blocker', 24]);
+    if (o.p.sux > .05) items.push([diamond(9, -6, 7), 'succinylcholine', 22]);
+    if (o.p.ache < .6) items.push([cross(9, -6, 6), 'enzyme stopped', 22]);
+    if (o.p.receptors < .9) items.push([antibody(9, -8), 'antibody, gate lost', 22]);
+    let x = 12, y = 384;
+    for (const [icon, w, pad] of items) { const width = pad + w.length * 9.4; if (x > 12 && x + width > 472) { x = 12; y += 22; } b += `<g transform="translate(${f(x)} ${y})">${icon}${T(pad, 0, w, 'xs', 'start')}</g>`; x += width + 20; }
+    h = y + 10;
+  }
+  const attrs = s => `data-ach="${(s.A / BASE.A).toFixed(4)}" data-opened="${(s.opened / BASE.opened).toFixed(4)}" data-epp="${(s.epp / BASE.epp).toFixed(4)}" data-safety="${(s.safety / BASE.safety).toFixed(4)}" data-twitch1="${s.twitch[0].toFixed(4)}" data-twitch4="${s.twitch[3].toFixed(4)}" data-fade="${s.fade.toFixed(4)}" data-held="${s.blocked.toFixed(4)}"`;
+  return { body: `<g data-new-state="${legend || 'current'}" ${attrs(o)}>${b}</g>`, h };
+}
+const tofSvg = (label, o, opt) => { const { body, h } = tofArt(o, opt); return svg(label, body, { h }); };
 
-/* ---------- Core step pictures ---------- */
-function motorPicture() {
-  let b = DEFS + `<rect x="34" y="40" width="46" height="480" rx="23" fill="#f3e3df" stroke="${WALL}" stroke-width="3"/>`;
-  b += `<text transform="translate(24 420) rotate(-90)" text-anchor="middle" class="sm">spinal cord</text>`;
-  b += `<path d="M380 56 V96 M380 504 V540" stroke="#c4bca8" stroke-width="7" stroke-linecap="round"/>`;
-  b += `<path d="M380 90 C472 190 472 410 380 510 C288 410 288 190 380 90 Z" fill="${ORGAN}" stroke="${WALL}" stroke-width="3"/>`;
-  for (const dx of [-44, -22, 0, 22, 44]) b += `<path d="M380 104 C${380 + dx * 1.7} 220 ${380 + dx * 1.7} 380 380 496" fill="none" stroke="#d29a8e" stroke-width="1.5"/>`;
-  // The nerve is drawn over the muscle so its branches show where they land.
-  b += `<circle cx="57" cy="150" r="12" fill="${INK}"/>`;
-  b += `<path d="M69 150 C190 150 200 300 304 304" fill="none" stroke="${INK}" stroke-width="6" stroke-linecap="round"/>`;
-  for (const [x, y] of [[340, 266], [354, 304], [340, 342]]) b += `<path d="M300 304 Q318 ${y} ${x} ${y}" fill="none" stroke="${INK}" stroke-width="3"/><circle cx="${x}" cy="${y}" r="5" fill="${INK}"/>`;
-  b += arrow('M96 128 C176 128 206 250 280 274', BLUE, 3, 'stroke-dasharray="8 7"') + text(176, 150, 'signal', 'sm b blue', 'end');
-  b += text(150, 330, 'motor nerve', 'sm b') + text(150, 352, 'a cable of axons', 'sm');
-  b += text(94, 106, 'nerve cell', 'sm', 'start') + `<path d="M92 112 L66 142" stroke="${INK}" stroke-width="1.5"/>`;
-  b += text(380, 40, 'skeletal muscle', 'sm b');
+/* ---------- Steps 1 and 2: from spinal cord to muscle ---------- */
+function motorArt(t) {
+  const u = span(t, .05, .5), squeeze = Math.sin(Math.PI * span(t, .48, .9));
+  let b = `<rect x="30" y="30" width="46" height="330" rx="23" fill="#f3e3df" stroke="${WALL}" stroke-width="3"/>${T(12, 390, 'spinal cord', 'sm', 'start')}`;
+  const w = 64 + 18 * squeeze;
+  b += `<g data-part="muscle"><path d="M380 56 V92 M380 316 V352" stroke="#c4bca8" stroke-width="7" stroke-linecap="round"/><path d="M380 88 C${f(380 + w)} 160 ${f(380 + w)} 250 380 320 C${f(380 - w)} 250 ${f(380 - w)} 160 380 88 Z" fill="${ORGAN}" stroke="${WALL}" stroke-width="3"/></g>`;
+  b += T(380, 40, 'skeletal muscle', 'sm b');
+  b += `<g data-part="cellbody">${dot(53, 120, 12, INK)}</g>`;
+  const nerve = [[65, 120], [170, 120], [210, 210], [304, 206]];
+  b += `<g data-part="nerve"><path d="M65 120 C170 120 210 210 304 206" fill="none" stroke="${INK}" stroke-width="6" stroke-linecap="round"/>`;
+  for (const [x, y] of [[340, 172], [352, 206], [340, 240]]) b += `<path d="M300 206 Q318 ${y} ${x} ${y}" fill="none" stroke="${INK}" stroke-width="3"/>${dot(x, y, 5, INK)}`;
+  b += `</g>`;
+  if (u > 0 && u < 1) { const v = 1 - u, [x, y] = [0, 1].map(k => v * v * v * nerve[0][k] + 3 * v * v * u * nerve[1][k] + 3 * v * u * u * nerve[2][k] + u * u * u * nerve[3][k]); b += dot(x, y, 9, BLUE); }
+  b += T(150, 262, 'motor nerve:', 'sm b', 'middle') + T(150, 286, 'a cable of axons', 'sm');
+  b += T(90, 92, 'nerve cell', 'sm', 'start') + `<path d="M88 98 L62 112" stroke="${INK}" stroke-width="1.5"/>`;
+  b += fadeIn(squeeze, T(380, 384, 'the muscle contracts', 'xs b blue'));
   return b;
 }
-function junctionsPicture() {
-  const ys = [250, 330, 410, 490], xs = [170, 250, 320, 390];
-  let b = DEFS;
-  for (const y of ys) b += `<rect x="30" y="${y - 25}" width="420" height="50" rx="25" fill="${ORGAN}" stroke="${WALL}" stroke-width="2.5"/>`;
-  b += `<path d="M240 20 V150" stroke="${INK}" stroke-width="6" stroke-linecap="round"/>`;
-  ys.forEach((y, i) => { const x = xs[i]; b += `<path d="M240 148 C240 184 ${x} ${y - 70} ${x} ${y - 34}" fill="none" stroke="${INK}" stroke-width="3"/><ellipse cx="${x}" cy="${y - 28}" rx="15" ry="7" fill="${INK}"/>`; });
-  b += `<circle cx="170" cy="222" r="30" fill="none" stroke="${BLUE}" stroke-width="3" stroke-dasharray="6 5"/>`;
-  b += text(20, 176, 'neuromuscular junction', 'sm b blue', 'start') + `<path d="M120 184 L148 200" stroke="${BLUE}" stroke-width="2"/>`;
-  b += text(256, 70, 'motor nerve', 'sm b', 'start') + text(240, 550, 'muscle fibres', 'sm b');
-  return b;
-}
-function zoomPicture(o, opt, notes) {
-  return DEFS + g(70, synapse(o, opt)) + notes;
-}
-function tracePicture(threshold) {
-  const G = traceGeom(BASE);
-  let b = DEFS + g(24, tracePanel(BASE, null, { threshold, status: false }));
-  if (!threshold) b += `<path d="M${f(G.px + 30)} ${f(24 + G.peak + 18)} L${f(G.px + 8)} ${f(24 + G.peak + 4)}" stroke="${INK}" stroke-width="1.5"/>` + text(f(G.px + 34), f(24 + G.peak + 28), 'end plate potential', 'sm b on-white', 'start');
-  b += text(240, 236, 'one impulse arrives', 'xs');
-  return b;
-}
-function firePicture() {
-  let b = DEFS + `<rect x="20" y="110" width="440" height="60" rx="30" fill="${ORGAN}" stroke="${WALL}" stroke-width="3"/>`;
-  b += `<path d="M240 24 V94" stroke="${INK}" stroke-width="5"/><ellipse cx="240" cy="102" rx="24" ry="10" fill="${INK}"/>${text(240, 147, 'end plate', 'xs on-organ')}`;
-  b += arrow('M190 140 H58', BLUE, 5) + arrow('M290 140 H422', BLUE, 5);
-  b += text(240, 202, 'muscle action potential', 'sm b blue');
-  b += arrow('M240 214 V246', INK, 2.5);
-  b += `<rect x="86" y="262" width="308" height="76" rx="38" fill="${ORGAN}" stroke="${WALL}" stroke-width="3"/>`;
-  b += arrow('M28 300 H76', INK, 3) + arrow('M452 300 H404', INK, 3) + text(240, 366, 'the fibre shortens', 'sm');
-  b += g(386, `<g class="on-white"><rect x="16" y="0" width="448" height="140" fill="#fff" stroke="${RULE}"/>${text(28, 22, 'strength ↑', 'xs', 'start')}${text(452, 132, 'time →', 'xs', 'end')}<path d="M28 112 H452" stroke="${RULE}" stroke-width="2"/><path d="${bump(240, 76, 112, 60)}" fill="${BLUE_FILL}" stroke="${BLUE}" stroke-width="3"/>${text(452, 22, 'one twitch', 'xs b blue', 'end')}</g>`);
-  return b;
-}
-function burstPicture(o) {
-  let b = DEFS + '<g class="on-white">';
-  const X = [130, 220, 310, 400];
-  b += `<rect x="16" y="8" width="448" height="146" fill="#fff" stroke="${RULE}"/>` + text(28, 30, 'acetylcholine released', 'xs', 'start');
-  X.forEach((x, k) => { const h = 96 * o.shots[k].release; b += `<rect data-bar="release" x="${x - 16}" y="${f(144 - h)}" width="32" height="${f(h)}" fill="${GREEN}"/>`; });
-  b += `<rect x="16" y="166" width="448" height="160" fill="#fff" stroke="${RULE}"/>` + text(28, 188, 'end plate potential', 'xs', 'start');
-  X.forEach((x, k) => { const h = 34 * o.shots[k].S; b += `<rect data-bar="epp" x="${x - 16}" y="${f(316 - h)}" width="32" height="${f(h)}" fill="${BLUE}"/>`; });
-  b += `<path d="M28 282 H452" stroke="${RED}" stroke-width="2"/>` + text(60, 276, 'threshold', 'xs red', 'start');
-  b += g(338, `<rect x="16" y="0" width="448" height="148" fill="#fff" stroke="${RULE}"/>${text(28, 22, 'twitch strength', 'xs', 'start')}<path d="M28 ${TW_BASE} H452" stroke="${RULE}" stroke-width="2"/>${X.map((x, k) => `<path data-twitch="${k + 1}" d="${bump(x, TW_H * o.twitch[k], TW_BASE, 36)}" fill="${BLUE_FILL}" stroke="${BLUE}" stroke-width="3"/>`).join('')}`) + '</g>';
-  b += text(452, 512, 'a quick burst of impulses →', 'xs', 'end');
+function junctionsArt(t) {
+  const ys = [214, 280, 346], xs = [168, 262, 356], u = span(t, .05, .45);
+  let b = '';
+  ys.forEach((y, i) => { const lit = span(t, .42 + i * .04, .5 + i * .04) * (1 - span(t, .8, .95)); b += `<g data-part="fibres"><rect x="30" y="${y - 24}" width="420" height="48" rx="24" fill="${ORGAN}" stroke="${WALL}" stroke-width="2.5"/>${fadeIn(lit, `<rect x="30" y="${y - 24}" width="420" height="48" rx="24" fill="${BLUE}" opacity=".18"/>`)}</g>`; });
+  b += `<path d="M240 20 V130" stroke="${INK}" stroke-width="6" stroke-linecap="round"/>`;
+  ys.forEach((y, i) => { const x = xs[i]; b += `<path d="M240 128 C240 160 ${x} ${y - 70} ${x} ${y - 32}" fill="none" stroke="${INK}" stroke-width="3"/><ellipse cx="${x}" cy="${y - 27}" rx="15" ry="7" fill="${INK}"/>`; });
+  if (u > 0 && u < 1) b += dot(240, lerp(20, 128, u), 8, BLUE);
+  b += `<g data-part="nmj"><circle cx="168" cy="186" r="30" fill="none" stroke="${BLUE}" stroke-width="3" stroke-dasharray="6 5"/>${T(16, 132, 'neuromuscular', 'sm b blue', 'start')}${T(16, 154, 'junction', 'sm b blue', 'start')}<path d="M92 160 L142 178" stroke="${BLUE}" stroke-width="2"/></g>`;
+  b += T(258, 60, 'motor nerve', 'sm b', 'start') + T(240, 400, 'muscle fibres', 'sm b');
   return b;
 }
 
@@ -301,136 +336,63 @@ function compare(o) {
     ['Through a burst', o.fade < .95 ? ['twitches fade', 'down'] : ['no fade', 'same']]
   ];
 }
-const ARROW = { up: '↑', down: '↓', same: '↔' };
-const readout = o => `<ul class="readout" aria-label="Compared with normal">${compare(o).map(([k, [w, d]]) => `<li><b>${k}</b> <span class="${d}">${ARROW[d]} ${w}</span></li>`).join('')}</ul>`;
+const readoutOf = o => readout(compare(o).map(([k, [w, d]]) => [k, d, w]));
 const describe = o => compare(o).map(([k, [w]]) => `${k.toLowerCase()}: ${w}`).join('; ');
 
-/* ---------- Lesson steps ---------- */
-const CORE = {
-  motor: () => svg('A spinal cord on the left. From a nerve cell inside it, a long motor nerve, a cable of axons, runs to a skeletal muscle on the right and branches into it. A dashed blue arrow along the nerve shows a signal travelling out to the muscle.', motorPicture(), 560),
-  junctions: () => svg('A motor nerve coming down from the top and branching. Each branch ends in a small dark knob near the middle of one of several long muscle fibres stacked below. One ending is circled and labelled: the neuromuscular junction.', junctionsPicture(), 570),
-  gap: () => svg('Close-up of the nerve ending sitting just above the muscle fibre. A narrow gap, the synaptic gap, separates them. Under the gap, the fibre’s surface dips into deep folds: the end plate.',
-    zoomPicture(BASE, { vesicles: false, spill: false, receptors: false, enzyme: false }, text(240, 150, 'nerve ending', 'sm b on-white') + arrow('M434 184 V214', INK, 2, 'marker-start="url(#ah-k)"') + text(474, 170, 'synaptic gap', 'sm b', 'end') + text(240, 312, 'end plate: the folded surface', 'sm b on-organ')), 340),
-  packets: () => svg('The same close-up. The nerve ending is filled with round vesicles, and each vesicle holds green dots of acetylcholine.',
-    zoomPicture(BASE, { spill: false, receptors: false, enzyme: false }, text(20, 30, 'vesicles, each full', 'sm b', 'start') + text(20, 52, 'of acetylcholine', 'sm b green', 'start') + `<path d="M150 60 V116" stroke="${INK}" stroke-width="1.5"/>`), 340),
-  release: () => svg('A blue arrow runs down the nerve: a nerve impulse arriving. Amber calcium dots flow into the nerve ending from both sides, two vesicles have merged with its lower wall, and green acetylcholine dots have spilled into the gap.',
-    zoomPicture(BASE, { receptors: false, enzyme: false, impulse: true, calcium: true }, text(270, 34, 'nerve impulse', 'sm b blue', 'start') + text(20, 144, 'calcium', 'xs b amber', 'start') + text(240, 340, 'acetylcholine spills into the gap', 'sm b green')), 356),
-  receptors: () => svg('Green acetylcholine dots dock in gate-shaped acetylcholine receptors along the end plate. Each docked gate stands open, and small arrows show sodium flowing through it into the fibre. Gates with nothing docked stay shut.',
-    zoomPicture(BASE, { enzyme: false }, text(240, 340, 'docked gates open: sodium flows in ↓', 'sm b')), 356),
-  voltage: () => svg('A graph of the end plate’s voltage over time, with the words voltage up and time across. The line is flat at rest, jumps sharply upward when the impulse arrives, then fades back down: the end plate potential.', tracePicture(false), 246),
-  margin: () => svg('The same voltage graph with a red line marking the threshold. The end plate potential rises far above it; a double arrow marks the room between the threshold and the peak: the safety margin.', tracePicture(true), 246),
-  fire: () => svg('A long muscle fibre with the nerve ending at its middle. Blue arrows spread from the end plate toward both ends of the fibre: the muscle action potential. Below, the fibre is drawn shorter and fatter, and a small graph shows a single bump: one twitch.', firePicture(), 530),
-  enzyme: () => svg('The close-up again. Cholinesterase, drawn as small grey mouth shapes in the folds of the end plate, has chopped most of the acetylcholine into broken pieces; only a few dots are left and most gates have closed.',
-    zoomPicture(BASE, { A: .45, chopped: true, states: ['empty', 'empty', 'empty', 'empty', 'ach', 'empty', 'empty', 'empty', 'empty', 'empty'] }, text(240, 340, 'cholinesterase chops acetylcholine apart', 'sm b')), 356),
-  burst: () => svg('Three rows for a quick burst of impulses. Green bars show each impulse releasing a little less acetylcholine than the last. Blue bars show each end plate potential, smaller each time but all still above the red threshold line. Blue bumps show the twitches, all equally tall.', burstPicture(BASE), 524),
-  whole: () => svg('The whole picture. At the top, the close-up: a nerve ending full of vesicles, acetylcholine in the gap, some receptor gates open with sodium flowing in, and cholinesterase in the folds. In the middle, the end plate potential rising well above the threshold, so every fibre fires. At the bottom, a quick burst of impulses giving equally strong twitches.', picture(BASE), 680)
-};
+/* ---------- The lesson's scenes, one per step kind ---------- */
 const CHANGE_WHERE = {
-  ndmb: 'Grey blockers fill most receptor gates, which stay shut; only a few hold acetylcholine.',
-  sux: 'Black diamond-shaped succinylcholine molecules sit in most receptor gates, which are held open, and the end plate voltage sits raised just under threshold.',
-  che: 'First grey blockers fill most gates. Then a red cross stops cholinesterase, acetylcholine crowds the gap and wins several gates back from the blockers.',
-  mg: 'Most receptors are gone, drawn as dashed outlines with red Y-shaped antibodies, and the folds are shallower.'
+  ndmb: 'Purple blockers fill most gates, which stay shut; only a few hold acetylcholine. The end plate potentials fall towards threshold and the twitches weaken and fade.',
+  sux: 'Purple succinylcholine diamonds sit in most gates, which are held open; after a flurry of small twitches the end plate stays held up and the twitches shrink, all alike.',
+  che: 'First purple blockers fill most gates. Then purple crosses stop cholinesterase, acetylcholine crowds the gap and wins gates back, and the end plate potentials and twitches recover.',
+  mg: 'Most gates are gone, drawn as dashed outlines with red Y-shaped antibodies; the end plate potentials only just clear threshold and the twitches fade.'
 };
 const LEGEND = { ndmb: 'with the blocker', sux: 'with succinylcholine', che: 'blocker, then inhibitor', mg: 'myasthenia gravis' };
-const DURATION = { che: 2800 };
+const TITLE = { ndmb: 'Nondepolarizing blockers', sux: 'Succinylcholine', che: 'Cholinesterase inhibitors after a blocker', mg: 'Myasthenia gravis' };
 function stateAt(kind, t) {
-  const ease = x => 1 - Math.pow(1 - clamp(x, 0, 1), 3);
+  const e = x => 1 - Math.pow(1 - clamp(x, 0, 1), 3);
   if (kind === 'che') {
     // The blocker acts first, then the inhibitor is added.
     const blockerOnly = { ...NORMAL, ndmb: CHANGES.che.ndmb };
-    return t < .5 ? mix(NORMAL, blockerOnly, ease(t / .4)) : mix(blockerOnly, { ...NORMAL, ...CHANGES.che }, ease((t - .55) / .45));
+    return t < .5 ? mix(NORMAL, blockerOnly, e(t / .4)) : mix(blockerOnly, { ...NORMAL, ...CHANGES.che }, e((t - .55) / .4));
   }
-  return mix(NORMAL, { ...NORMAL, ...CHANGES[kind] }, ease(t));
+  return mix(NORMAL, { ...NORMAL, ...CHANGES[kind] }, e(span(t, .1, .7)));
 }
-function changePicture(el, t) {
-  const kind = el.dataset.kind, o = model(stateAt(kind, t));
-  const flurry = kind === 'sux' && t < 1 ? Math.max(0, Math.sin(Math.PI * clamp((t - .04) / .6, 0, 1))) : 0;
-  const tag = kind === 'che' ? (t < .5 ? 'blocker acts' : 'inhibitor added') : '';
-  const name = el.dataset.stepTitle.split(':')[0];
-  const label = `${name}, drawn over a faint dashed picture of normal. ${CHANGE_WHERE[kind]} Compared with normal: ${describe(o)}.`;
-  return { pic: svg(label, picture(o, { ghost: BASE, legend: LEGEND[kind], flurry, tag }), 724), ro: readout(o) };
-}
-
-const steps = $$('[data-step]');
-const backBtn = $('[data-step-back]'), nextBtn = $('[data-step-next]'), progress = $('[data-step-progress]');
-let current = 0, frame = 0;
-const visualOf = el => el.querySelector('[data-visual]');
-const isAnimated = el => el.dataset.kind in CHANGES;
-// During a morph only the picture is replaced each frame; the word readout is rewritten only when its words change.
-const lastReadout = new WeakMap();
-function drawAt(el, t) {
-  const v = visualOf(el), { pic, ro } = changePicture(el, t), old = v.querySelector('svg');
-  if (!old) { v.innerHTML = pic + ro; lastReadout.set(v, ro); return; }
-  old.outerHTML = pic;
-  if (lastReadout.get(v) !== ro) { v.querySelector('.readout').outerHTML = ro; lastReadout.set(v, ro); }
-}
-function animate(el) {
-  cancelAnimationFrame(frame);
-  if (reducedMotion()) { drawAt(el, 1); return; }
-  const length = DURATION[el.dataset.kind] || 1800;
-  let start = null;
-  drawAt(el, 0);
-  const tick = now => {
-    if (start === null) start = now;
-    const t = Math.min(1, (now - start) / length);
-    drawAt(el, t);
-    if (t < 1) frame = requestAnimationFrame(tick);
+function change(kind) {
+  return {
+    duration: kind === 'che' ? 4000 : 3200,
+    render(t) {
+      const o = model(stateAt(kind, t));
+      const flurry = kind === 'sux' && t < 1 ? Math.max(0, Math.sin(Math.PI * clamp((t - .06) / .56, 0, 1))) : 0;
+      const tag = kind === 'che' ? (t < .5 ? '1: the blocker acts' : '2: the inhibitor is added') : '';
+      const label = `${TITLE[kind]}, drawn over a faint dashed picture of normal. ${CHANGE_WHERE[kind]} Compared with normal: ${describe(o)}.`;
+      return { svg: tofSvg(label, o, { ghost: BASE, legend: LEGEND[kind], kind, a: kind === 'che' ? span(t, .8, .96) : span(t, .62, .92), flurry, tag }), readout: readoutOf(o) };
+    }
   };
-  frame = requestAnimationFrame(tick);
 }
-// Pictures are drawn once the reference data has set the model's normal margin.
-let started = false;
-function startLesson() {
-  steps.forEach(el => {
-    const kind = el.dataset.kind;
-    if (CORE[kind]) visualOf(el).innerHTML = CORE[kind]();
-    else drawAt(el, 1);
-    el.querySelector('.replay')?.addEventListener('click', () => animate(el));
-  });
-  started = true;
-  if (/^#step-\d+$/.test(location.hash)) fromHash(); else showStep(current);
-}
-function showStep(n, focus = false) {
-  if (!started) return;
-  cancelAnimationFrame(frame);
-  current = clamp(n, 0, steps.length - 1);
-  steps.forEach((el, i) => { el.hidden = i !== current; });
-  backBtn.disabled = current === 0;
-  nextBtn.textContent = current === steps.length - 1 ? 'Start again ↻' : 'Next →';
-  progress.textContent = `Step ${current + 1} of ${steps.length}`;
-  if (location.hash !== `#step-${current + 1}`) history.replaceState(null, '', `#step-${current + 1}`);
-  const el = steps[current];
-  if (isAnimated(el)) animate(el);
-  if (focus) { const h = el.querySelector('h2'); h.focus({ preventScroll: true }); h.scrollIntoView({ block: 'start' }); }
-}
-nextBtn.addEventListener('click', () => showStep(current === steps.length - 1 ? 0 : current + 1, true));
-backBtn.addEventListener('click', () => showStep(current - 1, true));
-$('#lesson').addEventListener('keydown', e => {
-  if (e.target.closest('input, select, textarea') || e.altKey || e.ctrlKey || e.metaKey) return;
-  if (e.key === 'ArrowRight' && current < steps.length - 1) { e.preventDefault(); showStep(current + 1, true); }
-  if (e.key === 'ArrowLeft' && current > 0) { e.preventDefault(); showStep(current - 1, true); }
-});
-
-/* ---------- Tabs ---------- */
-const tabs = $$('[role=tab]');
-function activate(tab, focus = false) {
-  tabs.forEach(t => { const on = t === tab; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; document.getElementById(t.getAttribute('aria-controls')).hidden = !on; });
-  if (focus) tab.focus();
-  if (tab.id === 'tab-lesson') { if (started && isAnimated(steps[current])) drawAt(steps[current], 1); } else cancelAnimationFrame(frame);
-  update();
-}
-tabs.forEach((t, i) => {
-  t.addEventListener('click', () => activate(t));
-  t.addEventListener('keydown', e => {
-    const n = { ArrowRight: (i + 1) % tabs.length, ArrowLeft: (i + tabs.length - 1) % tabs.length, Home: 0, End: tabs.length - 1 }[e.key];
-    if (n !== undefined) { e.preventDefault(); activate(tabs[n], true); }
-  });
-});
-function fromHash() {
-  const m = location.hash.match(/^#step-(\d+)$/);
-  if (m && started) { if (tabs[0].getAttribute('aria-selected') !== 'true') activate(tabs[0]); showStep(Number(m[1]) - 1); }
-}
-window.addEventListener('hashchange', fromHash);
+const close = (mode, labels, label, h = 304) => mode === 'bare' || mode === 'still'
+  ? () => svg(label, closeUp(mode, 1) + labels(1), { h })
+  : { duration: 4400, loop: true, rest: .55, render: t => svg(label, closeUp(mode, t) + labels(t), { h }) };
+const NERVE_END = () => T(8, 70, 'nerve', 'sm b', 'start') + T(8, 92, 'ending', 'sm b', 'start');
+const scenes = {
+  motor: { duration: 4200, loop: true, rest: .6, render: t => svg('A spinal cord on the left. From a nerve cell inside it, a long motor nerve, a cable of axons, runs to a skeletal muscle on the right and branches into it. A blue signal travels out along the nerve, and when it arrives the muscle bulges as it contracts.', motorArt(t), { h: 398 }) },
+  junctions: { duration: 3600, loop: true, rest: .55, render: t => svg('A motor nerve coming down from the top and branching. Each branch ends in a small dark knob near the middle of one of three long muscle fibres stacked below. A signal runs down the nerve and each fibre lights as its branch delivers it. One ending is circled: the neuromuscular junction.', junctionsArt(t), { h: 408 }) },
+  gap: close('bare', () => NERVE_END() + `<g data-part="gap">${arrow(`M392 ${GAP + 4} V${PLATE - 6}`, INK, 2, 'marker-start="url(#ah-k)"')}${T(400, 142, 'synaptic', 'xs b', 'start')}${T(400, 162, 'gap', 'xs b', 'start')}</g>` + `<g data-part="endplate">${T(240, 262, 'end plate: the folded surface', 'sm b on-organ')}</g>` + T(12, 292, 'muscle fibre', 'xs on-organ', 'start'),
+    'Close-up of the nerve ending sitting just above the muscle fibre. A narrow gap, the synaptic gap, separates them. Under the gap, the fibre’s surface dips into deep folds: the end plate.'),
+  packets: close('still', () => NERVE_END() + `<g data-part="vesicles">${T(240, 152, 'vesicles: bubbles of acetylcholine', 'xs b green')}</g>`,
+    'The same close-up. The nerve ending is filled with round vesicles, and each vesicle holds green dots of acetylcholine.'),
+  release: close('spill', () => T(262, 18, 'nerve impulse', 'xs b blue', 'start') + `<g data-part="calcium">${T(8, 106, 'calcium', 'xs b red', 'start')}${T(8, 126, 'flows in', 'xs b red', 'start')}</g>` + `<g data-part="ach">${T(240, 274, 'acetylcholine spills into the gap', 'xs b green on-organ')}</g>`,
+    'A blue nerve impulse runs down the nerve. Red calcium squares flow into the nerve ending from both lower corners, two vesicles merge with its lower wall, and green acetylcholine dots spill into the gap, then drift away.'),
+  receptors: close('dock', () => `<g data-part="gates">${T(240, 264, 'gates: acetylcholine receptors', 'xs b on-organ')}</g><g data-part="sodium">${T(240, 288, 'open gates let sodium rush in', 'xs b amber on-organ')}</g>`,
+    'Acetylcholine spills into the gap and two molecules dock in each gate-shaped receptor along the end plate. Each gate with both its sites filled opens, and amber sodium dots rush through it into the fibre. When the acetylcholine leaves, the gates shut.'),
+  voltage: { duration: 2800, render: t => svg('A graph of the end plate’s voltage over time. The line is flat at rest, jumps sharply upward just after the impulse arrives, then fades back down: the end plate potential.', eppArt(false, t), { h: 318 }) },
+  margin: { duration: 2800, render: t => svg('The same voltage graph with a red line marking the threshold. The end plate potential rises far above it; a double arrow marks the room between the threshold and the peak: the safety margin.', eppArt(true, t), { h: 318 }) },
+  fire: { duration: 4200, loop: true, rest: .5, render: t => svg('A long muscle fibre with the nerve ending at its middle. A blue band spreads from the end plate toward both ends of the fibre, the muscle action potential; then the fibre shortens and fattens, and a graph below draws a single bump: one twitch.', fireArt(t), { h: 392 }) },
+  enzyme: close('chop', () => `<g data-part="enzyme">${T(240, 264, 'cholinesterase in the folds', 'xs b on-organ')}${T(240, 288, 'chops acetylcholine: gates close', 'xs on-organ')}</g>`,
+    'The close-up again. Acetylcholine docks and the gates open; then the green dots are carried down to cholinesterase, mouth shapes in the folds, and chopped into halves that fade, so the gates close.'),
+  burst: { duration: 4400, render: t => svg('Three rows for a quick burst of four impulses. Green bars show each impulse releasing a little less acetylcholine than the last. Blue bars show each end plate potential, smaller each time but all still far above the red threshold line. Blue bumps show the four twitches, all equally strong.', burstArt(t), { h: 400 }) },
+  whole: () => tofSvg('The whole picture. At the top, a row of eight gates on the end plate, about half holding acetylcholine, with cholinesterase below. In the middle, four end plate potentials from a quick burst, all far above the red threshold line. At the bottom, four equally strong twitches.', BASE),
+  ndmb: change('ndmb'), sux: change('sux'), che: change('che'), mg: change('mg'),
+};
 
 /* ---------- Shared model state (Clinical values + Explore freely) ---------- */
 let params = { ...NORMAL }, data = null;
@@ -474,7 +436,7 @@ function update() {
   if (!BASE) return;
   syncControls();
   const o = model(params);
-  $('#explore-visual').innerHTML = svg(`Illustrative model with your settings, drawn over a faint dashed picture of normal. Compared with normal: ${describe(o)}.`, picture(o, { ghost: BASE, legend: 'your settings' }), 724) + readout(o);
+  $('#explore-visual').innerHTML = tofSvg(`Illustrative model with your settings, drawn over a faint dashed picture of normal. Compared with normal: ${describe(o)}.`, o, { ghost: BASE, legend: 'your settings' }) + readoutOf(o);
   const pct = n => `${Math.round(n * 100)} in 100`;
   const rel = `acetylcholine in the gap ×${(o.A / BASE.A).toFixed(2)} · gates opened ×${(o.opened / BASE.opened).toFixed(2)} · end plate potential ×${(o.epp / BASE.epp).toFixed(2)} · fibres firing on the first impulse ${pct(o.twitch[0])}, on the last of a burst ${pct(o.twitch[3])}`;
   if (!data) { $('#model-results').textContent = `Illustrative model, relative to normal: ${rel}`; return; }
@@ -579,7 +541,7 @@ async function load() {
   }
   if (!(MARGIN > 1)) MARGIN = FALLBACK_MARGIN;
   BASE = model(NORMAL);
-  startLesson();
   update();
 }
-load();
+
+lesson({ scenes, before: load, onTab: { clinical: update, explore: update } });

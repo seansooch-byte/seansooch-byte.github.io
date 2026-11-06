@@ -1,0 +1,209 @@
+{
+  "minutes": 30,
+  "prerequisites": [],
+  "objectives": [
+    "Trace one autonomic signal across a synapse: release, crossing the gap, docking on a receptor, and how the gap is cleared.",
+    "Name each branch's messenger and its receptors: acetylcholine on M receptors; noradrenaline mainly on alpha-1, alpha-2 and beta-1 receptors; and adrenaline, the adrenal glands' hormone, which also reaches beta-2.",
+    "Predict how the heart, arterioles, airways and pupil answer each receptor type.",
+    "Predict what agonists, antagonists and cholinesterase inhibitors do to heart rate, blood pressure, airways and pupils, including the baroreflex's answer."
+  ],
+  "checks": {
+    "mag": {
+      "prompt": "A muscarinic agonist docks on M receptors and switches them on, like extra acetylcholine everywhere at once. What happens to the heart rate and the pupils?",
+      "choices": [
+        "The heart slows and the pupils get smaller",
+        "The heart speeds up and the pupils get larger",
+        "The heart slows and the pupils get larger",
+        "Nothing changes: only nerves can switch receptors on"
+      ],
+      "answer": 0,
+      "why": "M receptors are the brake's receptors. Switching them all on presses the brake everywhere: the pacemaker slows, and the pupil's ring muscle tightens, so the pupil shrinks. The airways narrow too."
+    },
+    "mant": {
+      "prompt": "Atropine sits in M receptors without switching them on, so acetylcholine cannot dock. At rest the heart's brake is always partly on. What happens to the heart rate?",
+      "choices": [
+        "It rises: the brake is released",
+        "It falls: the brake is pressed harder",
+        "It stays the same: the accelerator is unchanged"
+      ],
+      "answer": 0,
+      "why": "At rest, acetylcholine on the pacemaker's M receptors holds the rate down. Block those receptors and the brake comes off, so the heart beats faster even though nothing was added to the accelerator."
+    },
+    "che": {
+      "prompt": "A cholinesterase inhibitor stops the enzyme that chops acetylcholine apart. The nerves release the same amount as before. What happens at the M receptors?",
+      "choices": [
+        "More acetylcholine docks for longer, so every M effect grows",
+        "Less acetylcholine docks, so the brake lets go",
+        "The receptors are blocked, as with atropine",
+        "Only the heart's receptors change"
+      ],
+      "answer": 0,
+      "why": "With the enzyme stopped, acetylcholine builds up in the gap and keeps docking. The brake is pressed harder everywhere it acts: a slower heart, smaller pupils and narrower airways."
+    },
+    "aag": {
+      "prompt": "Phenylephrine switches on alpha-1 receptors on arteriole muscle. It does not act on the heart. What does the heart rate do?",
+      "choices": [
+        "It falls: pressure rises and the baroreflex slows the heart",
+        "It rises: alpha-1 receptors speed the heart",
+        "It stays the same: the drug does not touch the heart"
+      ],
+      "answer": 0,
+      "why": "The arterioles narrow and blood pressure rises. The pressure sensors report it, and the brainstem eases the accelerator and presses the brake, so the heart slows: a reflex slowing."
+    },
+    "ablock": {
+      "prompt": "An alpha-1 blocker lets arteriole muscle relax, so blood pressure falls. The heart's beta-1 receptors are untouched. What does the heart rate do?",
+      "choices": [
+        "It rises: the baroreflex presses the accelerator",
+        "It falls: the blocker reaches the heart",
+        "It stays the same"
+      ],
+      "answer": 0,
+      "why": "Falling pressure makes the sensors fire less, so the brainstem presses the accelerator. Its noradrenaline still reaches the free beta-1 receptors, and the heart speeds up."
+    },
+    "bag": {
+      "prompt": "Isoproterenol switches on both beta-1 and beta-2 receptors. Beta-1 receptors sit on the heart; beta-2 on airway muscle and some arterioles. What happens to the airways?",
+      "choices": [
+        "They widen",
+        "They narrow",
+        "They do not change: no sympathetic nerves reach them"
+      ],
+      "answer": 0,
+      "why": "Beta-2 receptors relax airway muscle, which is how adrenaline in the blood widens the airways. A drug that switches them on does the same, even with no nerve nearby, while beta-1 speeds and strengthens the heart."
+    },
+    "bblock": {
+      "prompt": "A nonselective beta-blocker covers beta-1 receptors on the heart and beta-2 receptors on airway muscle. What happens to the heart rate and the airways?",
+      "choices": [
+        "The heart slows, and the airways can narrow",
+        "The heart slows, and the airways widen",
+        "The heart speeds up, and the airways narrow",
+        "The heart slows, and the airways are untouched"
+      ],
+      "answer": 0,
+      "why": "Without beta-1 signals the heart beats slower and less forcefully. Without beta-2 signals adrenaline can no longer relax airway muscle, so acetylcholine's narrowing wins, which is why these drugs are a danger in asthma."
+    }
+  },
+  "quiz": [
+    {
+      "id": "ach-receptor",
+      "objective": 2,
+      "step": "ach",
+      "stem": "Which messenger do parasympathetic nerves release onto organs, and which receptors does it dock on?",
+      "choices": [
+        "Acetylcholine, on muscarinic (M) receptors",
+        "Noradrenaline, on beta receptors",
+        "Acetylcholine, on alpha receptors",
+        "Adrenaline, on muscarinic receptors"
+      ],
+      "answer": 0,
+      "why": "The brake's messenger is acetylcholine, and on organs it docks on muscarinic receptors. Noradrenaline, the accelerator's messenger, docks on alpha and beta receptors."
+    },
+    {
+      "id": "clearing",
+      "objective": 1,
+      "step": "reuptake",
+      "stem": "How does each messenger's signal end?",
+      "choices": [
+        "Acetylcholine is chopped by cholinesterase in the gap; noradrenaline is mostly pumped back into the nerve ending",
+        "Both are chopped by cholinesterase in the gap",
+        "Both are pumped back into the nerve ending",
+        "Neither ends on its own: the receptors switch themselves off"
+      ],
+      "answer": 0,
+      "why": "Cholinesterase waits in the gap and chops acetylcholine within moments. No enzyme in the gap chops noradrenaline; the nerve ending pumps most of it back in, which is reuptake."
+    },
+    {
+      "id": "alpha2",
+      "objective": 2,
+      "step": "reuptake",
+      "stem": "Where do alpha-2 receptors sit in this lesson, and what do they do when noradrenaline docks on them?",
+      "choices": [
+        "On the sympathetic nerve ending itself: they turn further release down",
+        "On heart muscle: they speed the heart",
+        "On airway muscle: they widen the airways",
+        "On the pupil's ring muscle: they shrink the pupil"
+      ],
+      "answer": 0,
+      "why": "Alpha-2 receptors on the nerve ending are a brake built into the accelerator: noradrenaline docking there reduces how much more is released. Lesson 4's central alpha-2 agonists use the same receptor type in the brainstem."
+    },
+    {
+      "id": "airway-receptors",
+      "objective": 3,
+      "step": "airway",
+      "stem": "Which pairing correctly matches the airway muscle's receptors to their effects?",
+      "choices": [
+        "M receptors narrow the airways; beta-2 receptors widen them",
+        "M receptors widen the airways; beta-2 receptors narrow them",
+        "Alpha-1 receptors widen the airways; beta-1 receptors narrow them",
+        "Beta-1 receptors widen the airways; M receptors have no effect"
+      ],
+      "answer": 0,
+      "why": "Acetylcholine from parasympathetic nerves tightens airway muscle through M receptors. Adrenaline in the blood relaxes it through beta-2 receptors. Beta-1 receptors belong to the heart."
+    },
+    {
+      "id": "pupil-receptors",
+      "objective": 3,
+      "step": "pupil",
+      "stem": "Eye drops that switch on alpha-1 receptors are put in before a doctor looks inside the eye. Why do they help?",
+      "choices": [
+        "They tighten the spoke-like muscle, so the pupil widens",
+        "They tighten the ring muscle, so the pupil shrinks",
+        "They block the M receptors on the spoke-like muscle",
+        "They slow the heart, so less blood clouds the eye"
+      ],
+      "answer": 0,
+      "why": "The pupil's spoke-like muscle carries alpha-1 receptors, and switching them on pulls the pupil larger. The ring muscle, with M receptors, is what makes it smaller."
+    },
+    {
+      "id": "atropine",
+      "objective": 4,
+      "step": "mant",
+      "stem": "A patient's heart is beating too slowly because the vagus nerve, a parasympathetic nerve, is firing hard. Which drug speeds it up by acting on the receptors that nerve uses?",
+      "choices": [
+        "Atropine, a muscarinic antagonist",
+        "A beta-blocker",
+        "A cholinesterase inhibitor",
+        "A muscarinic agonist"
+      ],
+      "answer": 0,
+      "why": "The vagus slows the heart through acetylcholine on M receptors. Atropine blocks those receptors and releases the brake. A cholinesterase inhibitor or a muscarinic agonist would slow the heart further, and so would a beta-blocker."
+    },
+    {
+      "id": "reflex-tachy",
+      "objective": 4,
+      "step": "ablock",
+      "stem": "Someone starts an alpha-1 blocker for high blood pressure. Which change in heart rate is expected, and why?",
+      "choices": [
+        "Faster: falling pressure makes the baroreflex press the accelerator",
+        "Slower: the blocker covers the heart's beta-1 receptors",
+        "Slower: alpha-1 receptors are the heart's accelerator",
+        "No change: nothing reaches the heart"
+      ],
+      "answer": 0,
+      "why": "The blocker widens arterioles, so pressure falls. The baroreflex answers by pressing the accelerator, and its noradrenaline reaches the free beta-1 receptors on the heart. The speed-up is the reflex, not the drug acting on the heart."
+    },
+    {
+      "id": "asthma-beta",
+      "objective": 4,
+      "step": "bblock",
+      "stem": "A person with asthma is prescribed a nonselective beta-blocker. Why is this risky?",
+      "choices": [
+        "It blocks beta-2 receptors, so adrenaline can no longer relax airway muscle",
+        "It switches on M receptors in the airways",
+        "It stops cholinesterase, so acetylcholine builds up in the airways",
+        "It speeds the heart, which tires the breathing muscles"
+      ],
+      "answer": 0,
+      "why": "Airway muscle relies on beta-2 receptors, fed by adrenaline in the blood, to relax. A nonselective beta-blocker covers them too, so the airways can narrow. Beta-1-selective drugs spare the airways more."
+    }
+  ],
+  "takeaways": [
+    "The autonomic nervous system runs the organs without thought, through two branches: the sympathetic accelerator and the parasympathetic brake. Most organs get both; most blood vessels get only the accelerator.",
+    "At a synapse a nerve ending releases a messenger that crosses a tiny gap and docks on receptors; the signal fades soon after the gap is cleared.",
+    "Parasympathetic nerves release acetylcholine onto muscarinic (M) receptors, and cholinesterase in the gap chops it apart within moments.",
+    "Most sympathetic nerves release noradrenaline onto alpha and beta receptors (those to sweat glands release acetylcholine). Its signal ends mostly by reuptake into the nerve ending, and alpha-2 receptors on the ending turn release down. The adrenal glands add adrenaline to the blood.",
+    "M: slower heart, narrower airways, smaller pupil. Beta-1: faster, stronger heart. Alpha-1: narrower arterioles, larger pupil. Beta-2: wider airways and some wider arterioles.",
+    "Agonists switch receptors on and antagonists block them. Cholinesterase inhibitors make acetylcholine linger, which strengthens its signal wherever it is released: at M receptors, and at skeletal muscle, where too much causes weakness.",
+    "The baroreflex answers a drug's effect on blood pressure: alpha-1 agonists raise pressure and slow the heart; alpha-1 blockers lower it and speed the heart.",
+    "Nonselective beta-blockers slow and weaken the heart and can narrow the airways in asthma by blocking beta-2 receptors; beta-1-selective ones spare the airways more."
+  ]
+}

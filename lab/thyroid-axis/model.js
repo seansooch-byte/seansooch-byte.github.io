@@ -6,12 +6,16 @@
    - The pituitary's TSH falls steeply as thyroid hormone (T4) in the blood rises: the negative-feedback brake.
    - The gland's release = working tissue × (1 − synthesis block) × iodine supply × (TSH drive + antibody push).
      TSH drive saturates: twice normal at most.
-   - T4 in the blood = gland release + T4 from a tablet. T3 is made mostly from T4 in body cells, a little by the gland.
+   - T4 in the blood = gland release + T4 from a tablet. T3 is made mostly from T4 in body cells, a little by the gland;
+     propylthiouracil (PTU) also slows that T4-to-T3 step in body cells (conv below 1), and propranolol, the usual
+     beta-blocker here, slows it a little. When T4 runs low, body cells turn more of it into T3, so T3 holds up better
+     than T4 (in early hypothyroidism it often stays normal). The brake follows T4, since the pituitary makes its own
+     T3 from T4 by a step PTU does not block.
    - The body's pace follows T3; the heartbeat follows the pace, blunted by a beta-blocker.
    The loop settles where the gland's release matches the T4 it is assumed to produce (bisection on T4). */
 (function () {
   const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
-  const NORMAL = { cap: 1, stim: 0, block: 0, exo: 0, iod: 1, beta: 0 };
+  const NORMAL = { cap: 1, stim: 0, block: 0, exo: 0, iod: 1, beta: 0, conv: 1 };
   const FEEDBACK = 2.2;
   const tshFor = H => clamp(Math.pow(Math.max(H, 1e-4), -FEEDBACK), 0.005, 60);
   const trhFor = H => clamp(Math.pow(Math.max(H, 1e-4), -1.2), 0.05, 12);
@@ -32,7 +36,8 @@
   // picture sets by hand (the core steps on feedback); otherwise H is the settled level.
   function describe(p, H, snapshot = false) {
     // In a snapshot the gland has not yet caught up, so T3 in the blood still follows the T4 level set by hand.
-    const tsh = tshFor(H), out = releaseAt(p, H), t3 = snapshot ? H : 0.2 * out + 0.8 * H;
+    const tsh = tshFor(H), out = releaseAt(p, H), conv = clamp(p.conv ?? 1, 0, 1.5) * clamp(Math.pow(Math.max(H, 1e-4), -0.5), 1, 1.6);
+    const t3 = snapshot ? H * conv : 0.2 * out + 0.8 * H * conv;
     const pace = clamp(Math.sqrt(Math.max(t3, 0)), 0.3, 2.2);
     const hr = pace * (1 - 0.35 * clamp(p.beta, 0, 1));
     const gland = clamp(Math.sqrt(Math.max(p.cap, 0.02)) * (1 + 0.12 * Math.min(Math.max(p.stim, 0), 2)) * (1 + 0.1 * clamp(Math.log2(tsh), 0, 3)), 0.3, 1.6);
@@ -46,9 +51,10 @@
   };
   const DRUGS = {
     levothyroxine: p => ({ ...p, exo: p.exo + 0.6 }),   // T4 from outside the gland
-    thionamide: p => ({ ...p, block: 1 - (1 - p.block) * 0.4 }), // the gland builds less hormone
+    thionamide: p => ({ ...p, block: 1 - (1 - p.block) * 0.4 }), // the gland builds less hormone (methimazole, PTU)
+    ptu: p => ({ ...p, block: 1 - (1 - p.block) * 0.4, conv: (p.conv ?? 1) * 0.6 }), // PTU: the same, and body cells make less T3 from T4
     rai: p => ({ ...p, cap: p.cap * 0.25 }),           // overactive tissue destroyed
-    betablocker: p => ({ ...p, beta: 1 })              // the heart answers alarm signals less; the loop is untouched
+    betablocker: p => ({ ...p, beta: 1, conv: (p.conv ?? 1) * 0.9 }) // the heart answers alarm signals less; propranolol also trims T4 to T3 a little
   };
   function build(preset, drugs = []) {
     let p = PRESETS[preset]();

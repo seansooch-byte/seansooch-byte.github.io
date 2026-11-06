@@ -1,9 +1,12 @@
-'use strict';
+// Lesson 5: The renin-angiotensin-aldosterone system. The kit (/lab/kit/kit.js) runs the page; this file
+// is the teaching model, the pictures, and the Clinical values and Explore freely tabs.
+import { lesson } from '/lab/kit/kit.js';
+import { C, f, clamp, lerp, ease as EASE, span, svg, text, lines, circle, rect, path, arrowTo, part, readout, esc } from '/lab/kit/draw.js';
+
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
-const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
-const f = n => Number(n.toFixed(1));
-const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+const ease = EASE.out, easeIO = EASE.inOut;
+const frac = x => x - Math.floor(x);
 
 /* ---------- Teaching model ----------
    Every quantity is relative: 1 means the normal resting state. No clinical numbers live here;
@@ -44,301 +47,338 @@ function steady(p) {
 const BASE = steady(NORMAL);
 const mix = (a, b, t) => { const out = { ...a }; for (const k in b) if (typeof b[k] === 'number') out[k] = a[k] + (b[k] - a[k]) * t; return out; };
 
-/* ---------- Drawing ---------- */
-const RED = '#b3261e', BLUE = '#254dff', INK = '#171916', ORGAN = '#f1d6d0', GLAND = '#f0dfb4', LUNG = '#f3dcdc';
-// Each picture gets its own arrowhead ids: a marker referenced from a hidden step would not draw.
-let pictureId = 0;
-const svg = (label, body) => { const id = `p${++pictureId}-`; return `<svg viewBox="0 0 480 624" role="img" aria-label="${label}">${body.replace(/ah-/g, id + 'ah-')}</svg>`; };
-const text = (x, y, s, cls = '', anchor = 'middle') => `<text x="${x}" y="${y}" text-anchor="${anchor}" class="${cls}">${s}</text>`;
-const arrow = (d, color = INK, w = 2.5, extra = '') => `<path d="${d}" fill="none" stroke="${color}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#ah-${color === BLUE ? 'b' : 'k'})" ${extra}/>`;
-const DEFS = `<defs><marker id="ah-k" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="${INK}"/></marker><marker id="ah-b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="${BLUE}"/></marker></defs>`;
-
-// Bars: amounts drawn on a gentle curve so both "much more" and "much less" stay readable.
-const TRACK = 126;
-const lvl = L => clamp(.4 * Math.pow(Math.max(L, 0), .7), .02, 1);
-const BAR_X = { L: 24, C: 177, R: 330 };
-function bar(col, y, L, G, name) {
-  const x = BAR_X[col], w = f(TRACK * lvl(L));
-  let s = `<rect x="${x}" y="${y}" width="${TRACK}" height="14" fill="#fff" stroke="#babeb3"/><rect data-bar="${name}" x="${x}" y="${y}" width="${w}" height="14" fill="${BLUE}"/>`;
-  if (G) s += `<rect class="ghost" x="${x}" y="${y - 3}" width="${f(TRACK * lvl(G))}" height="20" fill="none" stroke="${INK}" stroke-width="2" stroke-dasharray="5 4"/>`;
+/* ---------- Drawing vocabulary ----------
+   Enzymes (renin, ACE) are green mouths that cut; angiotensin I is a short chain of pale beads, angiotensin II
+   a shorter chain of solid blue beads; aldosterone is a green hexagon; sodium an amber diamond and potassium a
+   purple circle, as in Lesson 2. */
+const ORGAN = '#f6dcd8', GLAND = '#f3e3b5', PALE = C.blueWash;
+const bead = (x, y, kind, r = 7) => kind === 'two' ? circle(x, y, r, C.blue, C.ink, 1.5)
+  : kind === 'one' ? circle(x, y, r, PALE, C.blue, 2) : circle(x, y, r, '#fff', C.ink, 1.5);
+// A chain of n beads from (x, y), each step (dx, dy).
+const chainOf = (x, y, n, kind, dx = 16, dy = 0, r = 7) => Array.from({ length: n }, (_, i) => bead(x + i * dx, y + i * dy, typeof kind === 'function' ? kind(i) : kind, r)).join('');
+// An enzyme: a green disc with a mouth; open runs from 0 (shut) to 1 (wide).
+function mouth(x, y, r = 15, angle = 0, open = .7) {
+  const a = (12 + 30 * open) * Math.PI / 180, rot = angle * Math.PI / 180;
+  const p1 = [x + r * Math.cos(rot + a), y + r * Math.sin(rot + a)], p2 = [x + r * Math.cos(rot - a), y + r * Math.sin(rot - a)];
+  return `<path d="M${f(x)} ${f(y)} L${f(p1[0])} ${f(p1[1])} A${r} ${r} 0 1 1 ${f(p2[0])} ${f(p2[1])} Z" fill="${C.green}" stroke="#fff" stroke-width="1.5"/>`;
+}
+const hex = (x, y, r = 8, extra = '') => `<path d="${Array.from({ length: 6 }, (_, i) => { const t = (i * 60 + 30) * Math.PI / 180; return `${i ? 'L' : 'M'}${f(x + r * Math.cos(t))} ${f(y + r * Math.sin(t))}`; }).join('')}Z" fill="${C.green}" stroke="#fff" stroke-width="1.5" ${extra}/>`;
+const na = (x, y, r = 6, extra = '') => `<path d="M${f(x)} ${f(y - r)}L${f(x + r)} ${f(y)}L${f(x)} ${f(y + r)}L${f(x - r)} ${f(y)}Z" fill="${C.amber}" stroke="#fff" stroke-width="1.2" ${extra}/>`;
+const kion = (x, y, r = 6, extra = '') => circle(x, y, r, C.purple, '#fff', 1.2, extra);
+const drop = (x, y, r = 5.5, extra = '') => `<path d="M${f(x)} ${f(y - r * 1.35)}C${f(x + r * .5)} ${f(y - r * .6)} ${f(x + r)} ${f(y)} ${f(x + r)} ${f(y + r * .4)}A${f(r)} ${f(r)} 0 0 1 ${f(x - r)} ${f(y + r * .4)}C${f(x - r)} ${f(y)} ${f(x - r * .5)} ${f(y - r * .6)} ${f(x)} ${f(y - r * 1.35)}Z" fill="${C.blue}" stroke="#fff" stroke-width="1.2" ${extra}/>`;
+const fade = a => `opacity="${f(clamp(a, 0, 1))}"`;
+// Chevrons along a vessel, moving with t.
+const chevrons = (x0, x1, y, dir, t, col = '#fff') => {
+  let s = '';
+  const step = 46, off = frac(t * 2) * step;
+  for (let x = x0 + (dir > 0 ? off : step - off); x < x1; x += step) s += path(`M${f(x - dir * 6)} ${y - 6} L${f(x)} ${y} L${f(x - dir * 6)} ${y + 6}`, col, 3);
+  return s;
+};
+// A pressure dial; value is relative pressure (1 normal); ghost draws a dashed normal needle.
+const needleAngle = P => clamp((P - 1) * 4, -1, 1) * 70;
+function dial(cx, cy, r, P, { ghost = null, labels = true } = {}) {
+  let s = `<path d="M${cx - r} ${cy} A${r} ${r} 0 0 1 ${cx + r} ${cy} Z" fill="#fff" stroke="${C.ink}" stroke-width="2"/>`;
+  s += [-60, -30, 0, 30, 60].map(a => { const t = a * Math.PI / 180; return path(`M${f(cx + (r - 9) * Math.sin(t))} ${f(cy - (r - 9) * Math.cos(t))} L${f(cx + (r - 2) * Math.sin(t))} ${f(cy - (r - 2) * Math.cos(t))}`, C.ink, 2); }).join('');
+  if (ghost !== null) s += `<g class="ghost" data-ghost="normal">${path(`M${cx} ${cy} V${cy - r + 10}`, C.ink, 3, `transform="rotate(${f(needleAngle(ghost))} ${cx} ${cy})" stroke-dasharray="5 4"`)}</g>`;
+  s += path(`M${cx} ${cy} V${cy - r + 8}`, C.blue, 5, `transform="rotate(${f(needleAngle(P))} ${cx} ${cy})"`) + circle(cx, cy, 5, C.ink);
+  if (labels) s += text(cx - r - 4, cy + 20, 'low', 'xs', 'middle') + text(cx + r + 4, cy + 20, 'high', 'xs', 'middle');
   return s;
 }
-// How the model's state is drawn. Exponents exaggerate differences so they read at a glance.
-function look(o) {
-  return {
-    angle: clamp((o.P - 1) * 4, -1, 1) * 75,
-    tube: clamp(22 * Math.pow(o.T, -6), 8, 38),
-    fill: clamp(52 * Math.pow(o.V, 5), 14, 92),
-    k: clamp(.4 * Math.pow(o.K, 6), .03, 1)
+// A level bar with an optional dashed normal outline.
+function bar(x, y, w, level, ghostLevel = null, h = 14) {
+  let s = rect(x, y, w, h, '#fff', '#babeb3', 1) + rect(x, y, f(w * clamp(level, .02, 1)), h, C.blue);
+  if (ghostLevel !== null) s += `<g class="ghost" data-ghost="normal">${rect(x, y - 3, f(w * clamp(ghostLevel, .02, 1)), h + 6, 'none', C.ink, 2, 'stroke-dasharray="5 4"')}</g>`;
+  return s;
+}
+const lvl = L => clamp(.4 * Math.pow(Math.max(L, 0), .7), .02, 1);
+const KIDNEY = 'M140 60 C70 60 38 130 42 196 C46 268 90 318 150 316 C200 314 226 290 222 262 C219 240 200 230 198 212 C196 194 200 180 216 170 C236 156 236 124 220 98 C204 74 176 60 140 60 Z';
+const block = (x, y, a = 1) => `<g data-block data-part="block" ${fade(a)}>${circle(x, y, 12, '#fff', C.red, 3.5)}${path(`M${x - 6} ${y - 6} L${x + 6} ${y + 6} M${x + 6} ${y - 6} L${x - 6} ${y + 6}`, C.red, 3.5)}</g>`;
+
+// A filled outline (draw.js path() is for lines, with no fill).
+const shape = (d, fill, stroke = C.ink, w = 2, extra = '') => `<path d="${d}" fill="${fill}" stroke="${stroke}" stroke-width="${w}" stroke-linejoin="round" ${extra}/>`;
+// Points spread along a polyline, for particles riding a path.
+function rider(pts) {
+  const cum = [0];
+  for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+  return s => {
+    const d = clamp(s, 0, 1) * cum.at(-1);
+    let j = 0;
+    while (j < cum.length - 2 && cum[j + 1] < d) j++;
+    const k = (d - cum[j]) / ((cum[j + 1] - cum[j]) || 1);
+    return [lerp(pts[j][0], pts[j + 1][0], k), lerp(pts[j][1], pts[j + 1][1], k)];
   };
 }
-const block = (x, y) => `<g data-block><circle cx="${x}" cy="${y}" r="13" fill="#fff" stroke="${RED}" stroke-width="3.5"/><path d="M${x - 6} ${y - 6} L${x + 6} ${y + 6} M${x + 6} ${y - 6} L${x - 6} ${y + 6}" stroke="${RED}" stroke-width="3.5" stroke-linecap="round"/></g>`;
-const cup = (x, y) => `<path d="M${x - 9} ${y - 7} V${y} A9 9 0 0 0 ${x + 9} ${y} V${y - 7}" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>`;
-const KIDNEY = 'M80 26 C44 22 30 52 34 76 C38 102 64 112 90 106 C112 101 120 86 110 78 C102 72 102 62 110 56 C122 46 112 28 80 26 Z';
-const LIVER = 'M352 46 C380 30 440 32 456 44 C466 54 456 70 440 80 C420 94 384 100 364 92 C346 84 338 56 352 46 Z';
 
-const ALL = ['kidney', 'gauge', 'sense', 'renin', 'liver', 'ang1', 'ace', 'ang2', 'arteriole', 'adrenal', 'salt', 'volume', 'feedback'];
-const PART_LABEL = { kidney: 'kidney', renin: 'renin', liver: 'angiotensinogen', ang1: 'angiotensin I', ace: 'ACE', ang2: 'angiotensin II', arteriole: 'arterioles', adrenal: 'aldosterone', salt: 'salt kept', volume: 'blood volume', gauge: 'blood pressure' };
-
-// The whole chain. parts: which links are drawn so far; ghost: the normal state drawn dashed; blocks: where a drug acts.
-function picture(o, { parts = ALL, ghost = null, legend = '', blocks = [], fresh = [] } = {}) {
-  const has = k => parts.includes(k), L = look(o), G = ghost ? look(ghost) : null;
-  const cls = (part, base = '') => `${base}${fresh.includes(part) ? ' fresh' : ''}`.trim();
-  let b = DEFS;
-  // Sensing line: from the pressure dial back up to the kidney.
-  if (has('sense')) {
-    const fb = has('feedback');
-    b += `<path d="M42 512 H12 V66 H30" fill="none" stroke="${fb ? BLUE : INK}" stroke-width="${fb ? 4 : 2}" stroke-dasharray="${fb ? '2 8' : '2 6'}" stroke-linecap="round" marker-end="url(#ah-${fb ? 'b' : 'k'})"/>`;
-    if (fb) b += `<text transform="translate(30 300) rotate(-90)" text-anchor="middle" class="sm blue${fresh.includes('feedback') ? ' fresh' : ''}">pressure felt</text>`;
+/* ---------- Steps 1 and 2: the kidney watches pressure, and releases renin ---------- */
+const LOW = .85;   // step 2: the kidney senses a fall in pressure
+function kidneyCloseUp(t, { P = 1, ghost = null, renin = null, reninLevel = null, reninGhost = null } = {}) {
+  let b = part('kidney', shape(KIDNEY, ORGAN, C.red, 3) + text(122, 196, 'kidney', 'lg b'));
+  // Blood in through the artery, out through the vein.
+  b += path('M474 180 H210', C.red, 20) + chevrons(214, 474, 180, -1, t);
+  b += path('M210 222 H474', '#5d6270', 18) + chevrons(214, 474, 222, 1, t);
+  b += text(296, 160, 'blood in', 'sm b', 'start') + text(474, 258, 'blood out', 'sm b', 'end');
+  // The pressure sensors, in the walls of the small vessels that feed each filter.
+  b += part('sensor', [[208, 194], [218, 202], [206, 207], [220, 190]].map(([x, y]) => circle(x, y, 6, C.green, '#fff', 1.5)).join('')
+    + path('M212 214 L204 330', C.green, 1.5, 'stroke-dasharray="3 3"') + text(204, 352, 'sensor cells in the small vessels', 'xs b green'));
+  // The dial on the artery.
+  b += path('M380 120 V170', C.ink, 3) + part('pressure', dial(380, 116, 46, P, { ghost }) + text(380, 52, 'blood pressure', 'sm b'));
+  // Renin leaves in the blood: a steady stream once it starts (renin: 0..1 since release began).
+  if (renin !== null) {
+    let r = '';
+    for (let i = 0; i < 7; i++) { const q = renin * 1.5 - i / 7; if (q > 0) r += mouth(lerp(234, 470, frac(q)), 222 + 3 * Math.sin(i * 2.1), 7, 0, .6); }
+    b += part('renin', r);
   }
-  // Kidney and renin.
-  b += `<path d="${KIDNEY}" fill="${ORGAN}" stroke="${RED}" stroke-width="3"/>${text(68, 71, PART_LABEL.kidney, cls('kidney', 'xs on-organ'))}`;
-  if (has('renin')) {
-    const dots = has('ang1') ? 'M118 82 C150 94 182 108 222 110' : 'M118 82 C140 90 160 98 186 104';
-    b += `<path d="${dots}" fill="none" stroke="${BLUE}" stroke-width="7" stroke-dasharray="0.1 13" stroke-linecap="round"/>`;
-    b += text(87, 136, PART_LABEL.renin, cls('renin')) + bar('L', 146, o.S, ghost && ghost.S, 'renin');
-  }
-  // Liver, angiotensinogen, and the cut that makes angiotensin I.
-  if (has('liver')) {
-    b += `<path d="${LIVER}" fill="${ORGAN}" stroke="${RED}" stroke-width="3"/>${text(402, 70, 'liver', 'sm on-organ')}`;
-    b += text(240, 34, PART_LABEL.liver, cls('liver', 'sm'));
-    let beads = '';
-    for (let i = 0; i < 11; i++) beads += `<circle cx="${186 + i * 11}" cy="58" r="5.5" fill="${i < 4 ? BLUE : '#fff'}" stroke="${INK}" stroke-width="1.5"/>`;
-    b += beads + arrow('M344 58 H308');
-    b += `<path d="M230 46 V70" stroke="${INK}" stroke-width="2.5" stroke-dasharray="4 3"/>`;
-  }
-  if (has('ang1')) {
-    b += arrow('M240 76 V166') + text(250, 118, 'cut', 'sm', 'start');
-    b += text(240, 188, PART_LABEL.ang1, cls('ang1')) + bar('C', 198, o.A1, ghost && ghost.A1, 'ang1');
-  }
-  // Lungs and ACE.
-  if (has('ace')) {
-    b += `<path d="M396 216 C380 212 364 230 366 252 C368 266 392 266 396 254 Z M404 216 C420 212 436 230 434 252 C432 266 408 266 404 254 Z" fill="${LUNG}" stroke="${RED}" stroke-width="2.5"/>`;
-    b += text(400, 290, 'lungs', 'sm') + arrow('M360 240 H252') + text(300, 224, PART_LABEL.ace, cls('ace', 'blue'));
-  }
-  if (has('ang2')) {
-    b += arrow('M240 218 V270') + text(240, 292, PART_LABEL.ang2, cls('ang2')) + bar('C', 302, o.A2, ghost && ghost.A2, 'ang2');
-  }
-  // Arterioles: narrower when angiotensin II's signal is stronger.
-  if (has('arteriole')) {
-    b += arrow('M222 322 C170 326 112 330 90 340') + cup(87, 352);
-    b += text(87, 382, PART_LABEL.arteriole, cls('arteriole'));
-    const w = f(L.tube), y = 410;
-    b += `<path d="M24 ${y} H150" stroke="${RED}" stroke-width="${w}" stroke-linecap="butt"/>`;
-    b += [48, 87, 126].map(x => `<ellipse cx="${x}" cy="${y}" rx="5" ry="${f(w / 2 + 4)}" fill="none" stroke="${INK}" stroke-width="2"/>`).join('');
-    if (G) b += `<path class="ghost" d="M24 ${f(y - G.tube / 2)} H150 M24 ${f(y + G.tube / 2)} H150" stroke="${INK}" stroke-width="2" stroke-dasharray="5 4"/>`;
-    b += arrow('M87 434 V462');
-  }
-  // Adrenal glands, aldosterone, salt kept and potassium.
-  if (has('adrenal')) {
-    b += arrow('M258 322 C310 326 360 330 384 340') + cup(393, 348);
-    b += `<path d="M370 374 L393 352 L416 374 Z" fill="${GLAND}" stroke="#7a5c00" stroke-width="2"/>${text(393, 394, 'adrenal glands', 'sm')}`;
-    b += text(393, 420, PART_LABEL.adrenal, cls('adrenal')) + bar('R', 428, o.aldo, ghost && ghost.aldo, 'aldo');
-  }
-  if (has('salt')) {
-    b += arrow('M393 446 V462');
-    b += text(393, 482, PART_LABEL.salt, cls('salt')) + bar('R', 490, o.R, ghost && ghost.R, 'salt');
-    const kw = f(TRACK * L.k);
-    b += text(393, 532, 'potassium', cls('salt', 'sm'));
-    b += `<rect x="330" y="540" width="${TRACK}" height="14" fill="#fff" stroke="#babeb3"/><rect data-bar="potassium" x="330" y="540" width="${kw}" height="14" fill="${BLUE}"/>`;
-    if (G) b += `<rect class="ghost" x="330" y="537" width="${f(TRACK * G.k)}" height="20" fill="none" stroke="${INK}" stroke-width="2" stroke-dasharray="5 4"/>`;
-  }
-  // Blood volume: a container that fills.
-  if (has('volume')) {
-    if (has('salt')) b += arrow('M326 497 H290');
-    b += text(240, 430, PART_LABEL.volume, cls('volume'));
-    const top = f(532 - L.fill);
-    b += `<rect x="200" y="440" width="80" height="92" rx="8" fill="#fff" stroke="${INK}" stroke-width="2"/><rect x="202" y="${top}" width="76" height="${f(530 - top)}" rx="6" fill="${ORGAN}"/><path d="M202 ${top} H278" stroke="${RED}" stroke-width="3"/>`;
-    if (G) b += `<path class="ghost" d="M196 ${f(532 - G.fill)} H284" stroke="${INK}" stroke-width="2" stroke-dasharray="5 4"/>`;
-    b += arrow('M196 504 H140');
-  }
-  // Pressure dial.
-  if (has('gauge')) b += dial(87, 512, 44, L, G) + text(87, 562, PART_LABEL.gauge, cls('gauge'));
-  for (const [x, y] of blocks) b += block(x, y);
-  return withState(o, b, ghost, legend, blocks);
-}
-// Wraps a drawing with the state it shows (read by the smoke test) and the normal-versus-changed legend.
-function withState(o, b, ghost, legend, blocks = []) {
-  let out = `<g data-new-state="${legend || 'current'}" data-pressure="${o.P.toFixed(4)}" data-renin="${o.S.toFixed(4)}" data-renin-active="${o.Ract.toFixed(4)}" data-ang1="${o.A1.toFixed(4)}" data-ang2="${o.A2.toFixed(4)}" data-signal="${o.E.toFixed(4)}" data-aldo="${o.aldo.toFixed(4)}" data-salt="${o.R.toFixed(4)}" data-volume="${o.V.toFixed(4)}" data-potassium="${o.K.toFixed(4)}">${b}</g>`;
-  if (ghost) {
-    out += `<g class="ghost" data-ghost="normal" data-pressure="${ghost.P.toFixed(4)}" data-renin="${ghost.S.toFixed(4)}"><path d="M180 576 H206" stroke="${INK}" stroke-width="3" stroke-dasharray="5 4"/></g>${text(212, 582, 'normal', 'sm', 'start')}`;
-    out += `<path d="M290 576 H316" stroke="${BLUE}" stroke-width="6"/>${text(322, 582, legend, 'sm blue', 'start')}`;
-  }
-  if (blocks.length) out += `<g transform="translate(193 602) scale(.75) translate(-193 -602)">${block(193, 602)}</g>${text(212, 608, 'drug blocks here', 'sm red', 'start')}`;
-  return out;
-}
-
-// Pressure dial shared by the close-up and the chain.
-function dial(cx, cy, r, L, G) {
-  let s = `<path d="M${cx - r} ${cy} A${r} ${r} 0 0 1 ${cx + r} ${cy} Z" fill="#fff" stroke="${INK}" stroke-width="2"/>`;
-  s += [-60, -30, 0, 30, 60].map(a => { const t = a * Math.PI / 180; return `<path d="M${f(cx + (r - 8) * Math.sin(t))} ${f(cy - (r - 8) * Math.cos(t))} L${f(cx + (r - 1) * Math.sin(t))} ${f(cy - (r - 1) * Math.cos(t))}" stroke="${INK}" stroke-width="2"/>`; }).join('');
-  if (G) s += `<path class="ghost" d="M${cx} ${cy} V${cy - r + 10}" transform="rotate(${f(G.angle)} ${cx} ${cy})" stroke="${INK}" stroke-width="3" stroke-dasharray="5 4" stroke-linecap="round"/>`;
-  s += `<path d="M${cx} ${cy} V${cy - r + 8}" transform="rotate(${f(L.angle)} ${cx} ${cy})" stroke="${BLUE}" stroke-width="5" stroke-linecap="round"/><circle cx="${cx}" cy="${cy}" r="5" fill="${INK}"/>`;
-  return s + text(cx - r, cy + 20, 'low', 'xs') + text(cx + r, cy + 20, 'high', 'xs');
-}
-const chevrons = (xs, y, dir) => xs.map(x => `<path d="M${x - dir * 6} ${y - 6} L${x} ${y} L${x - dir * 6} ${y + 6}" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`).join('');
-
-// Steps 1 and 2: a close-up of one kidney, the dial on the vessel feeding it, and (step 2) renin leaving it.
-function kidneyPicture(o, { ghost = null, legend = '', renin = false } = {}) {
-  const L = look(o), G = ghost ? look(ghost) : null;
-  let b = DEFS;
-  b += `<path d="${KIDNEY}" transform="translate(-34 96) scale(2.8)" fill="${ORGAN}" stroke="${RED}" stroke-width="3" vector-effect="non-scaling-stroke"/>`;
-  b += text(150, 290, 'kidney', 'big on-organ');
-  b += `<path d="M470 282 H262" stroke="${RED}" stroke-width="18"/>${chevrons([440, 390, 340], 282, -1)}${text(452, 262, 'blood in', 'sm', 'end')}`;
-  b += `<path d="M262 320 H470" stroke="#5d6270" stroke-width="16"/>${chevrons([330, 380, 430], 320, 1)}${text(452, 356, 'blood out', 'sm', 'end')}`;
-  b += `<g fill="${BLUE}">${[[258, 296], [270, 302], [260, 306], [272, 292]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="5"/>`).join('')}</g>`;
-  b += `<path d="M392 212 C362 236 312 250 280 290" fill="none" stroke="${INK}" stroke-width="2.5" stroke-dasharray="2 6" stroke-linecap="round" marker-end="url(#ah-k)"/>`;
-  b += dial(400, 178, 46, L, G) + text(400, 114, 'blood pressure', '', 'middle');
-  if (renin) {
-    b += `<path d="M292 320 H462" fill="none" stroke="${BLUE}" stroke-width="7" stroke-dasharray="0.1 14" stroke-linecap="round"/>`;
-    b += text(240, 470, 'renin released', 'fresh') + bar('C', 482, o.S, ghost && ghost.S, 'renin');
-  }
-  // Nudge the close-up down so it sits in the middle of the frame, clear of the legend.
-  return withState(o, `<g transform="translate(0 36)">${b}</g>`, ghost, legend);
-}
-
-// Step 5: the lock-and-key close-up of a receptor.
-function receptorPicture() {
-  const key = (x, y0) => {
-    let s = '';
-    for (let i = 0; i < 8; i++) s += `<circle cx="${x}" cy="${y0 + i * 15}" r="7" fill="${BLUE}" stroke="${INK}" stroke-width="1.5"/>`;
-    return s;
-  };
-  const membrane = (x0, x1) => {
-    let s = `<rect x="${x0}" y="320" width="${x1 - x0}" height="240" fill="${ORGAN}"/>`;
-    s += `<path d="M${x0} 320 H${x1} M${x0} 342 H${x1}" stroke="${RED}" stroke-width="2.5"/>`;
-    for (let x = x0 + 8; x < x1; x += 16) s += `<circle cx="${x}" cy="320" r="4" fill="#fff" stroke="${RED}" stroke-width="1.5"/><circle cx="${x}" cy="342" r="4" fill="#fff" stroke="${RED}" stroke-width="1.5"/>`;
-    return s;
-  };
-  let b = DEFS + membrane(20, 228) + membrane(252, 460);
-  // Left: a cell with the receptor. The key sits in the cup and the cell answers.
-  b += `<path d="M98 270 V330 A26 26 0 0 0 150 330 V270" fill="#ecefe5" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>`;
-  b += key(124, 236);
-  b += text(124, 214, 'angiotensin II', 'blue');
-  b += `<path d="M58 266 L96 292" stroke="${INK}" stroke-width="1.5"/>${text(58, 256, 'receptor', 'sm')}`;
-  b += [[-40, 410], [0, 420], [40, 410]].map(([dx, y]) => arrow(`M${124 + dx * .3} 372 L${124 + dx} ${y}`, BLUE, 3.5)).join('');
-  b += text(124, 456, 'the cell', 'sm on-organ') + text(124, 480, 'answers', 'sm on-organ');
-  // Right: a cell with no receptor. The same messenger floats past.
-  b += key(356, 150) + text(356, 128, 'angiotensin II', 'blue');
-  b += text(356, 430, 'no receptor:', 'sm on-organ') + text(356, 454, 'nothing happens', 'sm on-organ');
-  b += `<path d="M240 40 V580" stroke="#babeb3" stroke-width="2"/>`;
-  b += text(124, 60, 'a cell with', 'sm') + text(124, 82, 'the receptor', 'sm') + text(356, 60, 'a cell without', 'sm') + text(356, 82, 'the receptor', 'sm');
+  if (reninLevel !== null) b += part('renin', text(250, 300, 'renin released', 'sm b green', 'start') + bar(250, 310, 210, reninLevel, reninGhost));
   return b;
 }
+const watchScene = t => svg('Close-up of one kidney. Blood flows in through an artery and out through a vein. A dial on the artery shows the blood pressure, its needle in the middle and twitching with each heartbeat. Green sensor cells sit in the walls of the small vessels feeding the filters.',
+  kidneyCloseUp(t, { P: 1 + .03 * Math.max(0, Math.sin(t * Math.PI * 8)) }), { h: 364 });
+function reninScene(t) {
+  const fall = easeIO(span(t, .05, .35)), P = lerp(1, LOW, fall), S = chain(NORMAL, P).S;
+  let b = kidneyCloseUp(t * .6, { P, ghost: 1, renin: span(t, .35, 1), reninLevel: lvl(lerp(1, S, ease(span(t, .35, .8)))), reninGhost: lvl(1) });
+  b += `<g ${fade(span(t, .2, .35))}>${text(318, 112, 'falls', 'xs b blue', 'end')}</g>`;
+  return svg('The same kidney close-up. The pressure needle falls below its dashed normal position. Green renin then streams out of the sensor cells into the blood leaving the kidney, and the renin bar grows past its dashed normal length.', b, { h: 364 });
+}
 
-// Plain-word comparison with normal (used for chips and text alternatives).
-function trend(v, b, up, down) { const r = v / b; return r > 1.015 ? [up, 'up'] : r < .985 ? [down, 'down'] : ['about the same', 'same']; }
+/* ---------- Step 3: renin cuts angiotensinogen ---------- */
+function cutScene(t) {
+  const reach = easeIO(span(t, .05, .4)), snip = span(t, .4, .5), away = easeIO(span(t, .5, .85));
+  const y0 = 128, x0 = 160, dx = 15, cut = 11, cx = x0 + (cut - .5) * dx;
+  let b = shape('M18 120 C30 86 96 80 132 96 C150 104 152 132 134 148 C114 166 60 172 34 160 C14 150 8 136 18 120 Z', ORGAN, C.red, 3) + text(80, 134, 'liver', 'sm b');
+  b += text(160, 74, 'angiotensinogen:', 'sm b', 'start') + text(160, 98, 'a long protein from the liver', 'xs', 'start');
+  // The long chain; its last ten beads are the piece renin cuts off.
+  b += part('angiotensinogen', path(`M146 ${y0} H${x0}`, C.ink, 2) + chainOf(x0, y0, cut, 'gen', dx));
+  const piece = chainOf(x0 + cut * dx + away * 6, y0 + away * 100, 10, 'one', dx);
+  b += away < .02 ? part('angiotensinogen', piece) : part('ang1', piece);
+  // Renin rises from the blood below and snips.
+  const ry = lerp(300, y0 + 28, reach);
+  b += part('renin', mouth(cx, ry, 16, -90, .8 - .7 * Math.sin(snip * Math.PI)) + text(cx - 26, ry + 7, 'renin', 'sm b green', 'end'));
+  if (snip > .3) b += path(`M${f(cx)} ${y0 - 18} V${y0 + 16}`, C.green, 2.5, `stroke-dasharray="4 3" ${fade(1 - away)}`);
+  b += `<g ${fade(span(t, .7, .95))}>${part('ang1', text(392, 276, 'angiotensin I', 'b blue'))}${text(392, 300, 'does little by itself', 'xs')}</g>`;
+  return svg('The liver releases angiotensinogen, drawn as a long chain of beads. Green renin rises from below and snips the last ten beads off its end. That short piece, angiotensin I, drifts away; it does little by itself.', b, { h: 318 });
+}
+
+/* ---------- Step 4: ACE in the lungs makes angiotensin II (a cycle) ---------- */
+function aceScene(t) {
+  let b = text(240, 32, 'a blood vessel in the lungs', 'sm b');
+  b += rect(14, 104, 452, 132, ORGAN) + path('M14 104 H466', C.red, 4) + path('M14 236 H466', C.red, 4);
+  b += part('ace', [140, 240, 340].map(x => mouth(x, 117, 13, 90, .55)).join('') + text(240, 92, 'ACE on the lining', 'xs b green'));
+  // Two chains in flight: one still angiotensin I, one already trimmed to angiotensin II.
+  const y = 178, gap = 14, at = 240;
+  let one = '', two = '';
+  for (const off of [.25, .75]) {
+    const lead = lerp(-40, 620, frac(t + off));
+    if (lead < at) { one += chainOf(lead, y, 10, 'one', -gap, 0, 6); continue; }
+    const q = clamp((lead - at) / 160, 0, 1);
+    for (let i = 0; i < 2; i++) one += bead(at + 14 * i + 30 * q, y - 18 - 46 * q - 8 * i, 'one', 6).replace('/>', ` ${fade(1 - q)}/>`);
+    two += chainOf(lead - 2 * gap, y, 8, 'two', -gap, 0, 6);
+  }
+  b += part('ang1', one + text(100, 272, 'angiotensin I', 'sm b') + text(100, 294, 'flows in', 'xs'));
+  b += part('ang2', two + text(380, 272, 'angiotensin II', 'sm b blue') + text(380, 294, 'the active hormone', 'xs'));
+  b += text(240, 330, 'ACE trims off two pieces', 'xs b green');
+  return svg('A blood vessel in the lungs, its lining carrying green ACE. Pale chains of ten beads, angiotensin I, flow in from the left; at ACE two beads are trimmed off, and solid blue chains of eight beads, angiotensin II, the active hormone, flow on to the right.', b, { h: 344 });
+}
+
+/* ---------- Step 5: a messenger needs a receptor ---------- */
+function receptorScene(t) {
+  const membrane = (x0, x1) => {
+    let s = rect(x0, 236, x1 - x0, 130, ORGAN) + path(`M${x0} 236 H${x1} M${x0} 256 H${x1}`, C.red, 2.5);
+    for (let x = x0 + 8; x < x1; x += 16) s += circle(x, 236, 4, '#fff', C.red, 1.5) + circle(x, 256, 4, '#fff', C.red, 1.5);
+    return s;
+  };
+  const dock = easeIO(span(t, .05, .5)), answer = span(t, .5, .8);
+  let b = membrane(14, 228) + membrane(252, 466) + path('M240 30 V370', '#babeb3', 2);
+  b += text(121, 34, 'a cell with', 'sm b') + text(121, 56, 'the receptor', 'sm b') + text(359, 34, 'a cell without', 'sm b') + text(359, 56, 'the receptor', 'sm b');
+  b += part('receptor', shape('M95 196 V250 A26 26 0 0 0 147 250 V196', '#ecefe5', C.ink, 5) + text(28, 184, 'receptor', 'xs b', 'start') + path('M62 190 L92 206', C.ink, 1.5));
+  const rTop = lerp(92, 150, dock);
+  b += part('ang2', chainOf(121, lerp(92, 202, dock), 8, 'two', 0, 7, 6) + chainOf(359, rTop, 8, 'two', 0, 7, 6) + text(359, rTop - 14, 'angiotensin II', 'xs b blue'));
+  b += `<g ${fade(answer)}>${text(150, 214, 'docks', 'xs b', 'start')}${[[-34, 330], [0, 342], [34, 330]].map(([dx, y]) => arrowTo(121 + dx * .3, 290, 121 + dx, y, C.blue, 3.5)).join('')}${text(121, 362, 'the cell answers', 'sm b on-organ')}</g>`;
+  b += `<g ${fade(answer)}>${text(359, 314, 'no receptor:', 'sm b on-organ')}${text(359, 338, 'nothing happens', 'sm b on-organ')}</g>`;
+  return svg('Two cells side by side. On the left, a blue chain of angiotensin II drops into a cup-shaped receptor in the cell surface, like a key into a lock, and arrows show the cell answering. On the right, a cell with no receptor: the same messenger stops above it and nothing happens.', b, { h: 378 });
+}
+
+/* ---------- Step 6: it squeezes the smallest arteries ---------- */
+function squeezeScene(t) {
+  const k = easeIO(span(t, .25, .7)), w = lerp(64, 30, k), P = lerp(1, 1.14, k), yc = 196;
+  let b = part('arteriole', rect(20, yc - w / 2 - 12, 300, w + 24, '#e7c9a8', 'none', 0, 'rx="10"') + rect(20, yc - w / 2, 300, w, C.red)
+    + [58, 108, 158, 208, 258].map(x => `<ellipse cx="${x}" cy="${yc}" rx="9" ry="${f(w / 2 + 14)}" fill="none" stroke="#8a5a2b" stroke-width="3"/>`).join(''));
+  b += `<g class="ghost" data-ghost="normal">${path(`M20 ${yc - 32} H320 M20 ${yc + 32} H320`, C.ink, 2, 'stroke-dasharray="6 5"')}</g>`;
+  b += chevrons(24, 316, yc, 1, t * .5);
+  b += text(20, 90, 'an arteriole, ringed', 'sm b', 'start') + text(20, 112, 'with muscle', 'sm b', 'start');
+  const land = easeIO(span(t, 0, .25));
+  b += part('ang2', [83, 183].map(x => chainOf(x, lerp(124, yc - 44, land) - 30, 5, 'two', 0, 7, 5)).join('') + text(198, 128, 'angiotensin II', 'xs b blue', 'start'));
+  b += `<g ${fade(span(t, .4, .7))}>${text(170, 296, 'muscle tightens: narrower,', 'xs b')}${part('resistance', text(170, 320, 'harder to get through', 'sm b'))}</g>`;
+  b += part('pressure', dial(404, 186, 44, P, { ghost: 1 }) + text(404, 122, 'blood pressure', 'sm b'));
+  b += `<g ${fade(span(t, .55, .8))}>${text(404, 246, 'rises', 'sm b blue')}</g>`;
+  return svg('An arteriole, a small vessel ringed with muscle, with blood flowing through. Blue angiotensin II lands on its outside; the muscle tightens and the vessel narrows inside its dashed normal width, so blood finds it harder to get through. A blood pressure dial beside it rises above its dashed normal position.', b, { h: 340 });
+}
+
+/* ---------- Step 7: it calls out aldosterone ---------- */
+const ALDO_PATH = rider([[178, 128], [262, 150], [300, 200], [292, 268], [214, 300]]);
+function adrenalScene(t) {
+  const land = easeIO(span(t, .02, .3)), out = span(t, .32, 1);
+  let b = part('kidney', shape(KIDNEY, ORGAN, C.red, 3, 'transform="translate(10 84) scale(.8)" vector-effect="non-scaling-stroke"') + text(118, 254, 'kidney', 'lg b'));
+  b += part('adrenal', shape('M58 152 L118 62 L180 140 C150 126 92 130 58 152 Z', GLAND, '#7a5c00', 2.5) + text(118, 42, 'adrenal gland', 'sm b'));
+  b += part('ang2', chainOf(lerp(330, 194, land), 100, 8, 'two', 12, 0, 5.5)) + text(318, 76, 'angiotensin II', 'xs b blue', 'start');
+  let h = '';
+  for (let i = 0; i < 8; i++) { const q = out * 1.6 - i / 8; if (q > 0) { const [x, y] = ALDO_PATH(frac(q)); h += hex(x, y, 8); } }
+  b += part('aldosterone', h + `<g ${fade(span(t, .4, .6))}>${text(318, 200, 'aldosterone', 'sm b green', 'start')}${text(318, 222, 'in the blood,', 'xs', 'start')}${text(318, 243, 'back to the kidney', 'xs', 'start')}</g>`);
+  return svg('A kidney with an adrenal gland sitting on top like a cap. Blue angiotensin II arrives and docks on the gland. Green hexagons of aldosterone then stream out of the gland into the blood and travel back round to the kidney.', b, { h: 344 });
+}
+
+/* ---------- Step 8: aldosterone holds on to salt ---------- */
+function saltScene(t) {
+  let b = rect(14, 60, 150, 236, C.blueWash) + rect(316, 60, 150, 236, ORGAN) + rect(172, 60, 136, 236, '#fff7e8', C.ink, 2, 'rx="12"');
+  b += text(89, 44, 'inside the tube', 'sm b') + text(391, 44, 'blood', 'sm b') + text(240, 44, 'tube cell', 'sm b');
+  b += part('nephron', text(89, 318, 'end of a nephron:', 'xs') + text(89, 338, 'becomes urine', 'xs'));
+  const inA = easeIO(span(t, .02, .25)), go = span(t, .25, 1);
+  b += part('aldosterone', shape('M226 168 V184 A14 14 0 0 0 254 184 V168', 'none', C.green, 3) + hex(lerp(430, 240, inA), lerp(110, 184, inA), 10)
+    + text(240, 222, 'aldosterone', 'xs b green'));
+  // Sodium is taken from the tube into the blood; potassium goes the other way, into the urine.
+  b += `<g ${fade(span(t, .25, .4))}>${arrowTo(40, 118, 440, 118, C.amber, 3)}${arrowTo(440, 262, 40, 262, C.purple, 3)}</g>`;
+  let s = '', k = '';
+  for (let i = 0; i < 5; i++) { const q = go * 1.4 - i / 5; if (q > 0) s += na(lerp(30, 450, frac(q)), 118); }
+  for (let i = 0; i < 3; i++) { const q = go * 1.2 - .1 - i / 3; if (q > 0) k += kion(lerp(450, 30, frac(q)), 262); }
+  b += part('sodium', s + text(89, 104, 'sodium', 'xs b amber')) + part('potassium', k + text(391, 248, 'potassium', 'xs b purple'));
+  b += `<g ${fade(span(t, .4, .6))}>${text(240, 340, 'sodium kept,', 'sm b amber')}${text(240, 362, 'potassium sent out', 'sm b purple')}</g>`;
+  return svg('Close-up of a cell in the wall near the end of a nephron: inside the tube on the left, blood on the right. A green aldosterone hexagon enters the cell from the blood and docks. Then amber sodium diamonds move along an arrow from the tube through the cell into the blood, while purple potassium circles move the other way, out into the urine.', b, { h: 372 });
+}
+
+/* ---------- Step 9: water follows the salt ---------- */
+function volumeScene(t) {
+  const fill = easeIO(span(t, .3, .85)), P = lerp(1, 1.12, fill);
+  let b = text(20, 40, 'salt kept', 'sm b amber', 'start') + text(20, 62, 'water follows', 'sm b blue', 'start');
+  for (let i = 0; i < 10; i++) {
+    const q = t * 1.4 - i * .07;
+    if (q <= 0) continue;
+    const u = frac(q), x = lerp(30 + (i % 3) * 30, 220, u), y = lerp(96 + (i % 4) * 24, 230, u);
+    b += i % 3 === 0 ? na(x, y, 6, fade(u < .85 ? 1 : (1 - u) / .15)) : drop(x, y, 5.5, fade(u < .85 ? 1 : (1 - u) / .15));
+  }
+  const top = lerp(250, 170, fill);
+  b += part('blood-volume', rect(170, 110, 130, 210, '#fff', C.ink, 2, 'rx="14"') + rect(174, top, 122, 316 - top, C.red, 'none', 0, 'rx="10"'));
+  b += `<g class="ghost" data-ghost="normal">${path('M160 250 H310', C.ink, 2, 'stroke-dasharray="6 4"')}</g>`;
+  b += text(235, 96, 'blood volume', 'sm b') + `<g ${fade(span(t, .6, .85))}>${text(235, 346, 'fuller', 'sm b blue')}</g>`;
+  b += part('pressure', dial(400, 228, 44, P, { ghost: 1 }) + text(400, 164, 'blood pressure', 'sm b'));
+  b += `<g ${fade(span(t, .65, .9))}>${text(400, 290, 'pushes harder', 'xs b blue')}</g>`;
+  b += arrowTo(306, 230, 350, 230, C.ink, 3);
+  return svg('Amber salt and blue water drops keep flowing into a container of blood, which fills above its dashed normal level: blood volume grows. A blood pressure dial to the right rises above its dashed normal position.', b, { h: 360 });
+}
+
+/* ---------- The chain: steps 10 to 15, Clinical values and Explore freely ----------
+   Two columns of links, each with a bar for how much there is (dashed: normal). Upstream on the left:
+   renin, angiotensin I, angiotensin II; then angiotensin II's two jobs: narrowing arterioles (left) and
+   calling out aldosterone (right), which keeps salt and water. Both raise blood pressure, which the kidney
+   feels: the feedback line up the left side. */
+const NODE = {
+  renin: { x: 58, y: 36, name: 'renin', level: o => lvl(o.S) },
+  ang1: { x: 58, y: 102, name: 'angiotensin I', level: o => lvl(o.A1) },
+  ang2: { x: 58, y: 168, name: 'angiotensin II', level: o => lvl(o.A2) },
+  arteriole: { x: 58, y: 234, name: 'arterioles narrow', level: o => clamp(.4 * Math.pow(o.T, 6), .03, 1) },
+  pressure: { x: 58, y: 300, name: 'blood pressure', level: o => clamp(.4 * Math.pow(o.P, 4), .03, 1) },
+  aldosterone: { x: 282, y: 168, name: 'aldosterone', level: o => lvl(o.aldo) },
+  salt: { x: 282, y: 234, name: 'salt and water kept', level: o => clamp(.4 * Math.pow(o.R, 1.6), .03, 1) },
+  potassium: { x: 282, y: 300, name: 'potassium in blood', level: o => clamp(.4 * Math.pow(o.K, 6), .03, 1) },
+};
+const BAR_W = 120;
+const VALUE = { renin: o => o.S, ang1: o => o.A1, ang2: o => o.A2, arteriole: o => o.T, pressure: o => o.P, aldosterone: o => o.aldo, salt: o => o.R, potassium: o => o.K };
+const BLOCKS = { dri: [[118, 77]], ace: [[118, 143]], arb: [[118, 209], [230, 162]], mra: [[342, 209]] };
+const trend = (v, b) => v / b > 1.015 ? 'up' : v / b < .985 ? 'down' : 'same';   // the original lesson's threshold
+// blockA: how far the red crosses have faded in; changeA: the same for the "more" and "less" words.
+function chainMap(o, { ghost = null, blocks = [], words = '', blockA = 1, changeA = 1, signal = null, feedback = false, changes = false } = {}) {
+  let s = '';
+  // Links between the nodes.
+  s += arrowTo(118, 64, 118, 84, C.ink, 2.5) + text(130, 80, 'cuts angiotensinogen', 'xs', 'start');
+  s += arrowTo(118, 130, 118, 150, C.ink, 2.5) + text(130, 146, 'ACE, in the lungs', 'xs', 'start');
+  s += arrowTo(118, 196, 118, 216, C.ink, 2.5) + arrowTo(186, 162, 272, 162, C.ink, 2.5);
+  s += arrowTo(342, 196, 342, 216, C.ink, 2.5) + arrowTo(118, 262, 118, 282, C.ink, 2.5) + arrowTo(300, 262, 204, 292, C.ink, 2.5);
+  // The feedback line: pressure felt by the kidney turns renin up or down.
+  const fb = `M58 315 H24 V51 H50`;
+  s += part('feedback', `<path d="${fb}" fill="none" stroke="${feedback ? C.blue : C.ink}" stroke-width="${feedback ? 4 : 2}" stroke-dasharray="${feedback ? '2 8' : '2 6'}" stroke-linecap="round" marker-end="url(#ah-${feedback ? 'b' : 'k'})"/>`
+    + `<text transform="translate(15 183) rotate(-90)" text-anchor="middle" class="xs b${feedback ? ' blue' : ''}">felt by the kidney</text>`);
+  // The nodes.
+  for (const [k, n] of Object.entries(NODE)) {
+    let nd = text(n.x, n.y, n.name, 'sm b', 'start') + bar(n.x, n.y + 8, BAR_W, n.level(o), ghost ? n.level(ghost) : null);
+    if (changes && ghost) {
+      const d = trend(VALUE[k](o), VALUE[k](ghost));
+      if (d !== 'same') nd += text(n.x + BAR_W + 8, n.y + 21, d === 'up' ? '↑ more' : '↓ less', 'xs b blue', 'start', fade(changeA));
+    }
+    s += part(k, nd);
+  }
+  // A signal travelling down the relay, for the whole-chain step.
+  if (signal !== null) {
+    const legs = [[[118, 62], [118, 86]], [[118, 128], [118, 152]], [[186, 162], [272, 162]], [[342, 194], [342, 218]], [[300, 262], [204, 292]], [[58, 315], [24, 315], [24, 51], [50, 51]]];
+    const leg = Math.floor(signal * legs.length) % legs.length, q = frac(signal * legs.length), pts = legs[leg];
+    const seg = Math.min(pts.length - 2, Math.floor(q * (pts.length - 1))), u = q * (pts.length - 1) - seg;
+    s += circle(lerp(pts[seg][0], pts[seg + 1][0], u), lerp(pts[seg][1], pts[seg + 1][1], u), 7, C.blue, '#fff', 2);
+  }
+  for (const [x, y] of blocks) s += block(x, y, blockA);
+  if (ghost) s += `<g data-key>${path('M60 356 H88', C.ink, 3, 'stroke-dasharray="5 4"')}${text(96, 362, 'normal', 'xs', 'start')}${rect(176, 349, 28, 14, C.blue)}${text(212, 362, 'with the drug', 'xs', 'start')}</g>`;
+  return s + words;
+}
+const CHAIN_H = 372;
+const NAMES = { ace: 'ACE inhibitor', arb: 'Angiotensin receptor blocker', mra: 'Aldosterone antagonist', dri: 'Direct renin inhibitor' };
+const CHANGE_WORDS = {
+  ace: [['ACE blocked:', 'sm b red'], ['after it: less;', 'xs b'], ['before it: more,', 'xs b'], ['as the kidney', 'xs'], ['feels the drop', 'xs']],
+  arb: [['dock blocked:', 'sm b red'], ['after it: less;', 'xs b'], ['before it: more,', 'xs b'], ['as the kidney', 'xs'], ['feels the drop', 'xs']],
+  mra: [['its dock blocked:', 'sm b red'], ['after it: less;', 'xs b'], ['before it: more,', 'xs b'], ['as the kidney', 'xs'], ['feels the drop', 'xs']],
+  dri: [['renin blocked:', 'sm b red'], ['after it: less;', 'xs b'], ['renin made: more,', 'xs b'], ['as the kidney', 'xs'], ['feels the drop', 'xs']],
+};
+const wordsAt = (rows, a) => `<g data-named ${fade(a)}>${rows.map(([w, cls], i) => text(318, 30 + i * 21 + (i ? 2 : 0), w, cls, 'start')).join('')}</g>`;
 function compare(o, kind = '') {
-  const rows = [['Renin released', trend(o.S, BASE.S, 'more', 'less')]];
-  if (kind === 'dri' || kind === 'explore') rows.push(['Renin at work', trend(o.Ract, BASE.Ract, 'more', 'less')]);
-  rows.push(['Angiotensin I', trend(o.A1, BASE.A1, 'more', 'less')], ['Angiotensin II', trend(o.A2, BASE.A2, 'more', 'less')]);
-  if (kind === 'arb' || kind === 'explore') rows.push(['Angiotensin II signal', trend(o.E, BASE.E, 'stronger', 'weaker')]);
-  rows.push(['Aldosterone', trend(o.aldo, BASE.aldo, 'more', 'less')]);
-  if (kind === 'mra' || kind === 'explore') rows.push(['Salt kept', trend(o.R, BASE.R, 'more', 'less')]);
-  rows.push(['Blood volume', trend(o.V, BASE.V, 'more', 'less')], ['Blood pressure', trend(o.P, BASE.P, 'higher', 'lower')], ['Potassium', trend(o.K, BASE.K, 'higher', 'lower')]);
+  const t = (v, b, up, down) => { const d = trend(v, b); return [d === 'up' ? up : d === 'down' ? down : 'about the same', d]; };
+  const rows = [['Renin released', t(o.S, BASE.S, 'more', 'less')]];
+  if (kind === 'dri' || kind === 'explore') rows.push(['Renin at work', t(o.Ract, BASE.Ract, 'more', 'less')]);
+  rows.push(['Angiotensin I', t(o.A1, BASE.A1, 'more', 'less')], ['Angiotensin II', t(o.A2, BASE.A2, 'more', 'less')]);
+  if (kind === 'arb' || kind === 'explore') rows.push(['Angiotensin II signal', t(o.E, BASE.E, 'stronger', 'weaker')]);
+  rows.push(['Aldosterone', t(o.aldo, BASE.aldo, 'more', 'less')]);
+  rows.push(['Salt and water kept', t(o.R, BASE.R, 'more', 'less')], ['Blood volume', t(o.V, BASE.V, 'more', 'less')], ['Blood pressure', t(o.P, BASE.P, 'higher', 'lower')], ['Potassium', t(o.K, BASE.K, 'higher', 'lower')]);
   return rows;
 }
-const ARROW = { up: '↑', down: '↓', same: '↔' };
-const readout = (o, kind) => `<ul class="readout" aria-label="Compared with normal">${compare(o, kind).map(([k, [w, d]]) => `<li><b>${k}</b> <span class="${d}">${ARROW[d]} ${w}</span></li>`).join('')}</ul>`;
+const readoutOf = (o, kind) => readout(compare(o, kind).map(([k, [w, d]]) => [k, d, w]));
 const describe = (o, kind) => compare(o, kind).map(([k, [w]]) => `${k.toLowerCase()} ${w}`).join(', ');
 
-/* ---------- Lesson steps ---------- */
-const UPTO = n => ALL.slice(0, n);
-const LOW = { ...chain(NORMAL, .85), P: .85 }; // step 2: the kidney senses low pressure and releases more renin
-const CORE = {
-  watch: () => svg('Close-up of one kidney. Blood flows in through one vessel and out through another. A dial on the incoming vessel shows the blood pressure, its needle in the middle for the normal push, and a dotted line carries that reading to a cluster of cells in the kidney.', kidneyPicture(BASE)),
-  renin: () => svg('The same kidney close-up. The pressure dial now reads lower than normal, shown dashed. Dots of renin leave the kidney in the outgoing blood, and a bar shows more renin released than the dashed normal amount.', kidneyPicture(LOW, { ghost: BASE, legend: 'pressure low', renin: true })),
-  cut: () => svg('The liver makes angiotensinogen, drawn as a long chain of beads. Renin from the kidney cuts a short piece off it: angiotensin I, whose bar shows the amount made.', picture(BASE, { parts: UPTO(6), fresh: ['liver', 'ang1'] })),
-  'ace-step': () => svg('In the lungs, ACE acts on angiotensin I as it flows down the chain, making angiotensin II, the active hormone, shown by a new bar.', picture(BASE, { parts: UPTO(8), fresh: ['ace', 'ang2'] })),
-  receptor: () => svg('Close-up of two cells. Left: angiotensin II, a short chain of beads, fits into a cup-shaped receptor in the cell surface like a key in a lock, and arrows show the cell answering. Right: a cell with no receptor; the same messenger floats past and nothing happens.', receptorPicture()),
-  squeeze: () => svg('Angiotensin II docks on receptors on the arterioles, small muscle-ringed vessels; they narrow, which pushes up the blood pressure dial.', picture(BASE, { parts: UPTO(9), fresh: ['arteriole'] })),
-  adrenal: () => svg('Angiotensin II also docks on receptors on the adrenal glands, which release aldosterone, shown by a new bar.', picture(BASE, { parts: UPTO(10), fresh: ['adrenal'] })),
-  salt: () => svg('Aldosterone acts back on the kidney: a bar for salt kept, and a bar for potassium in the blood, which is kept low because aldosterone sends potassium out in the urine.', picture(BASE, { parts: UPTO(11), fresh: ['salt'] })),
-  volume: () => svg('Salt kept holds water in the body, filling a container labelled blood volume, which pushes on the blood pressure dial.', picture(BASE, { parts: UPTO(12), fresh: ['volume'] })),
-  feedback: () => svg('The dotted line from the pressure dial back up to the kidney is highlighted: the kidney feels the pressure, and higher pressure means less renin.', picture(BASE, { parts: ALL, fresh: ['feedback'] })),
-  whole: () => svg('The whole chain: the kidney releases renin; renin cuts angiotensinogen from the liver into angiotensin I; ACE in the lungs makes angiotensin II; it narrows arterioles and calls out aldosterone from the adrenal glands; aldosterone keeps salt and sends potassium out; salt and water fill the blood volume; pressure rises and is felt back at the kidney.', picture(BASE, { parts: ALL }))
-};
-const CHANGE_INFO = {
-  ace: { blocks: [[300, 240]] },
-  arb: { blocks: [[87, 352], [393, 348]] },
-  mra: { blocks: [[393, 455]] },
-  dri: { blocks: [[200, 106]] }
-};
-function changePicture(el, t) {
-  const kind = el.dataset.kind, info = CHANGE_INFO[kind];
-  const ease = 1 - Math.pow(1 - t, 3);
-  const o = steady(mix(NORMAL, { ...NORMAL, ...CHANGES[kind] }, ease));
-  const name = el.dataset.stepTitle.split(':')[0];
-  const where = t >= 1 || reducedMotion() ? info.blocks : [];
-  return svg(`${name}, drawn over a faint dashed picture of normal. A red cross marks where the drug blocks the chain. Compared with normal: ${describe(o, kind)}.`, picture(o, { parts: ALL, ghost: BASE, legend: 'with the drug', blocks: where })) + readout(o, kind);
+// Step 10: pressure climbs back to normal, and the kidney turns renin down.
+function feedbackScene(t) {
+  const k = easeIO(span(t, .08, .85)), sensed = lerp(LOW, 1, k), o = { ...chain(NORMAL, sensed), P: sensed };
+  const words = `<g ${fade(span(t, .45, .8))}>${lines(318, 32, ['pressure climbs', 'back, so the', 'kidney releases', 'less renin:', 'negative feedback'], 'xs b', 'start', 21)}</g>`;
+  return svg('The whole chain as two columns of bars, with a blue dotted feedback line running from blood pressure at the bottom back up to renin at the top. Pressure starts low and climbs back to normal; as it does, the renin bar shrinks, and every later link shrinks with it, back to its dashed normal length.',
+    chainMap(o, { ghost: BASE, feedback: true, words }), { h: CHAIN_H });
 }
-
-const steps = $$('[data-step]');
-const backBtn = $('[data-step-back]'), nextBtn = $('[data-step-next]'), progress = $('[data-step-progress]');
-let current = 0, frame = 0;
-const visualOf = el => el.querySelector('[data-visual]');
-const isAnimated = el => el.dataset.kind in CHANGE_INFO;
-const drawAt = (el, t) => { visualOf(el).innerHTML = changePicture(el, t); };
-function animate(el) {
-  cancelAnimationFrame(frame);
-  if (reducedMotion()) { drawAt(el, 1); return; }
-  let start = null;
-  drawAt(el, 0);
-  const tick = now => {
-    if (start === null) start = now;
-    const t = Math.min(1, (now - start) / 1600);
-    drawAt(el, t);
-    if (t < 1) frame = requestAnimationFrame(tick);
+function wholeScene(t) {
+  const words = lines(318, 32, ['each link makes', 'the next; the', 'result is felt', 'back at the', 'kidney'], 'xs', 'start', 21);
+  return svg('The whole chain as two columns. Renin cuts angiotensinogen into angiotensin I; ACE in the lungs makes angiotensin II; it narrows arterioles and calls out aldosterone, which keeps salt and water and lowers potassium in the blood; both raise blood pressure, which is felt back at the kidney. A blue dot travels the relay link by link.',
+    chainMap(BASE, { signal: t, words }), { h: CHAIN_H });
+}
+function changeScene(kind) {
+  return {
+    duration: 3000,
+    render(t) {
+      const o = steady(mix(NORMAL, { ...NORMAL, ...CHANGES[kind] }, easeIO(t)));
+      const a = span(t, .55, .9);
+      const label = `${NAMES[kind]}, drawn over dashed bars for normal. A red cross marks where the drug cuts the chain. Compared with normal: ${describe(o, kind)}.`;
+      const pic = chainMap(o, { ghost: BASE, blocks: BLOCKS[kind], words: wordsAt(CHANGE_WORDS[kind], a), blockA: span(t, 0, .15), changeA: a, changes: true });
+      return { svg: svg(label, pic, { h: CHAIN_H }), readout: readoutOf(o, kind) };
+    },
   };
-  frame = requestAnimationFrame(tick);
 }
-steps.forEach(el => {
-  const kind = el.dataset.kind;
-  if (CORE[kind]) visualOf(el).innerHTML = CORE[kind]();
-  else drawAt(el, 1);
-  el.querySelector('.replay')?.addEventListener('click', () => animate(el));
-});
-function showStep(n, focus = false) {
-  cancelAnimationFrame(frame);
-  current = clamp(n, 0, steps.length - 1);
-  steps.forEach((el, i) => { el.hidden = i !== current; });
-  backBtn.disabled = current === 0;
-  nextBtn.textContent = current === steps.length - 1 ? 'Start again ↻' : 'Next →';
-  progress.textContent = `Step ${current + 1} of ${steps.length}`;
-  if (location.hash !== `#step-${current + 1}`) history.replaceState(null, '', `#step-${current + 1}`);
-  const el = steps[current];
-  if (isAnimated(el)) animate(el);
-  if (focus) { const h = el.querySelector('h2'); h.focus({ preventScroll: true }); h.scrollIntoView({ block: 'start' }); }
-}
-nextBtn.addEventListener('click', () => showStep(current === steps.length - 1 ? 0 : current + 1, true));
-backBtn.addEventListener('click', () => showStep(current - 1, true));
-$('#lesson').addEventListener('keydown', e => {
-  if (e.target.closest('input, select, textarea') || e.altKey || e.ctrlKey || e.metaKey) return;
-  if (e.key === 'ArrowRight' && current < steps.length - 1) { e.preventDefault(); showStep(current + 1, true); }
-  if (e.key === 'ArrowLeft' && current > 0) { e.preventDefault(); showStep(current - 1, true); }
-});
 
-/* ---------- Tabs ---------- */
-const tabs = $$('[role=tab]');
-function activate(tab, focus = false) {
-  tabs.forEach(t => { const on = t === tab; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; document.getElementById(t.getAttribute('aria-controls')).hidden = !on; });
-  if (focus) tab.focus();
-  if (tab.id === 'tab-lesson') { if (isAnimated(steps[current])) drawAt(steps[current], 1); } else cancelAnimationFrame(frame);
-  update();
-}
-tabs.forEach((t, i) => {
-  t.addEventListener('click', () => activate(t));
-  t.addEventListener('keydown', e => {
-    const n = { ArrowRight: (i + 1) % tabs.length, ArrowLeft: (i + tabs.length - 1) % tabs.length, Home: 0, End: tabs.length - 1 }[e.key];
-    if (n !== undefined) { e.preventDefault(); activate(tabs[n], true); }
-  });
-});
-function fromHash() {
-  const m = location.hash.match(/^#step-(\d+)$/);
-  if (m) { if (tabs[0].getAttribute('aria-selected') !== 'true') activate(tabs[0]); showStep(Number(m[1]) - 1); }
-}
-window.addEventListener('hashchange', fromHash);
-if (/^#step-\d+$/.test(location.hash)) fromHash(); else showStep(0);
+const scenes = {
+  watch: { duration: 4000, loop: true, render: watchScene },
+  renin: { duration: 4200, render: reninScene },
+  cut: { duration: 4200, render: cutScene },
+  'ace-step': { duration: 4200, loop: true, render: aceScene },
+  receptor: { duration: 3600, render: receptorScene },
+  squeeze: { duration: 3800, render: squeezeScene },
+  adrenal: { duration: 4200, render: adrenalScene },
+  salt: { duration: 4600, render: saltScene },
+  volume: { duration: 4200, render: volumeScene },
+  feedback: { duration: 4400, render: feedbackScene },
+  whole: { duration: 6000, loop: true, render: wholeScene },
+  ace: changeScene('ace'),
+  arb: changeScene('arb'),
+  mra: changeScene('mra'),
+  dri: changeScene('dri'),
+};
 
 /* ---------- Shared model state (Clinical values + Explore freely) ---------- */
 let params = { ...NORMAL }, data = null;
@@ -358,10 +398,17 @@ const DECIMALS = { k: 1 };
 const fmt = (id, n) => n.toFixed(DECIMALS[id] ?? 0);
 const DIRECTION = { up: '↑ Expected increase', down: '↓ Expected decrease', none: '↔ Little or no change', variable: '↕ Variable' };
 const domain = v => { const lo = (v.low ?? v.typical) * .8, hi = (v.high ?? v.typical) * 1.2; return n => f(20 + clamp((n - lo) / (hi - lo), 0, 1) * 360); };
+// Where a drug is set below full strength in Explore freely, mark the cut on the chain.
+const BLOCK_PARAM = { dri: 'dri', ace: 'ace', arb: 'arb', mra: 'mra' };
 function update() {
   syncControls();
   const o = steady(params);
-  $('#explore-visual').innerHTML = svg(`Illustrative model with your settings, drawn over a faint dashed picture of normal. Compared with normal: ${describe(o, 'explore')}.`, picture(o, { parts: ALL, ghost: BASE, legend: 'your settings' })) + readout(o, 'explore');
+  const blocks = Object.entries(BLOCK_PARAM).filter(([, p]) => params[p] < .97).flatMap(([k]) => BLOCKS[k]);
+  const label = `Illustrative model with these settings, drawn over dashed bars for normal. Compared with normal: ${describe(o, 'explore')}.`;
+  // Two separate pictures: each needs its own arrowhead ids, or the hidden tab's copy would hide them.
+  const pic = () => svg(label, chainMap(o, { ghost: BASE, blocks, changes: true }), { h: CHAIN_H });
+  $('#explore-visual').innerHTML = pic() + readoutOf(o, 'explore');
+  $('#clinical-visual').innerHTML = pic();
   const rel = `renin released ×${o.S.toFixed(2)} · angiotensin II ×${o.A2.toFixed(2)} · aldosterone ×${o.aldo.toFixed(2)} · blood volume ×${o.V.toFixed(2)} · pressure ×${o.P.toFixed(2)} · potassium ×${o.K.toFixed(2)}`;
   if (!data) { $('#model-results').textContent = `Illustrative model, relative to normal: ${rel}`; return; }
   const m = measures(o), unit = id => data.values.find(v => v.id === id).unit;
@@ -377,8 +424,9 @@ function update() {
     if (v.low !== null && v.high !== null) status = val < v.low ? 'below typical range' : val > v.high ? 'above typical range' : 'within typical range';
     else { const r = val / v.typical; status = r > 1.015 ? 'above the textbook typical value' : r < .985 ? 'below the textbook typical value' : 'near the textbook typical value'; }
     row.querySelector('.status').textContent = `Model: ${status}`;
-    const d = state?.shifts[v.id];
-    row.querySelector('.direction').textContent = state ? (d ? DIRECTION[d] : 'Not listed for this state') : '';
+    const d = state?.shifts[v.id], dir = row.querySelector('.direction');
+    dir.textContent = state ? (d ? DIRECTION[d] : 'Not listed for this state') : '';
+    dir.classList.toggle('quiet', !d);
   }
 }
 const markCustom = () => {
@@ -387,10 +435,10 @@ const markCustom = () => {
     ? `Custom settings: ${s.label} with the model adjusted by hand. The arrows still describe ${s.label} alone.`
     : 'Custom model settings.';
 };
-for (const k of SLIDERS) $('#' + k).addEventListener('input', e => { params[k] = Number(e.target.value); $('#clinical-state').value = 'normal'; $('#state-summary').textContent = 'Custom model settings.'; update(); });
-$('#feedback').addEventListener('change', e => { params.feedback = e.target.checked; $('#clinical-state').value = 'normal'; $('#state-summary').textContent = 'Custom model settings.'; update(); });
+for (const k of SLIDERS) $('#' + k).addEventListener('input', e => { params[k] = Number(e.target.value); $('#clinical-state').value = 'normal'; $('#state-summary').textContent = 'Custom model settings.'; $('#state-source').textContent = ''; update(); });
+$('#feedback').addEventListener('change', e => { params.feedback = e.target.checked; $('#clinical-state').value = 'normal'; $('#state-summary').textContent = 'Custom model settings.'; $('#state-source').textContent = ''; update(); });
 $('#clinical-salt').addEventListener('input', e => { params.salt = Number(e.target.value); markCustom(); update(); announce(); });
-const resetAll = () => { params = { ...NORMAL }; $('#clinical-state').value = 'normal'; $('#state-summary').textContent = 'Normal teaching baseline.'; update(); announce(); };
+const resetAll = () => { params = { ...NORMAL }; $('#clinical-state').value = 'normal'; $('#state-summary').textContent = 'Normal teaching baseline.'; $('#state-source').textContent = ''; update(); announce(); };
 $('#reset').addEventListener('click', resetAll);
 $('#clinical-reset').addEventListener('click', resetAll);
 $('#clinical-state').addEventListener('change', e => {
@@ -398,6 +446,7 @@ $('#clinical-state').addEventListener('change', e => {
   params = { ...NORMAL, ...(CHANGES[id] || {}) };
   const s = data?.states.find(x => x.id === id);
   $('#state-summary').textContent = s ? `${s.label}: ${s.summary} The model now shows this change.${s.modelNote ? ' ' + s.modelNote : ''}` : 'Normal teaching baseline.';
+  $('#state-source').textContent = s ? `Directions: ${s.where} [${s.source}]` : '';
   update(); announce();
 });
 let announceTimer = 0;
@@ -432,15 +481,15 @@ async function load() {
       const row = document.createElement('div');
       row.className = 'value-row'; row.dataset.cv = v.id;
       const left = document.createElement('div');
-      left.innerHTML = '<h3></h3><div class="reading"></div><div class="status"></div><div class="direction"></div>';
+      left.innerHTML = '<h3></h3><div class="reading"></div><div class="status"></div><div class="direction quiet"></div>';
       left.querySelector('h3').textContent = v.label;
       const right = document.createElement('div');
-      const band = hasRange ? `<rect class="band" x="${pos(v.low)}" y="12" width="${f(pos(v.high) - pos(v.low))}" height="22"/>` : '';
+      const band = hasRange ? `<rect class="band" x="${pos(v.low)}" y="12" width="${f(pos(v.high) - pos(v.low))}" height="22"/><path class="limit" d="M${pos(v.low)} 6 V40 M${pos(v.high)} 6 V40"/>` : '';
       const typ = v.typical !== null ? `<path class="typical" d="M${pos(v.typical)} 8 V38"/>` : '';
       right.innerHTML = `<svg class="gauge" viewBox="0 0 400 46" role="img"><path class="track" d="M20 23 H380"/>${band}${typ}<line class="marker" x1="20" x2="20" y1="4" y2="42"/></svg><div class="key"></div>`;
       right.querySelector('svg').setAttribute('aria-label', `${v.label}: textbook ${hasRange ? 'range' : 'typical value'} and the current illustrative model marker`);
       right.querySelector('.key').textContent = hasRange
-        ? `Textbook range ${v.low}–${v.high} ${v.unit} (shaded band), typical ${v.typical} (black line) · blue line: model`
+        ? `Textbook range ${v.low} to ${v.high} ${v.unit} (shaded band), typical ${v.typical} (black line) · blue line: model`
         : `Textbook typical value about ${v.typical} ${v.unit} (black line) · blue line: model`;
       const cite = document.createElement('div'); cite.className = 'citation';
       cite.textContent = `${v.where} [${v.source}]${v.note ? ' · ' + v.note : ''}`;
@@ -465,5 +514,5 @@ async function load() {
   }
   update();
 }
-update();
-load();
+
+lesson({ scenes, before: load, onTab: { clinical: update, explore: update } });

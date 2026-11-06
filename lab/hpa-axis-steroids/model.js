@@ -3,17 +3,19 @@
    Every level is relative to the normal body (1 = normal). Nothing here is a lab number.
 
    - The hypothalamus's CRH rises with stress and falls as the glucocorticoid signal in the blood (E) rises.
-   - The pituitary's ACTH follows CRH and is braked by E directly too; a pituitary tumor adds ACTH the brake cannot touch.
+   - The pituitary's ACTH follows CRH and is braked by E directly too, scaled by how much working pituitary there is
+     (pit: below 1 in secondary adrenal insufficiency); a pituitary tumor adds ACTH the brake cannot touch.
    - The cortex's own cortisol = working cortex × (1 − synthesis block) × drive from ACTH (three times normal at most).
    - E = own cortisol + any glucocorticoid drug. The loop settles where these agree (bisection on E).
    - The mineralocorticoid signal M = working cortex × aldosterone output + any mineralocorticoid drug.
+     Aldosterone is set mainly by the kidney's renin system, not by ACTH, so a failing pituitary leaves it alone.
      More M: the kidneys keep more sodium and lose more potassium.
    - Glucose follows E; inflammation is calmed by E. */
 (function () {
   const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
-  const NORMAL = { stress: 1, cap: 1, aldo: 1, tumor: 0, exoG: 0, exoM: 0, block: 0 };
+  const NORMAL = { stress: 1, cap: 1, aldo: 1, tumor: 0, exoG: 0, exoM: 0, block: 0, pit: 1 };
   const crhFor = (p, E) => clamp(Math.max(p.stress, 0) / Math.max(E, 1e-4), 0.02, 20);
-  const acthFor = (p, E) => clamp(crhFor(p, E) / Math.sqrt(Math.max(E, 1e-4)), 0.01, 30) + Math.max(0, p.tumor);
+  const acthFor = (p, E) => clamp(crhFor(p, E) / Math.sqrt(Math.max(E, 1e-4)), 0.01, 30) * clamp(p.pit ?? 1, 0, 2) + Math.max(0, p.tumor);
   const drive = a => 3 * a / (a + 2);                         // drive(1) = 1, at most 3
   const ownFor = (p, E) => Math.max(0, p.cap) * clamp(1 - p.block, 0, 1) * drive(acthFor(p, E));
   function settle(p) {
@@ -43,7 +45,8 @@
   const PRESETS = {
     normal: () => ({ ...NORMAL }),
     cushing: () => ({ ...NORMAL, tumor: 3 }),      // a pituitary tumor making ACTH the brake cannot stop
-    addison: () => ({ ...NORMAL, cap: 0.2 }),      // most of the cortex no longer works
+    addison: () => ({ ...NORMAL, cap: 0.2 }),      // most of the cortex no longer works (primary adrenal insufficiency)
+    secondary: () => ({ ...NORMAL, pit: 0.1 }),    // the pituitary makes little ACTH (secondary adrenal insufficiency)
     hyperaldo: () => ({ ...NORMAL, aldo: 3 }),     // too much aldosterone
     hypoaldo: () => ({ ...NORMAL, aldo: 0.25 })    // too little aldosterone
   };

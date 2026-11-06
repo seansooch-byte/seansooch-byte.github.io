@@ -1,0 +1,203 @@
+{
+  "minutes": 25,
+  "prerequisites": [
+    "pressure-volume-loop"
+  ],
+  "objectives": [
+    "Explain how filling stretches heart muscle so the next beat pumps more: the Frank–Starling mechanism.",
+    "Read the Frank–Starling curve, telling a move along it (a change in filling) apart from a shift of the whole curve (a change in contractility).",
+    "Explain how stroke volume and heart rate make cardiac output, and why a very fast heart can pump less.",
+    "Predict how IV fluids, diuretics, positive inotropes, beta-blockers, venodilators and heart failure change blood per beat and cardiac output."
+  ],
+  "checks": {
+    "fluids": {
+      "prompt": "IV fluids add to the blood returning to the heart, so the ventricle fills more before each beat. The heart's strength is unchanged. On a healthy heart's curve, what happens to blood per beat?",
+      "choices": [
+        "It rises: the heart moves right and up along its curve",
+        "It falls: the heart is overstretched",
+        "The whole curve lifts to a higher one",
+        "Nothing: blood per beat does not depend on filling"
+      ],
+      "answer": 0,
+      "why": "More filling means more stretch, and a healthy heart on the rising part of its curve answers with a stronger beat. The curve itself stays put: only filling changed, so the heart moves along it, right and up."
+    },
+    "diuretics": {
+      "prompt": "Diuretics help the kidneys remove salt and water, so less blood returns and the ventricle fills less. On a healthy heart's curve, what happens to blood per beat?",
+      "choices": [
+        "It falls: the heart moves left and down along its curve",
+        "It rises, because the heart has less to push",
+        "The whole curve drops to a lower one",
+        "It stays exactly the same"
+      ],
+      "answer": 0,
+      "why": "Less filling means less stretch, so the next beat is weaker and pumps less. The muscle's strength is unchanged, so the heart moves down along the same curve rather than onto a new one."
+    },
+    "inotropes": {
+      "prompt": "A positive inotrope makes the muscle squeeze harder from the same stretch. Filling does not change. What happens on the Frank–Starling chart?",
+      "choices": [
+        "The whole curve lifts: more blood per beat from the same filling",
+        "The heart moves right along the same curve",
+        "Blood per beat falls",
+        "Only the heart rate changes"
+      ],
+      "answer": 0,
+      "why": "Contractility is the squeeze at a given stretch, so raising it lifts the whole curve. At the same filling, the dot now sits higher: each beat pumps more, and so does each minute."
+    },
+    "beta": {
+      "prompt": "A beta-blocker slows the heart and makes its squeeze a little gentler. In this lesson's model the longer filling between slower beats about makes up for the gentler squeeze, so each beat pumps about the same. What happens to the blood the heart pumps each minute, its cardiac output?",
+      "choices": [
+        "It falls: there are fewer beats each minute",
+        "It rises: each slower beat fills so much more",
+        "It stays exactly the same: the body holds it fixed",
+        "It rises: a gentler squeeze wastes less blood"
+      ],
+      "answer": 0,
+      "why": "Cardiac output is blood per beat times beats a minute. With about the same per beat and fewer beats each minute, cardiac output falls. Lowering resting cardiac output is also what beta-blockers are known for."
+    },
+    "nitrates": {
+      "prompt": "Venodilators such as nitrates relax the veins, so more blood stays in them, away from the heart. What happens to filling and to blood per beat?",
+      "choices": [
+        "Both fall: the heart moves left and down along its curve",
+        "Both rise",
+        "Filling falls, but blood per beat rises",
+        "The whole curve lifts"
+      ],
+      "answer": 0,
+      "why": "Blood held in relaxed veins is not returning to the heart, so filling falls. Less stretch gives a weaker beat: the heart moves left and down along the same curve."
+    },
+    "failure": {
+      "prompt": "In this heart failure the muscle squeezes weakly, so the whole curve drops. The kidneys then hold on to salt and water, and filling rises. What happens to blood per beat?",
+      "choices": [
+        "It recovers only a little: on the low, flat curve extra filling adds little",
+        "It returns fully to normal",
+        "It rises above normal",
+        "It falls further with every bit of extra filling"
+      ],
+      "answer": 0,
+      "why": "Moving right along a low curve that is already flattening gains little blood per beat. Meanwhile the extra fluid backs up into the lungs and tissues as congestion: filling is not enough."
+    }
+  },
+  "quiz": [
+    {
+      "id": "why-fuller",
+      "objective": 1,
+      "step": "stretchmore",
+      "stem": "Why does a fuller ventricle pump harder on its next beat?",
+      "choices": [
+        "Filling stretches its fibres, and within the working range stretched fibres contract with more force",
+        "The extra blood pushes the outlet valve open harder",
+        "A stretched heart beats faster",
+        "Nerves sense the extra blood and order a stronger squeeze"
+      ],
+      "answer": 0,
+      "why": "The Frank–Starling mechanism is built into the muscle itself: stretch lines up its filaments better and makes them respond more strongly. It needs no nerves, and it changes the force of each beat, not the heart rate."
+    },
+    {
+      "id": "preload",
+      "objective": 1,
+      "step": "stretch",
+      "stem": "Which measure is the usual stand-in for preload?",
+      "choices": [
+        "The volume in the ventricle at the end of filling, the end-diastolic volume",
+        "The volume pushed out in one beat",
+        "The pressure in the aorta",
+        "The heart rate"
+      ],
+      "answer": 0,
+      "why": "Preload is the stretch of the muscle just before it contracts, and the blood filling the chamber is what stretches it. The stroke volume is the result of the beat, not its starting stretch."
+    },
+    {
+      "id": "shift-or-slide",
+      "objective": 2,
+      "step": "strength",
+      "stem": "After a drug, the heart pumps more blood per beat although it fills no more than before. What happened on the Frank–Starling chart?",
+      "choices": [
+        "The whole curve moved up: contractility rose",
+        "The heart moved right along the same curve",
+        "The heart moved left along the same curve",
+        "The curve became flatter at the top"
+      ],
+      "answer": 0,
+      "why": "With filling unchanged, the dot cannot have slid along the curve. More per beat from the same filling means a stronger squeeze: a higher curve. Moving right along the curve would need more filling."
+    },
+    {
+      "id": "flat-top",
+      "objective": 2,
+      "step": "curve",
+      "stem": "A heart already sits far out on the flat part of its curve. Filling rises a little more. What happens to its blood per beat?",
+      "choices": [
+        "It barely rises",
+        "It rises steeply",
+        "It drops to zero",
+        "It doubles"
+      ],
+      "answer": 0,
+      "why": "The curve levels off: past a point, extra filling adds little blood per beat. On the steep early part the same extra filling would have made a big difference."
+    },
+    {
+      "id": "too-fast",
+      "objective": 3,
+      "step": "output",
+      "stem": "Why can a very fast heart rate lower cardiac output?",
+      "choices": [
+        "The gaps between beats get so short that each beat fills, and pumps, much less",
+        "Fast beats wear out the valves within minutes",
+        "Cardiac output depends only on stroke volume",
+        "The heart stops filling from the veins at any rate above normal"
+      ],
+      "answer": 0,
+      "why": "Cardiac output is stroke volume times heart rate. A faster rate helps until the filling time between beats becomes so short that stroke volume falls faster than the rate rises."
+    },
+    {
+      "id": "beta-stroke",
+      "objective": 4,
+      "step": "beta",
+      "stem": "A patient starts a beta-blocker. Their heart rate falls, and in this model each beat pumps about the same as before. Why does blood per beat hold up, though the squeeze is gentler?",
+      "choices": [
+        "Slower beats leave more time to fill, so each beat starts fuller",
+        "The drug makes the muscle squeeze harder",
+        "The kidneys add fluid within seconds",
+        "Blood per beat can never change"
+      ],
+      "answer": 0,
+      "why": "The gentler squeeze lowers the curve a little, and the longer filling time moves the heart right along it. In this model the two roughly cancel, so blood per beat holds while cardiac output falls with the rate."
+    },
+    {
+      "id": "failure-fluid",
+      "objective": 4,
+      "step": "failure",
+      "stem": "In heart failure with a weak squeeze, the heart works on a low curve that flattens early. The kidneys hold on to salt and water, so filling rises. Why does this help the output so little?",
+      "choices": [
+        "On the low, flat curve extra filling adds little blood per beat, and the fluid backs up as congestion",
+        "Extra filling lifts the whole curve back to normal",
+        "The extra fluid all leaves in the urine at once",
+        "Filling has no effect on any heart"
+      ],
+      "answer": 0,
+      "why": "A weak heart's curve is low and flattens early. Sliding along it with more filling recovers only a little stroke volume, while the higher filling pressures push fluid into the lungs and tissues."
+    },
+    {
+      "id": "diuretic-congestion",
+      "objective": 4,
+      "step": "diuretics",
+      "stem": "A patient with heart failure has a weak heart working on the flat part of a low Frank–Starling curve, and fluid in the lungs. A diuretic lowers filling, yet cardiac output barely drops. Why?",
+      "choices": [
+        "On a flat stretch of the curve, less filling costs little blood per beat",
+        "Diuretics make the heart squeeze harder",
+        "Diuretics speed up the heart a great deal",
+        "Cardiac output never depends on filling"
+      ],
+      "answer": 0,
+      "why": "On a flat stretch of the curve, moving left changes blood per beat very little, so removing the extra fluid eases the congestion without costing much output. On a healthy heart's steep part, the same fall in filling would cost more."
+    }
+  ],
+  "takeaways": [
+    "Filling stretches the ventricle's muscle. That stretch before the beat is the preload, usually read as the end-diastolic volume.",
+    "The Frank–Starling mechanism: within the working range, more stretch gives a stronger squeeze, so more filling means more blood per beat.",
+    "The Frank–Starling curve rises and then levels off. Changing filling moves the heart along the curve; changing contractility moves the whole curve.",
+    "Cardiac output is stroke volume times heart rate. A faster heart pumps more, until the filling time between beats gets too short.",
+    "IV fluids move the heart right and up along its curve; diuretics and venodilators move it left and down. Positive inotropes lift the whole curve.",
+    "Beta-blockers slow the heart and soften its squeeze. The longer filling between slower beats pushes the other way, so in this model blood per beat changes little; with fewer beats each minute, cardiac output falls.",
+    "In heart failure with a weak squeeze, the whole curve drops. The kidneys raise filling to compensate, but on a low flat curve that wins back little and causes congestion."
+  ]
+}

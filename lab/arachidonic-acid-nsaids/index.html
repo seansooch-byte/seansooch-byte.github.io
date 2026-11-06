@@ -4,16 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Inflammation and the Arachidonic Acid Pathway · The Lab · Sean Sooch</title>
-<meta name="description" content="A guided visual lesson: how injured cells snip arachidonic acid from their membranes and turn it into prostaglandins and leukotrienes, and where NSAIDs, COX-2 selective inhibitors, aspirin, glucocorticoids and leukotriene modifiers block the pathway.">
+<meta name="description" content="A guided visual lesson: how injured cells snip arachidonic acid from their membranes and turn it into prostaglandins, thromboxane and leukotrienes, and where NSAIDs, COX-2 selective inhibitors, aspirin, glucocorticoids and leukotriene modifiers block the pathway.">
 <link rel="canonical" href="https://seansooch.dev/lab/arachidonic-acid-nsaids/">
 <meta property="og:title" content="Inflammation and the Arachidonic Acid Pathway">
 <meta property="og:description" content="How injured cells make prostaglandins and leukotrienes, and where anti-inflammatory drugs block the pathway, one picture at a time.">
 <meta property="og:url" content="https://seansooch.dev/lab/arachidonic-acid-nsaids/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/lab/kit/kit.css">
 <link rel="stylesheet" href="style.css">
 <script src="model.js" defer></script>
-<script src="app.js" defer></script>
+<script type="module" src="app.js"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to the lesson</a>
@@ -29,115 +30,113 @@
     </nav>
   </div>
 </header>
-<main id="main">
+<main id="main" data-slug="arachidonic-acid-nsaids">
   <div class="intro">
-    <p class="eyebrow"><a href="/lab/">The Lab</a> / Core medicine / Lesson 18</p>
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / <a href="/lab/#defence">Unit 6: Inflammation, infection, immunity and cancer</a> / Lesson 18</p>
     <h1>Inflammation and the <span>arachidonic acid</span> pathway.</h1>
-    <p class="lede">When a cell is hurt, it snips a fatty tail out of its own skin and turns it into a burst of signals: some protect you, some bring pain, swelling and fever. Build that pathway one piece at a time, then watch five kinds of anti-inflammatory drugs block it, each in a different place.</p>
+    <p class="lede">When a cell is hurt, it snips a fatty tail out of its own skin and turns it into a burst of signals: some protect you, some bring pain, swelling and fever. Watch that pathway flow, one piece at a time, then see five kinds of anti-inflammatory drugs block it, each in a different place.</p>
     <p class="note">Educational, not for clinical use</p>
+    <div class="lx-plan" data-lx-plan></div>
   </div>
 
   <div class="tabs" role="tablist" aria-label="Lesson views">
     <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-quiz" aria-controls="quiz" aria-selected="false" tabindex="-1">Quiz</button>
+    <button type="button" role="tab" id="tab-summary" aria-controls="summary" aria-selected="false" tabindex="-1">Summary</button>
     <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
     <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
   </div>
 
   <section id="lesson" role="tabpanel" aria-labelledby="tab-lesson">
     <article data-step="1" data-step-title="Cells and their membrane" data-kind="membrane">
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">The trigger</p>
       <h2 tabindex="-1">Cells and their membrane</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Your body is built from <dfn>cells</dfn>, tiny living units. Each cell is wrapped in a thin skin, its <dfn>membrane</dfn>. The membrane is made of <dfn>phospholipids</dfn>: fat molecules with a water-loving head and two oily tails, packed side by side in a double layer.</p>
+      <p class="caption">Your body is built from <dfn>cells</dfn>, tiny living units. Each cell is wrapped in a thin skin, its <dfn data-part="membrane">membrane</dfn>. The membrane is made of <dfn data-part="lipid">phospholipids</dfn>: fat molecules with a water-loving head and two oily tails, packed side by side in a double layer.</p>
     </article>
     <article data-step="2" data-step-title="An injury sets off inflammation" data-kind="injury" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">The trigger</p>
       <h2 tabindex="-1">An injury sets off inflammation</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">When part of the body is hurt by a knock, a cut or germs, it answers with <dfn>inflammation</dfn>: the area turns red, warm, swollen and painful. Inflammation brings help to clear the damage, and it starts with signals made from the membrane itself.</p>
+      <p class="caption">When part of the body is hurt by a knock, a cut or germs, it answers with <dfn data-part="signs">inflammation</dfn>: the area turns red, warm, swollen and painful. Inflammation brings help to clear the damage. Among its first signals are ones made from the cell membrane itself.</p>
     </article>
     <article data-step="3" data-step-title="Scissors free arachidonic acid" data-kind="scissors" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">The trigger</p>
       <h2 tabindex="-1">Scissors free arachidonic acid</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Injury switches on an <dfn>enzyme</dfn>, a protein that speeds up one chemical change. This one, <dfn>phospholipase</dfn>, works like scissors: it snips a fatty tail called <dfn>arachidonic acid</dfn> free from the membrane. Every signal that follows is built from it.</p>
+      <p class="caption">Injury switches on an <dfn>enzyme</dfn>, a protein that speeds up one chemical change. This one, <dfn data-part="scissors">phospholipase A2</dfn>, works like scissors: it snips a fatty tail called <dfn data-part="aa">arachidonic acid</dfn> free from the membrane’s phospholipids. Every signal that follows is built from it.</p>
     </article>
     <article data-step="4" data-step-title="Two roads from one raw material" data-kind="roads" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">The signals</p>
       <h2 tabindex="-1">Two roads from one raw material</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Freed arachidonic acid can take two roads. One runs through <dfn>cyclooxygenase</dfn>, called COX for short; the other runs through <dfn>lipoxygenase</dfn>. Both are enzymes, and each turns arachidonic acid into a different family of signals.</p>
+      <p class="caption">Freed arachidonic acid can take two roads. One runs through <dfn data-part="cox">cyclooxygenase</dfn>, called COX for short; the other runs through <dfn data-part="lox">lipoxygenase</dfn>. Both are enzymes, and each turns arachidonic acid into a different family of signals.</p>
     </article>
     <article data-step="5" data-step-title="COX-1 keeps the stomach shield up" data-kind="cox1" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">The signals</p>
       <h2 tabindex="-1">COX-1 keeps the stomach shield up</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>COX-1</dfn> is the everyday form of COX, at work in most tissues all the time. It makes <dfn>prostaglandins</dfn>, short-lived local signals. In the stomach they keep up the <dfn>stomach shield</dfn>, a slimy, acid-cancelling coat over the lining (<a href="/lab/gastric-acid-secretion/">Lesson 16</a>).</p>
+      <p class="caption"><dfn data-part="cox1">COX-1</dfn> is the everyday form of COX, at work in most tissues all the time. It makes <dfn data-part="pgA">prostaglandins</dfn>, short-lived local signals. In the stomach they keep up the <dfn data-part="shield">stomach shield</dfn>: they brake acid and thicken the mucus and bicarbonate over the lining (<a href="/lab/gastric-acid-secretion/">Lesson 16</a>).</p>
     </article>
     <article data-step="6" data-step-title="Platelets and thromboxane" data-kind="platelets" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">The signals</p>
       <h2 tabindex="-1">Platelets and thromboxane</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Platelets</dfn> are tiny cell pieces in the blood that clump together to plug a leak in a blood vessel (<a href="/lab/coagulation-cascade/">Lesson 12</a>). Their COX-1 makes <dfn>thromboxane</dfn>, a signal that calls more platelets to stick and clump.</p>
+      <p class="caption"><dfn data-part="clot">Platelets</dfn> are tiny cell pieces in the blood that clump together to plug a leak in a blood vessel (<a href="/lab/coagulation-cascade/">Lesson 12</a>). Their COX-1 makes <dfn data-part="tx">thromboxane</dfn>, a signal that calls more platelets to stick and clump and narrows the vessel.</p>
     </article>
     <article data-step="7" data-step-title="COX-2: the injury enzyme" data-kind="cox2" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">The signals</p>
       <h2 tabindex="-1">COX-2: the injury enzyme</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>COX-2</dfn> is the second form of COX. Most tissues hold little of it, but injured cells quickly make much more. At the injury, COX-2 pours out the prostaglandins that drive inflammation.</p>
+      <p class="caption"><dfn data-part="cox2">COX-2</dfn> is the second form of COX. Most tissues hold little of it, though the kidneys, brain and blood vessel linings keep some. Injured tissue and the white cells it calls in quickly make much more, and at the injury COX-2 pours out the <dfn data-part="pgC">prostaglandins that drive inflammation</dfn>.</p>
     </article>
     <article data-step="8" data-step-title="Pain, swelling and fever" data-kind="effects" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">The signals</p>
       <h2 tabindex="-1">Pain, swelling and fever</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">These prostaglandins widen and loosen nearby blood vessels, so the area reddens and swells. They make pain nerves more sensitive. In the brain they turn up the body’s thermostat, causing <dfn>fever</dfn>: a raised body temperature. The new meter tracks pain, swelling and fever together.</p>
+      <p class="caption">These prostaglandins widen nearby blood vessels and help them leak, so the area reddens and swells. They make <dfn data-part="nerve">pain nerves</dfn> more sensitive. In the brain they turn up the body’s thermostat, causing <dfn data-part="fever">fever</dfn>: a raised body temperature. From here on, one meter tracks all three: pain, swelling and fever.</p>
     </article>
     <article data-step="9" data-step-title="Lipoxygenase makes leukotrienes" data-kind="lox" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">The signals</p>
       <h2 tabindex="-1">Lipoxygenase makes leukotrienes</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Down the other road, lipoxygenase makes <dfn>leukotrienes</dfn>. They call in <dfn>white blood cells</dfn>, the body’s defence cells, and squeeze the <dfn>airways</dfn>, the breathing tubes of the lungs. Too much of them helps narrow the airways in <dfn>asthma</dfn>, a lung condition with wheezy breathing.</p>
+      <p class="caption">Down the other road, lipoxygenase makes <dfn data-part="lt">leukotrienes</dfn>. They call in <dfn>white blood cells</dfn>, the body’s defence cells, and squeeze the <dfn data-part="airway">airways</dfn>, the breathing tubes of the lungs. Too much of them helps narrow the airways in <dfn>asthma</dfn>, a lung condition with wheezy breathing.</p>
     </article>
     <article data-step="10" data-step-title="The whole pathway: the key measures" data-kind="whole" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">The signals</p>
       <h2 tabindex="-1">The whole pathway: the key measures</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Injury frees arachidonic acid. COX-1 keeps up the stomach shield and platelet clumping; COX-2 drives pain, swelling and fever; lipoxygenase makes leukotrienes. Two key measures sum it up: how much pain, swelling and fever, and how strong the stomach shield is.</p>
+      <p class="caption">Injury frees arachidonic acid. COX-1 keeps up the stomach shield and platelet clumping; COX-2 drives pain, swelling and fever; lipoxygenase makes leukotrienes, which squeeze the airways. Two key measures sum it up: how much <dfn data-part="inflam">pain, swelling and fever</dfn>, and how strong the stomach shield is.</p>
     </article>
-    <article data-step="11" data-step-title="NSAIDs: both COX enzymes plugged" data-kind="nsaid" hidden>
+    <article data-step="11" data-step-title="Ordinary NSAIDs: both COX enzymes plugged" data-kind="nsaid" hidden>
       <p class="eyebrow">What changes it</p>
-      <h2 tabindex="-1">NSAIDs: both COX enzymes plugged</h2>
+      <h2 tabindex="-1">Ordinary NSAIDs: both COX enzymes plugged</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Non-steroidal anti-inflammatory drugs</dfn> (NSAIDs, not steroids), such as ibuprofen, plug both COX-1 and COX-2 for a while. Pain, swelling and fever fall, but the stomach shield thins and platelets clump less. A little arachidonic acid spills toward leukotrienes.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn data-part="plug">Non-steroidal anti-inflammatory drugs</dfn> (NSAIDs, not steroids), such as ibuprofen, are the ordinary kind: they plug both COX-1 and COX-2 for a while. Pain, swelling and fever fall, but the stomach shield thins and platelets clump less. A little arachidonic acid spills toward leukotrienes, which can worsen some people’s asthma.</p>
     </article>
     <article data-step="12" data-step-title="COX-2 selective inhibitors: only COX-2 plugged" data-kind="cox2i" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">COX-2 selective inhibitors: only COX-2 plugged</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>COX-2 selective inhibitors</dfn>, such as celecoxib, plug COX-2 but leave COX-1 working. Pain, swelling and fever fall; the stomach shield and platelet clumping stay near normal. Blood vessels and kidneys still need some COX-2 prostaglandins, so risks remain.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn data-part="plug">COX-2 selective inhibitors</dfn>, such as celecoxib, plug COX-2 but leave COX-1 working. Pain, swelling and fever fall, while the stomach shield and platelet clumping stay near normal. But blood vessel linings use COX-2 to make <dfn>prostacyclin</dfn>, which keeps platelets from sticking; losing it raises the risk of heart attack and stroke, and the kidneys still need COX-2 too.</p>
     </article>
     <article data-step="13" data-step-title="Aspirin: COX tagged for good" data-kind="aspirin" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Aspirin: COX tagged for good</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Aspirin</dfn> blocks COX for good by sticking a chemical tag onto it. Most cells can build new COX, but platelets cannot, so their thromboxane stays low and clumping stays down for the platelet’s whole life. Pain and swelling ease; the stomach shield thins.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn data-part="tag">Aspirin</dfn> blocks COX for good by sticking a chemical tag, an acetyl group, onto it. Most cells can build new COX, but platelets have no nucleus and cannot, so their thromboxane stays low and clumping stays down for the rest of each platelet’s life. Pain and swelling ease; the stomach shield thins.</p>
     </article>
     <article data-step="14" data-step-title="Glucocorticoids: the scissors slowed" data-kind="steroid" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Glucocorticoids: the scissors slowed</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Glucocorticoids</dfn>, steroid medicines copied from the body’s stress hormone cortisol (<a href="/lab/hpa-axis-steroids/">Lesson 15</a>), such as prednisone, work higher up. They slow the phospholipase scissors and stop cells making extra COX-2, so prostaglandins and leukotrienes both fall.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn data-part="scissors">Glucocorticoids</dfn>, steroid medicines modelled on the stress hormone cortisol (<a href="/lab/hpa-axis-steroids/">Lesson 15</a>), such as prednisone, work higher up. They make cells produce <dfn data-part="scissors">annexin A1</dfn> (once called lipocortin), which holds back phospholipase A2, and stop cells making extra COX-2, so prostaglandins and leukotrienes both fall.</p>
     </article>
     <article data-step="15" data-step-title="Leukotriene modifiers: the airway squeeze eased" data-kind="ltm" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Leukotriene modifiers: the airway squeeze eased</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Leukotriene modifiers</dfn>, such as montelukast, block leukotrienes where they act on the airways, or block lipoxygenase itself. The airway squeeze eases, which helps prevent asthma attacks. COX and its prostaglandins carry on untouched, so pain and swelling stay.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn data-part="ltm">Leukotriene modifiers</dfn> either block leukotrienes where they act on the airways, as montelukast does, or block lipoxygenase itself. The airway squeeze eases, which helps prevent asthma attacks. COX and its prostaglandins carry on untouched, so pain and fever stay, though leukotriene-driven airway swelling eases too.</p>
     </article>
 
     <div class="step-nav">
@@ -145,8 +144,12 @@
       <span data-step-progress aria-live="polite">Step 1 of 15</span>
       <button type="button" data-step-next>Next →</button>
     </div>
-    <p class="hint">Start with Next, or use the arrow keys. Pictures are illustrative, not measurements.</p>
+    <p class="hint">Start with Next, or use the arrow keys. Under a moving picture: pause, drag to any moment, or slow it down. Underlined terms light up their part of the picture. Flows and meters are illustrative, not measurements.</p>
   </section>
+
+  <section id="quiz" role="tabpanel" aria-labelledby="tab-quiz" hidden></section>
+
+  <section id="summary" role="tabpanel" aria-labelledby="tab-summary" hidden></section>
 
   <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
     <h2>Reference values, beside the model.</h2>
@@ -173,11 +176,14 @@
     </div>
     <p id="state-summary" class="state-summary" aria-live="polite">Normal teaching baseline.</p>
     <p id="state-source" class="model-note"></p>
-    <p class="model-note">The blue line on each bar, and the large number beside it, show where an illustrative teaching model sits: not a patient measurement and not a sourced value. The shaded bands are the reference ranges quoted under each row; where a source gives only one typical value, a dark tick marks it instead. Selecting a drug or condition shows the expected direction of each value, compared with a normal body, and applies that state to the model. Where no direction is cited, no arrow is shown and the model holds that value where it was.</p>
-    <p id="baseline-note" class="model-note"></p>
+    <details class="lx-fine">
+      <summary>How to read these bars</summary>
+      <p>The blue line on each bar, and the large number beside it, show where an illustrative teaching model sits: not a patient measurement and not a sourced value. The shaded bands are the reference ranges quoted under each row; where a source gives only one typical value, a dark tick marks it instead. Selecting a drug or condition shows the expected direction of each value, compared with a normal body, and applies that state to the model. Where no direction is cited, no arrow is shown and the model holds that value where it was.</p>
+      <p id="baseline-note" class="model-note"></p>
+      <p>NSAIDs, COX-2 selective inhibitors and leukotriene modifiers are animated in the Lesson and in Explore freely, but they are not listed as states here: no open reference with a checked excerpt giving their direction on these values was available to this page, and every state on this tab must quote its source.</p>
+    </details>
     <div id="value-rows"></div>
     <p id="cv-live" class="visually-hidden" aria-live="polite"></p>
-    <p class="model-note">NSAIDs, COX-2 selective inhibitors and leukotriene modifiers are animated in the Lesson and in Explore freely, but they are not listed as states here: no open reference with a checked excerpt giving their direction on these values was available to this page, and every state on this tab must quote its source.</p>
     <h3>Sources</h3>
     <ul id="sources"></ul>
     <p class="model-note">Blood pH and acidosis are taught in <a href="/lab/acid-base/">Lesson 11: Acid–Base Balance</a>; glucocorticoids and blood glucose in <a href="/lab/hpa-axis-steroids/">Lesson 15: The HPA Axis and Steroids</a>.</p>
@@ -214,7 +220,7 @@
       <summary>How this teaching model works</summary>
       <p>Everything is worked out relative to the untreated injury and settles at once; there is no time course. Phospholipase frees a trickle of arachidonic acid at rest and more as the injury grows. COX-1 is always present; COX-2 is made in proportion to the injury. At the injury COX-2 does most of the work, so the prostaglandins behind pain, swelling and fever follow COX-2 far more than COX-1. The stomach shield and platelet clumping follow COX-1 alone. Arachidonic acid that COX cannot take spills a little toward lipoxygenase, so blocking COX raises leukotrienes slightly.</p>
       <p>An NSAID plugs a share of both COX enzymes; a COX-2 selective inhibitor plugs COX-2 only; aspirin tags COX-1 almost completely and COX-2 less so, and because platelets cannot make new COX its effect on them lasts. A glucocorticoid slows phospholipase, stops much of the extra COX-2 being made and damps inflammation in other ways too. A leukotriene modifier blocks leukotrienes where they act, so the airway squeeze falls while leukotrienes are still made. The sizes of every effect are illustrative; only their directions are meant to teach.</p>
-      <p>Left out: prostacyclin, the blood-vessel prostaglandin whose loss under COX-2 selective inhibitors is part of their heart risk; the kidney’s prostaglandins; other routes for arachidonic acid; the many other inflammatory signals; how drugs are absorbed and cleared; and every real-world difference between people. Nothing here is a prediction for a real person, and nothing here is a treatment plan.</p>
+      <p>Left out: prostacyclin, the blood-vessel prostaglandin whose loss under COX-2 selective inhibitors is part of their heart risk (the lesson names it, the model does not draw it); the kidney’s prostaglandins; other routes for arachidonic acid; the many other inflammatory signals; how drugs are absorbed and cleared; and every real-world difference between people. Nothing here is a prediction for a real person, and nothing here is a treatment plan.</p>
     </details>
   </section>
 

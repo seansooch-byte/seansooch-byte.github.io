@@ -1,0 +1,200 @@
+{
+  "minutes": 29,
+  "prerequisites": [
+    "autonomic-synapse"
+  ],
+  "objectives": [
+    "Explain how sodium, calcium and potassium doors draw a heart muscle cell's action potential, phase by phase from 0 to 4.",
+    "Tell a pacemaker cell's action potential apart from a muscle cell's, and explain how nerves change the heart rate through phase 4.",
+    "Read the PR interval, the QRS complex and the QT interval as the AV node's pause, the ventricles' phase 0 and their whole action potential.",
+    "Predict how class I, II, III and IV drugs reshape the action potential and the electrocardiogram."
+  ],
+  "checks": {
+    "class1a": {
+      "prompt": "A class IA drug blocks fast sodium doors and also some potassium doors. What happens to the QRS complex and the QT interval?",
+      "choices": [
+        "Both lengthen",
+        "The QRS widens; the QT stays the same",
+        "The QT lengthens; the QRS stays the same",
+        "Both shorten"
+      ],
+      "answer": 0,
+      "why": "Blocking sodium slows phase 0, so the signal spreads more slowly and the QRS widens. Blocking potassium delays phase 3, so the action potential, and with it the QT, lengthens."
+    },
+    "class1b": {
+      "prompt": "A class IB drug grabs sodium doors but lets go quickly between beats, and trims the plateau a little. At a normal heart rate, what happens to the QRS and the QT?",
+      "choices": [
+        "QRS about the same; QT a little shorter",
+        "QRS much wider; QT longer",
+        "QRS wider; QT the same",
+        "Both stay exactly the same"
+      ],
+      "answer": 0,
+      "why": "Letting go quickly leaves little block by the next beat, so phase 0 and the QRS barely change. The slightly shorter plateau shortens the action potential and the QT a little."
+    },
+    "class1c": {
+      "prompt": "A class IC drug blocks fast sodium doors strongly and lets go slowly, without touching potassium doors. What happens to phase 0 and the QT?",
+      "choices": [
+        "Phase 0 much slower; QT about the same",
+        "Phase 0 much slower; QT much longer",
+        "Phase 0 unchanged; QT shorter",
+        "Phase 0 quicker; QT about the same"
+      ],
+      "answer": 0,
+      "why": "Strong sodium block slows phase 0 a lot, so the QRS widens. With the potassium doors untouched, phases 2 and 3 keep their length, so the QT stays about the same."
+    },
+    "class2": {
+      "prompt": "Beta-blockers stop noradrenaline acting on pacemaker cells, where it steepens the phase 4 drift. What happens to the heart rate?",
+      "choices": [
+        "It falls: the drift flattens, so each beat comes later",
+        "It rises: the drift steepens",
+        "It stays the same: beta-blockers act only on muscle cells"
+      ],
+      "answer": 0,
+      "why": "Without noradrenaline's push, the drift to threshold is flatter, so each beat comes later and the rate falls. The AV node passes the signal more slowly too, which lengthens the PR."
+    },
+    "class3": {
+      "prompt": "A class III drug blocks the potassium doors that end the plateau. What happens to the QT interval?",
+      "choices": [
+        "It lengthens",
+        "It shortens",
+        "It stays the same: only the QRS changes"
+      ],
+      "answer": 0,
+      "why": "Potassium leaving the cell is what brings the voltage down in phase 3. Blocking it delays phase 3, so the action potential and the QT both lengthen."
+    },
+    "class4": {
+      "prompt": "Verapamil blocks the calcium doors that power phase 0 in pacemaker and AV node cells. What happens to the PR interval?",
+      "choices": [
+        "It lengthens: the AV node passes the signal more slowly",
+        "It shortens: the signal skips the AV node",
+        "It stays the same: the AV node runs on sodium"
+      ],
+      "answer": 0,
+      "why": "AV node cells rise on calcium, like pacemaker cells. With their calcium doors blocked they pass the signal on more slowly, so the pause between the atria and the ventricles, and the PR, lengthens."
+    }
+  },
+  "quiz": [
+    {
+      "id": "phase0",
+      "objective": 1,
+      "step": "na",
+      "stem": "Which ion rushing into the cell makes phase 0, the sharp upswing, of a heart muscle cell?",
+      "choices": [
+        "Sodium",
+        "Calcium",
+        "Potassium",
+        "Chloride"
+      ],
+      "answer": 0,
+      "why": "Fast sodium doors snap open and sodium floods in, so the voltage leaps up. Calcium carries the plateau, and potassium leaving the cell carries the fall."
+    },
+    {
+      "id": "plateau",
+      "objective": 1,
+      "step": "ca",
+      "stem": "What holds the voltage up during phase 2, the plateau?",
+      "choices": [
+        "Calcium flowing in, balanced by potassium flowing out",
+        "Sodium still rushing in",
+        "Potassium flowing in",
+        "No ions move during the plateau"
+      ],
+      "answer": 0,
+      "why": "Slow calcium doors let calcium trickle in while some potassium leaks out. The two roughly balance, so the voltage stays nearly flat, and that calcium also triggers the squeeze."
+    },
+    {
+      "id": "refractory",
+      "objective": 1,
+      "step": "refractory",
+      "stem": "Why can't heart muscle be driven into one long, unbroken squeeze?",
+      "choices": [
+        "Its long refractory period blocks a new upswing until the cell has nearly reset",
+        "Its cells have no calcium doors",
+        "The AV node blocks every second signal",
+        "Its potassium doors never open"
+      ],
+      "answer": 0,
+      "why": "From phase 0 until late in phase 3 the sodium doors stay locked, so no new action potential can start. By the time one can, the squeeze is ending, so squeezes cannot run together."
+    },
+    {
+      "id": "pacemaker-phase4",
+      "objective": 2,
+      "step": "pm",
+      "stem": "What makes a pacemaker cell fire on its own, with no signal from a neighbour?",
+      "choices": [
+        "In phase 4 sodium leaks in, so its voltage drifts up to threshold",
+        "Its potassium doors stay shut, so the voltage never falls",
+        "Calcium enters during a long plateau",
+        "Fast sodium doors open while it rests"
+      ],
+      "answer": 0,
+      "why": "Pacemaker cells never settle at rest: special doors let sodium leak in, the funny current, so the voltage creeps up until it reaches threshold and the cell fires."
+    },
+    {
+      "id": "vagal",
+      "objective": 2,
+      "step": "nerves",
+      "stem": "During sleep, more acetylcholine from the brake nerves reaches the pacemaker. What happens to phase 4 and the heart rate?",
+      "choices": [
+        "Phase 4 starts lower and flattens; the rate falls",
+        "Phase 4 steepens; the rate rises",
+        "Phase 0 disappears; the heart stops",
+        "Nothing changes: acetylcholine acts only on muscle cells"
+      ],
+      "answer": 0,
+      "why": "Acetylcholine makes the pacemaker's voltage start lower and drift more slowly, so it takes longer to reach threshold and beats come later. Noradrenaline does the opposite."
+    },
+    {
+      "id": "ecg-map",
+      "objective": 3,
+      "step": "ecg",
+      "stem": "Which part of the electrocardiogram matches the ventricles' phase 0, and which their phase 3?",
+      "choices": [
+        "QRS complex for phase 0; T wave for phase 3",
+        "P wave for phase 0; QRS complex for phase 3",
+        "T wave for phase 0; P wave for phase 3",
+        "PR interval for phase 0; QRS complex for phase 3"
+      ],
+      "answer": 0,
+      "why": "The QRS complex is the signal sweeping through the ventricles as their cells rise in phase 0; the T wave is their fall in phase 3. The P wave belongs to the atria."
+    },
+    {
+      "id": "class3-qt",
+      "objective": 4,
+      "step": "class3",
+      "stem": "Which drug class lengthens the QT interval mainly by delaying phase 3?",
+      "choices": [
+        "Class III, potassium channel blockers",
+        "Class IB, light sodium channel blockers",
+        "Class II, beta-blockers",
+        "Class IV, calcium channel blockers"
+      ],
+      "answer": 0,
+      "why": "Class III drugs block the potassium doors that end the plateau, so phase 3 and the QT lengthen. Class IB shortens the QT a little; classes II and IV act mainly on the pacemaker and the AV node."
+    },
+    {
+      "id": "pr-av",
+      "objective": 4,
+      "step": "class4",
+      "stem": "A patient taking diltiazem, a calcium channel blocker, now has a longer PR interval. Which part of the signal's path explains it?",
+      "choices": [
+        "The AV node, whose calcium-powered cells now pass the signal more slowly",
+        "The ventricles' muscle, whose phase 3 is delayed",
+        "The fast wiring, whose sodium doors are blocked",
+        "The atria, whose P wave has gone"
+      ],
+      "answer": 0,
+      "why": "The PR interval includes the AV node's pause. AV node cells rise on calcium, so blocking calcium doors slows them and stretches the PR. A delayed phase 3 would lengthen the QT instead."
+    }
+  ],
+  "takeaways": [
+    "A heart cell's voltage is set by doors in its membrane: sodium and calcium flow in, potassium flows out.",
+    "A muscle cell's action potential has five phases: 0, sodium rushes in; 1, a brief potassium dip; 2, the plateau, calcium in balanced by potassium out; 3, potassium out, back down; 4, rest.",
+    "The long refractory period, from phase 0 until late in phase 3, stops heart muscle being driven into one unbroken squeeze.",
+    "Pacemaker cells have no flat rest: sodium leaking in drifts them to threshold in phase 4, and their phase 0 rises gently on calcium. Noradrenaline steepens the drift; acetylcholine lowers and flattens it.",
+    "The signal pauses in the AV node, whose calcium-powered cells set most of the PR interval. The QRS is the ventricles' phase 0 and the QT their whole action potential.",
+    "Class I drugs block sodium, differently by subclass: IA slows phase 0 moderately, widens the QRS and lengthens the QT; IB barely changes phase 0 or the QRS at a normal rate and trims the QT; IC slows phase 0 most and widens the QRS most. Class III drugs block potassium: phase 3 and the QT lengthen.",
+    "Class II drugs (beta-blockers) flatten the pacemaker's phase 4; class IV drugs (verapamil, diltiazem) slow the pacemaker's climb to threshold and the AV node's calcium-powered phase 0. Both slow the heart rate and lengthen the PR interval."
+  ]
+}

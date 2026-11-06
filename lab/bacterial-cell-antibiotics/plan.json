@@ -1,0 +1,202 @@
+{
+  "minutes": 26,
+  "prerequisites": [],
+  "objectives": [
+    "Name the four parts of a bacterium that antibiotics attack, and say why your own cells are spared.",
+    "Explain how beta-lactams and vancomycin each stop the wall being built, and why vancomycin misses gram-negative bacteria.",
+    "Tell apart the ribosome drugs: aminoglycosides and tetracyclines on the small 30S part, macrolides on the large 50S part.",
+    "Trace how fluoroquinolones, and sulfonamides with trimethoprim, stop a bacterium copying its DNA.",
+    "Tell a drug that kills bacteria (bactericidal) from one that only stops their growth (bacteriostatic)."
+  ],
+  "checks": {
+    "betalactam": {
+      "prompt": "Beta-lactams jam the wall-building enzymes, so no new bridges are tied while the bacterium keeps growing and reshaping its wall. What happens to the bacterium?",
+      "choices": [
+        "Its wall weakens, the inside pushes out and it bursts",
+        "It stops growing but stays whole and alive",
+        "It loses its DNA",
+        "Nothing: the old wall is strong enough"
+      ],
+      "answer": 0,
+      "why": "A growing bacterium keeps opening its wall to add new bricks. With the enzymes jammed, the gaps are never tied shut, so the net weakens and the pressure inside bursts the cell. That is why beta-lactams kill bacteria that are growing."
+    },
+    "vancomycin": {
+      "prompt": "Vancomycin does not touch the wall-building enzymes. It clamps onto the D-Ala-D-Ala tip of each new brick instead. What happens to a growing staphylococcus, a gram-positive germ it works well against?",
+      "choices": [
+        "Wall building fails, so it is killed and may burst, as with a beta-lactam",
+        "Nothing: the enzymes are untouched, so they keep tying bridges",
+        "Its wall grows thicker and buries the drug",
+        "Its wall stays strong, but it stops making proteins"
+      ],
+      "answer": 0,
+      "why": "The enzymes must grip the tip to tie a brick in. With the tip covered they have nothing to hold, so no new bridges form and wall building fails, which kills a growing staphylococcus. Not every gram-positive germ dies: enterococci are usually only stopped from growing."
+    },
+    "aminoglycoside": {
+      "prompt": "Aminoglycosides grip the small 30S part of the ribosome and make it misread the copied instructions. What does the ribosome then make?",
+      "choices": [
+        "Faulty proteins, which damage the membrane and kill the bacterium",
+        "No proteins at all, so the bacterium simply waits",
+        "Extra wall bricks",
+        "Normal proteins, only more slowly"
+      ],
+      "answer": 0,
+      "why": "Misreading puts the wrong building blocks into the chain. The faulty proteins lodge in the membrane and make it leaky, which is why aminoglycosides kill bacteria rather than just stopping them."
+    },
+    "macrolide": {
+      "prompt": "Macrolides plug the exit of the large 50S part, and tetracyclines block the docking site on the small 30S part. What happens to the bacteria?",
+      "choices": [
+        "Protein making stalls: they stop growing, but most stay alive",
+        "They burst within minutes",
+        "They make faulty proteins that kill them",
+        "Their DNA is cut and left broken"
+      ],
+      "answer": 0,
+      "why": "With the exit plugged or the docking site blocked, the chain cannot grow, so no new proteins are made and growth stops. The bacteria are held still rather than killed, and white blood cells clear them."
+    },
+    "fluoroquinolone": {
+      "prompt": "Fluoroquinolones trap DNA gyrase and topoisomerase IV just after they have cut both DNA strands. What happens next?",
+      "choices": [
+        "The cuts stay open, copying stops and the broken DNA kills the bacterium",
+        "The DNA coils tighter, but copying carries on",
+        "The wall weakens and the cell bursts",
+        "The bacterium makes extra folate to mend the cut"
+      ],
+      "answer": 0,
+      "why": "These enzymes normally seal every cut they make. Trapped mid-job, they leave the DNA broken, so copying cannot go on and the breaks kill the cell."
+    },
+    "sulfa": {
+      "prompt": "A sulfonamide blocks an earlier step of folate making and trimethoprim blocks a later one. What does the bacterium run short of?",
+      "choices": [
+        "Folate, and so the purines and thymidine it needs to copy its DNA",
+        "The raw material at the start of the line",
+        "Wall bricks",
+        "Ribosomes"
+      ],
+      "answer": 0,
+      "why": "The shortage is downstream of the blocks: little active folate is made, and without it the cell cannot make enough purines and thymidine, DNA letters it needs to copy its DNA. The blocks stop the raw material being used; they do not use it up."
+    }
+  },
+  "quiz": [
+    {
+      "id": "spared",
+      "objective": 1,
+      "step": "targets",
+      "stem": "Why can penicillin harm bacteria while leaving your own cells alone?",
+      "choices": [
+        "Your cells have no cell wall, so there is nothing for it to stop",
+        "Your cells are too large for it to get into",
+        "Your white blood cells break it down before it reaches your cells",
+        "It only works on cells that have a nucleus"
+      ],
+      "answer": 0,
+      "why": "Penicillin, a beta-lactam, jams the enzymes that build the bacterial wall. Your cells have no wall and no such enzymes, so they are not its target. A nucleus has nothing to do with it: bacteria are the ones without one."
+    },
+    {
+      "id": "tip-or-enzyme",
+      "objective": 2,
+      "step": "vancomycin",
+      "stem": "Beta-lactams and vancomycin both stop new wall bridges. Where does each one act?",
+      "choices": [
+        "Beta-lactams jam the wall-building enzyme; vancomycin covers the D-Ala-D-Ala tip",
+        "Beta-lactams cover the D-Ala-D-Ala tip; vancomycin jams the enzyme",
+        "Both cover the D-Ala-D-Ala tip",
+        "Beta-lactams act on the wall; vancomycin acts on the ribosome"
+      ],
+      "answer": 0,
+      "why": "Beta-lactams are shaped like the D-Ala-D-Ala tip, so they lodge in the enzyme that grips it. Vancomycin binds the tip itself, so the enzyme has nothing to grip. Both stop bridges forming; neither acts on the ribosome."
+    },
+    {
+      "id": "gram-negative",
+      "objective": 2,
+      "step": "gram",
+      "stem": "Vancomycin works against many gram-positive bacteria but not against gram-negative ones. Why?",
+      "choices": [
+        "It is too big to get through the gram-negative outer membrane",
+        "Gram-negative bacteria have no cell wall",
+        "Gram-negative bacteria have a thicker wall",
+        "Gram-negative bacteria make no D-Ala-D-Ala tips"
+      ],
+      "answer": 0,
+      "why": "Gram-negative bacteria do have a wall, a thin one built from the same tipped bricks. But it sits under an outer membrane that a molecule as large as vancomycin cannot cross."
+    },
+    {
+      "id": "small-part",
+      "objective": 3,
+      "step": "aminoglycoside",
+      "stem": "Which two antibiotic families grip the small 30S part of the bacterial ribosome?",
+      "choices": [
+        "Aminoglycosides and tetracyclines",
+        "Macrolides and tetracyclines",
+        "Aminoglycosides and macrolides",
+        "Fluoroquinolones and macrolides"
+      ],
+      "answer": 0,
+      "why": "Aminoglycosides cause misreading and tetracyclines block docking, both on the small 30S part. Macrolides act on the large 50S part, at the exit; fluoroquinolones act on DNA, not the ribosome."
+    },
+    {
+      "id": "ribosome-killer",
+      "objective": 3,
+      "step": "macrolide",
+      "stem": "A doctor wants a ribosome drug that kills the bacteria rather than just holding them still. Which family fits?",
+      "choices": [
+        "An aminoglycoside, which makes faulty proteins that wreck the membrane",
+        "A macrolide, which plugs the exit of the 50S part",
+        "A tetracycline, which blocks docking on the 30S part",
+        "None: every ribosome drug only stops growth"
+      ],
+      "answer": 0,
+      "why": "Macrolides and tetracyclines stall protein making, so growth stops but most bacteria live. Aminoglycosides make the ribosome misread, and the faulty proteins damage the membrane, which kills the bacteria."
+    },
+    {
+      "id": "cipro",
+      "objective": 4,
+      "step": "fluoroquinolone",
+      "stem": "How does ciprofloxacin, a fluoroquinolone, kill a bacterium?",
+      "choices": [
+        "It traps DNA gyrase and topoisomerase IV, so the DNA they cut is never sealed",
+        "It blocks the bacterial dihydrofolate reductase step of folate making",
+        "It clamps onto the D-Ala-D-Ala tips of new wall bricks",
+        "It plugs the exit of the ribosome's 50S part"
+      ],
+      "answer": 0,
+      "why": "Fluoroquinolones catch DNA gyrase and topoisomerase IV just after they cut both DNA strands. The breaks are never sealed, so copying stops and the cell dies. Blocking dihydrofolate reductase is trimethoprim; covering the tip is vancomycin."
+    },
+    {
+      "id": "pair",
+      "objective": 4,
+      "step": "sulfa",
+      "stem": "Why are a sulfonamide and trimethoprim often given together?",
+      "choices": [
+        "They block an earlier and a later step of the same folate line, which works better than either alone",
+        "Trimethoprim stops the sulfonamide being broken down",
+        "One attacks the wall and the other the ribosome",
+        "Trimethoprim stops your own cells using folate, so only the bacteria get it"
+      ],
+      "answer": 0,
+      "why": "Two blocks on one line starve the bacterium of folate far more completely than one. Your cells are spared because they take folate from food and because trimethoprim grips the bacterial dihydrofolate reductase much more tightly than yours, not because your folate is switched off."
+    },
+    {
+      "id": "few-white-cells",
+      "objective": 5,
+      "step": "killstop",
+      "stem": "A patient has very few white blood cells after cancer treatment. Why might a bacteriostatic drug on its own fall short?",
+      "choices": [
+        "It only stops growth, and clearing the bacteria is left to the white blood cells",
+        "It works only on gram-negative bacteria",
+        "It kills bacteria too fast for the body to cope",
+        "It needs white blood cells to carry it to the bacteria"
+      ],
+      "answer": 0,
+      "why": "A bacteriostatic drug mainly stops the bacteria multiplying; it is the white blood cells that clear them. With few white cells the bacteria can wait it out, so a bactericidal drug, which kills them itself, is often preferred."
+    }
+  ],
+  "takeaways": [
+    "Antibiotics hit parts of a bacterium that your cells lack or build differently: the wall, the ribosomes, the DNA untangling enzymes and the folate line.",
+    "The wall is a net of sugar chains tied by bridges. Beta-lactams jam the wall-building enzymes (penicillin-binding proteins); vancomycin covers the D-Ala-D-Ala tip they grip. Either way wall building fails, killing many growing bacteria, though not all of them burst.",
+    "Vancomycin is too big to cross the outer membrane of gram-negative bacteria, so it is used against gram-positive ones.",
+    "Aminoglycosides and tetracyclines grip the small 30S part of the ribosome; macrolides plug the large 50S part. Aminoglycosides cause misreading and kill; macrolides and tetracyclines stall protein making and stop growth.",
+    "DNA gyrase eases the winding ahead of the copying fork and topoisomerase IV unhooks the finished copies. Fluoroquinolones trap both after they cut the DNA, so the breaks are never sealed.",
+    "Sulfonamides block an earlier step of folate making (dihydropteroate synthase) and trimethoprim a later one (dihydrofolate reductase). Together they starve the bacterium of the folate it needs to make purines and thymidine for its DNA.",
+    "Bactericidal drugs kill the bacteria they reach; bacteriostatic drugs mainly stop them multiplying and leave white blood cells to clear them. Which one a drug is depends on the drug, the germ and the conditions."
+  ]
+}

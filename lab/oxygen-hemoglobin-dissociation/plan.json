@@ -1,0 +1,179 @@
+{
+  "minutes": 25,
+  "prerequisites": [],
+  "objectives": [
+    "Explain how hemoglobin loads oxygen in the lungs and unloads it in the tissues, using the S-shaped curve.",
+    "Say what the half-saturation pressure (P50) marks, and which way a right or a left shift moves it.",
+    "Tell saturation apart from oxygen content, and explain how the two can disagree.",
+    "Predict how carbon dioxide, acid, heat, 2,3-BPG, fetal hemoglobin, carbon monoxide and anemia change the oxygen the tissues get."
+  ],
+  "checks": {
+    "right": {
+      "prompt": "Busy tissue makes carbon dioxide and acid and warms up, and red cells adapting to low oxygen make more 2,3-BPG. All of these shift the curve to the right. At the same tissue oxygen pressure as before, what does hemoglobin do?",
+      "choices": [
+        "Lets go of more oxygen",
+        "Holds on to more oxygen",
+        "Loses some of its seats",
+        "Behaves exactly as before"
+      ],
+      "answer": 0,
+      "why": "A right shift means more pressure is needed to keep the seats full. At the same low tissue pressure, fewer seats stay filled, so more oxygen is handed over exactly where the tissue is working hardest."
+    },
+    "left": {
+      "prompt": "Fetal hemoglobin, cold blood and alkalosis all make hemoglobin grip oxygen more tightly. Which way does the curve move?",
+      "choices": [
+        "Left: half full at a lower oxygen pressure",
+        "Right: half full at a higher oxygen pressure",
+        "Down: a lower ceiling",
+        "It does not move"
+      ],
+      "answer": 0,
+      "why": "Gripping tighter means seats fill at lower pressures, so the half-saturation pressure falls and the curve sits to the left. Hemoglobin loads easily but unloads less in the tissues."
+    },
+    "co": {
+      "prompt": "Carbon monoxide sticks to half of hemoglobin's seats, and the seats left grip their oxygen tighter. The air and the lungs are unchanged. What happens to the oxygen pressure of blood leaving the lungs, and to the oxygen it carries?",
+      "choices": [
+        "Pressure stays normal; the oxygen carried falls",
+        "Pressure falls; the oxygen carried stays normal",
+        "Both fall",
+        "Both stay normal"
+      ],
+      "answer": 0,
+      "why": "Oxygen pressure measures the oxygen dissolved in the blood, which comes in from the air in the lungs; carbon monoxide does not change it. But with half the seats taken, the blood carries far less oxygen, and what it carries is held tighter."
+    },
+    "anemia": {
+      "prompt": "In anemia the blood has half its usual hemoglobin. Each molecule that is left works normally. What happens to the saturation of blood leaving the lungs?",
+      "choices": [
+        "It stays normal: each remaining seat still fills",
+        "It falls by half",
+        "It rises, to make up the difference",
+        "It drops close to zero"
+      ],
+      "answer": 0,
+      "why": "Saturation is the share of seats that are full, not how many seats there are. The remaining molecules still load fully in the lungs, so saturation looks normal while the oxygen content falls."
+    }
+  },
+  "quiz": [
+    {
+      "id": "plateau",
+      "objective": 1,
+      "step": "lungs",
+      "stem": "On a trip to the mountains, the oxygen pressure in the lungs falls a little. Why does blood leaving the lungs stay nearly fully saturated?",
+      "choices": [
+        "The lungs sit on the curve's flat top, where a small change in pressure barely changes saturation",
+        "Hemoglobin grows extra seats at altitude",
+        "The lungs sit on the curve's steep slope, where pressure has no effect",
+        "Saturation does not depend on oxygen pressure"
+      ],
+      "answer": 0,
+      "why": "The plateau is a safety margin. Across the flat top, a dip in lung oxygen pressure moves saturation very little, so loading is protected."
+    },
+    {
+      "id": "slope",
+      "objective": 1,
+      "step": "tissues",
+      "stem": "Working muscle can pull a lot of oxygen off hemoglobin with only a small fall in its own oxygen pressure. Why?",
+      "choices": [
+        "The muscle's oxygen pressure sits on the curve's steep slope",
+        "The muscle's oxygen pressure sits on the curve's flat top",
+        "Carbon dioxide turns into oxygen in working muscle",
+        "Red cells stop moving while they are in muscle"
+      ],
+      "answer": 0,
+      "why": "On the steep middle of the curve, a small drop in pressure empties many seats. That is what makes unloading in the tissues so effective."
+    },
+    {
+      "id": "reserve",
+      "objective": 1,
+      "step": "given",
+      "stem": "At rest, blood returning from the tissues still carries most of its oxygen. What is that oxygen?",
+      "choices": [
+        "A reserve the tissues can draw on when they work harder",
+        "Waste oxygen that the lungs breathe out",
+        "Oxygen locked to carbon dioxide that cannot be used",
+        "Oxygen the heart muscle keeps for itself"
+      ],
+      "answer": 0,
+      "why": "Resting tissues take only about a quarter of the oxygen on offer. The rest stays on board as a reserve, which exercise taps by taking a bigger share from each pass and by pumping more blood."
+    },
+    {
+      "id": "p50-up",
+      "objective": 2,
+      "step": "half",
+      "stem": "A blood sample's half-saturation pressure (P50) is higher than normal. What does that mean?",
+      "choices": [
+        "The curve has shifted right: hemoglobin gives up oxygen more easily",
+        "The curve has shifted left: hemoglobin holds oxygen more tightly",
+        "The blood has more hemoglobin than usual",
+        "The blood carries carbon monoxide"
+      ],
+      "answer": 0,
+      "why": "P50 is the pressure at which half the seats are full. Needing more pressure to fill half the seats means a right-shifted curve and a looser grip."
+    },
+    {
+      "id": "what-right",
+      "objective": 4,
+      "step": "right",
+      "stem": "Which of these shifts the curve to the right?",
+      "choices": [
+        "More carbon dioxide and acid in working tissue",
+        "Cooling the blood",
+        "Alkalosis, blood less acidic than usual",
+        "Fetal hemoglobin"
+      ],
+      "answer": 0,
+      "why": "Carbon dioxide, acid and heat in working tissue, and 2,3-BPG made by red cells adapting to low oxygen, shift the curve right. Cold, alkalosis and fetal hemoglobin shift it left."
+    },
+    {
+      "id": "fetal",
+      "objective": 4,
+      "step": "left",
+      "stem": "How does fetal hemoglobin's left-shifted curve help a baby before birth?",
+      "choices": [
+        "It loads oxygen at a lower pressure, so it can take oxygen from the mother's blood",
+        "It unloads extra oxygen into the mother's tissues",
+        "It carries carbon dioxide in place of oxygen",
+        "It has eight oxygen seats per molecule instead of four"
+      ],
+      "answer": 0,
+      "why": "Gripping tighter lets fetal hemoglobin fill at the low oxygen pressures of the placenta, pulling oxygen across from the mother's less tightly gripping hemoglobin."
+    },
+    {
+      "id": "content",
+      "objective": 3,
+      "step": "anemia",
+      "stem": "A person's arterial saturation and oxygen pressure are both normal, but the oxygen content of their blood is low. Which fits best?",
+      "choices": [
+        "Anemia: too little hemoglobin",
+        "A right shift from fever",
+        "Breathing extra oxygen",
+        "A left shift from cold"
+      ],
+      "answer": 0,
+      "why": "Content is mostly saturation combined with the amount of hemoglobin. With too little hemoglobin, every remaining seat can be full and the pressure normal, yet the blood carries less oxygen."
+    },
+    {
+      "id": "co",
+      "objective": 4,
+      "step": "co",
+      "stem": "In carbon monoxide poisoning, the oxygen pressure of arterial blood is usually normal. Why are the tissues still short of oxygen?",
+      "choices": [
+        "Carbon monoxide takes seats, so less oxygen is carried, and the seats left hold their oxygen tighter",
+        "Carbon monoxide lowers the oxygen pressure in the air sacs",
+        "Carbon monoxide shifts the curve right, so oxygen leaks out in the lungs",
+        "Carbon monoxide bursts red blood cells"
+      ],
+      "answer": 0,
+      "why": "Two hits: fewer seats carry oxygen, so content falls, and the remaining seats grip tighter, a left shift, so less is handed over in the tissues. The oxygen pressure misses both."
+    }
+  ],
+  "takeaways": [
+    "Hemoglobin has four oxygen seats, and binding is cooperative: each oxygen that binds makes the next one easier, which bends the dissociation curve into an S.",
+    "The lungs load hemoglobin on the curve's flat top, so a dip in lung oxygen pressure barely lowers saturation.",
+    "The tissues unload on the steep slope, where a small fall in pressure releases a lot of oxygen. At rest most oxygen stays on board as a reserve.",
+    "The half-saturation pressure (P50) marks where the curve sits: a right shift raises it and loosens the grip; a left shift lowers it and tightens the grip.",
+    "Right shift: more carbon dioxide, acid, heat, or 2,3-BPG (made by red cells adapting to low oxygen). Left shift: fetal hemoglobin, cold, alkalosis, and carbon monoxide.",
+    "Saturation is the share of seats that are full; oxygen content is the total oxygen carried, almost all of it on hemoglobin. Anemia lowers content while saturation and oxygen pressure stay normal.",
+    "Carbon monoxide steals seats and makes the rest grip tighter: content falls while the arterial oxygen pressure stays normal."
+  ]
+}

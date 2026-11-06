@@ -1,0 +1,181 @@
+{
+  "minutes": 25,
+  "prerequisites": [
+    "nephron-diuretics",
+    "blood-pressure-regulation"
+  ],
+  "objectives": [
+    "Trace the chain from renin to aldosterone: what each link makes, and where.",
+    "Explain the two ways angiotensin II raises blood pressure, and how feedback switches the chain off.",
+    "Predict how a drug changes the links after its cut, the links before it, and blood potassium.",
+    "Tell ACE inhibitors, angiotensin receptor blockers, aldosterone antagonists and direct renin inhibitors apart by where they cut the chain."
+  ],
+  "checks": {
+    "ace": {
+      "prompt": "An ACE inhibitor stops ACE, so less angiotensin II is made and blood pressure falls. The kidney feels that fall. What happens to renin, and to angiotensin I?",
+      "choices": [
+        "Both rise",
+        "Both fall",
+        "Renin rises; angiotensin I falls",
+        "Neither changes"
+      ],
+      "answer": 0,
+      "why": "The fall in pressure makes the kidney release more renin: the feedback now runs the other way. Renin keeps cutting angiotensinogen, and the angiotensin I it makes piles up, because ACE cannot convert it."
+    },
+    "arb": {
+      "prompt": "An angiotensin receptor blocker takes the dock angiotensin II needs on arterioles and the adrenal glands. Pressure falls, and the kidney releases more renin. What happens to the amount of angiotensin II in the blood?",
+      "choices": [
+        "It rises, but it cannot act through the blocked receptor",
+        "It falls, as with an ACE inhibitor",
+        "It stays exactly normal"
+      ],
+      "answer": 0,
+      "why": "ACE still works, so the extra renin leads to extra angiotensin I and then extra angiotensin II. The receptor is blocked, so that angiotensin II cannot narrow arterioles or call out aldosterone."
+    },
+    "mra": {
+      "prompt": "An aldosterone antagonist blocks aldosterone's receptor in the nephron. Aldosterone normally keeps sodium and sends potassium out into the urine. What happens to blood potassium?",
+      "choices": [
+        "It rises",
+        "It falls",
+        "It does not change"
+      ],
+      "answer": 0,
+      "why": "With aldosterone's receptor blocked, less potassium is sent out in the urine, so it builds up in the blood. Less sodium is kept too, so volume and pressure fall."
+    },
+    "dri": {
+      "prompt": "A direct renin inhibitor stops renin from cutting angiotensinogen, the very first link. Which way do the links after it move?",
+      "choices": [
+        "Angiotensin I, angiotensin II and aldosterone all fall",
+        "Angiotensin I falls, but angiotensin II rises",
+        "They all rise",
+        "Only aldosterone falls"
+      ],
+      "answer": 0,
+      "why": "Renin makes angiotensin I, ACE turns that into angiotensin II, and angiotensin II calls out aldosterone, so cutting the first link lowers them all. The kidney releases more renin as pressure falls, but the drug keeps that renin from working."
+    }
+  },
+  "quiz": [
+    {
+      "id": "trigger",
+      "objective": 1,
+      "step": "renin",
+      "stem": "Which change makes the kidney release more renin?",
+      "choices": [
+        "A fall in blood pressure in the vessel feeding the kidney",
+        "A rise in blood pressure in the vessel feeding the kidney",
+        "Eating more salt",
+        "A rise in blood volume"
+      ],
+      "answer": 0,
+      "why": "Sensor cells in the walls of the vessels feeding each filter release renin when the pressure they feel falls. A rise in pressure, extra salt or a fuller circulation all turn renin down."
+    },
+    {
+      "id": "ace-where",
+      "objective": 1,
+      "step": "ace-step",
+      "stem": "Where is most angiotensin I turned into angiotensin II?",
+      "choices": [
+        "On the lining of blood vessels in the lungs",
+        "In the liver",
+        "In the adrenal glands",
+        "Inside the nephron"
+      ],
+      "answer": 0,
+      "why": "ACE sits on the inner lining of blood vessels, and the lungs, with their huge vessel lining, do much of the converting. The liver makes angiotensinogen; the adrenal glands make aldosterone."
+    },
+    {
+      "id": "two-jobs",
+      "objective": 2,
+      "step": "whole",
+      "stem": "Angiotensin II raises blood pressure in two ways. Which pair?",
+      "choices": [
+        "It narrows arterioles, and it calls out aldosterone so salt and water are kept",
+        "It speeds up the heart, and it widens arterioles",
+        "It makes the liver release more angiotensinogen, and it blocks renin",
+        "It sends potassium into the blood, and it thins the blood"
+      ],
+      "answer": 0,
+      "why": "Narrower arterioles raise resistance within minutes; aldosterone keeps salt, water follows, and the fuller circulation raises pressure over hours to days."
+    },
+    {
+      "id": "salty-meal",
+      "objective": 2,
+      "step": "feedback",
+      "stem": "After several salty meals, blood volume and pressure creep up. What does the kidney do?",
+      "choices": [
+        "Releases less renin, so the chain makes less angiotensin II and aldosterone",
+        "Releases more renin, to keep the pressure high",
+        "Releases more aldosterone itself, to keep more salt",
+        "Stops feeling the pressure until the salt is gone"
+      ],
+      "answer": 0,
+      "why": "Negative feedback: the kidney feels the higher pressure and turns renin down, so less angiotensin II and less aldosterone are made, less salt is kept, and pressure eases back."
+    },
+    {
+      "id": "ace-pattern",
+      "objective": 3,
+      "step": "ace",
+      "stem": "A patient starts an ACE inhibitor. Which pattern of blood levels fits?",
+      "choices": [
+        "Renin up, angiotensin II down, aldosterone down",
+        "Renin down, angiotensin II down, aldosterone down",
+        "Renin up, angiotensin II up, aldosterone up",
+        "Renin down, angiotensin II up, aldosterone down"
+      ],
+      "answer": 0,
+      "why": "After the cut, angiotensin II and aldosterone fall. Before it, renin rises, because the kidney feels the fall in pressure; with less angiotensin II, its feedback on renin is lifted too."
+    },
+    {
+      "id": "potassium",
+      "objective": 3,
+      "step": "mra",
+      "stem": "A woman takes spironolactone together with an ACE inhibitor. Which blood test matters most to watch?",
+      "choices": [
+        "Potassium, which can rise too high",
+        "Sodium, which can rise sharply",
+        "Potassium, which can fall too low",
+        "Blood sugar, which can fall"
+      ],
+      "answer": 0,
+      "why": "One drug lowers aldosterone and the other blocks its receptor, so together they sharply cut how much potassium is sent out in the urine, and blood potassium can climb to a dangerous level."
+    },
+    {
+      "id": "arb-ang2",
+      "objective": 4,
+      "step": "arb",
+      "stem": "Which drug leaves the blood with more angiotensin II than normal, yet still lowers blood pressure?",
+      "choices": [
+        "An angiotensin receptor blocker",
+        "An ACE inhibitor",
+        "A direct renin inhibitor",
+        "Neither: lowering pressure always means less angiotensin II"
+      ],
+      "answer": 0,
+      "why": "An ARB blocks the receptor, not the making of angiotensin II. Extra renin leads to extra angiotensin II, but it cannot act on the blocked receptor, the one that tightens vessels and calls out aldosterone. ACE inhibitors and direct renin inhibitors both cut the chain before angiotensin II, so it falls."
+    },
+    {
+      "id": "cough",
+      "objective": 4,
+      "step": "ace",
+      "stem": "A man develops a dry cough on an ACE inhibitor, and his doctor switches him to an angiotensin receptor blocker. Why might that help?",
+      "choices": [
+        "An ARB leaves ACE working, so bradykinin does not build up",
+        "An ARB blocks renin, so less angiotensin I is made",
+        "An ARB does not lower blood pressure, so it is gentler",
+        "An ARB works in the kidney instead of the blood vessels"
+      ],
+      "answer": 0,
+      "why": "ACE also breaks down bradykinin; blocking ACE lets bradykinin build up, which can cause a dry cough. An ARB blocks the angiotensin II receptor and leaves ACE alone, while still lowering pressure."
+    }
+  ],
+  "takeaways": [
+    "Low blood pressure, less salt reaching the kidney's tubes, or sympathetic nerves make the kidney release renin.",
+    "Renin cuts angiotensinogen, made by the liver, into angiotensin I; ACE, mostly on the lining of lung vessels, trims it into angiotensin II, the active hormone.",
+    "Angiotensin II raises pressure two ways: within minutes it narrows arterioles; over hours to days it calls out aldosterone, which keeps sodium, water following, and sends potassium out.",
+    "Negative feedback: as pressure recovers, the kidney releases less renin, so every later link makes less.",
+    "A drug that stops a step in the making lowers what comes after it, and the fall in pressure makes the kidney release more renin, so what comes before the cut rises. A receptor blocker instead lets angiotensin II rise while blocking its main effects.",
+    "ACE inhibitors: angiotensin I piles up, angiotensin II falls, and bradykinin builds up, which can cause a cough. Angiotensin receptor blockers: angiotensin II rises but cannot act on the blocked receptor.",
+    "Aldosterone antagonists block aldosterone's receptor in the nephron; direct renin inhibitors stop renin itself.",
+    "All four can raise blood potassium, because aldosterone's effect on the nephron falls."
+  ]
+}

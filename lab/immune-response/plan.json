@@ -1,0 +1,181 @@
+{
+  "minutes": 23,
+  "prerequisites": [
+    "arachidonic-acid-nsaids"
+  ],
+  "objectives": [
+    "Tell the innate response (fast, ready-made, the same each time) from the adaptive response (slow to build, made to measure, with memory).",
+    "Trace how a germ's tag, its antigen, is carried to a lymph node and switches on a matching helper T cell.",
+    "Explain how B cells, antibodies and memory cells clear a germ, and why a second meeting, or a vaccine, makes the response faster.",
+    "Predict what vaccines, calcineurin inhibitors, anti-TNF biologics and glucocorticoids do to the response."
+  ],
+  "checks": {
+    "vaccine": {
+      "prompt": "A vaccine shows the body a germ's tags ahead of time, so memory cells are ready before the real germ arrives. When it does arrive, what happens?",
+      "choices": [
+        "Antibodies rise sooner and higher, so the germs usually climb less",
+        "The germs climb just as high, but leave a little sooner",
+        "Antibodies rise later than usual",
+        "No antibodies are made, because the memory cells do the job alone"
+      ],
+      "answer": 0,
+      "why": "Memory B and T cells that fit the tag are already waiting, so they wake within days, and memory B cells quickly make plasma cells. Antibodies rise early and high, so the germs usually climb less and the illness is milder."
+    },
+    "cni": {
+      "prompt": "A calcineurin inhibitor blocks the helper T cell's on switch, so much less of the IL-2 grow signal is made. What happens to the response?",
+      "choices": [
+        "Far fewer T cells multiply, B cells get less help and fewer antibodies are made",
+        "More T cells multiply to make up for it",
+        "Only the eating cells stop working",
+        "Nothing changes until the next infection"
+      ],
+      "answer": 0,
+      "why": "With little IL-2, far fewer matching T cells grow into a clone, and most B cells need helper T cells to become plasma cells. So T cells and antibodies both stay lower, which protects a transplant but lets some germs spread more easily."
+    },
+    "antitnf": {
+      "prompt": "An anti-TNF biologic grabs and holds TNF, the loudest alarm signal. What happens at the site of an infection?",
+      "choices": [
+        "Less inflammation: vessels leak less and fewer eating cells arrive, so germs are held back less",
+        "More inflammation, because the trapped TNF builds up",
+        "The germs are killed faster",
+        "Antibodies stop being made at once"
+      ],
+      "answer": 0,
+      "why": "TNF is one of the main signals that make nearby vessels widen and leak and call in eating cells. Mopped up, it cannot do that, so swelling settles, which calms joint and gut diseases, but fewer eating cells reach the germs."
+    },
+    "gc": {
+      "prompt": "A glucocorticoid enters immune cells and turns down the instructions for many alarm signals at once. What happens?",
+      "choices": [
+        "Inflammation falls and fewer T cells multiply, so germs are fought less well",
+        "Only TNF falls; every other signal is unchanged",
+        "Inflammation rises",
+        "More white blood cells are made, and they fight better"
+      ],
+      "answer": 0,
+      "why": "Glucocorticoids act on the instructions, so many alarm signals fall together, not just one, and T cells are spurred to multiply less. Inflammation settles, but the defence against germs is weaker too."
+    }
+  },
+  "quiz": [
+    {
+      "id": "innate-first",
+      "objective": 1,
+      "step": "eat",
+      "stem": "Which of these is part of the innate response?",
+      "choices": [
+        "Neutrophils rushing in from the blood to eat germs within hours",
+        "Plasma cells pouring out antibodies",
+        "Memory cells waking fast on a second meeting",
+        "A clone of T cells that all fit one tag"
+      ],
+      "answer": 0,
+      "why": "The innate response is ready-made and fast: macrophages and neutrophils eat germs within hours, the same way each time. Antibodies, clones and memory belong to the adaptive response, which takes days to build."
+    },
+    {
+      "id": "days",
+      "objective": 1,
+      "step": "clone",
+      "stem": "Why does the adaptive response take days to build?",
+      "choices": [
+        "The few T and B cells that fit the tag must first multiply into large clones",
+        "It waits until the innate response has cleared the germs",
+        "Antibodies have to be carried in from the skin",
+        "It cannot start until the alarm signals stop"
+      ],
+      "answer": 0,
+      "why": "Only a handful of cells fit any one tag. They have to be found in a lymph node, switched on and copied again and again before there are enough of them to beat the germ."
+    },
+    {
+      "id": "dendritic",
+      "objective": 2,
+      "step": "tag",
+      "stem": "What does a dendritic cell carry from the infected tissue to a lymph node?",
+      "choices": [
+        "Pieces of the germ's name tag, its antigen, held up on its surface",
+        "Antibodies it has made",
+        "TNF, to raise the alarm inside the node",
+        "Memory cells from an earlier infection"
+      ],
+      "answer": 0,
+      "why": "Dendritic cells swallow germs, take pieces of their tags to the lymph node and hold them up, so the rare T cell that fits can find its tag. They do not make antibodies; plasma cells do."
+    },
+    {
+      "id": "il2",
+      "objective": 2,
+      "step": "switch",
+      "stem": "A helper T cell finds its tag and calcineurin switches on. What does that switch do?",
+      "choices": [
+        "Turns on the gene for IL-2, the signal that makes the T cell multiply",
+        "Makes the T cell release antibodies",
+        "Kills the dendritic cell that showed the tag",
+        "Turns the T cell into a memory cell straight away"
+      ],
+      "answer": 0,
+      "why": "Calcineurin passes the message on to the cell's instructions, turning on IL-2, the grow signal. The T cell then copies itself into a clone. Antibodies come from plasma cells, not T cells."
+    },
+    {
+      "id": "second-time",
+      "objective": 3,
+      "step": "memory",
+      "stem": "The same germ comes back years later. Why is the second response faster?",
+      "choices": [
+        "Memory cells that fit its tag are already waiting and wake quickly",
+        "The antibodies from the first time are still at their peak",
+        "The germ has grown weaker since the first time",
+        "Eating cells have learned to make antibodies"
+      ],
+      "answer": 0,
+      "why": "Most of the first response's antibodies fade within months, but memory cells stay for years. There are far more of them than the first time and they wake more readily, so although they still multiply, antibodies rise sooner and higher."
+    },
+    {
+      "id": "vaccine-how",
+      "objective": 3,
+      "step": "vaccine",
+      "stem": "How does a vaccine protect someone?",
+      "choices": [
+        "It builds memory cells without the illness, so antibodies rise early when the real germ comes",
+        "It kills germs directly in the blood",
+        "It mops up alarm signals",
+        "It stops T cells switching on"
+      ],
+      "answer": 0,
+      "why": "A vaccine shows the body a germ's tags safely, so memory cells are made ahead of time. It does not kill germs itself; mopping up alarm signals and blocking T cells are what immune-calming drugs do."
+    },
+    {
+      "id": "transplant",
+      "objective": 4,
+      "step": "cni",
+      "stem": "Tacrolimus, a calcineurin inhibitor, is given after a kidney transplant. What does it do?",
+      "choices": [
+        "Blocks the helper T cell's on switch, so far fewer T cells that would attack the new kidney multiply",
+        "Mops up TNF in the blood",
+        "Kills the cells of the donated kidney",
+        "Works as a vaccine against the new kidney"
+      ],
+      "answer": 0,
+      "why": "The body sees the donated kidney's tags as foreign, and matching T cells would multiply and attack it. Blocking calcineurin cuts the IL-2 they make, so far fewer of those T cells multiply. The cost is that germs spread more easily."
+    },
+    {
+      "id": "sleeping-tb",
+      "objective": 4,
+      "step": "antitnf",
+      "stem": "Before starting an anti-TNF biologic, doctors check for old, sleeping tuberculosis. Why?",
+      "choices": [
+        "TNF helps keep sleeping tuberculosis walled off, so mopping it up can let it wake",
+        "People with tuberculosis break the drug down too fast for it to work",
+        "Tuberculosis raises TNF so high that the drug cannot catch it all",
+        "The drug is made from tuberculosis germs"
+      ],
+      "answer": 0,
+      "why": "TNF keeps calling in eating cells that hold old tuberculosis germs in check. With TNF mopped up, germs are held back less, and a sleeping infection can wake up."
+    }
+  ],
+  "takeaways": [
+    "The innate response comes first, within hours: macrophages already in the tissue and neutrophils from the blood eat germs, and alarm signals such as TNF bring inflammation.",
+    "Dendritic cells carry pieces of a germ's tags, its antigens, to a lymph node, where the few T and B cells that fit that one tag wait.",
+    "When a helper T cell finds its tag, calcineurin turns on IL-2, its grow signal, and the cell multiplies into a clone: the adaptive response, which takes days.",
+    "With T cell help, B cells become plasma cells that pour out antibodies; antibodies, killer T cells and the innate defences together control the germs and often clear them.",
+    "Memory cells stay for years, so a second meeting brings antibodies sooner and higher. A vaccine builds that memory without the illness.",
+    "Calcineurin inhibitors block the T cell switch (used after transplants); anti-TNF biologics mop up TNF (used for joint and gut diseases); glucocorticoids turn down many alarm signals at once.",
+    "Drugs that calm the immune response can let some germs spread more easily; how much depends on the drug and the person."
+  ]
+}

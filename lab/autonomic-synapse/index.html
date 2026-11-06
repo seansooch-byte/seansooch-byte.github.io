@@ -11,8 +11,9 @@
 <meta property="og:url" content="https://seansooch.dev/lab/autonomic-synapse/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/lab/kit/kit.css">
 <link rel="stylesheet" href="style.css">
-<script src="app.js" defer></script>
+<script type="module" src="app.js"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to the lesson</a>
@@ -28,16 +29,19 @@
     </nav>
   </div>
 </header>
-<main id="main">
+<main id="main" data-slug="autonomic-synapse">
   <div class="intro">
-    <p class="eyebrow"><a href="/lab/">The Lab</a> / Core medicine / Lesson 6</p>
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / <a href="/lab/#signals">Unit 2: Nerves, rhythm and muscle</a> / Lesson 6</p>
     <h1>The autonomic<br><span>synapse.</span></h1>
-    <p class="lede">Your organs are wired to an accelerator and a brake. Follow one signal from nerve to organ, across a gap and into a receptor, then see how seven kinds of drugs press, release or jam those pedals.</p>
+    <p class="lede">Your organs are wired to an accelerator and a brake. Watch one signal leave a nerve, cross a gap and dock in a receptor, learn which receptor does what in each organ, then see how seven kinds of drugs press, release or jam those pedals.</p>
     <p class="note">Educational, not for clinical use</p>
+    <div class="lx-plan" data-lx-plan></div>
   </div>
 
   <div class="tabs" role="tablist" aria-label="Lesson views">
     <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-quiz" aria-controls="quiz" aria-selected="false" tabindex="-1">Quiz</button>
+    <button type="button" role="tab" id="tab-summary" aria-controls="summary" aria-selected="false" tabindex="-1">Summary</button>
     <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
     <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
   </div>
@@ -47,143 +51,146 @@
       <p class="eyebrow">Build the signal</p>
       <h2 tabindex="-1">Nerves that run you on autopilot</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Some nerves work without you ever thinking about them. They make up the <dfn>autonomic nervous system</dfn>: wiring from the brain and spinal cord to the organs that keep you alive, such as the heart, blood vessels, lungs, eyes and gut.</p>
+      <p class="caption">Some nerves work without you ever thinking about them. They make up the <dfn data-part="nerves">autonomic nervous system</dfn>: wiring from the brain and spinal cord to the organs that keep you alive, such as the heart, blood vessels, lungs, eyes and gut. Signals run along it all the time.</p>
     </article>
     <article data-step="2" data-step-title="Two branches, pulling opposite ways" data-kind="branches" hidden>
       <p class="eyebrow">Build the signal</p>
       <h2 tabindex="-1">Two branches, pulling opposite ways</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">The <dfn>sympathetic</dfn> branch (red) is the accelerator: it readies you for “fight or flight”. The <dfn>parasympathetic</dfn> branch (green) is the brake: it runs “rest and digest”. Most organs get both, and both work all the time, a little more or less.</p>
+      <p class="caption">The <dfn data-part="symp">sympathetic</dfn> branch (red, solid) is the accelerator: it readies you for “fight or flight”. The <dfn data-part="para">parasympathetic</dfn> branch (green, dashed) is the brake: it runs “rest and digest”. Most organs get both, and both work all the time, a little more or less. Most blood vessels get only the accelerator.</p>
     </article>
     <article data-step="3" data-step-title="Nerve and organ never quite touch" data-kind="synapse" hidden>
       <p class="eyebrow">Build the signal</p>
       <h2 tabindex="-1">Nerve and organ never quite touch</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">A nerve ending stops just short of the organ’s cells. That tiny gap is the <dfn>synapse</dfn>. To cross it, the nerve releases a <dfn>neurotransmitter</dfn>: a chemical messenger that drifts over the gap in a split second and passes the signal on.</p>
+      <p class="caption">Near an organ, an autonomic nerve fibre has many small swellings, its nerve endings, that stop just short of the organ’s cells. Each swelling and the tiny gap beside it form a <dfn data-part="gap">synapse</dfn>. When a signal arrives, the swelling releases a <dfn data-part="messenger">neurotransmitter</dfn>: a chemical messenger that crosses the gap in a split second, docks on the organ cell and passes the signal on. Then the gap is cleared.</p>
     </article>
     <article data-step="4" data-step-title="The brake’s messenger: acetylcholine" data-kind="ach" hidden>
       <p class="eyebrow">Build the signal</p>
       <h2 tabindex="-1">The brake’s messenger: acetylcholine</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Parasympathetic nerves release <dfn>acetylcholine</dfn> (green dots). It works only where it can dock on a <dfn>receptor</dfn>: a site on the cell shaped to fit one messenger, like a lock for a key. On organs, its receptors are called <dfn>muscarinic receptors</dfn>.</p>
+      <p class="caption">Parasympathetic nerves release <dfn data-part="ach">acetylcholine</dfn> (green dots). It works only where it can dock on a <dfn data-part="receptor">receptor</dfn>: a site on the cell shaped to fit one messenger, like a lock for a key. On organs, its receptors are <dfn data-part="receptor">muscarinic receptors</dfn>, M for short.</p>
     </article>
     <article data-step="5" data-step-title="An enzyme keeps the signal short" data-kind="enzyme" hidden>
       <p class="eyebrow">Build the signal</p>
       <h2 tabindex="-1">An enzyme keeps the signal short</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">An <dfn>enzyme</dfn> is a protein that makes one chemical change happen. <dfn>Cholinesterase</dfn>, waiting in the gap, chops acetylcholine apart within moments. So the brake acts only while the nerve keeps firing, and lets go soon after it stops.</p>
+      <p class="caption">An <dfn data-part="enzyme">enzyme</dfn> is a protein that makes one chemical change happen. <dfn data-part="enzyme">Cholinesterase</dfn>, waiting in the gap, chops acetylcholine apart within moments. So the brake acts only while the nerve keeps firing, and lets go soon after it stops.</p>
     </article>
-    <article data-step="6" data-step-title="Acetylcholine slows the heart" data-kind="para-heart" hidden>
-      <p class="eyebrow">Build the signal</p>
-      <h2 tabindex="-1">Acetylcholine slows the heart</h2>
-      <div class="visual" data-visual></div>
-      <p class="caption">Each dot on the strip is one heartbeat, so closer dots mean a faster <dfn>heart rate</dfn>. At rest, acetylcholine on the heart’s muscarinic receptors holds the rate down, like a foot resting on the brake.</p>
-    </article>
-    <article data-step="7" data-step-title="The accelerator’s messenger: noradrenaline" data-kind="ne" hidden>
+    <article data-step="6" data-step-title="The accelerator’s messenger: noradrenaline" data-kind="ne" hidden>
       <p class="eyebrow">Build the signal</p>
       <h2 tabindex="-1">The accelerator’s messenger: noradrenaline</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Sympathetic nerves release <dfn>noradrenaline</dfn> (red dots), also called norepinephrine. It docks on <dfn>adrenergic receptors</dfn>, which come in two main families: <dfn>alpha receptors</dfn> and <dfn>beta receptors</dfn>. Which family an organ carries decides how it answers.</p>
+      <p class="caption">Most sympathetic nerves release <dfn data-part="ne">noradrenaline</dfn> (red dots), also called norepinephrine; those to sweat glands release acetylcholine instead. Noradrenaline docks on <dfn data-part="alpha beta">adrenergic receptors</dfn>, which come in two families, alpha and beta, each with numbered types such as alpha-1 and beta-1. The types an organ carries decide how it answers.</p>
     </article>
-    <article data-step="8" data-step-title="Beta receptors speed the heart" data-kind="beta" hidden>
+    <article data-step="7" data-step-title="Noradrenaline is pumped back in" data-kind="reuptake" hidden>
       <p class="eyebrow">Build the signal</p>
-      <h2 tabindex="-1">Beta receptors speed the heart</h2>
+      <h2 tabindex="-1">Noradrenaline is pumped back in</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Through beta receptors on the heart, noradrenaline does the opposite of acetylcholine: the heart beats faster, and each beat squeezes harder, shown by the new bar. More blood is pumped every minute.</p>
+      <p class="caption">No enzyme in this gap chops noradrenaline up. Instead the nerve ending pumps most of it back inside to use again: <dfn data-part="reuptake">reuptake</dfn>. Some docks on <dfn data-part="alpha2">alpha-2 receptors</dfn> on the ending itself, which turn further release down, a brake built into the accelerator. <a href="/lab/blood-pressure-regulation/">Lesson 4</a>’s central alpha-2 agonists switch on this receptor type in the brainstem.</p>
     </article>
-    <article data-step="9" data-step-title="Alpha receptors squeeze the smallest arteries" data-kind="alpha" hidden>
-      <p class="eyebrow">Build the signal</p>
-      <h2 tabindex="-1">Alpha receptors squeeze the smallest arteries</h2>
+    <article data-step="8" data-step-title="Acetylcholine slows the heart" data-kind="para-heart" hidden>
+      <p class="eyebrow">The organs answer</p>
+      <h2 tabindex="-1">Acetylcholine slows the heart</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Arterioles</dfn> are the smallest arteries, ringed with muscle. Through alpha receptors, noradrenaline tightens that muscle, so they narrow. Blood is harder to push through, and <dfn>blood pressure</dfn>, the push of blood on artery walls, rises.</p>
+      <p class="caption">The heart has its own pacemaker, which left alone would beat faster than it does at rest. Acetylcholine on its <dfn data-part="muscarinic">M receptors</dfn> holds the <dfn data-part="rate">heart rate</dfn>, the beats each minute, down, like a foot resting on the brake. Each dot on the strip is one beat, so closer dots mean a faster rate.</p>
     </article>
-    <article data-step="10" data-step-title="The adrenal glands add adrenaline to the blood" data-kind="adrenal" hidden>
-      <p class="eyebrow">Build the signal</p>
+    <article data-step="9" data-step-title="Beta-1 receptors speed and strengthen the heart" data-kind="beta" hidden>
+      <p class="eyebrow">The organs answer</p>
+      <h2 tabindex="-1">Beta-1 receptors speed and strengthen the heart</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Through <dfn data-part="beta1">beta-1 receptors</dfn> on the heart, noradrenaline does the opposite of acetylcholine: the heart beats faster, and each beat squeezes harder, drawn as bigger dots. More blood is pumped every minute.</p>
+    </article>
+    <article data-step="10" data-step-title="Alpha-1 receptors squeeze the smallest arteries" data-kind="alpha" hidden>
+      <p class="eyebrow">The organs answer</p>
+      <h2 tabindex="-1">Alpha-1 receptors squeeze the smallest arteries</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn data-part="arteriole">Arterioles</dfn> are the smallest arteries, ringed with muscle. Through <dfn data-part="alpha1">alpha-1 receptors</dfn> on that muscle, noradrenaline tightens it, so they narrow. Blood is harder to push through, and <dfn data-part="bp">blood pressure</dfn>, the push of blood on artery walls, rises.</p>
+    </article>
+    <article data-step="11" data-step-title="The adrenal glands add adrenaline to the blood" data-kind="adrenal" hidden>
+      <p class="eyebrow">The organs answer</p>
       <h2 tabindex="-1">The adrenal glands add adrenaline to the blood</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Sympathetic nerves also reach the <dfn>adrenal glands</dfn>, small glands on top of the kidneys. They answer by releasing <dfn>adrenaline</dfn>, a close cousin of noradrenaline, into the blood, so it reaches beta receptors even where no nerve does.</p>
+      <p class="caption">Sympathetic nerves also reach the <dfn data-part="adrenal">adrenal glands</dfn>, small glands on top of the kidneys. They answer by releasing <dfn data-part="adrenaline">adrenaline</dfn> (epinephrine), a close cousin of noradrenaline, into the blood. It reaches receptors far from any sympathetic nerve, such as the <dfn>beta-2 receptors</dfn> on airway muscle.</p>
     </article>
-    <article data-step="11" data-step-title="The pupil: a tug of war" data-kind="pupil" hidden>
-      <p class="eyebrow">Build the signal</p>
+    <article data-step="12" data-step-title="The pupil: a tug of war" data-kind="pupil" hidden>
+      <p class="eyebrow">The organs answer</p>
       <h2 tabindex="-1">The pupil: a tug of war</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">The <dfn>pupil</dfn> is the dark opening of the eye. A ring muscle with muscarinic receptors makes it smaller when acetylcholine arrives; a spoke-like muscle with alpha receptors makes it larger when noradrenaline arrives. Its size shows which branch is winning.</p>
+      <p class="caption">The <dfn data-part="pupil">pupil</dfn> is the dark opening of the eye. A <dfn data-part="ring">ring muscle</dfn> with M receptors makes it smaller when acetylcholine arrives; a <dfn data-part="spoke">spoke-like muscle</dfn> with alpha-1 receptors makes it larger when noradrenaline arrives. Its size shows which branch is winning.</p>
     </article>
-    <article data-step="12" data-step-title="The airways: nerves narrow, adrenaline widens" data-kind="airway" hidden>
-      <p class="eyebrow">Build the signal</p>
-      <h2 tabindex="-1">The airways: nerves narrow, adrenaline widens</h2>
+    <article data-step="13" data-step-title="The airways: acetylcholine narrows, adrenaline widens" data-kind="airway" hidden>
+      <p class="eyebrow">The organs answer</p>
+      <h2 tabindex="-1">The airways: acetylcholine narrows, adrenaline widens</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">The <dfn>airways</dfn> are the tubes carrying air into the lungs, wrapped in muscle. Acetylcholine from parasympathetic nerves tightens it, narrowing them. Sympathetic nerves barely reach this muscle; adrenaline in the blood relaxes it through beta receptors, widening them.</p>
+      <p class="caption">The <dfn data-part="airway">airways</dfn> carry air into the lungs, wrapped in muscle. Acetylcholine from parasympathetic nerves, on <dfn data-part="muscarinic">M receptors</dfn>, tightens it and narrows them. Sympathetic nerves barely reach this muscle; adrenaline in the blood relaxes it through <dfn data-part="beta2">beta-2 receptors</dfn>, widening them. Asthma inhalers either switch on beta-2 receptors or block M receptors.</p>
     </article>
-    <article data-step="13" data-step-title="Pressure sensors close the loop" data-kind="reflex" hidden>
-      <p class="eyebrow">Build the signal</p>
+    <article data-step="14" data-step-title="Pressure sensors close the loop" data-kind="reflex" hidden>
+      <p class="eyebrow">The organs answer</p>
       <h2 tabindex="-1">Pressure sensors close the loop</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Sensors in the arteries feel blood pressure and report to the brain. If pressure rises, the brain eases the accelerator and presses the brake, so the heart slows; if pressure falls, the reverse. This automatic answer is a <dfn>reflex</dfn>. <a href="/lab/blood-pressure-regulation/">Lesson 4</a> covers it.</p>
+      <p class="caption">Sensors in the artery walls feel blood pressure and report to the brainstem. If pressure rises, it eases the accelerator and presses the brake, so the heart slows and pressure falls back; if pressure falls, the reverse. This automatic answer is the <dfn data-part="reflex">baroreflex</dfn>. <a href="/lab/blood-pressure-regulation/">Lesson 4</a> covers it.</p>
     </article>
-    <article data-step="14" data-step-title="The whole picture" data-kind="whole" hidden>
-      <p class="eyebrow">Build the signal</p>
+    <article data-step="15" data-step-title="The whole picture" data-kind="whole" hidden>
+      <p class="eyebrow">The organs answer</p>
       <h2 tabindex="-1">The whole picture</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Two nerve messengers, three receptor families. Acetylcholine on muscarinic receptors slows the heart and narrows pupil and airways; noradrenaline on alpha and beta receptors tightens arterioles and speeds the heart, while adrenaline in the blood opens airways. Key measures: heart rate and blood pressure.</p>
+      <p class="caption">Two nerve messengers, one hormone and four receptor types on organs. Acetylcholine on M receptors slows the heart and narrows the airways and pupil. Noradrenaline on beta-1 speeds and strengthens the heart, and on alpha-1 narrows arterioles and widens the pupil. Adrenaline on beta-2 widens the airways. Key measures: heart rate and blood pressure.</p>
     </article>
-    <article data-step="15" data-step-title="Muscarinic agonists: the brake pressed harder" data-kind="mag" hidden>
+    <article data-step="16" data-step-title="Muscarinic agonists: the brake pressed harder" data-kind="mag" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Muscarinic agonists: the brake pressed harder</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">An <dfn>agonist</dfn> is a drug that docks on a receptor and switches it on, mimicking the messenger. Muscarinic agonists, such as pilocarpine, act like extra acetylcholine: the heart slows, the pupil and airways narrow, and the gut and glands get busier.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption">An <dfn data-part="drug">agonist</dfn> is a drug that docks on a receptor and switches it on, mimicking the messenger. Muscarinic agonists, such as pilocarpine, act like extra acetylcholine on every M receptor: the heart slows and blood pressure falls, the pupil and airways narrow, and the gut and glands get busier.</p>
     </article>
-    <article data-step="16" data-step-title="Muscarinic antagonists: the brake taken off" data-kind="mant" hidden>
+    <article data-step="17" data-step-title="Muscarinic antagonists: the brake taken off" data-kind="mant" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Muscarinic antagonists: the brake taken off</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">An <dfn>antagonist</dfn>, or blocker, docks on a receptor without switching it on, so the messenger cannot get in. Muscarinic antagonists, such as atropine, release the brake: the heart speeds up, and the pupil and airways widen.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption">An <dfn data-part="drug">antagonist</dfn>, or blocker, docks on a receptor without switching it on, so the messenger cannot get in. Muscarinic antagonists, such as atropine, release the brake: the heart speeds up, the pupil and airways widen, and the mouth and gut go dry and quiet.</p>
     </article>
-    <article data-step="17" data-step-title="Cholinesterase inhibitors: acetylcholine lingers" data-kind="che" hidden>
+    <article data-step="18" data-step-title="Cholinesterase inhibitors: acetylcholine lingers" data-kind="che" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Cholinesterase inhibitors: acetylcholine lingers</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">An <dfn>inhibitor</dfn> is a drug that stops an enzyme working. Cholinesterase inhibitors leave acetylcholine unchopped, so it builds up in the gap and keeps docking. Every muscarinic effect grows: the heart slows, and the pupil and airways narrow.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption">An <dfn data-part="enzyme">inhibitor</dfn> is a drug that stops an enzyme working. Cholinesterase inhibitors leave acetylcholine unchopped, so it builds up and keeps docking wherever it is released. M effects grow: the heart slows, and the pupils and airways narrow. At skeletal muscle a moderate build-up strengthens the signal, but too much causes weakness (<a href="/lab/neuromuscular-junction/">Lesson 8</a>).</p>
     </article>
-    <article data-step="18" data-step-title="Alpha-1 agonists: arterioles squeezed" data-kind="aag" hidden>
+    <article data-step="19" data-step-title="Alpha-1 agonists: arterioles squeezed" data-kind="aag" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Alpha-1 agonists: arterioles squeezed</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Alpha receptors come in subtypes; <dfn>alpha-1 receptors</dfn> sit on the muscle of arterioles and the pupil. Alpha-1 agonists, such as phenylephrine, switch them on: arterioles narrow and blood pressure rises, the reflex slows the heart, and the pupil widens.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption">Alpha-1 agonists, such as phenylephrine, switch on alpha-1 receptors. Arterioles narrow and blood pressure rises; the baroreflex then slows the heart. The pupil widens, which is why eye drops of this kind help a doctor see inside the eye.</p>
     </article>
-    <article data-step="19" data-step-title="Alpha-1 blockers: arterioles let go" data-kind="ablock" hidden>
+    <article data-step="20" data-step-title="Alpha-1 blockers: arterioles let go" data-kind="ablock" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Alpha-1 blockers: arterioles let go</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Alpha-1 blockers keep noradrenaline off alpha-1 receptors. Arteriole muscle relaxes, the arterioles widen and blood pressure falls. The reflex presses the accelerator, so the heart speeds up through beta receptors, which are still free. The pupil narrows.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption">Alpha-1 blockers keep noradrenaline off alpha-1 receptors. Arteriole muscle relaxes, the arterioles widen and blood pressure falls. The baroreflex presses the accelerator, so the heart speeds up through beta-1 receptors, which are still free. The pupil narrows. Standing up quickly can make you dizzy.</p>
     </article>
-    <article data-step="20" data-step-title="Nonselective beta agonists: a faster heart, wider airways" data-kind="bag" hidden>
+    <article data-step="21" data-step-title="Nonselective beta agonists: a faster heart, wider airways" data-kind="bag" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Nonselective beta agonists: a faster heart, wider airways</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Nonselective beta agonists, such as isoproterenol, switch on every beta receptor. The heart beats faster and harder, and the airways widen. Beta receptors in some blood vessels relax them, so pressure need not rise and can even fall.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption">Nonselective beta agonists, such as isoproterenol, switch on beta-1 and beta-2 receptors alike. Through beta-1 the heart beats faster and harder; through beta-2 the airways widen and some arterioles relax, so blood pressure need not rise and can even fall. Asthma inhalers use beta-2 agonists, which spare the heart more.</p>
     </article>
-    <article data-step="21" data-step-title="Beta blockers: the accelerator held back" data-kind="bblock" hidden>
+    <article data-step="22" data-step-title="Beta-blockers: the accelerator held back" data-kind="bblock" hidden>
       <p class="eyebrow">What changes it</p>
-      <h2 tabindex="-1">Beta blockers: the accelerator held back</h2>
+      <h2 tabindex="-1">Beta-blockers: the accelerator held back</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Beta blockers keep noradrenaline off beta receptors. The heart beats slower and less forcefully, and blood pressure falls. In the airways, blocking beta receptors keeps adrenaline from relaxing the muscle, so some beta blockers can narrow the airways.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption">Beta-blockers keep noradrenaline off beta receptors. Through beta-1, the heart beats slower and less forcefully, and blood pressure falls. Nonselective ones also block beta-2, so adrenaline can no longer relax airway muscle and the airways can narrow, a danger in asthma. Beta-1-selective ones spare the airways more.</p>
     </article>
 
     <div class="step-nav">
       <button type="button" data-step-back disabled>← Back</button>
-      <span data-step-progress aria-live="polite">Step 1 of 21</span>
+      <span data-step-progress aria-live="polite">Step 1 of 22</span>
       <button type="button" data-step-next>Next →</button>
     </div>
-    <p class="hint">Start with Next, or use the arrow keys. Sizes and spacing are illustrative, not measurements.</p>
+    <p class="hint">Start with Next, or use the arrow keys. Under a moving picture: pause, drag to any moment, or slow it down. Underlined terms light up their part of the picture. Sizes, spacing and counts are illustrative, not measurements.</p>
   </section>
+
+  <section id="quiz" role="tabpanel" aria-labelledby="tab-quiz" hidden></section>
+
+  <section id="summary" role="tabpanel" aria-labelledby="tab-summary" hidden></section>
 
   <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
     <h2>Reference values, beside the model.</h2>
@@ -206,8 +213,11 @@
       </div>
     </div>
     <p id="state-summary" class="state-summary" aria-live="polite">Normal teaching baseline.</p>
-    <p class="model-note">The blue line on each bar is an illustrative teaching model, not a patient measurement. For blood pressure, the shaded zone is the guideline’s “normal” category, which has only an upper limit, so the zone runs to the left edge of the bar. For heart rate, the dashed line is the guideline’s diagnostic threshold for sinus bradycardia: a definition, not a normal range, so nothing is shaded. Arrows appear only where the cited source gives a direction for that exact row; where a source speaks of blood pressure as a whole, the summary says so and no row arrow is shown. Real responses vary.</p>
-    <p id="baseline-note" class="model-note"></p>
+    <details class="lx-fine">
+      <summary>How to read these bars</summary>
+      <p>The blue line on each bar is an illustrative teaching model, not a patient measurement. For blood pressure, the shaded zone is the guideline’s “normal” category, which has only an upper limit, so the zone runs to the left edge of the bar. For heart rate, the dashed line is the guideline’s diagnostic threshold for sinus bradycardia: a definition, not a normal range, so nothing is shaded. Arrows appear only where the cited source gives a direction for that exact row; where a source speaks of blood pressure as a whole, the summary says so and no row arrow is shown. Real responses vary.</p>
+      <p id="baseline-note" class="model-note"></p>
+    </details>
     <div id="value-rows"></div>
     <p id="cv-live" class="visually-hidden" aria-live="polite"></p>
     <h3>Sources</h3>
@@ -249,14 +259,14 @@
           <label for="bAg">Nonselective beta agonist <output id="bAg-label" for="bAg">none</output></label>
           <input id="bAg" type="range" min="0" max="2" step="0.1" value="0">
         </fieldset>
-        <div class="check"><input id="reflex" type="checkbox" checked><label for="reflex">Pressure reflex working</label></div>
+        <label class="choice" for="reflex"><input id="reflex" type="checkbox" checked> Pressure reflex working</label>
         <button type="button" id="reset">Reset model</button>
       </div>
     </div>
     <p id="model-results" class="model-results" aria-live="polite"></p>
     <details>
       <summary>How this teaching model works</summary>
-      <p>Everything is relative to a normal resting state, where every quantity equals 1. Each branch has a drive (how hard its nerves fire). Acetylcholine in the gap is the parasympathetic drive divided by how fast cholinesterase clears it. The muscarinic signal is acetylcholine plus any muscarinic agonist, times the share of muscarinic receptors left free; the alpha and beta signals are built the same way from noradrenaline. Heart rate rises with the beta signal and falls with the muscarinic signal; the heart’s squeeze strength rises with the beta signal; arteriole tightness rises with the alpha signal and eases a little with beta signals from adrenaline and any beta agonist, standing in for the beta receptors that relax some blood vessels. Blood pressure is the product of squeeze strength, arteriole tightness and the square root of heart rate. The heartbeat strip is an abstract beat counter (one dot per beat), not a heart tracing; squeeze strength has its own bar. With the reflex on, pressure above normal lowers the sympathetic drive and raises the parasympathetic drive to the heart and arterioles (and the reverse), and the model finds the steady state where the pressure the reflex feels equals the pressure produced. Pupil and airway width are the ratio of their widening signal to their narrowing muscarinic signal, at resting drive; the reflex is not applied to them. The pupil widens through alpha receptors fed by sympathetic nerves. Airway muscle has almost no sympathetic nerves, so its beta signal comes from adrenaline released into the blood by the adrenal glands, which the model ties to the sympathetic drive slider. The model treats each drug as acting on every receptor of its family; real drugs often favour one subtype (for example beta-1 in the heart, beta-2 in the airways). It leaves out the gut, glands, sweat glands, adrenaline’s own action on the heart, nicotinic receptors and anything about timing. In the Clinical values tab the relative results are scaled to illustrative numbers, as that tab explains.</p>
+      <p>Everything is relative to a normal resting state, where every quantity equals 1. Each branch has a drive (how hard its nerves fire). Acetylcholine in the gap is the parasympathetic drive divided by how fast cholinesterase clears it. The muscarinic signal is acetylcholine plus any muscarinic agonist, times the share of muscarinic receptors left free; the alpha and beta signals are built the same way from noradrenaline. Heart rate rises with the beta signal and falls with the muscarinic signal; the heart’s squeeze strength rises with the beta signal; arteriole tightness rises with the alpha signal and eases a little with beta signals from adrenaline and any beta agonist, standing in for the beta-2 receptors that relax some blood vessels. Blood pressure is the product of squeeze strength, arteriole tightness and the square root of heart rate. In the picture each heartbeat is a dot: closer dots are a faster rate and bigger dots a stronger squeeze; it is an abstract beat counter, not a heart tracing. With the reflex on, pressure above normal lowers the sympathetic drive and raises the parasympathetic drive to the heart and arterioles (and the reverse), and the model finds the steady state where the pressure the reflex feels equals the pressure produced. Pupil and airway width are the ratio of their widening signal to their narrowing muscarinic signal, at resting drive; the reflex is not applied to them. The pupil widens through alpha-1 receptors fed by sympathetic nerves. Airway muscle has almost no sympathetic nerves, so its beta-2 signal comes from adrenaline released into the blood by the adrenal glands, which the model ties to the sympathetic drive slider. The model treats each drug as acting on every receptor of its family; real drugs often favour one type (for example beta-1 in the heart, beta-2 in the airways). It leaves out the gut, glands, sweat glands, alpha-2 receptors and reuptake, adrenaline’s own action on the heart, nicotinic receptors and anything about timing. In the Clinical values tab the relative results are scaled to illustrative numbers, as that tab explains.</p>
     </details>
   </section>
 

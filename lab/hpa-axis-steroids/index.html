@@ -11,9 +11,10 @@
 <meta property="og:url" content="https://seansooch.dev/lab/hpa-axis-steroids/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/lab/kit/kit.css">
 <link rel="stylesheet" href="style.css">
 <script src="model.js" defer></script>
-<script src="app.js" defer></script>
+<script type="module" src="app.js"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to the lesson</a>
@@ -29,130 +30,138 @@
     </nav>
   </div>
 </header>
-<main id="main">
+<main id="main" data-slug="hpa-axis-steroids">
   <div class="intro">
-    <p class="eyebrow"><a href="/lab/">The Lab</a> / Core medicine / Lesson 15</p>
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / <a href="/lab/#hormones">Unit 4: Hormones</a> / Lesson 15</p>
     <h1>The <span class="axis">HPA axis</span> and <span>steroids</span>.</h1>
-    <p class="lede">Two small glands on your kidneys make cortisol, and your brain keeps them in check with a brake. Build the loop one piece at a time, see what happens with too much or too little, then watch why steroid drugs switch the loop off.</p>
+    <p class="lede">Two small glands on your kidneys make cortisol, and your brain keeps them in check with a brake, the same pattern as the thyroid. Build the loop one piece at a time, watch the brake work, see what too much or too little looks like, then watch why steroid drugs switch the loop off.</p>
     <p class="note">Educational, not for clinical use</p>
+    <div class="lx-plan" data-lx-plan></div>
   </div>
 
   <div class="tabs" role="tablist" aria-label="Lesson views">
     <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-quiz" aria-controls="quiz" aria-selected="false" tabindex="-1">Quiz</button>
+    <button type="button" role="tab" id="tab-summary" aria-controls="summary" aria-selected="false" tabindex="-1">Summary</button>
     <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
     <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
   </div>
 
   <section id="lesson" role="tabpanel" aria-labelledby="tab-lesson">
     <article data-step="1" data-step-title="Two small glands on the kidneys" data-kind="glands">
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">Build the loop</p>
       <h2 tabindex="-1">Two small glands on the kidneys</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Your two <dfn>adrenal glands</dfn> sit like caps on top of the kidneys. A <dfn>gland</dfn> is an organ that makes and releases chemicals. Each adrenal gland has an outer layer, the <dfn>cortex</dfn>, wrapped around an inner core, the <dfn>medulla</dfn>.</p>
+      <p class="caption">Your two <dfn data-part="adrenal">adrenal glands</dfn> sit like caps on top of the kidneys. A <dfn>gland</dfn> is an organ that makes and releases chemicals. Each adrenal gland has an outer layer, the <dfn data-part="cortex">cortex</dfn>, wrapped around an inner core, the <dfn data-part="medulla">medulla</dfn>. This lesson is about the cortex.</p>
     </article>
     <article data-step="2" data-step-title="The cortex makes cortisol" data-kind="cortisol" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">Build the loop</p>
       <h2 tabindex="-1">The cortex makes cortisol</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">The cortex releases <dfn>cortisol</dfn> into the blood. Cortisol is a <dfn>hormone</dfn>, a chemical messenger carried in the blood, and a <dfn>steroid</dfn>, one of a family of hormones built from fats. It helps the body cope with long-lasting stress.</p>
+      <p class="caption">The cortex releases <dfn data-part="cortisol">cortisol</dfn> into the blood. Cortisol is a <dfn>hormone</dfn>, a chemical messenger carried in the blood, and a <dfn data-part="cholesterol">steroid</dfn>, one of a family of hormones built from cholesterol, a fatty substance. It helps the body cope with long-lasting stress.</p>
     </article>
     <article data-step="3" data-step-title="Cortisol frees fuel" data-kind="fuel" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">Build the loop</p>
       <h2 tabindex="-1">Cortisol frees fuel</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Cortisol tells the body to break down its stores, so more <dfn>glucose</dfn>, the sugar cells burn for energy, enters the blood. That is why cortisol and its relatives are called <dfn>glucocorticoids</dfn>: steroids from the cortex that act on glucose.</p>
+      <p class="caption">Cortisol tells the liver to make new <dfn data-part="sugar">glucose</dfn>, the sugar cells burn for energy, partly from broken-down muscle protein, so more glucose enters the blood. That is why cortisol and its relatives are called <dfn data-part="cortisol">glucocorticoids</dfn>: steroids from the cortex that act on glucose.</p>
     </article>
     <article data-step="4" data-step-title="Cortisol calms inflammation" data-kind="inflam" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">Build the loop</p>
       <h2 tabindex="-1">Cortisol calms inflammation</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Cortisol also turns down the <dfn>immune system</dfn>, the body’s defence against germs. That calms <dfn>inflammation</dfn>: the redness, heat and swelling of an immune response. More cortisol means calmer inflammation; less cortisol, fiercer.</p>
+      <p class="caption">Cortisol also turns down the <dfn>immune system</dfn>, the body’s defence against germs. That calms <dfn data-part="flame">inflammation</dfn>: the redness, heat and swelling of an immune response. More cortisol, calmer inflammation; less cortisol, fiercer.</p>
     </article>
     <article data-step="5" data-step-title="A second steroid keeps salt" data-kind="aldo" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">Build the loop</p>
       <h2 tabindex="-1">A second steroid keeps salt</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">The cortex also makes <dfn>aldosterone</dfn>, the main <dfn>mineralocorticoid</dfn>: a steroid that manages minerals. It tells the kidneys to keep <dfn>sodium</dfn>, the main salt in blood, and pass <dfn>potassium</dfn>, another mineral, out in urine (<a href="/lab/renin-angiotensin-aldosterone/">Lesson 5</a>).</p>
+      <p class="caption">The cortex also makes <dfn data-part="aldo">aldosterone</dfn>, the main <dfn>mineralocorticoid</dfn>: a steroid that manages minerals. It tells the kidneys to keep <dfn data-part="sodium">sodium</dfn>, the main salt in blood, and pass <dfn data-part="potassium">potassium</dfn> out in urine. The kidney’s own renin system sets it, far more than the brain does (<a href="/lab/renin-angiotensin-aldosterone/">Lesson 5</a>).</p>
     </article>
     <article data-step="6" data-step-title="The pituitary gives the order" data-kind="pituitary" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">Build the loop</p>
       <h2 tabindex="-1">The pituitary gives the order</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">The <dfn>pituitary</dfn>, a pea-sized gland at the base of the brain, sends <dfn>ACTH</dfn> (adrenocorticotropic hormone) through the blood to the adrenal cortex. ACTH tells the cortex to make cortisol. More ACTH, more cortisol.</p>
+      <p class="caption">The <dfn data-part="pituitary">pituitary</dfn>, a pea-sized gland at the base of the brain, sends <dfn data-part="acth">ACTH</dfn> (adrenocorticotropic hormone) through the blood to the adrenal cortex. ACTH tells the cortex to make cortisol: more ACTH, more cortisol. It is the same pattern as TSH and the thyroid (<a href="/lab/thyroid-axis/">Lesson 14</a>).</p>
     </article>
     <article data-step="7" data-step-title="The hypothalamus starts the chain" data-kind="hypothalamus" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">Build the loop</p>
       <h2 tabindex="-1">The hypothalamus starts the chain</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Just above sits the <dfn>hypothalamus</dfn>, a small brain region linking nerves to hormones. It sends <dfn>CRH</dfn> (corticotropin-releasing hormone) to the pituitary, which answers with ACTH. The three together are the <dfn>HPA axis</dfn>: hypothalamus, pituitary, adrenal.</p>
+      <p class="caption">Just above sits the <dfn data-part="hypothalamus">hypothalamus</dfn>, a small brain region linking nerves to hormones. It sends <dfn data-part="crh">CRH</dfn> (corticotropin-releasing hormone) to the pituitary, which answers with ACTH. The three together are the <dfn data-part="hypothalamus pituitary adrenal">HPA axis</dfn>: hypothalamus, pituitary, adrenal.</p>
     </article>
     <article data-step="8" data-step-title="Stress turns the chain up" data-kind="stress" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">Build the loop</p>
       <h2 tabindex="-1">Stress turns the chain up</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Long-lasting stress, such as illness, injury or hunger, makes the hypothalamus send more CRH. ACTH rises, the cortex makes more cortisol, and glucose climbs to fuel the body. Even without stress, the chain rises and falls in a daily rhythm.</p>
+      <p class="caption">At the start of <dfn data-part="stress">stress</dfn>, such as illness, injury or hunger, the hypothalamus sends more CRH. ACTH rises, the cortex makes more cortisol, and blood sugar climbs to fuel the body. Even without stress, the chain rises and falls in a daily rhythm, highest in the early morning.</p>
     </article>
     <article data-step="9" data-step-title="Enough cortisol puts on the brake" data-kind="brake" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">Build the loop</p>
       <h2 tabindex="-1">Enough cortisol puts on the brake</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Cortisol in the blood reports back to the brain. When it runs high, the hypothalamus and pituitary send less CRH and ACTH, so the cortex slows down. The result switches off its own cause: <dfn>negative feedback</dfn>.</p>
+      <p class="caption">Cortisol in the blood reports back to the brain. When it runs high, the hypothalamus and pituitary send less CRH and ACTH, so the cortex slows and cortisol falls back. The result switches off its own cause: <dfn data-part="brake">negative feedback</dfn>, the axis’s brake.</p>
     </article>
     <article data-step="10" data-step-title="Too little cortisol turns the order up" data-kind="lowbrake" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">Build the loop</p>
       <h2 tabindex="-1">Too little cortisol turns the order up</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">When cortisol runs low, the brake eases. The hypothalamus and pituitary send more CRH and ACTH and push the cortex harder until cortisol climbs back. So when only cortisol changes, ACTH answers in the opposite direction.</p>
+      <p class="caption">When cortisol runs low, the brake eases. The hypothalamus and pituitary send more CRH and ACTH and push the cortex harder until cortisol climbs back. So when the cortex itself is the problem, <dfn data-part="acth">ACTH</dfn> moves opposite to cortisol, just as TSH does to T4.</p>
     </article>
     <article data-step="11" data-step-title="The whole axis: the key measures" data-kind="whole" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">Build the loop</p>
       <h2 tabindex="-1">The whole axis: the key measures</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Hypothalamus, pituitary and adrenal cortex form one loop, held steady by the brake. Its effects show on routine <dfn>blood tests</dfn>, measurements made on a blood sample: glucose, sodium and potassium. Here cortisol and ACTH are drawn only as low, usual or high.</p>
+      <p class="caption">Hypothalamus, pituitary and adrenal cortex form one loop, held steady by the brake. Doctors read the loop from <dfn data-part="tests">ACTH and cortisol</dfn> measured together, and read its effects in <dfn data-part="effects">routine blood tests</dfn>: glucose, sodium and potassium.</p>
     </article>
     <article data-step="12" data-step-title="Cushing’s disease: too much cortisol" data-kind="cushing" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Cushing’s disease: too much cortisol</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Cushing’s syndrome</dfn> is the body under too much cortisol, from any cause. Shown here is <dfn>Cushing’s disease</dfn>, most often a pituitary <dfn>tumor</dfn>, an abnormal growth, pouring out ACTH that ignores the brake. Cortisol and glucose climb; CRH falls.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn>Cushing’s syndrome</dfn> is the body under too much cortisol-like action, from its own cortisol or from steroid medicine, the most common cause. Shown here is <dfn data-part="tumor">Cushing’s disease</dfn>: a pituitary <dfn data-part="tumor">tumor</dfn>, an abnormal growth, pouring out ACTH that the brake barely slows. Cortisol and blood sugar climb; the brake pushes CRH down, but ACTH stays high or unexpectedly normal.</p>
     </article>
-    <article data-step="13" data-step-title="Adrenal insufficiency: too little cortisol" data-kind="addison" hidden>
+    <article data-step="13" data-step-title="Addison’s disease: the cortex fails" data-kind="addison" hidden>
       <p class="eyebrow">What changes it</p>
-      <h2 tabindex="-1">Adrenal insufficiency: too little cortisol</h2>
+      <h2 tabindex="-1">Addison’s disease: the cortex fails</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">In <dfn>adrenal insufficiency</dfn>, such as <dfn>Addison’s disease</dfn>, the cortex makes too little of its steroids. Glucose and sodium fall. With the brake weak, CRH and ACTH climb and push hard on a cortex that cannot answer.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption">In <dfn data-part="damage">Addison’s disease</dfn>, <dfn>primary adrenal insufficiency</dfn>, the cortex itself is destroyed, usually by the immune system. Cortisol and aldosterone both fall: blood sugar and sodium tend to drop and potassium to rise. With the brake weak, CRH and ACTH climb high and push on a cortex that cannot answer.</p>
     </article>
-    <article data-step="14" data-step-title="Glucocorticoid drugs: the brake held on" data-kind="glucocorticoid" hidden>
+    <article data-step="14" data-step-title="Secondary adrenal insufficiency: the pituitary fails" data-kind="secondary" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Secondary adrenal insufficiency: the pituitary fails</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">In <dfn data-part="pituitary">secondary adrenal insufficiency</dfn> the pituitary fails, so ACTH is low, or too low for the need, and a healthy cortex makes too little cortisol; blood sugar can drop. Aldosterone, run mostly by the kidney’s renin system, carries on, so potassium stays normal. ACTH tells the two apart: high when the cortex fails, low or unexpectedly normal when the pituitary does.</p>
+    </article>
+    <article data-step="15" data-step-title="Glucocorticoid drugs: the brake held on" data-kind="glucocorticoid" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Glucocorticoid drugs: the brake held on</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Glucocorticoid drugs</dfn>, such as prednisone, are lab-made cortisol relatives that calm inflammation. The brain reads them as cortisol, so CRH and ACTH fall and the body’s own cortisol switches off. After long use they are stopped slowly, or <dfn>tapered</dfn>.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn data-part="tablet">Glucocorticoid drugs</dfn>, such as prednisone, are lab-made cortisol relatives that calm inflammation and raise blood sugar. The brain reads them as cortisol, so the brake tightens: CRH and ACTH fall and the body’s own cortisol falls. After long use they are stopped slowly, or <dfn>tapered</dfn>, while the resting cortex wakes up.</p>
     </article>
-    <article data-step="15" data-step-title="Mineralocorticoid drugs: salt kept, potassium lost" data-kind="mineralocorticoid" hidden>
+    <article data-step="16" data-step-title="Mineralocorticoid drugs: replacing aldosterone" data-kind="mineralocorticoid" hidden>
       <p class="eyebrow">What changes it</p>
-      <h2 tabindex="-1">Mineralocorticoid drugs: salt kept, potassium lost</h2>
+      <h2 tabindex="-1">Mineralocorticoid drugs: replacing aldosterone</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Mineralocorticoid drugs</dfn>, such as <dfn>fludrocortisone</dfn>, act like aldosterone on the kidneys and replace it in Addison’s disease. In excess, the kidneys keep more sodium and lose more potassium: blood sodium rises, potassium falls. CRH, ACTH and cortisol stay put.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn data-part="tablet">Mineralocorticoid drugs</dfn>, such as <dfn>fludrocortisone</dfn>, act like aldosterone on the kidneys. In Addison’s disease they replace the missing aldosterone, so potassium falls back and sodium is kept. They do nothing for cortisol, so ACTH stays high until a glucocorticoid is added. Too much lowers potassium and raises blood pressure.</p>
     </article>
-    <article data-step="16" data-step-title="Steroid synthesis inhibitors: the brake eases" data-kind="inhibitor" hidden>
+    <article data-step="17" data-step-title="Steroid synthesis inhibitors: the brake eases" data-kind="inhibitor" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Steroid synthesis inhibitors: the brake eases</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Steroid synthesis inhibitors</dfn> block steps the cortex uses to build its steroids. Less cortisol is made, so the brake eases: CRH and ACTH rise and push on the cortex, which still makes less than usual.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn data-part="block">Steroid synthesis inhibitors</dfn>, such as metyrapone, block steps the cortex uses to build cortisol, and are used to treat Cushing’s syndrome; here, Cushing’s disease. Cortisol and blood sugar fall back, so the brake eases: CRH rises and ACTH climbs higher still, pushing on the blocked cortex.</p>
     </article>
 
     <div class="step-nav">
       <button type="button" data-step-back disabled>← Back</button>
-      <span data-step-progress aria-live="polite">Step 1 of 16</span>
+      <span data-step-progress aria-live="polite">Step 1 of 17</span>
       <button type="button" data-step-next>Next →</button>
     </div>
-    <p class="hint">Start with Next, or use the arrow keys. Pictures are illustrative, not measurements.</p>
+    <p class="hint">Start with Next, or use the arrow keys. Under a moving picture: pause, drag to any moment, or slow it down. Underlined terms light up their part of the picture. Levels and arrow widths are illustrative, not measurements.</p>
   </section>
+
+  <section id="quiz" role="tabpanel" aria-labelledby="tab-quiz" hidden></section>
+
+  <section id="summary" role="tabpanel" aria-labelledby="tab-summary" hidden></section>
 
   <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
     <h2>Reference values, beside the model.</h2>
@@ -179,8 +188,11 @@
     </div>
     <p id="state-summary" class="state-summary" aria-live="polite">Normal teaching baseline.</p>
     <p id="state-source" class="model-note"></p>
-    <p class="model-note">The blue line on each bar, and the large number beside it, show where an illustrative teaching model sits: not a patient measurement and not a sourced value. The shaded bands are the reference ranges quoted under each row. Selecting a disease or drug shows the expected direction of each value from the cited passage, compared with a normal body, and applies that state to the model. The saved sources give no reference ranges for cortisol, ACTH or CRH, so those appear only in the picture, as low, usual or high.</p>
-    <p id="baseline-note" class="model-note"></p>
+    <details class="lx-fine">
+      <summary>How to read these bars</summary>
+      <p>The blue line on each bar, and the large number beside it, show where an illustrative teaching model sits: not a patient measurement and not a sourced value. The shaded bands are the reference ranges quoted under each row. Selecting a disease or drug shows the expected direction of each value from the cited passage, compared with a normal body, and applies that state to the model. The saved sources give no reference ranges for cortisol, ACTH or CRH, so those appear only in the picture, as low, usual or high.</p>
+      <p id="baseline-note" class="model-note"></p>
+    </details>
     <div id="value-rows"></div>
     <p id="cv-live" class="visually-hidden" aria-live="polite"></p>
     <h3>Sources</h3>
@@ -200,6 +212,7 @@
             <label class="choice"><input type="radio" name="preset" value="normal" checked> Normal</label>
             <label class="choice"><input type="radio" name="preset" value="cushing"> Cushing’s disease</label>
             <label class="choice"><input type="radio" name="preset" value="addison"> Addison’s disease</label>
+            <label class="choice"><input type="radio" name="preset" value="secondary"> Secondary adrenal insufficiency</label>
           </div>
         </fieldset>
         <fieldset>
@@ -218,6 +231,8 @@
           <input id="cap" type="range" min="0.1" max="1.5" step="0.05" value="1">
           <label for="tumor">ACTH from a pituitary tumor <output id="tumor-label" for="tumor"></output></label>
           <input id="tumor" type="range" min="0" max="4" step="0.1" value="0">
+          <label for="pit">Working pituitary <output id="pit-label" for="pit"></output></label>
+          <input id="pit" type="range" min="0.05" max="1.2" step="0.05" value="1">
         </fieldset>
         <button type="button" id="reset">Reset model</button>
       </div>
@@ -235,7 +250,7 @@
 
     <details>
       <summary>How this teaching model works</summary>
-      <p>Every level is worked out relative to the normal body and settles to a steady state. The hypothalamus’s CRH rises with long-term stress and falls in proportion to the glucocorticoid signal in the blood (the body’s own cortisol plus any glucocorticoid drug): that is the negative-feedback brake. The pituitary’s ACTH follows CRH and is braked directly too; a pituitary tumor adds ACTH that the brake cannot touch. The cortex’s cortisol output is its working capacity × the share of its steroid-building a synthesis inhibitor leaves (half) × the drive from ACTH, which saturates at three times normal. The loop settles where these agree, found by halving the search range seventy times. The saved sources give no direction for glucose or inflammation with a synthesis inhibitor, so the model never lets the inhibitor move them: they are worked out as if the block were absent. In the same way, the cited Addison’s passage gives no potassium direction, so a change in the working cortex is never allowed to move potassium.</p>
+      <p>Every level is worked out relative to the normal body and settles to a steady state. The hypothalamus’s CRH rises with long-term stress and falls in proportion to the glucocorticoid signal in the blood (the body’s own cortisol plus any glucocorticoid drug): that is the negative-feedback brake. The pituitary’s ACTH follows CRH and is braked directly too; a pituitary tumor adds ACTH that the brake cannot touch. The cortex’s cortisol output is its working capacity × the share of its steroid-building a synthesis inhibitor leaves (half) × the drive from ACTH, which saturates at three times normal. The loop settles where these agree, found by halving the search range seventy times. A failing pituitary (secondary adrenal insufficiency) scales ACTH down; aldosterone does not depend on ACTH in the model, so potassium stays put, as it does in the body. Every level follows the model’s physiology, including where a cited source gives no direction; the Clinical values tab says which directions are cited.</p>
       <p>Glucose follows the total glucocorticoid signal, and inflammation is calmed by it. Aldosterone output follows the working cortex, and a mineralocorticoid drug adds to it; more of this signal moves sodium up and potassium down. In the stopping chart, the cortex’s working capacity drifts toward what ACTH asks of it, so it shrinks while the drug holds ACTH low and recovers slowly afterwards. The sizes of all these effects, and the time axis, are illustrative choices; only their directions are meant to teach.</p>
       <p>Here in Explore freely the model never turns its levels into lab numbers: the sources give only the direction of each change, so the readout says where each level sits against its healthy band. The real reference numbers are in the Clinical values tab, which also prints the model’s level in each row’s unit as a clearly labelled illustrative value. Left out: the daily rhythm, binding proteins, the adrenal medulla, the renin–angiotensin system, other medicines and every real-world difference between people. Nothing here is a prediction for a real person, and nothing here is a treatment plan.</p>
     </details>

@@ -1,0 +1,180 @@
+{
+  "minutes": 25,
+  "prerequisites": [],
+  "objectives": [
+    "Explain how absorption, the liver's first pass, distribution and elimination shape the blood level after one amount.",
+    "Use the half-life to say how fast a level falls and how long a drug takes to clear.",
+    "Explain why amounts taken again and again build up to a steady state, and why getting there takes about 4 to 5 half-lives.",
+    "Predict how enzyme inducers, enzyme inhibitors, weaker kidneys and the intravenous route change the curve."
+  ],
+  "checks": {
+    "inducer": {
+      "prompt": "An enzyme inducer switches up the liver enzymes that break a drug down: more is lost on the first pass and the rest is cleared faster. The drug is still taken in the same amounts at the same times. What happens to its steady state?",
+      "choices": [
+        "It is lower, and reached sooner",
+        "It is higher, and reached later",
+        "It is lower, but reached later",
+        "It does not change"
+      ],
+      "answer": 0,
+      "why": "Once the extra enzymes have been made, faster clearance shortens the half-life, and an ordinary drug reaches its new steady state in about 4 to 5 of its new, shorter half-lives, so sooner. Less gets through the first pass and more is removed in each gap, so the plateau sits lower, perhaps below the working range."
+    },
+    "inhibitor": {
+      "prompt": "An enzyme inhibitor, such as the antibiotic erythromycin, slows the liver enzymes that break a drug down: more survives the first pass and the rest is cleared more slowly. Same amounts, same times. What happens to its steady state?",
+      "choices": [
+        "It is higher, and reached later",
+        "It is lower, and reached sooner",
+        "It is higher, but reached sooner",
+        "It does not change"
+      ],
+      "answer": 0,
+      "why": "Slower clearance lengthens the half-life, so the level keeps building for longer before it settles, and it settles higher, perhaps above the working range. The extra share surviving the first pass adds to the rise."
+    },
+    "kidney": {
+      "prompt": "Weaker kidneys pass less of a drug into urine, and this drug is half removed by the kidneys. The liver is unchanged. What happens to its half-life and its steady state?",
+      "choices": [
+        "Longer half-life; steady state later and higher",
+        "Shorter half-life; steady state sooner and lower",
+        "Same half-life; steady state higher",
+        "Longer half-life; steady state lower"
+      ],
+      "answer": 0,
+      "why": "Less clearance means a longer half-life. With a longer half-life the drug keeps building up for longer, so the plateau comes later and sits higher."
+    },
+    "iv": {
+      "prompt": "The same amounts are now given as quick injections into a vein, at the same times, instead of swallowed. They skip absorption and the first pass; the liver and kidneys remove the drug exactly as before. What happens to each peak, and to the half-life?",
+      "choices": [
+        "Peaks higher; half-life the same",
+        "Peaks higher; half-life shorter",
+        "Peaks lower; half-life the same",
+        "Peaks the same; half-life longer"
+      ],
+      "answer": 0,
+      "why": "A quick injection puts all of each amount into the general circulation at once, so the level jumps straight up to a higher peak. The route changes how the drug gets in, not how it is taken out, so the level falls at the same pace: same half-life, and steady state at the same time."
+    }
+  },
+  "quiz": [
+    {
+      "id": "first-pass",
+      "objective": 1,
+      "step": "firstpass",
+      "stem": "A drug taken by mouth is mostly broken down by the liver before it reaches the rest of the body. Which measure is low?",
+      "choices": [
+        "Its bioavailability: the share reaching the general circulation unchanged",
+        "Its half-life",
+        "Its volume of distribution",
+        "Its time to steady state"
+      ],
+      "answer": 0,
+      "why": "Absorbed drug travels in blood from the gut through the liver before it joins the general circulation, so a big first pass cuts the share that gets through unchanged: the bioavailability. The half-life is set later, by clearance and distribution, once the drug is circulating."
+    },
+    {
+      "id": "peak",
+      "objective": 1,
+      "step": "absorb",
+      "stem": "After one amount by mouth, why does the blood level stop climbing and start to fall?",
+      "choices": [
+        "Absorption slows as less drug is left in the gut to absorb, and removal then outpaces it",
+        "The liver and kidneys only start removing the drug at the peak",
+        "The drug is absorbed back into the gut after the peak",
+        "The blood is full, so no more drug can enter"
+      ],
+      "answer": 0,
+      "why": "Removal goes on from the start. While drug enters faster than it leaves, the level climbs; as less drug is left in the gut to absorb, absorption slows. At the peak the two balance, and after it removal wins."
+    },
+    {
+      "id": "spread",
+      "objective": 1,
+      "step": "spread",
+      "stem": "The same amount of two drugs reaches the general circulation, and the liver and kidneys clear both equally well. One spreads much more widely into the body's tissues. Once each has spread out, the one that spreads widely has:",
+      "choices": [
+        "A lower blood level and a longer half-life",
+        "A higher blood level and a shorter half-life",
+        "A lower blood level and a shorter half-life",
+        "The same blood level and the same half-life"
+      ],
+      "answer": 0,
+      "why": "A large volume of distribution leaves less drug in the blood, so the level is lower. With the same clearance, less of it passes the liver and kidneys at any moment, so it falls more slowly: the half-life depends on both clearance and volume of distribution."
+    },
+    {
+      "id": "eighth",
+      "objective": 2,
+      "step": "halflife",
+      "stem": "A drug's level is falling after its last amount, with all of it absorbed. How much of that level is left three half-lives later?",
+      "choices": [
+        "An eighth",
+        "A quarter",
+        "Half",
+        "Nothing: three half-lives clear it all"
+      ],
+      "answer": 0,
+      "why": "Each half-life halves what is left: a half, then a quarter, then an eighth. Because a share is removed, not a fixed amount, the level never simply runs out after a few halvings."
+    },
+    {
+      "id": "gone",
+      "objective": 2,
+      "step": "gone",
+      "stem": "Once all of it has been absorbed, about how long does an ordinary drug take to count as effectively gone from the body?",
+      "choices": [
+        "About 4 to 5 half-lives",
+        "One half-life",
+        "Two half-lives, since each one removes half",
+        "About 20 half-lives"
+      ],
+      "answer": 0,
+      "why": "After 4 to 5 half-lives only a few percent is left, so the drug counts as gone. Two half-lives do not remove it all: each half-life removes half of what is left, not half of the starting amount."
+    },
+    {
+      "id": "steady-time",
+      "objective": 3,
+      "step": "steady",
+      "stem": "A drug is taken at regular times. What decides how long it takes to reach steady state?",
+      "choices": [
+        "Its half-life",
+        "The size of each amount",
+        "How often it is taken",
+        "The width of its working range"
+      ],
+      "answer": 0,
+      "why": "For an ordinary drug, removed a fixed share at a time, steady state takes about 4 to 5 half-lives. A bigger or more frequent amount raises the plateau, but the climb towards it still takes the same 4 to 5 half-lives."
+    },
+    {
+      "id": "inducer",
+      "objective": 4,
+      "step": "inducer",
+      "stem": "Someone takes a drug that liver enzymes break down, then starts taking St John's wort, an enzyme inducer. What is most likely to happen to the drug?",
+      "choices": [
+        "Its level falls, and it may stop working",
+        "Its level rises, and it may become harmful",
+        "Its level stays the same",
+        "Its half-life gets longer"
+      ],
+      "answer": 0,
+      "why": "An inducer switches up the enzymes, so the drug is cleared faster and less survives the first pass. Its steady-state level falls, perhaps below the working range. An inhibitor of those liver enzymes, such as erythromycin, does the opposite."
+    },
+    {
+      "id": "kidney",
+      "objective": 4,
+      "step": "kidney",
+      "stem": "A drug removed mainly by the kidneys is taken, at the usual amounts and times, by someone whose kidneys work less well. What happens?",
+      "choices": [
+        "Its half-life lengthens, and it builds up higher, for longer",
+        "Its half-life shortens, and its level falls",
+        "Nothing changes, because the liver takes over its removal",
+        "Only the first peak changes"
+      ],
+      "answer": 0,
+      "why": "Less kidney clearance means a longer half-life. The drug keeps building up for longer and settles at a higher plateau, which can rise above the working range. The liver does not simply take over a drug it does not handle."
+    }
+  ],
+  "takeaways": [
+    "Pharmacokinetics is what the body does to a drug: it is absorbed, spread into the tissues, then removed, mostly by the liver, which breaks it down, and the kidneys, which send it out in urine.",
+    "Taken by mouth, the level climbs while absorption outpaces removal, peaks when the two balance, then falls. The first pass through the liver lowers the bioavailability: the share that reaches the general circulation unchanged.",
+    "A drug that spreads widely, with a large volume of distribution, has a lower blood level and, if clearance is the same, a longer half-life.",
+    "For most drugs a fixed share is removed over time, so each half-life halves the level; after 4 to 5 half-lives the drug counts as gone.",
+    "Taken at regular times, an ordinary drug builds up until the drug removed in each gap matches each amount: steady state, reached after about 4 to 5 half-lives, whatever the amount.",
+    "Enzyme inducers lower the levels of drugs those enzymes break down. Inhibitors of the liver's enzymes raise them, with a longer half-life and a later, higher steady state; grapefruit juice, which blocks mostly the gut wall's enzymes, raises how much gets in instead.",
+    "Weaker kidneys lengthen the half-life of drugs the kidneys remove, so those drugs build up for longer, to a higher steady state.",
+    "A quick injection into a vein puts all of each amount into the general circulation at once: an immediate, usually higher peak, but the same half-life."
+  ]
+}

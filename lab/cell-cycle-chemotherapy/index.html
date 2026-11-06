@@ -11,9 +11,10 @@
 <meta property="og:url" content="https://seansooch.dev/lab/cell-cycle-chemotherapy/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/lab/kit/kit.css">
 <link rel="stylesheet" href="style.css">
 <script src="model.js" defer></script>
-<script src="app.js" defer></script>
+<script type="module" src="app.js"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to the lesson</a>
@@ -29,16 +30,19 @@
     </nav>
   </div>
 </header>
-<main id="main">
+<main id="main" data-slug="cell-cycle-chemotherapy">
   <div class="intro">
-    <p class="eyebrow"><a href="/lab/">The Lab</a> / Core medicine / Lesson 21</p>
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / <a href="/lab/#defence">Unit 6: Inflammation, infection, immunity and cancer</a> / Lesson 21</p>
     <h1>The cell cycle <span>and chemotherapy</span>.</h1>
     <p class="lede">Every new cell in your body comes from an old one splitting in two. Follow one cell round the loop it takes to copy itself, see how cancer breaks that loop, then watch five kinds of chemotherapy strike, each at its own point.</p>
     <p class="note">Educational, not for clinical use</p>
+    <div class="lx-plan" data-lx-plan></div>
   </div>
 
   <div class="tabs" role="tablist" aria-label="Lesson views">
     <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-quiz" aria-controls="quiz" aria-selected="false" tabindex="-1">Quiz</button>
+    <button type="button" role="tab" id="tab-summary" aria-controls="summary" aria-selected="false" tabindex="-1">Summary</button>
     <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
     <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
   </div>
@@ -48,109 +52,103 @@
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">A cell makes two</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Your body is built from <dfn>cells</dfn>, tiny living units. To grow, heal and replace worn-out parts, a cell <dfn>divides</dfn>: it splits into two new cells, each a full copy of the first. Skin, blood and gut lining are renewed this way every day.</p>
+      <p class="caption">Your body is built from <dfn data-part="cell">cells</dfn>, tiny living units. To grow, heal and replace worn-out parts, a cell <dfn data-part="cell">divides</dfn>: it splits into two new cells, each a full copy of the first. Skin, blood and gut lining are renewed this way every day.</p>
     </article>
     <article data-step="2" data-step-title="The instructions inside" data-kind="dna" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">The instructions inside</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Inside a dividing cell sits the <dfn>nucleus</dfn>, its control room. It holds <dfn>DNA</dfn>, the long coded instructions for building and running the cell, wound into bundles called <dfn>chromosomes</dfn>. Before a cell divides, it must copy every chromosome, so each new cell gets a full set.</p>
+      <p class="caption">Inside a cell sits the <dfn data-part="nucleus">nucleus</dfn>, its control room. It holds <dfn data-part="dna">DNA</dfn>, the long coded instructions for building and running the cell, wound into bundles called <dfn data-part="chromosome">chromosomes</dfn>. Before a cell divides, it must copy every chromosome, so each new cell gets a full set.</p>
     </article>
     <article data-step="3" data-step-title="A loop of stages" data-kind="cycle" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">A loop of stages</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">The <dfn>cell cycle</dfn> is the loop a cell goes round to divide. It has four <dfn>phases</dfn>, or stages, always in the same order: grow, copy the DNA, check, then split. One trip round makes two cells, and each can start again.</p>
+      <p class="caption">The <dfn data-part="traveller">cell cycle</dfn> is the loop a cell goes round to divide. It has four <dfn>phases</dfn>, or stages, always in the same order: grow, copy the DNA, check, then split. One trip round makes two cells, and each can start again.</p>
     </article>
     <article data-step="4" data-step-title="G1: grow and get ready" data-kind="g1" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">G1: grow and get ready</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">The first phase is <dfn>G1</dfn> (first gap): the new cell grows, makes what it needs and checks its surroundings. At the end of G1 sits a <dfn>checkpoint</dfn>, a gate where the cell decides whether to go on and divide.</p>
+      <p class="caption">The first phase is <dfn data-part="phase-G1">G1</dfn> (first gap): the new cell grows, makes what it needs and checks its surroundings. At the end of G1 sits a <dfn data-part="gate">checkpoint</dfn>, a gate where the cell decides whether to go on and divide.</p>
     </article>
     <article data-step="5" data-step-title="The engines that open the gate" data-kind="cdk" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">The engines that open the gate</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">The gate is pushed open by <dfn>CDKs</dfn> (cyclin-dependent kinases). They are <dfn>enzymes</dfn>, tiny machines that each do one job, switched on by partner proteins called <dfn>cyclins</dfn>. Two of them, <dfn>CDK4 and CDK6</dfn>, push the cell out of G1.</p>
+      <p class="caption">The gate is opened by <dfn data-part="engine">CDKs</dfn> (cyclin-dependent kinases), <dfn>enzymes</dfn> switched on by partner proteins called <dfn data-part="engine">cyclins</dfn>. With cyclin D, <dfn data-part="engine">CDK4 and CDK6</dfn> switch off a brake protein, <dfn data-part="brake">Rb</dfn>, that holds the cell in G1, so it can go on to S phase.</p>
     </article>
     <article data-step="6" data-step-title="S phase: copying the DNA" data-kind="s" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">S phase: copying the DNA</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">In <dfn>S phase</dfn> (synthesis, meaning making), the cell copies all of its DNA. The two strands unzip, and the cell adds matching DNA <dfn>building blocks</dfn>, one by one, along each strand, so every chromosome ends up doubled.</p>
+      <p class="caption">In <dfn data-part="fork">S phase</dfn> (synthesis, meaning making), the cell copies all of its DNA. The two strands unzip, and the cell adds matching DNA <dfn data-part="blocks">building blocks</dfn>, one by one, along each strand, so every chromosome ends up as two joined copies: twice the DNA, the same number of chromosomes.</p>
     </article>
     <article data-step="7" data-step-title="Untwisting as it copies" data-kind="untwist" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">Untwisting as it copies</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">DNA is twisted, like a rope. Unzipping it to copy winds the rest tighter. <dfn>Topoisomerases</dfn> are enzymes that cut the DNA, let it untwist and join it up again, so copying, and later splitting, can carry on.</p>
+      <p class="caption">DNA is twisted, like a rope, and unzipping it to copy winds the rest tighter. <dfn data-part="topo">Topoisomerases</dfn> are enzymes that cut the DNA, let it untwist and join it up again, so copying, and later splitting, can carry on.</p>
     </article>
     <article data-step="8" data-step-title="G2: a final check" data-kind="g2" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">G2: a final check</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">In <dfn>G2</dfn> (second gap), the cell grows a little more and checks the copied DNA for damage. If it finds breaks it cannot fix, a healthy cell stops here, or destroys itself rather than pass on faulty instructions.</p>
+      <p class="caption">In <dfn data-part="phase-G2">G2</dfn> (second gap), the cell grows a little more and <dfn data-part="check">checks</dfn> the copied DNA for damage. If it finds breaks it cannot fix, a healthy cell stops here, or destroys itself rather than pass on faulty instructions.</p>
     </article>
     <article data-step="9" data-step-title="M phase: pulling the copies apart" data-kind="m" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">M phase: pulling the copies apart</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>M phase</dfn> is the split, in two parts. First <dfn>mitosis</dfn>: the doubled chromosomes line up, and a <dfn>spindle</dfn> of thin protein ropes, <dfn>microtubules</dfn>, grabs them and shrinks to pull one copy to each end. Then <dfn>cytokinesis</dfn>: the cell pinches in two.</p>
+      <p class="caption"><dfn>M phase</dfn> is the split, in two parts. First <dfn data-part="chromosome">mitosis</dfn>: the doubled chromosomes line up, and a <dfn data-part="spindle">spindle</dfn> of thin protein ropes, <dfn data-part="spindle">microtubules</dfn>, grabs them, and its ropes shorten to pull one copy to each end while the two ends move apart. Then <dfn>cytokinesis</dfn>: the cell pinches in two.</p>
     </article>
     <article data-step="10" data-step-title="Most cells are resting" data-kind="g0" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">Most cells are resting</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Most cells in your body are not dividing. They have stepped out of the loop into <dfn>G0</dfn>, a resting state, and simply do their jobs. Some can step back in when needed, for example to heal a wound.</p>
+      <p class="caption">Most cells in your body are not dividing. They have stepped out of the loop into <dfn data-part="g0">G0</dfn>, a resting state, and simply do their jobs. Some can step back in when needed, for example to heal a wound.</p>
     </article>
     <article data-step="11" data-step-title="The whole loop: the key measures" data-kind="whole" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">The whole loop: the key measures</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Put together: cells grow, copy, check and split, or rest. Some healthy tissues divide all the time, like the <dfn>bone marrow</dfn>, the soft centre of bones that makes blood. Key measures: how many cells build up, and how many new blood cells are made.</p>
+      <p class="caption">Put together: cells grow, copy, check and split, or rest. Some healthy tissues divide all the time, like the <dfn data-part="marrow">bone marrow</dfn>, the soft centre of bones that makes blood cells, including the white blood cells of <a href="/lab/immune-response/">Lesson 20</a>. Key measures: how big a tumour grows, and how many new blood cells are made.</p>
     </article>
     <article data-step="12" data-step-title="Cancer: the brakes fail" data-kind="cancer" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Cancer: the brakes fail</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Cancer</dfn> is cells dividing out of control. Damaged DNA jams the engines on and breaks the checkpoint, so fewer cells rest and a <dfn>tumour</dfn>, a growing lump of extra cells, builds up. <dfn>Chemotherapy</dfn> means drugs that kill dividing cells or stop them dividing.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn data-part="cells">Cancer</dfn> is cells dividing out of control. Changes in the DNA jam the engines on or break the brakes at the checkpoint, so fewer cells rest and a <dfn>tumour</dfn>, a growing lump of extra cells, builds up. <dfn>Chemotherapy</dfn> means drugs that kill dividing cells or stop them dividing.</p>
     </article>
     <article data-step="13" data-step-title="Antimetabolites: fake building blocks in S phase" data-kind="antimetabolite" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Antimetabolites: fake building blocks in S phase</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Antimetabolites</dfn> are look-alike DNA building blocks, or drugs that stop the cell making real ones. Cells in S phase take them up and copying jams, so those cells die. Cells in other phases are spared, for now.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn data-part="drug">Antimetabolites</dfn>, such as fluorouracil and methotrexate, are look-alike DNA building blocks, or drugs that stop the cell making real ones. Cells in S phase, copying their DNA, are damaged and die; cells in other phases are spared, for now. Methotrexate blocks dihydrofolate reductase, the enzyme trimethoprim blocks in bacteria (<a href="/lab/bacterial-cell-antibiotics/">Lesson 19</a>), but in your own cells.</p>
     </article>
     <article data-step="14" data-step-title="Vinca alkaloids and taxanes: the spindle jammed in M phase" data-kind="spindle" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Vinca alkaloids and taxanes: the spindle jammed in M phase</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Both jam the spindle. <dfn>Vinca alkaloids</dfn> stop its microtubule ropes from growing; <dfn>taxanes</dfn> freeze them so they cannot shrink and pull. Either way the chromosomes are not pulled apart: cells get stuck in mitosis and die.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption">Both jam the spindle. <dfn data-part="drug">Vinca alkaloids</dfn>, such as vincristine, stop its microtubule ropes from growing; <dfn data-part="drug">taxanes</dfn>, such as paclitaxel, freeze them so they cannot shrink and pull. Either way the chromosomes are not pulled apart: cells get stuck in mitosis and die.</p>
     </article>
     <article data-step="15" data-step-title="Alkylating agents: DNA damaged, in any phase" data-kind="alkylating" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Alkylating agents: DNA damaged, in any phase</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Alkylating agents</dfn> stick chemical groups onto DNA, damaging it so it cannot be copied properly. Some, with two sticky ends, also tie the two strands together, as shown here. They work in any phase, even in resting cells, but dividing cells suffer most.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn data-part="drug">Alkylating agents</dfn>, such as cyclophosphamide, stick chemical groups onto DNA, damaging it so it cannot be copied properly. Some, with two sticky ends, also tie the two strands together. They are not phase specific: they work in any phase, even in resting cells, but dividing cells suffer most.</p>
     </article>
     <article data-step="16" data-step-title="Topoisomerase inhibitors: the cut never rejoined" data-kind="topo" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Topoisomerase inhibitors: the cut never rejoined</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Topoisomerase inhibitors</dfn> trap the untwisting enzyme after it has cut the DNA, so the cut is never joined again. Breaks pile up while the cell copies and checks its DNA, in S phase and G2, and the cell dies.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn data-part="drug">Topoisomerase inhibitors</dfn>, such as irinotecan and etoposide, trap the untwisting enzyme after it has cut the DNA, so the cut is never joined again. Breaks pile up while the cell copies and checks its DNA, in S phase and G2, and the cell dies.</p>
     </article>
     <article data-step="17" data-step-title="CDK4/6 inhibitors: the G1 gate held shut" data-kind="cdk46" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">CDK4/6 inhibitors: the G1 gate held shut</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>CDK4/6 inhibitors</dfn> are <dfn>targeted drugs</dfn>, aimed at two engines, not all dividing cells. They block CDK4 and CDK6, so the G1 gate stays shut: cancer cells that rely on them wait in G1, and the tumour grows more slowly rather than being killed.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn data-part="drug">CDK4/6 inhibitors</dfn>, such as palbociclib, are <dfn>targeted drugs</dfn>, aimed at two engines rather than all dividing cells. They block CDK4 and CDK6, so the brake stays on and the G1 gate stays shut: cancer cells that rely on them mostly wait in G1, so the tumour grows more slowly; some may stop for good or die.</p>
     </article>
 
     <div class="step-nav">
@@ -158,8 +156,12 @@
       <span data-step-progress aria-live="polite">Step 1 of 17</span>
       <button type="button" data-step-next>Next →</button>
     </div>
-    <p class="hint">Start with Next, or use the arrow keys. Pictures are illustrative, not measurements. Blood cells and the immune system are in <a href="/lab/immune-response/">Lesson 20</a>; how drug levels rise and fall is in <a href="/lab/pharmacokinetics/">Lesson 17</a>.</p>
+    <p class="hint">Start with Next, or use the arrow keys. Under a moving picture: pause, drag to any moment, or slow it down. Underlined terms light up their part of the picture. Pictures are illustrative, not measurements. Blood cells and the immune system are in <a href="/lab/immune-response/">Lesson 20</a>; how drug levels rise and fall is in <a href="/lab/pharmacokinetics/">Lesson 17</a>.</p>
   </section>
+
+  <section id="quiz" role="tabpanel" aria-labelledby="tab-quiz" hidden></section>
+
+  <section id="summary" role="tabpanel" aria-labelledby="tab-summary" hidden></section>
 
   <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
     <h2>Blood counts, beside the model.</h2>
@@ -182,8 +184,11 @@
     </div>
     <p id="state-summary" class="state-summary" aria-live="polite">Normal teaching baseline: the marrow makes new blood cells as usual.</p>
     <p id="state-source" class="model-note"></p>
-    <p class="model-note">The blue line on each bar, and the large number beside it, show where an illustrative teaching model sits: not a patient measurement and not a sourced value. The shaded bands are the reference ranges quoted under each row, and a thin tick marks the source’s mean where it gives one. The picture and every bar come from the same model. Choosing a condition applies it to the model, and the dashed line shows the model without it. An arrow labelled “Cited” appears only where the quoted source gives that row’s direction; where it does not, no arrow is shown and the marker is the teaching model alone.</p>
-    <p id="baseline-note" class="model-note"></p>
+    <details class="lx-fine">
+      <summary>How to read these bars</summary>
+      <p>The blue line on each bar, and the large number beside it, show where an illustrative teaching model sits: not a patient measurement and not a sourced value. The shaded bands are the reference ranges quoted under each row, and a thin tick marks the source’s mean where it gives one. The picture and every bar come from the same model. Choosing a condition applies it to the model, and the dashed line shows the model without it. An arrow labelled “Cited” appears only where the quoted source gives that row’s direction; where it does not, no arrow is shown and the marker is the teaching model alone.</p>
+      <p id="baseline-note" class="model-note"></p>
+    </details>
     <div id="value-rows"></div>
     <p id="cv-live" class="visually-hidden" aria-live="polite"></p>
     <h3>What the source says about blood cells</h3>

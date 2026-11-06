@@ -1,0 +1,223 @@
+{
+  "minutes": 30,
+  "prerequisites": [],
+  "objectives": [
+    "Trace how glucose enters and leaves the blood, and what insulin and glucagon each do.",
+    "Explain how insulin rises after a meal and falls as blood sugar returns: negative feedback.",
+    "Tell type 1 from type 2 diabetes by what fails and what insulin does.",
+    "Name where each diabetes drug acts, and predict its effect on blood sugar and on the risk of a low."
+  ],
+  "checks": {
+    "type1": {
+      "prompt": "In type 1 diabetes the immune system destroys the beta cells, so almost no insulin is made. What happens to blood sugar before and after a meal?",
+      "choices": [
+        "It runs high even before eating, and climbs higher after",
+        "It stays normal until a meal, then rises",
+        "It falls too low, because nothing stores it",
+        "It stays normal, because the liver takes over"
+      ],
+      "answer": 0,
+      "why": "Without insulin few doors open in muscle and fat and the liver keeps releasing glucose, so blood sugar is high even after an overnight fast, and a meal sends it higher still."
+    },
+    "type2": {
+      "prompt": "In type 2 diabetes, muscle and fat cells answer insulin weakly, and the beta cells still work, for now. What happens to the insulin in the blood after a meal?",
+      "choices": [
+        "It rises higher than normal, yet blood sugar stays high",
+        "It falls, because the cells ignore it",
+        "It stays normal, and so does blood sugar",
+        "It almost disappears, as in type 1 diabetes"
+      ],
+      "answer": 0,
+      "why": "Beta cells release extra insulin to push past the resistance, so insulin runs high. Even so the doors barely open and blood sugar stays high; over years the tired beta cells fall behind."
+    },
+    "insulin": {
+      "prompt": "Injected insulin replaces the missing hormone in type 1 diabetes; the beta cells stay lost. What happens to blood sugar?",
+      "choices": [
+        "It comes back toward normal, as doors open and the liver holds back glucose",
+        "It stays high, because the beta cells are still gone",
+        "It rises, because insulin is a kind of sugar",
+        "It falls only once it reaches the kidneys"
+      ],
+      "answer": 0,
+      "why": "Insulin from a syringe works like the body’s own: muscle and fat take up glucose and the liver stops releasing it. The beta cells stay lost, so the injections must continue, and too much can drive sugar too low."
+    },
+    "metformin": {
+      "prompt": "Metformin mainly cuts how much glucose the liver makes; between meals and overnight, the liver is where blood glucose comes from. What happens to blood sugar in type 2 diabetes?",
+      "choices": [
+        "It falls, even after an overnight fast, without the pancreas being pushed",
+        "It falls only in the hour after a meal",
+        "It rises, because the liver stores less",
+        "It falls because the pancreas is forced to release much more insulin"
+      ],
+      "answer": 0,
+      "why": "Cutting the liver’s output lowers fasting blood sugar as well as the rise after meals. Metformin does not push the pancreas; insulin even falls a little as sugar comes down, so on its own it rarely causes lows."
+    },
+    "sulfonylurea": {
+      "prompt": "Sulfonylureas shut the beta cell’s potassium channel, the switch that rising blood sugar normally shuts, so the cell releases insulin whatever the sugar. What happens to insulin before the meal, when blood sugar is not raised?",
+      "choices": [
+        "It rises too, because the switch is held shut whatever the sugar",
+        "It stays the same, because the cell still waits for sugar",
+        "It falls, because the channel is closed",
+        "It disappears, because the beta cells tire at once"
+      ],
+      "answer": 0,
+      "why": "With the switch held shut, insulin flows even when blood sugar is not raised. That lowers sugar, but if a meal is missed it can push sugar too low: hypoglycemia. The drug needs beta cells that still work."
+    },
+    "sglt2": {
+      "prompt": "SGLT2 inhibitors block the kidney’s glucose carriers, so less of the filtered glucose is carried back into the blood. What happens to blood sugar and to the glucose in the urine?",
+      "choices": [
+        "Blood sugar falls, and glucose appears in the urine",
+        "Blood sugar rises, and the urine stays free of glucose",
+        "Both stay the same, because insulin makes up for it",
+        "Blood sugar falls because insulin rises"
+      ],
+      "answer": 0,
+      "why": "More of the glucose filtered out of the blood now stays in the urine, so the body loses sugar and blood sugar falls, without any extra insulin. The extra glucose in the urine also pulls water with it, so more urine is passed."
+    },
+    "glp1": {
+      "prompt": "A GLP-1 receptor agonist acts like the gut’s incretin: more insulin while sugar is high, less glucagon and a slower stomach. What happens to blood sugar after a meal?",
+      "choices": [
+        "It rises less, because insulin rises and sugar arrives more slowly",
+        "It rises more, because the stomach holds on to the food",
+        "It falls too low even without food, like a sulfonylurea",
+        "It stays the same, because GLP-1 acts only in the gut"
+      ],
+      "answer": 0,
+      "why": "Insulin release is boosted only while sugar is high, glucagon falls and food leaves the stomach more slowly, so the rise after a meal is smaller. Because the boost depends on high sugar, these drugs rarely cause lows on their own."
+    },
+    "dpp4": {
+      "prompt": "DPP-4 inhibitors block the enzyme that breaks down the body’s own GLP-1. What happens to GLP-1 and to insulin after a meal?",
+      "choices": [
+        "GLP-1 lasts longer, so insulin rises a little more",
+        "GLP-1 is broken down faster, so insulin falls",
+        "GLP-1 stops being made in the gut",
+        "Insulin rises even when blood sugar is low"
+      ],
+      "answer": 0,
+      "why": "With the enzyme blocked, the body’s own incretins last longer and beta cells release more insulin while sugar is rising. The effect is milder than a GLP-1 receptor agonist and, like it, depends on sugar being high."
+    }
+  },
+  "quiz": [
+    {
+      "id": "doors",
+      "objective": 1,
+      "step": "doors",
+      "stem": "When insulin docks on a muscle cell, what lets glucose in?",
+      "choices": [
+        "Glucose transporters moved up to the cell’s surface",
+        "Holes that insulin punches in the cell wall",
+        "Insulin carrying glucose in on its back",
+        "The cell making its own glucose instead"
+      ],
+      "answer": 0,
+      "why": "Insulin signals the cell to move glucose transporters, its doorways, from inside to the surface, so glucose can flow in. Insulin does not carry glucose itself."
+    },
+    {
+      "id": "overnight",
+      "objective": 1,
+      "step": "glucagon",
+      "stem": "Overnight, with no food coming in, what keeps blood sugar from falling too low?",
+      "choices": [
+        "Glucagon tells the liver to release glucose",
+        "Insulin tells the liver to store glucose",
+        "The kidneys make all the glucose the brain needs",
+        "Muscle releases the glucose in its glycogen into the blood"
+      ],
+      "answer": 0,
+      "why": "Glucagon from the alpha cells makes the liver turn glycogen back into glucose and make new glucose. Muscle glycogen fuels only the muscle itself; it is not released into the blood."
+    },
+    {
+      "id": "feedback",
+      "objective": 2,
+      "step": "feedback",
+      "stem": "After a meal, what makes the beta cells release less insulin again?",
+      "choices": [
+        "Blood sugar falling back into the band",
+        "Glucagon switching the beta cells off",
+        "The pancreas running out of insulin",
+        "The liver soaking up all the insulin"
+      ],
+      "answer": 0,
+      "why": "Insulin clears glucose from the blood, and as blood sugar falls the beta cells release less: the result switches off its own cause, negative feedback."
+    },
+    {
+      "id": "type2-pattern",
+      "objective": 3,
+      "step": "type2",
+      "stem": "Which pattern fits early type 2 diabetes?",
+      "choices": [
+        "High blood sugar with more insulin than normal",
+        "High blood sugar with almost no insulin",
+        "Normal blood sugar with no insulin",
+        "Low blood sugar with high insulin"
+      ],
+      "answer": 0,
+      "why": "In type 2 diabetes cells resist insulin, so beta cells pour out extra and insulin runs high while sugar stays high. Almost no insulin is the pattern of type 1 diabetes."
+    },
+    {
+      "id": "type1-insulin",
+      "objective": 3,
+      "step": "type1",
+      "stem": "Why does someone with type 1 diabetes need insulin itself, rather than a sulfonylurea?",
+      "choices": [
+        "Their beta cells are destroyed, so there is nothing left to push",
+        "Sulfonylureas cannot be swallowed",
+        "Their cells have no doors for glucose",
+        "Insulin also replaces their missing glucagon"
+      ],
+      "answer": 0,
+      "why": "A sulfonylurea works by making beta cells release insulin. In type 1 diabetes the immune system has destroyed them, so only insulin from outside can replace the hormone."
+    },
+    {
+      "id": "skipped-lunch",
+      "objective": 4,
+      "step": "sulfonylurea",
+      "stem": "A man taking a sulfonylurea skips lunch and becomes shaky and sweaty. What is most likely happening?",
+      "choices": [
+        "His blood sugar has fallen too low, because insulin kept coming",
+        "His blood sugar has climbed very high",
+        "Glucose is pouring into his urine",
+        "The drug has stopped working"
+      ],
+      "answer": 0,
+      "why": "Sulfonylureas make beta cells release insulin whatever the blood sugar. Without food, insulin keeps clearing glucose and sugar can drop too low: hypoglycemia, with shaking and sweating."
+    },
+    {
+      "id": "kidney-drug",
+      "objective": 4,
+      "step": "sglt2",
+      "stem": "Which drug lowers blood sugar by making the kidneys pass glucose into the urine?",
+      "choices": [
+        "An SGLT2 inhibitor",
+        "Metformin",
+        "A DPP-4 inhibitor",
+        "A sulfonylurea"
+      ],
+      "answer": 0,
+      "why": "SGLT2 inhibitors block the carriers that take filtered glucose back, so sugar leaves in the urine. Metformin acts mainly on the liver; DPP-4 inhibitors and sulfonylureas act through insulin."
+    },
+    {
+      "id": "glp1-dpp4",
+      "objective": 4,
+      "step": "dpp4",
+      "stem": "How do GLP-1 receptor agonists and DPP-4 inhibitors differ?",
+      "choices": [
+        "One acts like GLP-1 itself; the other stops the body’s own GLP-1 being broken down",
+        "One raises glucagon; the other lowers it",
+        "One works in the kidney; the other in the liver",
+        "One forces insulin out whatever the sugar; the other works only in the gut"
+      ],
+      "answer": 0,
+      "why": "A GLP-1 receptor agonist acts directly on GLP-1’s docking sites, a strong effect. A DPP-4 inhibitor blocks the enzyme that breaks GLP-1 down, so the body’s own GLP-1 lasts longer, a milder effect. Both depend on sugar being high."
+    }
+  ],
+  "takeaways": [
+    "Blood sugar is kept in a narrow band: glucose comes in from the gut after meals and from the liver between them, and goes out into cells all the time.",
+    "Beta cells sense rising sugar and release insulin. Gut incretins such as GLP-1 add to it after a meal, and the enzyme DPP-4 soon breaks them down.",
+    "Insulin opens the doors on muscle and fat and tells the liver to store glucose as glycogen; glucagon makes the liver release glucose between meals.",
+    "After a meal glucose rises, insulin follows, glucose falls back into the band and insulin eases off: negative feedback.",
+    "Type 1 diabetes: the beta cells are destroyed and almost no insulin is made. Type 2: cells answer insulin weakly, insulin runs high, and over time the beta cells tire.",
+    "Insulin replaces the hormone; metformin mainly lowers the liver’s glucose output; SGLT2 inhibitors make the kidneys pass glucose into the urine.",
+    "Sulfonylureas shut the beta cell’s potassium channel and can cause lows. GLP-1 receptor agonists boost insulin only while sugar is high, lower glucagon and slow the stomach; DPP-4 inhibitors make the body’s own GLP-1 last longer."
+  ]
+}

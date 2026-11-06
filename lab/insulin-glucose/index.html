@@ -11,9 +11,10 @@
 <meta property="og:url" content="https://seansooch.dev/lab/insulin-glucose/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/lab/kit/kit.css">
 <link rel="stylesheet" href="style.css">
 <script src="model.js" defer></script>
-<script src="app.js" defer></script>
+<script type="module" src="app.js"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to the lesson</a>
@@ -29,16 +30,19 @@
     </nav>
   </div>
 </header>
-<main id="main">
+<main id="main" data-slug="insulin-glucose">
   <div class="intro">
-    <p class="eyebrow"><a href="/lab/">The Lab</a> / Core medicine / Lesson 13</p>
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / <a href="/lab/#hormones">Unit 4: Hormones</a> / Lesson 13</p>
     <h1><span class="insulin">Insulin</span> and <span>glucose</span>.</h1>
     <p class="lede">After a carbohydrate-containing meal, sugar floods your blood, and in a healthy body it is back where it started within a few hours. Build up how insulin clears it, see the two ways diabetes breaks the loop, then watch six kinds of diabetes medicine each fix a different part.</p>
     <p class="note">Educational, not for clinical use</p>
+    <div class="lx-plan" data-lx-plan></div>
   </div>
 
   <div class="tabs" role="tablist" aria-label="Lesson views">
     <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-quiz" aria-controls="quiz" aria-selected="false" tabindex="-1">Quiz</button>
+    <button type="button" role="tab" id="tab-summary" aria-controls="summary" aria-selected="false" tabindex="-1">Summary</button>
     <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
     <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
   </div>
@@ -46,125 +50,117 @@
   <section id="lesson" role="tabpanel" aria-labelledby="tab-lesson">
     <article data-step="1" data-step-title="Glucose: the body's fuel" data-kind="fuel">
       <p class="eyebrow">Build the idea</p>
-      <h2 tabindex="-1">Glucose: the body’s fuel</h2>
+      <h2 tabindex="-1">Glucose: the body's fuel</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Glucose</dfn> is a simple sugar, the fuel almost every cell prefers. Blood carries it to every cell. How much glucose the blood holds, called <dfn>blood sugar</dfn>, is kept inside a narrow healthy band.</p>
+      <p class="caption"><dfn data-part="glucose">Glucose</dfn> is a simple sugar that almost every cell can burn for energy, and the brain’s main fuel. Blood carries it to every cell. How much glucose the blood holds, called <dfn data-part="meter">blood sugar</dfn>, is kept inside a narrow healthy band.</p>
     </article>
     <article data-step="2" data-step-title="A meal sends glucose into the blood" data-kind="meal" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">A meal sends glucose into the blood</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">The gut breaks down <dfn>carbohydrates</dfn>, starchy and sugary foods such as bread, rice and fruit, into glucose and absorbs it into the blood. After a meal, blood sugar starts to climb. Something has to clear it again.</p>
+      <p class="caption">The gut breaks down digestible <dfn data-part="gut">carbohydrates</dfn>, starchy and sugary foods such as bread, rice and fruit, into simple sugars, mostly glucose, and absorbs them into the blood. After a meal, blood sugar climbs above its fasting band. Something has to clear it again.</p>
     </article>
     <article data-step="3" data-step-title="The pancreas answers with insulin" data-kind="pancreas" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">The pancreas answers with insulin</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">The <dfn>pancreas</dfn> is an organ behind the stomach. Tiny clusters of cells in it, called <dfn>islets</dfn>, hold <dfn>beta cells</dfn> that sense rising blood sugar and release <dfn>insulin</dfn>, a <dfn>hormone</dfn>: a chemical messenger carried in the blood.</p>
+      <p class="caption">The <dfn data-part="pancreas">pancreas</dfn> is an organ behind the stomach. Tiny clusters of cells in it, called <dfn data-part="islet">islets</dfn>, hold <dfn data-part="beta">beta cells</dfn> that sense rising blood sugar and release <dfn data-part="insulin">insulin</dfn>, a <dfn>hormone</dfn>: a chemical messenger carried in the blood. More sugar, more insulin.</p>
     </article>
     <article data-step="4" data-step-title="The gut sends an early signal" data-kind="incretin" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">The gut sends an early signal</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Food in the gut also makes it release <dfn>incretins</dfn>, gut hormones that tell beta cells to release more insulin while blood sugar is rising. An <dfn>enzyme</dfn>, a protein that drives a chemical reaction, soon breaks incretins down.</p>
+      <p class="caption">Food in the gut also makes it release <dfn data-part="glp1">incretins</dfn> such as GLP-1, gut hormones that tell beta cells to release more insulin, but only while blood sugar is high. An <dfn data-part="dpp4">enzyme</dfn>, a protein that drives a chemical reaction, called DPP-4, breaks them down within minutes.</p>
     </article>
     <article data-step="5" data-step-title="Insulin opens the doors" data-kind="doors" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">Insulin opens the doors</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Muscle and fat cells are insulin’s main targets. When insulin docks on one, the cell moves <dfn>glucose transporters</dfn>, doorways for glucose, up to its surface, and glucose flows in to be burned or stored. Without insulin, few doors are open.</p>
+      <p class="caption">Muscle and fat cells are insulin’s main targets. When insulin docks on one, the cell moves <dfn data-part="doors">glucose transporters</dfn>, doorways for glucose, up to its surface, and glucose flows in to be burned or stored. Without insulin, few doors are open.</p>
     </article>
     <article data-step="6" data-step-title="The liver stores the extra" data-kind="liver" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">The liver stores the extra</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Insulin also tells the <dfn>liver</dfn>, the body’s chemical workshop, to stop releasing glucose and to pack the extra away as <dfn>glycogen</dfn>, a stored chain of glucose. Muscle stores some glycogen too.</p>
+      <p class="caption">Insulin also tells the <dfn data-part="liver">liver</dfn>, the body’s chemical workshop, to stop releasing glucose and to pack the extra away as <dfn data-part="glycogen">glycogen</dfn>, a stored chain of glucose. Muscle stores some glycogen too.</p>
     </article>
     <article data-step="7" data-step-title="Back into the band, and insulin eases off" data-kind="feedback" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">Back into the band, and insulin eases off</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">As glucose leaves the blood, blood sugar falls back into the band and the beta cells release less insulin. The result switches off its own cause. This is <dfn>negative feedback</dfn>, and it keeps blood sugar steady.</p>
+      <p class="caption">As glucose leaves the blood, blood sugar falls back into the band and the beta cells release less insulin. The result switches off its own cause. This is <dfn data-part="curve icurve">negative feedback</dfn>, and it keeps blood sugar steady.</p>
     </article>
     <article data-step="8" data-step-title="Between meals, glucagon tops it up" data-kind="glucagon" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">Between meals, glucagon tops it up</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Between meals and overnight, blood sugar starts to dip. <dfn>Alpha cells</dfn> in the islets then release <dfn>glucagon</dfn>, insulin’s opposite. It tells the liver to turn glycogen back into glucose and to make new glucose, topping the blood back up.</p>
+      <p class="caption">Between meals and overnight, blood sugar starts to dip and insulin falls. <dfn data-part="alpha">Alpha cells</dfn> in the islets then release <dfn data-part="glucagon">glucagon</dfn>, insulin’s opposite. It tells the liver to turn glycogen back into glucose and to make new glucose, topping the blood back up.</p>
     </article>
     <article data-step="9" data-step-title="The kidneys hand glucose back" data-kind="kidney" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">The kidneys hand glucose back</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">The <dfn>kidneys</dfn> filter blood to make urine (<a href="/lab/nephron-diuretics/">Lesson 2</a>), and glucose slips out with the filtered fluid. Pumps called <dfn>SGLT2</dfn>, short for sodium–glucose transporter 2, carry it back into the blood, so almost none is lost.</p>
+      <p class="caption">The <dfn data-part="tubule">kidneys</dfn> filter blood to make urine (<a href="/lab/nephron-diuretics/">Lesson 2</a>), and glucose slips out with the filtered fluid. Carriers called <dfn data-part="sglt2">SGLT2</dfn>, short for sodium-glucose cotransporter 2, take most of it back into the tube’s cells, a second carrier takes most of the rest, and it returns to the blood, so almost none is lost, unless blood sugar runs so high that they are overwhelmed.</p>
     </article>
     <article data-step="10" data-step-title="Diabetes: when the loop fails" data-kind="diabetes" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">Diabetes: when the loop fails</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Diabetes mellitus</dfn> is a lasting disease in which this loop fails and blood sugar stays too high, called <dfn>hyperglycemia</dfn>. It fails in two main ways: the body makes too little insulin, or cells stop answering it well.</p>
+      <p class="caption"><dfn>Diabetes mellitus</dfn> is a lasting disease in which this loop fails and blood sugar stays too high, called <dfn data-part="high">hyperglycemia</dfn>. It fails in two main ways: the body makes too little insulin, or cells stop answering it well.</p>
     </article>
     <article data-step="11" data-step-title="The whole picture: one key measure" data-kind="whole" hidden>
       <p class="eyebrow">Build the idea</p>
       <h2 tabindex="-1">The whole picture: one key measure</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Gut, pancreas, muscle, fat, liver and kidneys share the job: insulin lowers blood sugar, glucagon raises it. The key measure is blood sugar itself, often taken after an overnight fast and then called <dfn>fasting blood sugar</dfn>.</p>
+      <p class="caption">Gut, pancreas, muscle, fat, liver and kidneys share the job: insulin lowers blood sugar, glucagon raises it. The key measure is blood sugar itself, often taken after an overnight fast and then called <dfn data-part="fasting">fasting blood sugar</dfn>.</p>
     </article>
     <article data-step="12" data-step-title="Type 1 diabetes: no insulin" data-kind="type1" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Type 1 diabetes: no insulin</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">In <dfn>type 1 diabetes</dfn> the <dfn>immune system</dfn>, the body’s defence against germs, destroys the beta cells. Almost no insulin is made, so few doors open, the liver keeps releasing glucose and blood sugar climbs high, even before eating.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption">In <dfn data-part="attack">type 1 diabetes</dfn> the <dfn>immune system</dfn>, the body’s defence against germs, destroys the beta cells. Almost no insulin is made, so few doors open, the liver keeps releasing glucose and blood sugar climbs high, even before eating.</p>
     </article>
     <article data-step="13" data-step-title="Type 2 diabetes: cells stop answering" data-kind="type2" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Type 2 diabetes: cells stop answering</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">In <dfn>type 2 diabetes</dfn>, by far the most common kind, cells become <dfn>insulin resistant</dfn>: they answer insulin weakly. Beta cells release extra insulin to make up for it, but over time they tire out, and blood sugar stays high.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption">In <dfn data-part="doors">type 2 diabetes</dfn>, by far the most common kind, cells become <dfn>insulin resistant</dfn>: they answer insulin weakly. Beta cells release extra insulin to make up for it, but over time they tire out, and blood sugar stays high.</p>
     </article>
     <article data-step="14" data-step-title="Insulin injections: the missing hormone, from outside" data-kind="insulin" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Insulin injections: the missing hormone, from outside</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Insulin injections</dfn> put the hormone under the skin, since stomach acid would destroy it as a pill. It replaces what the beta cells no longer make: doors open again and the liver holds back glucose. In type 1 diabetes it is essential.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn data-part="syringe">Insulin injections</dfn> put the hormone under the skin, since a protein swallowed as a pill would be digested. It replaces what the beta cells no longer make: doors open again and the liver holds back glucose. In type 1 diabetes it is essential; too much drives blood sugar too low.</p>
     </article>
     <article data-step="15" data-step-title="Metformin: the liver makes less" data-kind="metformin" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Metformin: the liver makes less</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Metformin</dfn>, a tablet for type 2 diabetes, mainly cuts how much glucose the liver makes. It also helps cells answer insulin a little better and trims how much glucose the gut absorbs.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn data-part="liver">Metformin</dfn>, a tablet for type 2 diabetes, mainly cuts how much glucose the liver makes. It also helps cells answer insulin a little better and trims how much glucose the gut absorbs. It does not push the pancreas, so on its own it rarely drives blood sugar too low.</p>
     </article>
     <article data-step="16" data-step-title="Sulfonylureas: beta cells pushed harder" data-kind="sulfonylurea" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Sulfonylureas: beta cells pushed harder</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Sulfonylureas</dfn> are tablets that bind to a switch on beta cells, a <dfn>potassium channel</dfn>, pushing them to release more insulin. They need beta cells that still work, and can drive blood sugar too low, called <dfn>hypoglycemia</dfn>.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn data-part="channel">Sulfonylureas</dfn> are tablets that shut a <dfn data-part="channel">potassium channel</dfn> on beta cells, the same switch rising blood sugar shuts. The cell then releases insulin whatever the blood sugar, so these drugs need beta cells that still work, and can drive blood sugar too low, called <dfn>hypoglycemia</dfn>.</p>
     </article>
     <article data-step="17" data-step-title="SGLT2 inhibitors: sugar leaves in urine" data-kind="sglt2" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">SGLT2 inhibitors: sugar leaves in urine</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>SGLT2 inhibitors</dfn> are tablets that block the kidney’s glucose pumps. Filtered glucose is no longer carried back, so extra sugar leaves in the urine and blood sugar falls. Passing more urine is a common effect.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn data-part="sglt2">SGLT2 inhibitors</dfn> are tablets that block the kidney’s glucose carriers. Less of the filtered glucose is carried back, so extra sugar leaves in the urine and blood sugar falls, without any extra insulin. Passing more urine is a common effect.</p>
     </article>
     <article data-step="18" data-step-title="GLP-1 receptor agonists: a stronger incretin signal" data-kind="glp1" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">GLP-1 receptor agonists: a stronger incretin signal</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>GLP-1 receptor agonists</dfn> are drugs, usually injected, that act like GLP-1 (glucagon-like peptide 1), one of the gut’s incretins. When blood sugar is high they boost insulin release; they also limit glucagon and slow how fast the stomach empties.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn data-part="glp1">GLP-1 receptor agonists</dfn> are drugs, usually injected, that act like GLP-1 (glucagon-like peptide 1), one of the gut’s incretins. When blood sugar is high they boost insulin release; they also lower glucagon and slow how fast the stomach empties, so sugar rises less after a meal.</p>
     </article>
     <article data-step="19" data-step-title="DPP-4 inhibitors: incretins last longer" data-kind="dpp4" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">DPP-4 inhibitors: incretins last longer</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>DPP-4 inhibitors</dfn> are tablets that block DPP-4 (dipeptidyl peptidase 4), the enzyme that breaks incretins down. The body’s own incretins last longer, so beta cells release more insulin when blood sugar is rising.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn data-part="dpp4">DPP-4 inhibitors</dfn> are tablets that block DPP-4 (dipeptidyl peptidase 4), the enzyme that breaks incretins down. The body’s own GLP-1 lasts longer, so beta cells release more insulin while blood sugar is rising. The effect is milder than a GLP-1 receptor agonist’s.</p>
     </article>
 
     <div class="step-nav">
@@ -172,8 +168,12 @@
       <span data-step-progress aria-live="polite">Step 1 of 19</span>
       <button type="button" data-step-next>Next →</button>
     </div>
-    <p class="hint">Start with Next, or use the arrow keys. Pictures are illustrative, not measurements.</p>
+    <p class="hint">Start with Next, or use the arrow keys. Under a moving picture: pause, drag to any moment, or slow it down. Underlined terms light up their part of the picture. Curves, dots and arrow widths are illustrative, not measurements.</p>
   </section>
+
+  <section id="quiz" role="tabpanel" aria-labelledby="tab-quiz" hidden></section>
+
+  <section id="summary" role="tabpanel" aria-labelledby="tab-summary" hidden></section>
 
   <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
     <h2>Reference values, beside the model.</h2>
@@ -204,8 +204,11 @@
     </div>
     <p id="state-summary" class="state-summary" aria-live="polite">Normal teaching baseline.</p>
     <p id="state-source" class="model-note"></p>
-    <p class="model-note">The blue line on each bar is an illustrative teaching model, not a patient measurement; its readings, and the end points of each bar, are teaching-model choices, not reference values. The shaded bands are the reference ranges quoted under each row. Selecting a disease, drug or state shows the expected direction of each value from the cited passage. For a drug, the direction compares it with the untreated disease it is used for, and the model applies the drug to that disease.</p>
-    <p id="baseline-note" class="model-note"></p>
+    <details class="lx-fine">
+      <summary>How to read these bars</summary>
+      <p>The blue line on each bar is an illustrative teaching model, not a patient measurement; its readings, and the end points of each bar, are teaching-model choices, not reference values. The shaded bands are the reference ranges quoted under each row. Selecting a disease, drug or state shows the expected direction of each value from the cited passage. For a drug, the direction compares it with the untreated disease it is used for, and the model applies the drug to that disease.</p>
+      <p id="baseline-note" class="model-note"></p>
+    </details>
     <div id="value-rows"></div>
     <p id="cv-live" class="visually-hidden" aria-live="polite"></p>
     <h3>Sources</h3>
@@ -246,7 +249,7 @@
           <input id="sens" type="range" min="0.1" max="1.5" step="0.05" value="1">
           <label for="meal">Size of the meal <output id="meal-label" for="meal"></output></label>
           <input id="meal" type="range" min="0" max="2" step="0.1" value="1">
-          <label for="time">Moment drawn in the picture <output id="time-label" for="time"></output></label>
+          <label for="time">Moment marked on the picture <output id="time-label" for="time"></output></label>
           <input id="time" type="range" min="0" max="240" step="5" value="45">
         </fieldset>
         <button type="button" id="reset">Reset model</button>

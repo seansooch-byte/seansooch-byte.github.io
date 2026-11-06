@@ -1,0 +1,190 @@
+{
+  "minutes": 25,
+  "prerequisites": [
+    "oxygen-hemoglobin-dissociation"
+  ],
+  "objectives": [
+    "Explain how ventilation and perfusion meet in each alveolus, and what the ventilation–perfusion ratio compares.",
+    "Tell dead space apart from a shunt, and name a disease that causes each.",
+    "Explain why well-aired sacs cannot make up for poorly aired ones, and how the lung steers blood toward air.",
+    "Predict what supplemental oxygen, bronchodilators, a pulmonary embolism and pneumonia do to the oxygen in arterial blood."
+  ],
+  "checks": {
+    "oxygen": {
+      "prompt": "Extra oxygen is added to the air breathed in. One sac gets too little air for its blood; another gets no air at all, because it is full of fluid (a shunt). Which blood picks up more oxygen?",
+      "choices": [
+        "Only the blood from the sac with too little air",
+        "Only the shunt blood",
+        "Both, by the same amount",
+        "Neither: extra oxygen never helps"
+      ],
+      "answer": 0,
+      "why": "The sac with too little air still gets some air, so extra oxygen in that air raises the oxygen inside it and its blood fills, though the sac is still short of air. Shunt blood never meets air, so no amount of oxygen in the air can reach it."
+    },
+    "beta2": {
+      "prompt": "In an asthma attack the muscle around an airway tightens. A beta-2 agonist switches on that muscle's relax signal. What happens to the blood leaving the air sac beyond it?",
+      "choices": [
+        "It carries more oxygen, because the airway opens and air reaches the sac",
+        "It carries less oxygen, because the drug narrows the sac's blood vessels",
+        "Nothing changes: the drug acts on blood, not on air",
+        "It carries more oxygen, because the drug adds oxygen to the blood"
+      ],
+      "answer": 0,
+      "why": "Relaxed muscle lets the airway widen, so air reaches the sac again, its oxygen rises and the blood leaving it fills. The drug changes the air supply, not the blood itself."
+    },
+    "antimusc": {
+      "prompt": "Nerves tighten airway muscle by releasing acetylcholine onto muscarinic receptors. A muscarinic antagonist sits in those receptors without switching them on. What happens to an airway narrowed by that signal?",
+      "choices": [
+        "It opens: the tighten signal can no longer land",
+        "It narrows further: acetylcholine builds up",
+        "Nothing changes: only beta-2 agonists open airways"
+      ],
+      "answer": 0,
+      "why": "With the receptors occupied, acetylcholine has nowhere to land, so the muscle is no longer told to tighten. It eases, the airway widens and air returns to the sacs."
+    },
+    "pe": {
+      "prompt": "A clot blocks the blood going to the right air sac. That blood is pushed to the left sac, while each sac keeps the same air. What happens to the oxygen in blood going to the body?",
+      "choices": [
+        "It falls: the left sac now has too little air for all that blood",
+        "It rises: the right sac's unused air is fresher",
+        "It stays the same: no air was lost"
+      ],
+      "answer": 0,
+      "why": "The right sac's fresh air is wasted, because no blood meets it: dead space. Its blood crowds into the left sac, which now has more blood than its air can fill, so blood leaves it short of oxygen."
+    },
+    "pneumonia": {
+      "prompt": "In pneumonia the right air sac fills completely with fluid, so no air reaches it, but blood keeps flowing past. What does the blood leaving that sac carry?",
+      "choices": [
+        "The same low oxygen it arrived with: a shunt",
+        "Full oxygen, because blood still flows past",
+        "Nothing: no blood can pass a fluid-filled sac"
+      ],
+      "answer": 0,
+      "why": "Blood can only pick up oxygen from air it meets. Past a fluid-filled sac it meets none, so it leaves as low in oxygen as it arrived and drags the mixed blood down."
+    }
+  },
+  "quiz": [
+    {
+      "id": "ratio",
+      "objective": 1,
+      "step": "match",
+      "stem": "What does the ventilation–perfusion ratio compare?",
+      "choices": [
+        "The air reaching an alveolus with the blood flowing past it",
+        "The oxygen in the blood with the carbon dioxide in it",
+        "Breaths per minute with heartbeats per minute",
+        "The air breathed in with the air breathed out"
+      ],
+      "answer": 0,
+      "why": "Ventilation is air reaching the alveoli and perfusion is blood flowing past them. The ratio says how well the two match, sac by sac; it is not a count of breaths or beats."
+    },
+    {
+      "id": "pairing",
+      "objective": 2,
+      "step": "pneumonia",
+      "stem": "Which pairing is right?",
+      "choices": [
+        "A pulmonary embolism makes dead space; sacs that pneumonia fills completely make a shunt",
+        "A pulmonary embolism makes a shunt; sacs that pneumonia fills make dead space",
+        "Both make dead space",
+        "Both make a shunt"
+      ],
+      "answer": 0,
+      "why": "A clot leaves sacs with air but no blood: dead space. Sacs that pneumonia fills completely keep their blood but get no air: a shunt. Sacs it fills only partly get too little air for their blood."
+    },
+    {
+      "id": "shunt-blood",
+      "objective": 2,
+      "step": "lowair",
+      "stem": "Blood keeps flowing past alveoli that get no air at all. What leaves those alveoli?",
+      "choices": [
+        "Blood as low in oxygen as when it arrived",
+        "Blood full of oxygen",
+        "Fresh air with no carbon dioxide in it",
+        "Nothing: blood cannot flow past a sac with no air"
+      ],
+      "answer": 0,
+      "why": "With no air to meet, the blood picks up no oxygen and leaves unchanged: a shunt. Fresh, unused air is what dead space holds, the opposite case."
+    },
+    {
+      "id": "cannot-make-up",
+      "objective": 3,
+      "step": "mix",
+      "stem": "Half of a person's alveoli are well aired and half get too little air. Why can the well-aired half not make up the difference?",
+      "choices": [
+        "Their blood is already nearly full of oxygen, so it cannot carry much more",
+        "Their blood flows too fast to load oxygen",
+        "Their air has no spare oxygen to give",
+        "Oxygen-poor blood is filtered out before it mixes"
+      ],
+      "answer": 0,
+      "why": "Blood leaving a well-aired sac sits on the flat top of the oxygen curve, almost full. Extra air there adds very little, so it cannot top up the oxygen-poor blood it mixes with."
+    },
+    {
+      "id": "steer",
+      "objective": 3,
+      "step": "steer",
+      "stem": "What does hypoxic vasoconstriction do?",
+      "choices": [
+        "Narrows vessels around poorly aired sacs, steering blood toward well-aired ones",
+        "Widens the airways wherever oxygen is low",
+        "Narrows vessels around well-aired sacs to save their oxygen",
+        "Speeds up breathing when oxygen is low"
+      ],
+      "answer": 0,
+      "why": "Vessels next to a sac low in oxygen tighten, so less blood goes where the air is poor and more goes where it is good. The mismatch shrinks, though it does not vanish."
+    },
+    {
+      "id": "who-helped",
+      "objective": 4,
+      "step": "oxygen",
+      "stem": "Two patients have low oxygen in their arterial blood. In one, much of the lung gets too little air; in the other, much of the lung is full of fluid, a large shunt. Who will extra oxygen help more?",
+      "choices": [
+        "The patient whose lung gets too little air",
+        "The patient with the large shunt",
+        "Both equally",
+        "Neither: extra oxygen only helps healthy lungs"
+      ],
+      "answer": 0,
+      "why": "Poorly aired sacs still get some air, so richer air raises their oxygen and their blood fills. Shunt blood never meets air, so extra oxygen barely changes it."
+    },
+    {
+      "id": "pe-why",
+      "objective": 4,
+      "step": "pe",
+      "stem": "A pulmonary embolism blocks the blood flow to part of the lung. Why does the oxygen in arterial blood fall?",
+      "choices": [
+        "The blocked blood is pushed to other sacs, which then have too little air for it",
+        "The blocked sacs fill with fluid",
+        "The clot uses up the oxygen in the blood",
+        "Air can no longer reach the blocked sacs"
+      ],
+      "answer": 0,
+      "why": "The blocked sacs keep their air but lose their blood, so their air is wasted. The oxygen falls because their blood crowds into other sacs that cannot fill it all; extra oxygen can lift that low oxygen, though the mismatch remains."
+    },
+    {
+      "id": "asthma-inhaler",
+      "objective": 4,
+      "step": "beta2",
+      "stem": "A patient having an asthma attack breathes in a beta-2 agonist. How does it help them get oxygen?",
+      "choices": [
+        "It relaxes the airway muscle, so more air reaches the sacs beyond",
+        "It adds oxygen to the air they breathe",
+        "It blocks the receptors that acetylcholine lands on",
+        "It widens the blood vessels, so more blood reaches the sacs"
+      ],
+      "answer": 0,
+      "why": "A beta-2 agonist switches on the airway muscle's relax signal, so the airway widens and air reaches the sacs again. Blocking acetylcholine's receptors is how a muscarinic antagonist works instead."
+    }
+  ],
+  "takeaways": [
+    "Ventilation is air reaching the alveoli; perfusion is blood flowing past them. Each alveolus needs the two in balance.",
+    "The ventilation–perfusion ratio compares the air a sac gets with the blood flowing past it: too little air for the blood leaves that blood short of oxygen.",
+    "A shunt is blood that passes alveoli with no air: it leaves as low in oxygen as it arrived. Dead space is air that reaches alveoli with no blood: it is wasted.",
+    "Blood from every sac mixes. Well-aired sacs cannot make up for poorly aired ones, because their blood is already nearly full, so a little oxygen-poor blood drags the mix down.",
+    "Hypoxic vasoconstriction narrows the vessels around poorly aired sacs and steers blood toward well-aired ones, shrinking the mismatch.",
+    "Supplemental oxygen usually lifts the low blood oxygen of a mismatch, because poorly aired sacs still get some air, though the mismatch itself remains; it barely helps a true shunt, whose blood never meets air.",
+    "Bronchodilators open narrowed airways: beta-2 agonists switch on the relax signal, muscarinic antagonists block the tighten signal.",
+    "A pulmonary embolism makes dead space and pushes blood into sacs short of air; pneumonia gives sacs too little air, and a shunt where they fill completely with fluid."
+  ]
+}

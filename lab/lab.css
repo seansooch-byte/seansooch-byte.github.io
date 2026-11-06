@@ -1,42 +1,129 @@
-/* The Lab: shared styles for /lab/ (index only; each app carries its own CSS). */
-:root{--paper:#f7f7f2;--white:#fff;--ink:#171916;--soft:#4b4f47;--rule:#babeb3;--accent:#254dff;
+/* The Lab: the course page (/lab/). Lessons use /lab/kit/kit.css. */
+:root{--paper:#f7f7f2;--white:#fff;--ink:#171916;--soft:#4b4f47;--muted:#53584d;--rule:#babeb3;--panel:#ecefe5;--accent:#254dff;--accent-deep:#1a3ad1;--wash:#e4e9ff;--green:#2c6a2c;--red:#b3261e;
   --sans:'Space Grotesk',system-ui,-apple-system,'Segoe UI',sans-serif;--display:'Anton',Impact,'Arial Narrow',sans-serif;color-scheme:light}
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:96px}
 body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.55 var(--sans)}
 a{color:var(--ink);text-decoration-color:var(--accent);text-decoration-thickness:2px;text-underline-offset:3px}
 :focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+[hidden]{display:none!important}
+.visually-hidden{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .skip{position:absolute;left:-9999px;top:0;background:var(--ink);color:var(--paper);padding:8px 12px}
 .skip:focus{left:8px;top:8px}
-.wrap{max-width:1080px;margin:0 auto;padding:0 18px}
-.top{border-bottom:2px solid var(--ink);background:var(--paper)}
-.top .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:12px;padding-bottom:12px;font-weight:600}
-.top a{text-decoration:none}.top a:hover{text-decoration:underline;text-decoration-color:var(--accent)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 clamp(16px,3.6vw,32px)}
+button{font:inherit;cursor:pointer;min-height:46px;padding:10px 18px;border:1px solid var(--ink);background:var(--white);color:var(--ink);border-radius:0}
+
+/* ---------- The head ---------- */
 .kicker{margin:44px 0 6px;font-size:14px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--soft)}
 h1{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:clamp(72px,15vw,168px);line-height:.86;margin:0;letter-spacing:.005em}
 h1 span{color:var(--accent)}
 .lede{font-size:clamp(18px,2.3vw,22px);max-width:760px;margin:22px 0 10px}
-.rules{max-width:760px;margin:0 0 34px;color:var(--soft);font-size:15px}
-.tally{display:flex;gap:18px;flex-wrap:wrap;border-top:2px solid var(--ink);border-bottom:1px solid var(--rule);padding:10px 0;font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
-.apps{list-style:none;margin:0;padding:0}
-.app{border-bottom:1px solid var(--rule)}
-.app a.card{display:grid;grid-template-columns:120px 1fr auto;gap:8px 24px;align-items:baseline;padding:22px 0;text-decoration:none;color:var(--ink)}
-.app .no{font-family:var(--display);font-size:44px;line-height:1;color:var(--accent)}
-.app h2{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:clamp(32px,4.4vw,52px);line-height:.95;margin:0 0 8px;letter-spacing:.01em}
-.app p{margin:0 0 8px;max-width:680px}
-.app .meta{font-size:13px;color:var(--soft);letter-spacing:.02em}
-.app .date{font-size:14px;font-weight:600;white-space:nowrap}
-.app a.card:hover h2,.app a.card:focus-visible h2{text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:4px}
+.rules{max-width:760px;margin:0 0 28px;color:var(--soft);font-size:15px}
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:0;border-top:2px solid var(--ink);border-bottom:1px solid var(--rule)}
+.facts div{padding:14px 16px 12px;border-left:1px solid var(--rule)}
+.facts div:first-child{border-left:0;padding-left:0}
+.facts dt{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+.facts dd{margin:4px 0 0;font-family:var(--display);font-size:clamp(30px,4.4vw,48px);line-height:1}
+.tally{display:flex;gap:18px;flex-wrap:wrap;padding:10px 0 0;margin:0;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--soft)}
+
+/* ---------- Pick up where you left off ---------- */
+.resume{margin:22px 0 0}
+.resume:empty{display:none}
+.resume .card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 24px;align-items:center;border:1px solid var(--ink);border-left:6px solid var(--accent);background:var(--white);padding:16px 20px}
+.resume .label{margin:0;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.resume .what{margin:2px 0 0;font-size:20px;font-weight:600;line-height:1.25}
+.resume .sub{margin:4px 0 0;font-size:14px;color:var(--soft)}
+.resume .go{grid-row:1/4;grid-column:2;display:inline-flex;align-items:center;min-height:48px;padding:10px 20px;background:var(--accent);color:#fff;font-weight:700;text-decoration:none;white-space:nowrap}
+.resume .go:hover{background:var(--accent-deep)}
+
+/* ---------- The course at a glance ---------- */
+.map{margin:30px 0 8px}
+.map>ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:2px;background:var(--rule);border:1px solid var(--rule)}
+.map>ol>li{background:var(--paper);padding:12px 12px 14px;min-width:0}
+.map-unit{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:start;text-decoration:none;min-height:64px}
+.map-no{font-family:var(--display);font-size:30px;line-height:.9;color:var(--accent)}
+.map-title{font-size:13px;font-weight:600;line-height:1.25}
+.map-unit:hover .map-title{text-decoration:underline;text-decoration-color:var(--accent)}
+.map-lessons{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.map-lessons a,.map-lessons .soon{display:block;width:22px;height:22px;border-radius:50%;border:2px solid var(--ink);background:var(--white)}
+.map-lessons .soon{border-style:dashed;border-color:var(--rule)}
+.map-lessons a.is-started{background:linear-gradient(90deg,var(--accent) 50%,var(--white) 50%)}
+.map-lessons a.is-done{background:var(--accent);border-color:var(--accent)}
+.map-lessons a:hover{box-shadow:0 0 0 3px var(--wash)}
+
+/* ---------- Units and their lessons ---------- */
+.unit{margin-top:56px}
+.unit-head{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 22px;align-items:end;border-bottom:2px solid var(--ink);padding-bottom:12px}
+.unit-no{grid-row:1/4;margin:0;font-family:var(--display);font-size:clamp(20px,2.4vw,26px);letter-spacing:.04em;text-transform:uppercase;color:var(--accent);align-self:start;padding-top:8px}
+.unit-head h2{margin:0;font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:clamp(32px,4.6vw,54px);line-height:.95;letter-spacing:.01em}
+.unit-sum{margin:8px 0 0;max-width:720px}
+.unit-meta{margin:6px 0 0;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--soft)}
+.lessons{list-style:none;margin:0;padding:0}
+.lesson{display:grid;grid-template-columns:96px minmax(0,1fr);gap:4px 20px;padding:22px 0;border-bottom:1px solid var(--rule)}
+.lesson .no{font-family:var(--display);font-size:46px;line-height:.9;color:var(--accent)}
+.lesson h3{margin:0 0 6px;font-size:clamp(22px,2.6vw,28px);line-height:1.15;font-weight:600;letter-spacing:-.02em}
+.lesson h3 a{text-decoration:none}
+.lesson h3 a:hover,.lesson h3 a:focus-visible{text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:3px}
+.lesson .desc{margin:0 0 8px;max-width:700px}
+.lesson .meta{margin:0;font-size:13px;font-weight:600;letter-spacing:.04em;color:var(--soft)}
+.goals{margin:10px 0 0;max-width:700px}
+.goals summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);min-height:36px;display:inline-flex;align-items:center}
+.goals ol{margin:4px 0 0;padding-left:22px;font-size:15px}
+.goals li{margin:4px 0}
+.progress{display:flex;align-items:center;gap:12px;margin:12px 0 0;font-size:13px;font-weight:600;color:var(--soft)}
+.progress .bar{display:block;width:160px;height:8px;background:var(--panel);border:1px solid var(--rule)}
+.progress .bar i{display:block;height:100%;width:0;background:var(--accent)}
+.lesson.is-done .progress{color:var(--green)}
+.lesson.is-done .progress .bar i{background:var(--green)}
+.lesson.soon{color:var(--soft)}
+.lesson.soon .no{color:var(--rule)}
+
+/* ---------- Mixed review ---------- */
+.review{margin-top:64px;border-top:2px solid var(--ink);padding-top:18px}
+.review h2{margin:0 0 6px;font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:clamp(32px,4.6vw,54px);line-height:.95}
+.review>p{max-width:720px;margin:0 0 16px}
+.review-box>button{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+.review-box>button:hover{background:var(--accent-deep)}
+.rv-head{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline;justify-content:space-between;margin:0 0 4px}
+.rv-score{font-weight:700}
+.rv-score b{font-family:var(--display);font-weight:400;font-size:30px;color:var(--accent);margin-right:4px}
+.rv-qs{list-style:none;margin:0;padding:0;counter-reset:q}
+.rv-qs>li{counter-increment:q;border-bottom:1px solid var(--rule);padding:20px 0;display:grid;grid-template-columns:40px minmax(0,1fr);gap:4px 14px}
+.rv-qs>li::before{content:counter(q);font-family:var(--display);font-size:28px;line-height:1;color:var(--accent)}
+.rv-from{margin:0 0 4px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--soft)}
+.rv-stem{margin:0 0 12px;font-weight:600;max-width:70ch}
+.lx-choices{display:grid;gap:8px;margin:0;padding:0;list-style:none;max-width:70ch}
+.lx-choices button{width:100%;text-align:left;background:var(--paper);border-color:var(--rule);font-weight:500;padding:10px 14px;display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px;align-items:baseline}
+.lx-choices button::before{content:attr(data-mark);font-weight:700;color:var(--soft)}
+.lx-choices button:hover:not(:disabled){border-color:var(--ink);background:var(--white)}
+.lx-choices button:disabled{cursor:default;color:var(--ink)}
+.lx-choices button.is-right{border-color:var(--green);background:#e1efdd}
+.lx-choices button.is-wrong{border-color:var(--red);background:#f8e4e1}
+.lx-choices button.is-dim{opacity:.55}
+.rv-verdict{font-weight:700;margin:12px 0 4px}
+.rv-verdict.is-right{color:var(--green)}.rv-verdict.is-wrong{color:var(--red)}
+.rv-why{margin:0 0 4px;max-width:70ch}
+.rv-link{margin:4px 0 0;font-size:14px}
+.rv-foot{display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding-top:16px}
+.rv-foot p{margin:0;flex:1 1 260px;font-weight:600}
 .empty{padding:28px 0;color:var(--soft)}
-.app.soon .card{display:grid;grid-template-columns:120px 1fr auto;gap:8px 24px;align-items:baseline;padding:22px 0;color:var(--soft)}
-.app.soon .no{color:var(--rule)}
-.app.soon h2{color:var(--soft);font-size:clamp(24px,3vw,34px)}
-.app.soon p{color:var(--soft)}
-.app.soon .date{font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:12px;border:1px solid var(--rule);padding:3px 8px;align-self:start}
-.app.ready .meta{color:var(--ink)}
+
 footer{margin-top:72px;border-top:2px solid var(--ink)}
 footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:14px;padding-bottom:40px;font-size:14px}
-@media (max-width:720px){.app a.card,.app.soon .card{grid-template-columns:1fr;gap:4px}.app.soon .date{justify-self:start}.app .no{font-size:34px}.app .date{order:-1}}
+@media (max-width:960px){.map>ol{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:720px){
+  .facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .facts div:nth-child(3){border-left:0;padding-left:0}
+  .facts div:nth-child(n+3){border-top:1px solid var(--rule)}
+  .map>ol{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .lesson{grid-template-columns:52px minmax(0,1fr);gap:2px 12px}
+  .lesson .no{font-size:32px}
+  .unit-head{grid-template-columns:1fr}
+  .unit-no{grid-row:auto;padding-top:0}
+  .resume .card{grid-template-columns:1fr}
+  .resume .go{grid-row:auto;grid-column:auto;justify-self:start;margin-top:8px}
+  .rv-qs>li{grid-template-columns:28px minmax(0,1fr);gap:4px 10px}
+}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 /* Site top bar, matching the homepage's view A (Astra) bar. Scoped names so it cannot collide with lab.css or a lesson's CSS. */
 .site-top{position:sticky;top:0;z-index:50;background:rgba(247,247,242,.96);border-bottom:1px solid #171916;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);font-family:'Space Grotesk',system-ui,-apple-system,'Segoe UI',sans-serif}

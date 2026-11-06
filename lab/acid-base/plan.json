@@ -1,0 +1,180 @@
+{
+  "minutes": 25,
+  "prerequisites": [
+    "nephron-diuretics",
+    "ventilation-perfusion"
+  ],
+  "objectives": [
+    "Explain how the bicarbonate buffer, the lungs and the kidneys hold blood pH in its narrow band, and how fast each acts.",
+    "Read pH as a balance between carbon dioxide, the acid side, and bicarbonate, the base side.",
+    "Name the four acid-base disorders from the side that changed first, and predict how the other side compensates.",
+    "Predict what carbonic anhydrase inhibitors, loop and thiazide diuretics, sodium bicarbonate and salicylate toxicity do to the balance."
+  ],
+  "checks": {
+    "cai": {
+      "prompt": "A carbonic anhydrase inhibitor stops the kidney returning bicarbonate to the blood, so bicarbonate is lost in urine. Which way does pH move first, and what do the lungs then do?",
+      "choices": [
+        "pH falls; the lungs breathe faster to blow off carbon dioxide",
+        "pH rises; the lungs breathe slower to keep carbon dioxide",
+        "pH falls; the lungs breathe slower to keep carbon dioxide",
+        "pH stays the same, so nothing needs to compensate"
+      ],
+      "answer": 0,
+      "why": "Losing bicarbonate lightens the base side, so pH falls: a metabolic acidosis. The lungs answer by moving their side the same way, blowing off carbon dioxide, which brings pH part of the way back."
+    },
+    "diuretic": {
+      "prompt": "A loop diuretic makes the kidneys pass a lot of salt and water but little bicarbonate, so the same bicarbonate is left in less fluid. What happens to blood bicarbonate and pH?",
+      "choices": [
+        "Bicarbonate rises and pH rises: an alkalosis",
+        "Bicarbonate falls and pH falls: an acidosis",
+        "Both stay the same, because water is neither acid nor base"
+      ],
+      "answer": 0,
+      "why": "The same bicarbonate in less fluid is more concentrated, and the lost volume calls up hormones that make the kidney keep bicarbonate and push out hydrogen ions. The base side grows: contraction alkalosis."
+    },
+    "sodium": {
+      "prompt": "Sodium bicarbonate is bicarbonate itself. Taken in, it adds straight to the base side. Which disorder does it push the blood toward?",
+      "choices": [
+        "Metabolic alkalosis",
+        "Metabolic acidosis",
+        "Respiratory alkalosis",
+        "Respiratory acidosis"
+      ],
+      "answer": 0,
+      "why": "Bicarbonate changed first, so the disorder is metabolic, and more base makes the blood more alkaline. Breathing slows a little in answer, and healthy kidneys soon pass the extra bicarbonate."
+    },
+    "salicylate": {
+      "prompt": "Early in salicylate toxicity, the drug drives breathing hard and blows off carbon dioxide, before much acid has built up. Which way does pH move first?",
+      "choices": [
+        "Up, toward alkaline: a respiratory alkalosis",
+        "Down, toward acidic: a metabolic acidosis",
+        "Nowhere: the kidneys hold it steady"
+      ],
+      "answer": 0,
+      "why": "Losing carbon dioxide lightens the acid side, so pH rises: a respiratory alkalosis comes first. Only later do acids build up and use up bicarbonate, adding a metabolic acidosis, so pH can then drift back near normal."
+    }
+  },
+  "quiz": [
+    {
+      "id": "fastest",
+      "objective": 1,
+      "step": "speeds",
+      "stem": "Acid suddenly enters the blood. Which defence acts within seconds?",
+      "choices": [
+        "Buffers, such as bicarbonate",
+        "The lungs, by changing breathing",
+        "The kidneys, by changing the urine",
+        "The liver, by making new bicarbonate"
+      ],
+      "answer": 0,
+      "why": "Buffers are already in the blood and catch hydrogen ions at once. The lungs remove acid as carbon dioxide within minutes; the kidneys take hours to days to pass other acids and remake the bicarbonate used up."
+    },
+    {
+      "id": "breathe-acid",
+      "objective": 1,
+      "step": "swap",
+      "stem": "Why does breathing out carbon dioxide remove acid from the blood?",
+      "choices": [
+        "Carbon dioxide and water make carbonic acid, so less carbon dioxide means less acid",
+        "Carbon dioxide is a base, so losing it frees hydrogen ions",
+        "Breathing out carries hydrogen ions straight out of the lungs",
+        "Carbon dioxide destroys bicarbonate in the lungs"
+      ],
+      "answer": 0,
+      "why": "Carbonic anhydrase keeps carbon dioxide and carbonic acid swapping. Breathing out carbon dioxide pulls the swap toward carbon dioxide and water, so carbonic acid, and the acid it holds, falls. Hydrogen ions themselves are not breathed out."
+    },
+    {
+      "id": "ratio",
+      "objective": 2,
+      "step": "balance",
+      "stem": "A blood sample has twice the usual bicarbonate and twice the usual carbon dioxide. What is its pH likely to be?",
+      "choices": [
+        "About normal, because the balance between the two is unchanged",
+        "Far too alkaline, because bicarbonate doubled",
+        "Far too acidic, because carbon dioxide doubled",
+        "Impossible to say from these two"
+      ],
+      "answer": 0,
+      "why": "pH depends on the balance between the two sides, not the amount of either. Doubling both keeps the beam level, even though each side is abnormal."
+    },
+    {
+      "id": "opioid",
+      "objective": 3,
+      "step": "four",
+      "stem": "After an opioid overdose, breathing slows and carbon dioxide builds up first. Which disorder is this?",
+      "choices": [
+        "Respiratory acidosis",
+        "Metabolic acidosis",
+        "Respiratory alkalosis",
+        "Metabolic alkalosis"
+      ],
+      "answer": 0,
+      "why": "Carbon dioxide changed first, so it is respiratory, and more carbon dioxide is more acid, so it is an acidosis. The kidneys may later keep extra bicarbonate in answer."
+    },
+    {
+      "id": "lungs-answer",
+      "objective": 3,
+      "step": "compensate",
+      "stem": "In a metabolic acidosis, how do the lungs compensate?",
+      "choices": [
+        "They breathe faster and deeper, lowering carbon dioxide",
+        "They breathe slower, raising carbon dioxide",
+        "They make extra bicarbonate",
+        "They stop working until pH recovers"
+      ],
+      "answer": 0,
+      "why": "The other side moves the same way as the first change: bicarbonate fell, so the lungs lower carbon dioxide by breathing faster and deeper, bringing pH back toward normal."
+    },
+    {
+      "id": "never-past",
+      "objective": 3,
+      "step": "compensate",
+      "stem": "Can compensation push pH past normal to the other side?",
+      "choices": [
+        "No: it brings pH back toward normal but not past it",
+        "Yes: it usually overshoots a little",
+        "Yes, but only when the kidneys compensate",
+        "No, because compensation never changes pH at all"
+      ],
+      "answer": 0,
+      "why": "Compensation moves pH back toward its band but stops short. A pH on the other side of normal points to a second disorder, not to compensation."
+    },
+    {
+      "id": "loop-alkalosis",
+      "objective": 4,
+      "step": "diuretic",
+      "stem": "A patient taking a loop diuretic for swelling becomes slightly alkalotic. Which explanation fits best?",
+      "choices": [
+        "Salt and water are lost but bicarbonate stays, and aldosterone makes the kidney lose more hydrogen ions",
+        "The diuretic is itself a base",
+        "The diuretic blocks carbonic anhydrase, so bicarbonate is lost",
+        "The diuretic makes the lungs breathe faster"
+      ],
+      "answer": 0,
+      "why": "This is contraction alkalosis: less fluid around the same bicarbonate, plus aldosterone pushing out hydrogen ions and potassium. Blocking carbonic anhydrase is what acetazolamide does, and it causes the opposite, an acidosis."
+    },
+    {
+      "id": "aspirin-mixed",
+      "objective": 4,
+      "step": "salicylate",
+      "stem": "Hours after an aspirin overdose, an adult has low bicarbonate, a pH near normal, and a carbon dioxide even lower than compensation for the acid alone would bring. What does this show?",
+      "choices": [
+        "A mixed picture: a respiratory alkalosis from driven breathing plus a metabolic acidosis from built-up acid",
+        "Full health, because the pH is normal",
+        "A pure metabolic acidosis with no change in breathing",
+        "A respiratory acidosis that the kidneys have compensated"
+      ],
+      "answer": 0,
+      "why": "Salicylate drives breathing first, lowering carbon dioxide, then acids build up and use up bicarbonate. The two pull pH opposite ways, so a near-normal pH can hide two disorders at once."
+    }
+  ],
+  "takeaways": [
+    "Blood pH is held in a narrow band just on the alkaline side, although the body makes acid all day as carbon dioxide and other acids.",
+    "The bicarbonate buffer catches hydrogen ions: bicarbonate becomes carbonic acid, which carbonic anhydrase swaps for carbon dioxide and water.",
+    "pH depends on the balance between carbon dioxide, the acid side set by the lungs in minutes, and bicarbonate, the base side set by the kidneys over hours to days.",
+    "The side that changed first names the disorder: carbon dioxide first is respiratory, bicarbonate first is metabolic. A process toward acid is an acidosis, toward alkaline an alkalosis; the blood itself then has acidemia or alkalemia.",
+    "Compensation moves the other side the same way, bringing pH back toward normal but never past it.",
+    "Carbonic anhydrase inhibitors lose bicarbonate in urine: metabolic acidosis. Loop and thiazide diuretics shrink the fluid around the same bicarbonate and call up aldosterone: contraction alkalosis.",
+    "Sodium bicarbonate adds base: a metabolic alkalosis that healthy kidneys soon undo. Salicylate toxicity drives breathing first (respiratory alkalosis), then adds acid (metabolic acidosis), so pH can look near normal."
+  ]
+}

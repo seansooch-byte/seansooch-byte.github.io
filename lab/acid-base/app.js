@@ -1,9 +1,15 @@
-'use strict';
+// Lesson 11: Acid–base balance. The kit (/lab/kit/kit.js) runs the page; this file is the model, the pictures and
+// the Clinical values and Explore freely tabs.
+import { lesson } from '/lab/kit/kit.js';
+
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
-const f = n => Number(n.toFixed(1));
-const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+const f = n => Number((+n).toFixed(1));
+const span = (t, a, b) => clamp((t - a) / (b - a), 0, 1);
+const ease = x => 1 - Math.pow(1 - clamp(x, 0, 1), 3);
+const lerp = (a, b, t) => a + (b - a) * t;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 /* ---------- Teaching model ----------
    The bicarbonate buffer, Henderson–Hasselbalch: pH = 6.1 + log10(HCO3 / (0.03 × PCO2)).
@@ -30,47 +36,39 @@ function model(p) {
 const mix = (a, b, t) => { const out = { ...a }; for (const k in b) out[k] = a[k] + (b[k] - a[k]) * t; return out; };
 const BASE = model(NORMAL);
 
-/* ---------- Drawing ---------- */
-const INK = '#171916', BLUE = '#254dff', ACID = '#b3261e', RULE = '#babeb3', MUTED = '#53584d', PANEL = '#ecefe5';
+/* ---------- Drawing ----------
+   Every picture is 480 wide and at most 420 tall, with the kit's type (20 / .sm 18 / .xs 17). The seesaw carries six
+   tokens a side at the normal mix: carbon dioxide (rings) on the acid side, bicarbonate (blue discs) on the base side.
+   A token lost since normal stays as a dashed ring; a token added carries a ring of its own. Badges number the changes:
+   1, the first change; 2, the other side answering (or, for salicylate, a second problem). */
+const INK = '#171916', BLUE = '#254dff', ACID = '#b3261e', RULE = '#babeb3', MUTED = '#53584d';
 const ACIDL = '#f3d6d1', BASEL = '#d6defd', NEUTRAL = '#e4e2d8';
-let pictureId = 0;  // each picture gets its own ids: a gradient referenced from a hidden step would not draw
-const svg = (label, body, h) => { const id = `p${++pictureId}-`; return `<svg viewBox="0 0 480 ${h}" role="img" aria-label="${label}">${body.replace(/ah-/g, id + 'ah-')}</svg>`; };
-const text = (x, y, s, cls = '', anchor = 'middle') => `<text x="${f(x)}" y="${f(y)}" text-anchor="${anchor}" class="${cls}">${s}</text>`;
+let pictureId = 0;  // each picture gets its own ids: a gradient or marker referenced from a hidden step would not draw
+const svg = (label, body, h) => { const id = `p${++pictureId}-`; return `<svg viewBox="0 0 480 ${f(h)}" role="img" aria-label="${esc(label)}">${body.replace(/ah-/g, id + 'ah-')}</svg>`; };
+const text = (x, y, s, cls = '', anchor = 'middle', extra = '') => `<text x="${f(x)}" y="${f(y)}" text-anchor="${anchor}" class="${cls}" ${extra}>${s}</text>`;
 const MARK = { [INK]: 'k', [BLUE]: 'b', [ACID]: 'r', [MUTED]: 'm' };
 const arrow = (d, color = INK, w = 2.5, extra = '') => `<path d="${d}" fill="none" stroke="${color}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#ah-${MARK[color] || 'k'})" ${extra}/>`;
 const DEFS = `<defs>${Object.entries(MARK).map(([c, k]) => `<marker id="ah-${k}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="${c}"/></marker>`).join('')}<linearGradient id="ah-ph" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="${ACID}"/><stop offset=".5" stop-color="${NEUTRAL}"/><stop offset="1" stop-color="${BLUE}"/></linearGradient></defs>`;
+const part = (name, body) => `<g data-part="${name}">${body}</g>`;
+const fade = a => `opacity="${f(clamp(a, 0, 1))}"`;
 
 // Little symbols used across the pictures.
-const bubble = (x, y, r = 9) => `<circle data-co2 cx="${f(x)}" cy="${f(y)}" r="${r}" fill="#fff" stroke="${ACID}" stroke-width="2"/>`;
-const hion = (x, y, r = 5) => `<circle data-h cx="${f(x)}" cy="${f(y)}" r="${r}" fill="${ACID}"/>`;
-const bicarb = (x, y, r = 12) => `<circle data-bicarb cx="${f(x)}" cy="${f(y)}" r="${r}" fill="${BLUE}"/>`;
+const bubble = (x, y, r = 9, extra = '') => `<circle data-co2 cx="${f(x)}" cy="${f(y)}" r="${r}" fill="#fff" stroke="${ACID}" stroke-width="2" ${extra}/>`;
+const hion = (x, y, r = 5, extra = '') => `<circle data-h cx="${f(x)}" cy="${f(y)}" r="${r}" fill="${ACID}" ${extra}/>`;
+const bicarb = (x, y, r = 12, extra = '') => `<circle data-bicarb cx="${f(x)}" cy="${f(y)}" r="${r}" fill="${BLUE}" ${extra}/>`;
 const carbonic = (x, y, r = 12) => `<circle cx="${f(x)}" cy="${f(y)}" r="${r}" fill="${BASEL}" stroke="${BLUE}" stroke-width="2.5"/>` + hion(x + r * .8, y - r * .8, r * .42);
+const drop = (x, y, s = 1) => `<path d="M${f(x)} ${f(y - 16 * s)} C${f(x + 12 * s)} ${f(y)} ${f(x + 16 * s)} ${f(y + 8 * s)} ${f(x)} ${f(y + 16 * s)} C${f(x - 16 * s)} ${f(y + 8 * s)} ${f(x - 12 * s)} ${f(y)} ${f(x)} ${f(y - 16 * s)} Z" fill="#cfe0f2" stroke="${INK}" stroke-width="2"/>`;
 const lungsIcon = (x, y, s = 1) => `<g transform="translate(${f(x)} ${f(y)}) scale(${s})"><path d="M0 -24 V-4 M0 -6 C-4 2 -8 2 -12 4 M0 -6 C4 2 8 2 12 4" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round"/><path d="M-6 -6 C-22 -10 -30 10 -28 22 C-27 30 -18 32 -10 28 C-6 26 -5 20 -5 14 Z" fill="${ACIDL}" stroke="${INK}" stroke-width="2"/><path d="M6 -6 C22 -10 30 10 28 22 C27 30 18 32 10 28 C6 26 5 20 5 14 Z" fill="${ACIDL}" stroke="${INK}" stroke-width="2"/></g>`;
 const kidneyIcon = (x, y, s = 1) => `<g transform="translate(${f(x)} ${f(y)}) scale(${s})"><path d="M-6 -26 C-26 -26 -30 -6 -26 8 C-22 22 -10 30 2 24 C10 20 6 10 4 4 C2 -2 10 -6 8 -14 C6 -22 2 -26 -6 -26 Z" fill="${BASEL}" stroke="${INK}" stroke-width="2"/><path d="M4 0 C14 2 18 12 18 28" fill="none" stroke="${INK}" stroke-width="2.5" stroke-linecap="round"/></g>`;
-function keyRow(items, y) {
-  let x = 16, row = 0, body = '';
-  for (const [icon, word] of items) {
-    const w = 44 + word.length * 8.4;
-    if (x > 16 && x + w > 470) { x = 16; row++; }
-    body += `<g transform="translate(${f(x)} ${y + row * 28})">${icon}${text(44, 5, word, 'xs', 'start')}</g>`;
-    x += w + 18;
-  }
-  return { body, rows: row + 1 };
-}
+const plusIcon = (x, y) => `<circle cx="${x}" cy="${y}" r="20" fill="#fff" stroke="${BLUE}" stroke-width="2.5"/><path d="M${x - 10} ${y} H${x + 10} M${x} ${y - 10} V${y + 10}" stroke="${BLUE}" stroke-width="5" stroke-linecap="round"/>`;
+const acidIcon = (x, y) => `<circle cx="${x}" cy="${y}" r="20" fill="#fff" stroke="${ACID}" stroke-width="2.5"/>${hion(x - 6, y - 3, 5.5)}${hion(x + 6, y + 6, 5.5)}`;
 
-/* ---------- The seesaw ---------- */
-// Tilt and needle follow the model's pH change (illustrative scales: tanh keeps big changes on the picture).
-const tiltOf = dpH => 18 * Math.tanh(dpH / 0.12);
-const needleX = dpH => 240 + 190 * Math.tanh(dpH / 0.15);
-const blockH = rel => 58 * clamp(rel, 0.2, 2);
-const PIV = { x: 240, y: 320 }, ARM = 170;
-function ends(theta) {
-  const a = theta * Math.PI / 180, c = Math.cos(a) * ARM, s = Math.sin(a) * ARM;
-  return { L: { x: PIV.x - c, y: PIV.y - s }, R: { x: PIV.x + c, y: PIV.y + s } };
-}
+/* ---------- The pH meter ---------- */
+const MX0 = 88, MX1 = 392;
+const needleX = dpH => f(240 + 152 * Math.tanh(dpH / .15));
 // The healthy band comes from the reference file's pH range, placed with the same pH-to-position mapping as the needle.
 // Only if the file fails to load does the picture fall back to an illustrative band of fixed width.
-const FALLBACK_BAND = [214, 266];
+const FALLBACK_BAND = [192, 288];
 function bandX() {
   if (!K) return FALLBACK_BAND;
   const ph0 = absolute(BASE).ph;
@@ -87,58 +85,86 @@ function inBand(o) {
   const ph = Number(absolute(o).ph.toFixed(2));
   return ph >= K.phLo && ph <= K.phHi;
 }
-function gauge(o, ghost) {
-  let s = `<rect x="40" y="40" width="400" height="16" fill="url(#ah-ph)" stroke="${INK}" stroke-width="1.5"/>`;
-  const [bx0, bx1] = bandX();
-  s += `<rect data-band x="${f(bx0)}" y="34" width="${f(bx1 - bx0)}" height="28" fill="none" stroke="${INK}" stroke-width="2.5"/>`;
-  s += text(40, 84, '← more acidic', 'xs b acid', 'start') + text(440, 84, 'more alkaline →', 'xs b blue', 'end') + text(240, 84, 'healthy band', 'xs b');
-  s += text(20, 53, 'pH', 'xs b');
-  if (ghost) { const g = needleFor(ghost); s += `<g data-ghost-needle><path d="M${f(g - 9)} 22 L${f(g + 9)} 22 L${f(g)} 38 Z" fill="none" stroke="${INK}" stroke-width="1.8" stroke-dasharray="3 2" opacity=".55"/></g>`; }
-  const n = needleFor(o);
-  s += `<g data-needle="${f(n)}"><path d="M${f(n - 10)} 20 L${f(n + 10)} 20 L${f(n)} 38 Z" fill="${INK}"/><path d="M${f(n)} 36 V60" stroke="${INK}" stroke-width="3"/></g>`;
-  return s;
-}
-function blocks(o, theta, ghost = false) {
-  const { L, R } = ends(theta);
-  const hA = blockH(o.rP), hB = blockH(o.rH);
+// word: what the needle did, written under it with an arrow from the dashed normal needle.
+function meter(o, ghost, word = '', from = ghost) {
+  const [b0, b1] = bandX(), n = needleFor(o);
+  let s = text(MX0, 18, 'blood pH', 'xs b', 'start') + text((b0 + b1) / 2, 18, 'healthy band', 'xs b');
+  s += part('meter', `<rect x="${MX0}" y="28" width="${MX1 - MX0}" height="14" fill="url(#ah-ph)" stroke="${INK}" stroke-width="1.5"/><rect data-band x="${f(b0)}" y="23" width="${f(b1 - b0)}" height="24" fill="none" stroke="${INK}" stroke-width="2.5"/>`);
+  s += text(MX0 - 8, 41, 'acidic', 'xs b acid', 'end') + text(MX1 + 8, 41, 'alkaline', 'xs b blue', 'start');
   if (ghost) {
-    const st = `fill="none" stroke="${INK}" stroke-width="2" stroke-dasharray="6 5" opacity=".5"`;
-    return `<path d="M${f(L.x)} ${f(L.y)} L${f(R.x)} ${f(R.y)}" stroke="${INK}" stroke-width="7" stroke-dasharray="10 8" opacity=".3"/>` +
-      `<rect x="${f(L.x - 42)}" y="${f(L.y - 8 - hA)}" width="84" height="${f(hA)}" ${st}/><rect x="${f(R.x - 42)}" y="${f(R.y - 8 - hB)}" width="84" height="${f(hB)}" ${st}/>`;
+    const g = needleFor(ghost);
+    s += `<path class="ghost" data-ghost-needle d="M${g} 46 L${f(g - 9)} 62 L${f(g + 9)} 62 Z" fill="none" stroke="${INK}" stroke-width="1.8" stroke-dasharray="3 2"/>`;
+    const g0 = from ? needleFor(from) : g;
+    if (word && Math.abs(n - g0) > 22) s += `<g data-named>${arrow(`M${g0} 72 H${f(n + (n > g0 ? -6 : 6))}`, BLUE, 3)}${text(clamp((g0 + n) / 2, 80, 400), 92, word, 'xs b blue')}</g>`;
   }
-  const dots = (x, y, h, color) => { let d = ''; for (let yy = y + h - 10; yy > y + 4; yy -= 14) for (let i = 0; i < 4; i++) d += `<circle cx="${f(x - 27 + i * 18)}" cy="${f(yy)}" r="3.2" fill="${color}" opacity=".55"/>`; return d; };
-  let s = `<path d="M${f(L.x)} ${f(L.y)} L${f(R.x)} ${f(R.y)}" stroke="${INK}" stroke-width="7" stroke-linecap="round"/>`;
-  s += `<path d="M${f(L.x - 48)} ${f(L.y - 4)} H${f(L.x + 48)} M${f(R.x - 48)} ${f(R.y - 4)} H${f(R.x + 48)}" stroke="${INK}" stroke-width="4" stroke-linecap="round"/>`;
-  s += `<path d="M${f(L.x)} ${f(L.y - 4)} V${f(L.y)} M${f(R.x)} ${f(R.y - 4)} V${f(R.y)}" stroke="${INK}" stroke-width="4"/>`;
-  s += `<rect data-side="acid" x="${f(L.x - 42)}" y="${f(L.y - 8 - hA)}" width="84" height="${f(hA)}" fill="${ACIDL}" stroke="${ACID}" stroke-width="2.5"/>` + dots(L.x, L.y - 8 - hA, hA, ACID);
-  s += `<rect data-side="base" x="${f(R.x - 42)}" y="${f(R.y - 8 - hB)}" width="84" height="${f(hB)}" fill="${BASEL}" stroke="${BLUE}" stroke-width="2.5"/>` + dots(R.x, R.y - 8 - hB, hB, BLUE);
+  s += `<path data-needle="${n}" d="M${n} 44 L${f(n - 10)} 62 L${f(n + 10)} 62 Z" fill="${INK}"/>`;
   return s;
 }
-// A note in the upper corners: an icon and up to three short lines.
+
+/* ---------- The seesaw ---------- */
+const PIV = { x: 240, y: 300 }, ARM = 170, TOK = 11, GAP = 26;
+const tiltOf = dpH => 11 * Math.tanh(dpH / .12);   // degrees; heavier side down (an illustrative scale)
+function ends(theta) {
+  const a = theta * Math.PI / 180, c = Math.cos(a) * ARM, s = Math.sin(a) * ARM;
+  return { L: { x: PIV.x - c, y: PIV.y - s }, R: { x: PIV.x + c, y: PIV.y + s } };
+}
+function token(x, y, kind, added = false, op = 1, r = TOK) {
+  const col = kind === 'acid' ? ACID : BLUE;
+  let s = kind === 'acid' ? `<circle cx="${f(x)}" cy="${f(y)}" r="${r}" fill="#fff" stroke="${ACID}" stroke-width="2.5"/>` : `<circle cx="${f(x)}" cy="${f(y)}" r="${r}" fill="${BLUE}"/>`;
+  if (added) s += `<circle data-added cx="${f(x)}" cy="${f(y)}" r="${f(r + 4)}" fill="none" stroke="${col}" stroke-width="1.8"/>`;
+  return op < 1 ? `<g ${fade(op)}>${s}</g>` : s;
+}
+const lost = (x, y, r = TOK) => `<circle data-lost cx="${f(x)}" cy="${f(y)}" r="${r}" fill="none" stroke="${INK}" stroke-width="1.6" stroke-dasharray="3.5 3" opacity=".75"/>`;
+// One side's tokens on its pan: six at the normal mix, three to a row, filled from the bottom; lost ones leave from the top.
+function stack(cx, baseY, rel, kind, r = TOK, gap = GAP) {
+  const n = 6 * clamp(rel, 0, 2), full = Math.floor(n + 1e-6), frac = n - full;
+  let s = '';
+  for (let i = 0; i < Math.max(6, Math.ceil(n - 1e-6)); i++) {
+    const x = cx + ((i % 3) - 1) * gap, y = baseY - r - 3 - Math.floor(i / 3) * gap;
+    if (i < 6 && i >= full) s += lost(x, y, r);
+    if (i < full) s += token(x, y, kind, i >= 6, 1, r);
+    else if (i === full && frac > .03) s += token(x, y, kind, i >= 6, frac, r);
+  }
+  return s;
+}
+// A note above one pan: an organ icon, an optional numbered badge, and up to three short lines.
 function note(side, n) {
   if (!n) return '';
-  const left = side === 'left', ix = left ? 52 : 428, tx = left ? 92 : 388, anchor = left ? 'start' : 'end';
-  let s = n.icon === 'lungs' ? lungsIcon(ix, 132, 1) : n.icon === 'kidney' ? kidneyIcon(ix, 132, 1) : n.icon === 'add' ? `<circle cx="${ix}" cy="132" r="22" fill="#fff" stroke="${BLUE}" stroke-width="2.5"/><path d="M${ix - 11} 132 H${ix + 11} M${ix} 121 V143" stroke="${BLUE}" stroke-width="5" stroke-linecap="round"/>` : n.icon === 'acid' ? `<circle cx="${ix}" cy="132" r="22" fill="#fff" stroke="${ACID}" stroke-width="2.5"/>${hion(ix - 7, 128, 6)}${hion(ix + 7, 138, 6)}` : '';
-  n.lines.forEach((w, i) => { s += text(tx, 118 + i * 18, w, `xs b ${i === 0 ? '' : n.cls || ''}`, anchor); });
-  return `<g data-note="${side}">${s}</g>`;
+  const left = side === 'left', ix = left ? 34 : 446, tx = left ? 72 : 408, anchor = left ? 'start' : 'end';
+  let s = n.icon === 'lungs' ? lungsIcon(ix, 140, 1) : n.icon === 'kidney' ? kidneyIcon(ix, 140, 1) : n.icon === 'add' ? plusIcon(ix, 136) : n.icon === 'acid' ? acidIcon(ix, 136) : '';
+  if (n.badge) {
+    const bx = left ? tx + 11 : tx - 11, col = n.badge === 1 ? INK : n.tone === 'second' ? ACID : BLUE;
+    s += `<circle data-badge="${n.badge}" cx="${bx}" cy="110" r="11.5" fill="${col}"/>` + text(bx, 116, String(n.badge), 'xs b on-badge');
+    s += text(left ? tx + 30 : tx - 30, 116, n.lines[0], 'xs b', anchor);
+  } else s += text(tx, 116, n.lines[0], 'xs b', anchor);
+  n.lines.slice(1).forEach((w, i) => { s += text(tx, 138 + 22 * i, w, `xs b ${n.cls || ''}`, anchor); });
+  const g = `<g data-note="${side}" ${n.op != null && n.op < 1 ? fade(n.op) : ''}>${s}</g>`;
+  return n.part ? part(n.part, g) : g;
 }
-function attrs(o) { return `data-bicarb="${o.rH.toFixed(4)}" data-co2="${o.rP.toFixed(4)}" data-ph="${o.dpH.toFixed(4)}"`; }
+const anyLost = o => o.rP < .995 || o.rH < .995, anyAdded = o => o.rP > 1.005 || o.rH > 1.005;
+// opt: { ghost (normal state, or null), left, right (notes), word (what the needle did), center (lines under the meter) }
 function seesaw(o, opt = {}) {
-  const { ghost = null, ghostKey = 'normal', ghostWord = 'normal', legend = '', left = null, right = null, extra = '' } = opt;
-  let s = DEFS + gauge(o, ghost);
-  s += `<path d="M${PIV.x} ${PIV.y} L${PIV.x - 26} 368 H${PIV.x + 26} Z" fill="${INK}"/><path d="M150 368 H330" stroke="${INK}" stroke-width="2"/>`;
-  if (ghost) s += `<g class="ghost" data-ghost="${ghostKey}" ${attrs(ghost)}>${blocks(ghost, tiltOf(ghost.dpH), true)}</g>`;
-  s += `<g data-new-state="${legend || 'current'}" ${attrs(o)}>${blocks(o, tiltOf(o.dpH))}${note('left', left)}${note('right', right)}</g>`;
-  s += text(96, 396, 'acid side', 'xs b acid') + text(96, 414, 'carbon dioxide', 'xs b');
-  s += text(384, 396, 'base side', 'xs b blue') + text(384, 414, 'bicarbonate', 'xs b');
-  s += extra;
-  if (ghost) {
-    const key = keyRow([[`<path d="M0 0 H34" stroke="${INK}" stroke-width="2" stroke-dasharray="6 5" opacity=".6"/>`, ghostWord], [`<rect x="0" y="-7" width="34" height="14" fill="${BASEL}" stroke="${INK}" stroke-width="2"/>`, legend]], 446);
-    return { body: s + key.body, h: 462 + 28 * (key.rows - 1) };
-  }
-  return { body: s, h: 428 };
+  const { ghost = BASE, left = null, right = null, word = '', center = null, centerY = 112, from = ghost } = opt;
+  const { L, R } = ends(tiltOf(o.dpH));
+  let b = DEFS + meter(o, ghost, word, from);
+  if (center) b += center.map((w, i) => text(240, centerY + 24 * i, w, 'sm b')).join('');
+  if (ghost) b += `<path class="ghost" data-ghost="normal" d="M66 ${PIV.y} H414" stroke="${INK}" stroke-width="2" stroke-dasharray="7 6" opacity=".55"/>`;
+  b += `<path d="M${PIV.x} ${PIV.y} L${PIV.x - 26} ${PIV.y + 30} H${PIV.x + 26} Z" fill="${INK}"/><path d="M150 ${PIV.y + 30} H330" stroke="${INK}" stroke-width="2"/>`;
+  b += `<path d="M${f(L.x)} ${f(L.y)} L${f(R.x)} ${f(R.y)}" stroke="${INK}" stroke-width="7" stroke-linecap="round"/>`;
+  b += `<path d="M${f(L.x - 46)} ${f(L.y - 4)} H${f(L.x + 46)} M${f(R.x - 46)} ${f(R.y - 4)} H${f(R.x + 46)}" stroke="${INK}" stroke-width="4" stroke-linecap="round"/>`;
+  b += `<g data-new-state ${attrs(o)}>${part('acid-side', stack(L.x, L.y - 6, o.rP, 'acid'))}${part('base-side', stack(R.x, R.y - 6, o.rH, 'base'))}</g>`;
+  b += note('left', left) + note('right', right);
+  b += part('acid-side', text(70, 362, 'acid side:', 'xs b acid') + text(70, 384, 'carbon dioxide', 'xs b'));
+  b += part('base-side', text(410, 362, 'base side:', 'xs b blue') + text(410, 384, 'bicarbonate', 'xs b'));
+  const keys = [];
+  if (anyLost(o)) keys.push([lost(0, -6, 8), 'lost']);
+  if (anyAdded(o)) keys.push([`<circle cx="0" cy="-6" r="7" fill="${MUTED}"/><circle cx="0" cy="-6" r="10.5" fill="none" stroke="${MUTED}" stroke-width="1.6"/>`, 'added']);
+  keys.forEach(([icon, w], i) => { const x = keys.length === 1 ? 200 : 170 + i * 80; b += `<g transform="translate(${x} 386)">${icon}${text(16, 0, w, 'xs muted', 'start')}</g>`; });
+  return b;
 }
-const seesawSvg = (label, o, opt) => { const { body, h } = seesaw(o, opt); return svg(label, body, h); };
+const SEESAW_H = 398;
+const seesawSvg = (label, o, opt) => svg(label, seesaw(o, opt), SEESAW_H);
+function attrs(o) { return `data-bicarb="${o.rH.toFixed(4)}" data-co2="${o.rP.toFixed(4)}" data-ph="${o.dpH.toFixed(4)}"`; }
 
 /* ---------- Words: comparisons and text alternatives ---------- */
 const amount = (v, b) => { const r = v / b; return r > 1.015 ? ['more', 'up'] : r < .985 ? ['less', 'down'] : ['about the same', 'same']; };
@@ -154,257 +180,238 @@ const ARROW = { up: '↑', down: '↓', same: '↔', acidic: '←', alkaline: '�
 const readout = (o, ref, head) => `<ul class="readout" aria-label="${head}"><li class="head">${head}</li>${compare(o, ref).map(([k, [w, d]]) => `<li><b>${k}</b> <span class="${d}">${ARROW[d]} ${w}</span></li>`).join('')}</ul>`;
 const describe = (o, ref) => compare(o, ref).map(([k, [w]]) => `${k.toLowerCase()}: ${w}`).join('; ');
 const tiltWords = o => { const t = tiltOf(o.dpH), inside = inBand(o); return Math.abs(t) < .6 ? `The beam sits level and the pH needle is ${inside ? 'inside' : 'just outside'} the healthy band.` : `The beam tips down on the ${t > 0 ? 'base' : 'acid'} side and the pH needle moves toward ${t > 0 ? 'alkaline' : 'acidic'}${inside ? ', still inside the healthy band' : ', out of the healthy band'}.`; };
+const tokenWords = o => `Carbon dioxide side: ${f(6 * o.rP)} of 6 tokens; bicarbonate side: ${f(6 * o.rH)} of 6 tokens.`;
 
-/* ---------- Core step pictures ---------- */
+/* ---------- Build the idea: the step pictures ---------- */
 function scalePicture() {
   // Positions along the scale are illustrative, not to scale.
   const X = u => 30 + 420 * u;
-  let b = DEFS + `<rect x="30" y="74" width="420" height="22" fill="url(#ah-ph)" stroke="${INK}" stroke-width="1.5"/>`;
-  const mark = (u, up, lines, cls) => {
-    const x = X(u), y0 = up ? 74 : 96, y1 = up ? 56 : 114;
-    let s = `<path d="M${f(x)} ${y0} V${y1}" stroke="${INK}" stroke-width="2"/>`;
-    lines.forEach((w, i) => { s += text(x, up ? 50 - (lines.length - 1 - i) * 17 : 130 + i * 17, w, `xs b ${cls}`); });
-    return s;
-  };
-  b += mark(.12, true, ['lemon juice'], 'acid') + mark(.5, true, ['water'], '') + mark(.82, true, ['soap'], 'blue');
-  b += `<rect data-blood-band x="${f(X(.525))}" y="70" width="${f(420 * .03)}" height="30" fill="#fff" stroke="${INK}" stroke-width="2.5"/>`;
-  b += mark(.54, false, ['blood'], '');
+  let b = DEFS + part('scale', `<rect x="30" y="76" width="420" height="22" fill="url(#ah-ph)" stroke="${INK}" stroke-width="1.5"/>`);
+  const mark = (u, word, cls) => `<path d="M${f(X(u))} 76 V60" stroke="${INK}" stroke-width="2"/>` + text(X(u), 52, word, `xs b ${cls}`);
+  b += mark(.12, 'lemon juice', 'acid') + mark(.5, 'water', '') + mark(.82, 'soap', 'blue');
+  b += `<rect data-blood-band x="${f(X(.525))}" y="72" width="${f(420 * .03)}" height="30" fill="#fff" stroke="${INK}" stroke-width="2.5"/>` + text(X(.54), 126, 'blood', 'xs b');
+  b += text(30, 126, 'acidic', 'xs b acid', 'start') + text(450, 126, 'alkaline', 'xs b blue', 'end');
   // Zoomed view of blood's band.
-  b += `<path d="M${f(X(.525))} 100 L40 196 M${f(X(.555))} 100 L440 196" stroke="${INK}" stroke-width="1.2" stroke-dasharray="4 4"/>`;
-  b += `<rect x="40" y="196" width="400" height="104" fill="#fff" stroke="${INK}" stroke-width="1.5"/>`;
-  b += text(240, 222, 'zoomed in on blood', 'xs b muted');
-  b += `<rect x="60" y="240" width="360" height="18" fill="url(#ah-ph)" stroke="${INK}" stroke-width="1.2"/><rect x="200" y="232" width="80" height="34" fill="none" stroke="${INK}" stroke-width="3"/>`;
-  b += `<path d="M230 226 L250 226 L240 242 Z" fill="${INK}"/>`;
-  b += text(60, 288, '← too acidic', 'xs b acid on-white', 'start') + text(420, 288, 'too alkaline →', 'xs b blue on-white', 'end') + text(240, 288, 'the narrow band', 'xs b on-white');
-  b += text(30, 160, '← more acidic', 'xs b acid', 'start') + text(450, 160, 'more alkaline →', 'xs b blue', 'end');
+  b += `<path d="M${f(X(.525))} 102 L40 176 M${f(X(.555))} 102 L440 176" stroke="${INK}" stroke-width="1.2" stroke-dasharray="4 4"/>`;
+  b += `<rect x="40" y="176" width="400" height="116" fill="#fff" stroke="${INK}" stroke-width="1.5"/>`;
+  b += text(240, 200, 'zoomed in on blood', 'xs b muted on-white');
+  b += `<rect x="60" y="212" width="360" height="18" fill="url(#ah-ph)" stroke="${INK}" stroke-width="1.2"/><rect x="196" y="204" width="88" height="34" fill="none" stroke="${INK}" stroke-width="3"/>`;
+  b += `<path d="M240 230 L231 246 H249 Z" fill="${INK}"/>`;
+  b += text(60, 274, 'too acidic', 'xs b acid on-white', 'start') + text(240, 274, 'healthy band', 'xs b on-white') + text(420, 274, 'too alkaline', 'xs b blue on-white', 'end');
   return b;
 }
-function madePicture() {
+// Moving: carbon dioxide and other acids stream out of a working cell into the blood.
+function madePicture(t) {
   let b = DEFS;
-  b += `<path d="M40 150 C34 90 110 60 160 76 C214 92 226 150 210 200 C194 252 120 270 74 240 C46 222 44 190 40 150 Z" fill="#f2e6d6" stroke="${INK}" stroke-width="2.5"/>`;
-  b += `<ellipse cx="118" cy="160" rx="30" ry="24" fill="#e2d2bb" stroke="${INK}" stroke-width="1.5"/>`;
-  b += text(126, 296, 'a working cell', 'sm b');
-  b += `<rect x="330" y="30" width="120" height="290" rx="14" fill="${ACIDL}" stroke="${ACID}" stroke-width="2.5"/>` + text(390, 56, 'blood', 'sm b acid');
-  b += arrow('M214 120 H322', INK, 3) + arrow('M214 210 H322', ACID, 3);
-  b += text(268, 108, 'carbon dioxide', 'xs b') + text(268, 198, 'other acids', 'xs b acid');
-  [[360, 100], [400, 128], [420, 90], [372, 150]].forEach(([x, y]) => { b += bubble(x, y); });
-  [[356, 210], [384, 236], [416, 204], [402, 268], [364, 280], [428, 240]].forEach(([x, y]) => { b += hion(x, y, 6); });
-  b += bubble(170, 140, 7) + hion(176, 196, 5);
-  return b + keyRow([[bubble(18, 0, 7), 'carbon dioxide'], [hion(18, 0, 6), 'hydrogen ion']], 352).body;
+  b += `<path d="M30 150 C26 96 86 66 128 80 C170 94 182 146 170 190 C158 238 100 258 62 232 C38 216 34 186 30 150 Z" fill="#f2e6d6" stroke="${INK}" stroke-width="2.5"/>`;
+  b += `<ellipse cx="96" cy="160" rx="26" ry="20" fill="#e2d2bb" stroke="${INK}" stroke-width="1.5"/>` + text(100, 290, 'a working cell', 'sm b');
+  b += `<rect x="330" y="40" width="130" height="240" rx="14" fill="${ACIDL}" stroke="${ACID}" stroke-width="2.5"/>` + text(395, 70, 'blood', 'sm b acid');
+  let co2 = arrow('M182 124 H320', INK, 3) + text(251, 108, 'carbon dioxide', 'xs b');
+  let acids = arrow('M182 214 H320', ACID, 3) + text(251, 198, 'other acids', 'xs b acid');
+  let hs = '';
+  for (let i = 0; i < 3; i++) {
+    const p = (t + i / 3) % 1, op = Math.sin(Math.PI * p);
+    co2 += bubble(188 + 124 * p, 124, 8, fade(op));
+    hs += hion(188 + 124 * ((p + .17) % 1), 214, 6, fade(Math.sin(Math.PI * ((p + .17) % 1))));
+  }
+  b += part('co2', co2 + [[360, 100], [404, 128], [424, 92], [372, 150]].map(([x, y]) => bubble(x, y)).join(''));
+  b += part('acids', acids);
+  b += part('h', hs + [[356, 206], [386, 232], [418, 200], [404, 262], [362, 258], [432, 236]].map(([x, y]) => hion(x, y, 6)).join(''));
+  b += `<g transform="translate(16 330)">${bubble(8, -6, 7)}${text(24, 0, 'carbon dioxide', 'xs', 'start')}${hion(170, -6, 6)}${text(184, 0, 'hydrogen ion', 'xs', 'start')}</g>`;
+  return b;
 }
-function bufferPicture() {
+// Moving: a drop of acid into plain water, and into blood with its buffer.
+function bufferPicture(t) {
+  const fall = ease(span(t, .06, .36)), react = ease(span(t, .42, .78));
   let b = DEFS;
-  const beaker = (cx, fill, label, swing, word, buffered) => {
+  const beaker = (cx, fill, label, buffered) => {
     let s = `<path d="M${cx - 70} 120 V250 Q${cx - 70} 268 ${cx - 52} 268 H${cx + 52} Q${cx + 70} 268 ${cx + 70} 250 V120" fill="none" stroke="${INK}" stroke-width="3"/>`;
     s += `<path d="M${cx - 68} 150 H${cx + 68} V250 Q${cx + 68} 266 ${cx + 52} 266 H${cx - 52} Q${cx - 68} 266 ${cx - 68} 250 Z" fill="${fill}"/>`;
-    s += `<path d="M${cx - 8} 34 H${cx + 8} V74 L${cx} 86 L${cx - 8} 74 Z" fill="#fff" stroke="${INK}" stroke-width="2"/>` + hion(cx, 104, 7) + text(cx + 18, 60, 'acid in', 'xs b acid', 'start');
-    if (buffered) [[cx - 40, 190], [cx - 6, 220], [cx + 34, 186], [cx + 18, 240], [cx - 30, 244]].forEach(([x, y], i) => { s += i < 2 ? carbonic(x, y, 11) : bicarb(x, y, 11); });
-    else [[cx - 30, 200], [cx + 10, 180], [cx + 30, 230], [cx - 10, 236]].forEach(([x, y]) => { s += hion(x, y, 6); });
+    s += `<path d="M${cx - 8} 34 H${cx + 8} V74 L${cx} 86 L${cx - 8} 74 Z" fill="#fff" stroke="${INK}" stroke-width="2"/>` + text(cx + 18, 62, 'acid in', 'xs b acid', 'start');
+    const dy = lerp(98, 176, fall);
+    if (buffered) {
+      // The buffer: bicarbonate that catches the acid, and carbonic acid already made.
+      s += part('buffer', [[cx - 40, 236], [cx + 34, 226]].map(([x, y]) => carbonic(x, y, 11)).join('') + bicarb(cx + 36, 186, 11) + bicarb(cx - 34, 196, 11)
+        + (react < 1 ? bicarb(lerp(cx + 4, cx, react), lerp(236, 182, react), 11, fade(1 - react)) : '') + (react > 0 ? `<g ${fade(react)}>${carbonic(cx, 182, 11)}</g>` : ''));
+      if (react < .02) s += hion(cx, dy, 7);
+    } else {
+      if (react < .02) s += hion(cx, dy, 7);
+      else [[cx - 34, 204], [cx + 12, 188], [cx + 36, 232], [cx - 10, 240]].forEach(([x, y]) => { s += hion(lerp(cx, x, react), lerp(176, y, react), 6); });
+    }
     s += text(cx, 292, label, 'xs b');
-    s += `<rect x="${cx - 80}" y="312" width="160" height="12" fill="url(#ah-ph)" stroke="${INK}" stroke-width="1.2"/>`;
-    s += `<path d="M${cx - 6} 302 L${cx + 6} 302 L${cx} 312 Z" fill="none" stroke="${INK}" stroke-width="1.5" stroke-dasharray="2 2" opacity=".6"/>`;
-    const n = cx - swing;
-    s += `<path d="M${n - 8} 300 L${n + 8} 300 L${n} 314 Z" fill="${INK}"/>` + text(cx, 348, word, 'xs b');
+    s += `<rect x="${cx - 80}" y="306" width="160" height="12" fill="url(#ah-ph)" stroke="${INK}" stroke-width="1.2"/>`;
+    s += `<path class="ghost" d="M${cx} 320 L${cx - 7} 332 H${cx + 7} Z" fill="none" stroke="${INK}" stroke-width="1.5" stroke-dasharray="2 2"/>`;
+    const n = cx - (buffered ? 6 : 66) * react;
+    s += `<path d="M${f(n)} 319 L${f(n - 8)} 333 H${f(n + 8)} Z" fill="${INK}"/>` + text(cx, 356, buffered ? 'pH barely moves' : 'pH swings far', 'xs b');
     return s;
   };
-  b += beaker(124, '#e3e9ef', 'plain water', 66, 'pH swings far', false);
-  b += beaker(356, ACIDL, 'blood, with buffer', 6, 'pH barely moves', true);
+  b += beaker(124, '#e3e9ef', 'plain water', false) + beaker(356, ACIDL, 'blood, with buffer', true);
   return b;
 }
-function bicarbPicture() {
-  // A three-frame story, no reaction symbols: the ion drifts in, is caught, and is held.
+// Moving: a hydrogen ion drifts in and bicarbonate catches it, becoming carbonic acid.
+function bicarbPicture(t) {
+  const go = ease(span(t, .1, .45)), caught = span(t, .45, .55), out = span(t, 0, .08);
   let b = DEFS;
-  const frame = (cx, word1, word2) => `<rect x="${cx - 72}" y="14" width="144" height="100" fill="#fff" stroke="${RULE}" stroke-width="1.5"/>` + text(cx, 136, word1, 'xs b') + text(cx, 153, word2, 'xs b');
-  b += frame(85, 'a hydrogen ion', 'drifts close') + frame(240, 'bicarbonate', 'catches it') + frame(395, 'carbonic acid', 'holds on tight');
-  b += `<path d="M138 26 C122 34 116 44 106 50" fill="none" stroke="${ACID}" stroke-width="2" stroke-dasharray="3 4"/>` + bicarb(70, 74, 20) + hion(102, 52, 8);
-  b += bicarb(240, 70, 20) + hion(258, 52, 8) + `<path d="M218 46 A32 32 0 0 1 270 40" fill="none" stroke="${BLUE}" stroke-width="2.5" stroke-linecap="round"/>`;
-  b += carbonic(395, 66, 22);
-  b += `<rect x="30" y="178" width="420" height="168" fill="${ACIDL}" stroke="${ACID}" stroke-width="2"/>` + text(46, 202, 'in blood', 'xs b acid', 'start');
+  const hx = lerp(70, 222, go), hy = lerp(56, 66, go);
+  let top = '';
+  top += caught < 1 ? part('bicarb', bicarb(240, 84, 24, fade(1 - caught))) : '';
+  top += caught > 0 ? part('carbonic', `<g ${fade(caught)}><circle cx="240" cy="84" r="24" fill="${BASEL}" stroke="${BLUE}" stroke-width="3"/></g>`) : '';
+  top += hion(caught > 0 ? 222 : hx, caught > 0 ? 66 : hy, 9);
+  if (go < .3) top += `<g ${fade(1 - span(go, .1, .3))}>${text(70, 34, 'hydrogen ion', 'xs b acid')}</g>`;
+  if (caught < 1) top += `<g ${fade(1 - caught)}>${text(240, 136, 'bicarbonate', 'xs b blue')}</g>`;
+  if (caught > 0) top += `<g ${fade(caught)}>${text(240, 136, 'carbonic acid: holds on', 'xs b')}</g>`;
+  b += `<g ${fade(out)}>${top}</g>`;
+  b += `<rect x="30" y="166" width="420" height="160" fill="${ACIDL}" stroke="${ACID}" stroke-width="2"/>` + text(46, 190, 'in blood', 'xs b acid', 'start');
+  let crowd = '', one = '';
   for (let i = 0; i < 21; i++) {
-    const x = 84 + (i % 7) * 52, y = 232 + Math.floor(i / 7) * 40;
-    b += i === 10 ? carbonic(x, y, 12) : bicarb(x, y, 12);
+    const x = 84 + (i % 7) * 52, y = 222 + Math.floor(i / 7) * 38;
+    if (i === 10) one += carbonic(x, y, 12); else crowd += bicarb(x, y, 12);
   }
-  return b + text(240, 370, 'far more bicarbonate than carbonic acid', 'xs b');
+  b += part('bicarb', crowd) + part('carbonic', one);
+  return b + text(240, 356, 'far more bicarbonate than carbonic acid', 'xs b');
 }
-function swapPicture() {
-  // A picture of the process, no reaction symbols: carbonic acid splits in the blood and the gas leaves through the lungs.
+// Moving: carbonic anhydrase splits carbonic acid into carbon dioxide and water; the gas is breathed out.
+function swapPicture(t) {
+  const split = span(t, .25, .42), rise = ease(span(t, .5, .9)), back = 0;
   let b = DEFS;
-  b += text(20, 40, 'the split also runs backward:', 'xs muted', 'start') + text(20, 58, 'carbon dioxide and water rejoin', 'xs muted', 'start');
-  b += lungsIcon(420, 62, 1.3) + text(420, 118, 'lungs', 'xs b');
+  b += text(16, 36, 'the split also runs backward:', 'xs muted', 'start') + text(16, 58, 'carbon dioxide and water rejoin', 'xs muted', 'start');
+  b += lungsIcon(420, 66, 1.3) + text(420, 128, 'lungs', 'xs b');
   b += `<rect x="20" y="196" width="440" height="124" rx="16" fill="${ACIDL}" stroke="${ACID}" stroke-width="2"/>` + text(36, 220, 'blood', 'xs b acid', 'start');
-  b += carbonic(80, 272, 20);
-  b += `<g data-enzyme><path d="M130 272 l14 -24 h102 l14 24 l-14 24 h-102 z" fill="#fff" stroke="${BLUE}" stroke-width="2.5"/>${text(195, 268, 'carbonic', 'xs b blue on-white')}${text(195, 286, 'anhydrase', 'xs b blue on-white')}</g>`;
-  b += bubble(318, 262, 16) + `<path d="M378 248 C390 264 396 274 396 282 A18 18 0 0 1 360 282 C360 274 366 264 378 248 Z" fill="#cfe0f2" stroke="${INK}" stroke-width="2"/>`;
-  b += `<path d="M318 244 C318 196 352 150 396 104" fill="none" stroke="${ACID}" stroke-width="2.5" stroke-dasharray="4 5"/>` + text(330, 150, 'breathed out', 'xs b acid', 'end');
-  b += text(80, 344, 'carbonic acid', 'xs b') + text(195, 366, 'speeds the split', 'xs b blue') + text(318, 344, 'carbon dioxide', 'xs b') + text(420, 344, 'water', 'xs b');
+  b += arrow('M100 272 H296', BLUE, 3, 'stroke-dasharray="2 7"');
+  b += part('enzyme', `<path d="M130 272 l14 -24 h102 l14 24 l-14 24 h-102 z" fill="#fff" stroke="${BLUE}" stroke-width="2.5"/>${text(195, 268, 'carbonic', 'xs b blue on-white')}${text(195, 288, 'anhydrase', 'xs b blue on-white')}`);
+  b += `<g ${fade(1 - split)}>${carbonic(70, 272, 20)}</g>` + (split > 0 ? `<circle cx="70" cy="272" r="20" fill="none" stroke="${INK}" stroke-width="1.6" stroke-dasharray="3.5 3" ${fade(split * .75)}/>` : '');
+  // The path the carbon dioxide takes out to the lungs.
+  b += `<path d="M330 248 C334 196 360 150 400 108" fill="none" stroke="${ACID}" stroke-width="2.5" stroke-dasharray="4 5"/>` + text(316, 178, 'breathed out', 'xs b acid', 'end');
+  const bx = lerp(330, 404, rise), by = lerp(264, 84, rise) + (rise > 0 && rise < 1 ? -10 * Math.sin(Math.PI * rise) : 0);
+  b += bubble(bx, by, 16, fade(split * (1 - .55 * span(t, .82, .95))));
+  b += `<g ${fade(split * (1 - back))}>${drop(420, 270, 1)}</g>`;
+  b += text(70, 346, 'carbonic acid', 'xs b') + text(318, 346, 'carbon dioxide', 'xs b') + text(420, 346, 'water', 'xs b') + text(195, 370, 'speeds the split', 'xs b blue');
   return b;
 }
-function speedsPicture() {
-  let b = DEFS;
-  const row = (y, icon, name, x1, word, color) => icon + text(84, y - 8, name, 'xs b', 'start') + `<rect x="84" y="${y}" width="${x1 - 84}" height="16" fill="${color}" stroke="${INK}" stroke-width="1.5"/>` + text(x1 + 8, y + 13, word, 'xs b', x1 > 360 ? 'end' : 'start');
-  b += row(70, bicarb(46, 66, 14) + hion(56, 56, 6), 'buffers', 120, 'seconds', BASEL);
-  b += row(150, lungsIcon(46, 146, .9), 'lungs', 220, 'minutes', ACIDL);
-  b += row(230, kidneyIcon(46, 226, .9), 'kidneys', 456, '', BASEL) + text(456, 268, 'hours to days', 'xs b', 'end');
-  b += arrow('M84 290 H460', INK, 2.5) + text(460, 314, 'time since acid arrives →', 'xs b', 'end');
-  return b;
-}
-function mini(cx, cy, o, changed, word) {
-  const t = tiltOf(o.dpH) * 1.1, a = t * Math.PI / 180, c = Math.cos(a) * 78, s = Math.sin(a) * 78;
+// The four disorders, each on a small seesaw: which side changed first, and which way the beam tips.
+function mini(cx, cy, o, title, tone, word) {
+  const th = tiltOf(o.dpH) * 1.1, a = th * Math.PI / 180, c = Math.cos(a) * 64, s = Math.sin(a) * 64;
   const L = { x: cx - c, y: cy - s }, R = { x: cx + c, y: cy + s };
-  const hA = 30 * o.rP, hB = 30 * o.rH;
-  let g = `<path d="M${cx} ${cy} L${cx - 13} ${cy + 26} H${cx + 13} Z" fill="${INK}"/>`;
+  let g = text(cx, cy - 100, title, `xs b ${tone}`);
+  g += `<path d="M${cx} ${cy} L${cx - 13} ${cy + 24} H${cx + 13} Z" fill="${INK}"/>`;
   g += `<path d="M${f(L.x)} ${f(L.y)} L${f(R.x)} ${f(R.y)}" stroke="${INK}" stroke-width="5" stroke-linecap="round"/>`;
-  g += `<rect x="${f(L.x - 22)}" y="${f(L.y - 3 - hA)}" width="44" height="${f(hA)}" fill="${ACIDL}" stroke="${ACID}" stroke-width="${changed === 'acid' ? 4 : 2}"/>`;
-  g += `<rect x="${f(R.x - 22)}" y="${f(R.y - 3 - hB)}" width="44" height="${f(hB)}" fill="${BASEL}" stroke="${BLUE}" stroke-width="${changed === 'base' ? 4 : 2}"/>`;
-  g += text(cx, cy + 50, word, `xs b ${changed === 'acid' ? 'acid' : 'blue'}`);
-  return g;
+  g += `<path d="M${f(L.x - 26)} ${f(L.y - 3)} H${f(L.x + 26)} M${f(R.x - 26)} ${f(R.y - 3)} H${f(R.x + 26)}" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>`;
+  g += stack(L.x, L.y - 5, o.rP, 'acid', 6.5, 15) + stack(R.x, R.y - 5, o.rH, 'base', 6.5, 15);
+  return g + text(cx, cy + 52, word, 'xs b');
 }
 function fourPicture() {
-  let b = DEFS;
-  b += text(130, 26, 'acidosis', 'sm b acid') + text(360, 26, 'alkalosis', 'sm b blue');
-  b += `<path d="M245 40 V400 M16 214 H470" stroke="${RULE}" stroke-width="1.5"/>`;
-  b += text(16, 58, 'respiratory', 'xs b muted', 'start') + text(16, 238, 'metabolic', 'xs b muted', 'start');
-  b += mini(130, 150, model({ m: 1, r: 1.5, c: 0 }), 'acid', 'more carbon dioxide');
-  b += mini(360, 150, model({ m: 1, r: .62, c: 0 }), 'acid', 'less carbon dioxide');
-  b += mini(130, 330, model({ m: .62, r: 1, c: 0 }), 'base', 'less bicarbonate');
-  b += mini(360, 330, model({ m: 1.45, r: 1, c: 0 }), 'base', 'more bicarbonate');
+  let b = DEFS + `<path d="M240 8 V386 M8 196 H472" stroke="${RULE}" stroke-width="1.5"/>`;
+  b += mini(124, 126, model({ m: 1, r: 1.5, c: 0 }), 'respiratory acidosis', 'acid', '↑ carbon dioxide first');
+  b += mini(356, 126, model({ m: 1, r: .62, c: 0 }), 'respiratory alkalosis', 'blue', '↓ carbon dioxide first');
+  b += mini(124, 322, model({ m: .62, r: 1, c: 0 }), 'metabolic acidosis', 'acid', '↓ bicarbonate first');
+  b += mini(356, 322, model({ m: 1.45, r: 1, c: 0 }), 'metabolic alkalosis', 'blue', '↑ bicarbonate first');
   return b;
 }
-const UNCOMP = model({ m: .62, r: 1, c: 0 }), COMP = model({ m: .62, r: 1, c: 1 });
-const CORE = {
-  scale: () => svg('A pH scale running from more acidic on the left, red, to more alkaline on the right, blue. Lemon juice sits far to the acidic end, water in the middle, soap toward the alkaline end. Blood is a small box just on the alkaline side of water. A zoomed-in view shows that narrow band, with too acidic on one side and too alkaline on the other.', scalePicture(), 312),
-  made: () => svg('A working cell on the left with two arrows into a blood vessel on the right: one carries white carbon dioxide bubbles, the other carries red dots, hydrogen ions from other acids.', madePicture(), 366),
-  buffer: () => svg('Two beakers, each with a drop of acid falling in. Left: plain water, the acid dots float free and the pH pointer below swings far toward acidic. Right: blood with a buffer, blue particles catch the acid and the pH pointer barely moves.', bufferPicture(), 360),
-  bicarb: () => svg('Three small frames. First, a red hydrogen ion drifts close to a blue bicarbonate. Then the bicarbonate catches it. Now the pair is carbonic acid, a pale circle holding on tight to the red dot. Below, a box of blood holds many blue bicarbonate circles and just one carbonic acid: far more bicarbonate than carbonic acid.', bicarbPicture(), 384),
-  swap: () => svg('A blood vessel. Inside it, carbonic acid meets the enzyme carbonic anhydrase, which speeds up its split into a carbon dioxide bubble and a drop of water. A dotted trail carries the carbon dioxide up out of the blood to the lungs: breathed out. A note says the split also runs backward: carbon dioxide and water rejoin.', swapPicture(), 380),
-  balance: () => seesawSvg(`A pH meter above a seesaw. On the left, the acid side, a red block of carbon dioxide; on the right, the base side, a blue block of bicarbonate. ${tiltWords(BASE)}`, BASE, {
-    extra: text(240, 150, 'level beam:', 'sm b') + text(240, 174, 'pH in its band', 'sm b') + arrow('M240 186 V230', INK, 2.5)
-  }),
-  lungs: () => seesawSvg(`The seesaw with lungs above the acid side. Faster breathing makes the carbon dioxide block lighter, slower breathing makes it heavier. ${tiltWords(BASE)}`, BASE, { left: { icon: 'lungs', lines: ['lungs', 'faster: lighter', 'slower: heavier'], cls: 'acid' } }),
-  kidneys: () => seesawSvg(`The seesaw with lungs above the acid side and kidneys above the base side. The kidneys keep bicarbonate or let it go. ${tiltWords(BASE)}`, BASE, { left: { icon: 'lungs', lines: ['lungs', 'set this side'], cls: 'muted' }, right: { icon: 'kidney', lines: ['kidneys', 'keep it or', 'let it go'], cls: 'blue' } }),
-  speeds: () => svg('A timeline. Buffers respond within seconds, a short bar. Lungs take minutes, a longer bar. Kidneys take hours to days, a bar running across the whole timeline.', speedsPicture(), 324),
-  four: () => svg('Four small seesaws in a grid. Columns: acidosis, alkalosis. Rows: respiratory, metabolic. Respiratory acidosis: carbon dioxide up, tipping acidic. Respiratory alkalosis: carbon dioxide down, tipping alkaline. Metabolic acidosis: bicarbonate down, tipping acidic. Metabolic alkalosis: bicarbonate up, tipping alkaline.', fourPicture(), 404),
-  compensate: () => seesawSvg(`Metabolic acidosis: the bicarbonate block is smaller. A dashed outline shows the seesaw before compensating, tipped well toward acidic. After the lungs respond, the carbon dioxide block is smaller too and the beam is closer to level, still tipped a little toward acidic. ${tiltWords(COMP)}`, COMP, { ghost: UNCOMP, ghostKey: 'uncompensated', ghostWord: 'before compensating', legend: 'after the lungs respond', left: { icon: 'lungs', lines: ['lungs breathe', 'off extra', 'carbon dioxide'], cls: 'acid' } }),
-  whole: () => seesawSvg(`The whole picture. Buffers act at once; lungs above the acid side set carbon dioxide; kidneys above the base side set bicarbonate. The three things a blood test reads are labelled: pH on the meter, carbon dioxide and bicarbonate on the two blocks. ${tiltWords(BASE)}`, BASE, {
-    left: { icon: 'lungs', lines: ['lungs', 'minutes'], cls: 'acid' }, right: { icon: 'kidney', lines: ['kidneys', 'hours to days'], cls: 'blue' },
-    extra: text(240, 200, 'buffers:', 'xs b') + text(240, 218, 'at once', 'xs b')
-  })
-};
+// Moving: the three defences start one after another as time runs on.
+function speedsPicture(t) {
+  const cur = lerp(84, 456, span(t, .04, .92));
+  let b = DEFS;
+  const rows = [
+    { y: 70, icon: bicarb(40, 72, 14) + hion(52, 60, 6), name: 'buffers', x0: 104, fill: BASEL },
+    { y: 160, icon: lungsIcon(40, 158, .9), name: 'lungs', x0: 206, fill: ACIDL },
+    { y: 250, icon: kidneyIcon(42, 252, .9), name: 'kidneys', x0: 322, fill: BASEL }
+  ];
+  for (const r of rows) {
+    b += r.icon + text(84, r.y - 10, r.name, 'xs b', 'start');
+    b += `<rect x="84" y="${r.y}" width="372" height="18" fill="#fff" stroke="${RULE}"/>`;
+    if (cur > r.x0) b += `<rect x="${r.x0}" y="${r.y}" width="${f(cur - r.x0)}" height="18" fill="${r.fill}" stroke="${INK}" stroke-width="1.5"/>`;
+  }
+  b += arrow('M84 300 H462', INK, 2.5);
+  [[104, 'seconds'], [206, 'minutes'], [322, 'hours'], [432, 'days']].forEach(([x, w]) => { b += `<path d="M${x} 294 V306" stroke="${INK}" stroke-width="2"/>` + text(x, 326, w, 'xs b'); });
+  b += `<path d="M${f(cur)} 40 V296" stroke="${BLUE}" stroke-width="2" stroke-dasharray="5 4"/>`;
+  return b + text(456, 356, 'time since acid arrives →', 'xs b', 'end');
+}
 
-/* ---------- What changes it ---------- */
-// Each change runs in two phases: the first change, then the body's response (or a second change).
+/* ---------- The notes the seesaw pictures carry ---------- */
+const LUNGS_SET = { icon: 'lungs', lines: ['lungs set', 'this side'], cls: 'muted' };
+function lungsLoop(t) {
+  const r = 1 - .38 * Math.sin(2 * Math.PI * t), o = model({ m: 1, r, c: 0 });
+  const fast = t < .5, level = Math.abs(r - 1) < .07;
+  const left = { icon: 'lungs', part: 'lungs', lines: level ? ['lungs set', 'this side'] : fast ? ['breathe faster:', 'carbon dioxide', 'blown off'] : ['breathe slower:', 'carbon dioxide', 'builds up'], cls: level ? 'muted' : fast ? 'blue' : 'acid' };
+  return { o, left, word: o.dpH > .01 ? 'pH rises' : o.dpH < -.01 ? 'pH falls' : '' };
+}
+function kidneysLoop(t) {
+  const m = 1 + .38 * Math.sin(2 * Math.PI * t), o = model({ m, r: 1, c: 0 });
+  const keep = t < .5, level = Math.abs(m - 1) < .07;
+  const right = { icon: 'kidney', part: 'kidneys', lines: level ? ['kidneys set', 'this side'] : keep ? ['kidneys keep', 'more bicarbonate'] : ['kidneys let', 'more go'], cls: level ? 'muted' : keep ? 'blue' : 'acid' };
+  return { o, left: LUNGS_SET, right, word: o.dpH > .01 ? 'pH rises' : o.dpH < -.01 ? 'pH falls' : '' };
+}
+// Each change runs in two parts: the first change (badge 1), then the other side answering (badge 2).
 const CHANGES = {
+  compensate: [{ m: .62, r: 1, c: 0 }, { m: .62, r: 1, c: 1 }],
   cai: [{ m: .72, r: 1, c: 0 }, { m: .72, r: 1, c: .6 }],
   diuretic: [{ m: 1.3, r: 1, c: 0 }, { m: 1.3, r: 1, c: .6 }],
   sodium: [{ m: 1.35, r: 1, c: 0 }, { m: 1.35, r: 1, c: .6 }],
-  salicylate: [{ m: .7, r: 1, c: 0 }, { m: .7, r: .62, c: 0 }]
+  // Salicylate: breathing is driven first (carbon dioxide falls), then acids build up (bicarbonate falls): a mixed picture.
+  salicylate: [{ m: 1, r: .62, c: 0 }, { m: .65, r: .62, c: 0 }]
 };
-const LEGEND = { cai: 'carbonic anhydrase inhibitor', diuretic: 'diuretic causing potassium loss', sodium: 'sodium bicarbonate', salicylate: 'salicylate toxicity' };
+const ANSWER_SLOWER = { side: 'left', icon: 'lungs', badge: 2, part: 'answer', lines: ['lungs answer:', 'breathe slower'], cls: 'blue' };
 const NOTES = {
-  cai: [{ right: { icon: 'kidney', lines: ['kidneys', 'enzyme blocked:', 'bicarbonate lost'], cls: 'acid' } }, { left: { icon: 'lungs', lines: ['lungs', 'breathe faster', 'to compensate'], cls: 'muted' } }],
-  diuretic: [{ right: { icon: 'kidney', lines: ['kidneys', 'potassium low:', 'bicarbonate kept'], cls: 'blue' } }, { left: { icon: 'lungs', lines: ['lungs', 'breathe a little', 'slower'], cls: 'muted' } }],
-  sodium: [{ right: { icon: 'add', lines: ['bicarbonate', 'added', 'directly'], cls: 'blue' } }, { left: { icon: 'lungs', lines: ['lungs', 'breathe a little', 'slower'], cls: 'muted' } }],
-  salicylate: [{ right: { icon: 'acid', lines: ['salicylic acid', 'uses up', 'bicarbonate'], cls: 'acid' } }, { left: { icon: 'lungs', lines: ['lungs', 'breathing', 'driven hard'], cls: 'blue' } }]
+  compensate: [{ side: 'right', icon: 'acid', badge: 1, lines: ['bicarbonate', 'falls first'], cls: 'acid' }, { side: 'left', icon: 'lungs', badge: 2, part: 'answer', lines: ['lungs answer:', 'breathe off', 'carbon dioxide'], cls: 'blue' }],
+  cai: [{ side: 'right', icon: 'kidney', badge: 1, part: 'kidney', lines: ['enzyme blocked:', 'bicarbonate', 'lost in urine'], cls: 'acid' }, { side: 'left', icon: 'lungs', badge: 2, part: 'answer', lines: ['lungs answer:', 'breathe faster'], cls: 'blue' }],
+  diuretic: [{ side: 'right', icon: 'kidney', badge: 1, part: 'kidney', lines: ['less fluid, same', 'bicarbonate:', 'it rises'], cls: 'blue' }, ANSWER_SLOWER],
+  sodium: [{ side: 'right', icon: 'add', badge: 1, part: 'added', lines: ['bicarbonate', 'added directly'], cls: 'blue' }, ANSWER_SLOWER],
+  salicylate: [{ side: 'left', icon: 'lungs', badge: 1, part: 'drive', lines: ['breathing', 'driven hard'], cls: 'blue' }, { side: 'right', icon: 'acid', badge: 2, tone: 'second', lines: ['then acids', 'build up, using', 'up bicarbonate'], cls: 'acid' }]
 };
+function twoPart(kind, t) {
+  const [a, b] = CHANGES[kind], first = t < .5;
+  const o = model(first ? mix(NORMAL, a, ease(span(t, .04, .42))) : mix(a, b, ease(span(t, .56, .94))));
+  const [n1, n2] = NOTES[kind], side = {};
+  const a1 = span(t, .1, .24), a2 = span(t, .58, .72);
+  if (a1 > .01) side[n1.side] = { ...n1, op: a1 };
+  if (a2 > .01) side[n2.side] = { ...n2, op: a2 };
+  const firstDp = model(a).dpH;
+  const word = first ? (o.dpH < -.01 ? 'pH falls' : o.dpH > .01 ? 'pH rises' : '') : (Math.abs(o.dpH) < Math.abs(firstDp) - .01 ? (kind === 'salicylate' ? 'back near normal' : 'back toward normal') : o.dpH < 0 ? 'pH falls' : 'pH rises');
+  return { o, left: side.left || null, right: side.right || null, word, from: first ? BASE : model(a) };
+}
+
+/* ---------- The lesson's scenes, one per step kind ---------- */
 const CHANGE_WHERE = {
-  cai: 'First the bicarbonate block shrinks as the kidneys lose bicarbonate, and the beam tips toward acidic. Then the lungs breathe faster and the carbon dioxide block shrinks a little, pulling the beam part of the way back.',
-  diuretic: 'First, with potassium low, the kidneys push out more hydrogen ions and keep more bicarbonate: the bicarbonate block grows and the beam tips toward alkaline. Then breathing slows a little and the carbon dioxide block grows slightly, pulling the beam a little way back.',
-  sodium: 'First the bicarbonate block grows as bicarbonate is added, and the beam tips toward alkaline. Then breathing slows a little and the carbon dioxide block grows slightly, pulling the beam a little way back.',
-  salicylate: 'First the bicarbonate block shrinks as salicylic acid uses it up, and the beam tips toward acidic. Then breathing is driven hard, the carbon dioxide block shrinks a lot, and the beam swings past level toward alkaline.'
+  compensate: 'First, badge 1: bicarbonate falls, three of the six blue tokens become dashed rings, the beam tips down on the acid side and the pH needle moves toward acidic. Then, badge 2: the lungs answer by breathing off carbon dioxide, so the carbon dioxide side loses tokens too; the beam comes back toward level and the needle back toward the band, but not past normal.',
+  cai: 'First, badge 1 on the base side: with the kidney enzyme blocked, bicarbonate is lost in urine; blue tokens leave, the beam tips down on the acid side and the needle moves toward acidic. Then, badge 2 on the acid side: the lungs answer by breathing faster, carbon dioxide tokens leave too, and the needle comes part of the way back.',
+  diuretic: 'First, badge 1 on the base side: with less fluid around the same bicarbonate, bicarbonate rises; ringed blue tokens are added, the beam tips down on the base side and the needle moves toward alkaline. Then, badge 2 on the acid side: the lungs answer by breathing slower, a little carbon dioxide is added, and the needle comes a little way back.',
+  sodium: 'First, badge 1 on the base side: bicarbonate is added directly; ringed blue tokens appear, the beam tips down on the base side and the needle moves toward alkaline. Then, badge 2 on the acid side: the lungs answer by breathing slower, a little carbon dioxide is added, and the needle comes a little way back.',
+  salicylate: 'First, badge 1 on the acid side: breathing is driven hard and carbon dioxide tokens leave, so the beam tips down on the base side and the needle swings toward alkaline: a respiratory alkalosis. Then, badge 2 in red on the base side: acids build up and use up bicarbonate, so blue tokens leave too and the needle swings back near normal, with both sides now short: a mixed picture.'
 };
-const DURATION = 2400;
-function stateAt(kind, t) {
-  const ease = x => 1 - Math.pow(1 - clamp(x, 0, 1), 3);
-  const [a, b] = CHANGES[kind];
-  return t < .5 ? mix(NORMAL, a, ease(t / .5)) : mix(a, b, ease((t - .5) / .5));
-}
-function changePicture(el, t) {
-  const kind = el.dataset.kind, o = model(stateAt(kind, t));
-  const name = el.dataset.stepTitle.split(':')[0];
-  const label = `${name}, drawn over a faint dashed outline of the normal balance. ${CHANGE_WHERE[kind]} ${tiltWords(o)} Compared with normal: ${describe(o, BASE)}.`;
-  const [n1, n2] = NOTES[kind];
-  const opt = { ghost: BASE, legend: LEGEND[kind], ...n1, ...(t >= .5 ? n2 : {}) };
-  return { pic: seesawSvg(label, o, opt), ro: readout(o, BASE, 'Compared with normal') };
-}
-
-const steps = $$('[data-step]');
-const backBtn = $('[data-step-back]'), nextBtn = $('[data-step-next]'), progress = $('[data-step-progress]');
-let current = 0, frame = 0;
-const visualOf = el => el.querySelector('[data-visual]');
-const isAnimated = el => el.dataset.kind in CHANGES;
-const lastReadout = new WeakMap();
-function drawAt(el, t) {
-  const v = visualOf(el), { pic, ro } = changePicture(el, t), old = v.querySelector('svg');
-  if (!old) { v.innerHTML = pic + ro; lastReadout.set(v, ro); return; }
-  old.outerHTML = pic;
-  if (lastReadout.get(v) !== ro) { v.querySelector('.readout').outerHTML = ro; lastReadout.set(v, ro); }
-}
-function animate(el) {
-  cancelAnimationFrame(frame);
-  if (reducedMotion()) { drawAt(el, 1); return; }
-  let start = null;
-  drawAt(el, 0);
-  const tick = now => {
-    if (start === null) start = now;
-    const t = Math.min(1, (now - start) / DURATION);
-    drawAt(el, t);
-    if (t < 1) frame = requestAnimationFrame(tick);
+const TITLE = { compensate: 'Compensation', cai: 'Carbonic anhydrase inhibitor', diuretic: 'Loop or thiazide diuretic', sodium: 'Sodium bicarbonate', salicylate: 'Salicylate toxicity' };
+function changeScene(kind, withReadout = true) {
+  return {
+    duration: 4200,
+    render(t) {
+      const { o, left, right, word, from } = twoPart(kind, t);
+      const label = `${TITLE[kind]}, drawn over a dashed level beam and a dashed pH needle for normal. ${CHANGE_WHERE[kind]} ${tiltWords(o)} ${tokenWords(o)}`;
+      const pic = seesawSvg(label, o, { left, right, word, from });
+      return withReadout ? { svg: pic, readout: readout(o, BASE, 'Compared with normal') } : pic;
+    }
   };
-  frame = requestAnimationFrame(tick);
 }
-let started = false;
-function startLesson() {
-  steps.forEach(el => {
-    const kind = el.dataset.kind;
-    if (CORE[kind]) visualOf(el).innerHTML = CORE[kind]();
-    else drawAt(el, 1);
-    el.querySelector('.replay')?.addEventListener('click', () => animate(el));
-  });
-  started = true;
-  if (/^#step-\d+$/.test(location.hash)) fromHash(); else showStep(current);
-}
-function showStep(n, focus = false) {
-  if (!started) return;
-  cancelAnimationFrame(frame);
-  current = clamp(n, 0, steps.length - 1);
-  steps.forEach((el, i) => { el.hidden = i !== current; });
-  backBtn.disabled = current === 0;
-  nextBtn.textContent = current === steps.length - 1 ? 'Start again ↻' : 'Next →';
-  progress.textContent = `Step ${current + 1} of ${steps.length}`;
-  if (location.hash !== `#step-${current + 1}`) history.replaceState(null, '', `#step-${current + 1}`);
-  const el = steps[current];
-  if (isAnimated(el)) animate(el);
-  // Scroll the whole step (not just its heading) so the top of a side-by-side visual is never under the sticky bar.
-  if (focus) { el.querySelector('h2').focus({ preventScroll: true }); el.scrollIntoView({ block: 'start' }); }
-}
-nextBtn.addEventListener('click', () => showStep(current === steps.length - 1 ? 0 : current + 1, true));
-backBtn.addEventListener('click', () => showStep(current - 1, true));
-$('#lesson').addEventListener('keydown', e => {
-  if (e.target.closest('input, select, textarea') || e.altKey || e.ctrlKey || e.metaKey) return;
-  if (e.key === 'ArrowRight' && current < steps.length - 1) { e.preventDefault(); showStep(current + 1, true); }
-  if (e.key === 'ArrowLeft' && current > 0) { e.preventDefault(); showStep(current - 1, true); }
-});
-
-/* ---------- Tabs ---------- */
-const tabs = $$('[role=tab]');
-function activate(tab, focus = false) {
-  tabs.forEach(t => { const on = t === tab; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; document.getElementById(t.getAttribute('aria-controls')).hidden = !on; });
-  if (focus) tab.focus();
-  if (tab.id === 'tab-lesson') { if (started && isAnimated(steps[current])) drawAt(steps[current], 1); } else cancelAnimationFrame(frame);
-  update();
-}
-tabs.forEach((t, i) => {
-  t.addEventListener('click', () => activate(t));
-  t.addEventListener('keydown', e => {
-    const n = { ArrowRight: (i + 1) % tabs.length, ArrowLeft: (i + tabs.length - 1) % tabs.length, Home: 0, End: tabs.length - 1 }[e.key];
-    if (n !== undefined) { e.preventDefault(); activate(tabs[n], true); }
-  });
-});
-function fromHash() {
-  const m = location.hash.match(/^#step-(\d+)$/);
-  if (m && started) { if (tabs[0].getAttribute('aria-selected') !== 'true') activate(tabs[0]); showStep(Number(m[1]) - 1); }
-}
-window.addEventListener('hashchange', fromHash);
+const still = (label, body, h) => () => svg(label, body(), h);
+const scenes = {
+  scale: still('A pH scale running from acidic on the left, red, to alkaline on the right, blue. Lemon juice sits far toward the acidic end, water in the middle, soap toward the alkaline end. Blood is a small box just on the alkaline side of water. A zoomed-in view shows that narrow healthy band, with too acidic on one side and too alkaline on the other.', scalePicture, 302),
+  made: { duration: 3200, loop: true, rest: .4, render: t => svg('A working cell on the left with two arrows into a blood vessel on the right. Along the upper arrow, white carbon dioxide bubbles keep streaming into the blood; along the lower arrow, red dots, hydrogen ions from other acids.', madePicture(t), 342) },
+  buffer: { duration: 4200, render: t => svg('Two beakers, each with a drop of acid falling in. Left: plain water; the acid breaks up into free red hydrogen ions and the pH pointer below swings far toward acidic. Right: blood with a buffer; a blue bicarbonate catches the acid and becomes carbonic acid, and the pH pointer barely moves.', bufferPicture(t), 366) },
+  bicarb: { duration: 3600, loop: true, rest: .7, render: t => svg('A red hydrogen ion drifts toward a blue bicarbonate, which catches it and becomes carbonic acid, a pale circle holding on to the red dot. Below, a box of blood holds many blue bicarbonates and just one carbonic acid: far more bicarbonate than carbonic acid.', bicarbPicture(t), 368) },
+  swap: { duration: 4200, render: t => svg('Inside a blood vessel, carbonic acid passes the enzyme carbonic anhydrase, which speeds its split into a carbon dioxide bubble and a drop of water. The carbon dioxide bubble then rises along a dotted path out of the blood to the lungs: breathed out. A note says the split also runs backward: carbon dioxide and water rejoin.', swapPicture(t), 380) },
+  balance: () => seesawSvg(`A pH meter above a seesaw. On the left, the acid side, six carbon dioxide tokens; on the right, the base side, six bicarbonate tokens: the normal mix. ${tiltWords(BASE)}`, BASE, { ghost: null, center: ['level beam:', 'pH in its band'] }),
+  lungs: { duration: 6400, loop: true, rest: .25, render: t => { const s = lungsLoop(t); return svg(`The seesaw with lungs above the acid side, breathing faster and then slower. Breathing faster blows off carbon dioxide tokens, the beam tips down on the base side and the pH needle rises; breathing slower lets carbon dioxide build up, the beam tips down on the acid side and the needle falls. ${tokenWords(s.o)}`, seesaw(s.o, { left: s.left, word: s.word }), SEESAW_H); } },
+  kidneys: { duration: 7000, loop: true, rest: .25, render: t => { const s = kidneysLoop(t); return svg(`The seesaw with lungs above the acid side and kidneys above the base side. The kidneys keep more bicarbonate, adding ringed blue tokens so the beam tips toward alkaline, then let more go, so blue tokens leave and the beam tips toward acidic. ${tokenWords(s.o)}`, seesaw(s.o, { left: s.left, right: s.right, word: s.word }), SEESAW_H); } },
+  speeds: { duration: 4600, render: t => svg('A timeline that runs on from seconds to days. Buffers start within seconds, a bar from the start; the lungs join within minutes; the kidneys join over hours and keep working for days.', speedsPicture(t), 364) },
+  four: still('Four small seesaws in a grid. Respiratory acidosis: carbon dioxide up first, tokens added on the acid side, tipping toward acidic. Respiratory alkalosis: carbon dioxide down first, tokens lost, tipping toward alkaline. Metabolic acidosis: bicarbonate down first, tipping toward acidic. Metabolic alkalosis: bicarbonate up first, tipping toward alkaline.', fourPicture, 392),
+  compensate: changeScene('compensate', false),
+  whole: () => seesawSvg(`The whole picture. Buffers act at once; lungs above the acid side set carbon dioxide in minutes; kidneys above the base side set bicarbonate over hours to days. The three things a blood test reads: pH on the meter, carbon dioxide and bicarbonate on the two sides. ${tiltWords(BASE)}`, BASE, {
+    ghost: null, center: ['buffers: at once'], centerY: 92,
+    left: { icon: 'lungs', lines: ['lungs set this', 'side in minutes'], cls: 'muted' }, right: { icon: 'kidney', lines: ['kidneys set it', 'over hours', 'to days'], cls: 'muted' }
+  }),
+  cai: changeScene('cai'),
+  diuretic: changeScene('diuretic'),
+  sodium: changeScene('sodium'),
+  salicylate: changeScene('salicylate'),
+};
 
 /* ---------- Absolute numbers (only once the data file has loaded) ---------- */
 let K = null, data = null;
@@ -424,13 +431,13 @@ function phMap(o) {
   const lo = iso(K.phLo), hi = iso(K.phHi);
   b += `<path data-ph-band d="M${X(pLo)} ${Y(lo(pLo))} L${X(pHi)} ${Y(lo(pHi))} L${X(pHi)} ${Y(hi(pHi))} L${X(pLo)} ${Y(hi(pLo))} Z" fill="#d1d8fd" clip-path="url(#ah-plot)"/>`;
   b += `<path d="M${x0} ${y1 - 10} V${y0} H${x1 + 6}" fill="none" stroke="${INK}" stroke-width="2"/>`;
-  for (let p = Math.ceil(pLo / 10) * 10; p <= pHi; p += 10) b += `<path d="M${X(p)} ${y0} V${y0 + 6}" stroke="${INK}" stroke-width="1.5"/>` + text(X(p), y0 + 22, String(p), 'xs');
-  for (let h = Math.ceil(hLo / 10) * 10; h <= hHi; h += 10) b += `<path d="M${x0 - 6} ${Y(h)} H${x0}" stroke="${INK}" stroke-width="1.5"/>` + text(x0 - 10, Y(h) + 5, String(h), 'xs', 'end');
-  b += text(x1, y0 + 46, 'carbon dioxide, PCO2 (mm Hg) →', 'xs b', 'end') + text(12, 14, 'bicarbonate (mM) ↑', 'xs b', 'start');
-  b += text(X(pHi * .86), Y(hi(pHi * .86)) - 10, `pH ${K.phLo}–${K.phHi}`, 'xs b blue', 'end');
-  b += text(x0 + 12, y1 + 18, '← more alkaline', 'xs b blue', 'start') + text(x1 - 6, y0 - 12, 'more acidic →', 'xs b acid', 'end');
+  for (let p = Math.ceil(pLo / 10) * 10; p <= pHi; p += 10) b += `<path d="M${X(p)} ${y0} V${y0 + 6}" stroke="${INK}" stroke-width="1.5"/>` + text(X(p), y0 + 24, String(p), 'xs');
+  for (let h = Math.ceil(hLo / 10) * 10; h <= hHi; h += 10) b += `<path d="M${x0 - 6} ${Y(h)} H${x0}" stroke="${INK}" stroke-width="1.5"/>` + text(x0 - 10, Y(h) + 6, String(h), 'xs', 'end');
+  b += text(x1, y0 + 50, 'carbon dioxide, PCO2 (mm Hg) →', 'xs b', 'end') + text(12, 14, 'bicarbonate (mM) ↑', 'xs b', 'start');
+  b += text(X(pHi * .86), Y(hi(pHi * .86)) - 12, `pH ${K.phLo} to ${K.phHi}`, 'xs b blue', 'end');
+  b += text(x0 + 12, y1 + 20, '← more alkaline', 'xs b blue', 'start') + text(x1 - 6, y0 - 12, 'more acidic →', 'xs b acid', 'end');
   const n = absolute(BASE), pr = absolute(model({ ...o.p, c: 0 })), now = absolute(o);
-  b += `<circle cx="${X(n.pco2)}" cy="${Y(n.hco3)}" r="5" fill="${INK}"/>` + text(X(n.pco2) + 9, Y(n.hco3) + 18, 'normal', 'xs b', 'start');
+  b += `<circle cx="${X(n.pco2)}" cy="${Y(n.hco3)}" r="5" fill="${INK}"/>` + text(X(n.pco2) + 10, Y(n.hco3) + 22, 'normal', 'xs b', 'start');
   if (o.who) b += `<circle data-primary cx="${X(pr.pco2)}" cy="${Y(pr.hco3)}" r="8" fill="none" stroke="${INK}" stroke-width="2" stroke-dasharray="3 3"/>` + arrow(`M${X(pr.pco2)} ${Y(pr.hco3)} L${X(now.pco2)} ${Y(now.hco3)}`, MUTED, 2);
   b += `<circle data-point cx="${X(now.pco2)}" cy="${Y(now.hco3)}" r="8" fill="${BLUE}" stroke="#fff" stroke-width="2"/>`;
   return b;
@@ -445,6 +452,15 @@ function syncControls() {
   for (const [id, k] of Object.entries(SLIDERS)) {
     for (const pre of ['', 'clinical-']) { $('#' + pre + id).value = params[k]; $(`#${pre}${id}-label`).textContent = level(id, params[k]); }
   }
+}
+// The notes for any model state: badge 1 on the side that changed first, badge 2 on the side that answers.
+function notesFor(o) {
+  const p = o.p, side = { left: null, right: null };
+  if (Math.abs(p.r - 1) > .015) side.left = { icon: 'lungs', badge: 1, lines: ['carbon dioxide', p.r > 1 ? 'rises first' : 'falls first'], cls: p.r > 1 ? 'acid' : 'blue' };
+  if (Math.abs(p.m - 1) > .015) side.right = { icon: 'kidney', badge: 1, lines: ['bicarbonate', p.m > 1 ? 'rises first' : 'falls first'], cls: p.m > 1 ? 'blue' : 'acid' };
+  if (o.who === 'lungs') side.left = { icon: 'lungs', badge: 2, lines: ['lungs answer:', o.rP < p.r ? 'breathe faster' : 'breathe slower'], cls: 'blue' };
+  if (o.who === 'kidneys') side.right = { icon: 'kidney', badge: 2, lines: ['kidneys answer:', o.rH < p.m ? 'let more go' : 'keep more'], cls: 'blue' };
+  return side;
 }
 const valueOf = id => data.values.find(v => v.id === id);
 const hasRange = v => Number.isFinite(v.low) && Number.isFinite(v.high);
@@ -475,9 +491,8 @@ function changeWords(o) {
 function update() {
   syncControls();
   const o = model(params);
-  const label = `Illustrative model with these settings, drawn over a faint dashed outline of normal. ${tiltWords(o)} Compared with normal: ${describe(o, BASE)}.`;
-  const side = (who, organ) => o.who === who ? ['compensating', organ === 'lungs' ? (o.rP < o.primary.rP ? 'breathing faster' : 'breathing slower') : (o.rH < o.primary.rH ? 'letting it go' : 'keeping more')] : ['set this side'];
-  const opt = { ghost: BASE, legend: 'these settings', left: { icon: 'lungs', lines: ['lungs', ...side('lungs', 'lungs')], cls: o.who === 'lungs' ? 'blue' : 'muted' }, right: { icon: 'kidney', lines: ['kidneys', ...side('kidneys', 'kidneys')], cls: o.who === 'kidneys' ? 'blue' : 'muted' } };
+  const label = `Illustrative model with these settings, drawn over a dashed level beam and a dashed pH needle for normal. ${tiltWords(o)} ${tokenWords(o)} Compared with normal: ${describe(o, BASE)}.`;
+  const opt = { ...notesFor(o), word: o.dpH < -.01 ? 'toward acidic' : o.dpH > .01 ? 'toward alkaline' : '' };
   $('#explore-visual').innerHTML = seesawSvg(label, o, opt) + readout(o, BASE, 'Compared with normal');
   $('#clinical-visual').innerHTML = seesawSvg(label, o, opt);
   if (!data) {
@@ -488,7 +503,7 @@ function update() {
   const a = absolute(o);
   $('#model-results').textContent = `Illustrative model output: pH ${a.ph.toFixed(2)} · carbon dioxide (PCO2) ${a.pco2.toFixed(0)} mm Hg · bicarbonate ${a.hco3.toFixed(1)} mM · bicarbonate to carbonic acid ratio ${a.ratio.toFixed(1)} to 1. ${changeWords(o)}`;
   const pr = absolute(model({ ...o.p, c: 0 }));
-  $('#ph-map').innerHTML = svg(`Illustrative pH map: bicarbonate up the side, carbon dioxide along the bottom. A shaded wedge between two straight lines through the origin marks the pH range from the reference file, ${K.phLo} to ${K.phHi}. The normal point sits inside it. The model now sits at carbon dioxide ${a.pco2.toFixed(0)} mm Hg and bicarbonate ${a.hco3.toFixed(1)} mM, pH ${a.ph.toFixed(2)}${o.who ? `; before compensation it sat at ${pr.pco2.toFixed(0)} mm Hg and ${pr.hco3.toFixed(1)} mM, pH ${pr.ph.toFixed(2)}, and an arrow shows compensation moving it toward the wedge` : ''}.`, phMap(o), 330);
+  $('#ph-map').innerHTML = svg(`Illustrative pH map: bicarbonate up the side, carbon dioxide along the bottom. A shaded wedge between two straight lines through the origin marks the pH range from the reference file, ${K.phLo} to ${K.phHi}. The normal point sits inside it. The model now sits at carbon dioxide ${a.pco2.toFixed(0)} mm Hg and bicarbonate ${a.hco3.toFixed(1)} mM, pH ${a.ph.toFixed(2)}${o.who ? `; before compensation it sat at ${pr.pco2.toFixed(0)} mm Hg and ${pr.hco3.toFixed(1)} mM, pH ${pr.ph.toFixed(2)}, and an arrow shows compensation moving it toward the wedge` : ''}.`, phMap(o), 336);
   const state = data.states.find(s => s.id === $('#clinical-state').value);
   const m = { ph: a.ph, pco2: a.pco2, hco3: a.hco3, ratio: a.ratio };
   for (const v of data.values) {
@@ -596,7 +611,7 @@ async function load() {
     $('#load-error').hidden = false;
     $('#load-error').textContent = 'The reference file did not load. Reload the page to try again; the lesson and Explore freely still work on an illustrative model.';
   }
-  startLesson();
   update();
 }
-load();
+
+lesson({ scenes, before: load, onTab: { clinical: update, explore: update } });

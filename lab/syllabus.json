@@ -1,5 +1,37 @@
 {
-  "about": "The Lab's core-medicine course, in teaching order. The daily pipeline builds the first module that is neither shipped (in lab/apps.json) nor withdrawn (in lab/rejected.json). Reorder, add or remove modules by editing this list; never change the slug of a shipped lesson. drugClasses are the drug classes and disease states each lesson animates (never doses).",
+  "about": "The Lab's core-medicine course, in teaching order. The daily pipeline builds the first module that is neither shipped (in lab/apps.json) nor withdrawn (in lab/rejected.json). Reorder, add or remove modules by editing this list; never change the slug of a shipped lesson. drugClasses are the drug classes and disease states each lesson animates (never doses). Units group the modules into the course's six parts; a module's unit is one of the ids in units, and modules of one unit sit together.",
+  "units": [
+    {
+      "id": "circulation",
+      "title": "The heart, the kidney and blood pressure",
+      "summary": "How the heart fills and pumps, how the kidney handles salt and water, and the reflexes and hormones that hold blood pressure steady."
+    },
+    {
+      "id": "signals",
+      "title": "Nerves, rhythm and muscle",
+      "summary": "How nerves pass a signal on to organs and muscle, and the ion currents that set the rhythm of the heart."
+    },
+    {
+      "id": "breath-and-blood",
+      "title": "Breath and blood",
+      "summary": "How blood carries oxygen, how the lung matches air to blood, how blood pH is held steady, and how a clot is built."
+    },
+    {
+      "id": "hormones",
+      "title": "Hormones",
+      "summary": "Three hormone systems that run on feedback: insulin and glucose, the thyroid, and cortisol."
+    },
+    {
+      "id": "drug-handling",
+      "title": "The gut and drug handling",
+      "summary": "How the stomach makes acid on command, and how any drug's level rises and falls in the blood."
+    },
+    {
+      "id": "defence",
+      "title": "Inflammation, infection, immunity and cancer",
+      "summary": "How the body raises inflammation, fights bacteria, mounts an immune response and keeps cell division in check, and the drugs that act at each point."
+    }
+  ],
   "modules": [
     {
       "slug": "pressure-volume-loop",
@@ -12,7 +44,8 @@
         "Venodilators",
         "Beta-blockers",
         "Heart failure with reduced ejection fraction"
-      ]
+      ],
+      "unit": "circulation"
     },
     {
       "slug": "nephron-diuretics",
@@ -25,7 +58,8 @@
         "Carbonic anhydrase inhibitors (acetazolamide)",
         "Osmotic diuretics (mannitol)"
       ],
-      "notes": "Loop diuretic step: show Na+ leaving the nephron in the urine and blood volume dropping."
+      "notes": "Loop diuretic step: show Na+ leaving the nephron in the urine and blood volume dropping.",
+      "unit": "circulation"
     },
     {
       "slug": "frank-starling-cardiac-output",
@@ -38,7 +72,8 @@
         "Beta-blockers",
         "Venodilators (nitrates)",
         "Heart failure"
-      ]
+      ],
+      "unit": "circulation"
     },
     {
       "slug": "blood-pressure-regulation",
@@ -51,7 +86,8 @@
         "Beta-blockers",
         "Direct vasodilators",
         "Hemorrhage (volume loss)"
-      ]
+      ],
+      "unit": "circulation"
     },
     {
       "slug": "renin-angiotensin-aldosterone",
@@ -62,7 +98,8 @@
         "Angiotensin receptor blockers (ARBs)",
         "Aldosterone antagonists (spironolactone)",
         "Direct renin inhibitors"
-      ]
+      ],
+      "unit": "circulation"
     },
     {
       "slug": "autonomic-synapse",
@@ -73,7 +110,8 @@
         "Cholinesterase inhibitors",
         "Alpha agonists and blockers",
         "Beta agonists and blockers"
-      ]
+      ],
+      "unit": "signals"
     },
     {
       "slug": "cardiac-action-potential",
@@ -84,7 +122,8 @@
         "Beta-blockers (class II)",
         "Potassium channel blockers (class III)",
         "Calcium channel blockers (class IV)"
-      ]
+      ],
+      "unit": "signals"
     },
     {
       "slug": "neuromuscular-junction",
@@ -95,7 +134,8 @@
         "Depolarizing neuromuscular blockers (succinylcholine)",
         "Cholinesterase inhibitors (reversal)",
         "Myasthenia gravis"
-      ]
+      ],
+      "unit": "signals"
     },
     {
       "slug": "oxygen-hemoglobin-dissociation",
@@ -106,7 +146,8 @@
         "Left shift (fetal hemoglobin, cold, alkalosis)",
         "Carbon monoxide poisoning",
         "Anemia"
-      ]
+      ],
+      "unit": "breath-and-blood"
     },
     {
       "slug": "ventilation-perfusion",
@@ -117,7 +158,8 @@
         "Bronchodilators (beta-2 agonists, muscarinic antagonists)",
         "Pulmonary embolism (dead space)",
         "Pneumonia (shunt)"
-      ]
+      ],
+      "unit": "breath-and-blood"
     },
     {
       "slug": "acid-base",
@@ -128,7 +170,8 @@
         "Loop and thiazide diuretics (contraction alkalosis)",
         "Sodium bicarbonate",
         "Salicylate toxicity"
-      ]
+      ],
+      "unit": "breath-and-blood"
     },
     {
       "slug": "coagulation-cascade",
@@ -141,7 +184,8 @@
         "Direct thrombin inhibitors",
         "Antiplatelet drugs",
         "Thrombolytics"
-      ]
+      ],
+      "unit": "breath-and-blood"
     },
     {
       "slug": "insulin-glucose",
@@ -154,7 +198,8 @@
         "SGLT2 inhibitors",
         "GLP-1 receptor agonists",
         "DPP-4 inhibitors"
-      ]
+      ],
+      "unit": "hormones"
     },
     {
       "slug": "thyroid-axis",
@@ -165,7 +210,8 @@
         "Thionamides (methimazole, propylthiouracil)",
         "Radioactive iodine",
         "Beta-blockers for symptoms"
-      ]
+      ],
+      "unit": "hormones"
     },
     {
       "slug": "hpa-axis-steroids",
@@ -176,7 +222,8 @@
         "Mineralocorticoids",
         "Steroid synthesis inhibitors",
         "Cushing syndrome and adrenal insufficiency"
-      ]
+      ],
+      "unit": "hormones"
     },
     {
       "slug": "gastric-acid-secretion",
@@ -187,7 +234,8 @@
         "H2 receptor blockers",
         "Antacids",
         "Prostaglandin analogues"
-      ]
+      ],
+      "unit": "drug-handling"
     },
     {
       "slug": "pharmacokinetics",
@@ -198,7 +246,8 @@
         "Enzyme inhibitors",
         "Reduced kidney clearance",
         "Oral versus intravenous routes"
-      ]
+      ],
+      "unit": "drug-handling"
     },
     {
       "slug": "arachidonic-acid-nsaids",
@@ -210,7 +259,8 @@
         "Aspirin",
         "Glucocorticoids",
         "Leukotriene modifiers"
-      ]
+      ],
+      "unit": "defence"
     },
     {
       "slug": "bacterial-cell-antibiotics",
@@ -223,7 +273,8 @@
         "Macrolides and tetracyclines",
         "Fluoroquinolones",
         "Sulfonamides and trimethoprim"
-      ]
+      ],
+      "unit": "defence"
     },
     {
       "slug": "immune-response",
@@ -234,7 +285,8 @@
         "Calcineurin inhibitors",
         "Anti-TNF biologics",
         "Glucocorticoids"
-      ]
+      ],
+      "unit": "defence"
     },
     {
       "slug": "cell-cycle-chemotherapy",
@@ -246,7 +298,8 @@
         "Alkylating agents",
         "Topoisomerase inhibitors",
         "CDK4/6 inhibitors"
-      ]
+      ],
+      "unit": "defence"
     }
   ]
 }

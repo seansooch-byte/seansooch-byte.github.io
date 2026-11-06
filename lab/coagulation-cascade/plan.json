@@ -1,0 +1,199 @@
+{
+  "minutes": 27,
+  "prerequisites": [],
+  "objectives": [
+    "Trace how a torn vessel seals itself: vascular spasm, the platelet plug, then the fibrin net.",
+    "Explain how the clotting factors switch each other on, from two ways in through factor X and thrombin to fibrin, and how antithrombin and plasmin hold the clot in check.",
+    "Name exactly where heparins, warfarin, factor Xa inhibitors and direct thrombin inhibitors act on the cascade.",
+    "Tell antiplatelet drugs and thrombolytics apart from anticoagulants by what they act on."
+  ],
+  "checks": {
+    "heparin": {
+      "prompt": "Heparin latches on to antithrombin, the natural brake, and makes it switch off thrombin and factor Xa much faster. What happens to the fibrin net?",
+      "choices": [
+        "It thins: less thrombin is left to make fibrin",
+        "It thickens: the brake pushes more fibrin out",
+        "It stays the same: heparin acts only on platelets",
+        "It dissolves at once, like a clot-busting drug"
+      ],
+      "answer": 0,
+      "why": "Heparin does not touch fibrin directly. By speeding the antithrombin brake it leaves less factor Xa and thrombin working, so less fibrinogen becomes fibrin and the net thins."
+    },
+    "vka": {
+      "prompt": "Warfarin blocks the liver's recycling of vitamin K, which the liver needs to finish factors II, VII, IX and X. What goes out into the blood?",
+      "choices": [
+        "Clotting factors that are made but cannot work",
+        "No clotting factors at all",
+        "Extra clotting factors, to make up for the loss",
+        "Normal factors that are broken down faster"
+      ],
+      "answer": 0,
+      "why": "The liver still makes the proteins, but without vitamin K it cannot add their finishing touch, so they cannot work. The brakes proteins C and S are made faulty the same way."
+    },
+    "xa": {
+      "prompt": "A factor Xa inhibitor sits on switched-on factor X and stops it working. Which steps below it are affected?",
+      "choices": [
+        "Thrombin and fibrin: less of both is made",
+        "Only the platelet plug, which shrinks",
+        "None: thrombin is made straight from tissue factor",
+        "Only plasmin, which speeds up"
+      ],
+      "answer": 0,
+      "why": "Factor Xa is the first step of the shared path, the step that makes thrombin. Block it and less thrombin is made, so less fibrin too."
+    },
+    "dti": {
+      "prompt": "A direct thrombin inhibitor blocks thrombin itself, while factor X still switches on as usual. What happens to fibrin?",
+      "choices": [
+        "Little is made, because thrombin cannot turn fibrinogen into fibrin",
+        "It is made as usual, because factor X is working",
+        "It is made faster, because thrombin is freed up"
+      ],
+      "answer": 0,
+      "why": "Fibrinogen becomes fibrin only through thrombin. With thrombin blocked, factor X working upstream does not help: the net barely forms."
+    },
+    "antiplatelet": {
+      "prompt": "Aspirin stops platelets making thromboxane, and P2Y12 blockers stop ADP landing on platelets. Both are signals stuck platelets use to call in more. What happens to the platelet plug?",
+      "choices": [
+        "It is smaller and looser: fewer platelets are called in",
+        "It is bigger: the signals pile up",
+        "It is the same: these drugs act only on clotting factors"
+      ],
+      "answer": 0,
+      "why": "With one signal silenced and the other unable to land, fewer passing platelets join. The plug is smaller and looser, and it offers less surface for the cascade."
+    },
+    "lytic": {
+      "prompt": "A thrombolytic turns plasminogen into plasmin. What does plasmin do to an unwanted clot?",
+      "choices": [
+        "Cuts up its fibrin net, so the clot breaks up",
+        "Adds fibrin to make it stronger",
+        "Stops new platelets joining, but leaves the clot alone",
+        "Switches off factor X, so no new thrombin forms"
+      ],
+      "answer": 0,
+      "why": "Plasmin is the enzyme that breaks down fibrin. Making more of it breaks up a clot that has already formed, which no anticoagulant or antiplatelet drug can do."
+    }
+  },
+  "quiz": [
+    {
+      "id": "first-seal",
+      "objective": 1,
+      "step": "plug",
+      "stem": "What forms the first, soft seal over a small tear in a vessel?",
+      "choices": [
+        "A plug of platelets stuck together",
+        "A net of fibrin threads",
+        "A clump of red blood cells",
+        "A layer of antithrombin"
+      ],
+      "answer": 0,
+      "why": "Platelets pile into the tear first. Fibrin comes later and knits that soft plug into a firm patch."
+    },
+    {
+      "id": "vwf",
+      "objective": 1,
+      "step": "stick",
+      "stem": "What helps platelets stick to the collagen exposed by a tear?",
+      "choices": [
+        "Von Willebrand factor, which acts like double-sided tape",
+        "Antithrombin, which glues them on",
+        "Plasmin, which roughens the collagen",
+        "Thrombin, which turns platelets into fibrin"
+      ],
+      "answer": 0,
+      "why": "Von Willebrand factor binds both collagen and the platelet, holding the platelet on. Antithrombin and plasmin work against clotting, not for it."
+    },
+    {
+      "id": "meet",
+      "objective": 2,
+      "step": "paths",
+      "stem": "Where do the two ways into the cascade meet?",
+      "choices": [
+        "At factor X, the first step of the common pathway",
+        "At fibrinogen",
+        "At plasmin",
+        "At the platelet plug"
+      ],
+      "answer": 0,
+      "why": "Tissue factor with factor VII, and contact through factors XI and IX, both switch on factor X. From there one shared path makes thrombin and then fibrin."
+    },
+    {
+      "id": "antithrombin",
+      "objective": 2,
+      "step": "brake",
+      "stem": "What does antithrombin do?",
+      "choices": [
+        "Switches off thrombin and factor Xa, keeping the clot at the wound",
+        "Turns prothrombin into thrombin",
+        "Cuts fibrin threads apart",
+        "Makes platelets stickier"
+      ],
+      "answer": 0,
+      "why": "Antithrombin is the cascade's main brake: it switches off thrombin and factor Xa. Cutting fibrin is plasmin's job, a separate clean-up."
+    },
+    {
+      "id": "heparin-how",
+      "objective": 3,
+      "step": "heparin",
+      "stem": "How do heparins oppose clotting?",
+      "choices": [
+        "They speed up antithrombin, which switches off thrombin and factor Xa",
+        "They block the recycling of vitamin K in the liver",
+        "They stop platelets making thromboxane",
+        "They turn plasminogen into plasmin"
+      ],
+      "answer": 0,
+      "why": "Heparins work through antithrombin. Blocking vitamin K recycling is warfarin, stopping thromboxane is aspirin, and making plasmin is a thrombolytic."
+    },
+    {
+      "id": "warfarin-which",
+      "objective": 3,
+      "step": "vka",
+      "stem": "A patient takes warfarin. Which proteins does the liver release in a form that cannot work?",
+      "choices": [
+        "Factors II, VII, IX and X, and proteins C and S",
+        "Only fibrinogen",
+        "Only antithrombin",
+        "Factors VIII and XIII"
+      ],
+      "answer": 0,
+      "why": "These are the vitamin K–dependent proteins: four clotting factors and two of the cascade's brakes. Fibrinogen, antithrombin and factors VIII and XIII do not need vitamin K."
+    },
+    {
+      "id": "aspirin-what",
+      "objective": 4,
+      "step": "antiplatelet",
+      "stem": "A patient takes aspirin after a heart attack. What does it act on?",
+      "choices": [
+        "Platelets: it stops them making thromboxane",
+        "Factor Xa, which it blocks directly",
+        "Thrombin, which it blocks directly",
+        "Fibrin, which it dissolves"
+      ],
+      "answer": 0,
+      "why": "Aspirin is an antiplatelet drug: without thromboxane, platelets call in fewer others. It does not act on the clotting factors or on fibrin."
+    },
+    {
+      "id": "already-formed",
+      "objective": 4,
+      "step": "lytic",
+      "stem": "A clot is already blocking an artery. Which kind of drug breaks it down?",
+      "choices": [
+        "A thrombolytic, which makes plasmin to cut the fibrin",
+        "A factor Xa inhibitor, which dissolves fibrin",
+        "An antiplatelet drug, which dissolves platelets",
+        "Vitamin K, which reverses clotting"
+      ],
+      "answer": 0,
+      "why": "Anticoagulants and antiplatelet drugs stop new clot forming; only a thrombolytic, by making plasmin, breaks down fibrin that is already there. Vitamin K reverses warfarin, not a clot."
+    }
+  ],
+  "takeaways": [
+    "A torn vessel seals itself in three moves: the wall squeezes, platelets plug the tear, and fibrin knits the plug into a firm net.",
+    "Platelets stick to exposed collagen with von Willebrand factor's help, then call in more with ADP and thromboxane.",
+    "The cascade is a chain of switches: tissue factor with VII, and contact through XI and IX, switch on factor X; Xa turns prothrombin (II) into thrombin, and thrombin turns fibrinogen into fibrin.",
+    "Antithrombin switches off thrombin and factor Xa; plasmin cuts fibrin away as the vessel heals.",
+    "Heparins work through antithrombin. Warfarin blocks vitamin K recycling, so factors II, VII, IX and X and proteins C and S are made faulty.",
+    "Factor Xa inhibitors block factor Xa directly; direct thrombin inhibitors block thrombin itself.",
+    "Antiplatelet drugs act on platelets: aspirin stops thromboxane, P2Y12 blockers block ADP's landing site. Thrombolytics make plasmin to break up a clot that has already formed."
+  ]
+}

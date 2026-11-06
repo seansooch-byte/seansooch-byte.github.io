@@ -12,7 +12,21 @@
     "reviewer": {
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
-    }
+    },
+    "revisions": [
+      {
+        "date": "2026-11-06",
+        "what": "Rebuilt on the lesson kit: goals, time and prerequisites; a prediction before each change; a quiz tied to the goals; a printable summary with a glossary; pictures redrawn to read on a phone, moving under one player, with what changed named on the picture; independent clinical review of every caption, question and takeaway.",
+        "builder": {
+          "tool": "Claude Code",
+          "model": "claude-opus-5-5"
+        },
+        "reviewer": {
+          "tool": "OpenAI Codex",
+          "model": "gpt-5.6-sol"
+        }
+      }
+    ]
   },
   {
     "slug": "nephron-diuretics",
@@ -27,7 +41,21 @@
     "reviewer": {
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
-    }
+    },
+    "revisions": [
+      {
+        "date": "2026-11-06",
+        "what": "Rebuilt on the lesson kit: goals, time and prerequisites; a prediction before each change; a quiz tied to the goals; a printable summary with a glossary; pictures redrawn to read on a phone, moving under one player, with what changed named on the picture; independent clinical review of every caption, question and takeaway.",
+        "builder": {
+          "tool": "Claude Code",
+          "model": "claude-opus-5-5"
+        },
+        "reviewer": {
+          "tool": "OpenAI Codex",
+          "model": "gpt-5.6-sol"
+        }
+      }
+    ]
   },
   {
     "slug": "frank-starling-cardiac-output",
@@ -42,7 +70,21 @@
     "reviewer": {
       "tool": "Claude Code",
       "model": "claude-opus-5-5"
-    }
+    },
+    "revisions": [
+      {
+        "date": "2026-11-06",
+        "what": "Rebuilt on the lesson kit: goals, time and prerequisites; a prediction before each change; a quiz tied to the goals; a printable summary with a glossary; pictures redrawn to read on a phone, moving under one player, with what changed named on the picture; independent clinical review of every caption, question and takeaway.",
+        "builder": {
+          "tool": "Claude Code",
+          "model": "claude-opus-5-5"
+        },
+        "reviewer": {
+          "tool": "OpenAI Codex",
+          "model": "gpt-5.6-sol"
+        }
+      }
+    ]
   },
   {
     "slug": "blood-pressure-regulation",
@@ -57,7 +99,21 @@
     "reviewer": {
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
-    }
+    },
+    "revisions": [
+      {
+        "date": "2026-11-06",
+        "what": "Rebuilt on the lesson kit: goals, time and prerequisites; a prediction before each change; a quiz tied to the goals; a printable summary with a glossary; pictures redrawn to read on a phone, moving under one player, with what changed named on the picture; independent clinical review of every caption, question and takeaway.",
+        "builder": {
+          "tool": "Claude Code",
+          "model": "claude-opus-5-5"
+        },
+        "reviewer": {
+          "tool": "OpenAI Codex",
+          "model": "gpt-5.6-sol"
+        }
+      }
+    ]
   },
   {
     "slug": "renin-angiotensin-aldosterone",
@@ -72,7 +128,21 @@
     "reviewer": {
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
-    }
+    },
+    "revisions": [
+      {
+        "date": "2026-11-06",
+        "what": "Rebuilt on the lesson kit: goals, time and prerequisites; a prediction before each change; a quiz tied to the goals; a printable summary with a glossary; pictures redrawn to read on a phone, moving under one player, with what changed named on the picture; independent clinical review of every caption, question and takeaway.",
+        "builder": {
+          "tool": "Claude Code",
+          "model": "claude-opus-5-5"
+        },
+        "reviewer": {
+          "tool": "OpenAI Codex",
+          "model": "gpt-5.6-sol"
+        }
+      }
+    ]
   },
   {
     "slug": "autonomic-synapse",
@@ -87,7 +157,21 @@
     "reviewer": {
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
-    }
+    },
+    "revisions": [
+      {
+        "date": "2026-11-06",
+        "what": "Rebuilt on the lesson kit: goals, time and prerequisites; a prediction before each change; a quiz tied to the goals; a printable summary with a glossary; pictures redrawn to read on a phone, moving under one player, with what changed named on the picture; independent clinical review of every caption, question and takeaway.",
+        "builder": {
+          "tool": "Claude Code",
+          "model": "claude-opus-5-5"
+        },
+        "reviewer": {
+          "tool": "OpenAI Codex",
+          "model": "gpt-5.6-sol"
+        }
+      }
+    ]
   },
   {
     "slug": "cardiac-action-potential",
@@ -102,7 +186,21 @@
     "reviewer": {
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
-    }
+    },
+    "revisions": [
+      {
+        "date": "2026-11-06",
+        "what": "Rebuilt on the lesson kit: goals, time and prerequisites; a prediction before each change; a quiz tied to the goals; a printable summary with a glossary; pictures redrawn to read on a phone, moving under one player, with what changed named on the picture; independent clinical review of every caption, question and takeaway.",
+        "builder": {
+          "tool": "Claude Code",
+          "model": "claude-opus-5-5"
+        },
+        "reviewer": {
+          "tool": "OpenAI Codex",
+          "model": "gpt-5.6-sol"
+        }
+      }
+    ]
   },
   {
     "slug": "neuromuscular-junction",
@@ -117,7 +215,21 @@
     "reviewer": {
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
-    }
+    },
+    "revisions": [
+      {
+        "date": "2026-11-06",
+        "what": "Rebuilt on the lesson kit: goals, time and prerequisites; a prediction before each change; a quiz tied to the goals; a printable summary with a glossary; pictures redrawn to read on a phone, moving under one player, with what changed named on the picture; independent clinical review of every caption, question and takeaway.",
+        "builder": {
+          "tool": "Claude Code",
+          "model": "claude-opus-5-5"
+        },
+        "reviewer": {
+          "tool": "OpenAI Codex",
+          "model": "gpt-5.6-sol"
+        }
+      }
+    ]
   },
   {
     "slug": "oxygen-hemoglobin-dissociation",
@@ -132,7 +244,21 @@
     "reviewer": {
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
-    }
+    },
+    "revisions": [
+      {
+        "date": "2026-11-06",
+        "what": "Rebuilt on the lesson kit: goals, time and prerequisites; a prediction before each change; a quiz tied to the goals; a printable summary with a glossary; pictures redrawn to read on a phone, moving under one player, with what changed named on the picture; independent clinical review of every caption, question and takeaway.",
+        "builder": {
+          "tool": "Claude Code",
+          "model": "claude-opus-5-5"
+        },
+        "reviewer": {
+          "tool": "OpenAI Codex",
+          "model": "gpt-5.6-sol"
+        }
+      }
+    ]
   },
   {
     "slug": "ventilation-perfusion",
@@ -147,7 +273,21 @@
     "reviewer": {
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
-    }
+    },
+    "revisions": [
+      {
+        "date": "2026-11-06",
+        "what": "Rebuilt on the lesson kit: goals, time and prerequisites; a prediction before each change; a quiz tied to the goals; a printable summary with a glossary; pictures redrawn to read on a phone, moving under one player, with what changed named on the picture; independent clinical review of every caption, question and takeaway.",
+        "builder": {
+          "tool": "Claude Code",
+          "model": "claude-opus-5-5"
+        },
+        "reviewer": {
+          "tool": "OpenAI Codex",
+          "model": "gpt-5.6-sol"
+        }
+      }
+    ]
   },
   {
     "slug": "acid-base",
@@ -162,7 +302,21 @@
     "reviewer": {
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
-    }
+    },
+    "revisions": [
+      {
+        "date": "2026-11-06",
+        "what": "Rebuilt on the lesson kit: goals, time and prerequisites; a prediction before each change; a quiz tied to the goals; a printable summary with a glossary; pictures redrawn to read on a phone, moving under one player, with what changed named on the picture; independent clinical review of every caption, question and takeaway.",
+        "builder": {
+          "tool": "Claude Code",
+          "model": "claude-opus-5-5"
+        },
+        "reviewer": {
+          "tool": "OpenAI Codex",
+          "model": "gpt-5.6-sol"
+        }
+      }
+    ]
   },
   {
     "slug": "coagulation-cascade",
@@ -177,7 +331,21 @@
     "reviewer": {
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
-    }
+    },
+    "revisions": [
+      {
+        "date": "2026-11-06",
+        "what": "Rebuilt on the lesson kit: goals, time and prerequisites; a prediction before each change; a quiz tied to the goals; a printable summary with a glossary; pictures redrawn to read on a phone, moving under one player, with what changed named on the picture; independent clinical review of every caption, question and takeaway.",
+        "builder": {
+          "tool": "Claude Code",
+          "model": "claude-opus-5-5"
+        },
+        "reviewer": {
+          "tool": "OpenAI Codex",
+          "model": "gpt-5.6-sol"
+        }
+      }
+    ]
   },
   {
     "slug": "insulin-glucose",
@@ -192,7 +360,21 @@
     "reviewer": {
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
-    }
+    },
+    "revisions": [
+      {
+        "date": "2026-11-06",
+        "what": "Rebuilt on the lesson kit: goals, time and prerequisites; a prediction before each change; a quiz tied to the goals; a printable summary with a glossary; pictures redrawn to read on a phone, moving under one player, with what changed named on the picture; independent clinical review of every caption, question and takeaway.",
+        "builder": {
+          "tool": "Claude Code",
+          "model": "claude-opus-5-5"
+        },
+        "reviewer": {
+          "tool": "OpenAI Codex",
+          "model": "gpt-5.6-sol"
+        }
+      }
+    ]
   },
   {
     "slug": "thyroid-axis",
@@ -207,7 +389,21 @@
     "reviewer": {
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
-    }
+    },
+    "revisions": [
+      {
+        "date": "2026-11-06",
+        "what": "Rebuilt on the lesson kit: goals, time and prerequisites; a prediction before each change; a quiz tied to the goals; a printable summary with a glossary; pictures redrawn to read on a phone, moving under one player, with what changed named on the picture; independent clinical review of every caption, question and takeaway.",
+        "builder": {
+          "tool": "Claude Code",
+          "model": "claude-opus-5-5"
+        },
+        "reviewer": {
+          "tool": "OpenAI Codex",
+          "model": "gpt-5.6-sol"
+        }
+      }
+    ]
   },
   {
     "slug": "hpa-axis-steroids",
@@ -222,7 +418,21 @@
     "reviewer": {
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
-    }
+    },
+    "revisions": [
+      {
+        "date": "2026-11-06",
+        "what": "Rebuilt on the lesson kit: goals, time and prerequisites; a prediction before each change; a quiz tied to the goals; a printable summary with a glossary; pictures redrawn to read on a phone, moving under one player, with what changed named on the picture; independent clinical review of every caption, question and takeaway.",
+        "builder": {
+          "tool": "Claude Code",
+          "model": "claude-opus-5-5"
+        },
+        "reviewer": {
+          "tool": "OpenAI Codex",
+          "model": "gpt-5.6-sol"
+        }
+      }
+    ]
   },
   {
     "slug": "gastric-acid-secretion",
@@ -237,7 +447,21 @@
     "reviewer": {
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
-    }
+    },
+    "revisions": [
+      {
+        "date": "2026-11-06",
+        "what": "Rebuilt on the lesson kit: goals, time and prerequisites; a prediction before each change; a quiz tied to the goals; a printable summary with a glossary; pictures redrawn to read on a phone, moving under one player, with what changed named on the picture; independent clinical review of every caption, question and takeaway.",
+        "builder": {
+          "tool": "Claude Code",
+          "model": "claude-opus-5-5"
+        },
+        "reviewer": {
+          "tool": "OpenAI Codex",
+          "model": "gpt-5.6-sol"
+        }
+      }
+    ]
   },
   {
     "slug": "pharmacokinetics",
@@ -252,7 +476,21 @@
     "reviewer": {
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
-    }
+    },
+    "revisions": [
+      {
+        "date": "2026-11-06",
+        "what": "Rebuilt on the lesson kit: goals, time and prerequisites; a prediction before each change; a quiz tied to the goals; a printable summary with a glossary; pictures redrawn to read on a phone, moving under one player, with what changed named on the picture; independent clinical review of every caption, question and takeaway.",
+        "builder": {
+          "tool": "Claude Code",
+          "model": "claude-opus-5-5"
+        },
+        "reviewer": {
+          "tool": "OpenAI Codex",
+          "model": "gpt-5.6-sol"
+        }
+      }
+    ]
   },
   {
     "slug": "arachidonic-acid-nsaids",
@@ -267,7 +505,21 @@
     "reviewer": {
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
-    }
+    },
+    "revisions": [
+      {
+        "date": "2026-11-06",
+        "what": "Rebuilt on the lesson kit: goals, time and prerequisites; a prediction before each change; a quiz tied to the goals; a printable summary with a glossary; pictures redrawn to read on a phone, moving under one player, with what changed named on the picture; independent clinical review of every caption, question and takeaway.",
+        "builder": {
+          "tool": "Claude Code",
+          "model": "claude-opus-5-5"
+        },
+        "reviewer": {
+          "tool": "OpenAI Codex",
+          "model": "gpt-5.6-sol"
+        }
+      }
+    ]
   },
   {
     "slug": "bacterial-cell-antibiotics",
@@ -282,7 +534,21 @@
     "reviewer": {
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
-    }
+    },
+    "revisions": [
+      {
+        "date": "2026-11-06",
+        "what": "Rebuilt on the lesson kit: goals, time and prerequisites; a prediction before each change; a quiz tied to the goals; a printable summary with a glossary; pictures redrawn to read on a phone, moving under one player, with what changed named on the picture; independent clinical review of every caption, question and takeaway.",
+        "builder": {
+          "tool": "Claude Code",
+          "model": "claude-opus-5-5"
+        },
+        "reviewer": {
+          "tool": "OpenAI Codex",
+          "model": "gpt-5.6-sol"
+        }
+      }
+    ]
   },
   {
     "slug": "immune-response",
@@ -297,7 +563,21 @@
     "reviewer": {
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
-    }
+    },
+    "revisions": [
+      {
+        "date": "2026-11-06",
+        "what": "Rebuilt on the lesson kit: goals, time and prerequisites; a prediction before each change; a quiz tied to the goals; a printable summary with a glossary; pictures redrawn to read on a phone, moving under one player, with what changed named on the picture; independent clinical review of every caption, question and takeaway.",
+        "builder": {
+          "tool": "Claude Code",
+          "model": "claude-opus-5-5"
+        },
+        "reviewer": {
+          "tool": "OpenAI Codex",
+          "model": "gpt-5.6-sol"
+        }
+      }
+    ]
   },
   {
     "slug": "cell-cycle-chemotherapy",
@@ -312,6 +592,20 @@
     "reviewer": {
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
-    }
+    },
+    "revisions": [
+      {
+        "date": "2026-11-06",
+        "what": "Rebuilt on the lesson kit: goals, time and prerequisites; a prediction before each change; a quiz tied to the goals; a printable summary with a glossary; pictures redrawn to read on a phone, moving under one player, with what changed named on the picture; independent clinical review of every caption, question and takeaway.",
+        "builder": {
+          "tool": "Claude Code",
+          "model": "claude-opus-5-5"
+        },
+        "reviewer": {
+          "tool": "OpenAI Codex",
+          "model": "gpt-5.6-sol"
+        }
+      }
+    ]
   }
 ]

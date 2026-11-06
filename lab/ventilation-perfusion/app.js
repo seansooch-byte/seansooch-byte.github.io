@@ -1,9 +1,14 @@
-'use strict';
+// Lesson 10: Ventilation, perfusion and the alveolus. The kit (/lab/kit/kit.js) runs the page; this file is the
+// model, the pictures and the Clinical values and Explore freely tabs.
+import { lesson } from '/lab/kit/kit.js';
+
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
-const f = n => Number(n.toFixed(1));
-const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+const f = n => Number((+n).toFixed(1));
+const span = (t, a, b) => clamp((t - a) / (b - a), 0, 1);
+const ease = x => 1 - Math.pow(1 - clamp(x, 0, 1), 3);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 /* ---------- Teaching model ----------
    Two air sacs share one blood supply after a small bypass. Each sac normally gets half the air and half the
@@ -15,15 +20,15 @@ const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').match
 const STEEPNESS = 2.7;
 // If the data file cannot load, the lesson still runs on illustrative stand-in constants (arbitrary pressure units).
 const FALLBACK = { n: STEEPNESS, p50: 1, pio2: 5.6, pAo2n: 3.9, pAco2n: 1, pvo2: 1.5, pvco2: 1.12, s0: .03, vq: 1, o2pct: 1 };
-let K = null, BASE = null, NARROW = null;
+let K = null, BASE = null;
 const NORMAL = { fio2: 1, airway: 1, flow: 1, fill: 0 };
 const NARROWED = { ...NORMAL, airway: .2 };   // narrowed airway to the right sac (an asthma attack)
 const CHANGES = {
   oxygen: { fio2: 2 },       // oxygen share of the air breathed in doubled
   beta2: { airway: .85 },    // from narrowed, the relaxing signal opens the airway most of the way
   antimusc: { airway: .8 },  // from narrowed, blocking the tightening signal opens it most of the way
-  pe: { flow: .1 },          // a clot cuts blood to the right sac to a tenth; that blood goes to the left sac
-  pneumonia: { fill: .7 }    // seven tenths of the right sac filled with fluid
+  pe: { flow: .04 },         // a clot cuts blood to the right sac to almost nothing; that blood goes to the left sac
+  pneumonia: { fill: 1 }     // the right sac filled with fluid
 };
 const sat = P => P <= 0 ? 0 : 1 / (1 + Math.pow(P / K.p50, -K.n));
 const content = P => sat(P) + K.d * P;
@@ -83,398 +88,470 @@ function model(p) {
 }
 const mix = (a, b, t) => { const out = { ...a }; for (const k in b) if (typeof b[k] === 'number') out[k] = a[k] + (b[k] - a[k]) * t; return out; };
 
-/* ---------- Drawing ---------- */
-const INK = '#171916', BLUE = '#254dff', ART = '#b3261e', VEN = '#5b3f8c', RULE = '#babeb3', MUTED = '#53584d', PANEL = '#ecefe5';
-const AIR = '#ffffff', STALE = '#d6d2c3', FRESH = '#dfe6ff', RICH = '#b3c3ff', FLUID = '#e2cb86';
+/* ---------- Drawing ----------
+   Every picture is 480 wide and at most 420 tall, with the kit's type (20 / .sm 18 / .xs 17). The same air sac is
+   drawn everywhere: its airway comes down from above, its capillary loops under it, blood enters purple on the
+   outside and leaves coloured by how full of oxygen it is. */
+const INK = '#171916', BLUE = '#254dff', ART = '#b3261e', VEN = '#6b3fa0', RULE = '#babeb3', MUTED = '#53584d';
+const AIR = '#ffffff', RICHAIR = '#c3cfff', STALE = '#d6d2c3', FRESH = '#dfe6ff', RICH = '#aebcff', FLUID = '#e2cb86', MUSCLE = '#d9a194';
 let pictureId = 0;  // each picture gets its own ids: a gradient or marker referenced from a hidden step would not draw
-const svg = (label, body, h) => { const id = `p${++pictureId}-`; return `<svg viewBox="0 0 480 ${h}" role="img" aria-label="${label}">${body.replace(/ah-/g, id + 'ah-')}</svg>`; };
-const text = (x, y, s, cls = '', anchor = 'middle') => `<text x="${x}" y="${y}" text-anchor="${anchor}" class="${cls}">${s}</text>`;
+const svg = (label, body, h) => { const id = `p${++pictureId}-`; return `<svg viewBox="0 0 480 ${f(h)}" role="img" aria-label="${esc(label)}">${body.replace(/ah-/g, id + 'ah-')}</svg>`; };
+const text = (x, y, s, cls = '', anchor = 'middle', extra = '') => `<text x="${f(x)}" y="${f(y)}" text-anchor="${anchor}" class="${cls}" ${extra}>${s}</text>`;
 const MARK = { [INK]: 'k', [BLUE]: 'b', [ART]: 'r', [VEN]: 'v', [MUTED]: 'm' };
 const arrow = (d, color = INK, w = 2.5, extra = '') => `<path d="${d}" fill="none" stroke="${color}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#ah-${MARK[color] || 'k'})" ${extra}/>`;
 const DEFS = `<defs>${Object.entries(MARK).map(([c, k]) => `<marker id="ah-${k}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="${c}"/></marker>`).join('')}</defs>`;
+const part = (name, body) => `<g data-part="${name}">${body}</g>`;
+const fade = a => `opacity="${f(clamp(a, 0, 1))}"`;
 const hex = c => [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16));
 const lerpHex = (a, b, t) => { const A = hex(a), B = hex(b), u = clamp(t, 0, 1); return '#' + A.map((v, i) => Math.round(v + (B[i] - v) * u).toString(16).padStart(2, '0')).join(''); };
 const bloodColor = c => lerpHex(VEN, ART, (c - K.Cv) / (content(K.pAo2n) - K.Cv));
 const sacColor = po2 => po2 <= K.pAo2n ? lerpHex(STALE, FRESH, (po2 - K.pvo2) / (K.pAo2n - K.pvo2)) : lerpHex(FRESH, RICH, (po2 - K.pAo2n) / (K.pio2 * 2 - K.pAo2n));
-const wAir = a => 4 + 18 * Math.sqrt(clamp(a, 0, 1.5));
-const wBlood = q => 3 + 12 * Math.sqrt(Math.max(0, q) / K.half);
-const wShunt = s => 1.5 + 30 * s;
+const airColor = fio2 => lerpHex(AIR, RICHAIR, fio2 - 1);
+const wAir = a => 4 + 16 * Math.sqrt(clamp(a, 0, 1.5));     // a: air, relative to a normal sac
+const wBlood = q => 3 + 11 * Math.sqrt(Math.max(0, q));       // q: blood, relative to a normal sac
 
 // Tubes drawn in two passes, all outlines then all fills, so joins are seamless.
-function tubes(list) {
-  let out = '', fill = '';
-  for (const [d, w, color, attr = ''] of list) {
-    out += `<path d="${d}" fill="none" stroke="${INK}" stroke-width="${f(w + 3.5)}" stroke-linecap="round" stroke-linejoin="round"/>`;
-    fill += `<path d="${d}" fill="none" stroke="${color}" stroke-width="${f(w)}" stroke-linecap="round" stroke-linejoin="round" ${attr}/>`;
-  }
-  return out + fill;
+const outline = (d, w) => `<path d="${d}" fill="none" stroke="${INK}" stroke-width="${f(w + 3.5)}" stroke-linecap="round" stroke-linejoin="round"/>`;
+const fillTube = (d, w, color, extra = '') => `<path d="${d}" fill="none" stroke="${color}" stroke-width="${f(w)}" stroke-linecap="round" stroke-linejoin="round" ${extra}/>`;
+const tubes = list => list.map(([d, w]) => outline(d, w)).join('') + list.map(([d, w, c, x]) => fillTube(d, w, c, x)).join('');
+// The normal width of a tube, as a dashed outline drawn over it, so it shows whether the tube grew or shrank.
+let ghostN = 0;
+function ghostTube(d, w) {
+  const id = `ah-gm${++ghostN}`;
+  return `<g class="ghost" data-ghost="normal"><mask id="${id}" maskUnits="userSpaceOnUse" x="-10" y="-10" width="500" height="440"><rect x="-10" y="-10" width="500" height="440" fill="#fff"/><path d="${d}" fill="none" stroke="#000" stroke-width="${f(Math.max(.5, w - .5))}" stroke-linecap="round" stroke-linejoin="round"/></mask><path d="${d}" fill="none" stroke="${INK}" stroke-width="${f(w + 3.5)}" stroke-dasharray="7 5" stroke-linejoin="round" mask="url(#${id})"/></g>`;
 }
-// A capillary's colour runs from arriving blood (where it enters, x1) to the colour it leaves with (x2).
-const gradient = (id, x1, x2, end) => `<linearGradient id="ah-g${id}" gradientUnits="userSpaceOnUse" x1="${f(x1)}" y1="0" x2="${f(x2)}" y2="0"><stop offset="0" stop-color="${VEN}"/><stop offset=".45" stop-color="${end}"/><stop offset="1" stop-color="${end}"/></linearGradient>`;
+// A capillary's colour runs from arriving blood (where it meets the sac, x1) to the colour it leaves with (x2).
+const gradient = (id, x1, x2, end) => `<linearGradient id="ah-g${id}" gradientUnits="userSpaceOnUse" x1="${f(x1)}" y1="0" x2="${f(x2)}" y2="0"><stop offset="0" stop-color="${VEN}"/><stop offset=".55" stop-color="${end}"/><stop offset="1" stop-color="${end}"/></linearGradient>`;
 
 // Oxygen (blue dots) and carbon dioxide (rings) scattered through a sac, above any fluid.
 const DISK = Array.from({ length: 64 }, (_, i) => { const a = i * 2.39996323, r = Math.sqrt((i + .5) / 64) * .8; return [r * Math.cos(a), r * Math.sin(a)]; });
-function gas(cx, cy, R, u, fill) {
+function gas(cx, cy, R, u, fill = 0) {
   const nO = Math.round(clamp(2 + 9 * (u.po2 - K.pvo2) / (K.pAo2n - K.pvo2), 0, 26));
-  const nC = Math.round(clamp(6 * u.pco2 / K.pAco2n, 0, 10));
-  const top = cy + R - 2 * R * fill;
+  const nC = Math.round(clamp(5 * u.pco2 / K.pAco2n, 0, 8));
+  const top = cy + R - 2 * R * fill, rO = Math.max(3.6, R * .075), rC = Math.max(3.4, R * .065);
   let s = '', o = 0, c = 0;
   for (let k = 0; k < 64 && (o < nO || c < nC); k++) {
     const [dx, dy] = DISK[(k * 37) % 64], x = f(cx + dx * R), y = f(cy + dy * R);
     if (y > top - R * .12) continue;
-    if (k % 2 === 0 && o < nO) { s += `<circle data-gas="o2" cx="${x}" cy="${y}" r="${f(R * .075)}" fill="${BLUE}"/>`; o++; }
-    else if (k % 2 === 1 && c < nC) { s += `<circle data-gas="co2" cx="${x}" cy="${y}" r="${f(R * .065)}" fill="#fff" stroke="${INK}" stroke-width="1.6"/>`; c++; }
+    if (k % 2 === 0 && o < nO) { s += `<circle data-gas="o2" cx="${x}" cy="${y}" r="${f(rO)}" fill="${BLUE}"/>`; o++; }
+    else if (k % 2 === 1 && c < nC) { s += `<circle data-gas="co2" cx="${x}" cy="${y}" r="${f(rC)}" fill="#fff" stroke="${INK}" stroke-width="1.6"/>`; c++; }
   }
   return s;
 }
+// A sac: coloured by its oxygen (stale grey, fresh pale blue, rich blue), with fluid rising from the bottom.
 function sac(cx, cy, R, u, fill, id, gasOn = true) {
-  let s = `<circle data-sac="${id}" cx="${cx}" cy="${cy}" r="${R}" fill="${sacColor(u ? u.po2 : K.pvo2)}"/>`;
+  let s = `<circle data-sac="${id}" cx="${f(cx)}" cy="${f(cy)}" r="${f(R)}" fill="${sacColor(u ? u.po2 : K.pvo2)}"/>`;
   if (fill > .005) {
     const top = f(cy + R - 2 * R * fill);
-    s += `<clipPath id="ah-c${id}"><circle cx="${cx}" cy="${cy}" r="${R}"/></clipPath><rect data-fluid clip-path="url(#ah-c${id})" x="${cx - R}" y="${top}" width="${2 * R}" height="${f(2 * R * fill)}" fill="${FLUID}"/>`;
-    if (fill > .25) s += text(cx, f(Math.min(cy + R - 12, top + 24)), 'fluid', 'xs b on-fluid');
+    s += part('fluid', `<clipPath id="ah-c${id}"><circle cx="${f(cx)}" cy="${f(cy)}" r="${f(R)}"/></clipPath><rect data-fluid clip-path="url(#ah-c${id})" x="${f(cx - R)}" y="${top}" width="${f(2 * R)}" height="${f(2 * R * fill)}" fill="${FLUID}"/>`);
+    if (fill > .4) s += text(cx, f(Math.min(cy + R - 14, top + 28 + R * .25)), 'fluid', 'xs b on-fluid');
   }
-  if (gasOn && u) s += gas(cx, cy, R, u, fill);
-  return s + `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${INK}" stroke-width="2"/>`;
+  if (gasOn && u && fill < .999) s += gas(cx, cy, R, u, fill);
+  return s + `<circle cx="${f(cx)}" cy="${f(cy)}" r="${f(R)}" fill="none" stroke="${INK}" stroke-width="2"/>`;
 }
-function keyRow(items, y) {
-  let x = 16, row = 0, body = '';
-  for (const [icon, word] of items) {
-    const w = 44 + word.length * 8.6;
-    if (x > 16 && x + w > 470) { x = 16; row++; }
-    body += `<g transform="translate(${f(x)} ${y + row * 28})">${icon}${text(44, 5, word, 'xs', 'start')}</g>`;
-    x += w + 18;
-  }
-  return { body, rows: row + 1 };
-}
-const GAS_KEY = [[`<circle cx="18" cy="0" r="6" fill="${BLUE}"/>`, 'oxygen'], [`<circle cx="18" cy="0" r="5.5" fill="#fff" stroke="${INK}" stroke-width="1.6"/>`, 'carbon dioxide']];
+const GAS_KEY = (y, x = 16) => `<g transform="translate(${x} ${y})"><circle cx="8" cy="-6" r="6" fill="${BLUE}"/>${text(22, 0, 'oxygen', 'xs', 'start')}<circle cx="110" cy="-6" r="5.5" fill="#fff" stroke="${INK}" stroke-width="1.6"/>${text(124, 0, 'carbon dioxide', 'xs', 'start')}</g>`;
 
-// A single air sac with its airway and capillary loop: blood enters on the left, loops under, leaves on the right.
-function drawUnit(cx, cy, R, { v = 1, q = 1, id = 'u', gasOn = true, top = cy - R - 70 } = {}) {
-  const u = unit(.5 * v, K.half * q, K.pio2);
-  const k = R / 56, g = f(R + 12 * k + 6), ext = f(R * .8), low = f(cy + g + R * .35);
-  const d = `M${f(cx - g - ext)} ${low} H${f(cx - g)} V${cy} A${g} ${g} 0 0 0 ${f(cx + g)} ${cy} V${low} H${f(cx + g + ext)}`;
+/* ---------- One air sac ---------- */
+// Geometry of one sac at (cx, cy), radius R: its capillary is a U under it, from the left stub to the right stub.
+function geom(cx, cy, R) {
+  const k = R / 56, g = f(R * 1.13 + 8), ext = f(R * .8), low = f(cy + g + R * .3);
+  return { cx, cy, R, k, g, ext, low, d: `M${f(cx - g - ext)} ${low} H${f(cx - g)} V${cy} A${g} ${g} 0 0 0 ${f(cx + g)} ${cy} V${low} H${f(cx + g + ext)}` };
+}
+// A point a share s of the way along that capillary, and how far through the bend under the sac it is.
+function along(G, s) {
+  const L1 = G.ext, L2 = G.low - G.cy, L3 = Math.PI * G.g, total = 2 * L1 + 2 * L2 + L3;
+  let d = clamp(s, 0, 1) * total;
+  if (d < L1) return { x: G.cx - G.g - G.ext + d, y: G.low, bend: 0 };
+  d -= L1;
+  if (d < L2) return { x: G.cx - G.g, y: G.low - d, bend: 0 };
+  d -= L2;
+  if (d < L3) { const a = Math.PI - d / G.g; return { x: G.cx + G.g * Math.cos(a), y: G.cy + G.g * Math.sin(a), bend: d / L3 }; }
+  d -= L3;
+  if (d < L2) return { x: G.cx + G.g, y: G.cy + d, bend: 1 };
+  return { x: G.cx + G.g + d - L2, y: G.low, bend: 1 };
+}
+// Draws one sac: air and blood relative to normal, fluid share, oxygen in the air breathed in (fio2 × room air).
+function drawUnit(G, { air = 1, blood = 1, fill = 0, fio2 = 1, top = 0, id = 'u', gasOn = true, ghost = null, lumen = null, airPart = 'airway', bloodPart = 'capillary', sacR = G.R, plasma = false } = {}) {
+  const u = unit(.5 * air, K.half * blood, K.pio2 * fio2);
+  const leave = fill * K.Cv + (1 - fill) * u.c;
+  const { cx, cy, R, k, d } = G;
+  const aw = lumen ?? wAir(air) * k * .9, airway = `M${f(cx)} ${f(top)} V${f(cy - R + 6)}`;
   let s = '';
-  if (q > 0) s += gradient(id, cx - g, cx + g, bloodColor(u.c)) + tubes([[d, wBlood(K.half * q) * k, `url(#ah-g${id})`, `data-blood="${id}"`]]);
-  else s += `<path data-blood="empty" d="${d}" fill="none" stroke="${MUTED}" stroke-width="2.5" stroke-dasharray="5 5"/>`;
-  s += tubes([[`M${cx} ${f(top)} V${f(cy - R + 6)}`, wAir(v) * k * .9, AIR]]);
-  if (v <= 0) s += `<path d="M${f(cx - 17 * k)} ${f(cy - R - 16 * k)} H${f(cx + 17 * k)}" stroke="${INK}" stroke-width="${f(6 * k)}"/>`;
-  s += sac(cx, cy, R, u, 0, id, gasOn);
-  return { s, u, low, g, ext };
+  if (plasma) s += part(bloodPart, tubes([[d, wBlood(blood) * k, '#f6dcd7']]));
+  else if (blood > .004) s += gradient(id, cx - G.g, cx + G.g, bloodColor(leave)) + part(bloodPart, tubes([[d, wBlood(blood) * k, `url(#ah-g${id})`]]));
+  else if (!ghost || ghost.blood == null) s += part(bloodPart, `<path d="${d}" fill="none" stroke="${MUTED}" stroke-width="2.5" stroke-dasharray="5 5"/>`);
+  let a = air > .02 || lumen ? tubes([[airway, aw, airColor(fio2)]]) : tubes([[airway, 8 * k, AIR]]);
+  if (air <= .02 && !lumen) a += `<path d="M${f(cx - 16 * k)} ${f(cy - R - 12 * k)} H${f(cx + 16 * k)}" stroke="${INK}" stroke-width="${f(6 * k)}" stroke-linecap="round"/>`;
+  s += part(airPart, a);
+  if (ghost?.blood != null) s += ghostTube(d, wBlood(ghost.blood) * k);
+  if (ghost?.air != null || ghost?.lumen != null) s += ghostTube(airway, ghost.lumen ?? wAir(ghost.air) * k * .9);
+  s += sac(cx, cy, sacR, fill >= .999 ? null : u, fill, id, gasOn);
+  return { s, u, leave };
+}
+
+/* ---------- The air-to-blood scale ---------- */
+// No air at the left, matched in the middle, no blood at the right (a squashed log scale of the ratio).
+const SC0 = 48, SC1 = 432;
+const scaleX = r => r === Infinity ? SC1 : r <= 0 ? SC0 : f(240 + (SC1 - 240) * (2 / Math.PI) * Math.atan(Math.log10(r) / .5));
+function ratioScale(y, r, { left = ['too little air'], right = ['too little blood'], leftCls = 'xs b', rightCls = 'xs b', part: pt = 'scale', leftPart = '', rightPart = '' } = {}) {
+  let s = `<rect x="${SC0}" y="${y}" width="${SC1 - SC0}" height="10" rx="5" fill="#fff" stroke="${INK}" stroke-width="1.5"/>`;
+  s += `<path d="M240 ${y - 5} V${y + 15}" stroke="${INK}" stroke-width="2"/>`;
+  s += text(240, y + 34, 'matched', 'xs b');
+  const end = (rows, x, anchor, cls, p) => { const g = rows.map((w, i) => text(x, y + 34 + i * 21, w, cls, anchor)).join(''); return p ? part(p, g) : g; };
+  s += end(left, SC0, 'start', leftCls, leftPart) + end(right, SC1, 'end', rightCls, rightPart);
+  const x = scaleX(r);
+  s += `<path data-marker d="M${f(x - 10)} ${y - 17} L${f(x + 10)} ${y - 17} L${f(x)} ${y - 1} Z" fill="${BLUE}" stroke="#fff" stroke-width="1.5"/>`;
+  return part(pt, s);
 }
 
 /* ---------- The two-sac lung ---------- */
-const D = {
-  trachea: 'M240 4 V54',
-  brA: 'M240 50 C240 88 130 76 130 120', brB: 'M240 50 C240 88 350 76 350 120',
-  capA: 'M240 290 H200 V170 A70 70 0 0 1 60 170 V318', capB: 'M240 290 H280 V170 A70 70 0 0 0 420 170 V318',
-  stemTop: 'M240 304 V284', stem: 'M240 396 V300', shunt: 'M240 362 H440 V322',
-  h1: 'M60 318 H420', h2: 'M420 318 H440', h3: 'M440 318 H460 V378'
+const LG = { ax: 124, bx: 356, cy: 140, R: 48 };
+LG.g = f(LG.R * 1.13 + 8); LG.k = LG.R / 56;
+const LP = {
+  trachea: 'M240 0 V40',
+  brA: `M240 36 C240 70 ${LG.ax} 60 ${LG.ax} ${LG.cy - LG.R + 6}`,
+  brB: `M240 36 C240 70 ${LG.bx} 60 ${LG.bx} ${LG.cy - LG.R + 6}`,
+  capA: `M34 300 V${LG.cy} H${f(LG.ax - LG.g)} A${LG.g} ${LG.g} 0 0 0 ${f(LG.ax + LG.g)} ${LG.cy} V256 H240`,
+  capB: `M446 300 V${LG.cy} H${f(LG.bx + LG.g)} A${LG.g} ${LG.g} 0 0 1 ${f(LG.bx - LG.g)} ${LG.cy} V256 H240`,
+  artery: 'M240 256 V292'
 };
-const o2Frac = o => clamp(o.pao2 / (BASE.pao2 * 2.5), 0, 1);
-const co2Frac = o => clamp(o.paco2 / (K.pvco2 * 1.3), 0, 1);
+const satX = s => f(60 + 360 * clamp((s - .5) / .5, 0, 1));   // the bar runs from half full to full
 function statusOf(u, fill) {
-  if (fill > .3 || !u) return ['fluid:', 'shunt'];
-  if (u.r === 0) return ['no air:', 'shunt'];
-  if (u.r === Infinity) return ['no blood:', 'dead space'];
-  if (u.r < .6) return ['too little', 'air'];
-  if (u.r > 1.7) return ['too little', 'blood'];
+  if (fill > .5 || !u || u.r === 0) return ['shunt:', 'blood, no air'];
+  if (u.r === Infinity || u.r > 8) return ['dead space:', 'air, no blood'];
+  if (u.r < .6) return ['short of air', 'for its blood'];
+  if (u.r > 1.7) return ['little blood', 'for its air'];
   return ['matched'];
 }
+// The lung: o is a model state. words: { A, B } replace the sacs' status lines; extra is drawn on top.
+function lungPicture(o, opt = {}) {
+  const { ghost = null, words = {}, clot = 0, squeeze = 0, delta = '', extra = '', key = !!ghost } = opt;
+  const p = o.p, wA = wBlood(o.qA / K.half) * LG.k, wB = wBlood(o.qB / K.half) * LG.k, wArt = wBlood((o.qA + o.qB) / K.half) * LG.k;
+  let b = DEFS;
+  const cA = bloodColor(o.A.c), cB = bloodColor(o.cB), cArt = bloodColor(o.ca);
+  b += gradient('A', LG.ax - LG.g, LG.ax + LG.g, cA) + gradient('B', LG.bx + LG.g, LG.bx - LG.g, cB);
+  b += outline(LP.capA, wA) + outline(LP.capB, wB) + outline(LP.artery, wArt);
+  b += part('capillary', fillTube(LP.capA, wA, 'url(#ah-gA)') + fillTube(LP.capB, wB, 'url(#ah-gB)'));
+  b += part('artery', fillTube(LP.artery, wArt, cArt) + `<path d="M229 292 H251 L240 308 Z" fill="${cArt}" stroke="${INK}" stroke-width="1.5" stroke-linejoin="round"/>`);
+  if (clot > .02) b += part('clot', `<ellipse data-clot cx="446" cy="270" rx="${f(5 + 5 * clot)}" ry="${f(8 + 8 * clot)}" fill="${INK}"/>` + text(428, 277, 'clot', 'xs b', 'end', fade(span(clot, .3, .6))));
+  if (squeeze > .02) b += part('squeeze', `<g ${fade(span(squeeze, 0, .4))}>${arrow('M414 196 H432', INK, 3)}${arrow('M478 196 H460', INK, 3)}</g>`);
+  const airCol = airColor(p.fio2);
+  let air = tubes([[LP.trachea, 24, airCol], [LP.brA, wAir(1) * LG.k, airCol], [LP.brB, wAir(p.airway) * LG.k, airCol]]);
+  if (p.airway < .03) air += `<path d="M${LG.bx - 14} ${LG.cy - LG.R - 12} H${LG.bx + 14}" stroke="${INK}" stroke-width="6" stroke-linecap="round"/>`;
+  b += part('airway', air);
+  if (ghost) {
+    if (Math.abs(ghost.qA - o.qA) > .004) b += ghostTube(LP.capA, wBlood(ghost.qA / K.half) * LG.k);
+    if (Math.abs(ghost.qB - o.qB) > .004) b += ghostTube(LP.capB, wBlood(ghost.qB / K.half) * LG.k);
+    if (Math.abs(ghost.p.airway - p.airway) > .01) b += ghostTube(LP.brB, wAir(ghost.p.airway) * LG.k);
+  }
+  b += sac(LG.ax, LG.cy, LG.R, o.A, 0, 'A') + sac(LG.bx, LG.cy, LG.R, o.B, o.B ? p.fill : 1, 'B');
+  const lines = (x, rows, cls = 'xs b') => rows.map((w, i) => text(x, 232 + i * 21, w, cls)).join('');
+  b += lines(110, words.A || statusOf(o.A, 0)) + lines(370, words.B || statusOf(o.B, p.fill));
+  b += text(226, 24, 'air in', 'xs b', 'end');
+  b += text(16, 330, 'from the body', 'xs b purple', 'start') + text(240, 330, 'to the body', 'xs b red') + text(464, 330, 'from the body', 'xs b purple', 'end');
+  // The bar: the saturation of the mixed blood going to the body (share of hemoglobin seats full), from half to full.
+  b += text(16, 362, 'saturation of blood to the body', 'xs b', 'start') + text(16, 386, 'half', 'xs muted', 'start') + text(464, 386, 'full', 'xs muted', 'end');
+  b += `<rect x="60" y="372" width="360" height="18" fill="#fff" stroke="${RULE}"/>` + part('artery', `<rect data-bar="o2" x="60" y="372" width="${f(satX(o.sao2) - 60)}" height="18" fill="${cArt}"/>`);
+  if (ghost) b += `<path class="ghost" data-ghost-tick d="M${satX(ghost.sao2)} 366 V396" stroke="${INK}" stroke-width="2.5" stroke-dasharray="3 3"/>`;
+  if (key) b += `<path d="M340 12 H372 M340 24 H372" stroke="${INK}" stroke-width="1.8" stroke-dasharray="7 5"/>` + text(380, 24, 'normal', 'xs muted', 'start');
+  if (delta) b += text(464, 362, delta, 'xs b blue', 'end');
+  b += extra;
+  return `<g data-new-state ${attrs(o)}>${b}</g>`;
+}
+const LUNG_H = 400;
 function attrs(o) {
   const r = (a, b) => (b ? a / b : a > 1e-9 ? 99 : 1).toFixed(4);
-  return `data-pao2="${r(o.pao2, BASE.pao2)}" data-paco2="${r(o.paco2, BASE.paco2)}" data-alveolar-o2="${r(o.pAo2, BASE.pAo2)}" data-air-b="${r(o.vB, BASE.vB)}" data-blood-b="${r(o.qBair, BASE.qBair)}" data-shunt="${r(o.shunt, BASE.shunt)}"`;
+  return `data-pao2="${r(o.pao2, BASE.pao2)}" data-air-b="${r(o.vB, BASE.vB)}" data-blood-b="${r(o.qB, BASE.qB)}" data-shunt="${r(o.shunt, BASE.shunt)}"`;
 }
-function lungPicture(o, opt = {}) {
-  const { ghost = null, legend = '', narrowed = null, cause = 'clot', labels = false, signal = null } = opt;
-  const p = o.p;
-  let s = DEFS;
-  if (ghost) {
-    const gl = (d, w) => `<path d="${d}" fill="none" stroke="${INK}" stroke-opacity=".35" stroke-width="${f(w + 8)}" stroke-dasharray="8 6" stroke-linejoin="round"/>`;
-    s += `<g class="ghost" data-ghost="normal">${gl(D.brA, wAir(1)) + gl(D.brB, wAir(ghost.p.airway)) + gl(D.capA, wBlood(ghost.qA)) + gl(D.capB, wBlood(ghost.qB)) + gl(D.shunt, wShunt(ghost.shunt))}</g>`;
-  }
-  const cA = bloodColor(o.A.c), cB = bloodColor(o.cB), cMid = bloodColor((o.qA * o.A.c + o.qB * o.cB) / (o.qA + o.qB)), cArt = bloodColor(o.ca);
-  let b = gradient('A', 200, 60, cA) + gradient('B', 280, 420, cB);
-  b += tubes([
-    [D.capA, wBlood(o.qA), 'url(#ah-gA)', 'data-blood="A"'], [D.capB, wBlood(o.qB), 'url(#ah-gB)', 'data-blood="B"'],
-    [D.shunt, wShunt(o.shunt), VEN, 'data-blood="shunt"'], [D.stemTop, wBlood(1), VEN],
-    [D.h1, wBlood(o.qA), cA], [D.h2, wBlood(o.qA + o.qB), cMid], [D.h3, wBlood(1), cArt, 'data-blood="arterial"']
-  ]);
-  b += `<polygon points="445,376 475,376 460,396" fill="${cArt}" stroke="${INK}" stroke-width="1.5" stroke-linejoin="round"/>`;
-  // The vein from the body passes over the arterial header: a gap in the panel colour makes it read as a bridge.
-  b += `<path d="M240 336 V302" stroke="${PANEL}" stroke-width="${f(wBlood(1) + 12)}"/>` + tubes([[D.stem, wBlood(1), VEN]]);
-  if (cause === 'clot' && p.flow < .95) {
-    const k = 1 - p.flow;
-    b += `<ellipse data-clot cx="280" cy="232" rx="${f(5 + 8 * k)}" ry="${f(8 + 12 * k)}" fill="${INK}"/>` + text(262, 238, 'clot', 'xs b', 'end');
-  }
-  if (cause === 'squeeze' && p.flow < .95) {
-    b += arrow('M256 222 H269', INK, 3) + arrow('M304 222 H291', INK, 3);
-    b += text(240, 134, 'vessel', 'xs b') + text(240, 152, 'narrows', 'xs b') + `<path d="M254 160 L272 204" stroke="${INK}" stroke-width="1.5"/>`;
-  }
-  b += tubes([[D.trachea, 26, AIR], [D.brA, wAir(1), AIR], [D.brB, wAir(p.airway), AIR, 'data-airway="B"']]);
-  if (narrowed) b += `<path data-ghost="narrowed" d="${D.brB}" fill="none" stroke="${ART}" stroke-opacity=".75" stroke-width="${f(wAir(narrowed.airway))}" stroke-dasharray="2 4"/>`;
-  if (p.airway < .03) b += `<path d="M330 106 H370" stroke="${INK}" stroke-width="6"/>`;
-  if (signal) b += `<g data-signal>${text(472, 40, signal[0], 'xs b blue', 'end')}${text(472, 58, signal[1], 'xs b blue', 'end')}${arrow('M394 66 L340 90', BLUE, 2.5)}</g>`;
-  b += sac(130, 170, 56, o.A, 0, 'A') + sac(350, 170, 56, o.B, p.fill, 'B');
-  [[130, statusOf(o.A, 0)], [350, statusOf(o.B, p.fill)]].forEach(([x, lines]) => { lines.forEach((w, i) => { b += text(x, 270 + i * 18, w, 'xs b'); }); });
-  b += text(222, 24, 'air in ↓', 'xs b', 'end');
-  b += text(240, 418, 'from the body ↑', 'xs b ven') + text(474, 418, 'to the body', 'xs b red', 'end');
-  if (labels) b += text(258, 30, 'ventilation', 'xs b blue', 'start') + text(254, 388, 'perfusion', 'xs b ven', 'start');
-  // Two bars: oxygen and carbon dioxide in the mixed arterial blood.
-  const bar = (y, word, frac, key, color) => text(16, y, word, 'xs b', 'start') + `<rect x="16" y="${y + 8}" width="448" height="14" fill="#fff" stroke="${RULE}"/><rect data-bar="${key}" x="16" y="${y + 8}" width="${f(448 * frac)}" height="14" fill="${color}"/>`;
-  b += bar(446, 'oxygen in arterial blood', o2Frac(o), 'o2', cArt) + bar(486, 'carbon dioxide in arterial blood', co2Frac(o), 'co2', MUTED);
-  s += `<g data-new-state="${legend || 'current'}" ${attrs(o)}>${b}</g>`;
-  if (ghost) {
-    const tick = (y, frac) => `<path d="M${f(16 + 448 * frac)} ${y + 3} V${y + 27}" stroke="${INK}" stroke-width="2.5" stroke-dasharray="3 3"/>`;
-    s += `<g data-ghost-tick>${tick(446, o2Frac(ghost)) + tick(486, co2Frac(ghost))}</g>`;
-    const items = [[`<path d="M0 0 H34" stroke="${INK}" stroke-opacity=".35" stroke-width="12" stroke-dasharray="8 6"/>`, 'normal']];
-    if (narrowed) items.push([`<path d="M0 0 H34" stroke="${ART}" stroke-opacity=".75" stroke-width="7" stroke-dasharray="2 4"/>`, 'narrowed airway']);
-    items.push([`<path d="M0 0 H34" stroke="${INK}" stroke-width="10"/><path d="M1 0 H33" stroke="#fff" stroke-width="6"/>`, legend]);
-    const key = keyRow(items, 540);
-    return { body: s + key.body, h: 556 + 28 * (key.rows - 1) };
-  }
-  return { body: s, h: 516 };
-}
-const lungSvg = (label, o, opt) => { const { body, h } = lungPicture(o, opt); return svg(label, body, h); };
+const lungSvg = (label, o, opt) => svg(label, lungPicture(o, opt), LUNG_H);
 
 /* ---------- Words: comparisons and text alternatives ---------- */
 function trend(v, b, up, down) { const r = b ? v / b : v > 1e-9 ? 2 : 1; return r > 1.015 ? [up, 'up'] : r < .985 ? [down, 'down'] : ['about the same', 'same']; }
 function compare(o, ref) {
   return [
-    ['Oxygen in arterial blood', trend(o.pao2, ref.pao2, 'more', 'less')],
-    ['Carbon dioxide in arterial blood', trend(o.paco2, ref.paco2, 'more', 'less')],
-    ['Oxygen in the air sacs', trend(o.pAo2, ref.pAo2, 'more', 'less')],
+    ['Oxygen pressure in blood to the body', trend(o.pao2, ref.pao2, 'higher', 'lower')],
     ['Air reaching the right sac', trend(o.vB, ref.vB, 'more', 'less')],
-    ['Blood meeting air in the right sac', trend(o.qBair, ref.qBair, 'more', 'less')],
-    ['Blood bypassing air (shunt)', trend(o.shunt, ref.shunt, 'more', 'less')]
+    ['Blood flowing past the right sac', trend(o.qB, ref.qB, 'more', 'less')],
+    ['Blood that meets no air (shunt)', trend(o.shunt, ref.shunt, 'more', 'less')]
   ];
 }
 const ARROW = { up: '↑', down: '↓', same: '↔' };
-const readout = (o, ref, head) => `<ul class="readout" aria-label="${head}"><li class="head">${head}</li>${compare(o, ref).map(([k, [w, d]]) => `<li><b>${k}</b> <span class="${d}">${ARROW[d]} ${w}</span></li>`).join('')}</ul>`;
+const readoutOf = (rows, head) => `<ul class="readout" aria-label="${head}"><li class="head">${head}</li>${rows.map(([k, [w, d]]) => `<li><b>${k}</b> <span class="${d}">${ARROW[d]} ${w}</span></li>`).join('')}</ul>`;
+const readout = (o, ref, head) => readoutOf(compare(o, ref), head);
 const describe = (o, ref) => compare(o, ref).map(([k, [w]]) => `${k.toLowerCase()}: ${w}`).join('; ');
 const sacWords = o => `Left sac: ${statusOf(o.A, 0).join(' ')}. Right sac: ${statusOf(o.B, o.p.fill).join(' ')}.`;
 
-/* ---------- Core step pictures ---------- */
+/* ---------- Build the idea: the step pictures ---------- */
 function overviewPicture() {
   let b = DEFS;
   const lung = 'M128 104 C92 96 34 150 28 250 C24 316 52 344 100 336 C134 330 140 300 140 260 L140 132 C140 116 136 106 128 104Z';
   const twigs = 'M100 170 L78 214 M100 170 L112 226 M78 214 L62 252 M78 214 L92 262 M112 226 L104 280 M112 226 L126 276';
-  const half = `<path d="${lung}" fill="#f3dcd6" stroke="${ART}" stroke-width="2.5"/><path d="${twigs}" fill="none" stroke="${INK}" stroke-width="2.5" stroke-linecap="round"/>`;
+  const half = `<path d="${lung}" fill="#f3dcd6" stroke="${ART}" stroke-width="2.5"/>`;
+  const halfTwigs = `<path d="${twigs}" fill="none" stroke="${INK}" stroke-width="2.5" stroke-linecap="round"/>`;
   b += half + `<g transform="translate(300 0) scale(-1 1)">${half}</g>`;
-  b += tubes([['M150 14 V108', 20, AIR], ['M150 104 C150 136 112 140 100 170', 10, AIR], ['M150 104 C150 136 188 140 200 170', 10, AIR]]);
-  // Magnifier on a cluster of alveoli.
-  b += `<path d="M196 280 L296 178 M196 280 L304 262" stroke="${INK}" stroke-width="1.5" stroke-dasharray="4 4"/>`;
-  b += `<clipPath id="ah-mag"><circle cx="384" cy="214" r="88"/></clipPath><circle cx="384" cy="214" r="88" fill="#fff"/>`;
-  let inner = gradient('O', 300, 468, ART) + tubes([['M384 100 V178', 14, AIR]]);
-  inner += tubes([['M298 266 C330 300 438 300 470 262', 7, 'url(#ah-gO)']]);
-  const centres = [[384, 214]].concat([0, 1, 2, 3, 4, 5].map(i => [384 + 40 * Math.cos(Math.PI / 6 + i * Math.PI / 3), 214 + 40 * Math.sin(Math.PI / 6 + i * Math.PI / 3)]));
-  inner += centres.map(([x, y]) => `<circle cx="${f(x)}" cy="${f(y)}" r="21" fill="${FRESH}" stroke="${INK}" stroke-width="1.8"/>`).join('');
-  b += `<g clip-path="url(#ah-mag)">${inner}</g><circle cx="384" cy="214" r="88" fill="none" stroke="${INK}" stroke-width="2.5"/>`;
-  b += text(166, 36, 'windpipe', 'xs b', 'start');
-  b += `<path d="M40 104 L74 206" stroke="${INK}" stroke-width="1.5"/>` + text(14, 96, 'airways', 'xs b', 'start');
-  b += text(150, 372, 'lungs', 'sm b red');
-  b += text(384, 116, 'blood vessels', 'xs b red') + text(384, 330, 'alveoli: tiny air sacs', 'xs b');
+  b += part('airways', tubes([['M150 14 V108', 20, AIR], ['M150 104 C150 136 112 140 100 170', 10, AIR], ['M150 104 C150 136 188 140 200 170', 10, AIR]]) + halfTwigs + `<g transform="translate(300 0) scale(-1 1)">${halfTwigs}</g>`);
+  // A magnifier on a cluster of alveoli at the end of one airway twig.
+  b += `<path d="M206 282 L298 196 M206 282 L306 268" stroke="${INK}" stroke-width="1.5" stroke-dasharray="4 4"/>`;
+  b += `<clipPath id="ah-mag"><circle cx="380" cy="214" r="88"/></clipPath><circle cx="380" cy="214" r="88" fill="#fff"/>`;
+  let inner = gradient('O', 296, 466, ART) + tubes([['M380 100 V178', 14, AIR]]);
+  inner += tubes([['M294 266 C326 302 434 302 466 262', 8, 'url(#ah-gO)']]);
+  const centres = [[380, 214]].concat([0, 1, 2, 3, 4, 5].map(i => [380 + 40 * Math.cos(Math.PI / 6 + i * Math.PI / 3), 214 + 40 * Math.sin(Math.PI / 6 + i * Math.PI / 3)]));
+  inner += part('alveoli', centres.map(([x, y]) => `<circle cx="${f(x)}" cy="${f(y)}" r="21" fill="${FRESH}" stroke="${INK}" stroke-width="1.8"/>`).join(''));
+  b += `<g clip-path="url(#ah-mag)">${inner}</g><circle cx="380" cy="214" r="88" fill="none" stroke="${INK}" stroke-width="2.5"/>`;
+  b += text(168, 34, 'windpipe', 'xs b', 'start');
+  b += `<path d="M44 106 L72 206" stroke="${INK}" stroke-width="1.5"/>` + text(16, 98, 'airways', 'xs b', 'start');
+  b += text(150, 380, 'lungs', 'sm b red');
+  b += text(380, 84, 'alveoli:', 'xs b') + text(380, 106, 'tiny air sacs', 'xs b');
+  b += text(380, 332, 'blood vessel', 'xs b red');
   return b;
 }
-function bigUnit(opt = {}) { return drawUnit(240, 190, 88, { top: 18, ...opt }); }
+const BIG = () => geom(240, 182, 84);
 function unitPicture() {
-  const u = bigUnit({ gasOn: false });
+  const G = BIG(), u = drawUnit(G, { gasOn: false, top: 12 });
   let b = DEFS + u.s;
-  b += text(262, 64, 'airway', 'xs b', 'start');
-  b += text(240, 196, 'alveolus', 'sm b');
-  b += text(240, 336, 'capillary', 'xs b ven');
-  b += `<path d="M304 128 L340 96" stroke="${INK}" stroke-width="1.5"/>` + text(470, 74, 'an extremely', 'xs b', 'end') + text(470, 92, 'thin wall', 'xs b', 'end');
+  // The wall: the narrow gap where the sac meets its capillary.
+  const r1 = G.R + 3, a0 = Math.PI * .12, a1 = Math.PI * .88;
+  b += part('wall', `<path d="M${f(G.cx + r1 * Math.cos(a0))} ${f(G.cy + r1 * Math.sin(a0))} A${r1} ${r1} 0 0 1 ${f(G.cx + r1 * Math.cos(a1))} ${f(G.cy + r1 * Math.sin(a1))}" fill="none" stroke="${BLUE}" stroke-width="3"/>`);
+  b += text(262, 58, 'airway', 'xs b', 'start');
+  b += text(240, 190, 'alveolus', 'sm b');
+  b += text(240, 360, 'capillary', 'xs b purple');
+  b += `<path d="M384 168 L${f(G.cx + r1 * Math.cos(.95))} ${f(G.cy + r1 * Math.sin(.95))}" stroke="${INK}" stroke-width="1.5"/>` + text(464, 132, 'thin wall:', 'xs b', 'end') + text(464, 154, 'air meets blood', 'xs b', 'end');
   return b;
 }
-function swapPicture() {
-  let b = DEFS + bigUnit().s;
-  b += arrow('M204 238 L186 290', BLUE, 4.5) + arrow('M284 292 L268 242', INK, 3.5);
-  b += text(16, 384, 'oxygen into blood', 'xs b blue', 'start') + text(464, 384, 'carbon dioxide out to air', 'xs b', 'end');
-  return b + keyRow(GAS_KEY, 414).body;
+// Moving: oxygen crosses the wall into the blood while carbon dioxide crosses out into the sac.
+function swapPicture(t) {
+  const G = BIG();
+  let b = DEFS + drawUnit(G, { top: 12 }).s;
+  const at = (a, r) => [G.cx + r * Math.cos(a), G.cy + r * Math.sin(a)];
+  let moving = '';
+  for (let i = 0; i < 3; i++) {
+    const p = (t + i / 3) % 1, op = Math.sin(Math.PI * p);
+    const aO = (118 + 12 * i) * Math.PI / 180, [ox, oy] = at(aO, G.R * .55 + (G.g - G.R * .55) * p);
+    moving += `<circle cx="${f(ox)}" cy="${f(oy)}" r="7" fill="${BLUE}" stroke="#fff" stroke-width="1.5" ${fade(op)}/>`;
+    const aC = (62 - 12 * i) * Math.PI / 180, [cx, cy] = at(aC, G.g - (G.g - G.R * .55) * p);
+    moving += `<circle cx="${f(cx)}" cy="${f(cy)}" r="6.5" fill="#fff" stroke="${INK}" stroke-width="2" ${fade(op)}/>`;
+  }
+  const [o1x, o1y] = at(Math.PI * .72, G.R * .5), [o2x, o2y] = at(Math.PI * .72, G.g - 4);
+  const [c1x, c1y] = at(Math.PI * .28, G.g + 2), [c2x, c2y] = at(Math.PI * .28, G.R * .52);
+  b += part('exchange', arrow(`M${f(o1x)} ${f(o1y)} L${f(o2x)} ${f(o2y)}`, BLUE, 4) + arrow(`M${f(c1x)} ${f(c1y)} L${f(c2x)} ${f(c2y)}`, INK, 3.5) + moving);
+  b += text(16, 356, 'oxygen into blood', 'xs b blue', 'start') + text(464, 356, 'carbon dioxide out to air', 'xs b', 'end');
+  return b + GAS_KEY(392);
 }
-function ventPicture() {
-  let b = DEFS + bigUnit().s;
-  b += arrow('M206 24 V92', BLUE, 4) + arrow('M274 92 V24', MUTED, 4);
-  b += text(194, 48, 'fresh air in', 'xs b blue', 'end') + text(286, 48, 'used air out', 'xs b muted', 'start');
-  return b + keyRow(GAS_KEY, 374).body;
+// Moving: one breath. The sac swells as fresh air comes in, then used air goes out.
+function ventPicture(t) {
+  const G = geom(240, 196, 84), inhale = t < .5, swell = (1 - Math.cos(2 * Math.PI * t)) / 2;
+  const R = G.R * (1 + .045 * swell);
+  let b = DEFS + drawUnit(G, { top: 0, sacR: R }).s;
+  const p = inhale ? t / .5 : (t - .5) / .5;
+  let flow = '';
+  for (let i = 0; i < 3; i++) {
+    const q = clamp(p * 1.3 - i * .15, 0, 1), y = inhale ? 6 + (G.cy - R - 2) * q : (G.cy - R - 2) * (1 - q) + 6, op = Math.sin(Math.PI * q);
+    flow += inhale ? `<circle cx="240" cy="${f(y)}" r="6" fill="${BLUE}" ${fade(op)}/>` : `<circle cx="240" cy="${f(y)}" r="5.5" fill="#fff" stroke="${INK}" stroke-width="1.8" ${fade(op)}/>`;
+  }
+  b += part('airway', flow + `<g ${fade(inhale ? 1 : .4)}>${arrow('M200 22 V94', BLUE, 4)}${text(188, 52, 'fresh air in', 'xs b blue', 'end')}</g>` + `<g ${fade(inhale ? .4 : 1)}>${arrow('M280 94 V22', MUTED, 4)}${text(292, 52, 'used air out', 'xs b muted', 'start')}</g>`);
+  return b + GAS_KEY(376);
 }
-function perfPicture() {
-  let b = DEFS + bigUnit().s;
-  b += arrow('M60 364 H124', VEN, 4) + arrow('M356 364 H420', ART, 4);
-  b += text(16, 394, 'blood in: low in oxygen', 'xs b ven', 'start') + text(464, 394, 'blood out: topped up', 'xs b red', 'end');
+// Moving: red cells flow round the capillary in single file, filling with oxygen as they pass the sac.
+function perfPicture(t) {
+  const G = geom(240, 170, 84);
+  const u = drawUnit(G, { top: 0, plasma: true });
+  let b = DEFS + u.s, cells = '';
+  const out = bloodColor(u.leave);
+  for (let i = 0; i < 10; i++) {
+    const pt = along(G, (t + i / 10) % 1), c = lerpHex(VEN, out, pt.bend);
+    cells += `<ellipse cx="${f(pt.x)}" cy="${f(pt.y)}" rx="9" ry="6.5" fill="${c}" stroke="${INK}" stroke-width="1.2"/><ellipse cx="${f(pt.x)}" cy="${f(pt.y)}" rx="4" ry="2.2" fill="#fff" opacity=".35"/>`;
+  }
+  b += part('capillary', cells);
+  b += arrow(`M${f(G.cx - G.g - G.ext)} ${f(G.low + 34)} H${f(G.cx - G.g - 8)}`, VEN, 4) + arrow(`M${f(G.cx + G.g + 8)} ${f(G.low + 34)} H${f(G.cx + G.g + G.ext)}`, ART, 4);
+  b += text(16, 370, 'blood in: low in oxygen', 'xs b purple', 'start') + text(464, 370, 'blood out: topped up', 'xs b red', 'end');
   return b;
 }
 function matchPicture() {
-  let b = DEFS;
-  b += `<path d="M240 252 L208 306 H272 Z" fill="${INK}"/><path d="M64 252 H416" stroke="${INK}" stroke-width="7" stroke-linecap="round"/>`;
-  b += `<path d="M84 252 V236 H164 V252 M316 252 V236 H396 V252" fill="none" stroke="${INK}" stroke-width="2.5"/>`;
-  [[106, 196], [134, 186], [120, 214], [148, 210], [92, 220]].forEach(([x, y]) => { b += `<circle cx="${x}" cy="${y}" r="16" fill="${FRESH}" stroke="${INK}" stroke-width="1.8"/>`; });
-  [[100, 200], [128, 190], [142, 212], [116, 216]].forEach(([x, y]) => { b += `<circle cx="${x}" cy="${y}" r="4.5" fill="${BLUE}"/>`; });
-  b += `<path d="M356 140 C376 170 388 186 388 202 A32 32 0 0 1 324 202 C324 186 336 170 356 140Z" fill="${ART}" stroke="${INK}" stroke-width="2"/>`;
-  b += text(124, 138, 'air', 'sm b blue') + text(124, 160, 'ventilation', 'xs b');
-  b += text(356, 100, 'blood', 'sm b red') + text(356, 122, 'perfusion', 'xs b');
-  b += text(240, 346, 'balanced: a good match', 'sm b');
+  const G = geom(240, 132, 60);
+  let b = DEFS + drawUnit(G, { top: 0 }).s;
+  b += arrow('M206 8 V62', BLUE, 4) + text(194, 34, 'air delivered', 'xs b blue', 'end');
+  b += text(240, 262, 'blood flowing past', 'xs b purple');
+  b += text(464, 120, 'balanced:', 'sm b', 'end') + text(464, 144, 'a good match', 'sm b', 'end');
+  b += ratioScale(312, 1);
   return b;
 }
-function pairPicture(left, right) {
-  let b = DEFS;
-  [[120, left, 'L'], [360, right, 'R']].forEach(([cx, d, id]) => {
-    const u = drawUnit(cx, 150, 46, { v: d.v, q: d.q, id, top: 36 });
-    b += u.s + text(cx, 24, d.title, 'sm b');
-    d.lines.forEach((w, i) => { b += text(cx, 266 + i * 18, w, `xs b ${d.cls || ''}`); });
-  });
-  return b + keyRow(GAS_KEY, 320).body;
+// Moving: the airway closes, the sac goes stale and the blood leaving it stops filling with oxygen.
+function lowAirPicture(t) {
+  const G = geom(240, 150, 62), a1 = ease(span(t, .05, .42)), a2 = ease(span(t, .58, .9));
+  const air = 1 - .75 * a1 - .25 * a2;
+  const u = drawUnit(G, { air, top: 0, ghost: { air: 1 } });
+  let b = DEFS + u.s;
+  const wA = span(t, .3, .42) - span(t, .52, .6), wB = span(t, .8, .92);
+  if (wA > .01) b += `<g ${fade(wA)}>${text(464, 38, 'less air:', 'xs b blue', 'end')}${text(464, 60, 'blood leaves', 'xs b', 'end')}${text(464, 82, 'short of oxygen', 'xs b', 'end')}</g>`;
+  if (wB > .01) b += `<g ${fade(wB)}>${text(464, 38, 'no air at all:', 'xs b blue', 'end')}${text(464, 60, 'blood leaves', 'xs b', 'end')}${text(464, 82, 'unchanged', 'xs b', 'end')}</g>`;
+  b += text(f(G.cx - G.g - G.ext - 16), f(G.low + 6), 'blood in', 'xs b purple', 'end') + text(f(G.cx + G.g + G.ext + 16), f(G.low + 6), 'out', 'xs b ' + (u.leave > .9 ? 'red' : 'purple'), 'start');
+  const r = air > .002 ? u.u.r : 0;
+  b += ratioScale(306, r, { left: air <= .002 ? ['no air:', 'a shunt'] : ['too little air'], leftCls: air <= .002 ? 'xs b blue' : 'xs b', leftPart: 'shunt', right: ['too little blood'] });
+  return b;
 }
-const CORE = {
-  overview: () => svg('Two lungs with branching airways leading down from the windpipe. A magnifying circle shows a cluster of tiny round air sacs, the alveoli, with a blood vessel curving past them, changing from purple to red.', overviewPicture(), 390),
-  unit: () => svg('One air sac, the alveolus, at the end of its airway. A capillary loops around its lower half: blood enters on the left purple and leaves on the right red. A note points to the wall between air and blood: an extremely thin wall.', unitPicture(), 360),
-  swap: () => svg('The air sac holds blue oxygen dots and white carbon dioxide rings. A blue arrow carries oxygen from the sac into the capillary; a black arrow carries carbon dioxide from the blood into the sac.', swapPicture(), 428),
-  vent: () => svg('The air sac with its airway. A blue arrow beside the airway points down: fresh air in. A grey arrow points up: used air out.', ventPicture(), 388),
-  perf: () => svg('The air sac with blood flowing through its capillary loop. A purple arrow on the left: blood in, low in oxygen. A red arrow on the right: blood out, topped up.', perfPicture(), 404),
-  match: () => svg('A level seesaw. On the left pan, a cluster of air sacs: air, ventilation. On the right pan, a drop of blood: perfusion. The beam is level: balanced, a good match.', matchPicture(), 364),
-  lowair: () => svg('Two air sacs. Left: a narrowed airway, stale grey air with few oxygen dots, and blood leaving only partly red: blood leaves short of oxygen. Right: the airway is blocked, the sac is stale and blood leaves as purple as it came: a shunt.', pairPicture(
-    { v: .25, q: 1, title: 'less air', lines: ['blood leaves', 'short of oxygen'], cls: 'ven' },
-    { v: 0, q: 1, title: 'no air', lines: ['shunt: blood', 'leaves unchanged'], cls: 'ven' }), 336),
-  lowblood: () => svg('Two air sacs with open airways. Left: a thin trickle of blood and a sac full of oxygen dots: the air is only partly used. Right: no blood at all, an empty dashed vessel and a sac of unused fresh air: dead space.', pairPicture(
-    { v: 1, q: .25, title: 'less blood', lines: ['air only', 'partly used'] },
-    { v: 1, q: 0, title: 'no blood', lines: ['dead space:', 'air wasted'] }), 336),
-  mix: () => { const o = model({ ...NORMAL, airway: .15 }); return lungSvg(`Two air sacs sharing one blood supply. The left sac is well aired and its blood leaves red. The right sac's airway is narrow, its air is stale and its blood leaves purplish. The two streams join into arterial blood, which is darker than the left sac's blood alone; the oxygen bar is shorter than normal. ${sacWords(o)}`, o); },
-  steer: () => { const o = model({ ...NORMAL, airway: .15, flow: .4 }); return lungSvg(`The same two sacs. Around the poorly aired right sac, arrows show its vessel narrowing, so its capillary is thinner and more blood flows past the well-aired left sac. Arterial blood is redder than in the previous picture. ${sacWords(o)}`, o, { cause: 'squeeze' }); },
-  whole: () => lungSvg(`The whole picture. Air comes down the windpipe to two air sacs, ventilation; blood comes up from the body, splits around the two sacs and a thin bypass, perfusion, and leaves mixed as arterial blood to the body. Both sacs are matched; bars show oxygen and carbon dioxide in arterial blood.`, BASE, { labels: true })
-};
+// Moving: the capillary empties, the sac's air goes unused and stays fresh.
+function lowBloodPicture(t) {
+  const G = geom(240, 150, 62), a1 = ease(span(t, .05, .42)), a2 = ease(span(t, .58, .9));
+  const blood = 1 - .75 * a1 - .25 * a2;
+  const u = drawUnit(G, { blood, top: 0, ghost: { blood: 1 } });
+  let b = DEFS + u.s;
+  const wA = span(t, .3, .42) - span(t, .52, .6), wB = span(t, .8, .92);
+  if (wA > .01) b += `<g ${fade(wA)}>${text(464, 38, 'less blood:', 'xs b blue', 'end')}${text(464, 60, 'air only', 'xs b', 'end')}${text(464, 82, 'partly used', 'xs b', 'end')}</g>`;
+  if (wB > .01) b += `<g ${fade(wB)}>${text(464, 38, 'no blood at all:', 'xs b blue', 'end')}${text(464, 60, 'air goes in and', 'xs b', 'end')}${text(464, 82, 'out for nothing', 'xs b', 'end')}</g>`;
+  const r = blood > .002 ? u.u.r : Infinity;
+  b += ratioScale(306, r, { left: ['too little air'], right: blood <= .002 ? ['no blood:', 'dead space'] : ['too little blood'], rightCls: blood <= .002 ? 'xs b blue' : 'xs b', rightPart: 'dead' });
+  return b;
+}
 
 /* ---------- What changes it ---------- */
-const LEGEND = { oxygen: 'supplemental oxygen', beta2: 'beta-2 agonist', antimusc: 'muscarinic antagonist', pe: 'pulmonary embolism', pneumonia: 'pneumonia' };
-const OPENERS = ['beta2', 'antimusc'];   // drugs that start from narrowed airways and open them
-// Shown beside the right airway while the drug acts: what it does to the muscle's signals.
-const SIGNAL = { beta2: ['relaxing signal', 'switched on'], antimusc: ['tightening signal', 'blocked'] };
-const CHANGE_WHERE = {
-  oxygen: 'Both air sacs turn a deeper blue with many more oxygen dots, and the oxygen bar for arterial blood grows well past the dashed normal tick.',
-  beta2: 'The right airway first narrows to the dotted red narrowed width, its sac turning stale. Then a note appears beside it, relaxing signal switched on, and the airway widens again almost to the dashed normal outline.',
-  antimusc: 'The right airway first narrows to the dotted red narrowed width, its sac turning stale. Then a note appears beside it, tightening signal blocked, and the airway widens again almost to the dashed normal outline.',
-  pe: 'A black clot sits in the right sac\'s vessel, which thins to a trickle; the left sac\'s vessel swells with the extra blood. The right sac fills with unused fresh air while the left one turns staler.',
-  pneumonia: 'Fluid rises to fill most of the right sac, and the bypass vessel carrying unaired purple blood thickens. Arterial blood turns darker and the oxygen bar shrinks.'
-};
-const DURATION = { beta2: 2400, antimusc: 2400 };
-function stateAt(kind, t) {
-  const ease = x => 1 - Math.pow(1 - clamp(x, 0, 1), 3);
-  if (OPENERS.includes(kind)) return t < .45 ? mix(NORMAL, NARROWED, ease(t / .45)) : mix(NARROWED, { ...NORMAL, ...CHANGES[kind] }, ease((t - .45) / .55));
-  return mix(NORMAL, { ...NORMAL, ...CHANGES[kind] }, ease(t));
-}
-function changePicture(el, t) {
-  const kind = el.dataset.kind, o = model(stateAt(kind, t)), opener = OPENERS.includes(kind);
-  const ref = opener ? NARROW : BASE, head = opener ? 'Compared with narrowed airways' : 'Compared with normal';
-  const name = el.dataset.stepTitle.split(':')[0];
-  const label = `${name}, drawn over a faint dashed outline of the normal lung. ${CHANGE_WHERE[kind]} ${sacWords(o)} ${head}: ${describe(o, ref)}.`;
-  const opt = { ghost: BASE, legend: LEGEND[kind], narrowed: opener ? NARROWED : null, signal: opener && t >= .45 ? SIGNAL[kind] : null };
-  return { pic: lungSvg(label, o, opt), ro: readout(o, ref, head) };
-}
-
-const steps = $$('[data-step]');
-const backBtn = $('[data-step-back]'), nextBtn = $('[data-step-next]'), progress = $('[data-step-progress]');
-let current = 0, frame = 0;
-const visualOf = el => el.querySelector('[data-visual]');
-const isAnimated = el => el.dataset.kind in CHANGES;
-const lastReadout = new WeakMap();
-function drawAt(el, t) {
-  const v = visualOf(el), { pic, ro } = changePicture(el, t), old = v.querySelector('svg');
-  if (!old) { v.innerHTML = pic + ro; lastReadout.set(v, ro); return; }
-  old.outerHTML = pic;
-  if (lastReadout.get(v) !== ro) { v.querySelector('.readout').outerHTML = ro; lastReadout.set(v, ro); }
-}
-function animate(el) {
-  cancelAnimationFrame(frame);
-  if (reducedMotion()) { drawAt(el, 1); return; }
-  const length = DURATION[el.dataset.kind] || 1600;
-  let start = null;
-  drawAt(el, 0);
-  const tick = now => {
-    if (start === null) start = now;
-    const t = Math.min(1, (now - start) / length);
-    drawAt(el, t);
-    if (t < 1) frame = requestAnimationFrame(tick);
+// Supplemental oxygen, side by side: a sac with too little air, and a shunt (a sac full of fluid).
+function oxygenPicture(t) {
+  const x = ease(span(t, .06, .8)), fio2 = 1 + x;
+  const GA = geom(120, 138, 46), GB = geom(360, 138, 46);
+  const room = { A: unit(.5 * .25, K.half, K.pio2), B: K.Cv };
+  let b = DEFS;
+  b += part('air', tubes([['M240 0 V40 H120 V96', 10, airColor(fio2)], ['M240 40 H360 V96', 10, airColor(fio2)]]));
+  const A = drawUnit(GA, { air: .25, fio2, id: 'A', lumen: 8, top: 40, airPart: 'air' });
+  const B = drawUnit(GB, { air: 1, fill: 1, fio2, id: 'B', lumen: 8, top: 40, airPart: 'air' });
+  b += A.s + B.s;
+  b += `<g ${fade(1 - span(t, .2, .4))}>${text(254, 20, 'room air in', 'xs b', 'start')}</g><g ${fade(span(t, .3, .5))}>${text(254, 20, 'extra oxygen in', 'xs b blue', 'start')}</g>`;
+  b += text(120, 252, 'too little air', 'xs b') + text(360, 252, 'no air: a shunt', 'xs b');
+  const bar = (x0, c, c0, id) => {
+    const w = 170, X = s => f(x0 + w * clamp((s - .5) / .5, 0, 1));
+    return `<rect x="${x0}" y="266" width="${w}" height="18" fill="#fff" stroke="${RULE}"/><rect data-bar="${id}" x="${x0}" y="266" width="${f(X(c) - x0)}" height="18" fill="${bloodColor(c)}"/><path class="ghost" d="M${X(c0)} 260 V290" stroke="${INK}" stroke-width="2.5" stroke-dasharray="3 3"/>`;
   };
-  frame = requestAnimationFrame(tick);
+  b += bar(35, A.leave, room.A.c, 'a') + bar(275, B.leave, room.B, 'b');
+  const a = span(t, .55, .85);
+  if (a > .01) b += `<g data-named ${fade(a)}>${text(120, 316, '↑ blood fills', 'xs b blue')}${text(360, 316, '↔ no change', 'xs b muted')}</g>`;
+  b += text(240, 348, 'bars: saturation of blood leaving', 'xs muted') + text(240, 370, 'each sac, half to full; dashed: room air', 'xs muted');
+  return { svg: b, A, B, room };
 }
-let started = false;
-function startLesson() {
-  steps.forEach(el => {
-    const kind = el.dataset.kind;
-    if (CORE[kind]) visualOf(el).innerHTML = CORE[kind]();
-    else drawAt(el, 1);
-    el.querySelector('.replay')?.addEventListener('click', () => animate(el));
-  });
-  started = true;
-  if (/^#step-\d+$/.test(location.hash)) fromHash(); else showStep(current);
+// The airway muscle, its signal and the drug, for the two bronchodilators.
+function airwayPicture(kind, t) {
+  const tight = ease(span(t, .04, .36)), open = ease(span(t, .55, .92));
+  const air = 1 - .8 * tight + (kind === 'beta2' ? .65 : .6) * open;
+  const G = geom(140, 268, 58), lumen = 6 + 18 * air, band = 7 + 8 * clamp(tight - open * .9, 0, 1);
+  const u = drawUnit(G, { air, top: 0, lumen, ghost: { lumen: 24 } });
+  let b = DEFS + u.s;
+  // Muscle bands round the airway: they bulge in as the muscle tightens.
+  let m = '';
+  for (const y of [52, 100, 148]) {
+    m += `<rect x="${f(140 - lumen / 2 - band - 1.75)}" y="${y - 11}" width="${f(band)}" height="22" rx="4" fill="${MUSCLE}" stroke="${INK}" stroke-width="1.5"/>`;
+    m += `<rect x="${f(140 + lumen / 2 + 1.75)}" y="${y - 11}" width="${f(band)}" height="22" rx="4" fill="${MUSCLE}" stroke="${INK}" stroke-width="1.5"/>`;
+  }
+  b += part('muscle', m + text(104, 92, 'airway', 'xs b', 'end') + text(104, 114, 'muscle', 'xs b', 'end'));
+  const rx = 140 + lumen / 2 + 1.75 + band;   // the receptor sits on the outer face of the middle band
+  const drugIn = ease(span(t, .4, .55));
+  let r = `<path d="M${f(rx)} 92 h8 v16 h-8" fill="#fff" stroke="${INK}" stroke-width="2"/>`;
+  if (kind === 'beta2') {
+    const dx = 330 - (330 - (rx + 9)) * drugIn;
+    r += `<path d="M${f(dx)} 100 l9 -9 l9 9 l-9 9 z" fill="${BLUE}" stroke="${INK}" stroke-width="1.5" ${fade(span(t, .36, .42))}/>`;
+    const coming = span(t, .36, .42) - span(t, .48, .54);
+    if (coming > .01) r += `<g ${fade(coming)}>${text(352, 106, 'beta-2 agonist', 'xs b blue', 'start')}</g>`;
+    r += `<g ${fade(span(t, .5, .6))}>${text(rx + 30, 92, 'beta-2 receptor', 'xs b', 'start')}${text(rx + 30, 114, 'switched on', 'xs b blue', 'start')}</g>`;
+  } else {
+    // A nerve ending drops acetylcholine onto the receptor until the antagonist sits in it.
+    r += `<path d="M470 66 C380 66 330 84 ${f(rx + 46)} 96" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round"/><circle cx="${f(rx + 40)}" cy="98" r="9" fill="#fff" stroke="${INK}" stroke-width="2.5"/>`;
+    for (let i = 0; i < 3; i++) {
+      const q = ((t * 4) + i / 3) % 1, stop = t > .5 ? .55 : 1;
+      const x = rx + 30 - 20 * Math.min(q, stop), op = t > .5 ? Math.sin(Math.PI * q) * .8 : Math.sin(Math.PI * q);
+      r += `<circle cx="${f(x)}" cy="${f(96 + 6 * (i - 1))}" r="3.2" fill="${ART}" ${fade(op)}/>`;
+    }
+    r += `<path d="M${f(rx + 1)} 94 h6 v12 h-6 z" fill="${ART}" stroke="${INK}" stroke-width="1" ${fade(drugIn)}/>`;
+    r += text(470, 56, 'nerve', 'xs b', 'end');
+    const ach = 1 - span(t, .4, .48);
+    if (ach > .01) r += `<g ${fade(ach)}>${text(rx + 58, 120, 'acetylcholine', 'xs b red', 'start')}</g>`;
+    r += `<g ${fade(span(t, .5, .6))}>${text(rx + 58, 120, 'antagonist blocks', 'xs b red', 'start')}${text(rx + 58, 142, 'the receptor', 'xs b red', 'start')}</g>`;
+  }
+  b += part('receptor', r);
+  const w1 = span(t, .2, .3) - span(t, .44, .5), w2 = span(t, .7, .82);
+  const on = kind === 'beta2' ? 'relax signal on:' : 'tighten signal blocked:';
+  if (w1 > .01) b += `<g ${fade(w1)}>${text(464, 186, 'muscle tightens:', 'xs b red', 'end')}${text(464, 208, 'airway narrows', 'xs b', 'end')}${arrow(`M${f(140 - lumen / 2 - band - 20)} 126 H${f(140 - lumen / 2 - 4)}`, ART, 3)}${arrow(`M${f(140 + lumen / 2 + band + 20)} 126 H${f(140 + lumen / 2 + 4)}`, ART, 3)}</g>`;
+  if (w2 > .01) b += `<g data-named ${fade(w2)}>${text(464, 186, on, 'xs b blue', 'end')}${text(464, 208, 'airway widens again', 'xs b', 'end')}${arrow(`M${f(140 - lumen / 2 - 3)} 126 H${f(140 - lumen / 2 - 24)}`, BLUE, 3)}${arrow(`M${f(140 + lumen / 2 + 3)} 126 H${f(140 + lumen / 2 + 24)}`, BLUE, 3)}</g>`;
+  // How full the blood leaving the sac is, half full to full, with normal dashed.
+  const X = s => f(268 + 192 * clamp((s - .5) / .5, 0, 1));
+  b += text(268, 236, 'saturation of blood', 'xs b', 'start') + text(268, 256, 'leaving the sac', 'xs b', 'start');
+  b += `<rect x="268" y="266" width="192" height="18" fill="#fff" stroke="${RULE}"/><rect data-bar="o2" x="268" y="266" width="${f(X(u.leave) - 268)}" height="18" fill="${bloodColor(u.leave)}"/>`;
+  b += `<path class="ghost" d="M${X(unit(.5, K.half, K.pio2).c)} 260 V290" stroke="${INK}" stroke-width="2.5" stroke-dasharray="3 3"/>`;
+  b += text(268, 308, 'half', 'xs muted', 'start') + text(460, 308, 'full', 'xs muted', 'end');
+  return { svg: b, air, leave: u.leave };
 }
-function showStep(n, focus = false) {
-  if (!started) return;
-  cancelAnimationFrame(frame);
-  current = clamp(n, 0, steps.length - 1);
-  steps.forEach((el, i) => { el.hidden = i !== current; });
-  backBtn.disabled = current === 0;
-  nextBtn.textContent = current === steps.length - 1 ? 'Start again ↻' : 'Next →';
-  progress.textContent = `Step ${current + 1} of ${steps.length}`;
-  if (location.hash !== `#step-${current + 1}`) history.replaceState(null, '', `#step-${current + 1}`);
-  const el = steps[current];
-  if (isAnimated(el)) animate(el);
-  // Scroll the whole step (not just its heading) so the top of a side-by-side visual is never under the sticky bar.
-  if (focus) { el.querySelector('h2').focus({ preventScroll: true }); el.scrollIntoView({ block: 'start' }); }
+const CHANGE_WHERE = {
+  pe: 'A black clot appears in the vessel bringing blood to the right sac, which thins to almost nothing; the left sac’s vessel swells with the extra blood, more than its air can serve. The right sac fills with unused fresh air: dead space, air but no blood. The saturation bar for blood to the body falls below its dashed normal tick.',
+  pneumonia: 'Fluid rises until it fills the right sac, so no air reaches it, while blood keeps flowing past and leaves as purple as it came: a shunt, blood but no air. The mixed blood to the body turns darker and its saturation bar falls well below the dashed normal tick.'
+};
+function lungChange(kind) {
+  return {
+    duration: 2800,
+    render(t) {
+      const a = ease(t), o = model(mix(NORMAL, { ...NORMAL, ...CHANGES[kind] }, a));
+      const named = span(t, .55, .9);
+      let extra = '';
+      if (kind === 'pe' && named > .01) extra = `<g data-named ${fade(named)}>${text(16, 58, 'more blood', 'xs b blue', 'start')}${text(16, 80, 'than air here', 'xs b blue', 'start')}${arrow('M34 90 V124', BLUE, 3)}</g>`;
+      if (kind === 'pneumonia' && named > .01) extra = `<g data-named ${fade(named)}>${text(464, 58, 'blood still', 'xs b blue', 'end')}${text(464, 80, 'flows past', 'xs b blue', 'end')}${arrow('M446 90 V124', BLUE, 3)}</g>`;
+      const label = `${kind === 'pe' ? 'Pulmonary embolism' : 'Pneumonia'}, drawn over a faint dashed outline of the normal lung. ${CHANGE_WHERE[kind]} ${sacWords(o)} Compared with normal: ${describe(o, BASE)}.`;
+      const delta = o.sao2 < BASE.sao2 - .008 && named > .3 ? '↓ falls' : '';
+      return { svg: lungSvg(label, o, { ghost: BASE, clot: kind === 'pe' ? a : 0, delta, extra }), readout: readout(o, BASE, 'Compared with normal') };
+    }
+  };
 }
-nextBtn.addEventListener('click', () => showStep(current === steps.length - 1 ? 0 : current + 1, true));
-backBtn.addEventListener('click', () => showStep(current - 1, true));
-$('#lesson').addEventListener('keydown', e => {
-  if (e.target.closest('input, select, textarea') || e.altKey || e.ctrlKey || e.metaKey) return;
-  if (e.key === 'ArrowRight' && current < steps.length - 1) { e.preventDefault(); showStep(current + 1, true); }
-  if (e.key === 'ArrowLeft' && current > 0) { e.preventDefault(); showStep(current - 1, true); }
-});
-
-/* ---------- Tabs ---------- */
-const tabs = $$('[role=tab]');
-function activate(tab, focus = false) {
-  tabs.forEach(t => { const on = t === tab; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; document.getElementById(t.getAttribute('aria-controls')).hidden = !on; });
-  if (focus) tab.focus();
-  if (tab.id === 'tab-lesson') { if (started && isAnimated(steps[current])) drawAt(steps[current], 1); } else cancelAnimationFrame(frame);
-  update();
-}
-tabs.forEach((t, i) => {
-  t.addEventListener('click', () => activate(t));
-  t.addEventListener('keydown', e => {
-    const n = { ArrowRight: (i + 1) % tabs.length, ArrowLeft: (i + tabs.length - 1) % tabs.length, Home: 0, End: tabs.length - 1 }[e.key];
-    if (n !== undefined) { e.preventDefault(); activate(tabs[n], true); }
-  });
-});
-function fromHash() {
-  const m = location.hash.match(/^#step-(\d+)$/);
-  if (m && started) { if (tabs[0].getAttribute('aria-selected') !== 'true') activate(tabs[0]); showStep(Number(m[1]) - 1); }
-}
-window.addEventListener('hashchange', fromHash);
+const still = (label, body, h) => () => svg(label, body(), h);
+const scenes = {
+  overview: still('Two lungs with branching airways leading down from the windpipe. A magnifying circle shows a cluster of tiny round air sacs, the alveoli, at the end of an airway, with a blood vessel curving past them that turns from purple to red.', overviewPicture, 392),
+  unit: still('One air sac, the alveolus, at the end of its airway. A capillary loops round its lower half: blood enters on the left purple and leaves on the right red. A blue line marks the extremely thin wall where air meets blood.', unitPicture, 374),
+  swap: { duration: 3200, loop: true, rest: .5, render: t => svg('The air sac holds blue oxygen dots and white carbon dioxide rings. Oxygen dots keep crossing the wall from the sac into the capillary along a blue arrow, while carbon dioxide rings cross from the blood up into the sac along a black arrow.', swapPicture(t), 402) },
+  vent: { duration: 4400, loop: true, rest: .3, render: t => svg('The air sac with its airway, breathing. Breathing in, blue oxygen dots travel down the airway beside an arrow marked fresh air in and the sac swells a little. Breathing out, carbon dioxide rings travel up beside an arrow marked used air out.', ventPicture(t), 388) },
+  perf: { duration: 4000, loop: true, render: t => svg('The air sac with red cells flowing in single file round its capillary loop. Each cell enters purple on the left, low in oxygen, and turns red as it passes under the sac, leaving on the right topped up.', perfPicture(t), 382) },
+  match: still('One air sac with a blue arrow of air delivered down its airway and its capillary of blood flowing past, the two in balance: a good match. Below, a scale from too little air on the left to too little blood on the right has its marker in the middle, at matched.', matchPicture, 380),
+  lowair: { duration: 4400, render: t => svg('One air sac whose airway narrows and then closes, drawn over a dashed outline of its normal airway. With less air the sac turns stale grey and the blood leaving it is only partly red: blood leaves short of oxygen. With no air at all the blood leaves as purple as it came. On the scale below, the marker slides from matched all the way left: no air, a shunt.', lowAirPicture(t), 384) },
+  lowblood: { duration: 4400, render: t => svg('One air sac whose capillary thins and then empties, drawn over a dashed outline of its normal capillary. With less blood the air is only partly used; with no blood at all the vessel is empty and the sac stays full of fresh, unused air. On the scale below, the marker slides from matched all the way right: no blood, dead space.', lowBloodPicture(t), 384) },
+  mix: { duration: 3000, render: t => { const o = model({ ...NORMAL, airway: 1 - .85 * ease(span(t, .05, .8)) }); return svg(`Two air sacs share one blood supply, drawn over a dashed outline of normal. The right sac's airway narrows: its air turns stale and its blood leaves purplish. The left sac is matched and its blood is already full. The two streams join into the blood going to the body, which is darker than the left sac's blood alone, and its saturation bar falls. ${sacWords(o)}`, lungPicture(o, { ghost: BASE, key: false, words: { A: ['matched,', 'already full'] }, delta: t > .6 ? '↓ mix falls' : '' }), LUNG_H); } },
+  steer: { duration: 3000, render: t => {
+    const a = ease(span(t, .05, .8)), from = model({ ...NORMAL, airway: .15 }), o = model({ ...NORMAL, airway: .15, flow: 1 - .6 * a });
+    const named = span(t, .5, .85);
+    const extra = named > .01 ? `<g data-named ${fade(named)}>${text(464, 58, 'vessel', 'xs b', 'end')}${text(464, 80, 'narrows', 'xs b', 'end')}${text(16, 58, 'blood steered', 'xs b blue', 'start')}${text(16, 80, 'to air', 'xs b blue', 'start')}${arrow('M34 90 V124', BLUE, 3)}</g>` : '';
+    return svg(`The same two sacs, the right one short of air, drawn over a dashed outline of the picture before. Arrows squeeze the vessel bringing blood to the poorly aired right sac, so its capillary thins and more blood flows past the well-aired left sac. The saturation bar for blood to the body rises back part of the way. ${sacWords(o)}`, lungPicture(o, { ghost: from, key: false, squeeze: a, delta: named > .3 ? '↑ rises again' : '', extra }), LUNG_H);
+  } },
+  whole: () => svg('The whole picture. Air comes down the windpipe to two air sacs: ventilation. Blood comes from the body, loops under each sac and leaves mixed toward the body: perfusion. Both sacs are matched, and the saturation bar shows the blood to the body nearly full.', lungPicture(BASE, { extra: text(258, 24, 'ventilation', 'xs b blue', 'start') + text(16, 52, 'perfusion:', 'xs b purple', 'start') + text(16, 74, 'blood past', 'xs b purple', 'start') }), LUNG_H),
+  oxygen: {
+    duration: 3000,
+    render(t) {
+      const { svg: body, A, B, room } = oxygenPicture(t);
+      const rows = [['Oxygen pressure in the sac with too little air', trend(A.u.po2, room.A.po2, 'higher', 'lower')], ['Saturation of blood leaving that sac', trend(A.leave, room.A.c, 'higher', 'lower')], ['Saturation of shunt blood', trend(B.leave, room.B, 'higher', 'lower')]];
+      return { svg: svg('Supplemental oxygen, side by side, drawn over dashed ticks for room air. On the left, a sac with too little air: as extra oxygen comes in, the sac turns blue with oxygen, its blood turns red and its bar rises nearly to full. On the right, a shunt, a sac full of fluid: its blood stays purple and its bar does not move.', body, 376), readout: readoutOf(rows, 'Compared with room air') };
+    }
+  },
+  beta2: { duration: 3600, render: t => svg('One airway wrapped in muscle bands, the air sac it feeds and the sac’s capillary, over a dashed outline of the normal airway. First the muscle tightens and the airway narrows: the sac goes stale and the saturation bar for the blood leaving it falls. Then a beta-2 agonist docks on the muscle’s beta-2 receptor, the relax signal switches on, and the airway opens again almost to normal; the sac freshens and the bar rises back.', airwayPicture('beta2', t).svg, 384) },
+  antimusc: { duration: 3600, render: t => svg('One airway wrapped in muscle bands, the air sac it feeds and the sac’s capillary, over a dashed outline of the normal airway. A nerve ending drops acetylcholine onto the muscle’s receptor, the muscle tightens and the airway narrows: the sac goes stale and the saturation bar for the blood leaving it falls. Then a muscarinic antagonist sits in the receptor, the drops can no longer land, and the airway opens again almost to normal.', airwayPicture('antimusc', t).svg, 384) },
+  pe: lungChange('pe'),
+  pneumonia: lungChange('pneumonia'),
+};
 
 /* ---------- Explore: each sac on the ventilation–perfusion line ---------- */
 function vqChart(o) {
-  const x0 = 70, x1 = 450, y0 = 240, y1 = 34;
+  const x0 = 70, x1 = 450, y0 = 240, y1 = 40;
   const ymax = Math.max(o.pio2, K.pio2) * 1.06;
   const X = r => f(x0 + (x1 - x0) * (clamp(Math.log10(r), -2, 2) + 2) / 4);
   const Y = P => f(y0 - (y0 - y1) * P / ymax);
   const line = pio2 => { let d = ''; for (let i = 0; i <= 80; i++) { const r = Math.pow(10, -2 + 4 * i / 80); d += `${i ? ' L' : 'M'}${X(r)} ${Y(unit(.5 * r, K.half, pio2).po2)}`; } return d; };
   let b = DEFS;
   b += `<path d="M${x0} ${y1 - 14} V${y0} H${x1 + 8}" fill="none" stroke="${INK}" stroke-width="2"/>`;
-  b += `<path d="M${x0} ${Y(K.pvo2)} H${x1}" stroke="${VEN}" stroke-width="1.5" stroke-dasharray="4 4"/>` + text(x0 + 6, f(Y(K.pvo2) - 6), 'blood arriving', 'xs ven', 'start');
-  b += `<path d="M${x0} ${Y(o.pio2)} H${x1}" stroke="${BLUE}" stroke-width="1.5" stroke-dasharray="4 4"/>` + text(x0 + 6, f(Y(o.pio2) - 6), 'air breathed in', 'xs blue', 'start');
+  b += `<path d="M${x0} ${Y(K.pvo2)} H${x1}" stroke="${VEN}" stroke-width="1.5" stroke-dasharray="4 4"/>` + text(x1, f(Y(K.pvo2) + 22), 'blood arriving', 'xs purple', 'end');
+  b += `<path d="M${x0} ${Y(o.pio2)} H${x1}" stroke="${BLUE}" stroke-width="1.5" stroke-dasharray="4 4"/>` + text(x0 + 8, f(Y(o.pio2) - 8), 'air breathed in', 'xs blue', 'start');
   if (o.p.fio2 > 1.01) b += `<path data-ghost="room air" d="${line(K.pio2)}" fill="none" stroke="${INK}" stroke-width="2.5" stroke-dasharray="6 5" opacity=".6"/>`;
   b += `<path data-vq-line d="${line(o.pio2)}" fill="none" stroke="${BLUE}" stroke-width="4"/>`;
-  b += `<path d="M${X(1)} ${y0} V${y0 + 8}" stroke="${INK}" stroke-width="2"/>` + text(X(1), y0 + 26, 'normal match', 'xs b');
-  b += text(x0, y0 + 26, 'no air', 'xs b', 'start') + text(x1, y0 + 26, 'no blood', 'xs b', 'end');
-  b += text(x1, y0 + 50, 'air ÷ blood, relative to a normal sac → (log)', 'xs b', 'end') + text(12, 18, 'oxygen in the air sac ↑', 'xs b', 'start');
+  b += `<path d="M${X(1)} ${y0} V${y0 + 8}" stroke="${INK}" stroke-width="2"/>` + text(X(1), y0 + 28, 'normal match', 'xs b');
+  b += text(x0, y0 + 28, 'no air', 'xs b', 'start') + text(x1, y0 + 28, 'no blood', 'xs b', 'end');
+  b += text(x1, y0 + 54, 'air ÷ blood, relative to normal → (log)', 'xs b', 'end') + text(12, 18, 'oxygen in the air sac ↑', 'xs b', 'start');
   const pt = (u, word, dy) => u ? `<circle data-sac-point cx="${X(u.r || .01)}" cy="${Y(u.po2)}" r="8" fill="#fff" stroke="${INK}" stroke-width="3"/>` + text(X(u.r || .01), f(Y(u.po2) + dy), word, 'xs b') : '';
-  b += pt(o.A, 'left sac', -14) + pt(o.B, 'right sac', 26);
+  b += pt(o.A, 'left sac', -16) + pt(o.B, 'right sac', 30);
   return b;
 }
 
 /* ---------- Shared model state (Clinical values + Explore freely) ---------- */
 let params = { ...NORMAL }, data = null;
 const SLIDERS = ['fio2', 'airway', 'flow', 'fill'];
-const STATE_PARAMS = { oxygen: CHANGES.oxygen, narrowed: { airway: NARROWED.airway }, widened: CHANGES.beta2, pe: CHANGES.pe, shunt: CHANGES.pneumonia };
+const STATE_PARAMS = { oxygen: CHANGES.oxygen, narrowed: { airway: NARROWED.airway }, widened: CHANGES.beta2, pe: CHANGES.pe, shunt: { fill: .7 } };
 const level = (k, v) => k === 'fio2' ? (v < 1.05 ? 'room air' : v < 1.6 ? 'a little extra' : v < 2.4 ? 'extra' : 'much extra')
   : k === 'airway' ? (v < .03 ? 'blocked' : v < .5 ? 'very narrow' : v < .97 ? 'narrowed' : 'open')
   : k === 'flow' ? (v < .3 ? 'mostly blocked' : v < .97 ? 'reduced' : 'normal')
@@ -513,17 +590,18 @@ function update() {
   syncControls();
   const o = model(params);
   const label = `Illustrative model with these settings, drawn over a faint dashed outline of normal. ${sacWords(o)} Compared with normal: ${describe(o, BASE)}.`;
-  $('#explore-visual').innerHTML = lungSvg(label, o, { ghost: BASE, legend: 'these settings' }) + readout(o, BASE, 'Compared with normal');
-  $('#clinical-visual').innerHTML = lungSvg(label, o, { ghost: BASE, legend: 'these settings' });
+  const opt = { ghost: BASE, clot: o.p.flow < .95 && !params.hpv ? 1 - o.p.flow : 0, squeeze: params.hpv && o.squeeze < .97 ? 1 : 0 };
+  $('#explore-visual').innerHTML = lungSvg(label, o, opt) + readout(o, BASE, 'Compared with normal');
+  $('#clinical-visual').innerHTML = lungSvg(label, o, opt);
   const where = r => r === 0 ? 'at no air' : r === Infinity ? 'at no blood' : `at ${r.toFixed(2)} times a normal sac's ratio on the horizontal axis${data ? ` (an actual ventilation–perfusion ratio of ${(r * K.vq).toFixed(2)})` : ''}`;
-  $('#vq-chart').innerHTML = svg(`Illustrative chart. The blue line shows the oxygen pressure an air sac settles at for every balance of air and blood, from the gas of arriving blood at no air to the air breathed in at no blood. Across, a log scale of each sac's air-to-blood ratio relative to a normal sac, so the centre tick (normal match) sits at 1, a normal sac${data ? `, whose actual ventilation–perfusion ratio is ${K.vq}` : ''}. Each position below gives the axis value and, in brackets, the actual ratio. The left sac sits ${where(o.A.r)}${o.B ? `; the right sac sits ${where(o.B.r)}` : '; the right sac is entirely filled with fluid'}.${o.p.fio2 > 1.01 ? ' A dashed line shows the same curve breathing room air.' : ''}`, vqChart(o), 300);
+  $('#vq-chart').innerHTML = svg(`Illustrative chart. The blue line shows the oxygen pressure an air sac settles at for every balance of air and blood, from the gas of arriving blood at no air to the air breathed in at no blood. Across, a log scale of each sac's air-to-blood ratio relative to a normal sac, so the centre tick (normal match) sits at 1, a normal sac${data ? `, whose actual ventilation–perfusion ratio is ${K.vq}` : ''}. Each position below gives the axis value and, in brackets, the actual ratio. The left sac sits ${where(o.A.r)}${o.B ? `; the right sac sits ${where(o.B.r)}` : '; the right sac is entirely filled with fluid'}.${o.p.fio2 > 1.01 ? ' A dashed line shows the same curve breathing room air.' : ''}`, vqChart(o), 306);
   const hpvNote = params.hpv ? ` Vessel narrowing has cut the right sac’s blood flow to ${Math.round(100 * o.squeeze)}% of its set value.` : '';
   if (!data) {
     $('#model-results').textContent = `Illustrative model, relative to normal: arterial oxygen ×${(o.pao2 / BASE.pao2).toFixed(2)} · arterial carbon dioxide ×${(o.paco2 / BASE.paco2).toFixed(2)} · shunt ×${(o.shunt / BASE.shunt).toFixed(2)}.${hpvNote}`;
     return;
   }
   const m = measures(o);
-  $('#model-results').textContent = `Illustrative model: oxygen ${withUnit('o2pct', m.o2pct)} of the air breathed in (${withUnit('pio2', m.pio2)}) · alveolar oxygen ${withUnit('pAo2', m.pAo2)} and carbon dioxide ${withUnit('pAco2', m.pAco2)} (air-weighted average) · blood leaving the lungs: oxygen ${withUnit('ppvo2', m.ppvo2)}, saturation ${withUnit('sat', m.sat)}, carbon dioxide ${o.paco2.toFixed(0)} ${valueOf('pvco2').unit} · ventilation–perfusion ratio: whole lung ${withUnit('vq', m.vq)}, right sac ${withUnit('vqRegion', m.vqRegion)}.${hpvNote}`;
+  $('#model-results').textContent = `Illustrative model: oxygen ${withUnit('o2pct', m.o2pct)} of the air breathed in (${withUnit('pio2', m.pio2)}) · alveolar oxygen ${withUnit('pAo2', m.pAo2)} and carbon dioxide ${withUnit('pAco2', m.pAco2)} (air-weighted average) · blood leaving the lungs: oxygen ${withUnit('ppvo2', m.ppvo2)}, saturation ${withUnit('sat', m.sat)}, carbon dioxide ${o.paco2.toFixed(0)} ${valueOf('pvco2').unit} (breathing held steady) · ventilation–perfusion ratio: whole lung ${withUnit('vq', m.vq)}, right sac ${withUnit('vqRegion', m.vqRegion)}.${hpvNote}`;
   const state = data.states.find(s => s.id === $('#clinical-state').value);
   for (const v of data.values) {
     const row = document.querySelector(`[data-cv="${v.id}"]`);
@@ -639,8 +717,7 @@ async function load() {
   }
   if (!K) { K = { ...FALLBACK }; derive(); }
   BASE = model(NORMAL);
-  NARROW = model(NARROWED);
-  startLesson();
   update();
 }
-load();
+
+lesson({ scenes, before: load, onTab: { clinical: update, explore: update } });

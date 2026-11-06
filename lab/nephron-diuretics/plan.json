@@ -1,0 +1,189 @@
+{
+  "minutes": 25,
+  "prerequisites": [],
+  "objectives": [
+    "Trace salt and water along a nephron and name what each segment takes back.",
+    "Explain why water follows salt, and how two hormones set what the collecting duct keeps.",
+    "Predict how much each diuretic class adds to the salt and water in the urine, and what that does to blood volume.",
+    "Tell the diuretic classes apart by what they do to blood potassium and bicarbonate."
+  ],
+  "checks": {
+    "loop": {
+      "prompt": "A loop diuretic blocks the salt carrier in the thick ascending limb, which normally takes back a large share of the filtered salt. The stretches after it can catch only a little more. What happens to the salt in the urine, and to blood volume?",
+      "choices": [
+        "Much more salt in the urine; blood volume falls",
+        "A little more salt in the urine; blood volume rises",
+        "No change: the later stretches catch it all",
+        "Less salt in the urine; blood volume rises"
+      ],
+      "answer": 0,
+      "why": "The distal tubule and collecting duct can take back only a little extra, so most of the salt the blocked segment would have kept flows on into the urine. Water follows that salt out, so blood volume falls."
+    },
+    "thiazide": {
+      "prompt": "A thiazide blocks the salt carrier in the early distal tubule, which normally takes back only a small share of the filtered salt. Compared with a loop diuretic, how much extra salt and water leave in the urine?",
+      "choices": [
+        "Less: a gentler effect",
+        "More: a stronger effect",
+        "About the same amount",
+        "None at all"
+      ],
+      "answer": 0,
+      "why": "A drug can only add what its segment would have taken back. The distal tubule handles a small share of the salt, far less than the thick ascending limb, so a thiazide is a gentler diuretic."
+    },
+    "ksp": {
+      "prompt": "In the collecting duct, taking salt back is what pushes potassium out into the urine. A potassium-sparing diuretic blocks that salt uptake. What happens to blood potassium?",
+      "choices": [
+        "It rises",
+        "It falls",
+        "It does not change"
+      ],
+      "answer": 0,
+      "why": "With less salt taken back in the collecting duct, less potassium is pushed into the urine, so more stays in the blood. That is the opposite of loop diuretics and thiazides."
+    },
+    "ca": {
+      "prompt": "Acetazolamide blocks carbonic anhydrase in the proximal tubule, so some salt and its bicarbonate stay in the tube. The thick ascending limb, further on, has room to take back extra salt. How big is the extra salt loss, and what happens to bicarbonate in the blood?",
+      "choices": [
+        "Mild salt loss; blood bicarbonate falls",
+        "The biggest salt loss of any diuretic; blood bicarbonate rises",
+        "No salt loss at all; bicarbonate is unchanged",
+        "Mild salt loss; blood bicarbonate rises"
+      ],
+      "answer": 0,
+      "why": "The thick ascending limb catches most of the extra salt, so the diuretic effect is mild. But bicarbonate is lost in the urine, so the blood holds less base and turns slightly acidic."
+    },
+    "osmotic": {
+      "prompt": "Mannitol passes the filter and is never taken back. Like salt, it holds water in the tube by osmosis. Which rises more in the urine?",
+      "choices": [
+        "Water, far more than salt",
+        "Salt, far more than water",
+        "Both rise by the same amount"
+      ],
+      "answer": 0,
+      "why": "Mannitol stays in the tube and holds water with it, so water leaves in large amounts while salt handling changes only a little."
+    }
+  },
+  "quiz": [
+    {
+      "id": "most-back",
+      "objective": 1,
+      "step": "pt",
+      "stem": "Which stretch of the nephron takes back the most salt and water?",
+      "choices": [
+        "The proximal tubule",
+        "The thick ascending limb",
+        "The distal tubule",
+        "The collecting duct"
+      ],
+      "answer": 0,
+      "why": "The proximal tubule takes back most of the filtered salt, with water following in step. The thick ascending limb comes second for salt, but its walls block water."
+    },
+    {
+      "id": "watery",
+      "objective": 1,
+      "step": "tal",
+      "stem": "Fluid leaving the thick ascending limb is more watery than when it entered. Why?",
+      "choices": [
+        "Salt is carried out, but its walls do not let water follow",
+        "Water is added to the tube from the blood",
+        "Its walls let water out faster than salt",
+        "Antidiuretic hormone opens water channels there"
+      ],
+      "answer": 0,
+      "why": "The salt carrier takes salt out while the walls block water, so the water stays behind and the fluid turns watery. Antidiuretic hormone does not open water channels here; its water channels are mainly in the collecting duct."
+    },
+    {
+      "id": "adh",
+      "objective": 2,
+      "step": "cd-water",
+      "stem": "After a long day with little to drink, your urine is dark and concentrated. Which hormone, acting on the collecting duct, made that possible?",
+      "choices": [
+        "Antidiuretic hormone, which opens water channels",
+        "Aldosterone, which opens water channels",
+        "Aldosterone, which pushes salt out into the urine",
+        "Carbonic anhydrase, which pulls water out of the tube"
+      ],
+      "answer": 0,
+      "why": "Antidiuretic hormone opens water channels in the collecting duct, so the salty deep layer can pull water back and leave concentrated urine. Aldosterone opens salt channels and keeps salt; carbonic anhydrase is an enzyme, not a hormone."
+    },
+    {
+      "id": "osmosis",
+      "objective": 2,
+      "step": "osmosis",
+      "stem": "Salt is carried out of the proximal tubule into the blood, and water follows without being carried. What moves the water?",
+      "choices": [
+        "Osmosis: water moves toward the side with more dissolved particles",
+        "A pump in the tube wall that spends energy on water",
+        "Blood pressure pushing water back into the tube",
+        "Antidiuretic hormone acting on the proximal tubule"
+      ],
+      "answer": 0,
+      "why": "Moving salt out leaves the blood side with more dissolved particles, and water follows by osmosis wherever the walls let it through. No pump moves water itself."
+    },
+    {
+      "id": "loop-volume",
+      "objective": 3,
+      "step": "loop",
+      "stem": "A woman with fluid building up in her lungs from heart failure is given furosemide, a loop diuretic. Which change brings the relief?",
+      "choices": [
+        "Much more salt and water leave in the urine, so blood volume falls",
+        "Her kidneys filter less fluid",
+        "Her blood potassium rises and pulls water into cells",
+        "Her collecting ducts take back water faster"
+      ],
+      "answer": 0,
+      "why": "Blocking the thick ascending limb's salt carrier sends a flood of salt on into the urine, and water follows it, so blood volume falls and less fluid backs up into the lungs. Less volume also means less filling of the heart (Lesson 3)."
+    },
+    {
+      "id": "strongest",
+      "objective": 3,
+      "step": "thiazide",
+      "stem": "Why does a loop diuretic remove much more salt than a thiazide?",
+      "choices": [
+        "The segment it blocks normally takes back a much larger share of the filtered salt",
+        "It also blocks the filter",
+        "A thiazide acts after the urine has left the kidney",
+        "A loop diuretic blocks every segment at once"
+      ],
+      "answer": 0,
+      "why": "Each drug can only add the salt its own segment would have taken back. The thick ascending limb takes back a large share; the distal tubule only a small one."
+    },
+    {
+      "id": "potassium",
+      "objective": 4,
+      "step": "ksp",
+      "stem": "Which of these diuretics tends to raise blood potassium rather than lower it?",
+      "choices": [
+        "Spironolactone, a potassium-sparing diuretic",
+        "Furosemide, a loop diuretic",
+        "A thiazide",
+        "Acetazolamide"
+      ],
+      "answer": 0,
+      "why": "Furosemide, thiazides and acetazolamide all send more salt to the collecting duct, which pushes more potassium out, so blood potassium falls. Spironolactone blocks aldosterone's salt uptake there, so less potassium is pushed out."
+    },
+    {
+      "id": "acetazolamide",
+      "objective": 4,
+      "step": "ca",
+      "stem": "A climber takes acetazolamide before a trip to high altitude. Which change in her blood follows from how the drug works in the kidney?",
+      "choices": [
+        "Bicarbonate falls, so the blood turns slightly acidic",
+        "Bicarbonate rises, so the blood turns alkaline",
+        "Blood volume rises",
+        "Potassium rises sharply"
+      ],
+      "answer": 0,
+      "why": "Blocking carbonic anhydrase in the proximal tubule lets bicarbonate escape into the urine, so the blood holds less base and becomes slightly acidic. Loop diuretics and thiazides do the reverse: the volume they remove tips the blood toward alkaline."
+    }
+  ],
+  "takeaways": [
+    "Each nephron filters plasma at the glomerulus, then takes back almost all of the salt and water; only a sliver becomes urine.",
+    "Water follows salt by osmosis, wherever the tube's walls let water through.",
+    "The proximal tubule takes back most salt and water; the thick ascending limb a large share of salt but no water; the distal tubule a little salt; the collecting duct the last salt (set by aldosterone) and water (set by antidiuretic hormone).",
+    "Salt kept holds water, so blood volume rises and falls with the salt the kidneys keep. Most diuretics work by passing more salt.",
+    "Loop diuretics block the thick ascending limb: the strongest effect on salt, a fall in blood volume, a much weaker ability to concentrate urine, and more potassium lost.",
+    "Thiazides block the distal tubule: a gentler effect, and they too lower blood potassium.",
+    "Potassium-sparing diuretics act in the collecting duct and raise blood potassium. Carbonic anhydrase inhibitors are mild and lose bicarbonate, leaving the blood slightly acidic.",
+    "Osmotic diuretics such as mannitol stay in the tube and carry far more water than salt out."
+  ]
+}

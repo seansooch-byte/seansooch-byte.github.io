@@ -1,562 +1,436 @@
-'use strict';
+// Lesson 21: The cell cycle and chemotherapy. The kit (/lab/kit/kit.js) runs the page; this file is the pictures
+// and the Clinical values and Explore freely tabs. The teaching model is model.js (window.CCModel), a classic
+// script loaded before this module.
+//
+// Expected behaviour:
+//   - One idea per picture, 480 wide and at most 420 tall, with the kit's type (20, .sm 18, .xs 17).
+//   - The phase steps show the ring alone, with the phase being taught lit and a cell travelling round it. The
+//     mechanism steps show the close-up alone (the gate and its engines, the copying fork, the untwisting enzyme,
+//     the spindle), each with a small ring in the corner that marks its phase.
+//   - Every "What changes it" step shows one ring of tumour cells from the model: dots are the share of living
+//     cells in each phase (dashed rings: normal), red crosses are cells killed in that phase, and a red bracket
+//     marks where the drug strikes. It morphs from normal at t = 0 to the drug's result at t = 1, and names what
+//     moved in words. Its readout comes from the same model as Explore freely.
+import { lesson } from '/lab/kit/kit.js';
+import { C, f, clamp, lerp, ease as EASE, span, svg, text, line, circle, rect, path, arrowTo, part, readout } from '/lab/kit/draw.js';
+
+const ease = EASE.out;
 const CC = window.CCModel;
+const NV = CC.NORMAL;
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
-const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
-const f = n => Number(n.toFixed(1));
-const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
-const NV = CC.NORMAL;
 
-/* ---------- Drawing helpers ---------- */
-const INK = '#171916', BLUE = '#254dff', AMBER = '#a34700', RED = '#b3261e', MUTED = '#53584d', RULE = '#babeb3';
-const PURPLE = '#6b3fa0', GREEN = '#2c6a2c', MARROW = '#8c3a2e', NUC = '#f1ede2';
-const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
-const text = (x, y, s, cls = '', anchor = 'middle', extra = '') => `<text x="${f(x)}" y="${f(y)}" text-anchor="${anchor}" class="${cls}" ${extra}>${s}</text>`;
-const H = 620;
-const svg = (label, body, h = H) => `<svg viewBox="0 0 480 ${h}" role="img" aria-label="${esc(label)}">${body}</svg>`;
-const line = (x1, y1, x2, y2, col, w, extra = '') => `<line x1="${f(x1)}" y1="${f(y1)}" x2="${f(x2)}" y2="${f(y2)}" stroke="${col}" stroke-width="${w}" stroke-linecap="round" ${extra}/>`;
-const circle = (x, y, r, fill, stroke = 'none', w = 0, extra = '') => `<circle cx="${f(x)}" cy="${f(y)}" r="${f(r)}" fill="${fill}" stroke="${stroke}" stroke-width="${w}" ${extra}/>`;
-function arrow(x1, y1, x2, y2, col, w = 2.5, extra = '') {
-  const a = Math.atan2(y2 - y1, x2 - x1), s = 5 + w * 1.6;
-  const p = r => `${f(x2 - s * Math.cos(a + r))} ${f(y2 - s * Math.sin(a + r))}`;
-  return `<g ${extra}>${line(x1, y1, x2 - Math.cos(a) * s * 0.6, y2 - Math.sin(a) * s * 0.6, col, w)}<path d="M${f(x2)} ${f(y2)} L${p(0.5)} L${p(-0.5)} Z" fill="${col}"/></g>`;
-}
-const cross = (x, y, s, col, extra = '') => `<path ${extra} d="M${f(x - s)} ${f(y - s)} L${f(x + s)} ${f(y + s)} M${f(x + s)} ${f(y - s)} L${f(x - s)} ${f(y + s)}" stroke="${col}" stroke-width="2.6" stroke-linecap="round" fill="none"/>`;
-// A chromosome: an X of two joined copies, or a single rod before copying.
-const chromo = (x, y, s, col, extra = '', doubled = true) => doubled
+/* ---------- Drawing ---------- */
+const NUC = '#f1ede2', MARROW = '#8c3a2e';
+const fade = a => `opacity="${f(clamp(a, 0, 1))}"`;
+const show = (a, body) => (a <= 0.02 ? '' : `<g ${fade(a)}>${body}</g>`);
+const cross = (x, y, s, col = C.red, extra = '') => `<path ${extra} d="M${f(x - s)} ${f(y - s)} L${f(x + s)} ${f(y + s)} M${f(x + s)} ${f(y - s)} L${f(x - s)} ${f(y + s)}" stroke="${col}" stroke-width="2.8" stroke-linecap="round" fill="none"/>`;
+const block = (x, y, w, h, extra = '') => rect(x - w / 2, y - h / 2, w, h, C.red, '#fff', 1.5, `rx="3" ${extra}`);
+// A chromosome: one rod before copying, an X of two joined copies after.
+const chromo = (x, y, s, col, doubled = true, extra = '') => doubled
   ? `<path ${extra} d="M${f(x - 5 * s)} ${f(y - 9 * s)} L${f(x + 5 * s)} ${f(y + 9 * s)} M${f(x + 5 * s)} ${f(y - 9 * s)} L${f(x - 5 * s)} ${f(y + 9 * s)}" stroke="${col}" stroke-width="${f(4 * s)}" stroke-linecap="round" fill="none"/>`
   : `<path ${extra} d="M${f(x)} ${f(y - 9 * s)} L${f(x)} ${f(y + 9 * s)}" stroke="${col}" stroke-width="${f(4 * s)}" stroke-linecap="round" fill="none"/>`;
-const cellBody = (x, y, r, extra = '', stroke = INK) => `<g ${extra}>${circle(x, y, r, '#fff', stroke, 2)}${circle(x, y, r * 0.42, NUC, MUTED, 1.5)}</g>`;
-// Two overlapping circles drawn as one pinched cell.
-const pinched = (x, y, r, d, extra = '', stroke = INK) => `<g ${extra}>${circle(x - d, y, r, '#fff', stroke, 2)}${circle(x + d, y, r, '#fff', stroke, 2)}${circle(x - d, y, r - 1.6, '#fff')}${circle(x + d, y, r - 1.6, '#fff')}${circle(x - d, y, r * 0.38, NUC, MUTED, 1.5)}${circle(x + d, y, r * 0.38, NUC, MUTED, 1.5)}</g>`;
-const PANEL = title => `<rect x="12" y="296" width="456" height="152" fill="#fff" stroke="${RULE}"/>${text(26, 318, title, 'xs b muted', 'start')}`;
-
-/* ---------- The cycle ring ---------- */
-const CX = 160, CY = 162, R = 92;
-const PH = {
-  G1: { a0: -90, a1: 40, tint: '#dde3ff', col: BLUE, cls: 'blue', word: 'grow', def: 4, lab: [205, 136] },
-  S: { a0: 40, a1: 150, tint: '#f6e2cc', col: AMBER, cls: 'amber', word: 'copy', def: 6, lab: [152, 204] },
-  G2: { a0: 150, a1: 220, tint: '#ebe1f4', col: PURPLE, cls: 'purple', word: 'check', def: 8, lab: [106, 156] },
-  M: { a0: 220, a1: 270, tint: '#dcebd8', col: GREEN, cls: 'green', word: 'split', def: 9, lab: [140, 112] }
-};
-const G0_DEF = 10;
-const rad = d => d * Math.PI / 180;
-const pt = (r, d) => [CX + r * Math.cos(rad(d)), CY + r * Math.sin(rad(d))];
-function arcPath(r, a0, a1) {
-  const [x0, y0] = pt(r, a0), [x1, y1] = pt(r, a1);
-  return `M${f(x0)} ${f(y0)} A${r} ${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${f(x1)} ${f(y1)}`;
-}
-const cols = p => Math.floor((PH[p].a1 - PH[p].a0 - 6) / 9);
-const slot = (p, i) => { const c = Math.floor(i / 2), row = i % 2; return pt(row ? 100 : 84, PH[p].a0 + 5 + c * 9 + (row ? 4.5 : 0)); };
-const dotsOf = (v, p) => clamp(Math.round(30 * v['sh' + p]), 0, 2 * cols(p));
-const deadOf = (v, p) => { const d = v['dead' + p]; return d < 0.02 ? 0 : clamp(Math.max(1, Math.round(8 * d)), 1, p === 'G0' ? 10 : cols(p)); };
-const named = (o, p) => o.n >= (p === 'G0' ? G0_DEF : PH[p].def);
-const G0X = 324, G0Y = 50;
-const g0Slot = i => [G0X + 24 + (i % 5) * 24, G0Y + 50 + Math.floor(i / 5) * 22];
-
-function ring(cur, o) {
-  const has = k => o.parts.has(k);
-  let s = '';
-  for (const [p, ph] of Object.entries(PH)) {
-    if (o.focus === p) s += `<path d="${arcPath(R, ph.a0, ph.a1)}" fill="none" stroke="${ph.col}" stroke-width="38"/>`;
-    s += `<path data-phase="${p}" d="${arcPath(R, ph.a0, ph.a1)}" fill="none" stroke="${ph.tint}" stroke-width="${o.focus === p ? 31 : 32}"/>`;
-  }
-  // Chevrons on the band show the direction of travel.
-  for (const a of [40, 150, 220, -90]) {
-    const [x, y] = pt(R, a), tx = -Math.sin(rad(a)), ty = Math.cos(rad(a)), nx = Math.cos(rad(a)), ny = Math.sin(rad(a));
-    s += `<path d="M${f(x + tx * 7)} ${f(y + ty * 7)} L${f(x - tx * 4 + nx * 7)} ${f(y - ty * 4 + ny * 7)} L${f(x - tx * 4 - nx * 7)} ${f(y - ty * 4 - ny * 7)} Z" fill="#fff" stroke="${MUTED}" stroke-width="1"/>`;
-  }
-  for (const [p, ph] of Object.entries(PH)) {
-    const [lx, ly] = ph.lab;
-    if (named(o, p)) s += text(lx, ly, p, `sm b ${ph.cls}`) + text(lx, ly + 16, ph.word, 'xs muted');
-    else s += text(lx, ly + 6, ph.word, `xs b ${ph.cls}`);
-  }
-  // The checkpoint gate at the end of G1, and the engines that open it.
-  if (has('gate')) {
-    const [x0, y0] = pt(70, 40), [x1, y1] = pt(114, 40);
-    if (has('broken')) {
-      const [xa, ya] = pt(84, 40), [xb, yb] = pt(100, 40);
-      s += `<g data-broken-gate>${line(x0, y0, xa, ya, INK, 5)}${line(xb, yb, x1, y1, INK, 5)}${cross((xa + xb) / 2, (ya + yb) / 2, 5, RED)}</g>`;
-    } else s += line(x0, y0, x1, y1, INK, 5, 'data-gate');
-    if (o.n >= 4 && o.n <= 10) s += text(266, 268, 'checkpoint', 'xs b', 'start') + line(262, 262, x1 + 2, y1 + 2, INK, 1.2);
-  }
-  if (has('engine')) {
-    const [ex, ey] = pt(62, 40);
-    s += `<g data-engine>${engine(ex, ey, 0.8)}</g>`;
-    if (o.drug === 'cdk46') s += `<g opacity="${clamp(o.markT, 0, 1).toFixed(2)}"><rect data-drug="cdk46" x="${f(ex - 11)}" y="${f(ey - 7)}" width="22" height="14" rx="3" fill="${RED}" stroke="#fff" stroke-width="1.5"/></g>`;
-  }
-  // Cells in each phase (dashed outlines: the normal mix).
-  for (const p of Object.keys(PH)) {
-    if (o.ghost) for (let i = 0; i < dotsOf(o.ghost, p); i++) { const [x, y] = slot(p, i); s += circle(x, y, 6.5, 'none', MUTED, 1.3, `data-ghost-cell="${p}" stroke-dasharray="2 2"`); }
-    for (let i = 0; i < dotsOf(cur, p); i++) { const [x, y] = slot(p, i); s += circle(x, y, 5.6, PH[p].col, '#fff', 1.2, `data-cell="${p}"`); }
-    for (let i = 0; i < deadOf(cur, p); i++) { const [x, y] = pt(122, PH[p].a0 + 5 + i * 9); s += cross(x, y, 4, RED, `data-dead="${p}"`); }
-  }
-  if (has('g0')) {
-    s += `<rect data-g0-box x="${G0X}" y="${G0Y}" width="144" height="160" fill="#fff" stroke="${o.drug === 'alkylating' && o.markT > 0.3 ? RED : MUTED}" stroke-width="${o.drug === 'alkylating' && o.markT > 0.3 ? 2.5 : 1.5}" stroke-dasharray="6 4"/>`;
-    s += text(G0X + 72, G0Y + 22, 'G0', 'sm b') + text(G0X + 72, G0Y + 38, 'resting', 'xs muted');
-    const n0 = clamp(Math.round(30 * cur.shG0), 0, 25), ng = o.ghost ? clamp(Math.round(30 * o.ghost.shG0), 0, 25) : 0;
-    for (let i = 0; i < ng; i++) { const [x, y] = g0Slot(i); s += circle(x, y, 6.5, 'none', MUTED, 1.3, 'data-ghost-cell="G0" stroke-dasharray="2 2"'); }
-    for (let i = 0; i < n0; i++) { const [x, y] = g0Slot(i); s += circle(x, y, 5.6, MUTED, '#fff', 1.2, 'data-g0-cell'); }
-    for (let i = 0; i < deadOf(cur, 'G0'); i++) s += cross(G0X + 22 + i * 12, G0Y + 150, 4, RED, 'data-dead="G0"');
-    s += arrow(258, 98, G0X - 4, 98, MUTED, 1.8) + arrow(G0X - 4, 128, 268, 132, MUTED, 1.8);
-  }
-  s += text(468, 42, 'dots: share of living cells', 'xs muted', 'end', 'data-share-key');
-  if (o.drug && o.drug !== 'cdk46') s += `<g opacity="${clamp(o.markT, 0, 1).toFixed(2)}">${target(o.drug)}</g>`;
-  return s;
-}
-// The red bracket that marks where a drug strikes.
-function target(drug) {
-  const arc = p => `<path data-drug="${drug}" d="${arcPath(131, PH[p].a0 + 2, PH[p].a1 - 2)}" fill="none" stroke="${RED}" stroke-width="5" stroke-linecap="round"/>`;
-  if (drug === 'antimetabolite') return arc('S');
-  if (drug === 'spindle') return arc('M');
-  if (drug === 'topo') return arc('S') + arc('G2');
-  if (drug === 'alkylating') return `<circle data-drug="alkylating" cx="${CX}" cy="${CY}" r="131" fill="none" stroke="${RED}" stroke-width="3" stroke-dasharray="8 6"/>`;
-  return '';
-}
-// A CDK engine (a notched wheel) with its cyclin partner.
-const engine = (x, y, s = 1, col = BLUE) => `<path d="M${f(x - 12 * s)} ${f(y)} A${f(12 * s)} ${f(12 * s)} 0 1 1 ${f(x + 8 * s)} ${f(y + 9 * s)} L${f(x)} ${f(y)} Z" fill="${col}"/><path d="M${f(x + 6 * s)} ${f(y - 4 * s)} q${f(10 * s)} ${f(-2 * s)} ${f(12 * s)} ${f(8 * s)} q${f(-6 * s)} ${f(6 * s)} ${f(-12 * s)} ${f(6 * s)} Z" fill="${AMBER}"/>`;
-
-/* ---------- Overviews before the ring ---------- */
-function tissue() {
-  let s = `<rect x="14" y="40" width="452" height="240" fill="#fbf3ea"/>`;
-  for (let r = 0; r < 5; r++) for (let c = 0; c < 9; c++) {
-    const x = 42 + c * 50 + (r % 2) * 25, y = 70 + r * 46;
-    if (x > 450) continue;
-    if (r === 2 && c === 4) { s += pinched(x + 6, y, 18, 11, 'data-dividing', BLUE); continue; }
-    s += cellBody(x, y, 21);
-  }
-  return s + arrow(330, 196, 274, 172, BLUE, 2) + text(336, 212, 'one cell dividing', 'xs b blue', 'start');
-}
-function bigCell() {
-  let s = `<ellipse cx="240" cy="166" rx="190" ry="114" fill="#fff" stroke="${INK}" stroke-width="2.5"/>`;
-  s += `<circle data-nucleus cx="250" cy="166" r="70" fill="${NUC}" stroke="${MUTED}" stroke-width="2"/>`;
-  [[222, 140, BLUE], [276, 142, AMBER], [232, 190, PURPLE], [280, 188, GREEN], [252, 166, BLUE]].forEach(([x, y, c]) => { s += chromo(x, y, 1.1, c, 'data-chromosome', false); });
-  s += text(80, 100, 'cell', 'sm b', 'start') + text(250, 258, 'nucleus', 'xs b');
-  s += arrow(370, 92, 296, 134, INK, 1.8) + text(372, 86, 'chromosomes', 'xs b', 'start');
-  return s;
-}
-
-/* ---------- Close-ups ---------- */
-function closeDivide() {
-  let s = PANEL('close up: one cell becomes two');
-  s += cellBody(84, 384, 34, 'data-stage');
-  s += pinched(232, 384, 30, 20, 'data-stage') + line(232, 352, 232, 360, INK, 2) + line(232, 408, 232, 416, INK, 2);
-  s += `<g data-stage>${cellBody(364, 384, 26)}${cellBody(424, 384, 26)}</g>`;
-  s += arrow(128, 384, 168, 384, MUTED, 2) + arrow(292, 384, 326, 384, MUTED, 2);
-  return s + text(84, 440, 'one cell', 'xs b') + text(232, 440, 'pinching in', 'xs b') + text(394, 440, 'two cells', 'xs b');
-}
-function ladder(x0, x1, yTop, yBot, opts = {}) {
-  // A twisted double strand drawn as two waves with rungs between them.
-  const n = 40, amp = (yBot - yTop) / 2, mid = (yTop + yBot) / 2, turns = opts.turns ?? 3;
-  let a = '', b = '', rungs = '';
-  for (let i = 0; i <= n; i++) {
-    const x = x0 + (x1 - x0) * i / n, ph = turns * 2 * Math.PI * i / n;
-    a += `${i ? 'L' : 'M'}${f(x)} ${f(mid - amp * Math.cos(ph))} `;
-    b += `${i ? 'L' : 'M'}${f(x)} ${f(mid + amp * Math.cos(ph))} `;
-    if (i % 3 === 1) rungs += line(x, mid - amp * Math.cos(ph), x, mid + amp * Math.cos(ph), RULE, 2.5, opts.rung ? 'data-dna-rung' : '');
-  }
-  return rungs + `<path d="${a}" fill="none" stroke="${BLUE}" stroke-width="3"/><path d="${b}" fill="none" stroke="${AMBER}" stroke-width="3"/>`;
-}
-function closeDna() {
-  let s = PANEL('close up: a chromosome, unwound');
-  s += chromo(60, 384, 2, BLUE, 'data-chromosome', false);
-  s += arrow(88, 384, 126, 384, MUTED, 2);
-  s += ladder(140, 450, 360, 408, { rung: true, turns: 2.5 });
-  return s + text(60, 440, 'a chromosome', 'xs b') + text(296, 440, 'DNA: two strands of coded instructions', 'xs b');
-}
-function closeCycle() {
-  let s = PANEL('close up: what happens in each stage');
-  const xs = [66, 182, 298, 414];
-  s += `<g data-mini>${cellBody(xs[0] - 16, 382, 14)}${arrow(xs[0] - 1, 382, xs[0] + 10, 382, MUTED, 1.6)}${cellBody(xs[0] + 30, 382, 22)}</g>`;
-  s += `<g data-mini>${chromo(xs[1] - 24, 382, 1.4, AMBER, '', false)}${arrow(xs[1] - 12, 382, xs[1] + 4, 382, MUTED, 1.6)}${chromo(xs[1] + 26, 382, 1.4, AMBER)}</g>`;
-  s += `<g data-mini>${chromo(xs[2] - 8, 382, 1.4, PURPLE)}${circle(xs[2] + 10, 372, 16, 'none', INK, 2.5)}${line(xs[2] + 22, 384, xs[2] + 34, 398, INK, 4)}</g>`;
-  s += `<g data-mini>${cellBody(xs[3] - 20, 382, 18)}${cellBody(xs[3] + 20, 382, 18)}</g>`;
-  ['grow', 'copy the DNA', 'check', 'split'].forEach((w, i) => { s += text(xs[i], 432, w, `xs b ${['blue', 'amber', 'purple', 'green'][i]}`); });
-  return s;
-}
-function gateDraw(x, y, open, extra = '') {
-  // A gate on a path: a post and a bar that swings up when open.
-  const bar = open ? line(x, y - 34, x + 18, y - 72, INK, 6) : line(x, y - 34, x, y + 30, INK, 6);
-  return `<g ${extra}>${line(x, y - 40, x, y - 28, MUTED, 3)}${circle(x, y - 34, 5, INK)}${bar}</g>`;
-}
-function closeG1() {
-  let s = PANEL('close up: G1, growing toward the gate');
-  s += cellBody(56, 386, 16) + arrow(78, 386, 102, 386, MUTED, 1.6) + cellBody(136, 386, 24) + arrow(166, 386, 190, 386, MUTED, 1.6) + cellBody(226, 386, 30);
-  s += line(270, 420, 450, 420, RULE, 2) + gateDraw(320, 390, false, 'data-gate-close');
-  s += text(392, 368, 'go on', 'xs b', 'start') + text(392, 384, 'and divide?', 'xs b', 'start');
-  return s + text(140, 440, 'the cell grows', 'xs b blue') + text(320, 440, 'checkpoint', 'xs b');
-}
-function closeCdk(cur, o) {
-  let s = PANEL('close up: the engines push the gate open');
-  s += line(40, 420, 450, 420, RULE, 2);
-  s += cellBody(110, 386, 24);
-  s += `<g data-engine>${engine(176, 380, 1.4)}</g><g data-engine>${engine(206, 404, 1.2)}</g>`;
-  s += gateDraw(256, 390, true, 'data-gate-close') + arrow(290, 386, 372, 386, BLUE, 2.4) + cellBody(414, 386, 20);
-  s += text(180, 346, 'CDK4 and CDK6', 'xs b blue') + text(222, 440, 'cyclin partner', 'xs b amber');
-  return s + text(414, 440, 'on to copying', 'xs b');
-}
-// The copying fork: parent DNA on the left, unzipped into two strands, each getting new building blocks.
-function closeCopy(cur, o) {
-  let s = PANEL(o.drug === 'antimetabolite' ? 'close up: copying the DNA in S phase' : 'close up: S phase, copying the DNA');
-  s += line(40, 372, 170, 372, BLUE, 3) + line(40, 392, 170, 392, AMBER, 3);
-  for (let x = 48; x < 170; x += 12) s += line(x, 372, x, 392, RULE, 2.5);
-  s += `<path d="M170 372 Q186 372 200 352 L440 352" fill="none" stroke="${BLUE}" stroke-width="3"/><path d="M170 392 Q186 392 200 412 L440 412" fill="none" stroke="${AMBER}" stroke-width="3"/>`;
-  const anti = o.drug === 'antimetabolite', e = anti ? o.e : 0;
-  const real = Math.round(8 - 6 * e);
-  for (const [y, col] of [[366, AMBER], [398, BLUE]]) {
-    for (let i = 0; i < 8; i++) {
-      const x = 212 + i * 28;
-      if (anti && i >= real) s += `<rect data-ghost-block x="${x}" y="${y - 6}" width="20" height="12" fill="none" stroke="${MUTED}" stroke-width="1.3" stroke-dasharray="2 2"/>`;
-      else s += `<rect data-block x="${x}" y="${y - 6}" width="20" height="12" fill="${col}" opacity=".85"/>`;
-    }
-    if (anti) s += `<g opacity="${clamp(o.markT, 0, 1).toFixed(2)}"><rect data-drug="antimetabolite" x="${212 + real * 28}" y="${y - 7}" width="20" height="14" fill="${RED}" stroke="#fff" stroke-width="1.5"/></g>`;
-  }
-  s += text(104, 360, 'parent DNA', 'xs b') + text(322, 340, 'new building blocks', 'xs b');
-  if (anti) return s + text(240, 440, 'a fake block jams the copying', 'xs b red');
-  return s + text(240, 440, 'each old strand gets a new partner', 'xs muted');
-}
-function twisted(x0, x1, y, amp, turns, extra = '') {
+const cellBody = (x, y, r, stroke = C.ink, extra = '') => `<g ${extra}>${circle(x, y, r, '#fff', stroke, 2)}${circle(x, y, r * 0.42, NUC, C.muted, 1.5)}</g>`;
+// Two overlapping circles drawn as one cell pinching in two.
+const pinched = (x, y, r, d, stroke = C.ink) => `<g>${circle(x - d, y, r, '#fff', stroke, 2)}${circle(x + d, y, r, '#fff', stroke, 2)}${circle(x - d, y, r - 1.6, '#fff')}${circle(x + d, y, r - 1.6, '#fff')}${circle(x - d, y, r * 0.38, NUC, C.muted, 1.5)}${circle(x + d, y, r * 0.38, NUC, C.muted, 1.5)}</g>`;
+// Two twisting strands of DNA, between x0 and x1.
+function strands(x0, x1, y, amp, turns, cols = [C.blue, C.amber], w = 3) {
   let a = '', b = '';
-  for (let i = 0; i <= 30; i++) { const x = x0 + (x1 - x0) * i / 30, ph = turns * 2 * Math.PI * i / 30; a += `${i ? 'L' : 'M'}${f(x)} ${f(y - amp * Math.cos(ph))} `; b += `${i ? 'L' : 'M'}${f(x)} ${f(y + amp * Math.cos(ph))} `; }
-  return `<g ${extra}><path d="${a}" fill="none" stroke="${BLUE}" stroke-width="3"/><path d="${b}" fill="none" stroke="${AMBER}" stroke-width="3"/></g>`;
+  for (let i = 0; i <= 50; i++) { const x = x0 + (x1 - x0) * i / 50, ph = turns * 2 * Math.PI * i / 50; a += `${i ? 'L' : 'M'}${f(x)} ${f(y - amp * Math.cos(ph))} `; b += `${i ? 'L' : 'M'}${f(x)} ${f(y + amp * Math.cos(ph))} `; }
+  return `<path d="${a}" fill="none" stroke="${cols[0]}" stroke-width="${w}"/><path d="${b}" fill="none" stroke="${cols[1]}" stroke-width="${w}"/>`;
 }
-const topoEnzyme = (x, y, extra = '') => `<path ${extra} d="M${x - 16} ${y - 20} Q${x} ${y - 34} ${x + 16} ${y - 20} M${x - 16} ${y + 20} Q${x} ${y + 34} ${x + 16} ${y + 20}" fill="none" stroke="${PURPLE}" stroke-width="6" stroke-linecap="round"/>`;
-function closeUntwist(cur, o) {
-  const drug = o.drug === 'topo', e = drug ? o.e : 0;
-  let s = PANEL(drug ? 'close up: the untwisting enzyme, trapped' : 'close up: cut, untwist, join');
-  s += twisted(28, 140, 384, 14, 4);
-  s += arrow(146, 384, 172, 384, MUTED, 1.8);
-  // The enzyme holds a cut open.
-  s += twisted(184, 222, 384, 14, 1) + twisted(250, 288, 384, 14, 1) + topoEnzyme(236, 384, 'data-topo-enzyme');
-  s += arrow(296, 384, 322, 384, MUTED, 1.8);
-  // Joined and relaxed (normal), or left broken (drug).
-  if (drug) {
-    const gap = 26 * e;
-    s += `<g data-ghost-joined>${line(332, 376, 450, 376, MUTED, 1.5, 'stroke-dasharray="4 4"')}${line(332, 392, 450, 392, MUTED, 1.5, 'stroke-dasharray="4 4"')}</g>`;
-    s += line(332, 376, 391 - gap / 2, 376, BLUE, 3) + line(332, 392, 391 - gap / 2, 392, AMBER, 3) + line(391 + gap / 2, 376, 450, 376, BLUE, 3) + line(391 + gap / 2, 392, 450, 392, AMBER, 3);
-    if (e > 0.5) s += cross(391, 384, 6, RED, 'data-break');
-    s += `<g opacity="${clamp(o.markT, 0, 1).toFixed(2)}"><rect data-drug="topo" x="226" y="374" width="20" height="20" rx="3" fill="${RED}" stroke="#fff" stroke-width="1.5"/></g>`;
-    return s + text(80, 440, 'wound tight', 'xs b') + text(236, 440, 'cut, then trapped', 'xs b red') + text(391, 440, 'never rejoined', 'xs b red');
+
+/* ---------- The ring: the cell cycle ---------- */
+const RC = { x: 176, y: 206, r: 124, w: 40 };
+const PH = {
+  G1: { a0: -90, a1: 40, col: C.blue, tint: '#dde3ff', word: 'grow', cls: 'blue' },
+  S: { a0: 40, a1: 150, col: C.amber, tint: '#f6e2cc', word: 'copy DNA', cls: 'amber' },
+  G2: { a0: 150, a1: 220, col: C.purple, tint: '#ebe1f4', word: 'check', cls: 'purple' },
+  M: { a0: 220, a1: 270, col: C.green, tint: '#dcebd8', word: 'split', cls: 'green' },
+};
+const CYCLE = ['G1', 'S', 'G2', 'M'];
+const rad = d => d * Math.PI / 180;
+const pt = (r, d, cx = RC.x, cy = RC.y) => [cx + r * Math.cos(rad(d)), cy + r * Math.sin(rad(d))];
+function arcD(r, a0, a1, cx = RC.x, cy = RC.y) {
+  const [x0, y0] = pt(r, a0, cx, cy), [x1, y1] = pt(r, a1, cx, cy);
+  return `M${f(x0)} ${f(y0)} A${f(r)} ${f(r)} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${f(x1)} ${f(y1)}`;
+}
+const GATE_A = 40;   // the G1 checkpoint, where G1 ends and S begins
+// o: { lit: phase names to light, gate: 'shut' | 'broken' | '', labels: true }
+function ring(o = {}) {
+  const lit = o.lit || [];
+  let s = '';
+  for (const p of CYCLE) {
+    const ph = PH[p], on = lit.includes(p) || !lit.length;
+    s += part(`phase-${p}`, path(arcD(RC.r, ph.a0 + 0.6, ph.a1 - 0.6), lit.includes(p) ? ph.col : ph.tint, RC.w, 'stroke-linecap="butt"' + (on ? '' : ' opacity=".55"')));
   }
-  s += line(332, 376, 450, 376, BLUE, 3) + line(332, 392, 450, 392, AMBER, 3);
-  return s + text(80, 440, 'wound tight', 'xs b') + text(236, 440, 'topoisomerase cuts', 'xs b purple') + text(391, 440, 'untwisted, joined', 'xs b');
-}
-function closeG2() {
-  let s = PANEL('close up: G2, checking the copy');
-  s += line(40, 368, 300, 368, BLUE, 3) + line(40, 384, 300, 384, AMBER, 3) + line(40, 400, 300, 400, AMBER, 3) + line(40, 416, 300, 416, BLUE, 3);
-  s += `<g data-check>${circle(200, 390, 30, 'none', INK, 3)}${line(222, 412, 244, 434, INK, 6)}</g>` + cross(196, 384, 6, RED);
-  s += text(386, 366, 'a break?', 'xs b red') + text(386, 390, 'fix it, stop,', 'xs b') + text(386, 406, 'or self-destruct', 'xs b');
-  return s + text(150, 440, 'the doubled DNA', 'xs muted');
-}
-function spindleCell(cx, w, mode, e, o) {
-  // mode: 'normal', 'vinca' (ropes cannot grow) or 'taxane' (ropes frozen, cannot shrink).
-  let s = `<ellipse cx="${cx}" cy="378" rx="${w}" ry="50" fill="#fff" stroke="${INK}" stroke-width="2"/>`;
-  const pl = cx - w + 16, pr = cx + w - 16;
-  s += circle(pl, 378, 6, GREEN) + circle(pr, 378, 6, GREEN);
-  const ys = [352, 378, 404];
-  for (const y of ys) s += chromo(cx, y, 0.9, AMBER, 'data-chromosome');
-  for (const y of ys) for (const [px, side] of [[pl, -1], [pr, 1]]) {
-    const full = cx + side * 7 - px;
-    if (mode !== 'normal' && o.ghost) s += line(px, 378, px + full, y, MUTED, 1.4, 'data-ghost-microtubule stroke-dasharray="3 3"');
-    const reach = mode === 'vinca' ? 1 - 0.65 * e : 1;
-    s += line(px, 378, px + full * reach, 378 + (y - 378) * reach, GREEN, 2.4, 'data-microtubule');
-    if (mode === 'taxane' && e > 0.3) s += circle(px + full * 0.5, 378 + (y - 378) * 0.5, 3, '#fff', RED, 1.5, 'data-frozen');
+  // Chevrons at each boundary: the way round.
+  for (const a of [-90, 40, 150, 220]) {
+    const [x, y] = pt(RC.r, a), tx = -Math.sin(rad(a)), ty = Math.cos(rad(a)), nx = Math.cos(rad(a)), ny = Math.sin(rad(a));
+    s += `<path d="M${f(x + tx * 8)} ${f(y + ty * 8)} L${f(x - tx * 5 + nx * 9)} ${f(y - ty * 5 + ny * 9)} L${f(x - tx * 5 - nx * 9)} ${f(y - ty * 5 - ny * 9)} Z" fill="#fff" stroke="${C.muted}" stroke-width="1"/>`;
+  }
+  if (o.labels !== false) for (const p of CYCLE) {
+    const ph = PH[p], [x, y] = pt(RC.r, (ph.a0 + ph.a1) / 2);
+    s += text(x, y + 7, p, lit.includes(p) ? 'sm b in-cell' : `sm b ${ph.cls} nohalo`);
+  }
+  if (o.gate) {
+    const [x0, y0] = pt(RC.r - 26, GATE_A), [x1, y1] = pt(RC.r + 26, GATE_A);
+    if (o.gate === 'broken') {
+      const [xa, ya] = pt(RC.r - 8, GATE_A), [xb, yb] = pt(RC.r + 8, GATE_A);
+      s += part('gate', line(x0, y0, xa, ya, C.ink, 6) + line(xb, yb, x1, y1, C.ink, 6) + cross((xa + xb) / 2, (ya + yb) / 2, 6));
+    } else s += part('gate', line(x0, y0, x1, y1, C.ink, 6));
   }
   return s;
 }
-function closeM(cur, o) {
-  if (o.drug === 'spindle') {
-    let s = PANEL('close up: the spindle, jammed');
-    s += spindleCell(124, 102, 'vinca', o.e, o) + spindleCell(356, 102, 'taxane', o.e, o);
-    s += `<g opacity="${clamp(o.markT, 0, 1).toFixed(2)}">${circle(124, 330, 7, RED, '#fff', 1.5, 'data-drug="spindle"')}${circle(356, 330, 7, RED, '#fff', 1.5, 'data-drug="spindle"')}</g>`;
-    return s + text(124, 444, 'vinca: ropes cannot grow', 'xs b red') + text(356, 444, 'taxane: ropes cannot shrink', 'xs b red');
-  }
-  let s = PANEL('close up: mitosis, then cytokinesis');
-  s += spindleCell(220, 150, 'normal', 0, o);
-  s += arrow(130, 336, 90, 336, GREEN, 2) + arrow(310, 336, 350, 336, GREEN, 2);
-  return s + text(240, 444, 'ropes pull copies apart, then the cell pinches in two', 'xs b green') + text(420, 384, 'pole', 'xs b', 'middle');
+// A small ring for the corner of a close-up, with its phase (or phases) lit.
+function badge(x, y, lit, col = null) {
+  let s = circle(x, y, 40, '#fff', C.rule, 1.5);
+  for (const p of CYCLE) { const ph = PH[p]; s += path(arcD(26, ph.a0 + 2, ph.a1 - 2, x, y), lit.includes(p) ? (col || ph.col) : ph.tint, 11, 'stroke-linecap="butt"'); }
+  return `<g data-badge>${s}${text(x, y + 6, lit.join(' '), `xs b ${col ? 'red' : PH[lit[0]].cls} on-white`)}</g>`;
 }
-function closeG0() {
-  let s = PANEL('close up: resting cells at work');
-  const jobs = [[60, 'nerve'], [150, 'muscle'], [240, 'liver']];
-  for (const [x, w] of jobs) s += cellBody(x, 382, 24, 'data-rest') + text(x, 432, w, 'xs b');
-  s += line(300, 340, 300, 440, RULE, 1);
-  s += cellBody(354, 382, 22) + arrow(380, 382, 430, 382, BLUE, 2.4);
-  return s + text(382, 432, 'steps back in', 'xs b blue') + text(382, 356, 'to heal a wound', 'xs b blue');
-}
-// Healthy tissue stops when full (the dashed ghost row); cancer cells keep dividing and heap up as the morph runs.
-const PILE = [[290, 392], [324, 392], [358, 392], [392, 392], [426, 392], [307, 362], [341, 362], [375, 362], [409, 362], [324, 334], [358, 334], [392, 334], [341, 308]];
-function closeCancer(cur, o) {
-  let s = PANEL('close up: healthy tissue, and a tumour');
-  s += line(28, 412, 210, 412, RULE, 2);
-  for (let i = 0; i < 5; i++) s += cellBody(46 + i * 36, 392, 16);
-  s += text(118, 440, 'healthy: stops when full', 'xs b');
-  s += line(250, 412, 456, 412, RULE, 2);
-  if (o.ghost) for (let i = 0; i < 5; i++) s += circle(PILE[i][0], PILE[i][1], 15, 'none', MUTED, 1.3, 'data-ghost-row stroke-dasharray="3 3"');
-  const n = Math.round(5 + (PILE.length - 5) * o.e);
-  for (let i = 0; i < n; i++) s += cellBody(PILE[i][0], PILE[i][1], 15, 'data-tumour-pile', RED);
-  return s + text(356, 440, 'cancer: keeps dividing', 'xs b red');
-}
-function closeWhole() {
-  let s = PANEL('healthy tissues that divide all the time');
-  // The bone marrow inside a bone, hair roots, and the gut lining.
-  s += `<g data-target>${circle(96, 378, 50, 'none', BLUE, 2.5)}</g>`;
-  s += `<rect x="52" y="364" width="88" height="28" rx="14" fill="#f4ead8" stroke="${INK}" stroke-width="2"/><rect x="62" y="370" width="68" height="16" rx="8" fill="#e8b3a8"/>`;
-  for (let i = 0; i < 5; i++) s += circle(70 + i * 13, 378, 3.5, MARROW);
-  s += `<g data-target>${circle(240, 378, 50, 'none', BLUE, 2.5)}</g>`;
-  s += line(200, 404, 280, 404, SKINLINE, 4);
-  for (let i = 0; i < 5; i++) s += `<path d="M${212 + i * 14} 404 q-6 -26 4 -50" fill="none" stroke="${INK}" stroke-width="2"/>` + circle(212 + i * 14, 408, 4, INK);
-  s += `<g data-target>${circle(384, 378, 50, 'none', BLUE, 2.5)}</g>`;
-  s += `<path d="M346 400 q9 -40 18 0 q9 -40 18 0 q9 -40 18 0 q9 -40 18 0" fill="#f2c9bf" stroke="${INK}" stroke-width="2"/>` + line(342, 400, 426, 400, INK, 2);
-  return s + text(96, 444, 'bone marrow', 'xs b') + text(240, 444, 'hair roots', 'xs b') + text(384, 444, 'gut lining', 'xs b');
-}
-const SKINLINE = '#d9b38c';
-function closeAlkyl(cur, o) {
-  const e = o.e;
-  let s = PANEL('close up: chemical groups stuck onto DNA');
-  s += line(40, 370, 200, 370, BLUE, 3) + line(40, 398, 200, 398, AMBER, 3);
-  // One-ended agents only add a chemical group (red dots); two-ended agents also tie the strands (red bars).
-  for (const [x, y] of [[54, 362], [132, 406], [176, 362]]) s += `<g opacity="${clamp(o.markT, 0, 1).toFixed(2)}">${circle(x, y, 5, RED, '#fff', 1.2, 'data-drug="alkylating" data-alkyl-group')}</g>`;
-  // Normal: the strands unzip at a fork. Drug: ties hold them shut.
-  const open = 34 * (1 - e);
-  if (o.ghost) s += `<path data-ghost-fork d="M200 370 L440 336 M200 398 L440 432" fill="none" stroke="${MUTED}" stroke-width="1.5" stroke-dasharray="4 4"/>`;
-  s += `<path d="M200 370 L440 ${f(370 - open)} M200 398 L440 ${f(398 + open)}" fill="none" stroke-width="3" stroke="${BLUE}"/>`;
-  s += `<path d="M200 398 L440 ${f(398 + open)}" fill="none" stroke-width="3" stroke="${AMBER}"/>`;
-  for (let i = 0; i < 4; i++) {
-    const x = 92 + i * 72, t = clamp((x - 200) / 240, 0, 1);
-    const y1 = 370 - open * t, y2 = 398 + open * t;
-    s += `<g opacity="${clamp(o.markT - i * 0.15, 0, 1).toFixed(2)}">${line(x, y1, x, y2, RED, 4, 'data-drug="alkylating" data-crosslink')}</g>`;
-  }
-  return s + text(26, 428, 'dots: one-ended agents add a group', 'xs b red', 'start') + text(26, 444, 'bars: two-ended agents also tie the strands', 'xs b red', 'start');
-}
-function closeCdk46(cur, o) {
-  const e = o.e;
-  let s = PANEL('close up: the G1 gate, held shut');
-  s += line(28, 420, 452, 420, RULE, 2);
-  s += gateDraw(300, 390, e < 0.5, 'data-gate-close');
-  s += `<g data-engine>${engine(268, 360, 1.3)}</g>`;
-  s += `<g opacity="${clamp(o.markT, 0, 1).toFixed(2)}"><rect data-drug="cdk46" x="250" y="350" width="34" height="20" rx="4" fill="${RED}" stroke="#fff" stroke-width="1.5"/></g>`;
-  // Normal flow: cells pass the gate. Drug: they queue in G1.
-  const passed = Math.round(3 * (1 - e)), queued = Math.round(2 + 4 * e);
-  if (o.ghost) for (let i = 0; i < 3; i++) s += circle(340 + i * 38, 396, 15, 'none', MUTED, 1.3, 'data-ghost-pass stroke-dasharray="3 3"');
-  for (let i = 0; i < passed; i++) s += cellBody(340 + i * 38, 396, 14, 'data-pass');
-  for (let i = 0; i < queued; i++) s += cellBody(262 - i * 36, 396, 14, 'data-queue');
-  return s + text(130, 444, 'cells wait in G1', 'xs b blue') + text(378, 444, 'few go on', 'xs b');
-}
-// Explore: tumour size and new blood cells over time.
-const GX0 = 56, GX1 = 448, GY0 = 422, GH = 92;
-function graph(cur, o) {
-  let s = PANEL('tumour and marrow over time (illustrative model)');
-  s += line(GX0, 326, GX0, GY0, INK, 1.5) + line(GX0, GY0, GX1, GY0, INK, 1.5) + text(GX1, 442, 'time →', 'xs', 'end');
-  s += `<text transform="rotate(-90 36 374)" x="36" y="374" text-anchor="middle" class="xs">amount ↑</text>`;
-  const path = (ts, ys, norm, from = 0) => 'M' + ts.slice(from).map((t, i) => `${f(GX0 + (GX1 - GX0) * t / CC.T_END)} ${f(GY0 - GH * clamp(ys[i + from] / norm, 0, 1.1))}`).join(' L');
-  const gT = o.ghostSeries.tum, gM = CC.BASE.mar.series, endT = gT.size[gT.size.length - 1];
-  const ratio = ser => ser.made.map((m, i) => (i === 0 ? 1 : m / gM.made[i]));
-  s += `<path data-ghost-curve="tumour" d="${path(gT.t, gT.size, endT)}" fill="none" stroke="${MUTED}" stroke-width="1.8" stroke-dasharray="6 5"/>`;
-  s += `<path data-ghost-curve="marrow" d="${path(gM.t, gM.made.map(() => 1), 1, 1)}" fill="none" stroke="${MUTED}" stroke-width="1.8" stroke-dasharray="6 5"/>`;
-  s += `<path data-curve="tumour" d="${path(o.series.tum.t, o.series.tum.size, endT)}" fill="none" stroke="${INK}" stroke-width="3"/>`;
-  s += `<path data-curve="marrow" d="${path(o.series.mar.t, ratio(o.series.mar), 1, 1)}" fill="none" stroke="${MARROW}" stroke-width="3"/>`;
-  return s + text(GX0 + 10, 340, 'new blood cells', 'xs b', 'start') + text(GX1 - 4, 360, 'tumour size', 'xs b', 'end');
+// A cell travelling round the ring, drawn for the phase it is in.
+function traveller(a) {
+  const [x, y] = pt(RC.r, a);
+  const p = a < 40 ? 'G1' : a < 150 ? 'S' : a < 220 ? 'G2' : 'M';
+  const grow = p === 'G1' ? 12 + 6 * clamp((a + 90) / 130, 0, 1) : 18;
+  let s = circle(x, y, grow, '#fff', C.ink, 2.4);
+  if (p === 'G1') s += chromo(x, y, 0.7, C.blue, false);
+  if (p === 'S') s += chromo(x, y, 0.7, C.amber, (a - 40) / 110 > 0.5);
+  if (p === 'G2') s += chromo(x, y, 0.7, C.purple, true) + circle(x + 8, y - 8, 6, 'none', C.ink, 1.8);
+  if (p === 'M') { const d = 8 * clamp((a - 220) / 50, 0, 1); s = pinched(x, y, 14, d) + chromo(x - d, y, 0.5, C.green, false) + chromo(x + d, y, 0.5, C.green, false); }
+  return part('traveller', s);
 }
 
-/* ---------- Meters ---------- */
-const SHARES = [['shG1', 'G1'], ['shS', 'S'], ['shG2', 'G2'], ['shM', 'M'], ['shG0', 'G0']];
-const METERS = [['tumour', ['tumour', 'size'], INK], ['marrow', ['new blood', 'cells'], MARROW], ['damaged', ['damaged', 'cells'], RED], ['shG1', ['share', 'in G1'], BLUE], ['shM', ['share in', 'mitosis'], GREEN]];
-const MX = i => 52 + i * 94, BASE_Y = 576, meterH = v => clamp(56 * v, 0, 84);
-const relOf = (v, k) => k.startsWith('sh') ? v[k] / NV[k] : v[k];
-function shareBars(cur, o) {
-  let s = line(12, 456, 468, 456, RULE, 1) + text(12, 478, 'share of cells at each stage: taller bar, bigger share', 'xs b muted', 'start');
-  SHARES.forEach(([k, p], i) => {
-    if (p === 'G0' && !o.parts.has('g0')) return;
-    const x = MX(i), h = clamp(220 * cur[k], 0, 84), ph = PH[p];
-    s += line(x - 26, BASE_Y, x + 26, BASE_Y, INK, 1.5);
-    s += `<rect data-share="${p}" x="${x - 14}" y="${f(BASE_Y - h)}" width="28" height="${f(h)}" fill="${ph ? ph.col : MUTED}"/>`;
-    if (named(o, p)) s += text(x, 596, p, 'xs b') + text(x, 612, ph ? ph.word : 'resting', 'xs muted');
-    else s += text(x, 596, ph.word, 'xs b');
+/* ---------- 1. A cell makes two ---------- */
+function dividePic(t) {
+  const grow = ease(span(t, 0.05, 0.4)), pinch = ease(span(t, 0.45, 0.7)), apart = ease(span(t, 0.7, 0.92));
+  let s = '';
+  if (pinch < 0.02) s += part('cell', cellBody(240, 132, 44 + 12 * grow));
+  else if (apart < 0.02) s += part('cell', pinched(240, 132, 44, 34 * pinch));
+  else s += part('cell', cellBody(240 - 34 - 64 * apart, 132, 44) + cellBody(240 + 34 + 64 * apart, 132, 44));
+  const word = apart > 0.5 ? 'two cells, each a full copy' : pinch > 0.3 ? 'it pinches in two' : 'one cell grows';
+  s += text(240, 236, word, 'sm b');
+  s += text(240, 266, 'skin, blood and gut lining are renewed this way', 'xs muted');
+  return s;
+}
+
+/* ---------- 2. The instructions inside ---------- */
+function dnaPic() {
+  let s = `<ellipse cx="160" cy="150" rx="140" ry="104" fill="#fff" stroke="${C.ink}" stroke-width="2.5"/>`;
+  s += part('nucleus', circle(176, 150, 62, NUC, C.muted, 2));
+  s += part('chromosome', [[150, 124, C.blue], [196, 124, C.amber], [158, 176, C.purple], [200, 172, C.green], [178, 148, C.blue]].map(([x, y, c]) => chromo(x, y, 1.1, c, false)).join(''));
+  s += text(30, 40, 'a cell', 'sm b', 'start') + text(176, 238, 'nucleus', 'xs b muted');
+  // One chromosome, unwound: DNA's two strands.
+  s += `<path d="M200 168 L306 288" stroke="${C.ink}" stroke-width="1.4" stroke-dasharray="4 4"/>`;
+  s += part('dna', strands(196, 464, 306, 15, 3.5) + Array.from({ length: 22 }, (_, i) => { const x = 202 + i * 12, ph = 3.5 * 2 * Math.PI * (x - 196) / 268; return line(x, 306 - 15 * Math.cos(ph), x, 306 + 15 * Math.cos(ph), C.rule, 2.2); }).join(''));
+  s += text(464, 40, 'chromosomes:', 'xs b', 'end') + text(464, 62, 'bundles of DNA', 'xs', 'end') + line(370, 70, 216, 130, C.ink, 1.4);
+  s += text(240, 356, 'DNA: two strands of coded instructions', 'xs b');
+  return s;
+}
+
+/* ---------- 3. A loop of stages ---------- */
+function phaseKey(lit = null) {
+  let s = '';
+  CYCLE.forEach((p, i) => {
+    const y = 96 + i * 52, ph = PH[p], on = !lit || lit === p;
+    s += rect(336, y - 16, 20, 20, ph.col, 'none', 0, `rx="4" ${on ? '' : 'opacity=".35"'}`);
+    s += text(364, y, p, `sm b ${on ? ph.cls : 'muted'}`, 'start') + text(364 + (p.length > 1 ? 30 : 20), y, ph.word, on ? 'xs' : 'xs muted', 'start');
   });
   return s;
 }
-function meters(cur, o) {
-  if (o.shares) return shareBars(cur, o);
-  let s = line(12, 456, 468, 456, RULE, 1);
-  s += text(468, 478, o.ghost ? 'compared with normal' : 'taller bar: more of it', 'xs b muted', 'end');
-  if (o.key) s += `<rect data-key-measure x="${MX(0) - 44}" y="486" width="${MX(1) - MX(0) + 88}" height="132" fill="none" stroke="${BLUE}" stroke-width="2"/>` + text((MX(0) + MX(1)) / 2, 478, 'key measures', 'xs b blue');
-  METERS.forEach(([k, words, col], i) => {
-    if (!o.meters.includes(k)) return;
-    const x = MX(i), h = meterH(relOf(cur, k));
-    s += line(x - 26, BASE_Y, x + 26, BASE_Y, INK, 1.5);
-    if (o.ghost) s += `<rect data-ghost-meter="${k}" x="${x - 18}" y="${f(BASE_Y - meterH(relOf(o.ghost, k)))}" width="36" height="${f(meterH(relOf(o.ghost, k)))}" fill="none" stroke="${INK}" stroke-width="1.5" stroke-dasharray="4 3"/>`;
-    s += `<rect data-meter="${k}" x="${x - 14}" y="${f(BASE_Y - h)}" width="28" height="${f(h)}" fill="${col}"/>`;
-    // Before cancer is introduced, the first key measure is simply how many cells build up.
-    (k === 'tumour' && o.n < 12 ? ['how many', 'cells'] : words).forEach((w, j) => { s += text(x, 596 + j * 16, w, 'xs b'); });
-  });
+function cyclePic(t) {
+  let s = ring() + traveller(-90 + 360 * t) + phaseKey();
+  s += text(RC.x, RC.y - 6, 'one trip round', 'xs b') + text(RC.x, RC.y + 16, 'makes two cells', 'xs b');
+  s += text(336, 330, 'always in', 'xs muted', 'start') + text(336, 352, 'this order', 'xs muted', 'start');
   return s;
 }
-function header(o) {
-  if (!o.legend) return text(12, 22, o.title, 'xs b muted', 'start');
-  return line(14, 17, 44, 17, INK, 2, 'stroke-dasharray="5 4"') + text(52, 22, 'normal', 'xs b', 'start')
-    + line(124, 17, 154, 17, INK, 5) + text(162, 22, o.legend, 'xs b', 'start');
-}
-const CLOSE = { divide: closeDivide, dna: closeDna, cycle: closeCycle, g1: closeG1, cdk: closeCdk, s: closeCopy, untwist: closeUntwist, g2: closeG2, m: closeM, g0: closeG0, cancer: closeCancer, whole: closeWhole, antimetabolite: closeCopy, spindle: closeM, alkylating: closeAlkyl, topo: closeUntwist, cdk46: closeCdk46, graph };
-function picture(cur, o) {
-  const over = o.parts.has('tissue') ? tissue() : o.parts.has('bigcell') ? bigCell() : ring(cur, o);
-  const close = CLOSE[o.close](cur, o);
-  const ghost = o.ghost ? `<g data-ghost="normal" ${attrs(o.ghost)}></g>` : '';
-  const bottom = o.meters || o.shares ? meters(cur, o) : '';
-  return header(o) + ghost + `<g data-new-state ${attrs(cur)}>` + over + close + bottom + '</g>';
-}
-const attrs = v => CC.KEYS.map(k => `data-${k.toLowerCase()}="${v[k].toFixed(4)}"`).join(' ');
 
-/* ---------- Words for changes ---------- */
+/* ---------- 4. G1: grow and get ready ---------- */
+function g1Pic(t) {
+  const a = -90 + 124 * ease(span(t, 0.05, 0.75));
+  let s = ring({ lit: ['G1'], gate: 'shut' }) + traveller(a);
+  const [gx, gy] = pt(RC.r + 30, GATE_A);
+  s += text(336, 90, 'G1: the new cell', 'xs b blue', 'start') + text(336, 112, 'grows and makes', 'xs', 'start') + text(336, 134, 'what it needs', 'xs', 'start');
+  s += text(336, 300, 'checkpoint:', 'xs b', 'start') + text(336, 322, 'go on, or not?', 'xs', 'start') + line(334, 290, gx + 4, gy + 4, C.ink, 1.4);
+  s += text(RC.x, RC.y + 6, 'grow', 'lg b blue');
+  return s;
+}
+
+/* ---------- 5. The engines that open the gate ---------- */
+const engine = (x, y, s = 1) => `<path d="M${f(x - 14 * s)} ${f(y)} A${f(14 * s)} ${f(14 * s)} 0 1 1 ${f(x + 9 * s)} ${f(y + 11 * s)} L${f(x)} ${f(y)} Z" fill="${C.blue}"/>`;
+const cyclin = (x, y, s = 1) => `<path d="M${f(x)} ${f(y - 12 * s)} q${f(16 * s)} ${f(2 * s)} ${f(14 * s)} ${f(16 * s)} q${f(-8 * s)} ${f(8 * s)} ${f(-16 * s)} ${f(6 * s)} q${f(8 * s)} ${f(-10 * s)} ${f(2 * s)} ${f(-22 * s)} Z" fill="${C.amber}"/>`;
+function gateScene(o) {
+  // o: { meet (engine and cyclin come together), unlock, open, pass, drug }
+  let s = line(16, 256, 464, 256, C.rule, 3) + text(16, 288, 'G1', 'sm b blue', 'start') + text(464, 288, 'S phase', 'sm b amber', 'end');
+  // The gate: a post and a bar, held shut by a brake until the engines release it.
+  const gx = 270, bar = o.open;
+  s += line(gx, 150, gx, 256, C.muted, 3) + circle(gx, 156, 6, C.ink);
+  s += part('gate', bar < 0.02 ? line(gx, 156, gx, 250, C.ink, 7) : line(gx, 156, gx + 92 * Math.sin(rad(80 * bar)), 156 + 94 * Math.cos(rad(80 * bar)) - 0, C.ink, 7));
+  if (o.unlock < 0.98) s += part('brake', rect(gx - 13, 196, 26, 22, '#fff', C.ink, 2, `rx="4" ${fade(1 - o.unlock)}`) + text(gx, 213, 'Rb', 'xs b on-white', 'middle', fade(1 - o.unlock)));
+  // The engine (CDK4 or CDK6) and its partner, cyclin D.
+  const ex = lerp(150, 236, o.meet), cy = lerp(110, 196, o.meet);
+  s += part('engine', engine(ex, 206, 1.5) + cyclin(lerp(120, ex + 14, o.meet), lerp(cy, 192, o.meet), 1.2));
+  if (o.drug > 0.02) s += part('drug', block(ex, 200 - 60 * (1 - o.drug), 30, 18, fade(Math.min(1, o.drug * 2))));
+  // The cell, waiting in G1, then through to S.
+  s += part('cell', cellBody(lerp(150, 400, o.pass), 226, 26));
+  return s;
+}
+function cdkPic(t) {
+  const meet = ease(span(t, 0.05, 0.3)), unlock = ease(span(t, 0.32, 0.46)), open = ease(span(t, 0.46, 0.62)), pass = ease(span(t, 0.62, 0.92));
+  let s = gateScene({ meet, unlock, open, pass }) + badge(424, 64, ['G1']);
+  s += text(16, 40, 'CDK4 or CDK6', 'xs b blue', 'start') + text(16, 62, '+ its partner, cyclin D', 'xs b amber', 'start');
+  s += show(1 - span(t, 0.4, 0.5), text(306, 212, 'the brake', 'xs b', 'start'));
+  s += show(span(t, 0.46, 0.6), text(306, 128, 'brake off:', 'xs b blue', 'start') + text(306, 150, 'the gate opens', 'xs b blue', 'start'));
+  s += show(span(t, 0.85, 1), text(400, 324, 'on to copying', 'xs b'));
+  return s;
+}
+
+/* ---------- 6. S phase: copying the DNA ---------- */
+function forkPic(t) {
+  let s = badge(424, 64, ['S']);
+  // The parent DNA comes in from the left and unzips at the fork; each old strand gets new partner blocks.
+  s += strands(16, 170, 206, 10, 2.2);
+  s += `<path d="M170 196 Q186 190 200 166 L464 166" fill="none" stroke="${C.blue}" stroke-width="3"/><path d="M170 216 Q186 222 200 246 L464 246" fill="none" stroke="${C.amber}" stroke-width="3"/>`;
+  s += part('fork', circle(178, 206, 14, '#fff', C.ink, 2));
+  const n = 8, u = t * n;
+  let blocks = '';
+  for (const [y, col] of [[180, C.amber], [232, C.blue]]) {
+    for (let i = 0; i < n; i++) {
+      const x = 210 + i * 30, a = clamp(u - i, 0, 1);
+      if (a > 0.02) blocks += rect(x, lerp(y - 40, y, ease(a)) - 7, 22, 14, col, 'none', 0, `rx="2" ${fade(a)}`);
+    }
+  }
+  s += part('blocks', blocks);
+  s += text(16, 150, 'the old DNA', 'xs b', 'start') + text(16, 172, 'unzips', 'xs', 'start');
+  s += text(464, 296, 'new building blocks,', 'xs b', 'end') + text(464, 318, 'one by one, on each strand', 'xs', 'end');
+  s += text(16, 296, 'each chromosome becomes', 'xs muted', 'start') + text(16, 318, 'two joined copies', 'xs muted', 'start');
+  return s;
+}
+
+/* ---------- 7. Untwisting as it copies ---------- */
+function untwistPic(t) {
+  let s = badge(424, 64, ['S']);
+  const wind = ease(span(t, 0, 0.3)) * (1 - ease(span(t, 0.6, 0.8))), gap = ease(span(t, 0.3, 0.42)) * (1 - ease(span(t, 0.66, 0.8)));
+  const ex = 300, gw = 26 * gap;
+  s += part('dna', strands(16, ex - gw / 2, 210, 13, 3 + 3 * wind) + strands(ex + gw / 2, 464, 210, 13, 1.6 + 0.8 * (1 - gap)));
+  // Topoisomerase: two jaws round the DNA that cut it, let it spin and join it again.
+  const jaw = 22 - 6 * gap;
+  s += part('topo', `<path d="M${ex - 24} ${f(210 - jaw - 12)} Q${ex} ${f(210 - jaw - 34)} ${ex + 24} ${f(210 - jaw - 12)} M${ex - 24} ${f(210 + jaw + 12)} Q${ex} ${f(210 + jaw + 34)} ${ex + 24} ${f(210 + jaw + 12)}" fill="none" stroke="${C.purple}" stroke-width="7" stroke-linecap="round"/>`);
+  if (gap > 0.3) s += `<path d="M${ex + 40} 162 a16 16 0 1 1 -2 -1" fill="none" stroke="${C.purple}" stroke-width="2.4" ${fade(gap)}/>`;
+  s += text(ex, 128, 'topoisomerase', 'xs b purple');
+  s += show(span(t, 0.1, 0.25) * (1 - span(t, 0.62, 0.72)), text(140, 160, 'wound tighter', 'xs b blue'));
+  s += text(240, 318, 'cut, let it untwist, join it again', 'xs b') + text(240, 340, 'so copying, and later splitting, carry on', 'xs muted');
+  return s;
+}
+
+/* ---------- 8. G2: a final check ---------- */
+function g2Pic(t) {
+  const a = 152 + 60 * ease(span(t, 0.05, 0.4));
+  let s = ring({ lit: ['G2'] }) + traveller(a);
+  // In the middle: the doubled chromosome under a magnifier, which finds a break.
+  const sweep = ease(span(t, 0.4, 0.75));
+  s += chromo(RC.x, RC.y, 2.2, C.purple, true);
+  const mx = lerp(RC.x - 40, RC.x + 8, sweep), my = lerp(RC.y - 30, RC.y - 10, sweep);
+  s += show(span(t, 0.75, 0.85), cross(RC.x + 10, RC.y - 12, 7));
+  s += part('check', circle(mx, my, 24, 'none', C.ink, 3) + line(mx + 17, my + 17, mx + 34, my + 34, C.ink, 6));
+  s += text(336, 90, 'G2: grow a little,', 'xs b purple', 'start') + text(336, 112, 'check the copy', 'xs', 'start');
+  s += show(span(t, 0.8, 0.95), text(336, 280, 'a break? fix it,', 'xs b red', 'start') + text(336, 302, 'stop here, or', 'xs b', 'start') + text(336, 324, 'self-destruct', 'xs b', 'start'));
+  return s;
+}
+
+/* ---------- 9. M phase: pulling the copies apart ---------- */
+function spindleCell(cx, cy, rx, o) {
+  // o: { pull (0 to 1), pinch (0 to 1), grow (rope reach, 1 normal), frozen }
+  let s = '';
+  const waist = o.pinch;
+  s += `<path d="M${cx} ${f(cy - 92 + 60 * waist)} C${f(cx + rx * 0.6)} ${cy - 96} ${cx + rx} ${cy - 70} ${cx + rx} ${cy} C${cx + rx} ${cy + 70} ${f(cx + rx * 0.6)} ${cy + 96} ${cx} ${f(cy + 92 - 60 * waist)} C${f(cx - rx * 0.6)} ${cy + 96} ${cx - rx} ${cy + 70} ${cx - rx} ${cy} C${cx - rx} ${cy - 70} ${f(cx - rx * 0.6)} ${cy - 96} ${cx} ${f(cy - 92 + 60 * waist)} Z" fill="#fff" stroke="${C.ink}" stroke-width="2.2"/>`;
+  const pl = cx - rx + 26, pr = cx + rx - 26;
+  s += circle(pl, cy, 7, C.green) + circle(pr, cy, 7, C.green);
+  let ropes = '', ch = '';
+  for (const dy of [-46, 0, 46]) {
+    const y = cy + dy, sep = (rx - 46) * o.pull;
+    for (const [px, side] of [[pl, -1], [pr, 1]]) {
+      const tipX = cx + side * (8 + sep), reach = o.grow ?? 1;
+      if (o.ghost) ropes += line(px, cy, cx + side * 8, y, C.ghost, 1.6, 'stroke-dasharray="3 3"');
+      ropes += line(px, cy, lerp(px, tipX, reach), lerp(cy, y, reach), C.green, 2.6);
+      if (o.frozen > 0.3) ropes += circle(lerp(px, tipX, 0.5), lerp(cy, y, 0.5), 3.5, '#fff', C.red, 1.6);
+    }
+    ch += o.pull < 0.05 ? chromo(cx, y, 1, C.amber, true) : chromo(cx - 8 - sep, y, 1, C.amber, false) + chromo(cx + 8 + sep, y, 1, C.amber, false);
+  }
+  return s + part('spindle', ropes) + part('chromosome', ch);
+}
+function mPic(t) {
+  const pull = ease(span(t, 0.3, 0.65)), pinch = ease(span(t, 0.7, 0.95));
+  let s = badge(424, 64, ['M']);
+  s += spindleCell(220, 200, 170, { pull, pinch });
+  s += text(16, 40, 'the spindle: microtubule ropes', 'xs b green', 'start');
+  s += show(1 - span(t, 0.28, 0.36), text(220, 330, 'copies lined up in the middle', 'xs b'));
+  s += show(span(t, 0.36, 0.5) * (1 - span(t, 0.68, 0.74)), text(220, 330, 'ropes shrink: one copy to each end', 'xs b'));
+  s += show(span(t, 0.74, 0.86), text(220, 330, 'then the cell pinches in two', 'xs b'));
+  return s;
+}
+
+/* ---------- 10. Most cells are resting ---------- */
+const G0BOX = { x: 340, y: 70, w: 128, h: 132 };
+const g0Slot = i => [G0BOX.x + 22 + (i % 5) * 21, G0BOX.y + 52 + Math.floor(i / 5) * 21];
+function g0Box(n, ghostN = 0, red = false, dead = 0) {
+  let s = rect(G0BOX.x, G0BOX.y, G0BOX.w, G0BOX.h, '#fff', red ? C.red : C.muted, red ? 2.6 : 1.6, 'stroke-dasharray="6 4"');
+  s += text(G0BOX.x + 12, G0BOX.y + 28, 'G0: resting', 'xs b', 'start');
+  for (let i = 0; i < ghostN; i++) { const [x, y] = g0Slot(i); s += circle(x, y, 7.5, 'none', C.ghost, 1.3, 'stroke-dasharray="2 2"'); }
+  for (let i = 0; i < n; i++) { const [x, y] = g0Slot(i); s += circle(x, y, 6.5, C.muted, '#fff', 1.2); }
+  for (let i = 0; i < dead; i++) s += cross(G0BOX.x + 20 + i * 16, G0BOX.y + G0BOX.h - 14, 5);
+  return part('g0', s);
+}
+function g0Pic(t) {
+  let s = ring() + g0Box(12);
+  // One cell steps out of G1 to rest; one resting cell steps back in.
+  const out = ease(span(t, 0.05, 0.45)), back = ease(span(t, 0.5, 0.9));
+  const [ax, ay] = pt(RC.r, -40), [bx, by] = pt(RC.r, -10);
+  s += arrowTo(ax + 18, ay - 8, G0BOX.x - 6, G0BOX.y + 40, C.muted, 2) + arrowTo(G0BOX.x - 6, G0BOX.y + 96, bx + 22, by, C.muted, 2);
+  s += circle(lerp(ax, G0BOX.x + 22, out), lerp(ay, G0BOX.y + 52 + 63, out), 7, C.muted, '#fff', 1.2);
+  s += circle(lerp(G0BOX.x + 106, bx, back), lerp(G0BOX.y + 52 + 42, by, back), 7, back > 0.6 ? C.blue : C.muted, '#fff', 1.2);
+  s += text(G0BOX.x, 240, 'most body cells', 'xs b', 'start') + text(G0BOX.x, 262, 'rest and do', 'xs', 'start') + text(G0BOX.x, 284, 'their jobs', 'xs', 'start');
+  s += show(span(t, 0.6, 0.8), text(G0BOX.x, 330, 'some step back', 'xs b blue', 'start') + text(G0BOX.x, 352, 'in, to heal', 'xs b blue', 'start'));
+  return s;
+}
+
+/* ---------- 11. The whole loop: tissues that never stop dividing ---------- */
+function wholePic(t) {
+  let s = '';
+  // A bone, its marrow making new blood cells, which leave into the blood.
+  s += part('marrow', `<rect x="20" y="70" width="200" height="120" rx="58" fill="#f4ead8" stroke="${C.ink}" stroke-width="2"/><rect x="42" y="92" width="156" height="76" rx="38" fill="#f2c9bf"/>`);
+  for (let i = 0; i < 6; i++) { const x = 72 + (i % 3) * 46, y = 116 + Math.floor(i / 3) * 30; s += ((t * 3 + i * 0.37) % 1) < 0.5 ? pinched(x, y, 8, 4, MARROW) : circle(x, y, 9, '#fff', MARROW, 2); }
+  s += line(240, 130, 464, 130, '#f1cdc6', 30);
+  for (let k = 0; k < 5; k++) { const u = (t + k / 5) % 1; s += circle(lerp(232, 470, u), 130 + 6 * Math.sin(6.28 * (u + k)), 7, k % 2 ? '#fff' : '#d9524a', k % 2 ? C.blue : 'none', k % 2 ? 2.4 : 0, fade(Math.min(1, (1 - u) * 5))); }
+  s += text(120, 220, 'bone marrow', 'sm b') + text(120, 242, 'makes new blood cells', 'xs');
+  s += text(352, 172, 'into the blood', 'xs muted');
+  // Two more tissues that divide all the time.
+  s += `<path d="M30 330 q12 -40 24 0 q12 -40 24 0 q12 -40 24 0 q12 -40 24 0" fill="#f2c9bf" stroke="${C.ink}" stroke-width="2"/>` + line(26, 330, 130, 330, C.ink, 2);
+  s += text(150, 318, 'gut lining', 'xs b', 'start');
+  s += line(262, 330, 340, 330, '#d9b38c', 5);
+  for (let i = 0; i < 4; i++) s += `<path d="M${272 + i * 18} 330 q-6 -26 4 -48" fill="none" stroke="${C.ink}" stroke-width="2"/>` + circle(272 + i * 18, 333, 4, C.ink);
+  s += text(352, 318, 'hair roots', 'xs b', 'start');
+  s += text(16, 40, 'healthy tissues that divide all the time:', 'xs b', 'start');
+  s += text(240, 384, 'key measures: tumour size, new blood cells', 'xs b muted');
+  return s;
+}
+
+/* ---------- 12 to 17. What changes it: one ring of tumour cells ---------- */
+const ARC_SLOTS = p => {
+  const ph = PH[p], out = [];
+  // Leave the middle of each phase clear for its name.
+  for (let a = ph.a0 + 6; a <= ph.a1 - 6; a += 10) if (Math.abs(a - (ph.a0 + ph.a1) / 2) >= 10) { out.push(pt(RC.r - 9, a)); out.push(pt(RC.r + 9, a + 5)); }
+  return out;
+};
+const SLOTS = Object.fromEntries(CYCLE.map(p => [p, ARC_SLOTS(p)]));
+const dotsOf = (v, p) => clamp(Math.round(34 * v['sh' + p]), 0, SLOTS[p].length);
+const deadOf = (v, p) => { const d = v['dead' + p]; return d < 0.03 ? 0 : clamp(Math.round(9 * d), 1, 9); };
+// Cells killed in a phase: red crosses just inside the ring, along that phase.
+function deaths(v, p) {
+  const n = deadOf(v, p), ph = PH[p];
+  let s = '';
+  for (let i = 0; i < n; i++) { const [x, y] = pt(RC.r - 36, ph.a0 + 8 + i * (ph.a1 - ph.a0 - 16) / Math.max(1, n - 1 || 1)); s += cross(x, y, 4.5); }
+  return s;
+}
+function ringPop(cur, ghostV, o) {
+  // o: { strike: phases the drug hits, all: true for every phase, gate, a (alpha of the drug marks) }
+  let s = ring({ gate: o.gate });
+  let gh = '', dots = '';
+  for (const p of CYCLE) {
+    for (let i = 0; i < dotsOf(ghostV, p); i++) { const [x, y] = SLOTS[p][i]; gh += circle(x, y, 7, 'none', C.ghost, 1.3, 'stroke-dasharray="2 2"'); }
+    for (let i = 0; i < dotsOf(cur, p); i++) { const [x, y] = SLOTS[p][i]; dots += circle(x, y, 6, PH[p].col, '#fff', 1.2); }
+  }
+  s += `<g class="ghost" data-ghost="normal">${gh}</g>` + part('cells', dots);
+  s += part('dead', CYCLE.map(p => deaths(cur, p)).join(''));
+  const n0 = clamp(Math.round(34 * cur.shG0), 0, 25), g0 = clamp(Math.round(34 * ghostV.shG0), 0, 25);
+  s += g0Box(n0, g0, o.all && o.a > 0.3, deadOf(cur, 'G0'));
+  if (o.a > 0.02) {
+    let mark = '';
+    if (o.all) mark += circle(RC.x, RC.y, RC.r + 30, 'none', C.red, 3, 'stroke-dasharray="9 6"');
+    for (const p of o.strike || []) mark += path(arcD(RC.r + 28, PH[p].a0 + 3, PH[p].a1 - 3), C.red, 6);
+    s += part('drug', `<g ${fade(o.a)}>${mark}</g>`);
+  }
+  return s;
+}
+// The middle of the ring: a small picture of the drug at work, and its words.
+const MIDDLE = {
+  cancer: e => { let s = ''; const n = Math.round(4 + 9 * e); for (let i = 0; i < n; i++) { const a = i * 2.4, r = 6 + 4.5 * Math.sqrt(i * 2); s += circle(RC.x + r * Math.cos(a), RC.y - 16 + r * Math.sin(a) * 0.8, 8, '#fff', C.red, 1.8); } return s + text(RC.x, RC.y + 40, 'tumour', 'xs b red'); },
+  antimetabolite: () => `<path d="M${RC.x - 50} ${RC.y - 16} L${RC.x - 14} ${RC.y - 16} L${RC.x + 30} ${RC.y - 34} M${RC.x - 50} ${RC.y - 6} L${RC.x - 14} ${RC.y - 6} L${RC.x + 30} ${RC.y + 12}" fill="none" stroke="${C.blue}" stroke-width="3"/>` + block(RC.x + 6, RC.y - 26, 14, 12) + text(RC.x, RC.y + 40, 'fake block', 'xs b red'),
+  spindle: () => `<ellipse cx="${RC.x}" cy="${RC.y - 14}" rx="44" ry="26" fill="#fff" stroke="${C.ink}" stroke-width="2"/>` + line(RC.x - 34, RC.y - 14, RC.x - 6, RC.y - 24, C.green, 2) + line(RC.x + 34, RC.y - 14, RC.x + 6, RC.y - 4, C.green, 2) + chromo(RC.x, RC.y - 14, 0.8, C.amber) + circle(RC.x, RC.y - 44, 6, C.red) + text(RC.x, RC.y + 40, 'spindle jammed', 'xs b red'),
+  alkylating: () => line(RC.x - 50, RC.y - 26, RC.x + 50, RC.y - 26, C.blue, 3) + line(RC.x - 50, RC.y - 2, RC.x + 50, RC.y - 2, C.amber, 3) + [-30, 0, 30].map(dx => line(RC.x + dx, RC.y - 26, RC.x + dx, RC.y - 2, C.red, 4)).join('') + text(RC.x, RC.y + 40, 'strands tied', 'xs b red'),
+  topo: () => strands(RC.x - 56, RC.x - 8, RC.y - 14, 9, 1.5) + strands(RC.x + 8, RC.x + 56, RC.y - 14, 9, 1.5) + block(RC.x, RC.y - 14, 12, 22) + text(RC.x, RC.y + 40, 'cut held open', 'xs b red'),
+  cdk46: () => engine(RC.x - 10, RC.y - 14, 1.3) + block(RC.x - 10, RC.y - 20, 26, 14) + line(RC.x + 26, RC.y - 44, RC.x + 26, RC.y + 10, C.ink, 6) + text(RC.x, RC.y + 40, 'gate held shut', 'xs b red'),
+};
+const WORDS = {
+  cancer: [['checkpoint', 'red'], ['broken', 'red'], ['↓ fewer rest', 'blue'], ['↑ more divide:', 'blue'], ['a tumour', 'blue'], ['builds up', 'blue']],
+  antimetabolite: [['antimetabolite', 'red'], ['strikes S', 'red'], ['↑ cells copying', 'blue'], ['their DNA die', 'blue']],
+  spindle: [['vinca, taxane:', 'red'], ['strike M', 'red'], ['↑ cells stuck', 'blue'], ['in mitosis die', 'blue']],
+  alkylating: [['alkylating', 'red'], ['agent: every', 'red'], ['phase', 'red'], ['↑ deaths all', 'blue'], ['round, even', 'blue'], ['resting cells', 'blue']],
+  topo: [['topoisomerase', 'red'], ['inhibitor:', 'red'], ['S and G2', 'red'], ['↑ breaks kill', 'blue'], ['cells copying', 'blue'], ['and checking', 'blue']],
+  cdk46: [['CDK4/6', 'red'], ['inhibitor:', 'red'], ['G1 held shut', 'red'], ['↑ cells pile up', 'blue'], ['in G1, waiting', 'blue'], ['no deaths', 'blue']],
+};
+const STRIKE = { antimetabolite: ['S'], spindle: ['M'], topo: ['S', 'G2'], cdk46: ['G1'], alkylating: [], cancer: [] };
+function changePic(kind, t) {
+  const e = ease(span(t, 0.15, 0.9));
+  const from = kind === 'cancer' ? CC.HEALTHY : NV, cur = CC.lerp(from, ENDS[kind], e);
+  const gate = kind === 'cancer' ? (e > 0.5 ? 'broken' : 'shut') : kind === 'cdk46' ? 'shut' : '';
+  let s = ringPop(cur, from, { strike: STRIKE[kind], all: kind === 'alkylating', gate, a: span(t, 0.08, 0.25) });
+  s += show(span(t, 0.1, 0.3), MIDDLE[kind](e));
+  WORDS[kind].forEach(([w, tone], i) => { s += show(span(t, 0.3 + i * 0.08, 0.4 + i * 0.08), text(G0BOX.x, 244 + i * 24, w, `xs b ${tone}`, 'start')); });
+  return s;
+}
+
+/* ---------- Words: comparisons and text alternatives ---------- */
 const ROWS = [['tumour', 'Tumour size', 'bigger', 'smaller'], ['marrow', 'New blood cells', 'more', 'fewer'], ['damaged', 'Damaged cells', 'more', 'fewer'], ['shG1', 'Share of living cells in G1', 'larger', 'smaller'], ['shM', 'Share of living cells in mitosis', 'larger', 'smaller']];
-function more(a, b, up, down) {
-  if (Math.abs(a - b) < 0.05 * Math.max(Math.abs(b), 0.05)) return ['about the same', 'same'];
-  return a > b ? [up, 'up'] : [down, 'down'];
+function trend(a, b, up, down) {
+  if (Math.abs(a - b) < 0.05 * Math.max(Math.abs(b), 0.05)) return ['same', 'about the same'];
+  return a > b ? ['up', up] : ['down', down];
 }
-const compare = (v, ref) => ROWS.map(([k, name, up, down]) => [name, more(v[k], ref[k], up, down)]);
-const ARROW = { up: '↑', down: '↓', same: '↔' };
-const readout = (v, ref, head) => `<ul class="readout" aria-label="${esc(head)}"><li class="head">${head}</li>${compare(v, ref).map(([k, [w, d]]) => `<li><b>${k}</b> <span class="${d}">${ARROW[d]} ${w}</span></li>`).join('')}</ul>`;
-const describe = (v, ref) => compare(v, ref).map(([k, [w]]) => `${k[0].toLowerCase() + k.slice(1)}: ${w}`).join('; ');
+const compare = (v, ref) => ROWS.map(([k, name, up, down]) => { const [d, w] = trend(v[k], ref[k], up, down); return [name, d, w]; });
+const changedFirst = rows => [...rows.filter(r => r[1] !== 'same'), ...rows.filter(r => r[1] === 'same')];
+const describe = (v, ref) => compare(v, ref).map(([k, , w]) => `${k[0].toLowerCase() + k.slice(1)}: ${w}`).join('; ');
 
-/* ---------- Lesson steps ---------- */
-const P3 = ['ring'], P4 = [...P3, 'gate'], P5 = [...P4, 'engine'], P10 = [...P5, 'g0'], P11 = [...P10, 'broken'];
-const CORE = {
-  divide: { n: 1, parts: ['tissue'], close: 'divide', title: 'a patch of tissue: cells side by side, as in skin',
-    label: 'A patch of tissue drawn as rows of round cells, each with a darker centre. One cell, outlined in blue, is pinching in two. Close up, one cell pinches in at the middle and becomes two cells.' },
-  dna: { n: 2, parts: ['bigcell'], close: 'dna', title: 'one cell, magnified',
-    label: 'One cell drawn large, with a round nucleus in its middle holding several coloured rod-shaped chromosomes. Close up, one chromosome is unwound into DNA: two twisting strands joined by rungs, like a twisted ladder.' },
-  cycle: { n: 3, parts: P3, close: 'cycle', shares: true, title: 'the cell cycle',
-    label: 'The cell cycle drawn as a ring of four coloured stages, read clockwise from the top: grow, copy, check and split, with small arrows showing the direction of travel. Coloured dots on the ring show the share of cells at each stage; grow holds the largest share and split the smallest. Close up, a cell grows, a chromosome is copied into a double X, the copy is checked under a magnifier, and the cell splits in two. Bars below show the share of cells at each stage.' },
-  g1: { n: 4, parts: P4, focus: 'G1', close: 'g1', shares: true, title: 'the cell cycle',
-    label: 'The ring with its first stage, G1, outlined in blue and holding the largest share of cells. A thick black bar across the ring at the end of G1 marks the checkpoint. Close up, a small cell grows bigger as it moves toward a closed gate labelled checkpoint.' },
-  cdk: { n: 5, parts: P5, focus: 'G1', close: 'cdk', shares: true, title: 'the cell cycle',
-    label: 'The ring with G1 outlined and a small blue engine beside the checkpoint bar. Close up, blue CDK engines, each with an amber cyclin partner, push the gate open and a cell moves on toward copying.' },
-  s: { n: 6, parts: P5, focus: 'S', close: 's', shares: true, title: 'the cell cycle',
-    label: 'The ring with its second stage, S phase, outlined in amber. Close up, the two strands of DNA unzip at a fork, and each old strand gets a matching row of new coloured building blocks.' },
-  untwist: { n: 7, parts: P5, focus: 'S', close: 'untwist', shares: true, title: 'the cell cycle',
-    label: 'The ring with S phase outlined. Close up, a tightly wound stretch of DNA; then a purple clamp-shaped topoisomerase holding a cut in it; then the DNA joined up again and lying straight, untwisted.' },
-  g2: { n: 8, parts: P5, focus: 'G2', close: 'g2', shares: true, title: 'the cell cycle',
-    label: 'The ring with its third stage, G2, outlined in purple. Close up, a magnifier passes over the doubled DNA and finds a red break; the cell can fix it, stop, or self-destruct.' },
-  m: { n: 9, parts: P5, focus: 'M', close: 'm', shares: true, title: 'the cell cycle',
-    label: 'The ring with its last and shortest stage, M phase, outlined in green and holding the smallest share of cells. Close up, a cell in mitosis: doubled chromosomes lined up across the middle, green spindle ropes running to them from a pole at each end, and arrows showing the copies being pulled apart.' },
-  g0: { n: 10, parts: P10, focus: 'G0', close: 'g0', shares: true, title: 'the cell cycle, and resting cells',
-    label: 'Beside the ring, a dashed box labelled G0, resting, holds grey resting cells, with arrows showing cells stepping out of G1 into it and back. Close up, nerve, muscle and liver cells resting at their jobs, and one cell stepping back into the loop to heal a wound. A new bar shows the share of cells resting.' },
-  whole: { n: 11, parts: P10, close: 'whole', meters: ['tumour', 'marrow'], key: true, title: 'the whole loop, and resting cells',
-    label: 'The whole loop: G1, S, G2 and M around the ring with the checkpoint, and resting cells in G0 beside it. Close up, three healthy tissues that divide all the time, each circled in blue: the bone marrow inside a bone, hair roots, and the gut lining. Two bars, how many cells build up and how many new blood cells are made, are framed as the key measures.' }
+/* ---------- The lesson's scenes, one per step kind ---------- */
+const DRUG_OPT = { cancer: {}, antimetabolite: { antimetabolite: true }, spindle: { spindle: true }, alkylating: { alkylating: true }, topo: { topo: true }, cdk46: { cdk46: true } };
+const ENDS = Object.fromEntries(Object.entries(DRUG_OPT).map(([k, o]) => [k, CC.settle(o)]));
+const CHANGE_WHERE = {
+  cancer: 'The ring of cells starts as healthy tissue, with most cells resting in the G0 box. The checkpoint bar at the end of G1 breaks with a red cross, the resting cells fall from many to few, more dots fill G1, S, G2 and M, and a lump of red-ringed cells, the tumour, grows in the middle.',
+  antimetabolite: 'A red bracket marks S phase. Red crosses pile up along S, where cells copying their DNA die, and the dots in S, G2 and M thin out against dashed outlines; in the middle, a red fake block jams a copying fork.',
+  spindle: 'A red bracket marks M phase. More dots crowd into M than the dashed outlines, cells stuck in mitosis, and red crosses along M mark cells dying there; in the middle, a spindle is jammed.',
+  alkylating: 'A red dashed circle surrounds the whole ring and the resting box turns red: red crosses appear along every phase and under the resting cells, most along G1 and S; in the middle, red bars tie the two DNA strands together.',
+  topo: 'Red brackets mark S phase and G2. Red crosses pile up along S and G2, where the DNA is copied and checked; in the middle, a red block holds a cut in the DNA open.',
+  cdk46: 'The checkpoint bar at the end of G1 stays shut and a red bracket marks G1. Dots pile up in G1 beyond the dashed outlines while S, G2 and M empty, and no red crosses appear: the cells wait rather than die; in the middle, a red block sits on the engine.'
 };
-const CHANGES = {
-  cancer: { legend: 'with cancer', opt: {}, from: CC.HEALTHY, n: 12, focus: null, normal: 'healthy tissue',
-    where: 'Halfway through, the checkpoint bar breaks, marked with a red cross. Fewer cells rest in G0 than in the dashed healthy normal, and a larger share sits in G1, S, G2 and M. Close up, healthy cells sit in a single neat row and stop when full, drawn again as dashed outlines on the right, while cancer cells, outlined in red, keep dividing and heap up over them.' },
-  antimetabolite: { legend: 'with an antimetabolite', opt: { antimetabolite: true }, focus: 'S',
-    where: 'A red bracket marks S phase. Red crosses pile up beside S phase, where cells die, and S, G2 and M hold a smaller share of the living cells. Close up, a red fake building block jams the copying fork and the rest of the new strand is left as dashed outlines.' },
-  spindle: { legend: 'with a vinca alkaloid or taxane', opt: { spindle: true }, focus: 'M',
-    where: 'A red bracket marks M phase. A larger share of the living cells sits in M phase than in the dashed normal, though fewer cells are alive overall, and red crosses beside it mark cells dying there. Close up, two cells in mitosis: with a vinca alkaloid the green spindle ropes stop short of the chromosomes; with a taxane the ropes reach them but are frozen, marked with small red rings, and cannot pull.' },
-  alkylating: { legend: 'with an alkylating agent', opt: { alkylating: true }, focus: null,
-    where: 'A red dashed circle surrounds the whole ring, and the resting box is outlined in red. Red crosses appear beside every phase and under the resting cells, most beside S and G1. Close up, red dots mark chemical groups stuck onto the DNA by one-ended agents, and red bars mark two-ended agents tying the two strands together, so they can no longer open into a copying fork, against a dashed normal fork.' },
-  topo: { legend: 'with a topoisomerase inhibitor', opt: { topo: true }, focus: null,
-    where: 'Red brackets mark S phase and G2. Red crosses pile up beside S and G2, where cells die. Close up, a red drug block traps the purple topoisomerase on a cut, and on the right the DNA stays broken where the dashed normal strand was joined.' },
-  cdk46: { legend: 'with a CDK4/6 inhibitor', opt: { cdk46: true }, focus: 'G1',
-    where: 'A red block sits on the engine beside the checkpoint. A larger share of the living cells sits in G1 than in the dashed normal, though the tumour holds fewer cells overall, while the shares in S, G2 and M shrink and no cells die. Close up, the gate stays shut, the red block sits on the engine, and cells queue up in G1 while only dashed outlines show where they would have gone on.' }
-};
-const ENDS = Object.fromEntries(Object.entries(CHANGES).map(([k, c]) => [k, CC.settle(c.opt)]));
-function corePicture(kind) {
-  const c = CORE[kind];
-  const o = { ...c, parts: new Set(c.parts), markT: 0, e: 0 };
-  return svg(c.label, picture(NV, o), c.meters || c.shares ? H : 460);
-}
-const DURATION = 2200;
-const ease = x => 1 - Math.pow(1 - clamp(x, 0, 1), 3);
-function changePicture(el, t) {
-  const kind = el.dataset.kind, c = CHANGES[kind], e = ease(t);
-  // A disease step morphs from healthy tissue to the untreated tumour; a drug step from the untreated tumour.
-  const from = c.from || NV, cur = CC.lerp(from, ENDS[kind], e);
-  const name = el.dataset.stepTitle.split(':')[0];
-  const label = `${name}, drawn over faint dashed marks for normal, ${c.normal || 'the untreated tumour'}. ${c.where} Compared with normal: ${describe(cur, from)}.`;
-  const parts = new Set(c.from && e < 0.5 ? P10 : P11);
-  const o = { n: c.n || 13, parts, focus: c.focus, close: kind, meters: METERS.map(m => m[0]), key: true, ghost: from, legend: c.legend, drug: c.from ? null : kind, markT: t * 3, e };
-  return { pic: svg(label, picture(cur, o)), ro: readout(cur, from, 'Compared with normal') };
-}
-
-const steps = $$('[data-step]');
-const backBtn = $('[data-step-back]'), nextBtn = $('[data-step-next]'), progress = $('[data-step-progress]');
-let current = 0, frame = 0;
-const visualOf = el => el.querySelector('[data-visual]');
-const isAnimated = el => el.dataset.kind in CHANGES;
-const lastReadout = new WeakMap();
-function drawAt(el, t) {
-  const v = visualOf(el), { pic, ro } = changePicture(el, t), old = v.querySelector('svg');
-  if (!old) { v.innerHTML = pic + ro; lastReadout.set(v, ro); return; }
-  old.outerHTML = pic;
-  if (lastReadout.get(v) !== ro) { v.querySelector('.readout').outerHTML = ro; lastReadout.set(v, ro); }
-}
-function animate(el) {
-  cancelAnimationFrame(frame);
-  if (reducedMotion()) { drawAt(el, 1); return; }
-  let start = null;
-  drawAt(el, 0);
-  const tick = now => {
-    if (start === null) start = now;
-    const t = Math.min(1, (now - start) / DURATION);
-    drawAt(el, t);
-    if (t < 1) frame = requestAnimationFrame(tick);
+const TITLE = { cancer: 'Cancer', antimetabolite: 'Antimetabolites', spindle: 'Vinca alkaloids and taxanes', alkylating: 'Alkylating agents', topo: 'Topoisomerase inhibitors', cdk46: 'CDK4/6 inhibitors' };
+function change(kind) {
+  const ref = kind === 'cancer' ? CC.HEALTHY : NV;
+  const order = changedFirst(compare(ENDS[kind], ref)).map(r => r[0]);
+  const sorted = rows => order.map(k => rows.find(r => r[0] === k));
+  return {
+    duration: 4800,
+    render(t) {
+      const cur = CC.lerp(ref, ENDS[kind], ease(span(t, 0.15, 0.9)));
+      const label = `${TITLE[kind]}, drawn over dashed outlines for normal, ${kind === 'cancer' ? 'healthy tissue' : 'the untreated tumour'}. Dots on the ring are the share of living cells in each phase. ${CHANGE_WHERE[kind]} Compared with normal: ${describe(cur, ref)}.`;
+      return { svg: svg(label, changePic(kind, t), { h: 412 }), readout: readout(sorted(compare(cur, ref))) };
+    }
   };
-  frame = requestAnimationFrame(tick);
 }
-let started = false;
-function startLesson() {
-  steps.forEach(el => {
-    const k = el.dataset.kind;
-    if (CORE[k]) visualOf(el).innerHTML = corePicture(k);
-    if (isAnimated(el)) drawAt(el, 1);
-    el.querySelector('.replay')?.addEventListener('click', () => animate(el));
-  });
-  started = true;
-  if (/^#step-\d+$/.test(location.hash)) fromHash(); else showStep(current);
-}
-function showStep(n, focus = false) {
-  if (!started) return;
-  cancelAnimationFrame(frame);
-  if (isAnimated(steps[current])) drawAt(steps[current], 1);   // a step left mid-morph keeps its end state
-  current = clamp(n, 0, steps.length - 1);
-  steps.forEach((el, i) => { el.hidden = i !== current; });
-  backBtn.disabled = current === 0;
-  nextBtn.textContent = current === steps.length - 1 ? 'Start again ↻' : 'Next →';
-  progress.textContent = `Step ${current + 1} of ${steps.length}`;
-  if (location.hash !== `#step-${current + 1}`) history.replaceState(null, '', `#step-${current + 1}`);
-  const el = steps[current];
-  if (isAnimated(el)) animate(el);
-  if (focus) { el.querySelector('h2').focus({ preventScroll: true }); el.scrollIntoView({ block: 'start' }); }
-}
-nextBtn.addEventListener('click', () => showStep(current === steps.length - 1 ? 0 : current + 1, true));
-backBtn.addEventListener('click', () => showStep(current - 1, true));
-$('#lesson').addEventListener('keydown', e => {
-  if (e.target.closest('input, select, textarea') || e.altKey || e.ctrlKey || e.metaKey) return;
-  if (e.key === 'ArrowRight' && current < steps.length - 1) { e.preventDefault(); showStep(current + 1, true); }
-  if (e.key === 'ArrowLeft' && current > 0) { e.preventDefault(); showStep(current - 1, true); }
-});
-
-/* ---------- Tabs ---------- */
-const tabs = $$('[role=tab]');
-function activate(tab, focus = false) {
-  tabs.forEach(t => { const on = t === tab; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; document.getElementById(t.getAttribute('aria-controls')).hidden = !on; });
-  if (focus) tab.focus();
-  cancelAnimationFrame(frame);   // a morph left running must not overwrite the end state drawn below
-  if (tab.id === 'tab-lesson' && started && isAnimated(steps[current])) drawAt(steps[current], 1);
-  if (tab.id === 'tab-clinical') updateClinical();
-  if (tab.id === 'tab-explore') updateExplore();
-}
-tabs.forEach((t, i) => {
-  t.addEventListener('click', () => activate(t));
-  t.addEventListener('keydown', e => {
-    const n = { ArrowRight: (i + 1) % tabs.length, ArrowLeft: (i + tabs.length - 1) % tabs.length, Home: 0, End: tabs.length - 1 }[e.key];
-    if (n !== undefined) { e.preventDefault(); activate(tabs[n], true); }
-  });
-});
-function fromHash() {
-  const m = location.hash.match(/^#step-(\d+)$/);
-  if (m && started) { if (tabs[0].getAttribute('aria-selected') !== 'true') activate(tabs[0]); showStep(Number(m[1]) - 1); }
-}
-window.addEventListener('hashchange', fromHash);
+const still = (label, draw, h) => () => svg(label, draw(), { h });
+const moving = (label, draw, h, duration, loop = true) => ({ duration, loop, render: t => svg(label, draw(t), { h }) });
+const scenes = {
+  divide: moving('One round cell with a darker nucleus grows, pinches in at the middle and splits into two cells, each a full copy.', dividePic, 284, 4200),
+  dna: still('One cell drawn large, with a round nucleus holding several coloured rod-shaped chromosomes. A dashed line leads from one chromosome to its DNA, unwound: two twisting strands joined by rungs, like a twisted ladder.', dnaPic, 372),
+  cycle: moving('The cell cycle as a ring of four coloured stages, read clockwise from the top: G1, grow; S, copy the DNA; G2, check; and M, split. A cell travels round the ring: it grows in G1, its chromosome doubles in S, it is checked in G2 and it pinches in two in M.', cyclePic, 372, 8000),
+  g1: moving('The ring with its first stage, G1, lit in blue. A small new cell travels round G1, growing, until it reaches a thick black bar across the ring at the end of G1: the checkpoint.', g1Pic, 372, 5200),
+  cdk: moving('A close-up of the G1 checkpoint: a cell waits at a gate held shut by a brake labelled Rb. A blue CDK engine and its amber partner, cyclin D, come together, release the brake, and the gate swings open; the cell moves on to S phase. A small ring in the corner marks G1.', cdkPic, 340, 5600, false),
+  s: moving('A close-up of DNA being copied: the parent DNA comes in from the left and unzips at a fork into two strands, and new coloured building blocks drop into place one by one along each strand. A small ring in the corner marks S phase.', forkPic, 340, 4800),
+  untwist: moving('A close-up of DNA twisted like a rope. As it is copied, the DNA on the left winds tighter; a purple topoisomerase clamps it, cuts it, lets it spin loose and joins it again, and the twists relax. A small ring in the corner marks S phase.', untwistPic, 360, 4800),
+  g2: moving('The ring with its third stage, G2, lit in purple. A cell travels through G2; in the middle, a magnifier passes over a doubled chromosome and finds a red break. The cell can fix it, stop, or destroy itself.', g2Pic, 372, 5000),
+  m: moving('A close-up of a cell in M phase. Doubled chromosomes line up across the middle; green spindle ropes run to them from a pole at each end and shrink, pulling one copy to each end; then the cell pinches in two. A small ring in the corner marks M phase.', mPic, 350, 5600),
+  g0: moving('The ring, and beside it a dashed box labelled G0, resting, full of grey resting cells. One cell steps out of G1 into the box, and one resting cell steps back into the loop.', g0Pic, 372, 5200),
+  whole: moving('Healthy tissues that divide all the time: a bone with its marrow, where cells divide and new blood cells stream out into the blood; the gut lining; and hair roots. The key measures are named below: tumour size and new blood cells.', wholePic, 400, 4000),
+};
+for (const k of Object.keys(DRUG_OPT)) scenes[k] = change(k);
 
 /* ---------- Clinical values ----------
    The model's normal white cell count sits at the middle of the quoted range, and its hematocrits at the source's
@@ -571,8 +445,8 @@ const PLACE_ARROW = { inside: '↔', above: '↑', below: '↓' };
 const hasRange = v => Number.isFinite(v.low) && Number.isFinite(v.high);
 const num = (n, d = 0) => n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
 const rangeText = v => `${num(v.low)}–${num(v.high)}`;
-const span = v => hasRange(v) ? [Math.max(0, v.low - (v.high - v.low)), v.high + (v.high - v.low)] : [v.typical * 0.5, v.typical * 1.5];
-const barX = (v, n) => { const [a, b] = span(v); return f(20 + clamp((n - a) / (b - a), 0, 1) * 360); };
+const barSpan = v => hasRange(v) ? [Math.max(0, v.low - (v.high - v.low)), v.high + (v.high - v.low)] : [v.typical * 0.5, v.typical * 1.5];
+const barX = (v, n) => { const [a, b] = barSpan(v); return f(20 + clamp((n - a) / (b - a), 0, 1) * 360); };
 const roundFor = (v, n) => v.unit === '%' ? Math.round(n) : Math.round(n / 100) * 100;
 const fmt = (v, n) => v.unit === '%' ? `${num(roundFor(v, n))}%` : `${num(roundFor(v, n))} ${v.unit}`;
 // Above or below is judged on the unrounded model value; only the printed number is rounded.
@@ -590,23 +464,23 @@ function bloodPicture(label) {
   // The marrow making new cells, and a drop of blood: white cells drawn in proportion to the model's count.
   const m = CC.blood(cvInputs(), REF), wRel = m.wbc / REF.wbc;
   let s = `<rect x="0" y="0" width="480" height="300" fill="#fff"/>` + text(16, 24, 'bone marrow and blood (illustrative model)', 'xs b muted', 'start');
-  s += `<rect x="20" y="70" width="160" height="150" rx="70" fill="#f4ead8" stroke="${INK}" stroke-width="2"/><rect x="40" y="96" width="120" height="98" rx="46" fill="#f2c9bf"/>`;
+  s += `<rect x="20" y="70" width="160" height="150" rx="70" fill="#f4ead8" stroke="${C.ink}" stroke-width="2"/><rect x="40" y="96" width="120" height="98" rx="46" fill="#f2c9bf"/>`;
   const nDiv = Math.round(8 * cv.marrow);
   for (let i = 0; i < 8; i++) {
     const x = 66 + (i % 4) * 23, y = 126 + Math.floor(i / 4) * 34;
-    s += i < nDiv ? pinched(x, y, 8, 4, 'data-marrow-cell', MARROW) : circle(x, y, 8, 'none', MUTED, 1.3, 'data-marrow-ghost stroke-dasharray="2 2"');
+    s += i < nDiv ? pinched(x, y, 8, 4, MARROW) : circle(x, y, 8, 'none', C.muted, 1.3, 'data-marrow-ghost stroke-dasharray="2 2"');
   }
-  s += text(100, 246, 'marrow: cells dividing', 'xs b', 'middle') + arrow(190, 145, 236, 145, MUTED, 2.2) + text(212, 132, 'new', 'xs muted');
-  s += `<path d="M360 50 C 420 124 440 160 440 190 A80 80 0 0 1 280 190 C280 160 300 124 360 50 Z" fill="#fbe9e6" stroke="${RED}" stroke-width="2"/>`;
+  s += text(100, 246, 'marrow: cells dividing', 'xs b', 'middle') + arrowTo(190, 145, 236, 145, C.muted, 2.2) + text(212, 132, 'new', 'xs muted');
+  s += `<path d="M360 50 C 420 124 440 160 440 190 A80 80 0 0 1 280 190 C280 160 300 124 360 50 Z" fill="#fbe9e6" stroke="${C.red}" stroke-width="2"/>`;
   const RBC = [[300, 200], [334, 176], [368, 150], [402, 180], [420, 218], [300, 240], [340, 262], [392, 258], [428, 248], [356, 214], [384, 112], [326, 222]];
   const inDrop = ([x, y]) => [f(360 + (x - 360) * 0.82), f(190 + (y - 190) * 0.82)];
   RBC.map(inDrop).forEach(([x, y]) => { s += `<ellipse cx="${x}" cy="${y}" rx="11" ry="7" fill="#d9524a" opacity=".8"/>`; });
   const WBC = [[318, 206], [352, 186], [386, 206], [366, 240], [404, 232], [336, 244], [372, 168], [420, 196], [310, 228], [396, 264], [350, 140], [288, 218]];
   const nW = clamp(Math.round(6 * wRel), 0, WBC.length);
   const W = WBC.map(inDrop);
-  for (let i = 0; i < nW; i++) s += circle(W[i][0], W[i][1], 9, '#fff', BLUE, 2.5, 'data-blood-wbc') + circle(W[i][0], W[i][1], 3.5, BLUE);
+  for (let i = 0; i < nW; i++) s += circle(W[i][0], W[i][1], 9, '#fff', C.blue, 2.5, 'data-blood-wbc') + circle(W[i][0], W[i][1], 3.5, C.blue);
   s += text(360, 292, 'blood: white cells are blue rings', 'xs b', 'middle');
-  return svg(label, s, 300);
+  return svg(label, s, { h: 304 });
 }
 function updateClinical() {
   $('#clinical-marrow').value = cv.marrow; $('#clinical-marrow-label').textContent = marrowWords(cv.marrow);
@@ -669,6 +543,27 @@ const EX_NAMES = { antimetabolite: 'an antimetabolite', spindle: 'a vinca alkalo
 const exploreOpts = () => { const o = { speed: ex.speed, stopHalf: ex.stopHalf }; for (const d of ex.drugs) o[d] = true; return o; };
 const pct = x => `${Math.round(100 * x)}%`;
 const speedWords = g => g < 0.8 ? 'slowly' : g <= 1.2 ? 'at the usual pace' : g <= 1.6 ? 'quickly' : 'very quickly';
+// Tumour size and new blood cells over time on top; below, the share of living tumour cells in each phase.
+function explorePicture(cur, base, runs, ghostRun, label) {
+  const E = { x0: 60, x1: 456, y0: 196, h: 150 }, T = CC.T_END;
+  const X = t => f(E.x0 + (E.x1 - E.x0) * t / T);
+  const gT = ghostRun.tum.series, gM = CC.BASE.mar.series, endT = gT.size[gT.size.length - 1];
+  const tumD = ser => ser.t.map((t, i) => `${i ? 'L' : 'M'}${X(t)} ${f(E.y0 - E.h * clamp(ser.size[i] / endT, 0, 1.1))}`).join(' ');
+  const marD = ser => ser.t.slice(1).map((t, i) => `${i ? 'L' : 'M'}${X(t)} ${f(E.y0 - E.h * 0.8 * clamp(ser.made[i + 1] / gM.made[i + 1], 0, 1.3))}`).join(' ');
+  let s = line(E.x0, 30, E.x0, E.y0, C.ink, 2) + line(E.x0, E.y0, E.x1 + 8, E.y0, C.ink, 2);
+  s += text(16, 22, 'amount ↑', 'xs b', 'start') + text(E.x1 + 8, E.y0 + 24, 'time →', 'xs b', 'end');
+  s += path(tumD(gT), C.ghost, 2.2, 'stroke-dasharray="6 5"') + path(marD(gM), C.ghost, 2.2, 'stroke-dasharray="6 5"');
+  s += path(tumD(runs.tum.series), C.ink, 4) + path(marD(runs.mar.series), MARROW, 4);
+  s += text(470, 52, 'tumour size', 'xs b', 'end') + text(470, 74, 'new blood cells', 'xs b red', 'end');
+  s += text(16, 252, 'share of living tumour cells (dashed: untreated)', 'xs b muted', 'start');
+  [['shG0', 'G0 resting', C.muted], ['shG1', 'G1', C.blue], ['shS', 'S', C.amber], ['shG2', 'G2', C.purple], ['shM', 'M', C.green]].forEach(([k, w, col], i) => {
+    const y = 270 + i * 27;
+    s += text(16, y + 13, w, 'xs', 'start');
+    s += rect(140, y, 300 * clamp(base[k] / 0.6, 0, 1), 15, 'none', C.ink, 1.5, 'stroke-dasharray="4 3"');
+    s += rect(140, y, 300 * clamp(cur[k] / 0.6, 0, 1), 15, col);
+  });
+  return svg(label, s, { h: 410 });
+}
 function updateExplore() {
   $('#speed').value = ex.speed; $('#speed-label').textContent = speedWords(ex.speed);
   $('#stop-half').checked = ex.stopHalf;
@@ -677,10 +572,8 @@ function updateExplore() {
   const base = CC.settle({ speed: ex.speed }), ghostRun = ex.speed === 1 ? CC.BASE : CC.run({ speed: ex.speed });
   const names = CC.DRUGS.filter(d => ex.drugs.has(d)).map(d => EX_NAMES[d]);
   const who = `a tumour whose cells divide ${speedWords(ex.speed)}${names.length ? `, treated with ${names.join(', ')}` : ', untreated'}${names.length && ex.stopHalf ? ', with the drug stopped halfway' : ''}`;
-  const label = `Illustrative model of ${who}, drawn over faint dashed marks for the untreated tumour of the same speed. The ring shows what share of the living cells sits in each phase and red crosses show where cells died; the lower panel plots tumour size and new blood cells over time. Compared with untreated: ${describe(cur, base)}.`;
-  const o = { n: 99, parts: new Set(P11), focus: null, close: 'graph', meters: METERS.map(m => m[0]), key: true, ghost: base, legend: 'your settings', markT: 0, e: 0,
-    series: { tum: runs.tum.series, mar: runs.mar.series }, ghostSeries: { tum: ghostRun.tum.series } };
-  $('#explore-visual').innerHTML = svg(label, picture(cur, o)) + readout(cur, base, 'Compared with untreated');
+  const label = `Illustrative model of ${who}, drawn over faint dashed marks for the untreated tumour of the same speed. The top panel plots tumour size and new blood cells over time; the bars below show what share of the living tumour cells sits in each phase. Compared with untreated: ${describe(cur, base)}.`;
+  $('#explore-visual').innerHTML = explorePicture(cur, base, runs, ghostRun, label) + readout(changedFirst(compare(cur, base)), 'Compared with untreated');
   const res = $('#model-results');
   res.textContent = `Illustrative model output, compared with the untreated run: tumour size ${pct(cur.tumour)} · new blood cells made ${pct(cur.marrow)} · share of living tumour cells in G1 ${pct(cur.shG1)}, in mitosis ${pct(cur.shM)}, resting ${pct(cur.shG0)}.`;
   for (const k of CC.KEYS) res.dataset[k.toLowerCase()] = cur[k].toFixed(4);
@@ -751,8 +644,8 @@ async function load() {
     $('#load-error').hidden = false;
     $('#load-error').textContent = 'The reference file did not load. Reload the page to try again; the lesson and Explore freely still work on an illustrative model.';
   }
-  startLesson();
   updateClinical();
   updateExplore();
 }
-load();
+
+lesson({ scenes, before: load, onTab: { clinical: updateClinical, explore: updateExplore } });

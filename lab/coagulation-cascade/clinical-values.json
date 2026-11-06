@@ -50,7 +50,7 @@
   "omitted": "Drug states are not in the table: none of the saved source passages gives a direction for any of these drug classes on platelet count, so no direction is guessed. Fibrinogen also has a quotable range (OpenStax section 18.1), but no saved passage gives its direction in any state here, so it is left out rather than shown with gaps.",
   "drugActions": [
     { "id": "heparins", "label": "Heparins", "step": 14,
-      "summary": "A short-acting anticoagulant that opposes prothrombin; a pharmaceutical form is given to people at risk of clots.",
+      "summary": "A short-acting anticoagulant that works through antithrombin, making it switch off thrombin and factor Xa faster (the quoted source says only that it opposes prothrombin); a pharmaceutical form is given to people at risk of clots.",
       "evidence": [
         { "quote": "And as noted earlier, basophils release heparin , a short-acting anticoagulant that also opposes prothrombin. Heparin is also found on the surfaces of cells lining the blood vessels. A pharmaceutical form of heparin is often administered therapeutically, for example, in surgical patients at risk for blood clots.",
           "source": "openstax-18.5", "where": "OpenStax Anatomy and Physiology 2e, section 18.5 Hemostasis, under the heading “Plasma Anticoagulants”" }

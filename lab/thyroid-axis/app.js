@@ -1,471 +1,435 @@
-'use strict';
+// Lesson 14: The thyroid axis. The kit (/lab/kit/kit.js) runs the page; this file draws the pictures from the
+// illustrative model in model.js (window.ThyroidModel) and runs the Clinical values and Explore freely tabs.
+//
+// Expected behaviour:
+//   - Every picture is 480 wide and at most 420 tall, set in the kit's type (20 / .sm 18 / .xs 17).
+//   - The axis picture (steps 5 to 16, Clinical values, Explore freely) reads top to bottom: hypothalamus, TRH,
+//     pituitary, TSH, thyroid, then T4 and T3 into the blood. The brake runs back up the left edge to the
+//     hypothalamus and the pituitary. Level bars for the blood tests (TSH, T4, T3) sit on the right, and the
+//     body (heartbeat, pace) runs along the bottom. Lesson 15 draws its axis in the same places, so the two
+//     loops read as one pattern.
+//   - Steps 5, 6 and 10 loop: hormone flows down the chain and the brake signal flows back up. Steps 7 and 8
+//     play the feedback once: a level moves, the brake answers, TRH and TSH follow, and T4 returns.
+//   - Each "What changes it" step morphs from where it starts (normal, or the untreated disease a drug treats)
+//     at t = 0 to the changed loop at t = 1, over dashed marks for normal, and says on the picture which levels
+//     rise or fall and what the brake does.
+import { lesson } from '/lab/kit/kit.js';
+import { C, f, clamp, lerp, ease, span, esc, svg, text, readout as readoutList } from '/lab/kit/draw.js';
+
 const TM = window.ThyroidModel;
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
-const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
-const f = n => Number(n.toFixed(1));
-const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-/* ---------- The model ----------
-   view(): the settled loop for a set of model settings (model.js); every level is relative to normal (1). */
 const view = p => TM.settle(p);
 const NORMAL_P = TM.build('normal');
 const NV = view(NORMAL_P);
 
-/* ---------- Drawing ---------- */
-const INK = '#171916', BLUE = '#254dff', AMBER = '#a34700', AMBERF = '#f2a93b', RED = '#b3261e', RULE = '#babeb3', MUTED = '#53584d';
-const BLOOD = '#f6dcd6', BANDF = '#d1d8fd', SKIN = '#f3e4d6', GLAND = '#e2a397';
-const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
-const text = (x, y, s, cls = '', anchor = 'middle') => `<text x="${f(x)}" y="${f(y)}" text-anchor="${anchor}" class="${cls}">${s}</text>`;
-const lines = (x, y, words, cls, anchor = 'start') => words.map((w, i) => text(x, y + i * 15, w, cls, anchor)).join('');
-const svg = (label, body, h) => `<svg viewBox="0 0 480 ${h}" role="img" aria-label="${esc(label)}">${body}</svg>`;
-// A straight arrow with its own head (no markers, so hidden steps never break shared ids).
-function arrow(x1, y1, x2, y2, w, color, extra = '') {
-  if (w <= 0) return '';
+/* ---------- Drawing pieces ---------- */
+const AMBERF = '#f2a93b', BLOOD = '#f6dcd6', BAND = '#d1d8fd', BRAIN = '#e8cfe0', GLAND = '#e2a397', SKIN = '#f3e4d6', HEART = '#d9776b';
+const fade = a => `opacity="${f(clamp(a, 0, 1))}"`;
+// A thick arrow whose width is the amount flowing (its own head, so widths can differ).
+function flow(x1, y1, x2, y2, w, col, extra = '') {
+  if (w < 0.5) return '';
   const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
-  const hl = Math.min(L * .6, w * 1.1 + 7), hw = w * 1.1 + 5;
-  const bx = x2 - ux * hl, by = y2 - uy * hl;
-  return `<g ${extra}><path d="M${f(x1)} ${f(y1)} L${f(bx)} ${f(by)}" stroke="${color}" stroke-width="${f(w)}" fill="none"/>` +
-    `<path d="M${f(x2)} ${f(y2)} L${f(bx - uy * hw)} ${f(by + ux * hw)} L${f(bx + uy * hw)} ${f(by - ux * hw)} Z" fill="${color}"/></g>`;
+  const hl = Math.min(L * .5, w * 1.05 + 8), hw = w * .85 + 6, bx = x2 - ux * hl, by = y2 - uy * hl;
+  return `<g ${extra}><path d="M${f(x1)} ${f(y1)} L${f(bx)} ${f(by)}" stroke="${col}" stroke-width="${f(w)}" fill="none"/>`
+    + `<path d="M${f(x2)} ${f(y2)} L${f(bx - uy * hw)} ${f(by + ux * hw)} L${f(bx + uy * hw)} ${f(by - ux * hw)} Z" fill="${col}"/></g>`;
 }
-// The ghost of an arrow: a dashed outline of its normal width, set just beside the solid one.
-function ghostArrow(x1, y1, x2, y2, w, color) {
-  if (w <= 0) return '';
+// The dashed outline of that arrow at its normal width, drawn on top: the ghost of normal.
+function flowGhost(x1, y1, x2, y2, w) {
+  if (w < 0.5) return '';
   const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
-  const hl = Math.min(L * .6, w * 1.1 + 7), hw = w * 1.1 + 5, bx = x2 - ux * hl, by = y2 - uy * hl, h = w / 2;
+  const hl = Math.min(L * .5, w * 1.05 + 8), hw = w * .85 + 6, bx = x2 - ux * hl, by = y2 - uy * hl, h = w / 2;
   const pts = [[x1 - uy * h, y1 + ux * h], [bx - uy * h, by + ux * h], [bx - uy * hw, by + ux * hw], [x2, y2], [bx + uy * hw, by - ux * hw], [bx + uy * h, by - ux * h], [x1 + uy * h, y1 - ux * h]];
-  return `<path d="M${pts.map(([x, y]) => `${f(x)} ${f(y)}`).join(' L')} Z" fill="none" stroke="${color}" stroke-width="1.6" stroke-dasharray="4 3" opacity=".75"/>`;
+  return `<path d="M${pts.map(([x, y]) => `${f(x)} ${f(y)}`).join(' L')} Z" fill="none" stroke="${C.ink}" stroke-width="1.5" stroke-dasharray="4 3"/>`;
 }
-const width = v => v <= 0.03 ? 0 : clamp(2 + 6 * v, 2, 14);
-
-// Fixed, shuffled places for hormone dots inside the blood vessel.
-const SLOTS = (() => {
-  const s = [];
-  for (let r = 0; r < 3; r++) for (let c = 0; c < 30; c++) s.push([66 + c * 13.4 + (r % 2) * 6.7, 326 + r * 12]);
-  let seed = 7;
-  for (let i = s.length - 1; i > 0; i--) { seed = (seed * 9301 + 49297) % 233280; const j = Math.floor(seed / 233280 * (i + 1)); [s[i], s[j]] = [s[j], s[i]]; }
-  return s;
-})();
-const t4Dot = (x, y, r = 4.6) => `<circle data-t4 cx="${f(x)}" cy="${f(y)}" r="${r}" fill="${AMBERF}" stroke="${AMBER}" stroke-width="1.5"/>`;
-const t3Dot = (x, y, r = 5) => `<path data-t3 d="M${f(x)} ${f(y - r)} L${f(x + r)} ${f(y)} L${f(x)} ${f(y + r)} L${f(x - r)} ${f(y)} Z" fill="${AMBER}"/>`;
-const hormoneDot = (x, y) => `<circle data-hormone cx="${f(x)}" cy="${f(y)}" r="4.6" fill="${AMBERF}" stroke="${AMBER}" stroke-width="1.5"/>`;
-const iodineDot = (x, y, hot = false) => `<circle data-iodine cx="${f(x)}" cy="${f(y)}" r="3.2" fill="${hot ? RED : '#fff'}" stroke="${hot ? RED : INK}" stroke-width="1.4"/>`;
-
-/* The gauges at the top right: TSH, T4 and T3 in the blood, on a ratio scale, with the healthy band from the data file. */
-const GX = { tsh: 352, t4: 402, t3: 452 }, GTOP = 58, GBOT = 278, GMID = 168, GHALF = 108;
-const SPAN = { tsh: Math.log(12), t4: Math.log(3.2), t3: Math.log(3.2) };
-const relOf = (v, k) => k === 'tsh' ? v.tsh : k === 't4' ? v.t4 : v.t3;
-const gyRaw = (k, rel) => Math.log(Math.max(rel, 1e-6)) / SPAN[k];
-const gy = (k, rel) => GMID - clamp(gyRaw(k, rel), -1, 1) * GHALF;
-let BANDS = null;   // set from clinical-values.json; until then the band is an illustrative fallback
-const FALLBACK = { tsh: [GMID - 45, GMID + 45], t4: [GMID - 38, GMID + 38], t3: [GMID - 38, GMID + 38] };
-const bandY = k => BANDS ? [gy(k, BANDS[k][1]), gy(k, BANDS[k][0])] : FALLBACK[k];
-const inBand = (k, rel) => { const [a, b] = bandY(k), y = gy(k, rel); return y >= a - 0.01 && y <= b + 0.01; };
-const GLABEL = { tsh: 'TSH', t4: 'T4', t3: 'T3' };
-function gauges(cur, ghost, before, keys, header = 'in the blood') {
-  let b = text(402, 22, header, 'xs b' + (header === 'in the blood' ? '' : ' blue'));
-  b += text(330, 100, '↑', 'xs muted', 'end') + text(330, 116, 'higher', 'xs muted', 'end') + text(330, 206, 'lower', 'xs muted', 'end') + text(330, 222, '↓', 'xs muted', 'end');
-  for (const k of keys) {
-    const x = GX[k], col = k === 'tsh' ? BLUE : AMBER, [b0, b1] = bandY(k);
-    b += `<path d="M${x} ${GTOP} V${GBOT}" stroke="${RULE}" stroke-width="4"/>`;
-    b += `<rect data-band="${k}" x="${x - 15}" y="${f(b0)}" width="30" height="${f(b1 - b0)}" fill="${BANDF}"/>`;
-    b += text(x, 46, GLABEL[k], 'xs b ' + (k === 'tsh' ? 'blue' : 'amber'));
-    if (ghost) b += `<path data-ghost-gauge="${k}" d="M${x - 19} ${f(gy(k, relOf(ghost, k)))} H${x + 19}" stroke="${INK}" stroke-width="2" stroke-dasharray="4 3"/>`;
-    if (before) b += `<path data-before-gauge="${k}" d="M${x - 19} ${f(gy(k, relOf(before, k)))} H${x + 19}" stroke="${MUTED}" stroke-width="2.6" stroke-dasharray="1.5 3.5" stroke-linecap="round"/>`;
-    const rel = relOf(cur, k), y = gy(k, rel), raw = gyRaw(k, rel);
-    b += `<rect data-gauge="${k}" data-level="${rel.toFixed(3)}" x="${x - 14}" y="${f(y - 4)}" width="28" height="8" fill="${col}" stroke="#fff" stroke-width="1.2"/>`;
-    if (raw > 1) b += `<path d="M${x} ${GTOP - 12} l-7 9 h14 Z" fill="${col}"/>`;
-    if (raw < -1) b += `<path d="M${x} ${GBOT + 12} l-7 -9 h14 Z" fill="${col}"/>`;
+// Arrow width from a level relative to normal (1 draws 7 wide).
+const widthOf = rel => clamp(7 + 4.4 * Math.log2(Math.max(rel, 1e-3)), 2, 16);
+// Small moving dots along a straight run, for the loops that play: n dots, phase in cycles.
+function dots(x1, y1, x2, y2, n, phase, col, r = 3.2) {
+  let s = '';
+  for (let i = 0; i < n; i++) {
+    const u = ((phase + i / n) % 1 + 1) % 1;
+    s += `<circle cx="${f(lerp(x1, x2, u))}" cy="${f(lerp(y1, y2, u))}" r="${r}" fill="${col}" stroke="#fff" stroke-width="1.2" ${fade(Math.min(1, u * 6, (1 - u) * 6))}/>`;
   }
-  b += text(402, 300, 'shaded: healthy band', 'xs muted');
-  return b;
+  return s;
+}
+// Words beside a level bar: what moved, measured against where the step started.
+// Unmoved: where it sits (high, low, usual). Moved: the way it went and where it ended ("↑ high", "↑ to usual", "↑ still low").
+function moved(rel, from, band, words = ['high', 'low', 'usual']) {
+  const [hiW, loW, usW] = words;
+  const where = rel > band[1] ? 'hi' : rel < band[0] ? 'lo' : 'in';
+  const lvl = { hi: hiW, lo: loW, in: usW }[where];
+  const r = Math.log(Math.max(rel, 1e-6) / Math.max(from, 1e-6));
+  if (Math.abs(r) < 0.068) return { word: lvl, cls: 'xs muted' };
+  const was = from > band[1] ? 'hi' : from < band[0] ? 'lo' : 'in';
+  const up = r > 0, end = where === 'in' ? (was === 'in' ? usW : `to ${usW}`) : (up && where === 'lo') || (!up && where === 'hi') ? `still ${lvl}` : lvl;
+  return { word: `${up ? '↑' : '↓'} ${end}`, cls: 'xs b blue' };
 }
 
-/* The thyroid: two lobes joined by a bridge, drawn around the windpipe; size follows the model. */
+/* ---------- The axis picture: one layout for every loop step ---------- */
+const CX = 150, BX = 30;
+const HYP = { x0: 62, x1: 238, y0: 14, y1: 54 }, PIT = { x0: 96, x1: 204, y0: 102, y1: 142 };
+const GC = [150, 232], GS = 0.8;            // the thyroid's centre and drawing scale
+const BL = { y0: 300, y1: 326 };            // the blood
+const MX0 = 320, MX1 = 470;                 // the level bars
+const ROWS = { tsh: 180, t4: 230, t3: 280 };
+const SPAN = { tsh: Math.log(12), t4: Math.log(3.2), t3: Math.log(3.2), pace: Math.log(2) };
+let BANDS = null;                          // from clinical-values.json, relative to the model's normal
+const FALLBACK = { tsh: [0.4, 2.5], t4: [0.6, 1.4], t3: [0.6, 1.4] };
+const BODY_BAND = [0.88, 1.13];             // the usual zone for the heartbeat and the pace (illustrative)
+const bandOf = k => k === 'pace' ? BODY_BAND : (BANDS || FALLBACK)[k];
 const LOBES = 'M-9 -4 C-18 -38 -50 -46 -58 -16 C-63 8 -50 36 -26 36 C-14 36 -9 24 -9 12 Z M9 -4 C18 -38 50 -46 58 -16 C63 8 50 36 26 36 C14 36 9 24 9 12 Z M-10 0 H10 V12 H-10 Z';
-const TC = [150, 238];
-function gland(gs, extra = '') {
-  return `<g transform="translate(${TC[0]} ${TC[1]}) scale(${gs.toFixed(3)})"${extra}><path d="${LOBES}" fill="${GLAND}" stroke="${INK}" stroke-width="${f(2 / gs)}"/>` +
-    [[-40, -14], [-30, 12], [-46, 6], [40, -14], [30, 12], [46, 6]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="5" fill="#f4d9b0" stroke="#b06e60" stroke-width="${f(1 / gs)}"/>`).join('') + '</g>';
+function thyroidShape(cx, cy, s, extra = '') {
+  return `<g transform="translate(${f(cx)} ${f(cy)}) scale(${f(s)})" ${extra}><path d="${LOBES}" fill="${GLAND}" stroke="${C.ink}" stroke-width="${f(2 / s)}"/>`
+    + [[-40, -14], [-30, 12], [-46, 6], [40, -14], [30, 12], [46, 6]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="5" fill="#f4d9b0" stroke="#b06e60" stroke-width="${f(1 / s)}"/>`).join('') + '</g>';
 }
-const glandGhost = gs => `<path data-ghost-gland transform="translate(${TC[0]} ${TC[1]}) scale(${gs.toFixed(3)})" d="${LOBES}" fill="none" stroke="${INK}" stroke-width="${f(1.6 / gs)}" stroke-dasharray="${f(5 / gs)} ${f(4 / gs)}" opacity=".7"/>`;
-const sideX = gs => Math.min(246, TC[0] + 62 * gs + 6);
+const thyroidGhost = (cx, cy, s) => `<path transform="translate(${f(cx)} ${f(cy)}) scale(${f(s)})" d="${LOBES}" fill="none" stroke="${C.ink}" stroke-width="${f(1.5 / s)}" stroke-dasharray="${f(5 / s)} ${f(4 / s)}"/>`;
+function meter(key, y, rel, { name, nameCls, ghost = 1, from = 1, words, box = false }) {
+  const half = (MX1 - MX0) / 2 - 8, mid = (MX0 + MX1) / 2;
+  const pos = r => mid + clamp(Math.log(Math.max(r, 1e-6)) / SPAN[key], -1, 1) * half;
+  const [lo, hi] = bandOf(key), m = moved(rel, from, [lo, hi], words);
+  let s = text(MX0, y - 12, name, nameCls, 'start') + text(MX1, y - 12, m.word, m.cls, 'end');
+  s += `<rect x="${MX0}" y="${y - 4}" width="${MX1 - MX0}" height="8" rx="4" fill="#fff" stroke="${C.rule}"/>`;
+  s += `<rect x="${f(pos(lo))}" y="${y - 4}" width="${f(pos(hi) - pos(lo))}" height="8" fill="${BAND}"/>`;
+  if (ghost !== null) s += `<rect class="ghost" x="${f(pos(ghost) - 6)}" y="${y - 11}" width="12" height="22" fill="none" stroke="${C.ink}" stroke-width="1.5" stroke-dasharray="3 2"/>`;
+  s += `<rect data-level="${key}" data-rel="${rel.toFixed(3)}" x="${f(pos(rel) - 5)}" y="${y - 10}" width="10" height="20" fill="${key === 'tsh' ? C.blue : C.amber}" stroke="#fff" stroke-width="1.5"/>`;
+  return `<g data-part="${key} tests">${s}</g>`;
+}
+// The heartbeat, one spike per beat: beats crowd together as the rate rises.
+function trace(hr, y, x0, x1, attrs) {
+  const P = 30 / Math.max(hr, 0.2);
+  let d = `M${x0} ${y}`;
+  for (let bx = x0 + 10; bx < x1 - 6; bx += P) d += ` L${f(bx - 4)} ${y} L${f(bx - 1)} ${y - 18} L${f(bx + 2)} ${y + 7} L${f(bx + 5)} ${y}`;
+  return `<path ${attrs} d="${d} L${x1} ${y}" fill="none" stroke-linejoin="round"/>`;
+}
+const HEART_D = 'M0 22 C-26 6 -24 -16 -10 -16 C-4 -16 0 -11 0 -7 C0 -11 4 -16 10 -16 C24 -16 26 6 0 22 Z';
+const antibody = (x, y) => `<path d="M${f(x)} ${f(y + 8)} V${f(y)} M${f(x)} ${f(y)} L${f(x - 6)} ${f(y - 7)} M${f(x)} ${f(y)} L${f(x + 6)} ${f(y - 7)}" stroke="${C.red}" stroke-width="2.8" stroke-linecap="round" fill="none"/>`;
 function trefoil(cx, cy, r) {
   let d = '';
   for (const a0 of [-90, 30, 150]) {
     const a = (a0 - 30) * Math.PI / 180, c = (a0 + 30) * Math.PI / 180, r0 = r * .3;
     d += `M${f(cx + r0 * Math.cos(a))} ${f(cy + r0 * Math.sin(a))} L${f(cx + r * Math.cos(a))} ${f(cy + r * Math.sin(a))} A${r} ${r} 0 0 1 ${f(cx + r * Math.cos(c))} ${f(cy + r * Math.sin(c))} L${f(cx + r0 * Math.cos(c))} ${f(cy + r0 * Math.sin(c))} Z `;
   }
-  return `<g data-rai><circle cx="${cx}" cy="${cy}" r="${r + 3}" fill="#f6d34a" stroke="${INK}" stroke-width="1.4"/><path d="${d}" fill="${INK}"/><circle cx="${cx}" cy="${cy}" r="${f(r * .18)}" fill="${INK}"/></g>`;
-}
-const antibody = (x, y, s = 1) => `<path data-antibody d="M${f(x)} ${f(y + 8 * s)} V${f(y)} M${f(x)} ${f(y)} L${f(x - 6 * s)} ${f(y - 7 * s)} M${f(x)} ${f(y)} L${f(x + 6 * s)} ${f(y - 7 * s)}" stroke="${RED}" stroke-width="2.6" stroke-linecap="round" fill="none"/>`;
-
-/* Heartbeat trace and the body's pace dial. */
-function trace(hr, y, extra) {
-  const P = 38 / Math.max(hr, 0.2), x0 = 108, x1 = 288;
-  let d = `M${x0} ${y}`, n = 0;
-  for (let bx = x0 + 12; bx < x1 - 6; bx += P) { d += ` L${f(bx - 4)} ${y} L${f(bx - 1)} ${y - 18} L${f(bx + 2)} ${y + 8} L${f(bx + 5)} ${y}`; n++; }
-  return `<path ${extra} data-beats="${n}" d="${d} L${x1} ${y}" fill="none" stroke-linejoin="round"/>`;
-}
-const DIAL = [398, 470, 52];
-const needleAngle = pace => clamp((pace - 1) * 1.7, -1.4, 1.4);
-function needle(pace, attrs) {
-  const a = needleAngle(pace), [cx, cy, r] = DIAL;
-  return `<path ${attrs} d="M${cx} ${cy} L${f(cx + (r - 8) * Math.sin(a))} ${f(cy - (r - 8) * Math.cos(a))}" stroke-linecap="round"/>`;
+  return `<circle cx="${cx}" cy="${cy}" r="${r + 3}" fill="#f6d34a" stroke="${C.ink}" stroke-width="1.4"/><path d="${d}" fill="${C.ink}"/>`;
 }
 
-const ALL = ['neck', 'thyroid', 'blood', 'release', 'dial', 'forms', 'gauges', 'brain', 'pituitary', 'tsh', 'hypothalamus', 'trh', 'brake', 'heart'];
-function body(v, show, ghost, before, marks) {
-  const has = k => show.includes(k), p = v.p, gs = v.gland;
-  let b = `<ellipse cx="150" cy="84" rx="118" ry="74" fill="${SKIN}" stroke="${RULE}" stroke-width="1.5"/>`;
-  b += `<rect x="100" y="146" width="100" height="168" fill="${SKIN}" stroke="${RULE}" stroke-width="1.5"/><path d="M101 147 H199" stroke="${SKIN}" stroke-width="3"/>`;
-  b += `<rect x="138" y="160" width="24" height="154" fill="#faf3ec" stroke="${RULE}" stroke-width="1.2"/>`;
-  for (let y = 186; y < 312; y += 12) b += `<path d="M139 ${y} H161" stroke="${RULE}" stroke-width="1.2"/>`;
-  b += `<rect x="130" y="156" width="40" height="22" rx="8" fill="#faf3ec" stroke="${RULE}" stroke-width="1.4"/>`;
-  if (has('labels1')) {
-    b += `<path d="M172 167 H232 M163 296 H232" stroke="${MUTED}" stroke-width="1"/>` + text(236, 171, 'voice box', 'xs b', 'start') + text(236, 300, 'windpipe', 'xs b', 'start');
-    b += text(150, 30, 'head', 'xs muted') + text(84, 290, 'neck', 'xs muted', 'end');
+/* axis(v, o): the loop at state v (from model.js). Options:
+   show     which parts to draw (all by default)
+   ghost    the normal state, drawn as dashed marks (or null)
+   from     the state the step started from, for the words beside each level bar
+   marks    { attack, antibody, block, ptu, rai, tablet, beta }: 0 to 1, how far each has appeared
+   brakeWord, trhWord, tshWord: words naming what moved (or '')
+   note     one line along the bottom
+   flowT    when set, dots flow along the chain and the brake (the phase of a loop)
+   tests    box the TSH and T4 bars as the key tests */
+const ALL = ['hyp', 'trh', 'pit', 'tsh', 'gland', 'out', 'blood', 'brake', 'meters', 'body'];
+function axis(v, o = {}) {
+  const show = new Set(o.show || ALL), has = k => show.has(k), g = o.ghost, mk = o.marks || {}, from = o.from || v;
+  let s = '';
+  // Nodes
+  if (has('hyp')) s += `<g data-part="hypothalamus"><rect x="${HYP.x0}" y="${HYP.y0}" width="${HYP.x1 - HYP.x0}" height="${HYP.y1 - HYP.y0}" rx="20" fill="${BRAIN}" stroke="${C.ink}" stroke-width="2"/>${text(CX, 40, 'hypothalamus', 'sm b')}</g>`;
+  if (has('pit')) s += `<g data-part="pituitary"><rect x="${PIT.x0}" y="${PIT.y0}" width="${PIT.x1 - PIT.x0}" height="${PIT.y1 - PIT.y0}" rx="20" fill="${BRAIN}" stroke="${C.ink}" stroke-width="2"/>${text(CX, 128, 'pituitary', 'sm b')}</g>`;
+  const gsize = o.gland ?? v.gland ?? 1, gs = GS * gsize, lx = GC[0] + 63 * gs + 12;
+  if (has('gland')) {
+    if (g && Math.abs(1 - gsize) > .03) s += `<g class="ghost">${thyroidGhost(GC[0], GC[1], GS)}</g>`;
+    s += `<g data-part="thyroid">${thyroidShape(GC[0], GC[1], gs)}${text(lx, 232, 'thyroid', 'sm b', 'start')}</g>`;
   }
-  // Brain: hypothalamus and pituitary
-  if (has('brain')) b += text(150, 30, 'brain', 'xs b muted');
-  if (has('hypothalamus')) {
-    b += `<ellipse cx="150" cy="58" rx="38" ry="17" fill="#e8cfe0" stroke="${INK}" stroke-width="2"/>` + text(194, 62, 'hypothalamus', 'xs b', 'start');
-  }
-  if (has('pituitary')) {
-    b += `<path d="M150 ${has('hypothalamus') ? 75 : 66} V112" stroke="${INK}" stroke-width="3"/><circle cx="150" cy="124" r="13" fill="#e8cfe0" stroke="${INK}" stroke-width="2"/>` + text(170, 129, 'pituitary', 'xs b', 'start');
-  }
-  // The thyroid
-  if (ghost && has('thyroid')) b += glandGhost(ghost.gland);
-  if (has('thyroid')) {
-    b += gland(gs, ` data-thyroid="${gs.toFixed(3)}"`);
-    b += text(sideX(gs), 228, 'thyroid', 'xs b', 'start');
-  }
-  // Marks for diseases and treatments at the gland
-  let sideLabel = null;
-  const imm = marks.immune || 0;
-  if (imm > 0) {
+  // Marks of disease and treatment at the gland
+  if (mk.attack > 0) {
     const pts = [[-40, -10], [-28, 18], [36, -6], [28, 20], [-50, 4], [48, 10]];
-    pts.slice(0, Math.round(6 * imm)).forEach(([x, y]) => { b += `<g data-immune><circle cx="${f(TC[0] + x * gs)}" cy="${f(TC[1] + y * gs)}" r="5" fill="#fff" stroke="${RED}" stroke-width="2.2"/><circle cx="${f(TC[0] + x * gs)}" cy="${f(TC[1] + y * gs)}" r="1.8" fill="${RED}"/></g>`; });
-    if (imm > 0.5) sideLabel = ['immune', 'attack'];
+    s += `<g data-part="attack" ${fade(mk.attack)}>` + pts.map(([x, y]) => `<circle cx="${f(GC[0] + x * gs)}" cy="${f(GC[1] + y * gs)}" r="5.5" fill="#fff" stroke="${C.red}" stroke-width="2.4"/><circle cx="${f(GC[0] + x * gs)}" cy="${f(GC[1] + y * gs)}" r="2" fill="${C.red}"/>`).join('') + '</g>';
   }
-  if (p.stim > 0.05) {
-    const pts = [[-64, -20], [-62, 22], [64, -20], [62, 22], [-34, -46], [34, -46]];
-    pts.slice(0, clamp(Math.round(3.2 * p.stim), 1, 6)).forEach(([x, y]) => { b += antibody(TC[0] + x * gs, TC[1] + y * gs); });
-    sideLabel = sideLabel || ['antibodies'];
+  if (mk.antibody > 0) {
+    const pts = [[-66, -24], [-68, 16], [66, -24], [68, 16]];
+    s += `<g data-part="antibody" ${fade(mk.antibody)}>` + pts.map(([x, y]) => antibody(GC[0] + x * gs, GC[1] + y * gs)).join('') + '</g>';
   }
-  if (p.block > 0.02) {
-    const o = clamp(p.block / 0.6, 0, 1);
-    for (const sx of [-1, 1]) {
-      const cx = TC[0] + sx * 34 * gs, cy = TC[1] + 4 * gs;
-      b += `<g data-block opacity="${o.toFixed(2)}"><circle cx="${f(cx)}" cy="${f(cy)}" r="12" fill="#fff" fill-opacity=".6" stroke="${RED}" stroke-width="3"/><path d="M${f(cx - 8)} ${f(cy + 8)} L${f(cx + 8)} ${f(cy - 8)}" stroke="${RED}" stroke-width="3"/></g>`;
-    }
-    sideLabel = ['building', 'blocked'];
+  if (mk.block > 0) {
+    s += `<g data-part="block" ${fade(mk.block)}>` + [-1, 1].map(sx => { const x = GC[0] + sx * 34 * gs, y = GC[1] + 6 * gs; return `<circle cx="${f(x)}" cy="${f(y)}" r="12" fill="#fff" fill-opacity=".7" stroke="${C.red}" stroke-width="3"/><path d="M${f(x - 8)} ${f(y + 8)} L${f(x + 8)} ${f(y - 8)}" stroke="${C.red}" stroke-width="3"/>`; }).join('') + '</g>';
   }
-  if (marks.rai > 0) {
-    b += trefoil(TC[0], TC[1] + 4, 11);
-    sideLabel = ['radioactive', 'iodine'];
+  if (mk.rai > 0) {
+    s += `<g data-part="rai" ${fade(mk.rai)}>${trefoil(GC[0], GC[1] + 6, 11)}</g>`;
   }
-  if (sideLabel) b += lines(sideX(gs), 246, sideLabel, 'xs b red');
-  // Iodine taken up from the blood
-  if (has('iodine') || marks.rai > 0) {
-    const hot = marks.rai > 0;
-    b += arrow(262, 312, 222, 272, 3, hot ? RED : INK, 'data-flow="iodine"');
-    for (const [x, y] of [[250, 332], [276, 344], [292, 328]]) b += iodineDot(x, y, hot);
-    if (!hot) b += text(268, 300, 'iodine', 'xs b', 'start');
+  if (o.cause) { const [a, b, al] = o.cause; s += `<g ${fade(al)}>${text(lx, 254, a, 'xs b red', 'start')}${text(lx, 276, b, 'xs b red', 'start')}</g>`; }
+  // The chain's arrows
+  const links = [];
+  if (has('trh')) links.push(['trh', CX, 57, CX, 100, widthOf(v.trh), C.ink, g && widthOf(g.trh)]);
+  if (has('tsh')) links.push(['tsh', CX, 145, CX, 206, widthOf(v.tsh), C.blue, g && widthOf(g.tsh)]);
+  if (has('out')) links.push(['out', CX, 250, CX, 299, widthOf(v.out), C.amber, g && widthOf(g.out)]);
+  for (const [k, x1, y1, x2, y2, w, col] of links) s += flow(x1, y1, x2, y2, w, col, `data-part="${k}" data-flow="${k}" data-w="${f(w)}"`);
+  if (g) s += `<g class="ghost" data-ghost="normal">${links.map(([, x1, y1, x2, y2, , , gw]) => flowGhost(x1, y1, x2, y2, gw)).join('')}</g>`;
+  if (has('trh')) s += text(166, 84, 'TRH', 'xs b', 'start') + (o.trhWord ? text(206, 84, o.trhWord, 'xs b blue', 'start') : '');
+  if (has('tsh')) s += text(166, 182, 'TSH', 'xs b blue', 'start') + (o.tshWord ? text(206, 182, o.tshWord, 'xs b blue', 'start') : '');
+  if (has('out')) s += `<g data-part="hormone">${text(138, 290, 'T4, T3', 'xs b amber', 'end')}</g>`;
+  // A T4 tablet from outside the body
+  if (mk.tablet > 0) {
+    s += `<g data-part="tablet" ${fade(mk.tablet)}>${text(226, 292, 'T4 tablet', 'xs b amber', 'start')}</g>`;
   }
-  // A tablet of T4 from outside the body
-  if (p.exo > 0.01) {
-    b += `<g data-tablet><rect x="246" y="276" width="34" height="16" rx="8" fill="${AMBERF}" stroke="${AMBER}" stroke-width="2"/><path d="M263 277 V291" stroke="${AMBER}" stroke-width="1.5"/></g>`;
-    b += arrow(263, 294, 263, 314, width(p.exo), AMBER, `data-flow="tablet" data-w="${f(width(p.exo))}"`);
-    b += text(263, 270, 'tablet', 'xs b amber');
+  // The blood
+  if (has('blood')) {
+    s += `<g data-part="blood"><rect x="12" y="${BL.y0}" width="456" height="${BL.y1 - BL.y0}" rx="13" fill="${BLOOD}" stroke="${C.red}" stroke-width="2"/>${text(458, BL.y1 - 7, 'blood', 'xs b red', 'end')}`;
+    const n = clamp(Math.round(9 * v.t4), 1, 26);
+    for (let i = 0; i < n; i++) s += `<circle cx="${f(170 + ((i * 0.6180339) % 1) * 230)}" cy="${f(BL.y0 + 7 + ((i * 0.381966) % 1) * 12)}" r="3.6" fill="${AMBERF}" stroke="${C.amber}" stroke-width="1.2"/>`;
+    s += '</g>';
+    if (mk.tablet > 0) s += `<g data-part="tablet" ${fade(mk.tablet)}><rect x="232" y="${BL.y0 + 4}" width="40" height="18" rx="9" fill="${AMBERF}" stroke="${C.amber}" stroke-width="2.2"/><path d="M252 ${BL.y0 + 5} V${BL.y0 + 21}" stroke="${C.amber}" stroke-width="1.5"/></g>`;
   }
-  // Heart
-  if (has('heart')) {
-    b += `<path d="M64 458 C26 434 30 404 50 405 C59 406 64 413 64 418 C64 413 69 406 78 405 C98 404 102 434 64 458 Z" fill="#d9776b" stroke="${INK}" stroke-width="2"/>`;
-    b += text(64, 482, 'heart', 'xs b');
-    if (p.beta > 0.02) {
-      const o = clamp(p.beta, 0, 1).toFixed(2);
-      b += `<g data-betablock opacity="${o}">` + [44, 64, 84].map(x => `<rect x="${x - 6}" y="${x === 64 ? 413 : 404}" width="12" height="7" fill="${BLUE}"/>`).join('') + '</g>';
-      b += text(64, 394, 'beta-blocker', 'xs b blue');
-    }
+  // The brake: hormone in the blood tells the hypothalamus and pituitary to release less
+  if (has('brake')) {
+    const w = clamp(2 + 3 * v.t4, 2, 10), my = 162;
+    if (g) { const h = clamp(2 + 3 * g.t4, 2, 10) / 2; s += `<g class="ghost" data-ghost="normal"><path d="M${f(BX - h)} ${BL.y0} V40 M${f(BX + h)} ${BL.y0} V40" stroke="${C.ink}" stroke-width="1.4" stroke-dasharray="4 3" fill="none"/></g>`; }
+    s += `<g data-part="brake" data-flow="brake" data-w="${f(w)}"><path d="M${BX} ${BL.y0 + 2} V34 H${HYP.x0 - 6} M${BX} ${PIT.y0 + 20} H${PIT.x0 - 6}" fill="none" stroke="${C.amber}" stroke-width="${f(w)}" stroke-linejoin="round"/>`
+      + `<path d="M${HYP.x0 - 4} 22 V46 M${PIT.x0 - 4} ${PIT.y0 + 8} V${PIT.y0 + 32}" stroke="${C.amber}" stroke-width="5"/>`
+      + text(48, my, 'brake', 'xs b amber', 'start') + (o.brakeWord ? text(48, my + 22, o.brakeWord, 'xs b blue', 'start') : '') + '</g>';
   }
-  return b;
+  // Flowing dots for the loops that play
+  if (o.flowT !== undefined) {
+    const ph = o.flowT;
+    if (has('trh')) s += dots(CX, 60, CX, 96, clamp(Math.round(3 * v.trh), 1, 7), ph, C.ink);
+    if (has('tsh')) s += dots(CX, 148, CX, 200, clamp(Math.round(3 * v.tsh), 1, 8), ph, C.blue);
+    if (has('out')) s += dots(CX, 252, CX, 294, clamp(Math.round(3 * v.out), 1, 8), ph, C.amber);
+    if (has('brake')) s += dots(BX, BL.y0 - 4, BX, 40, clamp(Math.round(4 * v.t4), 1, 10), ph, AMBERF, 3);
+  }
+  // The blood tests
+  if (has('meters')) {
+    s += text(MX0, 138, 'blood tests', 'xs b muted', 'start');
+    if (has('tsh')) s += meter('tsh', ROWS.tsh, v.tsh, { name: 'TSH', nameCls: 'xs b blue', ghost: g ? g.tsh : null, from: from.tsh, box: o.tests });
+    s += meter('t4', ROWS.t4, v.t4, { name: 'T4', nameCls: 'xs b amber', ghost: g ? g.t4 : null, from: from.t4, box: o.tests });
+    s += meter('t3', ROWS.t3, v.t3, { name: 'T3', nameCls: 'xs b amber', ghost: g ? g.t3 : null, from: from.t3 });
+    if (o.tests) s += `<g data-part="tests"><rect x="${MX0 - 10}" y="${ROWS.tsh - 34}" width="${MX1 - MX0 + 16}" height="${ROWS.t4 - ROWS.tsh + 52}" fill="none" stroke="${C.blue}" stroke-width="2.5"/></g>`;
+  }
+  // The body: heartbeat and pace
+  if (has('body')) {
+    s += `<g data-part="heart"><path transform="translate(34 374)" d="${HEART_D}" fill="${HEART}" stroke="${C.ink}" stroke-width="2"/>`;
+    if (mk.beta > 0) s += `<g ${fade(mk.beta)}>${[-9, 9].map(dx => `<rect x="${34 + dx - 5}" y="364" width="10" height="7" fill="${C.blue}"/>`).join('')}</g>`;
+    s += '</g>';
+    s += trace(v.hr, 386, 66, 296, `data-trace="${v.hr.toFixed(3)}" stroke="${C.red}" stroke-width="2.6"`);
+    const hm = moved(v.hr, from.hr, BODY_BAND, ['fast', 'slow', 'usual']);
+    s += text(66, 352, 'heartbeat', 'xs b', 'start') + text(296, 352, hm.word, hm.cls, 'end');
+    const half = (MX1 - MX0) / 2 - 8, mid = (MX0 + MX1) / 2, pos = r => mid + clamp(Math.log(r) / SPAN.pace, -1, 1) * half;
+    const pm = moved(v.pace, from.pace, bandOf('pace'), ['fast', 'slow', 'usual']);
+    s += `<g data-part="pace">${text(MX0, 352, 'pace', 'xs b', 'start')}${text(MX1, 352, pm.word, pm.cls, 'end')}`
+      + `<rect x="${MX0}" y="370" width="${MX1 - MX0}" height="8" rx="4" fill="#fff" stroke="${C.rule}"/><rect x="${f(pos(BODY_BAND[0]))}" y="370" width="${f(pos(BODY_BAND[1]) - pos(BODY_BAND[0]))}" height="8" fill="${BAND}"/>`
+      + (g ? `<rect class="ghost" x="${f(pos(g.pace) - 6)}" y="363" width="12" height="22" fill="none" stroke="${C.ink}" stroke-width="1.5" stroke-dasharray="3 2"/>` : '')
+      + `<rect x="${f(pos(v.pace) - 5)}" y="364" width="10" height="20" fill="${C.amber}" stroke="#fff" stroke-width="1.5"/></g>`;
+  }
+  if (o.note) s += text(o.noteX ?? 12, 410, o.note, 'xs b blue', o.noteX ? 'end' : 'start');
+  return s;
 }
-function flowsOf(v, show) {
-  const has = k => show.includes(k), out = [], gs = v.gland, y0 = Math.min(298, TC[1] + 36 * gs + 4);
-  if (has('release')) {
-    out.push(['release-l', TC[0] - 34 * gs, y0, TC[0] - 34 * gs, 314, width(v.out), AMBER]);
-    out.push(['release-r', TC[0] + 34 * gs, y0, TC[0] + 34 * gs, 314, width(v.out), AMBER]);
-  }
-  if (has('tsh')) out.push(['tsh', 150, 140, 150, TC[1] - 40 * gs - 2, width(v.tsh), BLUE]);
-  if (has('trh')) out.push(['trh', 116, 72, 132, 112, width(v.trh) * 0.8, INK]);
-  return out;
-}
-function brake(v, ghost) {
-  const w = clamp(1.5 + 2.5 * v.H, 1.5, 9);
-  let b = '';
-  if (ghost) { const gw = clamp(1.5 + 2.5 * ghost.H, 1.5, 9); b += `<path data-ghost-brake d="M${f(48 + gw / 2 + w / 2 + 4)} 312 V${f(64 + 6)}" stroke="${INK}" stroke-width="1.6" stroke-dasharray="4 3" opacity=".7" fill="none"/>`; }
-  b += `<g data-flow="brake" data-w="${f(w)}"><path d="M48 314 V58 H104" fill="none" stroke="${AMBER}" stroke-width="${f(w)}" stroke-dasharray="${f(w + 4)} 4"/><path d="M48 124 H128" fill="none" stroke="${AMBER}" stroke-width="${f(w)}" stroke-dasharray="${f(w + 4)} 4"/>` +
-    `<path d="M112 58 l-10 -${f(w / 2 + 5)} v${f(w + 10)} Z M136 124 l-10 -${f(w / 2 + 5)} v${f(w + 10)} Z" fill="${AMBER}"/></g>`;
-  b += `<text x="40" y="236" transform="rotate(-90 40 236)" text-anchor="middle" class="xs b amber">brake</text>`;
-  return b;
-}
-function vessel(v, show) {
-  let b = `<rect x="8" y="314" width="464" height="50" rx="25" fill="${BLOOD}" stroke="${RED}" stroke-width="2"/>` + text(16, 344, 'blood', 'xs b red', 'start');
-  if (!show.includes('blood')) return b;
-  if (show.includes('forms')) {
-    const n4 = clamp(Math.round(10 * v.t4), 0, 40), n3 = clamp(Math.round(5 * v.t3), 0, 22);
-    SLOTS.slice(0, n4).forEach(([x, y]) => { b += t4Dot(x, y); });
-    SLOTS.slice(n4, n4 + n3).forEach(([x, y]) => { b += t3Dot(x, y); });
-  } else SLOTS.slice(0, clamp(Math.round(12 * v.t4), 0, 48)).forEach(([x, y]) => { b += hormoneDot(x, y); });
-  return b;
-}
-function bottom(v, show, ghost, before) {
-  let b = '';
-  if (show.includes('heart')) {
-    if (ghost) b += trace(ghost.hr, 452, `data-ghost-trace stroke="${INK}" stroke-width="1.8" stroke-dasharray="4 3" opacity=".7"`);
-    b += trace(v.hr, 424, `data-trace stroke="${RED}" stroke-width="2.6"`);
-    b += text(198, 482, 'heartbeat →', 'xs b');
-  }
-  if (show.includes('dial')) {
-    const [cx, cy, r] = DIAL;
-    b += `<path d="M${cx - r} ${cy} A${r} ${r} 0 0 1 ${cx + r} ${cy}" fill="none" stroke="${RULE}" stroke-width="10"/><path d="M${cx} ${cy - r - 7} V${cy - r + 7}" stroke="${INK}" stroke-width="2"/>`;
-    b += text(cx, cy - r - 14, 'body’s pace', 'xs b') + text(cx - r - 2, cy + 18, 'slower', 'xs') + text(cx + r + 2, cy + 18, 'faster', 'xs');
-    if (ghost) b += needle(ghost.pace, `data-ghost-needle stroke="${INK}" stroke-width="2" stroke-dasharray="4 3" opacity=".75"`);
-    if (before) b += needle(before.pace, `stroke="${MUTED}" stroke-width="2.6" stroke-dasharray="1.5 3.5"`);
-    b += needle(v.pace, `data-needle stroke="${AMBER}" stroke-width="4.5"`) + `<circle cx="${cx}" cy="${cy}" r="6" fill="${INK}"/>`;
-  }
-  return b;
-}
-function attrs(v) {
-  return `data-tsh="${v.tsh.toFixed(3)}" data-t4="${v.t4.toFixed(3)}" data-t3="${v.t3.toFixed(3)}" data-out="${v.out.toFixed(3)}" data-hr="${v.hr.toFixed(3)}" data-pace="${v.pace.toFixed(3)}" data-gland="${v.gland.toFixed(3)}"`;
-}
-function keyRow(items, y) {
-  let x = 10, row = 0, out = '';
-  for (const [icon, word] of items) {
-    const w = 40 + word.length * 7.4;
-    if (x > 10 && x + w > 474) { x = 10; row++; }
-    out += `<g transform="translate(${f(x)} ${y + row * 24})">${icon}${text(40, 5, word, 'xs', 'start')}</g>`;
-    x += w + 14;
-  }
-  return { body: out, rows: row + 1 };
-}
-const KEY = {
-  hormone: [hormoneDot(17, 0), 'thyroid hormone'],
-  t4: [t4Dot(17, 0), 'T4'],
-  t3: [t3Dot(17, 0), 'T3'],
-  normal: [`<path d="M0 0 H34" stroke="${INK}" stroke-width="2" stroke-dasharray="6 5" opacity=".7"/>`, 'normal']
-};
-/* One full picture: brain, neck and gland on the left, the blood levels on the right, the vessel across, the body below. */
-function picture(cur, opt = {}) {
-  const { show = ALL, ghost = null, before = null, legend = '', beforeWord = '', extra = '', marks = {}, header } = opt;
-  let b = body(cur, show, ghost, before, marks);
-  if (show.includes('inset')) b += extra;
-  b += vessel(cur, show);
-  if (ghost) {
-    let g = '';
-    for (const [, x1, y1, x2, y2, w, color] of flowsOf(ghost, show)) g += ghostArrow(x1 + 13, y1, x2 + 13, y2, w, color);
-    b += `<g class="ghost" data-ghost="normal" ${attrs(ghost)}>${g}</g>`;
-  }
-  if (before) b += `<g data-ghost="before" ${attrs(before)}></g>`;
-  let flows = '';
-  for (const [k, x1, y1, x2, y2, w, color] of flowsOf(cur, show)) flows += arrow(x1, y1, x2, y2, w, color, `data-flow="${k}" data-w="${f(w)}"`);
-  let labels = '';
-  if (show.includes('tsh')) labels += text(162, 166, 'TSH', 'xs b blue', 'start');
-  if (show.includes('trh')) labels += text(108, 102, 'TRH', 'xs b', 'end');
-  const brk = show.includes('brake') ? brake(cur, ghost) : '';
-  const g = show.includes('gauges') ? gauges(cur, ghost, before, show.includes('tsh') ? ['tsh', 't4', 't3'] : ['t4', 't3'], header) : '';
-  b += `<g data-new-state="${esc(legend || 'current')}" ${attrs(cur)}>${brk}${flows}${labels}${g}${bottom(cur, show, ghost, before)}</g>`;
-  if (!show.includes('inset')) b += extra;
-  const items = show.includes('forms') ? [KEY.t4, KEY.t3] : show.includes('blood') ? [KEY.hormone] : [];
-  if (ghost) items.push(KEY.normal);
-  if (before) items.push([`<path d="M0 0 H34" stroke="${MUTED}" stroke-width="2.6" stroke-dasharray="1.5 3.5" stroke-linecap="round"/>`, beforeWord]);
-  if (legend) items.push([`<path d="M0 -4 H34 V4 H0 Z" fill="${AMBER}"/>`, legend]);
-  if (!items.length) return { body: b, h: 496 };
-  const key = keyRow(items, 512);
-  return { body: b + key.body, h: 526 + 24 * (key.rows - 1) };
-}
-const pictureSvg = (label, cur, opt) => { const { body: b, h } = picture(cur, opt); return svg(label, b, h); };
+const AXIS_H = 416;
 
-/* ---------- Words: comparisons and text alternatives ---------- */
-function more(a, b, up = 'higher', down = 'lower') {
-  const r = (a + 1e-6) / (b + 1e-6);
-  return r > 1.04 ? [up, 'up'] : r < 0.96 ? [down, 'down'] : ['about the same', 'same'];
+/* ---------- Build the loop: the step pictures ---------- */
+function glandPicture() {
+  let b = `<ellipse cx="240" cy="62" rx="104" ry="62" fill="${SKIN}" stroke="${C.rule}" stroke-width="1.5"/>`;
+  b += `<path d="M178 112 V330 M302 112 V330" stroke="${C.rule}" stroke-width="1.5"/><rect x="179" y="110" width="122" height="222" fill="${SKIN}"/>`;
+  b += `<g data-part="windpipe"><rect x="222" y="150" width="36" height="182" fill="#faf3ec" stroke="${C.muted}" stroke-width="1.4"/>`;
+  for (let y = 196; y < 330; y += 13) b += `<path d="M223 ${y} H257" stroke="${C.muted}" stroke-width="1.2"/>`;
+  b += '</g>';
+  b += `<rect x="212" y="146" width="56" height="34" rx="12" fill="#faf3ec" stroke="${C.muted}" stroke-width="1.6"/>`;
+  b += `<g data-part="thyroid">${thyroidShape(240, 238, 1.15)}</g>`;
+  b += `<path d="M270 162 H322" stroke="${C.muted}" stroke-width="1.2"/>` + text(328, 168, 'voice box', 'xs b', 'start');
+  b += `<path d="M310 232 H322" stroke="${C.muted}" stroke-width="1.2"/>` + text(328, 228, 'thyroid', 'lg b', 'start') + text(328, 254, 'two lobes and', 'xs', 'start') + text(328, 276, 'a bridge', 'xs', 'start');
+  b += `<path d="M222 312 H160" stroke="${C.muted}" stroke-width="1.2"/>` + text(154, 318, 'windpipe', 'xs b', 'end');
+  b += text(240, 66, 'head', 'xs muted') + text(150, 150, 'neck', 'xs muted', 'end');
+  return b;
 }
-function compare(v, ref) {
-  return [
-    ['TSH', more(v.tsh, ref.tsh)],
-    ['T4', more(v.t4, ref.t4)],
-    ['T3', more(v.t3, ref.t3)],
-    ['Heartbeat', more(v.hr, ref.hr, 'faster', 'slower')],
-    ['Body’s pace', more(v.pace, ref.pace, 'faster', 'slower')],
-    ['Gland size', more(v.gland, ref.gland, 'larger', 'smaller')]
+// Moving: the hormone level is turned up, then down, then back, and the body's pace follows it.
+function pacePicture(t) {
+  const H = t < .4 ? lerp(1, 1.7, ease.inOut(span(t, .08, .32))) : t < .78 ? lerp(1.7, .55, ease.inOut(span(t, .42, .68))) : lerp(.55, 1, ease.inOut(span(t, .8, .96)));
+  const pace = Math.sqrt(H);
+  let b = `<g data-part="hormone">${thyroidShape(92, 64, .78)}${text(150, 70, 'thyroid', 'sm b', 'start')}`;
+  b += flow(92, 98, 92, 172, widthOf(H), C.amber) + text(108, 150, 'thyroid hormone', 'xs b amber', 'start') + '</g>';
+  b += `<rect x="12" y="174" width="456" height="30" rx="15" fill="${BLOOD}" stroke="${C.red}" stroke-width="2"/>` + text(458, 195, 'blood', 'xs b red', 'end');
+  const n = clamp(Math.round(10 * H), 2, 22);
+  for (let i = 0; i < n; i++) b += `<circle cx="${f(130 + ((i * 0.6180339) % 1) * 250)}" cy="${f(182 + ((i * 0.381966) % 1) * 14)}" r="3.8" fill="${AMBERF}" stroke="${C.amber}" stroke-width="1.2"/>`;
+  // Three body cells, each burning fuel: the flame grows with the pace.
+  b += `<g data-part="pace">`;
+  for (const x of [90, 240, 390]) {
+    b += flow(x, 206, x, 232, 3 + 2 * H, C.amber) + `<circle cx="${x}" cy="274" r="38" fill="#f1e3cf" stroke="${C.ink}" stroke-width="2"/>`;
+    const fs = .45 + .6 * pace;
+    b += `<path transform="translate(${x} 292) scale(${f(fs)})" d="M0 0 C-15 0 -19 -12 -13 -22 C-9 -29 -4 -27 -2 -36 C7 -28 17 -19 15 -8 C14 -3 8 0 0 0 Z" fill="#e66a55" stroke="${C.red}" stroke-width="${f(1.6 / fs)}"/>`;
+  }
+  b += text(240, 334, 'body cells burning fuel', 'xs b');
+  const half = 150, mid = 240, pos = r => mid + clamp(Math.log(r) / Math.log(2), -1, 1) * half;
+  b += text(90, 364, 'pace', 'xs b', 'end') + `<rect x="${mid - half}" y="356" width="${half * 2}" height="10" rx="5" fill="#fff" stroke="${C.rule}"/>`;
+  b += `<rect x="${f(pos(BODY_BAND[0]))}" y="356" width="${f(pos(BODY_BAND[1]) - pos(BODY_BAND[0]))}" height="10" fill="${BAND}"/>`;
+  b += `<rect x="${f(pos(pace) - 5)}" y="350" width="10" height="22" fill="${C.amber}" stroke="#fff" stroke-width="1.5"/></g>`;
+  const word = H > 1.15 ? 'more hormone: a faster pace' : H < .85 ? 'less hormone: a slower pace' : 'usual hormone: a usual pace';
+  b += text(240, 398, word, 'sm b blue');
+  return b;
+}
+// Moving: iodine dots leave the blood, cross the follicle's wall of cells and fix onto the stored protein.
+function iodinePicture(t) {
+  const cx = 228, cy = 164, R = 92;
+  let b = `<g data-part="follicle">`;
+  for (let i = 0; i < 14; i++) { const a = i / 14 * Math.PI * 2; b += `<circle cx="${f(cx + R * Math.cos(a))}" cy="${f(cy + R * Math.sin(a))}" r="21" fill="${GLAND}" stroke="${C.ink}" stroke-width="1.5"/>`; }
+  b += '</g>';
+  b += `<g data-part="store"><circle cx="${cx}" cy="${cy}" r="68" fill="#f4d9b0" stroke="#b06e60" stroke-width="1.5"/>`;
+  for (let k = 0; k < 3; k++) b += `<path d="M${cx - 50} ${cy - 26 + k * 26} C${cx - 20} ${cy - 42 + k * 26} ${cx + 20} ${cy - 10 + k * 26} ${cx + 50} ${cy - 26 + k * 26}" fill="none" stroke="#b06e60" stroke-width="3" stroke-linecap="round"/>`;
+  b += '</g>';
+  b += `<rect x="12" y="314" width="456" height="30" rx="15" fill="${BLOOD}" stroke="${C.red}" stroke-width="2"/>` + text(458, 335, 'blood', 'xs b red', 'end');
+  // Each dot rides from the blood through the wall to a seat on a strand of the protein, sits, then a new one comes.
+  const seats = [[-34, -30], [0, -20], [30, -28], [-30, 0], [6, 6], [34, -2], [-24, 26], [10, 32], [36, 24]];
+  let s = '';
+  seats.forEach(([sx, sy], i) => {
+    const u = ((t * 2 + i / seats.length) % 1);
+    const sx0 = cx - 150 + i * 36, sy0 = 329;
+    const wallA = Math.atan2(sy0 - cy, sx0 - cx), wx = cx + R * Math.cos(wallA), wy = cy + R * Math.sin(wallA);
+    let x, y;
+    if (u < .4) { const k = ease.inOut(u / .4); x = lerp(sx0, wx, k); y = lerp(sy0, wy, k); }
+    else { const k = ease.inOut(Math.min(1, (u - .4) / .3)); x = lerp(wx, cx + sx, k); y = lerp(wy, cy + sy, k); }
+    s += `<circle cx="${f(x)}" cy="${f(y)}" r="5" fill="#fff" stroke="${C.ink}" stroke-width="1.8" ${fade(u > .94 ? (1 - u) * 16 : 1)}/>`;
+  });
+  b += `<g data-part="iodine">${s}</g>`;
+  b += text(240, 26, 'one follicle, enlarged', 'sm b');
+  b += `<path d="M340 96 L310 116" stroke="${C.muted}" stroke-width="1.2"/>` + text(344, 92, 'wall of cells', 'xs b', 'start');
+  b += `<path d="M300 172 L340 196" stroke="${C.muted}" stroke-width="1.2"/>` + text(344, 210, 'stored protein', 'xs b', 'start') + text(344, 232, 'with iodine fixed', 'xs', 'start') + text(344, 254, 'onto it', 'xs', 'start');
+  b += text(20, 302, 'iodine', 'xs b', 'start') + `<circle cx="86" cy="296" r="5" fill="#fff" stroke="${C.ink}" stroke-width="1.8"/>`;
+  return b;
+}
+// Moving: a T4 leaves the gland, travels in the blood into a body cell, loses one iodine and becomes T3.
+function hormoneMark(x, y, n, filled, part) {
+  let s = `<g data-part="${part}"><rect x="${f(x - 26)}" y="${f(y - 13)}" width="52" height="26" rx="13" fill="${filled ? AMBERF : '#fff'}" stroke="${C.amber}" stroke-width="2.5"/>`;
+  for (let i = 0; i < n; i++) s += `<circle cx="${f(x - 18 + i * 12)}" cy="${f(y)}" r="4.2" fill="#fff" stroke="${C.ink}" stroke-width="1.6"/>`;
+  return s + '</g>';
+}
+function formsPicture(t) {
+  let b = `${thyroidShape(72, 60, .72)}${text(128, 66, 'thyroid', 'sm b', 'start')}`;
+  b += `<rect x="12" y="112" width="456" height="30" rx="15" fill="${BLOOD}" stroke="${C.red}" stroke-width="2"/>` + text(458, 133, 'blood', 'xs b red', 'end');
+  b += `<g data-part="cell"><rect x="196" y="162" width="270" height="176" rx="36" fill="#f1e3cf" stroke="${C.ink}" stroke-width="2"/>${text(212, 324, 'a body cell', 'xs b', 'start')}`;
+  b += `<ellipse cx="392" cy="276" rx="56" ry="34" fill="#e9d3b8" stroke="${C.ink}" stroke-width="1.5"/>${text(392, 282, 'its centre', 'xs muted')}</g>`;
+  // The trip: gland to blood (0 to .2), along the blood (.2 to .4), into the cell (.4 to .52); the snip (.55 to .68); T3 to the centre (.72 to .86).
+  const u = t;
+  let x, y;
+  if (u < .2) { const k = ease.inOut(u / .2); x = lerp(72, 96, k); y = lerp(86, 127, k); }
+  else if (u < .4) { const k = ease.inOut((u - .2) / .2); x = lerp(96, 270, k); y = 127; }
+  else if (u < .52) { const k = ease.inOut((u - .4) / .12); x = 270; y = lerp(127, 214, k); }
+  else if (u < .72) { x = 270; y = 214; }
+  else { const k = ease.inOut(Math.min(1, (u - .72) / .14)); x = lerp(270, 392, k); y = lerp(214, 246, k); }
+  const snipped = u >= .6;
+  b += hormoneMark(x, y, snipped ? 3 : 4, !snipped, snipped ? 't3' : 't4');
+  if (snipped) { const k = span(u, .6, .78); b += `<circle cx="${f(270 + 34 + 30 * k)}" cy="${f(214 - 4 - 14 * k)}" r="4.2" fill="#fff" stroke="${C.ink}" stroke-width="1.6" ${fade(1 - k * .8)}/>`; }
+  b += `<g ${fade(span(u, .55, .65))}>${text(331, 192, 'one iodine snipped off', 'xs b')}</g>`;
+  b += `<g ${fade(span(u, .84, .94))}>${text(322, 236, 'T3 does', 'xs b blue', 'end')}${text(322, 258, 'the work', 'xs b blue', 'end')}</g>`;
+  b += `<g data-part="t4">${hormoneMark(40, 190, 4, true, 't4-key')}${text(40, 224, 'T4: four', 'xs b')}${text(40, 246, 'iodines', 'xs b')}</g>`;
+  b += `<g data-part="t3">${hormoneMark(40, 276, 3, false, 't3-key')}${text(40, 310, 'T3: three,', 'xs b')}${text(40, 332, 'stronger', 'xs b')}</g>`;
+  return b;
+}
+// The heart's docking sites: thyroid hormone adds more, so alarm signals push the heart harder, and it beats faster.
+function heartPicture(t) {
+  const H = t < .5 ? lerp(.55, 1, ease.inOut(span(t, .08, .4))) : lerp(1, 1.8, ease.inOut(span(t, .55, .88)));
+  const hr = Math.sqrt(H);
+  let b = `<g data-part="heart"><path transform="translate(130 150) scale(3.6)" d="${HEART_D}" fill="${HEART}" stroke="${C.ink}" stroke-width=".55"/></g>`;
+  const n = clamp(Math.round(4 * H), 2, 8), spots = [[-52, -34], [-24, -52], [10, -50], [40, -34], [-62, -4], [54, -4], [-38, 26], [34, 26]];
+  b += `<g data-part="receptor">${spots.slice(0, n).map(([x, y]) => `<path d="M${130 + x - 8} ${150 + y} h16 v-6 h-5 v-6 h-6 v6 h-5 Z" fill="${C.blue}"/>`).join('')}</g>`;
+  b += text(130, 252, 'docking sites', 'xs b blue') + text(130, 274, 'for alarm signals', 'xs b blue');
+  b += text(270, 70, 'thyroid hormone', 'xs b', 'start');
+  b += `<rect x="270" y="82" width="196" height="10" rx="5" fill="#fff" stroke="${C.rule}"/><rect x="270" y="82" width="${f(196 * clamp(H / 2, 0, 1))}" height="10" rx="5" fill="${C.amber}"/>`;
+  b += text(270, 120, H > 1.15 ? 'high: more docking sites' : H < .85 ? 'low: fewer docking sites' : 'usual', 'xs b amber', 'start');
+  b += trace(hr, 352, 20, 460, `stroke="${C.red}" stroke-width="2.8"`);
+  b += text(20, 312, 'heartbeat', 'xs b', 'start') + text(460, 312, H > 1.15 ? 'faster, harder' : H < .85 ? 'slower' : 'usual', 'sm b blue', 'end');
+  return b;
+}
+
+/* ---------- The feedback, played once ---------- */
+// T4 is pushed away from normal; the brake answers at once; TRH and TSH follow; the gland follows them and T4 returns.
+function feedback(dir, t) {
+  const far = dir > 0 ? 1.7 : .5;
+  const H = t < .5 ? lerp(1, far, ease.inOut(span(t, .08, .26))) : lerp(far, 1, ease.inOut(span(t, .6, .92)));
+  const lag = t < .5 ? lerp(1, far, ease.inOut(span(t, .26, .44))) : lerp(far, 1, ease.inOut(span(t, .62, .94)));
+  // The push: the gland first puts out a burst (or a dip); then its output follows TSH again.
+  const tsh = TM.tshFor(lag), trh = Math.pow(lag, -1.2), burst = dir > 0 ? 2.2 : .35;
+  const out = t < .28 ? lerp(1, burst, ease.inOut(span(t, .04, .18))) : lerp(burst, 2 * tsh / (tsh + 1), ease.inOut(span(t, .28, .42)));
+  const v = { ...NV, t4: H, t3: H, tsh, trh, out, pace: Math.sqrt(H), hr: Math.sqrt(H), gland: 1 };
+  const up = dir > 0;
+  const steps = [
+    [span(t, .1, .18), up ? '1  a burst from the gland: T4 runs high' : '1  the gland dips: T4 runs low'],
+    [span(t, .2, .28), up ? '2  the brake tightens' : '2  the brake eases'],
+    [span(t, .32, .42), up ? '3  TRH and TSH fall' : '3  TRH and TSH rise'],
+    [span(t, .58, .68), up ? '4  the gland slows: T4 falls back' : '4  the gland speeds up: T4 climbs back'],
   ];
+  const opt = { show: ['hyp', 'trh', 'pit', 'tsh', 'gland', 'out', 'blood', 'brake', 'meters'], ghost: NV, from: NV,
+    brakeWord: '', trhWord: '', tshWord: '' };
+  let b = axis(v, opt);
+  b += steps.map(([a, w], i) => `<g ${fade(a)}>${text(12, 348 + i * 22, w, i === 3 ? 'xs b blue' : 'xs b', 'start')}</g>`).join('');
+  return { svg: b, h: 432 > 420 ? 420 : 420 };
 }
-const ARROW = { up: '↑', down: '↓', same: '↔' };
-const readout = (v, ref, head) => `<ul class="readout" aria-label="${esc(head)}"><li class="head">${head}</li>${compare(v, ref).map(([k, [w, d]]) => `<li><b>${k}</b> <span class="${d}">${ARROW[d]} ${w}</span></li>`).join('')}</ul>`;
-// `upTo` keeps a core step's description to the pieces the lesson has introduced so far.
-const describe = (v, ref, upTo = Infinity) => compare(v, ref).filter((_, i) => i < upTo).map(([k, [w]]) => `${k}: ${w}`).join('; ');
-const bandWords = (v, keys = ['tsh', 't4', 't3']) => {
-  const out = keys.filter(k => !inBand(k, relOf(v, k)));
-  if (!out.length) return 'All the levels shown sit inside their healthy bands.';
-  return out.map(k => `${GLABEL[k]} sits ${gy(k, relOf(v, k)) < bandY(k)[0] ? 'above' : 'below'} its healthy band.`).join(' ');
-};
-
-/* ---------- Core step pictures ---------- */
-const STEP_SHOW = {
-  gland: ['neck', 'thyroid', 'labels1'],
-  pace: ['neck', 'thyroid', 'blood', 'release', 'dial'],
-  iodine: ['neck', 'thyroid', 'blood', 'release', 'dial', 'iodine', 'inset'],
-  forms: ['neck', 'thyroid', 'blood', 'release', 'dial', 'forms', 'gauges'],
-  pituitary: ['neck', 'thyroid', 'blood', 'release', 'dial', 'forms', 'gauges', 'brain', 'pituitary', 'tsh'],
-  hypothalamus: ['neck', 'thyroid', 'blood', 'release', 'dial', 'forms', 'gauges', 'brain', 'pituitary', 'tsh', 'hypothalamus', 'trh'],
-  brake: ['neck', 'thyroid', 'blood', 'release', 'dial', 'forms', 'gauges', 'brain', 'pituitary', 'tsh', 'hypothalamus', 'trh', 'brake'],
-  heart: ALL, whole: ALL
-};
-function follicleInset() {
-  const cx = 390, cy = 160;
-  let b = `<path d="M206 226 L${cx - 76} ${cy + 10}" stroke="${MUTED}" stroke-width="1" stroke-dasharray="3 3"/>`;
-  b += `<circle cx="${cx}" cy="${cy}" r="76" fill="#fff" stroke="${RULE}" stroke-width="1.5"/>`;
-  for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; b += `<circle cx="${f(cx + 50 * Math.cos(a))}" cy="${f(cy + 50 * Math.sin(a))}" r="13" fill="${GLAND}" stroke="${INK}" stroke-width="1.4"/>`; }
-  b += `<circle data-colloid cx="${cx}" cy="${cy}" r="35" fill="#f4d9b0" stroke="#b06e60" stroke-width="1.4"/>`;
-  for (const [x, y] of [[-14, -10], [8, -16], [16, 6], [-6, 14], [-20, 6], [4, 0]]) b += iodineDot(cx + x, cy + y);
-  for (const a of [2.3, 0.9]) b += arrow(cx + 92 * Math.cos(a), cy + 92 * Math.sin(a), cx + 64 * Math.cos(a), cy + 64 * Math.sin(a), 2.4, INK);
-  b += text(cx, 22, 'one follicle, enlarged', 'xs b') + text(cx, cy + 102, 'stored protein in the middle', 'xs muted');
-  return b;
-}
-function keyBox() {
-  return `<rect data-key-measures x="333" y="34" width="88" height="256" fill="none" stroke="${BLUE}" stroke-width="3"/>`;
-}
-const CORE = {
-  gland: () => pictureSvg('A head and neck in outline. Wrapped around the front of the windpipe, just below the voice box, sits a butterfly-shaped gland: the thyroid, two lobes joined by a narrow bridge.', NV, { show: STEP_SHOW.gland }),
-  pace: () => pictureSvg('Two amber arrows run from the two lobes of the thyroid down into a blood vessel, which carries amber dots of thyroid hormone across the body. Below, a dial labelled body’s pace, from slower to faster, points straight up at its normal middle.', NV, { show: STEP_SHOW.pace }),
-  iodine: () => pictureSvg('A small arrow carries iodine, drawn as white dots, from the blood up into the thyroid. A magnified circle beside it shows one follicle: a ring of cells around a store of protein in the middle, with iodine dots fixed onto that store.', NV, { show: STEP_SHOW.iodine, extra: follicleInset() }),
-  forms: () => pictureSvg(`The blood now carries two kinds of hormone: many round T4 dots and fewer diamond-shaped T3 dots. At the top right, two level gauges, T4 and T3, each with a shaded healthy band; both markers sit inside their bands. ${bandWords(NV, ['t4', 't3'])}`, NV, { show: STEP_SHOW.forms, extra: text(198, 400, 'in body cells: T4 → T3', 'xs b amber') }),
-  pituitary: () => pictureSvg('The head now shows the brain, with the pea-sized pituitary at its base. A thick blue arrow labelled TSH runs from the pituitary down the neck to the thyroid. A third gauge, TSH, joins T4 and T3 at the top right, its marker inside its healthy band.', NV, { show: STEP_SHOW.pituitary }),
-  hypothalamus: () => pictureSvg('Above the pituitary sits the hypothalamus, joined to it by a short stalk. A dark arrow labelled TRH runs from the hypothalamus to the pituitary, which sends the blue TSH arrow on to the thyroid: a chain from brain to gland.', NV, { show: STEP_SHOW.hypothalamus }),
-  brake: () => {
-    const v = TM.open(NORMAL_P, 1.7);
-    return pictureSvg(`Hormone running high. The blood is crowded with T4 and T3 dots, and a thick dashed amber line labelled brake runs from the blood up to the pituitary and hypothalamus. The TRH and TSH arrows shrink to thin lines beside their dashed normal outlines, and the gland’s release arrows thin. ${bandWords(v)} Compared with normal: ${describe(v, NV, 3)}.`, v, { show: STEP_SHOW.brake, ghost: NV, legend: 'hormone running high' });
-  },
-  lowbrake: () => {
-    const v = TM.open(NORMAL_P, 0.5);
-    return pictureSvg(`Hormone running low. Few T4 and T3 dots remain in the blood and the brake line is thin. The TSH arrow from the pituitary swells well past its dashed normal outline and the gland’s release arrows thicken. ${bandWords(v)} Compared with normal: ${describe(v, NV, 3)}.`, v, { show: STEP_SHOW.brake, ghost: NV, legend: 'hormone running low' });
-  },
-  heart: () => pictureSvg('A heart appears at the bottom left, with a heartbeat trace running beside it at a steady normal rhythm. Thyroid hormone in the blood makes the heart answer alarm signals more strongly, so more hormone would bunch the beats closer together and less would spread them out.', NV, { show: STEP_SHOW.heart }),
-  whole: () => pictureSvg('The whole loop: the hypothalamus sends TRH to the pituitary, the pituitary sends TSH to the thyroid, the thyroid releases T4 and T3 into the blood, and the hormone sets the body’s pace and heartbeat while a dashed brake line runs back up to the brain. A blue box marks the TSH and T4 gauges as the key tests.', NV, { show: ALL, extra: keyBox(), header: 'key tests' })
-};
 
 /* ---------- What changes it ---------- */
-// Each change morphs the model's settings from where it starts to where it ends; sizes are illustrative.
 const CHANGES = {
-  hypo: { from: 'normal', to: () => TM.build('hypo'), legend: 'hypothyroidism', against: null, marks: t => ({ immune: t }) },
-  graves: { from: 'normal', to: () => TM.build('graves'), legend: 'Graves’ disease', against: null, marks: () => ({}) },
-  levothyroxine: { from: 'hypo', to: () => TM.build('hypo', ['levothyroxine']), legend: 'with levothyroxine', against: 'hypothyroidism, untreated', marks: () => ({ immune: 1 }) },
-  thionamide: { from: 'graves', to: () => TM.build('graves', ['thionamide']), legend: 'with a thionamide', against: 'Graves’ disease, untreated', marks: () => ({}) },
-  rai: { from: 'graves', to: () => TM.build('graves', ['rai']), legend: 'after radioactive iodine', against: 'Graves’ disease, untreated', marks: t => ({ rai: t > 0.02 ? 1 : 0 }) },
-  betablocker: { from: 'graves', to: () => TM.build('graves', ['betablocker']), legend: 'with a beta-blocker', against: 'Graves’ disease, untreated', marks: () => ({}) }
+  hypo: { from: () => TM.build('normal'), to: () => TM.build('hypo'), marks: k => ({ attack: k }), gland: 1, cause: ['immune', 'attack'], note: 'less T4: the brake eases and TSH climbs' },
+  graves: { from: () => TM.build('normal'), to: () => TM.build('graves'), marks: k => ({ antibody: k }), cause: ['antibody', 'push'], note: 'more T4 and T3: the brake tightens and TSH falls' },
+  levothyroxine: { from: () => TM.build('hypo'), to: () => TM.build('hypo', ['levothyroxine']), marks: k => ({ attack: 1, tablet: k }), gland: 1, note: 'tablet T4 tightens the brake again: TSH falls back' },
+  thionamide: { from: () => TM.build('graves'), to: () => TM.build('graves', ['ptu']), mid: () => TM.build('graves', ['thionamide']), marks: k => ({ antibody: 1, block: k }), cause: ['building', 'blocked'], note: '', lag: true },
+  rai: { from: () => TM.build('graves'), to: () => TM.build('graves', ['rai']), marks: k => ({ antibody: 1, rai: k }), cause: ['radiation', 'shrinks it'], note: 'less T4 and T3: the brake eases; TSH rises back later', lag: true },
+  betablocker: { from: () => TM.build('graves'), to: () => TM.build('graves', ['betablocker']), marks: k => ({ antibody: 1, beta: k }), note: 'the symptoms ease: the gland, TSH and T4 stay put' },
 };
-const CHANGE_WHERE = {
-  hypo: 'Red immune cells gather on the gland and it shrinks inside its dashed normal outline. Its release arrows thin and the blood empties of T4 and T3, so the brake line thins and the blue TSH arrow swells. The pace dial swings toward slower and the heartbeats spread apart.',
-  graves: 'Red Y-shaped antibodies cling to the gland, which swells past its dashed outline and pours thick amber arrows into the blood. T4 and T3 crowd the blood, the brake line thickens and the TSH arrow shrinks to a thread. The pace dial swings toward faster and the heartbeats bunch together.',
-  levothyroxine: 'An amber tablet beside the neck sends T4 straight into the blood; the gland stays small and damaged. T4 and T3 climb back toward the dashed normal marks, the brake strengthens and the swollen TSH arrow shrinks back. The pace dial returns toward the middle.',
-  thionamide: 'Red block signs appear over both lobes: the gland is still enlarged and the antibodies are still there, but its release arrows thin. T4 and T3 fall back toward their bands, the brake eases and the TSH arrow grows again. The pace dial and the heartbeat ease back toward normal.',
-  rai: 'Radioactive iodine, drawn in red, flows from the blood into the gland, which shrinks to well under its dashed normal outline even though antibodies remain. Its release arrows thin, T4 and T3 fall back, the brake eases and TSH rises back. The pace dial and the heartbeat ease back toward normal.',
-  betablocker: 'Blue blocks appear on the heart and the heartbeats spread back toward a normal rhythm. Nothing else moves: the gland stays enlarged, T4 and T3 stay high, TSH stays low and the pace dial still points toward faster.'
+const TITLE = { hypo: 'Hypothyroidism', graves: 'Graves’ disease', levothyroxine: 'Levothyroxine for hypothyroidism', thionamide: 'A thionamide for Graves’ disease', rai: 'Radioactive iodine for Graves’ disease', betablocker: 'A beta-blocker for Graves’ disease' };
+const WHERE = {
+  hypo: 'Red immune cells gather on the gland. Its T4 and T3 arrow thins; T4 falls below its band while T3 dips but stays inside its band. The brake line thins, and the TRH and TSH arrows swell past their dashed normal outlines as TSH climbs above its band. The heartbeat spreads out and the pace bar slides toward slower.',
+  graves: 'Red Y-shaped antibodies cling to the gland, which swells past its dashed outline and pours out a thick T4 and T3 arrow. Both levels climb above their bands, the brake line thickens and the TSH arrow shrinks to a thread as TSH falls below its band. The heartbeat crowds together and the pace bar slides toward faster.',
+  levothyroxine: 'An amber T4 tablet sends T4 into the blood while the damaged gland stays as it was. T4 and T3 climb back into their bands, the brake strengthens and the swollen TSH arrow shrinks back as TSH falls into its band. The heartbeat and pace return toward normal.',
+  thionamide: 'Red block signs appear over both lobes. The gland stays enlarged and the antibodies stay, but its T4 and T3 arrow thins. T4 and T3 fall back into their bands first; the brake eases and TSH rises back only later. Then the bottom line adds that PTU also slows the T4-to-T3 step in body cells, so T3 falls further than T4.',
+  rai: 'Radioactive iodine, a yellow and black sign, collects in the gland, which shrinks to under its dashed normal outline though antibodies remain. Its arrow thins, T4 and T3 fall back into their bands, the brake eases and TSH rises back into its band, later than T4 falls.',
+  betablocker: 'Blue blocks cover the heart’s docking sites and the heartbeat spreads back toward a normal rhythm. The gland stays enlarged, T4 stays above its band and TSH stays low; T3 dips only slightly, and the pace bar still sits toward faster.',
 };
-const DURATION = 2200;
-const ease = x => 1 - Math.pow(1 - clamp(x, 0, 1), 3);
-const fromParams = kind => TM.build(CHANGES[kind].from);
-function changePicture(el, t) {
-  const kind = el.dataset.kind, c = CHANGES[kind];
-  const p0 = fromParams(kind), cur = view(TM.mix(p0, c.to(), ease(t)));
-  const before = c.against ? view(p0) : null, ref = before || NV;
-  const name = el.dataset.stepTitle.split(':')[0];
-  const label = `${name}, drawn over faint dashed marks for normal${before ? ` and dotted marks for ${c.against}` : ''}. ${CHANGE_WHERE[kind]} ${bandWords(cur)} Compared with ${before ? c.against : 'normal'}: ${describe(cur, ref)}.`;
-  const pic = pictureSvg(label, cur, { show: ALL, ghost: NV, before, legend: c.legend, beforeWord: c.against || '', marks: c.marks(ease(t)) });
-  return { pic, ro: readout(cur, ref, `Compared with ${before ? c.against : 'normal'}`) };
-}
-
-const steps = $$('[data-step]');
-const backBtn = $('[data-step-back]'), nextBtn = $('[data-step-next]'), progress = $('[data-step-progress]');
-let current = 0, frame = 0;
-const visualOf = el => el.querySelector('[data-visual]');
-const isAnimated = el => el.dataset.kind in CHANGES;
-const lastReadout = new WeakMap();
-function drawAt(el, t) {
-  const v = visualOf(el), { pic, ro } = changePicture(el, t), old = v.querySelector('svg');
-  if (!old) { v.innerHTML = pic + ro; lastReadout.set(v, ro); return; }
-  old.outerHTML = pic;
-  if (lastReadout.get(v) !== ro) { v.querySelector('.readout').outerHTML = ro; lastReadout.set(v, ro); }
-}
-function animate(el) {
-  cancelAnimationFrame(frame);
-  if (reducedMotion()) { drawAt(el, 1); return; }
-  let start = null;
-  drawAt(el, 0);
-  const tick = now => {
-    if (start === null) start = now;
-    const t = Math.min(1, (now - start) / DURATION);
-    drawAt(el, t);
-    if (t < 1) frame = requestAnimationFrame(tick);
+const mix = (a, b, k) => TM.mix(a, b, k);
+function change(kind) {
+  const c = CHANGES[kind];
+  return {
+    duration: kind === 'thionamide' ? 4200 : 2800,
+    render(t) {
+      const p0 = c.from(), start = view(p0);
+      let p, k;
+      if (c.mid) {
+        // Two moves: both thionamides block the gland; then PTU also slows T4 to T3 in body cells.
+        const k1 = ease.inOut(span(t, 0, .55)), k2 = ease.inOut(span(t, .65, 1));
+        p = k2 > 0 ? mix(c.mid(), c.to(), k2) : mix(p0, c.mid(), k1);
+        k = k1;
+      } else { k = ease.inOut(t); p = mix(p0, c.to(), k); }
+      let v = view(p);
+      const a = span(t, .5, .85);
+      // A pituitary held down for a long time recovers late: TSH and TRH follow the change behind T4.
+      if (c.lag) { const kl = ease.inOut(span(t, .3, 1)), q = view(mix(p0, c.mid ? c.mid() : c.to(), kl)); v = { ...v, tsh: q.tsh, trh: q.trh }; }
+      const words = {
+        trhWord: Math.abs(Math.log(v.trh / start.trh)) > .2 ? (v.trh > start.trh ? '↑ more' : '↓ less') : '',
+        tshWord: Math.abs(Math.log(v.tsh / start.tsh)) > .2 ? (v.tsh > start.tsh ? '↑ more' : '↓ less') : '',
+        brakeWord: Math.abs(v.t4 - start.t4) > .15 ? (v.t4 > start.t4 ? 'tightens' : 'eases') : '',
+      };
+      let note = c.note;
+      if (kind === 'thionamide') note = t > .62 ? 'PTU also slows T4 to T3 in body cells: T3 falls further' : 'less T4 and T3: the brake eases; TSH rises back later';
+      const mk = c.marks(Math.min(1, k * 1.6));
+      const body = axis(v, { ghost: NV, from: start, gland: c.gland, marks: mk, cause: c.cause ? [...c.cause, Math.min(1, k * 1.6)] : null, ...words, note: a > 0 ? note : '' });
+      const label = `${TITLE[kind]}, drawn over dashed marks for normal. ${WHERE[kind]}`;
+      return { svg: svg(label, body, { h: AXIS_H }), readout: readoutOf(v, start, kind === 'hypo' || kind === 'graves' ? 'Compared with normal' : `Compared with untreated ${kind === 'levothyroxine' ? 'hypothyroidism' : 'Graves’ disease'}`) };
+    }
   };
-  frame = requestAnimationFrame(tick);
 }
-let started = false;
-function drawCore() { steps.forEach(el => { const k = el.dataset.kind; if (CORE[k]) visualOf(el).innerHTML = CORE[k](); }); }
-function startLesson() {
-  drawCore();
-  steps.forEach(el => {
-    if (isAnimated(el)) drawAt(el, 1);
-    el.querySelector('.replay')?.addEventListener('click', () => animate(el));
-  });
-  started = true;
-  if (/^#step-\d+$/.test(location.hash)) fromHash(); else showStep(current);
+function trend(a, b, up = 'higher', down = 'lower') { const r = (a + 1e-6) / (b + 1e-6); return r > 1.07 ? ['up', up] : r < .935 ? ['down', down] : ['same', 'about the same']; }
+function compareRows(v, ref) {
+  return [['TSH', ...trend(v.tsh, ref.tsh)], ['T4', ...trend(v.t4, ref.t4)], ['T3', ...trend(v.t3, ref.t3)], ['Heartbeat', ...trend(v.hr, ref.hr, 'faster', 'slower')], ['Body’s pace', ...trend(v.pace, ref.pace, 'faster', 'slower')]];
 }
-function showStep(n, focus = false) {
-  if (!started) return;
-  cancelAnimationFrame(frame);
-  if (isAnimated(steps[current])) drawAt(steps[current], 1);   // a step left mid-morph keeps its end state
-  current = clamp(n, 0, steps.length - 1);
-  steps.forEach((el, i) => { el.hidden = i !== current; });
-  backBtn.disabled = current === 0;
-  nextBtn.textContent = current === steps.length - 1 ? 'Start again ↻' : 'Next →';
-  progress.textContent = `Step ${current + 1} of ${steps.length}`;
-  if (location.hash !== `#step-${current + 1}`) history.replaceState(null, '', `#step-${current + 1}`);
-  const el = steps[current];
-  if (isAnimated(el)) animate(el);
-  if (focus) { el.querySelector('h2').focus({ preventScroll: true }); el.scrollIntoView({ block: 'start' }); }
-}
-nextBtn.addEventListener('click', () => showStep(current === steps.length - 1 ? 0 : current + 1, true));
-backBtn.addEventListener('click', () => showStep(current - 1, true));
-$('#lesson').addEventListener('keydown', e => {
-  if (e.target.closest('input, select, textarea') || e.altKey || e.ctrlKey || e.metaKey) return;
-  if (e.key === 'ArrowRight' && current < steps.length - 1) { e.preventDefault(); showStep(current + 1, true); }
-  if (e.key === 'ArrowLeft' && current > 0) { e.preventDefault(); showStep(current - 1, true); }
-});
+const readoutOf = (v, ref, head) => readoutList(compareRows(v, ref), head);
+const describe = (v, ref) => compareRows(v, ref).map(([k, , w]) => `${k.toLowerCase()} ${w}`).join('; ');
 
-/* ---------- Tabs ---------- */
-const tabs = $$('[role=tab]');
-function activate(tab, focus = false) {
-  tabs.forEach(t => { const on = t === tab; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; document.getElementById(t.getAttribute('aria-controls')).hidden = !on; });
-  if (focus) tab.focus();
-  if (tab.id === 'tab-lesson') { if (started && isAnimated(steps[current])) drawAt(steps[current], 1); } else cancelAnimationFrame(frame);
-  if (tab.id === 'tab-clinical') updateClinical();
-  if (tab.id === 'tab-explore') updateExplore();
-}
-tabs.forEach((t, i) => {
-  t.addEventListener('click', () => activate(t));
-  t.addEventListener('keydown', e => {
-    const n = { ArrowRight: (i + 1) % tabs.length, ArrowLeft: (i + tabs.length - 1) % tabs.length, Home: 0, End: tabs.length - 1 }[e.key];
-    if (n !== undefined) { e.preventDefault(); activate(tabs[n], true); }
-  });
-});
-function fromHash() {
-  const m = location.hash.match(/^#step-(\d+)$/);
-  if (m && started) { if (tabs[0].getAttribute('aria-selected') !== 'true') activate(tabs[0]); showStep(Number(m[1]) - 1); }
-}
-window.addEventListener('hashchange', fromHash);
+/* ---------- The lesson's scenes, one per step kind ---------- */
+const loopScene = (label, opt, ms = 3000) => ({ duration: ms, loop: true, render: t => svg(label, axis(NV, { ...opt, flowT: t * 2 }), { h: opt.h || AXIS_H }) });
+const scenes = {
+  gland: () => svg('A head and neck from the front. Wrapped around the front of the windpipe, just below the voice box, sits the thyroid: two lobes joined by a narrow bridge, shaped like a butterfly.', glandPicture(), { h: 340 }),
+  pace: { duration: 7000, render: t => svg('The thyroid sends an amber arrow of thyroid hormone into the blood, which carries it to three body cells, each burning fuel as a small flame, with a pace bar below. The hormone is turned up, then down, then back: with more hormone the flames grow and the pace bar slides toward faster; with less they shrink and it slides toward slower.', pacePicture(t), { h: 410 }) },
+  iodine: { duration: 4500, loop: true, render: t => svg('One thyroid follicle, enlarged: a ring of cells around a store of protein. White iodine dots travel from the blood below, cross the wall of cells and fix onto strands of the stored protein.', iodinePicture(t), { h: 360 }) },
+  forms: { duration: 5200, render: t => svg('A hormone carrying four iodine dots, T4, leaves the thyroid, travels in the blood into a body cell, has one iodine snipped off and becomes T3, with three, which moves to the centre of the cell to do the work. A key shows T4 with four iodines and T3 with three, the stronger form.', formsPicture(t), { h: 346 }) },
+  pituitary: loopScene('The pituitary sends a blue TSH arrow down to the thyroid, and the thyroid sends an amber arrow of T4 and T3 into the blood; dots flow down both. On the right, blood tests for TSH, T4 and T3 each sit inside a shaded usual band.', { show: ['pit', 'tsh', 'gland', 'out', 'blood', 'meters'] }),
+  hypothalamus: loopScene('Above the pituitary sits the hypothalamus. A dark TRH arrow runs from it to the pituitary, which sends the blue TSH arrow on to the thyroid, which sends T4 and T3 into the blood: a chain from brain to gland, with dots flowing down it.', { show: ['hyp', 'trh', 'pit', 'tsh', 'gland', 'out', 'blood', 'meters'] }),
+  brake: { duration: 7500, render: t => { const r = feedback(1, t); return svg('Negative feedback, played once. The gland puts out a burst and T4 runs high, above its band; the amber brake line from the blood to the hypothalamus and pituitary thickens; the TRH and TSH arrows thin and TSH falls below its band; then the gland slows and T4 falls back, and everything returns to normal. Four numbered lines name the steps.', r.svg, { h: 420 }); } },
+  lowbrake: { duration: 7500, render: t => { const r = feedback(-1, t); return svg('The feedback the other way. The gland dips and T4 runs low, below its band; the brake line thins; the TRH and TSH arrows swell and TSH rises above its band; then the gland speeds up and T4 climbs back, and everything returns to normal. Four numbered lines name the steps.', r.svg, { h: 420 }); } },
+  heart: { duration: 6500, render: t => svg('A heart with blue docking sites for alarm signals. As thyroid hormone rises from low to usual to high, more docking sites appear and the heartbeat trace below goes from slow and spread out to fast and crowded.', heartPicture(t), { h: 372 }) },
+  whole: { duration: 3000, loop: true, render: t => svg('The whole loop. The hypothalamus sends TRH to the pituitary, the pituitary sends TSH to the thyroid, and the thyroid sends T4 and T3 into the blood, which sets the heartbeat and the body’s pace. An amber brake line runs from the blood back up to the pituitary and hypothalamus. A blue box marks the TSH and T4 bars: the key blood tests.', axis(NV, { flowT: t * 2, tests: true }), { h: AXIS_H }) },
+  hypo: change('hypo'),
+  graves: change('graves'),
+  levothyroxine: change('levothyroxine'),
+  thionamide: change('thionamide'),
+  rai: change('rai'),
+  betablocker: change('betablocker'),
+};
 
 /* ---------- Words for the sliders ---------- */
 const capWords = v => v < 0.2 ? 'very little' : v < 0.6 ? 'much less than normal' : v < 0.9 ? 'less than normal' : v <= 1.1 ? 'normal' : v <= 1.35 ? 'more than normal' : 'much more than normal';
@@ -476,25 +440,33 @@ const iodWords = v => v < 0.15 ? 'severely short' : v < 0.5 ? 'short' : v < 0.85
    The sources give only directions for diseases and drugs, so the model never prints a lab number:
    it reports where its marker sits (inside, above, below, or far beyond the band). */
 let data = null;
+const GLABEL = { tsh: 'TSH', t4: 'T4', t3: 'T3' };
+const relOf = (v, k) => k === 'tsh' ? v.tsh : k === 't4' ? v.t4 : v.t3;
+const gyRaw = (k, rel) => Math.log(Math.max(rel, 1e-6)) / SPAN[k];
 function place(k, rel) {
-  if (inBand(k, rel)) return 'inside';
-  const above = gy(k, rel) < bandY(k)[0], far = Math.abs(gyRaw(k, rel)) >= 1;
-  return `${far ? 'far ' : ''}${above ? 'above' : 'below'}`;
+  const [lo, hi] = bandOf(k);
+  if (rel >= lo - 1e-9 && rel <= hi + 1e-9) return 'inside';
+  const far = Math.abs(gyRaw(k, rel)) >= 1;
+  return `${far ? 'far ' : ''}${rel > hi ? 'above' : 'below'}`;
 }
 const PLACE_ARROW = { inside: '↔', above: '↑', 'far above': '⇈', below: '↓', 'far below': '⇊' };
 const levelWords = (k, rel, band = 'its healthy band') => { const w = place(k, rel); return w === 'inside' ? `inside ${band}` : `${w} ${band}`; };
+const bandWords = v => {
+  const out = ['tsh', 't4', 't3'].filter(k => place(k, relOf(v, k)) !== 'inside');
+  return out.length ? out.map(k => `${GLABEL[k]} sits ${levelWords(k, relOf(v, k))}.`).join(' ') : 'TSH, T4 and T3 all sit inside their healthy bands.';
+};
 
 /* ---------- Clinical values ---------- */
 const DIRECTION = { up: '↑ Expected increase', down: '↓ Expected decrease', none: '↔ Little or no change', variable: '↕ Variable' };
 const hasRange = v => Number.isFinite(v.low) && Number.isFinite(v.high);
-// The bar is a ratio scale centred on the model's normal, the same scale as the lesson's gauges.
+// The bar is a ratio scale centred on the model's normal, the same scale as the lesson's level bars.
 const barX = (k, rel) => f(200 + clamp(gyRaw(k, rel), -1, 1) * 170);
 // Print a range as the source does: the high end keeps the low end's decimals (0.5–4.0).
 const rangeText = v => { const d = (String(v.low).split('.')[1] || '').length; return `${v.low}–${v.high.toFixed(d)}`; };
 // How each cited state is applied to the model, and what its directions are compared with.
 const BASE_OF = { levothyroxine: 'hypo', thionamide: 'graves', rai: 'graves', betablocker: 'graves' };
 const BASE_WORD = { hypo: 'untreated hypothyroidism', graves: 'untreated Graves’ disease' };
-const MARKS_OF = { hypo: { immune: 1 }, levothyroxine: { immune: 1 }, rai: { rai: 1 } };
+const MARKS_OF = { hypo: { attack: 1 }, graves: { antibody: 1 }, levothyroxine: { attack: 1, tablet: 1 }, thionamide: { antibody: 1, block: 1 }, rai: { antibody: 1, rai: 1 }, betablocker: { antibody: 1, beta: 1 } };
 function stateParams(id) {
   if (id === 'hypo' || id === 'graves') return TM.build(id);
   if (BASE_OF[id]) return TM.build(BASE_OF[id], [id]);
@@ -507,9 +479,8 @@ function updateClinical() {
   const cur = view(cv.p);
   const st = data?.states.find(s => s.id === cv.state);
   const base = BASE_OF[cv.state], before = st && base ? view(TM.build(base)) : null;
-  const label = `Illustrative model${st ? `, set to ${st.label}` : ''}${cv.custom ? ' and adjusted by hand' : ''}, drawn over faint dashed marks for normal. ${bandWords(cur)} Compared with normal: ${describe(cur, NV)}.`;
-  const legend = cv.custom ? 'these settings' : st ? st.label.split(' (')[0].toLowerCase() : '';
-  $('#clinical-visual').innerHTML = pictureSvg(label, cur, { show: ALL, ghost: NV, before, legend, beforeWord: before ? BASE_WORD[base] : '', marks: cv.custom ? {} : (MARKS_OF[cv.state] || {}) });
+  const label = `Illustrative model${st ? `, set to ${st.label}` : ''}${cv.custom ? ' and adjusted by hand' : ''}, drawn over dashed marks for normal. ${bandWords(cur)} Compared with normal: ${describe(cur, NV)}.`;
+  $('#clinical-visual').innerHTML = svg(label, axis(cur, { ghost: NV, from: before || NV, marks: cv.custom ? {} : (MARKS_OF[cv.state] || {}) }), { h: AXIS_H });
   if (!data) return;
   const ref = st ? (before || NV) : null;
   const refWord = base ? BASE_WORD[base] : 'normal';
@@ -568,60 +539,74 @@ function announce() {
 
 /* ---------- Explore freely ---------- */
 const ex = { preset: 'normal', drugs: new Set(), cap: 1, stim: 0, iod: 1 };
-const DRUG_ORDER = ['levothyroxine', 'thionamide', 'rai', 'betablocker'];
+const DRUG_ORDER = ['levothyroxine', 'thionamide', 'ptu', 'rai', 'betablocker'];
 function exploreParams() {
   let p = { ...TM.NORMAL, cap: ex.cap, stim: ex.stim, iod: ex.iod };
-  for (const d of DRUG_ORDER) if (ex.drugs.has(d)) p = TM.DRUGS[d](p);
+  for (const d of DRUG_ORDER) {
+    if (!ex.drugs.has(d)) continue;
+    if (d === 'thionamide' && ex.drugs.has('ptu')) continue;   // both thionamides block the same step: count the block once
+    p = TM.DRUGS[d](p);
+  }
   return p;
+}
+function keyRow(items, y) {
+  let x = 10, row = 0, out = '';
+  for (const [icon, word] of items) {
+    const w = 46 + word.length * 9.4;
+    if (x > 10 && x + w > 474) { x = 10; row++; }
+    out += `<g transform="translate(${f(x)} ${y + row * 26})">${icon}${text(42, 6, word, 'xs', 'start')}</g>`;
+    x += w + 14;
+  }
+  return { body: out, rows: row + 1 };
 }
 function brakeChart(cur, p) {
   // Levels relative to normal, with no numbers: real reference numbers live only in the Clinical values tab.
-  const L = 40, R = 462, T = 16, B = 256, xMax = 2.8, ax = 1, ay = 1, yLo = -2.3, yHi = 1.7;
+  const L = 58, R = 462, T = 34, B = 270, xMax = 2.8, yLo = -2.3, yHi = 1.7;
   const X = t4 => L + clamp(t4 / xMax, 0, 1.02) * (R - L), Y = tsh => B - clamp((Math.log10(Math.max(tsh, 1e-6)) - yLo) / (yHi - yLo), -0.02, 1.02) * (B - T);
-  let b = `<rect x="${L}" y="${T}" width="${R - L}" height="${B - T}" fill="#fff" stroke="${RULE}"/>`;
-  const [x0, x1] = BANDS ? BANDS.t4.map(X) : [X(0.7), X(1.35)], [y1, y0] = BANDS ? BANDS.tsh.map(Y) : [Y(0.4), Y(2.5)];
-  b += `<rect data-ref-box x="${f(x0)}" y="${f(y0)}" width="${f(x1 - x0)}" height="${f(y1 - y0)}" fill="${BANDF}"/>`;
-  b += text(x1 + 6, y0 + 14, 'both inside', 'xs b blue', 'start') + text(x1 + 6, y0 + 29, 'their healthy bands', 'xs b blue', 'start');
-  b += text(L - 8, T + 14, 'more', 'xs muted', 'end') + text(L - 8, B, 'less', 'xs muted', 'end') + text(L, B + 20, 'less', 'xs muted', 'start') + text(R, B + 20, 'more', 'xs muted', 'end');
+  let b = `<rect x="${L}" y="${T}" width="${R - L}" height="${B - T}" fill="#fff" stroke="${C.rule}"/>`;
+  const [x0, x1] = bandOf('t4').map(X), [y1, y0] = bandOf('tsh').map(Y);
+  b += `<rect data-ref-box x="${f(x0)}" y="${f(y0)}" width="${f(x1 - x0)}" height="${f(y1 - y0)}" fill="${BAND}"/>`;
+  b += text(x1 + 6, y0 + 16, 'both in', 'xs b blue', 'start') + text(x1 + 6, y0 + 34, 'their bands', 'xs b blue', 'start');
+  b += text(L - 6, T + 14, 'more', 'xs muted', 'end') + text(L - 6, B, 'less', 'xs muted', 'end') + text(L, B + 22, 'less', 'xs muted', 'start') + text(R, B + 22, 'more', 'xs muted', 'end');
   // The brake: TSH the pituitary releases for each T4 level (fixed).
   let brakeD = '';
-  for (let i = 0; i <= 60; i++) { const h = 0.05 + i / 60 * (xMax / ax - 0.05); brakeD += (i ? ' L' : 'M') + `${f(X(h * ax))} ${f(Y(TM.tshFor(h) * ay))}`; }
-  b += `<path data-brake-curve d="${brakeD}" fill="none" stroke="${BLUE}" stroke-width="3"/>`;
+  for (let i = 0; i <= 60; i++) { const h = 0.05 + i / 60 * (xMax - 0.05); brakeD += (i ? ' L' : 'M') + `${f(X(h))} ${f(Y(TM.tshFor(h)))}`; }
+  b += `<path data-brake-curve d="${brakeD}" fill="none" stroke="${C.blue}" stroke-width="3"/>`;
   // The gland's answer: T4 it settles at for each TSH level (depends on the settings).
   const glandD = q => {
     let d = '';
     for (let i = 0; i <= 60; i++) {
-      const lt = (yLo - 0.3) + i / 60 * (yHi - yLo + 0.6), t = Math.pow(10, lt) / ay;
+      const lt = (yLo - 0.3) + i / 60 * (yHi - yLo + 0.6), t = Math.pow(10, lt);
       const h = TM.releaseFor(q, t) + q.exo;
-      d += (i ? ' L' : 'M') + `${f(X(h * ax))} ${f(Y(t * ay))}`;
+      d += (i ? ' L' : 'M') + `${f(X(h))} ${f(Y(t))}`;
     }
     return d;
   };
-  b += `<path d="${glandD(NORMAL_P)}" fill="none" stroke="${INK}" stroke-width="2" stroke-dasharray="6 5" opacity=".6"/>`;
-  b += `<path data-gland-curve d="${glandD(p)}" fill="none" stroke="${AMBER}" stroke-width="3"/>`;
-  b += `<circle cx="${f(X(ax))}" cy="${f(Y(ay))}" r="7" fill="none" stroke="${INK}" stroke-width="2" stroke-dasharray="3 2"/>`;
-  b += `<circle data-explore-point cx="${f(X(cur.t4 * ax))}" cy="${f(Y(cur.tsh * ay))}" r="7" fill="${AMBER}" stroke="#fff" stroke-width="2"/>`;
-  b += text(14, 10, 'TSH ↑ (ratio scale)', 'xs b', 'start') + text(R, B + 42, 'T4 →', 'xs b', 'end');
-  const k = keyRow([[`<path d="M0 0 H34" stroke="${BLUE}" stroke-width="3"/>`, 'brake: TSH for each T4'], [`<path d="M0 0 H34" stroke="${AMBER}" stroke-width="3"/>`, 'gland: T4 for each TSH'], [KEY.normal[0], 'normal gland']], 318);
-  return { body: b + k.body, h: 332 + 24 * (k.rows - 1) };
+  b += `<path d="${glandD(NORMAL_P)}" fill="none" stroke="${C.ink}" stroke-width="2" stroke-dasharray="6 5" opacity=".6"/>`;
+  b += `<path data-gland-curve d="${glandD(p)}" fill="none" stroke="${C.amber}" stroke-width="3"/>`;
+  b += `<circle cx="${f(X(1))}" cy="${f(Y(1))}" r="7" fill="none" stroke="${C.ink}" stroke-width="2" stroke-dasharray="3 2"/>`;
+  b += `<circle data-explore-point cx="${f(X(cur.t4))}" cy="${f(Y(cur.tsh))}" r="7" fill="${C.amber}" stroke="#fff" stroke-width="2"/>`;
+  b += text(L, 22, 'TSH ↑ (ratio scale)', 'xs b', 'start') + text(R, B + 46, 'T4 →', 'xs b', 'end');
+  const k = keyRow([[`<path d="M0 0 H34" stroke="${C.blue}" stroke-width="3"/>`, 'brake: TSH for each T4'], [`<path d="M0 0 H34" stroke="${C.amber}" stroke-width="3"/>`, 'gland: T4 for each TSH'], [`<path d="M0 0 H34" stroke="${C.ink}" stroke-width="2" stroke-dasharray="6 5"/>`, 'normal gland']], 344);
+  return { body: b + k.body, h: 358 + 26 * (k.rows - 1) };
 }
 function updateExplore() {
   for (const [id, words] of [['cap', capWords], ['stim', stimWords], ['iod', iodWords]]) { $('#' + id).value = ex[id]; $(`#${id}-label`).textContent = words(ex[id]); }
   const p = exploreParams(), cur = view(p);
-  const names = { levothyroxine: 'levothyroxine', thionamide: 'a thionamide', rai: 'radioactive iodine', betablocker: 'a beta-blocker' };
+  const names = { levothyroxine: 'levothyroxine', thionamide: 'methimazole', ptu: 'propylthiouracil', rai: 'radioactive iodine', betablocker: 'a beta-blocker' };
   const drugs = DRUG_ORDER.filter(d => ex.drugs.has(d)).map(d => names[d]);
   const who = `${{ normal: 'a normal body', hypo: 'hypothyroidism', graves: 'Graves’ disease' }[ex.preset]}${drugs.length ? ` with ${drugs.join(', ')}` : ''}`;
-  const marks = { immune: ex.preset === 'hypo' ? 1 : 0, rai: ex.drugs.has('rai') ? 1 : 0 };
-  const label = `Illustrative model of ${who}, drawn over faint dashed marks for normal. ${bandWords(cur)} Compared with normal: ${describe(cur, NV)}.`;
-  $('#explore-visual').innerHTML = pictureSvg(label, cur, { show: ALL, ghost: NV, legend: 'your settings', marks }) + readout(cur, NV, 'Compared with normal');
-  const [hrW] = more(cur.hr, NV.hr, 'faster than normal', 'slower than normal'), [paceW] = more(cur.pace, NV.pace, 'faster than normal', 'slower than normal'), [gW] = more(cur.gland, NV.gland, 'larger than normal', 'smaller than normal');
+  const marks = { attack: ex.preset === 'hypo' ? 1 : 0, antibody: ex.stim > 0.05 ? 1 : 0, block: (ex.drugs.has('thionamide') || ex.drugs.has('ptu')) ? 1 : 0, rai: ex.drugs.has('rai') ? 1 : 0, tablet: ex.drugs.has('levothyroxine') ? 1 : 0, beta: ex.drugs.has('betablocker') ? 1 : 0 };
+  const label = `Illustrative model of ${who}, drawn over dashed marks for normal. ${bandWords(cur)} Compared with normal: ${describe(cur, NV)}.`;
+  $('#explore-visual').innerHTML = svg(label, axis(cur, { ghost: NV, from: NV, marks }), { h: AXIS_H }) + readoutOf(cur, NV, 'Compared with normal');
+  const [, hrW] = trend(cur.hr, NV.hr, 'faster than normal', 'slower than normal'), [, paceW] = trend(cur.pace, NV.pace, 'faster than normal', 'slower than normal'), [, gW] = trend(cur.gland, NV.gland, 'larger than normal', 'smaller than normal');
   const levels = ['tsh', 't4', 't3'].map(k => `${GLABEL[k]} ${levelWords(k, relOf(cur, k))}`).join(' · ');
   const goiter = cur.gland > 1.15 ? ' (a goiter)' : '';
   const res = $('#model-results');
   res.textContent = `Illustrative model output for ${who}: ${levels} · heartbeat ${hrW === 'about the same' ? 'about normal' : hrW} · body’s pace ${paceW === 'about the same' ? 'about normal' : paceW} · gland ${gW === 'about the same' ? 'about normal size' : gW}${goiter}.`;
   Object.assign(res.dataset, { tsh: cur.tsh.toFixed(4), t4: cur.t4.toFixed(4), t3: cur.t3.toFixed(4) });
   const chart = brakeChart(cur, p);
-  $('#explore-chart').innerHTML = svg(`Illustrative chart with total T4 across and TSH up, on a ratio scale; no numbers are shown. A falling blue curve is the brake: the TSH the pituitary releases for each T4 level. A rising amber curve is the gland: the T4 it makes for each TSH level, with a dashed curve for the normal gland. The loop settles where they cross, with TSH ${levelWords('tsh', cur.tsh)} and T4 ${levelWords('t4', cur.t4)}. The shaded box is where TSH and T4 are both inside their healthy bands.`, chart.body, chart.h);
+  $('#explore-chart').innerHTML = svg(`Illustrative chart with total T4 across and TSH up, on a ratio scale; no numbers are shown. A falling blue curve is the brake: the TSH the pituitary releases for each T4 level. A rising amber curve is the gland: the T4 it makes for each TSH level, with a dashed curve for the normal gland. The loop settles where they cross, with TSH ${levelWords('tsh', cur.tsh)} and T4 ${levelWords('t4', cur.t4)}. The shaded box is where TSH and T4 are both inside their healthy bands.`, chart.body, { h: chart.h });
 }
 $$('#preset input').forEach(r => r.addEventListener('change', () => {
   ex.preset = r.value; const d = TM.build(r.value); ex.cap = d.cap; ex.stim = d.stim; updateExplore();
@@ -687,8 +672,8 @@ async function load() {
     $('#load-error').hidden = false;
     $('#load-error').textContent = 'The reference file did not load. Reload the page to try again; the lesson and Explore freely still work on an illustrative model.';
   }
-  startLesson();
   updateClinical();
   updateExplore();
 }
-load();
+
+lesson({ scenes, before: load, onTab: { clinical: updateClinical, explore: updateExplore } });

@@ -1,9 +1,10 @@
-'use strict';
+// Lesson 6: The autonomic synapse. The kit (/lab/kit/kit.js) runs the page; this file is the model,
+// the pictures, and the Clinical values and Explore freely tabs.
+import { lesson } from '/lab/kit/kit.js';
+import { C, svg, text, f, clamp, lerp, span, ease, arrow, readout } from '/lab/kit/draw.js';
+
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
-const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
-const f = n => Number(n.toFixed(1));
-const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ---------- Teaching model ----------
    Every quantity is relative: 1 means the normal resting state. No clinical numbers live here;
@@ -55,400 +56,534 @@ function steady(p) {
 const BASE = steady(NORMAL);
 const mix = (a, b, t) => { const out = { ...a }; for (const k in b) if (typeof b[k] === 'number') out[k] = a[k] + (b[k] - a[k]) * t; return out; };
 
-/* ---------- Drawing ---------- */
-const RED = '#b3261e', GREEN = '#1d6b45', BLUE = '#254dff', INK = '#171916', ORGAN = '#f1d6d0', WALL = '#a8584c', PANEL = '#ecefe5', PLUG = '#5d6270';
-// Each picture gets its own arrowhead ids: a marker referenced from a hidden step would not draw.
-let pictureId = 0;
-const svg = (label, body, h = 624) => { const id = `p${++pictureId}-`; return `<svg viewBox="0 0 480 ${h}" role="img" aria-label="${label}">${body.replace(/ah-/g, id + 'ah-')}</svg>`; };
-const text = (x, y, s, cls = '', anchor = 'middle') => `<text x="${x}" y="${y}" text-anchor="${anchor}" class="${cls}">${s}</text>`;
-const MARK = { [INK]: 'k', [BLUE]: 'b', [RED]: 'r', [GREEN]: 'g' };
-const arrow = (d, color = INK, w = 2.5, extra = '') => `<path d="${d}" fill="none" stroke="${color}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#ah-${MARK[color] || 'k'})" ${extra}/>`;
-const DEFS = `<defs>${Object.entries(MARK).map(([c, k]) => `<marker id="ah-${k}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="${c}"/></marker>`).join('')}</defs>`;
-const block = (x, y, r = 12, attr = 'data-block="enzyme"') => `<g ${attr}><circle cx="${x}" cy="${y}" r="${r}" fill="#fff" stroke="${RED}" stroke-width="3"/><path d="M${x - r / 2} ${y - r / 2} L${x + r / 2} ${y + r / 2} M${x + r / 2} ${y - r / 2} L${x - r / 2} ${y + r / 2}" stroke="${RED}" stroke-width="3" stroke-linecap="round"/></g>`;
-const diamond = (x, y, r = 6, attr = '') => `<path ${attr} d="M${f(x)} ${f(y - r)} L${f(x + r)} ${f(y)} L${f(x)} ${f(y + r)} L${f(x - r)} ${f(y)} Z" fill="${INK}"/>`;
-const plug = (x, y) => `<rect x="${x - 8}" y="${y}" width="16" height="13" rx="2" fill="${PLUG}" stroke="${INK}" stroke-width="1.5"/>`;
-const HEART = 'M0 -6 C-6 -20 -30 -18 -28 2 C-26 16 -8 26 0 34 C8 26 26 16 28 2 C30 -18 6 -20 0 -6 Z';
-const heartIcon = (x, y, s) => `<path d="${HEART}" transform="translate(${x} ${y}) scale(${s})" fill="${ORGAN}" stroke="${WALL}" stroke-width="${f(3 / s)}"/>`;
-
-// Messenger dots in the gap: fixed scattered spots, filled in order, so more messenger means more dots.
-const DOTS = Array.from({ length: 30 }, (_, i) => [(i * .618034) % 1, 112 + ((i * 7) % 4) * 8]);
-// A signal arrow whose thickness shows how strong the signal is.
-function signalArrow(x, s, color) {
-  const w = f(clamp(3 + 5 * s, 2, 18));
-  return `<rect x="${f(x - w / 2)}" y="178" width="${w}" height="32" fill="${color}"/><path d="M${f(x - w / 2 - 6)} 210 L${f(x + w / 2 + 6)} 210 L${x} 226 Z" fill="${color}"/>`;
+/* ---------- Drawing ----------
+   Every picture is 480 wide and at most 420 tall, with the kit's type (20 / .sm 18 / .xs 17).
+   Red is the sympathetic branch and its messengers, green the parasympathetic branch and acetylcholine,
+   purple a drug, blue what a change moved. */
+const INK = C.ink, SYM = C.red, PARA = C.green, DRUG = C.purple, BLUE = C.blue, MUTED = C.muted;
+const ORGAN = '#f1d6d0', WALL = '#a8584c', ENZ = '#d6d9cc', IRIS = '#8c9b80', AIR = '#e7cfc8';
+const T = text;
+// A fade; a fully faded label is written as opacity 0 (and is not a label a reader can see).
+const op = a => { const v = clamp(a, 0, 1); return v < .005 ? 'opacity="0"' : `opacity="${v.toFixed(2)}"`; };
+const fadeIn = (a, body) => a < .005 ? '' : `<g ${op(a)}>${body}</g>`;
+const dot = (x, y, r, col, extra = '') => `<circle cx="${f(x)}" cy="${f(y)}" r="${f(r)}" fill="${col}" ${extra}/>`;
+const tint = c => c === SYM ? 'red' : c === PARA ? 'green' : c === DRUG ? 'purple' : c === BLUE ? 'blue' : '';
+// A drug that switches a receptor on (a diamond), one that blocks it (a plug), an enzyme stopped (a cross).
+const diamond = (x, y, r = 7) => `<path d="M${f(x)} ${f(y - r)} L${f(x + r)} ${f(y)} L${f(x)} ${f(y + r)} L${f(x - r)} ${f(y)} Z" fill="${DRUG}"/>`;
+const plug = (x, y, w = 18, h = 13) => `<rect x="${f(x - w / 2)}" y="${f(y - h / 2)}" width="${w}" height="${h}" rx="2" fill="${DRUG}"/>`;
+const cross = (x, y, r = 8) => `<path d="M${f(x - r)} ${f(y - r)} L${f(x + r)} ${f(y + r)} M${f(x + r)} ${f(y - r)} L${f(x - r)} ${f(y + r)}" stroke="${DRUG}" stroke-width="4" stroke-linecap="round"/>`;
+// Cholinesterase: a mouth that opens and shuts as it chops.
+function enzyme(x, y, r = 12, open = .5) {
+  const a = (.22 + .4 * clamp(open, 0, 1)) * Math.PI / 2, ax = Math.sin(a) * r, ay = Math.cos(a) * r;
+  return `<path d="M${f(x)} ${f(y)} L${f(x - ax)} ${f(y - ay)} A${r} ${r} 0 1 0 ${f(x + ax)} ${f(y - ay)} Z" fill="${ENZ}" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/>`;
 }
-const ghostArrow = x => `<rect class="ghost" x="${x - 4}" y="176" width="8" height="36" fill="none" stroke="${INK}" stroke-width="2" stroke-dasharray="4 3"/>`;
+const HEART = 'M0 -6 C-6 -20 -30 -18 -28 2 C-26 16 -8 26 0 34 C8 26 26 16 28 2 C30 -18 6 -20 0 -6 Z';
+const heartIcon = (x, y, s) => `<path d="${HEART}" transform="translate(${f(x)} ${f(y)}) scale(${s.toFixed(3)})" fill="${ORGAN}" stroke="${WALL}" stroke-width="${(3 / s).toFixed(2)}"/>`;
+const bez = (p0, p1, p2, p3, u) => { const v = 1 - u; return [0, 1].map(k => v * v * v * p0[k] + 3 * v * v * u * p1[k] + 3 * v * u * u * p2[k] + u * u * u * p3[k]); };
+const bezPath = ([p0, p1, p2, p3]) => `M${p0.join(' ')} C${p1.join(' ')} ${p2.join(' ')} ${p3.join(' ')}`;
 
-// One synapse close-up: nerve ending, gap with messenger, organ cell with receptor cups, and the signal passed on.
-function synapsePanel(side, o, G, { enzyme = false } = {}) {
-  const symp = side === 'symp', x0 = symp ? 0 : 244, cx = x0 + 118, c = symp ? RED : GREEN, p = o.p;
-  let s = text(cx, 20, symp ? 'sympathetic' : 'parasympathetic', `sm b ${symp ? 'red' : 'green'}`);
-  s += `<path d="M${cx} 27 V46" stroke="${c}" stroke-width="8" stroke-linecap="round"/>`;
-  s += `<rect x="${cx - 56}" y="44" width="112" height="60" rx="28" fill="#fff" stroke="${c}" stroke-width="3"/>`;
-  for (const [dx, y] of [[-28, 64], [0, 60], [28, 66]]) s += `<circle cx="${cx + dx}" cy="${y}" r="9" fill="none" stroke="${c}" stroke-width="1.5"/><circle cx="${cx + dx}" cy="${y}" r="3.5" fill="${c}"/>`;
-  s += text(cx, 93, symp ? 'noradrenaline' : 'acetylcholine', 'xs');
-  // Messenger in the gap.
-  const [lo, hi] = symp ? [-84, 84] : enzyme ? [-86, 48] : [-86, 86];
-  const n = clamp(Math.round((symp ? o.ne : o.ach) * 6), 0, DOTS.length);
-  s += `<g data-dots="${n}">${DOTS.slice(0, n).map(([u, y]) => `<circle cx="${f(cx + lo + u * (hi - lo))}" cy="${y}" r="4.5" fill="${c}"/>`).join('')}</g>`;
-  // Agonist drug molecules (diamonds) over the receptors they switch on.
-  const fams = symp
-    ? [['alpha', [-74, -40], p.aFree, p.aAg, o.Al], ['beta', [40, 74], p.bFree, p.bAg, o.Be]]
-    : [['muscarinic', [-62, -28, 6], p.mFree, p.mAg, o.M]];
-  for (const [, xs, , ag] of fams) {
-    const k = Math.round(ag * 3), a = cx + xs[0] - 12, b = cx + xs[xs.length - 1] + 12;
-    for (let i = 0; i < k; i++) s += diamond(a + ((i * .618034 + .3) % 1) * (b - a), 114 + (i % 3) * 9, 5.5, 'data-agonist');
-  }
-  // Organ cell membrane and receptor cups.
-  s += `<rect x="${x0 + 6}" y="150" width="224" height="26" fill="${ORGAN}"/><path d="M${x0 + 6} 150 H${x0 + 230}" stroke="${WALL}" stroke-width="2"/>`;
-  for (const [name, xs, free, ag, sig] of fams) {
-    for (const dx of xs) {
-      const x = cx + dx;
-      s += `<path d="M${x - 10} 139 V150 A10 10 0 0 0 ${x + 10} 150 V139" fill="${PANEL}" stroke="${INK}" stroke-width="3"/>`;
-      if (free < .6) s += `<g data-block="receptor">${plug(x, 142)}</g>`;
-      else if (ag > .6) s += diamond(x, 150, 6);
-      else if (sig > .05) s += `<circle cx="${x}" cy="151" r="4.5" fill="${c}"/>`;
-    }
-    const mid = cx + (xs[0] + xs[xs.length - 1]) / 2;
-    s += text(mid, 169, name, 'xs on-organ');
-    if (G) s += ghostArrow(mid);
-    s += signalArrow(mid, sig, symp ? RED : GREEN);
-  }
-  s += symp ? text(cx, 206, 'signal', 'xs') : text(cx - 46, 206, 'signal', 'xs', 'end');
-  if (enzyme && !symp) {
-    const ex = cx + 82, ey = 139;
-    s += `<path d="M${ex} ${ey} L${f(ex - 10.4)} ${ey - 6} A12 12 0 1 1 ${f(ex - 10.4)} ${ey + 6} Z" fill="#d6d9cc" stroke="${INK}" stroke-width="2"/>`;
-    if (p.che < .6) s += block(ex, ey, 11);
-    s += `<path d="M${ex} 154 V188" stroke="${INK}" stroke-width="1.2" stroke-dasharray="2 3"/>` + text(cx + 64, 204, 'cholinesterase', 'xs');
-  }
+/* ---------- Steps 1 and 2: the wiring ---------- */
+const ORGANS = [['eyes', 36], ['lungs', 106], ['heart', 176], ['blood vessels', 246], ['gut', 316]];
+function organIcons() {
+  let b = `<path d="M342 36 Q380 12 418 36 Q380 60 342 36 Z" fill="#fff" stroke="${INK}" stroke-width="2"/>${dot(380, 36, 12, IRIS)}${dot(380, 36, 5, INK)}`;
+  b += `<path d="M376 88 C356 84 342 104 344 124 C346 138 370 138 376 126 Z M384 88 C404 84 418 104 416 124 C414 138 390 138 384 126 Z" fill="${ORGAN}" stroke="${WALL}" stroke-width="2.5"/>`;
+  b += heartIcon(380, 172, .95);
+  b += `<rect x="340" y="237" width="80" height="18" fill="${ORGAN}"/><path d="M340 237 H420 M340 255 H420" stroke="${WALL}" stroke-width="3"/>`;
+  b += `<path d="M346 316 C356 302 366 330 376 316 C386 302 396 330 406 316 C412 308 418 320 412 330" fill="none" stroke="${WALL}" stroke-width="6" stroke-linecap="round"/>`;
+  for (const [name, y] of ORGANS) b += T(380, y + 40, name, 'sm');
+  return b;
+}
+function brainAndCord() {
+  return `<ellipse cx="100" cy="54" rx="76" ry="44" fill="#f3e3df" stroke="${WALL}" stroke-width="3"/>${T(100, 61, 'brain', 'sm b on-organ')}`
+    + `<rect x="89" y="94" width="22" height="262" rx="11" fill="#f3e3df" stroke="${WALL}" stroke-width="3"/>`
+    + T(80, 212, 'spinal', 'sm', 'end') + T(80, 234, 'cord', 'sm', 'end');
+}
+// Nerves as curves from a start point to an organ, with signals (dots) running along them.
+const nerve = (from, toY, dy = 0) => [from, [from[0] + 96, from[1]], [250, toY + dy], [336, toY + dy]];
+const PLAIN = [[[176, 62], 36], [[111, 122], 106], [[111, 180], 176], [[111, 246], 246], [[111, 318], 316]];
+// Sympathetic nerves leave the middle of the cord; airway muscle in the lungs gets almost none of them.
+// Parasympathetic nerves leave the brainstem and the bottom of the cord, and most blood vessels get none.
+const SYMP = [[[111, 142], 36], [[111, 188], 176], [[111, 236], 246], [[111, 282], 316]];
+const PARAS = [[[150, 92], 36], [[111, 104], 106], [[111, 116], 176], [[111, 344], 316]];
+function signals(curves, t, col, n = 2) {
+  let s = '';
+  curves.forEach((c, i) => { for (let k = 0; k < n; k++) { const u = (t * 2 + k / n + i * .17) % 1; const [x, y] = bez(...c, u); s += dot(x, y, 5, col, op(span(u, 0, .08) * (1 - span(u, .9, 1)))); } });
   return s;
 }
-
-// Abstract beat counter: one dot per heartbeat over the same stretch of time, so closer dots mean a faster rate.
-// (Not a heart tracing; squeeze strength gets its own bar.)
-function beatXs(HR) {
-  const gap = clamp(54 / HR, 18, 150), xs = [];
-  for (let x = 128; x < 452; x += gap) xs.push(f(x));
-  return xs;
+function wiringArt(t) {
+  const curves = PLAIN.map(([p, y]) => nerve(p, y));
+  let b = brainAndCord() + organIcons();
+  b += `<g data-part="nerves">${curves.map(c => arrow(bezPath(c), INK, 2.5)).join('')}${signals(curves, t, BLUE)}</g>`;
+  b += T(12, 402, 'signals run all the time, without you thinking', 'xs muted', 'start');
+  return b;
 }
-// How the model's state is drawn. Exponents exaggerate differences so they read at a glance.
-const pow = (x, k) => Math.pow(Math.max(x, 1e-6), k);
-const look = o => ({
-  tube: clamp(30 * pow(o.R, -1.8), 8, 54),
-  lumen: clamp(24 * pow(o.airway, 1.2), 6, 40),
-  pupil: clamp(13 * pow(o.pupil, 1.3), 4, 29),
-  bp: clamp(.45 * pow(o.P, 1.3), .03, 1),
-  squeeze: clamp(.5 * pow(o.SV, 1.6), .03, 1)
+function branchesArt(t) {
+  const s = SYMP.map(([p, y]) => nerve(p, y, -7)), q = PARAS.map(([p, y]) => nerve(p, y, 7));
+  let b = brainAndCord() + organIcons();
+  b += `<g data-part="symp">${s.map(c => arrow(bezPath(c), SYM, 3)).join('')}${signals(s, t, SYM, 1)}</g>`;
+  b += `<g data-part="para">${q.map(c => arrow(bezPath(c), PARA, 3, 'stroke-dasharray="9 6"')).join('')}${signals(q, t, PARA, 1)}</g>`;
+  b += `<g data-part="symp"><path d="M14 382 H52" stroke="${SYM}" stroke-width="4"/>${T(60, 388, 'sympathetic: the accelerator', 'sm b red', 'start')}</g>`;
+  b += `<g data-part="para"><path d="M14 406 H52" stroke="${PARA}" stroke-width="4" stroke-dasharray="9 6"/>${T(60, 412, 'parasympathetic: the brake', 'sm b green', 'start')}</g>`;
+  return b;
+}
+
+/* ---------- Steps 3 to 7: one synapse, one release, start to finish ----------
+   For t from 0 to 1: an impulse comes down the nerve, two vesicles fuse with the ending and spill their
+   messenger, it crosses the gap and docks in the receptors, which pass the signal on, then the gap is
+   cleared (the messenger drifts off, is chopped by cholinesterase, or is pumped back in). */
+const GAP = 140, MEM = 204;                                   // ending's lower membrane; organ cell's membrane
+const ENDING = 'M228 0 V30 C172 32 120 48 120 84 V128 Q120 140 132 140 H348 Q360 140 360 128 V84 C360 48 308 32 252 30 V0 Z';
+const VES = [[166, 88], [212, 70], [266, 68], [314, 88], [200, 114], [282, 114]];   // the last two fuse
+const FUSE = [200, 282];
+const FREE = [[150, 164], [176, 182], [228, 158], [256, 184], [306, 164], [334, 182]]; // messenger left unbound
+const cupUp = (x, col = INK) => `<path d="M${x - 12} ${MEM - 13} V${MEM} A12 12 0 0 0 ${x + 12} ${MEM} V${MEM - 13}" fill="#fff" stroke="${col}" stroke-width="2.5" stroke-linejoin="round"/>`;
+const cupDown = x => `<path d="M${x - 12} ${GAP + 13} V${GAP} A12 12 0 0 1 ${x + 12} ${GAP} V${GAP + 13}" fill="#fff" stroke="${INK}" stroke-width="2.5" stroke-linejoin="round"/>`;
+const vesicle = (x, y, col, a = 1) => `<g ${op(a)}><circle cx="${x}" cy="${f(y)}" r="14" fill="#fff" stroke="${col}" stroke-width="1.5"/>${[[-5, -3], [5, -4], [0, 5]].map(([dx, dy]) => dot(x + dx, y + dy, 3, col)).join('')}</g>`;
+const signalArrow = (x, a, col, y0 = MEM + 22) => `<g ${op(a)}><rect x="${x - 6}" y="${y0}" width="12" height="34" fill="${col}"/><path d="M${x - 15} ${y0 + 34} H${x + 15} L${x} ${y0 + 52} Z" fill="${col}"/></g>`;
+const PUMP = 340, A2 = 140;
+function synapseArt(c, t) {
+  const col = c.col, msg = c.msg || col;
+  let b = `<rect x="0" y="${MEM}" width="480" height="${c.h - MEM}" fill="${ORGAN}"/><path d="M0 ${MEM} H480" stroke="${WALL}" stroke-width="3"/>`;
+  b += `<g data-part="gap"><rect x="120" y="${GAP + 2}" width="240" height="${MEM - GAP - 4}" fill="#fff" opacity=".5"/>${c.gapLabel ? arrow(`M384 ${GAP + 18} V${MEM - 6}`, INK, 2, 'marker-start="url(#ah-k)"') + T(396, 168, 'the gap:', 'xs', 'start') + T(396, 190, 'synapse', 'sm b', 'start') : ''}</g>`;
+  // The nerve ending, and the impulse arriving down its axon.
+  b += `<path d="${ENDING}" fill="#fff" stroke="${col}" stroke-width="3" stroke-linejoin="round"/>`;
+  const pulse = span(t, 0, .1);
+  if (pulse > 0 && pulse < 1) b += dot(240, lerp(2, 36, pulse), 9, col, 'opacity=".85"');
+  // Vesicles: the last two move down, fuse and spill, and re-form for the next impulse.
+  VES.forEach(([x, y], i) => {
+    if (i < 4) { b += vesicle(x, y, col); return; }
+    if (t < .17) b += vesicle(x, lerp(y, 124, ease.inOut(span(t, .06, .16))), col);
+    else if (t < .9) b += `<rect x="${x - 12}" y="${GAP - 3}" width="24" height="6" fill="#fff"/><path d="M${x - 14} ${GAP} A14 14 0 0 1 ${x + 14} ${GAP}" fill="none" stroke="${col}" stroke-width="1.5"/>`;
+    else b += vesicle(x, y, col, span(t, .9, 1));
+  });
+  // Receptors on the organ cell, and the autoreceptor and pump on the ending (step 7).
+  for (const g of c.groups) b += `<g data-part="${g.part}">${g.xs.map(x => cupUp(x)).join('')}</g>`;
+  if (c.clear === 'reuptake') {
+    b += `<g data-part="alpha2">${cupDown(A2)}</g>`;
+    b += `<g data-part="reuptake"><rect x="${PUMP - 13}" y="${GAP - 11}" width="9" height="24" rx="3" fill="${ENZ}" stroke="${INK}" stroke-width="1.5"/><rect x="${PUMP + 4}" y="${GAP - 11}" width="9" height="24" rx="3" fill="${ENZ}" stroke="${INK}" stroke-width="1.5"/>${arrow(`M${PUMP} ${GAP + 6} V${GAP - 24}`, INK, 2.5)}</g>`;
+  }
+  const enzymes = c.clear === 'enzyme' ? [146, 334] : [];
+  // The messenger: one dot per receptor, the rest left unbound in the gap.
+  const docks = c.groups.flatMap(g => g.xs.map(x => [x, MEM - 5, true]));
+  if (c.clear === 'reuptake') docks.push([A2, GAP + 5, true]);
+  const trips = [...docks, ...FREE.map(([x, y]) => [x, y, false])];
+  let dots = '', chomp = 0;
+  trips.forEach(([tx, ty], i) => {
+    const sx = tx < 241 ? FUSE[0] : FUSE[1], lag = (i % 5) * .014;
+    const u = ease.out(span(t, .18 + lag, .4 + lag));
+    if (u <= 0) return;
+    let x = lerp(sx, tx, u) + Math.sin(u * Math.PI) * ((i % 3) - 1) * 12, y = lerp(GAP + 4, ty, u), a = 1, split = 0;
+    if (c.clear === 'fade') a = 1 - span(t, .74 + lag, .86 + lag);
+    if (c.clear === 'enzyme') {
+      const ex = enzymes.reduce((m, e) => Math.abs(e - tx) < Math.abs(m - tx) ? e : m), k = i * .012;
+      const go = ease.inOut(span(t, .58 + k, .66 + k));
+      x = lerp(x, ex, go); y = lerp(y, MEM - 24, go);
+      split = span(t, .66 + k, .8 + k);
+      if (go > 0 && split < 1) chomp = Math.max(chomp, Math.sin(Math.PI * span(t, .6 + k, .7 + k)));
+    }
+    if (c.clear === 'reuptake') {
+      const k = (i % 6) * .02, go = ease.inOut(span(t, .6 + k, .72 + k)), up = span(t, .72 + k, .8 + k);
+      x = lerp(x, PUMP, go); y = lerp(y, GAP + 8, go) - 34 * up; a = 1 - span(up, .5, 1);
+    }
+    if (a <= .01 || split >= 1) return;
+    dots += split > 0
+      ? `<g ${op(1 - span(split, .5, 1))}><path d="M${f(x - 2 - 12 * split)} ${f(y - 6 - 10 * split)} a6 6 0 0 0 0 12 z" fill="${msg}"/><path d="M${f(x + 2 + 12 * split)} ${f(y - 6 - 10 * split)} a6 6 0 0 1 0 12 z" fill="${msg}"/></g>`
+      : dot(x, y, 5.5, msg, a < 1 ? op(a) : '');
+  });
+  b += `<g data-part="${c.dotPart}">${dots}</g>`;
+  if (enzymes.length) b += `<g data-part="enzyme">${enzymes.map(x => enzyme(x, MEM - 14, 15, .3 + .7 * chomp)).join('')}</g>`;
+  // The signal each receptor family passes on, while its messenger is docked.
+  const off = c.clear === 'enzyme' ? [.66, .74] : c.clear === 'reuptake' ? [.66, .76] : [.74, .84];
+  for (const g of c.groups) b += signalArrow((g.xs[0] + g.xs.at(-1)) / 2, span(t, .42, .5) * (1 - span(t, ...off)), g.col || col, c.arrowTop);
+  return b + c.labels(t);
+}
+const SYN = {
+  synapse: {
+    col: INK, msg: MUTED, h: 316, gapLabel: true, dotPart: 'messenger', clear: 'fade',
+    groups: [{ part: 'receptor', xs: [186, 222, 258, 294] }],
+    labels: () => T(262, 20, 'nerve', 'sm', 'start') + T(12, 34, 'nerve ending', 'sm b', 'start')
+      + `<g data-part="messenger">${T(112, 177, 'messenger', 'xs b', 'end')}</g>`
+      + `<g data-part="receptor">${T(170, 236, 'receptors', 'xs b on-organ', 'end')}</g>`
+      + T(256, 264, 'signal passed on', 'xs b on-organ', 'start') + T(12, 304, 'organ cell', 'sm b on-organ', 'start'),
+    label: 'Close-up of one nerve ending, a swelling of the nerve fibre, sitting just above an organ cell. An impulse comes down the nerve, two small sacs in the ending merge with its wall and spill grey messenger dots into the narrow gap between them, the synapse. The dots cross, dock in four cup-shaped receptors on the organ cell, and an arrow inside the cell shows the signal passed on. Then the dots drift away and the gap is clear again.'
+  },
+  ach: {
+    col: PARA, h: 316, dotPart: 'ach', clear: 'fade',
+    groups: [{ part: 'receptor', xs: [186, 222, 258, 294] }],
+    labels: () => T(262, 20, 'parasympathetic nerve', 'xs b green', 'start')
+      + `<g data-part="ach">${T(12, 177, 'acetylcholine', 'xs b green', 'start')}</g>`
+      + `<g data-part="receptor">${T(170, 236, 'M receptors', 'xs b on-organ', 'end')}${T(170, 256, '(muscarinic)', 'xs on-organ', 'end')}</g>`
+      + T(256, 264, 'signal passed on', 'xs b on-organ', 'start'),
+    label: 'A parasympathetic nerve ending above an organ cell. An impulse arrives, sacs spill green acetylcholine dots into the gap, and each dot that reaches a cup-shaped muscarinic receptor docks in it like a key in a lock. A green arrow inside the cell shows the signal passed on while the dots are docked.'
+  },
+  enzyme: {
+    col: PARA, h: 316, dotPart: 'ach', clear: 'enzyme',
+    groups: [{ part: 'receptor', xs: [186, 222, 258, 294] }],
+    labels: () => `<g data-part="enzyme">${T(476, 172, 'cholinesterase', 'sm b', 'end')}${T(476, 238, 'chops it apart', 'xs b on-organ', 'end')}</g>`
+      + T(262, 20, 'parasympathetic nerve', 'xs b green', 'start')
+      + `<g data-part="receptor">${T(150, 238, 'M receptors', 'xs b on-organ', 'end')}</g>`,
+    label: 'The same parasympathetic synapse with cholinesterase, two mouth-shaped enzymes at the edges of the gap. Acetylcholine crosses and docks, and the signal arrow appears; within moments each dot is carried to an enzyme and chopped into two halves that fade away, so the receptors empty and the signal stops.'
+  },
+  ne: {
+    col: SYM, h: 316, dotPart: 'ne', clear: 'fade', arrowTop: MEM + 42,
+    groups: [{ part: 'alpha', xs: [160, 196] }, { part: 'beta', xs: [284, 320] }],
+    labels: () => T(262, 20, 'sympathetic nerve', 'xs b red', 'start')
+      + `<g data-part="ne">${T(12, 177, 'noradrenaline', 'xs b red', 'start')}</g>`
+      + `<g data-part="alpha">${T(178, 234, 'alpha', 'sm b on-organ')}</g><g data-part="beta">${T(302, 234, 'beta', 'sm b on-organ')}</g>`
+      + T(240, 306, 'each family passes on its own signal', 'xs on-organ'),
+    label: 'A sympathetic nerve ending above an organ cell. Red noradrenaline dots spill into the gap and dock in two kinds of cup-shaped receptor: a pair labelled alpha and a pair labelled beta. Each family sends its own red signal arrow into the cell.'
+  },
+  reuptake: {
+    col: SYM, h: 316, dotPart: 'ne', clear: 'reuptake', arrowTop: MEM + 42,
+    groups: [{ part: 'alpha', xs: [160, 196] }, { part: 'beta', xs: [284, 320] }],
+    labels: () => `<g data-part="reuptake">${T(476, 100, 'pumped back', 'xs b', 'end')}${T(476, 120, 'in: reuptake', 'xs b', 'end')}</g>`
+      + `<g data-part="alpha2">${T(8, 168, 'alpha-2:', 'xs b', 'start')}${T(8, 188, 'less release', 'xs', 'start')}</g>`
+      + T(262, 20, 'sympathetic nerve', 'xs b red', 'start')
+      + `<g data-part="alpha">${T(178, 234, 'alpha', 'sm b on-organ')}</g><g data-part="beta">${T(302, 234, 'beta', 'sm b on-organ')}</g>`,
+    label: 'The sympathetic synapse again. Noradrenaline docks on the alpha and beta receptors, and one dot docks on an alpha-2 receptor hanging from the nerve ending itself, which turns further release down. Then a pump in the ending’s wall carries the noradrenaline back inside: reuptake. No enzyme chops it in the gap.'
+  }
+};
+const synapseScene = kind => ({ duration: 4600, loop: true, rest: .56, render: t => svg(SYN[kind].label, synapseArt(SYN[kind], t), { h: SYN[kind].h }) });
+
+/* ---------- Steps 8 and 9: the heart, as a strip of beats ----------
+   One dot per heartbeat over the same stretch of time: closer dots mean a faster rate, bigger dots a
+   stronger squeeze. A sweep draws the beats as they happen, and the heart swells with each one. */
+function heartArt(kind, t) {
+  const para = kind === 'para-heart', X0 = 168, X1 = 466, sweep = lerp(X0, X1 + 10, t);
+  const rows = para
+    ? [{ y: 110, gap: 43, r: 9, ghost: true, label: 'if the brake were off', cls: 'xs muted' }, { y: 200, gap: 62, r: 9, label: 'with acetylcholine on M: slower', cls: 'xs b green' }]
+    : [{ y: 110, gap: 62, r: 9, ghost: true, label: 'at rest', cls: 'xs muted' }, { y: 200, gap: 38, r: 12.5, label: 'noradrenaline on beta-1: faster', cls: 'xs b red' }];
+  const col = para ? PARA : SYM;
+  let b = '', beat = 0;
+  for (const r of rows) {
+    b += T(X0, r.y - 26, r.label, r.cls, 'start') + `<path d="M${X0} ${r.y} H${X1}" stroke="${C.rule}" stroke-width="2"/>`;
+    let s = '';
+    for (let x = X0 + 14; x <= X1 - 6; x += r.gap) {
+      if (x > sweep) break;
+      s += r.ghost ? `<circle cx="${f(x)}" cy="${r.y}" r="${r.r}" fill="none" stroke="${INK}" stroke-width="2" stroke-dasharray="4 3"/>` : dot(x, r.y, r.r, BLUE);
+      if (!r.ghost) beat = Math.max(beat, Math.exp(-(sweep - x) / 14));
+    }
+    b += r.ghost ? `<g class="ghost">${s}</g>` : `<g data-part="rate">${s}</g>`;
+  }
+  b += `<path d="M${f(Math.min(sweep, X1))} 70 V226" stroke="${MUTED}" stroke-width="1.5" stroke-dasharray="3 4"/>`;
+  b += T(X1, 254, 'beats over time →', 'xs muted', 'end');
+  if (!para) b += T(X0, 282, 'bigger dots: stronger beats', 'xs', 'start');
+  // The heart, its nerve and the messenger docking on it.
+  const s = 1.45 * (1 + (para ? .07 : .13) * beat);
+  b += heartIcon(76, 152, s) + T(76, 254, 'heart', 'sm b');
+  const nerve = 'M22 0 C24 40 54 54 68 96';
+  b += `<path d="${nerve}" fill="none" stroke="${col}" stroke-width="6" stroke-linecap="round"${para ? ' stroke-dasharray="10 6"' : ''}/>`;
+  b += [[-6, 108], [6, 116], [-2, 124]].map(([dx, y]) => dot(70 + dx, y, 4, col)).join('');
+  b += `<g data-part="${para ? 'muscarinic' : 'beta1'}">${T(50, 30, para ? 'parasympathetic nerve' : 'sympathetic nerve', `xs b ${para ? 'green' : 'red'}`, 'start')}</g>`;
+  return b;
+}
+const heartScene = kind => ({
+  duration: 4200, loop: true,
+  render: t => svg(kind === 'para-heart'
+    ? 'A heart with a dashed green parasympathetic nerve docking acetylcholine on its M receptors. Beside it, two strips of heartbeats drawn as dots over the same stretch of time: dashed, closer dots for how fast it would beat if the brake were off, and blue dots further apart for the real resting rate, held down by acetylcholine. A sweep draws the beats and the heart swells with each one.'
+    : 'A heart with a red sympathetic nerve docking noradrenaline on its beta-1 receptors. Two strips of heartbeats over the same stretch of time: dashed dots for the resting rate, and bigger blue dots closer together with noradrenaline: a faster rate and a stronger squeeze. The heart swells more with each beat.', heartArt(kind, t), { h: 296 })
 });
-const PART_NOTE_POS = { heart: [458, 244, 'end'], vessel: [86, 376, 'middle'], airway: [240, 374, 'middle'], pupil: [394, 384, 'middle'], bp: [464, 520, 'end'] };
-// Parts in teaching order: each core step adds the next one or two.
-const ALL = ['para', 'enzyme', 'heart', 'symp', 'squeeze', 'vessel', 'bp', 'pupil', 'airway', 'adrenaline', 'reflex'];
 
-// The whole picture. parts: what is drawn so far; ghost: the normal state drawn dashed; notes: short direction words.
-function picture(o, { parts = ALL, ghost = null, legend = '', notes = {}, color = INK } = {}) {
-  const has = k => parts.includes(k), L = look(o), G = ghost ? look(ghost) : null;
-  let b = DEFS;
-  if (has('symp')) b += synapsePanel('symp', o, ghost);
-  if (has('para')) b += synapsePanel('para', o, ghost, { enzyme: has('enzyme') });
-  if (has('heart')) {
-    b += heartIcon(50, 296, 1.15);
-    b += `<rect x="100" y="250" width="368" height="92" fill="#fff" stroke="#babeb3"/>${text(50, 352, 'heart rate', 'sm')}`;
-    b += `<path d="M112 274 H458" stroke="#babeb3" stroke-width="2"/>${text(458, 300, 'beats over time →', 'xs', 'end')}`;
-    if (ghost) b += `<g class="ghost">${beatXs(ghost.HR).map(x => `<circle cx="${x}" cy="274" r="11" fill="none" stroke="${INK}" stroke-width="2" stroke-dasharray="4 3"/>`).join('')}</g>`;
-    b += `<g data-strip>${beatXs(o.HR).map(x => `<circle cx="${x}" cy="274" r="8" fill="${BLUE}"/>`).join('')}</g>`;
-    if (has('squeeze')) {
-      const SQ = 204;
-      b += text(112, 331, 'squeeze strength', 'xs', 'start');
-      b += `<rect x="252" y="319" width="${SQ}" height="14" fill="#fff" stroke="#babeb3"/><rect data-bar="squeeze" x="252" y="319" width="${f(SQ * L.squeeze)}" height="14" fill="${BLUE}"/>`;
-      if (G) b += `<rect class="ghost" x="252" y="315" width="${f(SQ * G.squeeze)}" height="22" fill="none" stroke="${INK}" stroke-width="2" stroke-dasharray="5 4"/>`;
-    }
-  }
-  if (has('vessel')) {
-    const w = f(L.tube), y = 428;
-    b += `<rect x="24" y="${f(y - w / 2)}" width="124" height="${w}" fill="${ORGAN}"/><path d="M24 ${f(y - w / 2)} H148 M24 ${f(y + w / 2)} H148" stroke="${WALL}" stroke-width="4"/>`;
-    b += [48, 86, 124].map(x => `<ellipse cx="${x}" cy="${y}" rx="5" ry="${f(w / 2 + 5)}" fill="none" stroke="${INK}" stroke-width="2"/>`).join('');
-    if (G) b += `<path class="ghost" d="M20 ${f(y - G.tube / 2)} H152 M20 ${f(y + G.tube / 2)} H152" stroke="${INK}" stroke-width="2" stroke-dasharray="5 4"/>`;
-    b += text(86, 496, 'arteriole', 'sm');
-  }
-  if (has('airway')) {
-    b += `<circle cx="240" cy="428" r="44" fill="#e7cfc8" stroke="${WALL}" stroke-width="3"/><circle cx="240" cy="428" r="${f(L.lumen)}" fill="#fff" stroke="${INK}" stroke-width="2"/>`;
-    if (G) b += `<circle class="ghost" cx="240" cy="428" r="${f(G.lumen)}" fill="none" stroke="${INK}" stroke-width="2" stroke-dasharray="5 4"/>`;
-    b += text(240, 496, 'airway', 'sm');
-    if (has('adrenaline')) b += text(240, 515, 'opened by adrenaline in blood', 'xs red');
-  }
-  if (has('pupil')) {
-    b += `<path d="M330 428 Q394 374 458 428 Q394 482 330 428 Z" fill="#fff" stroke="${INK}" stroke-width="2"/><circle cx="394" cy="428" r="32" fill="#8c9b80"/><circle cx="394" cy="428" r="${f(L.pupil)}" fill="${INK}"/>`;
-    if (G) b += `<circle class="ghost" cx="394" cy="428" r="${f(G.pupil)}" fill="none" stroke="#fff" stroke-width="2.5" stroke-dasharray="5 4"/>`;
-    b += text(394, 496, 'pupil', 'sm');
-  }
-  if (has('bp')) {
-    const W = 292;
-    b += text(20, 540, 'blood pressure', 'sm', 'start');
-    b += `<rect x="168" y="527" width="${W}" height="16" fill="#fff" stroke="#babeb3"/><rect data-bar="pressure" x="168" y="527" width="${f(W * L.bp)}" height="16" fill="${BLUE}"/>`;
-    if (G) b += `<rect class="ghost" x="168" y="523" width="${f(W * G.bp)}" height="24" fill="none" stroke="${INK}" stroke-width="2" stroke-dasharray="5 4"/>`;
-  }
-  if (has('reflex')) {
-    b += arrow('M6 552 V36 H106', BLUE, 2.5, 'stroke-dasharray="2 7"') + arrow('M130 36 H350', BLUE, 2.5, 'stroke-dasharray="2 7"');
-    b += text(20, 240, 'pressure reflex', 'xs blue', 'start');
-  }
-  for (const [part, word] of Object.entries(notes)) { const [x, y, a] = PART_NOTE_POS[part]; b += text(x, y, word, `sm b ${color === RED ? 'red' : 'green'}`, a); }
-  return withState(o, b, ghost, legend);
-}
-// Wraps a drawing with the state it shows (read by the smoke test) and the normal-versus-changed legend.
-function withState(o, b, ghost, legend) {
-  const attrs = s => `data-hr="${s.HR.toFixed(4)}" data-strength="${s.SV.toFixed(4)}" data-pressure="${s.P.toFixed(4)}" data-arteriole="${s.R.toFixed(4)}" data-airway="${s.airway.toFixed(4)}" data-pupil="${s.pupil.toFixed(4)}" data-ach="${s.ach.toFixed(4)}"`;
-  let out = `<g data-new-state="${legend || 'current'}" ${attrs(o)}>${b}</g>`;
-  if (ghost) {
-    out += `<g class="ghost" data-ghost="normal" ${attrs(ghost)}><path d="M20 592 H46" stroke="${INK}" stroke-width="3" stroke-dasharray="5 4"/></g>${text(52, 598, 'normal', 'sm', 'start')}`;
-    out += `<path d="M150 592 H176" stroke="${BLUE}" stroke-width="6"/>${text(182, 598, legend, 'sm blue', 'start')}`;
-    const p = o.p, keys = [];
-    if (p.mFree < .6 || p.aFree < .6 || p.bFree < .6) keys.push([`<g>${plug(28, 606)}</g>`, 'blocker in receptor']);
-    if (p.mAg > .3 || p.aAg > .3 || p.bAg > .3) keys.push([diamond(28, 613, 6), 'agonist drug']);
-    if (p.che < .6) keys.push([`<g transform="translate(28 613) scale(.7) translate(-28 -613)">${block(28, 613, 11, '')}</g>`, 'enzyme stopped']);
-    keys.forEach(([icon, word], i) => { out += `<g transform="translate(${i * 200} 0)">${icon}${text(44, 619, word, 'sm', 'start')}</g>`; });
-  }
-  return out;
-}
-
-// Zoomed close-up of one synapse for the steps that introduce it.
-function zoomPicture(side, { enzyme = false, note = '' } = {}) {
-  const cx = (side === 'symp' ? 0 : 244) + 118, k = 1.75;
-  const b = DEFS + `<g transform="translate(${f(240 - k * cx)} 96) scale(${k})">${synapsePanel(side, BASE, null, { enzyme })}</g>` + text(240, 528, note[0], 'sm') + text(240, 554, note[1], 'sm');
-  return withState(BASE, b, null, '');
-}
-
-// Steps 1 and 2: brain and spinal cord wired to the organs.
-const ORGANS = [['eyes', 84], ['lungs', 196], ['heart', 300], ['blood vessels', 404], ['gut', 500]];
-function wiringPicture(branches) {
-  let b = DEFS + `<ellipse cx="110" cy="84" rx="74" ry="52" fill="#f3e3df" stroke="${WALL}" stroke-width="3"/>${text(110, 90, 'brain', 'on-organ')}`;
-  b += `<rect x="100" y="130" width="22" height="400" rx="11" fill="#f3e3df" stroke="${WALL}" stroke-width="3"/><text transform="translate(80 330) rotate(-90)" text-anchor="middle" class="sm">spinal cord</text>`;
-  // Organ icons.
-  b += `<path d="M330 84 Q370 58 410 84 Q370 110 330 84 Z" fill="#fff" stroke="${INK}" stroke-width="2"/><circle cx="370" cy="84" r="13" fill="#8c9b80"/><circle cx="370" cy="84" r="6" fill="${INK}"/>`;
-  b += `<path d="M366 170 C346 166 330 190 332 214 C334 230 360 230 366 216 Z M374 170 C394 166 410 190 408 214 C406 230 380 230 374 216 Z" fill="${ORGAN}" stroke="${WALL}" stroke-width="2.5"/>`;
-  b += heartIcon(370, 292, 1);
-  b += `<rect x="326" y="394" width="88" height="20" fill="${ORGAN}"/><path d="M326 394 H414 M326 414 H414" stroke="${WALL}" stroke-width="3"/>`;
-  b += `<path d="M334 486 C344 470 356 502 368 486 C380 470 392 502 404 486 C412 476 418 492 410 504 C398 520 386 492 374 506 C362 520 350 494 338 506" fill="none" stroke="${WALL}" stroke-width="6" stroke-linecap="round"/>`;
-  for (const [name, y] of ORGANS) b += text(370, y + 44, name, 'sm');
-  if (!branches) {
-    const from = { eyes: [180, 90], lungs: [122, 196], heart: [122, 290], 'blood vessels': [122, 400], gut: [122, 470] };
-    for (const [name, y] of ORGANS) { const [x0, y0] = from[name]; b += arrow(`M${x0} ${y0} C${x0 + 80} ${y0} ${240} ${y} 316 ${y}`, INK, 2.5); }
-    b += text(240, 600, 'signals run without you thinking', 'sm');
-  } else {
-    // Sympathetic leaves the middle of the spinal cord; airway muscle in the lungs gets almost none of it.
-    // Parasympathetic leaves the brainstem and the bottom of the cord, and most blood vessels get none.
-    const sympFrom = { eyes: 200, heart: 260, 'blood vessels': 330, gut: 380 };
-    for (const [name, y] of ORGANS) if (sympFrom[name]) b += arrow(`M122 ${sympFrom[name]} C200 ${sympFrom[name]} 230 ${y - 8} 316 ${y - 8}`, RED, 3);
-    const paraFrom = { eyes: [168, 112], lungs: [122, 146], heart: [122, 156], gut: [122, 510] };
-    for (const [name, y] of ORGANS) {
-      if (!paraFrom[name]) continue;
-      const [x0, y0] = paraFrom[name];
-      b += arrow(`M${x0} ${y0} C${x0 + 90} ${y0} 240 ${y + 8} 316 ${y + 8}`, GREEN, 3, 'stroke-dasharray="9 6"');
-    }
-    b += `<path d="M24 576 H62" stroke="${RED}" stroke-width="4"/>${text(70, 582, 'sympathetic: accelerator', 'sm red b', 'start')}`;
-    b += `<path d="M24 606 H62" stroke="${GREEN}" stroke-width="4" stroke-dasharray="9 6"/>${text(70, 612, 'parasympathetic: brake', 'sm green b', 'start')}`;
-  }
+/* ---------- Step 10: an arteriole narrows ---------- */
+function alphaArt(t) {
+  const u = ease.inOut(span(t, .3, .82)), hw = lerp(40, 22, u), cy = 168, rel = span(t, .05, .45), RINGS = [80, 160, 320, 400];
+  let b = `<path d="M240 0 V58" stroke="${SYM}" stroke-width="7" stroke-linecap="round"/><ellipse cx="240" cy="66" rx="26" ry="12" fill="#fff" stroke="${SYM}" stroke-width="3"/>`;
+  b += T(258, 24, 'sympathetic nerve', 'xs b red', 'start');
+  // The tube: walls, muscle rings carrying alpha-1 receptors, blood flowing through.
+  b += `<g data-part="arteriole"><rect x="24" y="${f(cy - hw)}" width="432" height="${f(2 * hw)}" fill="${ORGAN}"/><path d="M24 ${f(cy - hw)} H456 M24 ${f(cy + hw)} H456" stroke="${WALL}" stroke-width="5"/>`;
+  for (const x of RINGS) b += `<ellipse cx="${x}" cy="${cy}" rx="7" ry="${f(hw + 7)}" fill="none" stroke="${INK}" stroke-width="2.5"/>`;
+  b += arrow(`M190 ${cy} H${f(lerp(290, 262, u))}`, SYM, f(lerp(9, 5, u))) + '</g>';
+  b += `<g class="ghost"><path d="M18 ${cy - 40} H462 M18 ${cy + 40} H462" stroke="${INK}" stroke-width="2" stroke-dasharray="6 5"/></g>`;
+  b += `<g data-part="alpha1">${RINGS.map(x => dot(x, cy - hw - 8, 5.5, '#fff', `stroke="${SYM}" stroke-width="2.5"`)).join('')}${T(24, 108, 'alpha-1 receptors', 'xs b red', 'start')}</g>`;
+  // Noradrenaline drifting from the nerve onto the receptors of the two nearest rings.
+  [[160, 0], [320, .08], [160, .16], [320, .24], [200, .12], [280, .2]].forEach(([x, lag]) => {
+    const v = ease.out(span(rel, lag, lag + .6));
+    if (v > 0) b += dot(lerp(240, x, v), lerp(80, cy - hw - 18, v), 5, SYM, op(1 - .6 * span(t, .85, 1)));
+  });
+  b += T(24, cy + 70, 'arteriole: a muscle-ringed tube', 'xs b', 'start');
+  b += `<g ${op(span(t, .45, .8))}>${arrow(`M440 ${cy - 62} V${f(cy - hw - 6)}`, BLUE, 3)}${arrow(`M440 ${cy + 62} V${f(cy + hw + 6)}`, BLUE, 3)}${T(430, cy - 46, 'narrower', 'sm b blue', 'end')}</g>`;
+  // Blood pressure rises as the arteriole narrows.
+  const bar = lerp(.42, .7, u);
+  b += `<g data-part="bp">${T(24, 296, 'blood pressure', 'sm', 'start')}<rect x="172" y="282" width="270" height="18" fill="#fff" stroke="${C.rule}"/><rect x="172" y="282" width="${f(270 * bar)}" height="18" fill="${BLUE}"/></g>`;
+  b += `<rect class="ghost" x="172" y="278" width="${f(270 * .42)}" height="26" fill="none" stroke="${INK}" stroke-width="2" stroke-dasharray="5 4"/>`;
+  b += `<g ${op(span(t, .55, .85))}>${T(442, 330, 'higher ↑', 'sm b blue', 'end')}</g>`;
   return b;
 }
 
-// Step 3: a generic close-up of one synapse.
-function synapseCloseUp() {
-  const GREY = '#5d6270';
-  let b = DEFS + `<path d="M240 20 V96" stroke="${INK}" stroke-width="14" stroke-linecap="round"/>${text(258, 52, 'nerve', 'sm', 'start')}`;
-  b += `<rect x="130" y="88" width="220" height="150" rx="74" fill="#fff" stroke="${INK}" stroke-width="3"/>`;
-  for (const [x, y] of [[190, 140], [240, 128], [290, 142], [215, 186], [265, 190]]) b += `<circle cx="${x}" cy="${y}" r="16" fill="none" stroke="${INK}" stroke-width="1.5"/><circle cx="${x - 4}" cy="${y - 3}" r="4" fill="${GREY}"/><circle cx="${x + 5}" cy="${y + 4}" r="4" fill="${GREY}"/>`;
-  b += text(240, 226, 'nerve ending', 'sm');
-  for (let i = 0; i < 14; i++) b += `<circle cx="${f(170 + ((i * .618034) % 1) * 140)}" cy="${262 + (i * 7 % 5) * 16}" r="6" fill="${GREY}"/>`;
-  b += arrow('M120 258 V340', INK, 2) + arrow('M120 340 V258', INK, 2);
-  b += text(108, 296, 'the gap:', 'sm', 'end') + text(108, 318, 'synapse', 'sm b', 'end');
-  b += `<path d="M314 286 H354" stroke="${INK}" stroke-width="1.5"/>${text(360, 292, 'messenger', 'sm', 'start')}`;
-  b += `<rect x="40" y="352" width="400" height="230" fill="${ORGAN}"/><path d="M40 352 H440" stroke="${WALL}" stroke-width="3"/>`;
-  b += text(240, 420, 'organ cell', 'on-organ') + arrow('M240 440 V520', INK, 5) + text(240, 556, 'signal passed on', 'sm on-organ');
+/* ---------- Step 11: the adrenal gland ---------- */
+function adrenalArt(t) {
+  let b = `<rect x="392" y="24" width="44" height="352" fill="${ORGAN}"/><path d="M392 24 V376 M436 24 V376" stroke="${WALL}" stroke-width="3"/>`;
+  b += arrow('M414 70 V34', INK, 2.5) + T(386, 42, 'to the whole body', 'xs b', 'end');
+  b += `<path d="M80 256 C60 196 150 186 196 214 C226 232 270 228 282 262 C296 304 250 342 194 338 C146 334 96 318 80 256 Z" fill="${ORGAN}" stroke="${WALL}" stroke-width="3"/>${T(186, 290, 'kidney', 'sm on-organ')}`;
+  b += `<g data-part="adrenal"><path d="M104 214 Q138 150 182 146 Q226 152 246 210 Q178 190 104 214 Z" fill="#f0dfb4" stroke="#7a5c00" stroke-width="3"/>${T(12, 132, 'adrenal gland', 'sm b', 'start')}</g>`;
+  b += `<path d="M240 190 C300 186 330 196 392 196" fill="none" stroke="${ORGAN}" stroke-width="18"/><path d="M240 181 C300 177 330 187 392 187 M240 199 C300 195 330 205 392 205" fill="none" stroke="${WALL}" stroke-width="2"/>`;
+  // The sympathetic nerve fires; the gland answers with adrenaline into the blood.
+  b += `<path d="M30 0 C60 60 130 90 172 150" fill="none" stroke="${SYM}" stroke-width="6" stroke-linecap="round"/>`;
+  const p = span(t, 0, .18);
+  if (p > 0 && p < 1) { const [x, y] = bez([30, 0], [60, 60], [130, 90], [172, 150], p); b += dot(x, y, 9, SYM, 'opacity=".85"'); }
+  b += T(70, 24, 'sympathetic nerve', 'xs b red', 'start');
+  let a = '';
+  for (let k = 0; k < 9; k++) {
+    const u = span(t, .16 + k * .04, .62 + k * .04);
+    if (u <= 0 || u >= 1) continue;
+    const x = u < .4 ? lerp(200, 414, u / .4) : 414 + (k % 3 - 1) * 8, y = u < .4 ? lerp(186, 196, u / .4) : lerp(196, 40, (u - .4) / .6);
+    a += dot(x, y, 7, SYM);
+  }
+  b += `<g data-part="adrenaline">${a}${dot(30, 366, 7, SYM)}${T(46, 372, 'adrenaline, carried in the blood', 'sm', 'start')}</g>`;
   return b;
 }
 
-// Step 10: a sympathetic nerve reaches the adrenal gland, which releases adrenaline into the blood.
-const KIDNEY = 'M80 26 C44 22 30 52 34 76 C38 102 64 112 90 106 C112 101 120 86 110 78 C102 72 102 62 110 56 C122 46 112 28 80 26 Z';
-function adrenalPicture() {
-  let b = DEFS;
-  // Blood vessel on the right, carrying adrenaline up and away.
-  b += `<rect x="380" y="96" width="44" height="470" fill="${ORGAN}"/><path d="M380 96 V566 M424 96 V566" stroke="${WALL}" stroke-width="3"/>`;
-  b += arrow('M402 150 V104', INK, 2.5) + text(470, 84, 'to the whole body', 'sm', 'end');
-  // Kidney with the adrenal gland sitting on top.
-  b += `<path d="${KIDNEY}" transform="translate(2 250) scale(2.6)" fill="${ORGAN}" stroke="${WALL}" stroke-width="${f(3 / 2.6)}"/>${text(186, 400, 'kidney', 'on-organ')}`;
-  b += `<path d="M120 318 Q160 232 214 218 Q268 236 292 300 Q210 286 120 318 Z" fill="#f0dfb4" stroke="#7a5c00" stroke-width="3"/>`;
-  b += text(206, 206, 'adrenal gland', 'sm b');
-  // Sympathetic nerve arriving from above.
-  b += arrow('M206 30 V168', RED, 6) + text(192, 60, 'sympathetic nerve', 'sm red b', 'end');
-  // Adrenaline leaving the gland through a small vein into the vessel.
-  b += `<path d="M268 266 C320 266 340 300 380 300" fill="none" stroke="${ORGAN}" stroke-width="22"/><path d="M268 255 C320 255 340 289 380 289 M268 277 C320 277 340 311 380 311" fill="none" stroke="${WALL}" stroke-width="2"/>`;
-  for (const [x, y] of [[240, 262], [292, 270], [334, 290], [402, 290], [396, 240], [408, 196], [398, 160], [392, 350], [410, 420], [396, 500]]) b += `<circle cx="${x}" cy="${y}" r="7" fill="${RED}"/>`;
-  b += `<circle cx="40" cy="574" r="7" fill="${RED}"/>${text(56, 580, 'adrenaline, carried in the blood', 'sm', 'start')}`;
-  return b;
-}
-
-// Step 11: the pupil's two muscles, pulling in opposite directions.
-function pupilPicture() {
-  const cx = 240, cy = 236;
-  let b = DEFS + `<path d="M28 ${cy} Q240 46 452 ${cy} Q240 426 28 ${cy} Z" fill="#fff" stroke="${INK}" stroke-width="3"/><circle cx="${cx}" cy="${cy}" r="118" fill="#8c9b80"/>`;
+/* ---------- Step 12: the pupil's tug of war ---------- */
+function pupilArt(t) {
+  const cx = 240, cy = 168;
+  // Brake wins, then the accelerator wins, then back to the middle.
+  const small = Math.sin(Math.PI * span(t, .04, .44)), large = Math.sin(Math.PI * span(t, .52, .92));
+  const r = 36 - 16 * small + 18 * large;
+  let b = `<path d="M24 ${cy} Q240 -10 456 ${cy} Q240 346 24 ${cy} Z" fill="#fff" stroke="${INK}" stroke-width="3"/>${dot(cx, cy, 112, IRIS)}`;
+  b += `<g data-part="spoke">`;
   for (let i = 0; i < 20; i++) {
     const a = i * Math.PI / 10, c = Math.cos(a), s = Math.sin(a);
-    b += `<path d="M${f(cx + 66 * c)} ${f(cy + 66 * s)} L${f(cx + 110 * c)} ${f(cy + 110 * s)}" stroke="${RED}" stroke-width="4" stroke-linecap="round"/>`;
+    b += `<path d="M${f(cx + (r + 22) * c)} ${f(cy + (r + 22) * s)} L${f(cx + 104 * c)} ${f(cy + 104 * s)}" stroke="${SYM}" stroke-width="${f(3.5 + 2 * large)}" stroke-linecap="round"/>`;
   }
-  b += `<circle cx="${cx}" cy="${cy}" r="54" fill="none" stroke="${GREEN}" stroke-width="12" stroke-dasharray="10 4"/><circle cx="${cx}" cy="${cy}" r="44" fill="${INK}"/>`;
-  b += `<path d="M96 412 L196 280" stroke="${GREEN}" stroke-width="2"/><path d="M384 412 L318 312" stroke="${RED}" stroke-width="2"/>`;
-  b += `<path d="M${cx} ${cy} L${cx + 150} 70" stroke="#fff" stroke-width="5"/><path d="M${cx} ${cy} L${cx + 150} 70" stroke="${INK}" stroke-width="2"/>${text(cx + 156, 66, 'pupil', 'sm b', 'start')}`;
-  b += text(24, 438, 'ring muscle', 'sm b green', 'start') + text(24, 460, 'muscarinic receptors:', 'xs', 'start') + text(24, 480, 'acetylcholine → smaller', 'xs', 'start');
-  b += text(456, 438, 'spoke muscle', 'sm b red', 'end') + text(456, 460, 'alpha receptors:', 'xs', 'end') + text(456, 480, 'noradrenaline → larger', 'xs', 'end');
-  const mini = (x, r) => `<path d="M${x - 54} 556 Q${x} 522 ${x + 54} 556 Q${x} 590 ${x - 54} 556 Z" fill="#fff" stroke="${INK}" stroke-width="2"/><circle cx="${x}" cy="556" r="20" fill="#8c9b80"/><circle cx="${x}" cy="556" r="${r}" fill="${INK}"/>`;
-  b += mini(130, 5) + text(130, 612, 'brake wins', 'sm green b') + mini(350, 15) + text(350, 612, 'accelerator wins', 'sm red b');
+  b += `</g><g data-part="ring"><circle cx="${cx}" cy="${cy}" r="${f(r + 10)}" fill="none" stroke="${PARA}" stroke-width="${f(10 + 5 * small)}" stroke-dasharray="9 4"/></g>`;
+  b += `<g data-part="pupil">${dot(cx, cy, r, INK)}</g>`;
+  b += fadeIn(small, T(cx, 30, 'brake winning: smaller', 'sm b green')) + fadeIn(large, T(cx, 30, 'accelerator winning: larger', 'sm b red'));
+  b += `<g data-part="ring">${T(16, 340, 'ring muscle', 'sm b green', 'start')}${T(16, 362, 'M receptors:', 'xs', 'start')}${T(16, 382, 'acetylcholine → smaller', 'xs', 'start')}</g>`;
+  b += `<g data-part="spoke">${T(464, 340, 'spoke muscle', 'sm b red', 'end')}${T(464, 362, 'alpha-1 receptors:', 'xs', 'end')}${T(464, 382, 'noradrenaline → larger', 'xs', 'end')}</g>`;
+  b += `<path d="M64 322 L150 236" stroke="${PARA}" stroke-width="2"/><path d="M416 322 L330 246" stroke="${SYM}" stroke-width="2"/>`;
   return b;
 }
 
-// Step 12: an airway in cross-section, its muscle tightened by nerves and relaxed by adrenaline in the blood.
-function airwayPicture() {
-  const cx = 230, cy = 250;
-  let b = DEFS + `<circle cx="${cx}" cy="${cy}" r="128" fill="#e7cfc8" stroke="${WALL}" stroke-width="3"/>`;
-  b += `<circle cx="${cx}" cy="${cy}" r="88" fill="none" stroke="#b5776c" stroke-width="16" stroke-dasharray="14 5"/><circle cx="${cx}" cy="${cy}" r="70" fill="#fff" stroke="${INK}" stroke-width="2"/>`;
-  b += text(cx, cy + 6, 'air', 'sm') + `<path d="M${cx} ${cy + 90} V${cy + 134}" stroke="${INK}" stroke-width="1.5"/>${text(cx, cy + 152, 'muscle ring', 'sm')}`;
-  // Parasympathetic nerve from the left.
-  b += arrow(`M6 120 C70 120 110 150 ${cx - 70} ${cy - 50}`, GREEN, 5, 'stroke-dasharray="9 6"') + text(10, 100, 'parasympathetic nerve', 'sm green b', 'start');
-  // Blood vessel carrying adrenaline on the right.
-  b += `<rect x="404" y="60" width="40" height="400" fill="${ORGAN}"/><path d="M404 60 V460 M444 60 V460" stroke="${WALL}" stroke-width="3"/>`;
-  for (const y of [100, 170, 240, 310, 380, 430]) b += `<circle cx="424" cy="${y}" r="7" fill="${RED}"/>`;
-  b += arrow(`M398 ${cy} H${cx + 100}`, RED, 3, 'stroke-dasharray="6 5"') + text(470, 46, 'blood with adrenaline', 'sm red b', 'end');
-  b += text(14, 420, 'acetylcholine:', 'xs', 'start') + text(14, 440, 'muscle tightens,', 'xs', 'start') + text(14, 460, 'airway narrows', 'xs b green', 'start');
-  b += text(390, 420, 'adrenaline on beta', 'xs', 'end') + text(390, 440, 'receptors: relaxes,', 'xs', 'end') + text(390, 460, 'airway widens', 'xs b red', 'end');
-  const mini = (x, r) => `<circle cx="${x}" cy="548" r="34" fill="#e7cfc8" stroke="${WALL}" stroke-width="2"/><circle cx="${x}" cy="548" r="${r}" fill="#fff" stroke="${INK}" stroke-width="2"/>`;
-  b += mini(130, 7) + text(130, 610, 'brake wins', 'sm green b') + mini(350, 24) + text(350, 610, 'adrenaline wins', 'sm red b');
+/* ---------- Step 13: an airway, narrowed by acetylcholine and widened by adrenaline ---------- */
+function airwayArt(t) {
+  const cx = 210, cy = 190;
+  const narrow = Math.sin(Math.PI * span(t, .04, .44)), wide = Math.sin(Math.PI * span(t, .52, .92));
+  const r = 46 - 20 * narrow + 22 * wide;
+  let b = `<g data-part="airway"><circle cx="${cx}" cy="${cy}" r="118" fill="${AIR}" stroke="${WALL}" stroke-width="3"/>`;
+  b += `<circle cx="${cx}" cy="${cy}" r="${f(r + 20)}" fill="none" stroke="#b5776c" stroke-width="${f(14 + 6 * narrow)}" stroke-dasharray="14 5"/><circle cx="${cx}" cy="${cy}" r="${f(r)}" fill="#fff" stroke="${INK}" stroke-width="2"/>${T(cx, cy + 7, 'air', 'sm on-white')}</g>`;
+  // A parasympathetic nerve reaches the muscle from the top left and fires during the first half.
+  b += `<path d="M0 54 C60 56 104 84 ${cx - 56} ${cy - 58}" fill="none" stroke="${PARA}" stroke-width="5" stroke-dasharray="9 6" stroke-linecap="round"/>`;
+  if (narrow > .05) b += [0, 1, 2].map(k => dot(cx - 50 + k * 9, cy - 46 + k * 8, 4.5, PARA, op(narrow))).join('');
+  b += T(8, 30, 'parasympathetic nerve', 'xs b green', 'start');
+  // A blood vessel on the right carries adrenaline, which reaches the muscle in the second half.
+  b += `<rect x="404" y="48" width="40" height="280" fill="${ORGAN}"/><path d="M404 48 V328 M444 48 V328" stroke="${WALL}" stroke-width="3"/>`;
+  for (const y of [78, 138, 198, 258, 308]) b += dot(424, y, 6, SYM);
+  b += T(472, 30, 'blood with adrenaline', 'xs b red', 'end');
+  if (wide > .05) b += [0, 1, 2].map(k => dot(lerp(396, cx + r + 24, wide) - k * 8, cy - 8 + k * 10, 5, SYM, op(wide))).join('');
+  b += fadeIn(narrow, T(cx, 336, 'brake: narrower', 'sm b green')) + fadeIn(wide, T(cx, 336, 'adrenaline: wider', 'sm b red'));
+  b += `<g data-part="muscarinic">${T(8, 362, 'acetylcholine on M:', 'xs', 'start')}${T(8, 384, 'tightens: narrower', 'xs b green', 'start')}</g>`;
+  b += `<g data-part="beta2">${T(472, 362, 'adrenaline on beta-2:', 'xs', 'end')}${T(472, 384, 'relaxes: wider', 'xs b red', 'end')}</g>`;
   return b;
 }
 
-// Plain-word comparison with normal (used for chips and text alternatives).
-function trend(v, b, up, down) { const r = v / b; return r > 1.015 ? [up, 'up'] : r < .985 ? [down, 'down'] : ['about the same', 'same']; }
-function compare(o, kind = '') {
-  const rows = [];
-  if (kind === 'che' || kind === 'explore') rows.push(['Acetylcholine in the gap', trend(o.ach, BASE.ach, 'more', 'less')]);
-  rows.push(['Heart rate', trend(o.HR, BASE.HR, 'faster', 'slower')], ['Squeeze strength', trend(o.SV, BASE.SV, 'stronger', 'weaker')],
-    ['Arterioles', trend(BASE.R, o.R, 'wider', 'narrower')], ['Blood pressure', trend(o.P, BASE.P, 'higher', 'lower')],
-    ['Airways', trend(o.airway, BASE.airway, 'wider', 'narrower')], ['Pupils', trend(o.pupil, BASE.pupil, 'larger', 'smaller')]);
-  return rows;
-}
-const ARROW = { up: '↑', down: '↓', same: '↔' };
-const readout = (o, kind) => `<ul class="readout" aria-label="Compared with normal">${compare(o, kind).map(([k, [w, d]]) => `<li><b>${k}</b> <span class="${d}">${ARROW[d]} ${w}</span></li>`).join('')}</ul>`;
-const describe = (o, kind) => compare(o, kind).map(([k, [w]]) => `${k.toLowerCase()} ${w}`).join(', ');
-
-/* ---------- Lesson steps ---------- */
-const UPTO = n => ALL.slice(0, n);
-const CORE = {
-  wiring: () => svg('The brain and spinal cord on the left, with nerves running out to five organs on the right: the eyes, lungs, heart, blood vessels and gut. The signals run without conscious thought.', wiringPicture(false)),
-  branches: () => svg('The same wiring in two branches. Solid red nerves, the sympathetic accelerator, leave the middle of the spinal cord and reach the eyes, heart, blood vessels and gut, but hardly the muscle of the lungs. Dashed green nerves, the parasympathetic brake, leave the brainstem and the bottom of the cord and reach the eyes, lungs, heart and gut, but not the blood vessels.', wiringPicture(true)),
-  synapse: () => svg('Close-up of a nerve ending sitting just above an organ cell. Small sacs inside the ending hold messenger. Messenger dots drift across the narrow gap between them, the synapse, and an arrow inside the cell shows the signal passed on.', synapseCloseUp()),
-  ach: () => svg('Close-up of a parasympathetic synapse. Green acetylcholine dots cross the gap; each one fits a cup-shaped muscarinic receptor in the organ cell, and a green arrow shows the signal going into the cell.', zoomPicture('para', { note: ['acetylcholine docks in its receptor', 'and the signal passes into the cell'] })),
-  enzyme: () => svg('The same parasympathetic synapse with cholinesterase, a mouth-shaped enzyme sitting on the cell surface at the edge of the gap, chopping up acetylcholine.', zoomPicture('para', { enzyme: true, note: ['cholinesterase chops acetylcholine', 'apart, so the signal stays short'] })),
-  'para-heart': () => svg('The parasympathetic synapse above the heart. A heartbeat strip shows one dot per beat, evenly spaced, and a green word marks what acetylcholine does: the heart slower.', picture(BASE, { parts: UPTO(3), notes: { heart: 'slower ↓' }, color: GREEN }), 372),
-  ne: () => svg('Close-up of a sympathetic synapse. Red noradrenaline dots cross the gap to two kinds of cup-shaped receptor: a pair labelled alpha and a pair labelled beta, each passing its own signal into the cell.', zoomPicture('symp', { note: ['two receptor families,', 'alpha and beta'] })),
-  beta: () => svg('Both synapses above the heart. A new bar shows how hard each beat squeezes. Red words mark what the beta signal does: faster beats and a stronger squeeze.', picture(BASE, { parts: UPTO(5), notes: { heart: 'faster, stronger ↑' }, color: RED }), 372),
-  alpha: () => svg('Both synapses above the heart. New: an arteriole, a muscle-ringed tube, and a blood pressure bar. Red words mark what the alpha signal does: the arteriole narrower and blood pressure higher.', picture(BASE, { parts: UPTO(7), notes: { vessel: 'narrower', bp: 'higher ↑' }, color: RED })),
-  adrenal: () => svg('A kidney with an adrenal gland sitting on top. A red sympathetic nerve reaches the gland from above, and red dots of adrenaline leave it through a small vein into a blood vessel that carries them to the whole body.', adrenalPicture()),
-  pupil: () => svg('A large eye. Around the black pupil, a green ring muscle with muscarinic receptors pulls it smaller when acetylcholine arrives; red spoke-like muscles with alpha receptors pull it larger when noradrenaline arrives. Below, a small pupil where the brake wins and a large one where the accelerator wins.', pupilPicture()),
-  airway: () => svg('An airway in cross-section: air in the middle, wrapped in a ring of muscle. A green parasympathetic nerve from the left releases acetylcholine, which tightens the muscle and narrows the airway. On the right, a blood vessel carries red dots of adrenaline, which reach beta receptors on the muscle, relax it and widen the airway. Below, a narrow airway where the brake wins and a wide one where adrenaline wins.', airwayPicture()),
-  reflex: () => svg('The whole picture with a dotted blue line running from the blood pressure bar up to both nerves: the pressure reflex, which eases the accelerator and presses the brake when pressure rises.', picture(BASE, { parts: ALL })),
-  whole: () => svg('The whole picture: a sympathetic synapse releasing noradrenaline onto alpha and beta receptors, a parasympathetic synapse releasing acetylcholine onto muscarinic receptors with cholinesterase clearing the gap, and below them the heartbeat strip with its squeeze-strength bar, an arteriole, an airway opened by adrenaline in the blood, a pupil and the blood pressure bar, linked back to the nerves by the pressure reflex.', picture(BASE, { parts: ALL }))
-};
-const CHANGE_WHERE = {
-  mag: 'Black diamond-shaped drug molecules sit in the muscarinic receptors.',
-  mant: 'Grey blockers fill every muscarinic receptor, so acetylcholine cannot dock.',
-  che: 'A red cross stops cholinesterase, and acetylcholine dots crowd the gap.',
-  aag: 'Black diamond-shaped drug molecules sit in the alpha receptors.',
-  ablock: 'Grey blockers fill the alpha receptors.',
-  bag: 'Black diamond-shaped drug molecules sit in the beta receptors.',
-  bblock: 'Grey blockers fill the beta receptors.'
-};
-function changePicture(el, t) {
-  const kind = el.dataset.kind, ease = 1 - Math.pow(1 - t, 3);
-  const o = steady(mix(NORMAL, { ...NORMAL, ...CHANGES[kind] }, ease));
-  const name = el.dataset.stepTitle.split(':')[0];
-  return { pic: svg(`${name}, drawn over a faint dashed picture of normal. ${CHANGE_WHERE[kind]} Compared with normal: ${describe(o, kind)}.`, picture(o, { parts: ALL, ghost: BASE, legend: 'with the drug' })), ro: readout(o, kind) };
+/* ---------- Step 14: the baroreflex, once round the loop ---------- */
+function reflexArt(t) {
+  const up = ease.inOut(span(t, .02, .2)), down = ease.inOut(span(t, .7, .92)), level = .5 + .32 * up - .32 * down;
+  const hot = span(t, .14, .26) * (1 - span(t, .78, .9));      // sensors firing faster
+  const brake = span(t, .3, .42) * (1 - span(t, .82, .94));    // brake pressed, accelerator eased
+  let b = '';
+  // Pressure, felt by sensors in the artery wall.
+  b += `<g data-part="bp"><rect x="40" y="56" width="30" height="140" fill="#fff" stroke="${C.rule}" stroke-width="2"/><rect x="40" y="${f(196 - 140 * level)}" width="30" height="${f(140 * level)}" fill="${BLUE}"/></g>`;
+  b += `<path class="ghost" d="M32 126 H78" stroke="${INK}" stroke-width="2.5" stroke-dasharray="5 4"/>`;
+  b += T(55, 224, 'blood', 'xs b') + T(55, 246, 'pressure', 'xs b');
+  const path = [[78, 62], [150, 36], [250, 36], [298, 64]];
+  b += `<g data-part="reflex">${dot(74, 62, 7, BLUE)}<path d="${bezPath(path)}" fill="none" stroke="${BLUE}" stroke-width="3" stroke-dasharray="3 6"/>`;
+  for (let k = 0; k < 6; k++) { if (k >= 2 + Math.round(4 * hot)) continue; const [x, y] = bez(...path, (t * (2 + 4 * hot) + k / 6) % 1); b += dot(x, y, 4.5, BLUE); }
+  b += T(188, 22, 'sensors report pressure', 'xs b blue') + '</g>';
+  // The brainstem sets the two branches.
+  b += `<ellipse cx="372" cy="80" rx="80" ry="34" fill="#f3e3df" stroke="${WALL}" stroke-width="3"/>${T(372, 86, 'brainstem', 'sm b on-organ')}`;
+  b += `<path d="M338 112 C322 170 302 210 274 248" fill="none" stroke="${SYM}" stroke-width="${f(5.5 - 3.5 * brake)}" stroke-linecap="round"/>`;
+  b += `<path d="M404 112 C414 170 380 220 316 254" fill="none" stroke="${PARA}" stroke-width="${f(3 + 4 * brake)}" stroke-dasharray="9 6" stroke-linecap="round"/>`;
+  b += `<g ${op(.35 + .65 * brake)}>${T(304, 168, 'accelerator eased', 'xs b red', 'end')}${T(472, 266, 'brake pressed', 'xs b green', 'end')}</g>`;
+  // The heart slows, and pressure falls back.
+  const rate = lerp(1, .55, span(t, .4, .55) * (1 - span(t, .88, 1)));
+  const beat = Math.pow(Math.max(0, Math.sin(Math.PI * ((t * 9 * rate) % 1))), 8);
+  b += heartIcon(294, 290, 1.2 * (1 + .1 * beat)) + T(294, 356, 'heart', 'sm b');
+  b += `<g ${op(span(t, .45, .55))}>${T(350, 304, 'slower beats', 'xs b', 'start')}</g>`;
+  b += arrow('M252 306 C170 326 96 300 64 262', INK, 2.5, 'stroke-dasharray="6 5"');
+  b += `<g ${op(span(t, .72, .82))}>${T(150, 352, 'pressure falls back', 'xs b blue')}</g>`;
+  b += `<g ${op(1 - span(t, .2, .3) + span(t, .92, 1))}>${T(88, 120, 'pressure rises', 'xs b blue', 'start')}</g>`;
+  return b;
 }
 
-const steps = $$('[data-step]');
-const backBtn = $('[data-step-back]'), nextBtn = $('[data-step-next]'), progress = $('[data-step-progress]');
-let current = 0, frame = 0;
-const visualOf = el => el.querySelector('[data-visual]');
-const isAnimated = el => el.dataset.kind in CHANGES;
-// During a morph only the picture is replaced each frame; the word readout is rewritten only when its words change.
-const lastReadout = new WeakMap();
-function drawAt(el, t) {
-  const v = visualOf(el), { pic, ro } = changePicture(el, t), old = v.querySelector('svg');
-  if (!old) { v.innerHTML = pic + ro; lastReadout.set(v, ro); return; }
-  old.outerHTML = pic;
-  if (lastReadout.get(v) !== ro) { v.querySelector('.readout').outerHTML = ro; lastReadout.set(v, ro); }
-}
-function animate(el) {
-  cancelAnimationFrame(frame);
-  if (reducedMotion()) { drawAt(el, 1); return; }
-  let start = null;
-  drawAt(el, 0);
-  const tick = now => {
-    if (start === null) start = now;
-    const t = Math.min(1, (now - start) / 1600);
-    drawAt(el, t);
-    if (t < 1) frame = requestAnimationFrame(tick);
-  };
-  frame = requestAnimationFrame(tick);
-}
-steps.forEach(el => {
-  const kind = el.dataset.kind;
-  if (CORE[kind]) visualOf(el).innerHTML = CORE[kind]();
-  else drawAt(el, 1);
-  el.querySelector('.replay')?.addEventListener('click', () => animate(el));
+/* ---------- The whole picture: a map of the receptors, the base for every change ----------
+   Two messengers along the top. Each row is an organ: its receptor types (red for the sympathetic family,
+   green for M) and a drawing of what it does: beats (closer: faster; bigger: stronger), a tube, a bar, a
+   ring and an eye. A change is drawn over a dashed ghost of normal, with what moved named in blue. */
+const ROWS = [
+  { id: 'heart', name: 'heart', part: 'rate', tags: [['beta-1', 'b', 'b1'], ['M', 'm', 'm']] },
+  { id: 'arteriole', name: 'arterioles', part: 'arteriole', tags: [['alpha-1', 'a', 'a1']] },
+  { id: 'bp', name: 'blood pressure', part: 'bp', tags: [] },
+  { id: 'airway', name: 'airways', part: 'airway', tags: [['beta-2', 'b', 'b2'], ['M', 'm', 'm']] },
+  { id: 'pupil', name: 'pupil', part: 'pupil', tags: [['alpha-1', 'a', 'a1'], ['M', 'm', 'm']] }
+];
+const TOP = 54, ROW = 62;
+const pw = (x, k) => Math.pow(Math.max(x, 1e-6), k);
+// How each organ is drawn for a state (exponents exaggerate differences so they read at a glance).
+const look = o => ({
+  gap: clamp(46 * pw(o.HR, -1.05), 18, 90), r: clamp(7.5 * pw(o.SV, .9), 4, 12),
+  hw: clamp(15 * pw(o.R, -1.5), 5, 26), bp: clamp(.5 * pw(o.P, 1.5), .06, 1),
+  lumen: clamp(13 * pw(o.airway, 1.1), 3, 25), pupil: clamp(10 * pw(o.pupil, 1.15), 3, 21)
 });
-function showStep(n, focus = false) {
-  cancelAnimationFrame(frame);
-  current = clamp(n, 0, steps.length - 1);
-  steps.forEach((el, i) => { el.hidden = i !== current; });
-  backBtn.disabled = current === 0;
-  nextBtn.textContent = current === steps.length - 1 ? 'Start again ↻' : 'Next →';
-  progress.textContent = `Step ${current + 1} of ${steps.length}`;
-  if (location.hash !== `#step-${current + 1}`) history.replaceState(null, '', `#step-${current + 1}`);
-  const el = steps[current];
-  if (isAnimated(el)) animate(el);
-  if (focus) { const h = el.querySelector('h2'); h.focus({ preventScroll: true }); h.scrollIntoView({ block: 'start' }); }
-}
-nextBtn.addEventListener('click', () => showStep(current === steps.length - 1 ? 0 : current + 1, true));
-backBtn.addEventListener('click', () => showStep(current - 1, true));
-$('#lesson').addEventListener('keydown', e => {
-  if (e.target.closest('input, select, textarea') || e.altKey || e.ctrlKey || e.metaKey) return;
-  if (e.key === 'ArrowRight' && current < steps.length - 1) { e.preventDefault(); showStep(current + 1, true); }
-  if (e.key === 'ArrowLeft' && current > 0) { e.preventDefault(); showStep(current - 1, true); }
+// Which receptors a state's drugs act on.
+const drugsOf = p => ({
+  m: p.mAg > .3 ? 'on' : p.mFree < .6 ? 'block' : '',
+  a: p.aAg > .3 ? 'on' : p.aFree < .6 ? 'block' : '',
+  b: p.bAg > .3 ? 'on' : p.bFree < .6 ? 'block' : '',
+  che: p.che < .6
 });
-
-/* ---------- Tabs ---------- */
-const tabs = $$('[role=tab]');
-function activate(tab, focus = false) {
-  tabs.forEach(t => { const on = t === tab; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; document.getElementById(t.getAttribute('aria-controls')).hidden = !on; });
-  if (focus) tab.focus();
-  if (tab.id === 'tab-lesson') { if (isAnimated(steps[current])) drawAt(steps[current], 1); } else cancelAnimationFrame(frame);
-  update();
+const tw = (s, px = 17) => s.length * px * .56;  // a label's rough width
+function organDrawing(id, L, y, ghost) {
+  const cy = y + 32;
+  let s = '', g = '';
+  if (id === 'heart') {
+    for (let x = 176; x <= 352; x += L.gap) s += dot(x, cy, L.r, BLUE);
+    if (ghost) for (let x = 176; x <= 352; x += ghost.gap) g += `<circle cx="${f(x)}" cy="${cy}" r="${f(ghost.r)}" fill="none" stroke="${INK}" stroke-width="2" stroke-dasharray="4 3"/>`;
+    s = `<path d="M166 ${cy} H356" stroke="${C.rule}" stroke-width="2"/>` + s;
+  }
+  if (id === 'arteriole') {
+    s = `<rect x="166" y="${f(cy - L.hw)}" width="190" height="${f(2 * L.hw)}" fill="${ORGAN}"/><path d="M166 ${f(cy - L.hw)} H356 M166 ${f(cy + L.hw)} H356" stroke="${WALL}" stroke-width="3.5"/>`;
+    if (ghost) g = `<path d="M162 ${f(cy - ghost.hw)} H360 M162 ${f(cy + ghost.hw)} H360" stroke="${INK}" stroke-width="2" stroke-dasharray="6 5"/>`;
+  }
+  if (id === 'bp') {
+    s = `<rect x="166" y="${cy - 9}" width="190" height="18" fill="#fff" stroke="${C.rule}"/><rect x="166" y="${cy - 9}" width="${f(190 * L.bp)}" height="18" fill="${BLUE}"/>`;
+    if (ghost) g = `<rect x="166" y="${cy - 13}" width="${f(190 * ghost.bp)}" height="26" fill="none" stroke="${INK}" stroke-width="2" stroke-dasharray="5 4"/>`;
+  }
+  if (id === 'airway') {
+    s = `${dot(261, cy, 28, AIR, `stroke="${WALL}" stroke-width="2.5"`)}${dot(261, cy, L.lumen, '#fff', `stroke="${INK}" stroke-width="2"`)}`;
+    if (ghost) g = `<circle cx="261" cy="${cy}" r="${f(ghost.lumen)}" fill="none" stroke="${INK}" stroke-width="2" stroke-dasharray="4 3"/>`;
+  }
+  if (id === 'pupil') {
+    s = `<path d="M201 ${cy} Q261 ${cy - 34} 321 ${cy} Q261 ${cy + 34} 201 ${cy} Z" fill="#fff" stroke="${INK}" stroke-width="2"/>${dot(261, cy, 23, IRIS)}${dot(261, cy, L.pupil, INK)}`;
+    if (ghost) g = `<circle cx="261" cy="${cy}" r="${f(ghost.pupil)}" fill="none" stroke="#fff" stroke-width="2.5" stroke-dasharray="4 3"/>`;
+  }
+  return { s, g };
 }
-tabs.forEach((t, i) => {
-  t.addEventListener('click', () => activate(t));
-  t.addEventListener('keydown', e => {
-    const n = { ArrowRight: (i + 1) % tabs.length, ArrowLeft: (i + tabs.length - 1) % tabs.length, Home: 0, End: tabs.length - 1 }[e.key];
-    if (n !== undefined) { e.preventDefault(); activate(tabs[n], true); }
+// What a change moved, in words: [measure, word if it rose, word if it fell].
+const MEASURES = {
+  HR: ['Heart rate', 'faster ↑', 'slower ↓'], SV: ['Squeeze strength', 'stronger', 'weaker'],
+  R: ['Arterioles', 'narrower ↓', 'wider ↑'], P: ['Blood pressure', 'higher ↑', 'lower ↓'],
+  airway: ['Airways', 'wider ↑', 'narrower ↓'], pupil: ['Pupils', 'larger ↑', 'smaller ↓']
+};
+// The changes each step names on the picture (its main effects; the rest of the picture moves too).
+const NAMED = {
+  mag: ['HR', 'P', 'airway', 'pupil'], mant: ['HR', 'airway', 'pupil'], che: ['HR', 'P', 'airway', 'pupil'],
+  aag: ['R', 'P', 'HR', 'pupil'], ablock: ['R', 'P', 'HR', 'pupil'], bag: ['HR', 'SV', 'R', 'airway'], bblock: ['HR', 'SV', 'P', 'airway'],
+  explore: ['HR', 'SV', 'R', 'P', 'airway', 'pupil']
+};
+const REFLEX_NOTE = { aag: 'the reflex', ablock: 'the reflex' };
+const moved = (o, k) => { const r = o[k] / BASE[k]; return r > 1.05 ? 'up' : r < .95 ? 'down' : 'same'; };
+const word = (o, k) => { const d = moved(o, k); return d === 'up' ? MEASURES[k][1] : d === 'down' ? MEASURES[k][2] : ''; };
+function mapArt(o, { ghost = null, kind = '', legend = '', a = 1, drugA = 1 } = {}) {
+  const L = look(o), G = ghost ? look(ghost) : null, d = drugsOf(o.p), named = NAMED[kind] || [];
+  let b = '';
+  // The messengers along the top.
+  b += `<g data-part="ne">${T(12, 22, 'sympathetic', 'sm b red', 'start')}${T(12, 44, 'noradrenaline', 'xs', 'start')}${[0, 1, 2].map(k => dot(148 + 14 * k, 39, 5, SYM)).join('')}</g>`;
+  const nAch = clamp(Math.round(3 * Math.pow(o.ach / BASE.ach, 1.2)), 1, 9);
+  const CL = [[398, 39], [412, 39], [426, 39], [405, 28], [419, 28], [405, 50], [419, 50], [433, 28], [433, 50]];
+  b += `<g data-part="ach">${T(468, 22, 'parasympathetic', 'sm b green', 'end')}${T(268, 44, 'acetylcholine', 'xs', 'start')}${CL.slice(0, nAch).map(([x, y]) => dot(x, y, 5, PARA)).join('')}</g>`;
+  b += `<g data-part="enzyme">${enzyme(458, 46, 10, .5)}${d.che ? `<g ${op(drugA)}>${cross(458, 40, 7)}</g>` : ''}</g>`;
+  b += `<path d="M12 ${TOP - 2} H468" stroke="${C.rule}" stroke-width="1.5"/>`;
+  ROWS.forEach((row, i) => {
+    const y = TOP + i * ROW;
+    if (i) b += `<path d="M12 ${y} H468" stroke="${C.panel}" stroke-width="1"/>`;
+    const { s, g } = organDrawing(row.id, L, y, G);
+    b += `<g data-part="${row.part}">${T(12, y + 26, row.name, 'sm b', 'start')}${s}</g>`;
+    if (g) b += `<g class="ghost" data-ghost="normal">${g}</g>`;
+    let x = 12;
+    for (const [tag, fam, part] of row.tags) {
+      const act = d[fam], col = fam === 'm' ? PARA : SYM;
+      let t = '';
+      if (act) { t += `<g data-part="drug" ${op(drugA)}>${act === 'on' ? diamond(x + 7, y + 47, 7) : plug(x + 7, y + 47, 14, 12)}</g>`; x += 18; }
+      t += T(x, y + 53, tag, `xs b ${tint(col)}`, 'start');
+      b += `<g data-part="${part}">${t}</g>`;
+      x += tw(tag) + 14;
+    }
+    // What moved, named in blue on the row.
+    const keys = { heart: ['HR', 'SV'], arteriole: ['R'], bp: ['P'], airway: ['airway'], pupil: ['pupil'] }[row.id].filter(k => named.includes(k));
+    const words = keys.map(k => word(o, k)).filter(Boolean);
+    if (words.length && a > 0) {
+      let w = `${T(470, y + 28, words[0], 'sm b blue', 'end')}`;
+      if (words[1]) w += T(470, y + 50, words[1], 'xs b blue', 'end');
+      else if (row.id === 'heart' && REFLEX_NOTE[kind]) w += T(470, y + 50, REFLEX_NOTE[kind], 'xs muted', 'end');
+      b += `<g data-named ${op(a)}>${w}</g>`;
+    }
   });
-});
-function fromHash() {
-  const m = location.hash.match(/^#step-(\d+)$/);
-  if (m) { if (tabs[0].getAttribute('aria-selected') !== 'true') activate(tabs[0]); showStep(Number(m[1]) - 1); }
+  // The key under the picture.
+  let ky = TOP + ROWS.length * ROW + 22, kx = 12;
+  const items = [];
+  if (ghost) items.push([`<path d="M0 -6 H28" stroke="${INK}" stroke-width="2.5" stroke-dasharray="6 5"/>`, 'normal', 36]);
+  if (ghost && legend) items.push([`<path d="M0 -6 H28" stroke="${BLUE}" stroke-width="5"/>`, legend, 36]);
+  if (d.m === 'on' || d.a === 'on' || d.b === 'on') items.push([diamond(8, -6, 7), 'drug switches it on', 22]);
+  if (d.m === 'block' || d.a === 'block' || d.b === 'block') items.push([plug(8, -6, 14, 12), 'drug blocks it', 22]);
+  if (d.che) items.push([cross(8, -6, 6), 'enzyme stopped', 22]);
+  if (!ghost) items.push([dot(6, -6, 6, SYM), 'red: sympathetic receptors', 18], [dot(6, -6, 6, PARA), 'green: M', 18]);
+  let rows = 1;
+  for (const [icon, w, pad] of items) {
+    const width = pad + tw(w);
+    if (kx > 12 && kx + width > 472) { kx = 12; ky += 24; rows++; }
+    b += `<g transform="translate(${f(kx)} ${ky})">${icon}${T(pad, 0, w, 'xs', 'start')}</g>`;
+    kx += width + 18;
+  }
+  const attrs = s => `data-hr="${(s.HR / BASE.HR).toFixed(4)}" data-strength="${(s.SV / BASE.SV).toFixed(4)}" data-pressure="${(s.P / BASE.P).toFixed(4)}" data-arteriole="${(s.R / BASE.R).toFixed(4)}" data-airway="${(s.airway / BASE.airway).toFixed(4)}" data-pupil="${(s.pupil / BASE.pupil).toFixed(4)}" data-ach="${(s.ach / BASE.ach).toFixed(4)}"`;
+  return { body: `<g data-new-state="${legend || 'current'}" ${attrs(o)}>${b}</g>`, h: ky + 10 };
 }
-window.addEventListener('hashchange', fromHash);
-if (/^#step-\d+$/.test(location.hash)) fromHash(); else showStep(0);
+const mapSvg = (label, o, opt) => { const { body, h } = mapArt(o, opt); return svg(label, body, { h }); };
+
+/* ---------- Words: comparisons and text alternatives ---------- */
+// Arterioles are drawn and named by their width, which falls as their tightness rises.
+const FLIP = { up: 'down', down: 'up', same: 'same' };
+const rowsFor = (o, kind) => (NAMED[kind] || NAMED.explore).map(k => {
+  const dir = k === 'R' ? FLIP[moved(o, k)] : moved(o, k), w = word(o, k).replace(/ [↑↓]$/, '');
+  return [MEASURES[k][0], dir, dir === 'same' ? 'about the same' : w];
+});
+const readoutOf = (o, kind) => readout(rowsFor(o, kind));
+const describe = (o, kind) => rowsFor(o, kind).map(([k, , w]) => `${k.toLowerCase()} ${w}`).join(', ');
+
+/* ---------- The lesson's scenes, one per step kind ---------- */
+const TITLE = { mag: 'Muscarinic agonists', mant: 'Muscarinic antagonists', che: 'Cholinesterase inhibitors', aag: 'Alpha-1 agonists', ablock: 'Alpha-1 blockers', bag: 'Nonselective beta agonists', bblock: 'Beta-blockers' };
+const WHERE = {
+  mag: 'Purple diamonds, the drug, sit on every M receptor tag: heart, airways and pupil.',
+  mant: 'Purple plugs, the blocker, sit on every M receptor tag, so acetylcholine cannot dock.',
+  che: 'A purple cross stops cholinesterase, and green acetylcholine dots crowd the top of the picture.',
+  aag: 'Purple diamonds sit on the alpha-1 tags of the arterioles and the pupil.',
+  ablock: 'Purple plugs sit on the alpha-1 tags of the arterioles and the pupil.',
+  bag: 'Purple diamonds sit on the beta-1 tag of the heart and the beta-2 tag of the airways.',
+  bblock: 'Purple plugs sit on the beta-1 tag of the heart and the beta-2 tag of the airways.'
+};
+function change(kind) {
+  return {
+    duration: 3000,
+    render(t) {
+      const o = steady(mix(NORMAL, { ...NORMAL, ...CHANGES[kind] }, ease.inOut(span(t, .12, .78))));
+      const label = `${TITLE[kind]}, drawn over a faint dashed picture of normal. ${WHERE[kind]} Compared with normal: ${describe(o, kind)}.`;
+      return { svg: mapSvg(label, o, { ghost: BASE, kind, legend: 'with the drug', a: span(t, .6, .92), drugA: span(t, 0, .2) }), readout: readoutOf(o, kind) };
+    }
+  };
+}
+const scenes = {
+  wiring: { duration: 3600, loop: true, render: t => svg('The brain and spinal cord on the left, with nerves running out to five organs on the right: the eyes, lungs, heart, blood vessels and gut. Blue signals run along every nerve, all the time.', wiringArt(t), { h: 410 }) },
+  branches: { duration: 3600, loop: true, render: t => svg('The same wiring in two branches. Solid red nerves, the sympathetic accelerator, leave the middle of the spinal cord and reach the eyes, heart, blood vessels and gut, but hardly the airway muscle of the lungs. Dashed green nerves, the parasympathetic brake, leave the brainstem and the bottom of the cord and reach the eyes, lungs, heart and gut, but not the blood vessels.', branchesArt(t), { h: 420 }) },
+  synapse: synapseScene('synapse'),
+  ach: synapseScene('ach'),
+  enzyme: synapseScene('enzyme'),
+  ne: synapseScene('ne'),
+  reuptake: synapseScene('reuptake'),
+  'para-heart': heartScene('para-heart'),
+  beta: heartScene('beta'),
+  alpha: { duration: 3400, render: t => svg('A sympathetic nerve above an arteriole, a small artery ringed with muscle. Red noradrenaline dots fall onto the muscle’s alpha-1 receptors, the muscle tightens and the tube narrows inside its dashed, wider outline. Blue arrows mark it narrower, and a blood pressure bar below grows past its dashed normal: higher.', alphaArt(t), { h: 340 }) },
+  adrenal: { duration: 4400, loop: true, render: t => svg('A kidney with an adrenal gland sitting on top. A red sympathetic nerve fires into the gland, and red dots of adrenaline leave it through a small vein into a large blood vessel that carries them up to the whole body.', adrenalArt(t), { h: 384 }) },
+  pupil: { duration: 5200, loop: true, render: t => svg('A large eye. Around the black pupil, a green ring muscle with M receptors pulls it smaller when acetylcholine arrives; red spoke-like muscles with alpha-1 receptors pull it larger when noradrenaline arrives. The pupil shrinks while the brake wins, then grows while the accelerator wins.', pupilArt(t), { h: 392 }) },
+  airway: { duration: 5200, loop: true, render: t => svg('An airway in cross-section: air in the middle, wrapped in a ring of muscle. First a dashed green parasympathetic nerve releases acetylcholine onto M receptors: the muscle tightens and the airway narrows. Then red adrenaline from a blood vessel on the right reaches beta-2 receptors: the muscle relaxes and the airway widens.', airwayArt(t), { h: 394 }) },
+  reflex: { duration: 6400, loop: true, render: t => svg('The baroreflex as a loop. A blood pressure bar rises; blue signals from pressure sensors run faster to the brainstem; the brainstem eases the red accelerator nerve and presses the green brake nerve; the heart beats more slowly; and the pressure bar falls back to its dashed normal level.', reflexArt(t), { h: 364 }) },
+  whole: () => mapSvg('The whole picture as a map. Along the top, noradrenaline from the sympathetic branch and acetylcholine from the parasympathetic branch, cleared by cholinesterase. Then one row per organ, with its receptor types: the heart, beta-1 and M, drawn as a strip of beats; the arterioles, alpha-1, drawn as a tube; blood pressure as a bar; the airways, beta-2 and M, as a ring; and the pupil, alpha-1 and M, in an eye.', BASE),
+  mag: change('mag'), mant: change('mant'), che: change('che'), aag: change('aag'), ablock: change('ablock'), bag: change('bag'), bblock: change('bblock'),
+};
 
 /* ---------- Shared model state (Clinical values + Explore freely) ---------- */
 let params = { ...NORMAL }, data = null;
 const SLIDERS = ['symp', 'para', 'che', 'mFree', 'aFree', 'bFree', 'mAg', 'aAg', 'bAg'];
-const LESSON_LABEL = { mag: 'Muscarinic agonists', mant: 'Muscarinic antagonists', che: 'Cholinesterase inhibitors', aag: 'Peripheral alpha-1 agonists', ablock: 'Alpha-1 blockers', bag: 'Nonselective beta agonists', bblock: 'Beta blockers' };
+const LESSON_LABEL = { mag: 'Muscarinic agonists', mant: 'Muscarinic antagonists', che: 'Cholinesterase inhibitors', aag: 'Peripheral alpha-1 agonists', ablock: 'Alpha-1 blockers', bag: 'Nonselective beta agonists', bblock: 'Beta-blockers' };
 const level = (k, v) => (k === 'symp' || k === 'para') ? (v < .97 ? 'less' : v > 1.03 ? 'more' : 'normal')
   : k === 'che' ? (v > .97 ? 'normal' : v > .55 ? 'slowed' : 'mostly stopped')
   : k.endsWith('Ag') ? (v < .05 ? 'none' : v < 1 ? 'some' : 'a lot')
@@ -470,14 +605,14 @@ function measures(o) {
 const fmt = n => n.toFixed(0);
 const DIRECTION = { up: '↑ Expected increase', down: '↓ Expected decrease', none: '↔ Little or no change', variable: '↕ Variable' };
 function domain(v) {
-  const a = v.low ?? v.high * .6, b = v.high ?? v.low * 2, span = b - a, lo = a - .6 * span, hi = b + .6 * span;
+  const a = v.low ?? v.high * .6, b = v.high ?? v.low * 2, w = b - a, lo = a - .6 * w, hi = b + .6 * w;
   const pos = n => f(20 + clamp((n - lo) / (hi - lo), 0, 1) * 360);
   return { pos, lo, hi };
 }
 function update() {
   syncControls();
   const o = steady(params);
-  $('#explore-visual').innerHTML = svg(`Illustrative model with your settings, drawn over a faint dashed picture of normal. Compared with normal: ${describe(o, 'explore')}.`, picture(o, { parts: ALL, ghost: BASE, legend: 'your settings' })) + readout(o, 'explore');
+  $('#explore-visual').innerHTML = mapSvg(`Illustrative model with your settings, drawn over a faint dashed picture of normal. Compared with normal: ${describe(o, 'explore')}.`, o, { ghost: BASE, kind: 'explore', legend: 'your settings' }) + readoutOf(o, 'explore');
   const rel = `heart rate ×${o.HR.toFixed(2)} · squeeze strength ×${o.SV.toFixed(2)} · arteriole tightness ×${o.R.toFixed(2)} · blood pressure ×${o.P.toFixed(2)} · airway width ×${o.airway.toFixed(2)} · pupil size ×${o.pupil.toFixed(2)}`;
   if (!data) { $('#model-results').textContent = `Illustrative model, relative to normal: ${rel}`; return; }
   const m = measures(o), unit = id => data.values.find(v => v.id === id).unit;
@@ -495,8 +630,9 @@ function update() {
     const status = v.kind === 'threshold' ? (shown < v.low ? 'below the guideline threshold' : 'at or above the guideline threshold')
       : v.low !== null && shown < v.low ? 'below the guideline zone' : above ? 'above the guideline zone' : 'inside the shaded guideline zone';
     row.querySelector('.status').textContent = `Model: ${status}`;
-    const d = state?.shifts[v.id];
-    row.querySelector('.direction').textContent = state ? (d ? DIRECTION[d] : 'No direction listed for this row') : '';
+    const d = state?.shifts[v.id], dir = row.querySelector('.direction');
+    dir.textContent = state ? (d ? DIRECTION[d] : 'No direction listed for this row') : '';
+    dir.classList.toggle('quiet', Boolean(state && !d));
   }
 }
 const custom = () => { $('#clinical-state').value = 'normal'; $('#state-summary').textContent = 'Custom model settings.'; };
@@ -565,7 +701,7 @@ async function load() {
         : `${v.label}: the guideline band and the current illustrative model marker`);
       right.querySelector('.key').textContent = threshold
         ? `Diagnostic threshold, not a normal range: ${v.thresholdMeaning} (${v.low} ${v.unit}, dashed line). No normal band is shown · blue line: model`
-        : hasLow && hasHigh ? `Guideline band ${v.low}–${v.high} ${v.unit} (shaded) · blue line: model`
+        : hasLow && hasHigh ? `Guideline band ${v.low} to ${v.high} ${v.unit} (shaded) · blue line: model`
           : hasHigh ? `Guideline “normal” category: below ${v.high} ${v.unit} (shaded; no lower limit given) · blue line: model`
             : `Guideline lower limit ${v.low} ${v.unit} · blue line: model`;
       const cite = document.createElement('div'); cite.className = 'citation';
@@ -576,7 +712,6 @@ async function load() {
     }
     for (const [id, citation] of Object.entries(data.sources)) {
       const li = document.createElement('li'); li.textContent = `[${id}] ${citation}`;
-      if (data.sourceLinks?.[id]) { const a = document.createElement('a'); a.href = data.sourceLinks[id]; a.textContent = 'Full text'; li.append(' · ', a); }
       if (data.sourceDois?.[id]) { const a = document.createElement('a'); a.href = `https://doi.org/${data.sourceDois[id]}`; a.textContent = `DOI ${data.sourceDois[id]}`; li.append(' · ', a); }
       $('#sources').append(li);
     }
@@ -595,5 +730,5 @@ async function load() {
   }
   update();
 }
-update();
-load();
+
+lesson({ scenes, before: load, onTab: { clinical: update, explore: update } });

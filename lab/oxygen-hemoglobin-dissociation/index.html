@@ -11,8 +11,9 @@
 <meta property="og:url" content="https://seansooch.dev/lab/oxygen-hemoglobin-dissociation/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/lab/kit/kit.css">
 <link rel="stylesheet" href="style.css">
-<script src="app.js" defer></script>
+<script type="module" src="app.js"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to the lesson</a>
@@ -28,16 +29,19 @@
     </nav>
   </div>
 </header>
-<main id="main">
+<main id="main" data-slug="oxygen-hemoglobin-dissociation">
   <div class="intro">
-    <p class="eyebrow"><a href="/lab/">The Lab</a> / Core medicine / Lesson 9</p>
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / <a href="/lab/#breath-and-blood">Unit 3: Breath and blood</a> / Lesson 9</p>
     <h1>Oxygen and<br><span>hemoglobin.</span></h1>
     <p class="lede">Your blood picks up oxygen in the lungs and hands it over in the tissues, using the same molecule for both jobs. See how one S-shaped curve makes that possible, then watch what slides it, and what robs it.</p>
     <p class="note">Educational, not for clinical use</p>
+    <div class="lx-plan" data-lx-plan></div>
   </div>
 
   <div class="tabs" role="tablist" aria-label="Lesson views">
     <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-quiz" aria-controls="quiz" aria-selected="false" tabindex="-1">Quiz</button>
+    <button type="button" role="tab" id="tab-summary" aria-controls="summary" aria-selected="false" tabindex="-1">Summary</button>
     <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
     <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
   </div>
@@ -53,19 +57,19 @@
       <p class="eyebrow">Build the curve</p>
       <h2 tabindex="-1">Each red cell is packed with hemoglobin</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Each red blood cell is stuffed with <dfn>hemoglobin</dfn>, a protein that holds oxygen. One hemoglobin molecule has four <dfn>oxygen seats</dfn>: spots where one oxygen molecule can sit. Oxygen sits loosely, so it can get on and off again.</p>
+      <p class="caption">Each red blood cell is stuffed with <dfn data-part="molecule">hemoglobin</dfn>, a protein that holds oxygen. One hemoglobin molecule has four <dfn data-part="seat">oxygen seats</dfn>: spots where one oxygen molecule can sit. Oxygen sits loosely, so it can get on and off again.</p>
     </article>
     <article data-step="3" data-step-title="Oxygen pressure: how hard oxygen pushes" data-kind="pressure" hidden>
       <p class="eyebrow">Build the curve</p>
       <h2 tabindex="-1">Oxygen pressure: how hard oxygen pushes</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Oxygen pressure</dfn> measures how much oxygen is pressing to move from one place to another. It is high in the lungs, where fresh air arrives, and low in working tissues, which use oxygen up. Oxygen always moves from high pressure to low.</p>
+      <p class="caption"><dfn data-part="pressure">Oxygen pressure</dfn> measures the oxygen dissolved in the blood itself, not the oxygen held by hemoglobin: it is how hard oxygen presses to move on. It is high in the lungs, where fresh air arrives, and low in working tissues, which use oxygen up. Oxygen always moves from high pressure to low.</p>
     </article>
     <article data-step="4" data-step-title="More pressure, more seats filled" data-kind="fill" hidden>
       <p class="eyebrow">Build the curve</p>
       <h2 tabindex="-1">More pressure, more seats filled</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">The higher the oxygen pressure around hemoglobin, the more of its seats fill. The share of seats holding oxygen is called <dfn>saturation</dfn>: empty at no pressure, almost completely full at high pressure.</p>
+      <p class="caption">The higher the oxygen pressure around hemoglobin, the more of its seats fill. The share of seats holding oxygen is called <dfn data-part="saturation">saturation</dfn>: empty at no pressure, almost completely full at high pressure.</p>
     </article>
     <article data-step="5" data-step-title="The first oxygen makes the rest easier" data-kind="team" hidden>
       <p class="eyebrow">Build the curve</p>
@@ -83,65 +87,61 @@
       <p class="eyebrow">Build the curve</p>
       <h2 tabindex="-1">In the lungs, the flat top keeps blood full</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Blood leaving the lungs sits on the <dfn>plateau</dfn>, the curve’s flat top: almost every seat is full. Because the top is flat, even if lung oxygen pressure dips a little, hemoglobin still loads nearly fully. That is a built-in safety margin.</p>
+      <p class="caption">Blood leaving the lungs sits on the <dfn data-part="plateau">plateau</dfn>, the curve’s flat top: almost every seat is full. Because the top is flat, even if lung oxygen pressure dips a little, hemoglobin still loads nearly fully. That is a built-in safety margin.</p>
     </article>
     <article data-step="8" data-step-title="In the tissues, the steep slope lets go" data-kind="tissues" hidden>
       <p class="eyebrow">Build the curve</p>
       <h2 tabindex="-1">In the tissues, the steep slope lets go</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Working tissues have a low oxygen pressure, which lands on the curve’s steep slope. There, a small drop in pressure empties many seats, so hemoglobin <dfn>unloads</dfn>, or hands over, plenty of oxygen exactly where it is needed.</p>
+      <p class="caption">Working tissues have a low oxygen pressure, which lands on the curve’s steep slope. There, a small drop in pressure empties many seats, so hemoglobin <dfn data-part="slope">unloads</dfn>, or hands over, plenty of oxygen exactly where it is needed.</p>
     </article>
     <article data-step="9" data-step-title="The drop between them is what the tissues get" data-kind="given" hidden>
       <p class="eyebrow">Build the curve</p>
       <h2 tabindex="-1">The drop between them is what the tissues get</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">The gap in height between the lungs point and the tissues point is the oxygen unloaded. At rest, most oxygen stays on board: a <dfn>reserve</dfn> for exercise, when the heart also pumps more blood (<a href="/lab/frank-starling-cardiac-output/">Lesson 3</a>).</p>
+      <p class="caption">The gap in height between the lungs point and the tissues point is the share of hemoglobin’s oxygen handed over. At rest, most of it stays on board: a <dfn data-part="reserve">reserve</dfn> for exercise, when the heart also pumps more blood (<a href="/lab/frank-starling-cardiac-output/">Lesson 3</a>).</p>
     </article>
     <article data-step="10" data-step-title="Half full: where the curve sits" data-kind="half" hidden>
       <p class="eyebrow">Build the curve</p>
       <h2 tabindex="-1">Half full: where the curve sits</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">The <dfn>half-saturation pressure</dfn> is the oxygen pressure at which half the seats are full. It marks where the curve sits. A curve moved right, a <dfn>right shift</dfn>, needs more pressure to fill, so lets go easily; moved left, a <dfn>left shift</dfn>, it holds on tighter.</p>
+      <p class="caption">The <dfn data-part="half">half-saturation pressure</dfn> is the oxygen pressure at which half the seats are full. It marks where the curve sits. A curve moved right, a <dfn>right shift</dfn>, needs more pressure to fill, so lets go easily; moved left, a <dfn>left shift</dfn>, it holds on tighter.</p>
     </article>
     <article data-step="11" data-step-title="How much oxygen the blood carries" data-kind="content" hidden>
       <p class="eyebrow">Build the curve</p>
       <h2 tabindex="-1">How much oxygen the blood carries</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Saturation says what share of seats are full, not how many seats there are. <dfn>Oxygen content</dfn> is the total oxygen the blood carries: saturation combined with the amount of hemoglobin. Less hemoglobin lowers the ceiling, even if every seat is full.</p>
+      <p class="caption">Saturation says what share of seats are full, not how many seats there are. <dfn data-part="content">Oxygen content</dfn> is the total oxygen the blood carries: almost all of it on hemoglobin, so saturation combined with the amount of hemoglobin, plus a little dissolved. Less hemoglobin lowers the ceiling, even if every seat is full.</p>
     </article>
     <article data-step="12" data-step-title="The whole picture" data-kind="whole" hidden>
       <p class="eyebrow">Build the curve</p>
       <h2 tabindex="-1">The whole picture</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Lungs load hemoglobin on the flat top; tissues unload it on the steep slope; the drop between is what they receive. Two key measures: the half-saturation pressure, which says where the curve sits, and the oxygen content, which says how much the blood carries.</p>
+      <p class="caption">Lungs load hemoglobin on the flat top; tissues unload it on the steep slope; the drop between is the share handed over. Two key measures: the half-saturation pressure, which says where the curve sits, and the oxygen content, which says how much the blood carries.</p>
     </article>
     <article data-step="13" data-step-title="Right shift: letting go more easily" data-kind="right" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Right shift: letting go more easily</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Busy tissue makes <dfn>carbon dioxide</dfn>, a waste gas, and acid, and it warms up. Red cells also make more <dfn>2,3-BPG</dfn>, a chemical that loosens hemoglobin’s grip. All four shift the curve right: at the same tissue pressure, hemoglobin lets go of more oxygen.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption">Busy tissue makes <dfn>carbon dioxide</dfn>, a waste gas, and acid, and it warms up. Separately, over hours to days, red cells make more <dfn>2,3-BPG</dfn>, a chemical that loosens hemoglobin’s grip, when oxygen is short, as at altitude or in anemia. All four shift the curve right: at the same tissue pressure, hemoglobin lets go of more oxygen.</p>
     </article>
     <article data-step="14" data-step-title="Left shift: holding on tighter" data-kind="left" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Left shift: holding on tighter</h2>
       <div class="visual" data-visual></div>
       <p class="caption"><dfn>Fetal hemoglobin</dfn>, the kind a baby makes before birth, grips oxygen tighter, so it can pull oxygen from the mother’s blood. Cold and <dfn>alkalosis</dfn> (blood less acidic than usual) also shift the curve left: hemoglobin loads easily but lets go less in the tissues.</p>
-      <button type="button" class="replay">Replay ↻</button>
     </article>
     <article data-step="15" data-step-title="Carbon monoxide: stolen seats" data-kind="co" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Carbon monoxide: stolen seats</h2>
       <div class="visual" data-visual></div>
       <p class="caption"><dfn>Carbon monoxide</dfn>, a colourless gas from fires and faulty heaters, sticks to oxygen seats far more tightly than oxygen does. Fewer seats carry oxygen, and the rest grip tighter, a left shift. Blood oxygen pressure stays normal, yet content falls.</p>
-      <button type="button" class="replay">Replay ↻</button>
     </article>
     <article data-step="16" data-step-title="Anemia: fewer seats in the blood" data-kind="anemia" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Anemia: fewer seats in the blood</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Anemia</dfn> means too little hemoglobin in the blood, for example after blood loss. Each remaining seat fills normally, so saturation looks normal, but the ceiling drops and content falls. Tissues pull more from each seat, so their oxygen pressure falls.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn>Anemia</dfn> means too little hemoglobin in the blood, for example after blood loss. Each remaining seat fills normally, so saturation looks normal, but the ceiling drops and content falls. To get the same oxygen, tissues take a bigger share from each pass, so blood leaves them at a lower oxygen pressure.</p>
     </article>
 
     <div class="step-nav">
@@ -149,8 +149,12 @@
       <span data-step-progress aria-live="polite">Step 1 of 16</span>
       <button type="button" data-step-next>Next →</button>
     </div>
-    <p class="hint">Start with Next, or use the arrow keys. Curves, heights and seat counts are illustrative, not measurements.</p>
+    <p class="hint">Start with Next, or use the arrow keys. Under a moving picture: pause, drag to any moment, or slow it down. Underlined terms light up their part of the picture. Curves, heights and seat counts are illustrative, not measurements.</p>
   </section>
+
+  <section id="quiz" role="tabpanel" aria-labelledby="tab-quiz" hidden></section>
+
+  <section id="summary" role="tabpanel" aria-labelledby="tab-summary" hidden></section>
 
   <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
     <h2>Reference values, beside the model.</h2>
@@ -185,8 +189,11 @@
     </div>
     <p id="state-summary" class="state-summary" aria-live="polite">Normal teaching baseline.</p>
     <p id="state-source" class="model-note"></p>
-    <p class="model-note">The blue line on each bar is an illustrative teaching model, not a patient measurement. These textbooks give single approximate values rather than ranges, so each bar shows the textbook’s value as a black tick; the model is called close when it is within a tenth of that value. Arrows come from the cited source for the selected state.</p>
-    <p id="baseline-note" class="model-note"></p>
+    <details class="lx-fine">
+      <summary>How to read these bars</summary>
+      <p>The blue line on each bar is an illustrative teaching model, not a patient measurement. These textbooks give single approximate values rather than ranges, so each bar shows the textbook’s value as a black tick; the model is called close when it is within a tenth of that value. Arrows come from the cited source for the selected state.</p>
+      <p id="baseline-note" class="model-note"></p>
+    </details>
     <div id="value-rows"></div>
     <p id="cv-live" class="visually-hidden" aria-live="polite"></p>
     <h3>Sources</h3>

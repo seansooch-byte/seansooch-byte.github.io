@@ -1,9 +1,13 @@
-'use strict';
+// Lesson 9: Oxygen and hemoglobin. The kit (/lab/kit/kit.js) runs the page; this file is the model,
+// the pictures and the Clinical values and Explore freely tabs.
+import { lesson } from '/lab/kit/kit.js';
+
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
 const f = n => Number(n.toFixed(1));
-const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+const span = (t, a, b) => clamp((t - a) / (b - a), 0, 1);
+const ease = x => 1 - Math.pow(1 - clamp(x, 0, 1), 3);
 
 /* ---------- Teaching model ----------
    Saturation follows a Hill curve, sat = x^n / (1 + x^n), with x = oxygen pressure ÷ half-saturation pressure.
@@ -47,86 +51,88 @@ function model(p) {
 let BASE = null;
 const mix = (a, b, t) => { const out = { ...a }; for (const k in b) out[k] = a[k] + (b[k] - a[k]) * t; return out; };
 
-/* ---------- Drawing ---------- */
+/* ---------- Drawing ----------
+   Every picture is 480 wide and at most 420 tall, with the kit's type (20 / .sm 18 / .xs 17). */
 const INK = '#171916', BLUE = '#254dff', RED = '#b3261e', RULE = '#babeb3', MUTED = '#53584d';
 const HB = '#f6dcd7', CELL = '#efc3bb', CO_BAND = '#dcdfe4', BLUE_FILL = '#d1d8fd';
 let pictureId = 0;  // each picture gets its own arrowhead ids: a marker referenced from a hidden step would not draw
-const svg = (label, body, h) => { const id = `p${++pictureId}-`; return `<svg viewBox="0 0 480 ${h}" role="img" aria-label="${label}">${body.replace(/ah-/g, id + 'ah-')}</svg>`; };
-const text = (x, y, s, cls = '', anchor = 'middle') => `<text x="${x}" y="${y}" text-anchor="${anchor}" class="${cls}">${s}</text>`;
+const svg = (label, body, h) => { const id = `p${++pictureId}-`; return `<svg viewBox="0 0 480 ${f(h)}" role="img" aria-label="${label}">${body.replace(/ah-/g, id + 'ah-')}</svg>`; };
+const text = (x, y, s, cls = '', anchor = 'middle', extra = '') => `<text x="${f(x)}" y="${f(y)}" text-anchor="${anchor}" class="${cls}" ${extra}>${s}</text>`;
 const MARK = { [INK]: 'k', [BLUE]: 'b', [RED]: 'r' };
 const arrow = (d, color = INK, w = 2.5, extra = '') => `<path d="${d}" fill="none" stroke="${color}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#ah-${MARK[color] || 'k'})" ${extra}/>`;
 const DEFS = `<defs>${Object.entries(MARK).map(([c, k]) => `<marker id="ah-${k}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="${c}"/></marker>`).join('')}</defs>`;
-const g = (dy, body) => `<g transform="translate(0 ${dy})">${body}</g>`;
 const o2dot = (x, y, r = 6) => `<circle cx="${f(x)}" cy="${f(y)}" r="${r}" fill="${RED}"/>`;
+const fade = a => `opacity="${f(a)}"`;
 
 // One hemoglobin molecule: a rounded square with four seats. seats: array of 'o2' | 'co' | 'empty'.
 function molecule(x, y, size, seats, { round = .32 } = {}) {
   const r = size * round, q = size * .29, sr = size * .16;
-  let s = `<g data-molecule><rect x="${f(x)}" y="${f(y)}" width="${size}" height="${size}" rx="${f(r)}" fill="${HB}" stroke="${INK}" stroke-width="1.5"/>`;
+  let s = `<g data-molecule data-part="molecule"><rect x="${f(x)}" y="${f(y)}" width="${f(size)}" height="${f(size)}" rx="${f(r)}" fill="${HB}" stroke="${INK}" stroke-width="1.5"/>`;
   [[q, q], [size - q, q], [q, size - q], [size - q, size - q]].forEach(([dx, dy], i) => {
     const st = seats[i], cx = f(x + dx), cy = f(y + dy);
-    if (st === 'o2') s += `<circle data-seat="o2" cx="${cx}" cy="${cy}" r="${f(sr)}" fill="${RED}"/>`;
-    else if (st === 'co') s += `<rect data-seat="co" x="${f(cx - sr)}" y="${f(cy - sr)}" width="${f(sr * 2)}" height="${f(sr * 2)}" fill="${INK}"/>`;
-    else s += `<circle data-seat="empty" cx="${cx}" cy="${cy}" r="${f(sr)}" fill="#fff" stroke="${INK}" stroke-width="1.5"/>`;
+    if (st === 'o2') s += `<circle data-seat="o2" data-part="seat" cx="${cx}" cy="${cy}" r="${f(sr)}" fill="${RED}"/>`;
+    else if (st === 'co') s += `<rect data-seat="co" data-part="seat" x="${f(cx - sr)}" y="${f(cy - sr)}" width="${f(sr * 2)}" height="${f(sr * 2)}" fill="${INK}"/>`;
+    else s += `<circle data-seat="empty" data-part="seat" cx="${cx}" cy="${cy}" r="${f(sr)}" fill="#fff" stroke="${INK}" stroke-width="1.5"/>`;
   });
   return s + '</g>';
 }
 const filled = n => [0, 1, 2, 3].map(i => i < n ? 'o2' : 'empty');
 
-// The curve, in a 480 × 356 frame. Pressures run to 1.3 × the normal lung pressure.
-const CH = { x0: 66, x1: 456, y0: 300, top: 70 };
+// The curve, in its frame. Pressures run to 1.3 × the normal lung pressure.
+const CH = { x0: 70, x1: 456, y0: 250, top: 58 };
 const XMAX = () => K.pa * 1.3;
 const px = P => f(CH.x0 + (CH.x1 - CH.x0) * clamp(P / XMAX(), 0, 1));
 const py = c => f(CH.y0 - (CH.y0 - CH.top) * c);
 const contentAt = (o, P) => o.seats * sat(P / o.p50);
-function curvePath(o) {
+function curvePath(o, upTo = 1) {
   let d = '';
-  for (let i = 0; i <= 96; i++) { const P = XMAX() * i / 96; d += `${i ? ' L' : 'M'}${px(P)} ${py(contentAt(o, P))}`; }
+  const n = Math.max(2, Math.round(96 * upTo));
+  for (let i = 0; i <= n; i++) { const P = XMAX() * upTo * i / n; d += `${i ? ' L' : 'M'}${px(P)} ${py(contentAt(o, P))}`; }
   return d;
 }
 function axes(yWord) {
-  return `<path d="M${CH.x0} 34 V${CH.y0} H${CH.x1 + 10}" fill="none" stroke="${INK}" stroke-width="2"/>`
-    + text(18, 24, yWord, 'xs b', 'start') + text(CH.x1 + 10, CH.y0 + 46, 'oxygen pressure →', 'xs b', 'end');
+  return `<path d="M${CH.x0} 30 V${CH.y0} H${CH.x1 + 10}" fill="none" stroke="${INK}" stroke-width="2"/>`
+    + text(16, 20, yWord, 'xs b', 'start') + text(CH.x1 + 14, CH.y0 + 44, 'oxygen pressure →', 'xs b', 'end');
 }
 function ceiling(o, cls = '') {
   let s = '';
   if (o.p.co > .02) {
-    s += `<rect data-co-band x="${CH.x0}" y="${py(o.p.hb)}" width="${CH.x1 - CH.x0}" height="${f(py(o.seats) - py(o.p.hb))}" fill="${CO_BAND}"/>`;
-    if (o.p.co > .15) s += text(CH.x1 - 6, f((py(o.p.hb) + py(o.seats)) / 2 + 5), 'seats taken by carbon monoxide', 'xs on-band', 'end');
+    s += `<rect data-co-band data-part="co" x="${CH.x0}" y="${py(o.p.hb)}" width="${CH.x1 - CH.x0}" height="${f(py(o.seats) - py(o.p.hb))}" fill="${CO_BAND}"/>`;
+    if (o.p.co > .2) s += text(CH.x1 - 6, f((py(o.p.hb) + py(o.seats)) / 2 + 6), 'seats taken by carbon monoxide', 'xs on-band', 'end');
   }
   s += `<path data-ceiling d="M${CH.x0} ${py(o.seats)} H${CH.x1}" stroke="${INK}" stroke-width="1.5" stroke-dasharray="2 4"/>`;
-  if (cls !== 'quiet') s += text(CH.x0 + 8, f(py(o.seats) - 8), 'all seats full', 'xs muted', 'start');
+  if (cls !== 'quiet') s += text(CH.x0 + 8, f(py(o.seats) - 9), 'all seats full', 'xs muted', 'start');
   return s;
 }
 function points(o, { lungs = true, tissues = true, labels = true } = {}) {
   let s = '';
   if (lungs) {
     s += `<circle data-point="lungs" cx="${px(o.pa)}" cy="${py(o.ca)}" r="9" fill="${RED}" stroke="#fff" stroke-width="2"/>`;
-    if (labels) s += text(px(o.pa), f(py(o.ca) + 30), 'lungs', 'sm b red');
+    if (labels) s += text(px(o.pa), f(py(o.ca) + 32), 'lungs', 'sm b red');
   }
   if (tissues) {
     s += `<circle data-point="tissues" cx="${px(o.pv)}" cy="${py(o.cv)}" r="8" fill="#fff" stroke="${RED}" stroke-width="3.5"/>`;
-    if (labels) s += text(f(px(o.pv) + 14), f(py(o.cv) + 24), 'tissues', 'sm b red', 'start');
+    if (labels) s += text(f(px(o.pv) + 14), f(py(o.cv) + 26), 'tissues', 'sm b red', 'start');
   }
   return s;
 }
-function givenArrow(o, label = true) {
-  const x = px(o.pv), y1 = py(o.ca), y2 = py(o.cv);
+function givenArrow(o, label = true, grow = 1) {
+  const x = px(o.pv), y1 = py(o.ca), y2 = py(o.cv), yEnd = y1 + (y2 - y1) * grow;
   let s = `<path d="M${px(o.pa)} ${y1} H${x}" stroke="${INK}" stroke-width="1.5" stroke-dasharray="4 4"/>`;
-  if (y2 - y1 > 22) s += arrow(`M${x} ${y1} V${f(y2 - 13)}`, RED, 4);
-  if (label && y2 - y1 > 30) s += text(f(x - 10), f((y1 + y2) / 2 + 5), 'unloaded', 'xs b red', 'end');
+  if (yEnd - y1 > 22) s += arrow(`M${x} ${y1} V${f(yEnd - 13)}`, RED, 4);
+  if (label && y2 - y1 > 30 && grow > .6) s += text(f(x - 10), f((y1 + y2) / 2 + 6), 'unloaded', 'xs b red', 'end', fade(span(grow, .6, 1)));
   return `<g data-given>${s}</g>`;
 }
 function halfMarker(o, label = true) {
   const x = px(o.p50), y = py(o.seats / 2);
   let s = `<path d="M${CH.x0} ${y} H${x} V${CH.y0}" fill="none" stroke="${INK}" stroke-width="1.5" stroke-dasharray="5 4"/>`;
   s += `<circle cx="${x}" cy="${y}" r="6" fill="${INK}"/>`;
-  s += text(CH.x0 - 6, f(y + 5), 'half', 'xs b', 'end');
-  if (label) s += text(x, CH.y0 + 22, 'half-saturation pressure', 'xs b');
-  return `<g data-half>${s}</g>`;
+  s += text(CH.x0 - 8, f(y + 6), 'half', 'xs b', 'end');
+  if (label) s += text(Math.max(x, 120), CH.y0 + 22, 'half-saturation pressure', 'xs b');
+  return `<g data-half data-part="half">${s}</g>`;
 }
 function chart(o, opt = {}) {
-  const { ghost = null, yWord = 'oxygen carried ↑', lungs = true, tissues = true, given = true, half = true, labels = true, grip = '' } = opt;
+  const { ghost = null, yWord = 'oxygen carried ↑', lungs = true, tissues = true, given = true, half = true, labels = true, grip = '', reveal = 1 } = opt;
   let s = '';
   s += ceiling(o, ghost ? 'quiet' : '');
   if (ghost) {
@@ -136,17 +142,15 @@ function chart(o, opt = {}) {
     s += `<g class="ghost" data-ghost="normal" ${attrs(ghost)}>${gh}</g>`;
   }
   s += axes(yWord);
-  s += `<path data-curve d="${curvePath(o)}" fill="none" stroke="${BLUE}" stroke-width="4.5" stroke-linejoin="round"/>`;
+  s += `<path data-curve d="${curvePath(o, reveal)}" fill="none" stroke="${BLUE}" stroke-width="4.5" stroke-linejoin="round"/>`;
   if (half) s += halfMarker(o, labels);
   if (grip && ghost) {
     const x = px(ghost.pv), y1 = py(contentAt(ghost, ghost.pv)), y2 = py(contentAt(o, ghost.pv));
     if (Math.abs(y2 - y1) > 16) {
-      s += `<g data-grip>${arrow(`M${x} ${y1} V${f(y2 + (y2 > y1 ? -9 : 9))}`, INK, 3)}`;
-      s += grip === 'right' ? text(f(x - 10), f((y1 + y2) / 2 + 5), 'lets go more here', 'xs b', 'end') : text(f(x + 10), f((y1 + y2) / 2 + 14), 'holds on tighter here', 'xs b', 'start');
-      s += '</g>';
+      s += `<g data-grip>${arrow(`M${x} ${y1} V${f(y2 + (y2 > y1 ? -9 : 9))}`, INK, 3)}</g>`;
     }
   }
-  if (given && lungs && tissues) s += givenArrow(o, labels && !grip);
+  if (given && lungs && tissues && !grip) s += givenArrow(o, labels);
   s += points(o, { lungs, tissues, labels });
   return s;
 }
@@ -154,32 +158,37 @@ function chart(o, opt = {}) {
 // Two rows of molecules (six is normal): leaving the lungs, leaving the tissues. Extra hemoglobin adds a seventh.
 function seatRow(o, s1, y, word) {
   const present = clamp(Math.round(6 * o.p.hb), 0, 7), total = present * 4, slots = Math.max(6, present);
-  const step = slots > 6 ? 39 : 46, size = slots > 6 ? 34 : 38;
+  const step = slots > 6 ? 36 : 40, size = slots > 6 ? 30 : 32;
   const coN = Math.round(total * o.p.co), o2N = Math.round((total - coN) * s1);
   const st = Array.from({ length: slots }, () => ['empty', 'empty', 'empty', 'empty']);
   let k = 0;
   for (let j = 0; j < 4; j++) for (let m = 0; m < present; m++) if (k < coN) { st[m][j] = 'co'; k++; }
   k = 0;  // with teamwork, molecules tend to be either full or empty: fill one molecule at a time
   for (let m = 0; m < present; m++) for (let j = 0; j < 4; j++) if (k < o2N && st[m][j] === 'empty') { st[m][j] = 'o2'; k++; }
-  let s = text(16, y + 25, word, 'xs b', 'start');
+  let s = text(16, y + 23, word, 'xs b', 'start');
   for (let m = 0; m < slots; m++) {
-    const x = 196 + m * step;
-    s += m < present ? molecule(x, y, size, st[m]) : `<rect data-molecule="missing" x="${x}" y="${y}" width="${size}" height="${size}" rx="12" fill="none" stroke="${MUTED}" stroke-width="1.5" stroke-dasharray="4 4"/>`;
+    const x = 214 + m * step;
+    s += m < present ? molecule(x, y, size, st[m]) : `<rect data-molecule="missing" x="${x}" y="${y}" width="${size}" height="${size}" rx="10" fill="none" stroke="${MUTED}" stroke-width="1.5" stroke-dasharray="4 4"/>`;
   }
   return s;
 }
-const seatRows = (o, y) => seatRow(o, o.sa1, y, 'leaving the lungs') + seatRow(o, o.sv1, y + 50, 'leaving the tissues');
-function seatKey(o, y) {
-  const keys = [[o2dot(10, 0), 'oxygen'], [`<circle cx="10" cy="0" r="6" fill="#fff" stroke="${INK}" stroke-width="1.5"/>`, 'empty seat']];
-  if (o.p.co > .02) keys.push([`<rect x="4" y="-6" width="12" height="12" fill="${INK}"/>`, 'carbon monoxide']);
-  if (o.p.hb < .9) keys.push([`<rect x="0" y="-9" width="18" height="18" rx="6" fill="none" stroke="${MUTED}" stroke-width="1.5" stroke-dasharray="4 4"/>`, 'missing hemoglobin']);
-  // Flow the keys left to right, allowing for the larger phone font (each letter about 8.6 wide), wrapping if needed.
+const seatRows = (o, y) => seatRow(o, o.sa1, y, 'leaving the lungs') + seatRow(o, o.sv1, y + 42, 'leaving the tissues');
+// The key under a picture: normal and this state, then whatever the seat rows need, wrapping as needed.
+function key(o, y, legend) {
+  const items = [];
+  if (legend) {
+    items.push([`<path d="M0 -6 H30" stroke="${INK}" stroke-width="2.5" stroke-dasharray="6 5"/>`, 'normal', 38]);
+    items.push([`<path d="M0 -6 H30" stroke="${BLUE}" stroke-width="5"/>`, legend, 38]);
+  }
+  items.push([o2dot(9, -6), 'oxygen', 22]);
+  if (o.p.co > .02) items.push([`<rect x="3" y="-12" width="12" height="12" fill="${INK}"/>`, 'seat taken by carbon monoxide', 22]);
+  if (o.p.hb < .9) items.push([`<rect x="0" y="-15" width="18" height="18" rx="6" fill="none" stroke="${MUTED}" stroke-width="1.5" stroke-dasharray="4 4"/>`, 'missing hemoglobin', 24]);
   let x = 16, row = 0, body = '';
-  for (const [icon, word] of keys) {
-    const w = 26 + word.length * 8.6;
+  for (const [icon, word, pad] of items) {
+    const w = pad + word.length * 9.2;
     if (x > 16 && x + w > 470) { x = 16; row++; }
-    body += `<g transform="translate(${f(x)} ${y + row * 28})">${icon}${text(26, 5, word, 'xs', 'start')}</g>`;
-    x += w + 22;
+    body += `<g transform="translate(${f(x)} ${y + row * 28})">${icon}${text(pad, 0, word, 'xs', 'start')}</g>`;
+    x += w + 20;
   }
   return { body, rows: row + 1 };
 }
@@ -187,141 +196,167 @@ function seatKey(o, y) {
 function attrs(s) {
   return `data-pa="${(s.pa / BASE.pa).toFixed(4)}" data-sa="${(s.sa / BASE.sa).toFixed(4)}" data-p50="${(s.p50 / BASE.p50).toFixed(4)}" data-ca="${(s.ca / BASE.ca).toFixed(4)}" data-pv="${(s.pv / BASE.pv).toFixed(4)}" data-sv="${(s.sv / BASE.sv).toFixed(4)}" data-seats="${(s.seats / BASE.seats).toFixed(4)}"`;
 }
-// The whole picture: the curve, then the seats, then (with a ghost) a legend.
-function picture(o, { ghost = null, legend = '', grip = '' } = {}) {
-  let b = DEFS + `<g data-new-state="${legend || 'current'}" ${attrs(o)}>${chart(o, { ghost, grip })}${seatRows(o, 378)}</g>`;
-  if (ghost) {
-    b += `<path d="M16 500 H50" stroke="${INK}" stroke-width="2.5" stroke-dasharray="6 5"/>${text(58, 506, 'normal', 'sm', 'start')}`;
-    b += `<path d="M160 500 H194" stroke="${BLUE}" stroke-width="5"/>${text(202, 506, legend, 'sm b blue', 'start')}`;
+// What a change moved, named on the picture itself: an arrow on the chart, and its words in the empty
+// space under the curve's flat top (the steep middle is too crowded for words).
+function named(kind, o, g, a) {
+  if (!g || a <= 0) return '';
+  let s = '';
+  // Under a lowered ceiling the lungs dot and its label sit lower too, so the words drop below them.
+  const top = Math.max(186, py(o.seats) + 66);
+  const words = (rows) => rows.map(([w, cls], i) => text(452, top + i * 24, w, cls, 'end')).join('');
+  if (kind === 'right' || kind === 'left') {
+    const level = kind === 'right' ? .8 : .92, k = Math.pow(level / (1 - level), 1 / K.n);
+    const x1 = px(g.p50 * k), x2 = px(o.p50 * k), y = py(level * g.seats);
+    if (Math.abs(x2 - x1) > 18) s += arrow(`M${x1} ${y} H${f(x2 + (x2 > x1 ? -8 : 8))}`, BLUE, 3.5);
+    s += kind === 'right'
+      ? words([['→ curve slides right', 'xs b blue'], ['↓ lets go more', 'xs b'], ['at the same pressure', 'xs muted']])
+      : words([['← curve slides left', 'xs b blue'], ['↑ holds on tighter', 'xs b'], ['at the same pressure', 'xs muted']]);
   }
-  const keyY = ghost ? 538 : 504, key = seatKey(o, keyY);
-  return { body: b + key.body, h: keyY + 18 + 28 * (key.rows - 1) };
+  if (kind === 'co' || kind === 'anemia') {
+    const x = CH.x0 + 40, y1 = py(g.seats) + 6, y2 = py(o.seats) - 10;
+    if (y2 - y1 > 20) s += arrow(`M${x} ${f(y1)} V${f(y2)}`, BLUE, 3.5);
+    s += kind === 'co'
+      ? words([['↓ fewer seats for oxygen', 'xs b blue'], ['and the rest grip tighter', 'xs']])
+      : words([['↓ fewer seats', 'xs b blue'], ['each still fills fully', 'xs']]);
+  }
+  return `<g data-named ${fade(a)}>${s}</g>`;
+}
+// The whole picture: the curve, then the seats, then the key.
+function picture(o, { ghost = null, legend = '', grip = '', kind = '', a = 1 } = {}) {
+  let b = DEFS + `<g data-new-state="${legend || 'current'}" ${attrs(o)}>${chart(o, { ghost, grip })}${named(kind, o, ghost, a)}${seatRows(o, 306)}</g>`;
+  const keyY = 412, k = key(o, keyY, ghost ? legend : '');
+  return { body: b + k.body, h: keyY + 12 + 28 * (k.rows - 1) };
 }
 const pictureSvg = (label, o, opt) => { const { body, h } = picture(o, opt); return svg(label, body, h); };
 
-/* ---------- Core step pictures ---------- */
+/* ---------- Build the curve: the step pictures ---------- */
 function tripPicture() {
   let b = DEFS;
   // Lungs
-  b += `<path d="M240 18 V60 M240 60 Q222 70 206 82 M240 60 Q258 70 274 82" fill="none" stroke="${INK}" stroke-width="5" stroke-linecap="round"/>`;
-  b += `<path d="M200 70 C160 50 120 80 118 130 C116 170 150 186 196 170 C214 162 214 90 200 70 Z" fill="#f3d9d4" stroke="${RED}" stroke-width="2.5"/>`;
-  b += `<path d="M280 70 C320 50 360 80 362 130 C364 170 330 186 284 170 C266 162 266 90 280 70 Z" fill="#f3d9d4" stroke="${RED}" stroke-width="2.5"/>`;
-  b += text(240, 210, 'lungs: oxygen in', 'sm b red');
+  b += `<path d="M240 14 V48 M240 48 Q222 58 206 70 M240 48 Q258 58 274 70" fill="none" stroke="${INK}" stroke-width="5" stroke-linecap="round"/>`;
+  b += `<path d="M200 58 C160 38 120 68 118 112 C116 150 150 164 196 150 C214 142 214 78 200 58 Z" fill="#f3d9d4" stroke="${RED}" stroke-width="2.5"/>`;
+  b += `<path d="M280 58 C320 38 360 68 362 112 C364 150 330 164 284 150 C266 142 266 78 280 58 Z" fill="#f3d9d4" stroke="${RED}" stroke-width="2.5"/>`;
+  b += text(240, 190, 'lungs: oxygen in', 'sm b red');
   // Tissues
-  b += `<rect x="96" y="420" width="288" height="86" rx="16" fill="#e6dccb" stroke="${INK}" stroke-width="2"/>`;
-  b += text(240, 458, 'tissues: oxygen used', 'sm b') + text(240, 484, 'muscle, brain, gut, skin', 'xs');
+  b += `<rect x="110" y="300" width="260" height="78" rx="16" fill="#e6dccb" stroke="${INK}" stroke-width="2"/>`;
+  b += text(240, 334, 'tissues: oxygen used', 'sm b') + text(240, 360, 'muscle, brain, gut', 'xs');
   // The loop of blood: out on the right, back on the left.
-  b += arrow('M382 140 C452 200 452 360 384 430', RED, 5);
-  b += arrow('M98 430 C28 360 28 200 98 150', MUTED, 5);
-  for (const [x, y] of [[424, 210], [436, 290], [422, 368]]) b += `<ellipse cx="${x}" cy="${y}" rx="17" ry="11" fill="${CELL}" stroke="${RED}" stroke-width="2"/>${o2dot(x - 6, y, 3.5)}${o2dot(x + 6, y, 3.5)}`;
-  for (const [x, y] of [[56, 368], [44, 290], [58, 210]]) b += `<ellipse cx="${x}" cy="${y}" rx="17" ry="11" fill="${CELL}" stroke="${RED}" stroke-width="2"/>`;
-  b += text(240, 296, 'red blood cells', 'sm b') + text(240, 320, 'full on the way out,', 'xs') + text(240, 340, 'lighter on the way back', 'xs');
-  b += `<path d="M310 300 L400 290" stroke="${INK}" stroke-width="1.5"/><path d="M170 300 L76 290" stroke="${INK}" stroke-width="1.5"/>`;
+  b += arrow('M380 124 C446 170 446 270 384 312', RED, 5);
+  b += arrow('M96 312 C34 270 34 170 98 130', MUTED, 5);
+  for (const [x, y] of [[428, 186], [436, 248]]) b += `<ellipse cx="${x}" cy="${y}" rx="17" ry="11" fill="${CELL}" stroke="${RED}" stroke-width="2"/>${o2dot(x - 6, y, 3.5)}${o2dot(x + 6, y, 3.5)}`;
+  for (const [x, y] of [[50, 248], [44, 186]]) b += `<ellipse cx="${x}" cy="${y}" rx="17" ry="11" fill="${CELL}" stroke="${RED}" stroke-width="2"/>`;
+  b += text(240, 234, 'red blood cells', 'sm b') + text(240, 258, 'full going out, lighter coming back', 'xs');
   return b;
 }
 function cellPicture() {
   let b = DEFS;
-  b += `<ellipse cx="140" cy="200" rx="120" ry="96" fill="${CELL}" stroke="${RED}" stroke-width="3"/><ellipse cx="140" cy="200" rx="58" ry="40" fill="#e9b2a8" opacity=".55"/>`;
+  b += `<ellipse cx="132" cy="180" rx="112" ry="90" fill="${CELL}" stroke="${RED}" stroke-width="3"/><ellipse cx="132" cy="180" rx="54" ry="38" fill="#e9b2a8" opacity=".55"/>`;
   for (let i = 0; i < 30; i++) {
-    const a = i * 2.39996, r = 16 + 76 * Math.sqrt((i + .5) / 30), x = 140 + r * Math.cos(a) * 1.05, y = 200 + r * Math.sin(a) * .8;
+    const a = i * 2.39996, r = 16 + 70 * Math.sqrt((i + .5) / 30), x = 132 + r * Math.cos(a) * 1.05, y = 180 + r * Math.sin(a) * .8;
     b += `<rect x="${f(x - 6)}" y="${f(y - 6)}" width="12" height="12" rx="4" fill="${HB}" stroke="${INK}" stroke-width="1"/>`;
   }
-  b += text(140, 330, 'red blood cell', 'sm b red');
-  b += `<path d="M196 168 L300 106 M196 186 L300 266" stroke="${INK}" stroke-width="1.2" stroke-dasharray="4 4"/>`;
-  b += `<rect x="190" y="166" width="14" height="14" rx="4" fill="none" stroke="${BLUE}" stroke-width="2.5"/>`;
-  b += molecule(300, 106, 160, ['o2', 'o2', 'empty', 'empty']);
-  b += text(380, 76, 'hemoglobin', 'sm b');
-  b += text(380, 300, 'four oxygen seats', 'sm b');
-  b += text(380, 324, 'two full, two empty', 'xs');
+  b += text(132, 300, 'red blood cell', 'sm b red');
+  b += `<path d="M186 150 L292 92 M186 166 L292 248" stroke="${INK}" stroke-width="1.2" stroke-dasharray="4 4"/>`;
+  b += `<rect x="180" y="148" width="14" height="14" rx="4" fill="none" stroke="${BLUE}" stroke-width="2.5"/>`;
+  b += molecule(292, 92, 156, ['o2', 'o2', 'empty', 'empty']);
+  b += text(370, 72, 'hemoglobin', 'sm b');
+  b += text(370, 280, 'four oxygen seats', 'sm b');
+  b += text(370, 304, 'two full, two empty', 'xs');
   return b;
 }
 function pressurePicture() {
   let b = DEFS;
   const panel = (x, w, word, n, level, levelWord) => {
-    let s = `<rect x="${x}" y="40" width="${w}" height="190" rx="14" fill="#fff" stroke="${INK}" stroke-width="2"/>`;
+    let s = `<rect x="${x}" y="44" width="${w}" height="170" rx="14" fill="#fff" stroke="${INK}" stroke-width="2"/>`;
     // An evenly scattered (R2 low-discrepancy) sprinkle of oxygen.
-    for (let i = 0; i < n; i++) s += o2dot(x + 18 + ((.5 + i * .7548777) % 1) * (w - 36), 60 + ((.5 + i * .5698403) % 1) * 152, 5.5);
-    s += text(x + w / 2, 26, word, 'sm b');
-    s += `<rect x="${x}" y="268" width="${w}" height="26" fill="#fff" stroke="${RULE}"/><rect data-gauge x="${x}" y="268" width="${f(w * level)}" height="26" fill="${RED}"/>`;
-    s += text(x + w / 2, 322, levelWord, 'sm b');
+    for (let i = 0; i < n; i++) s += o2dot(x + 18 + ((.5 + i * .7548777) % 1) * (w - 36), 62 + ((.5 + i * .5698403) % 1) * 134, 5.5);
+    s += text(x + w / 2, 30, word, 'sm b');
+    s += `<g data-part="pressure"><rect x="${x}" y="250" width="${w}" height="26" fill="#fff" stroke="${RULE}"/><rect data-gauge x="${x}" y="250" width="${f(w * level)}" height="26" fill="${RED}"/></g>`;
+    s += text(x + w / 2, 304, levelWord, 'sm b');
     return s;
   };
-  b += panel(20, 190, 'air sac in the lungs', 34, .9, 'pressure: high');
-  b += panel(270, 190, 'working tissue', 7, .32, 'pressure: low');
-  b += text(240, 256, 'oxygen pressure', 'xs muted');
-  b += arrow('M210 136 H262', INK, 4);
-  b += text(240, 360, 'oxygen moves from high pressure to low', 'sm');
+  b += panel(16, 196, 'air sac in the lungs', 34, .9, 'pressure: high');
+  b += panel(268, 196, 'working tissue', 7, .32, 'pressure: low');
+  b += text(240, 240, 'oxygen pressure', 'xs muted');
+  b += arrow('M212 128 H260', INK, 4);
+  b += text(240, 344, 'oxygen moves from high pressure to low', 'sm');
   return b;
 }
-function fillPicture() {
+// Moving: oxygen pressure rises around one molecule, and its seats fill.
+function fillPicture(t) {
+  const P = XMAX() * ease(span(t, .05, .95)), s = sat(P / K.p50), n = clamp(Math.round(4 * s - .2), 0, 4);
   let b = DEFS;
-  const xs = [36, 124, 212, 300, 388];
-  xs.forEach((x, i) => {
-    b += molecule(x, 70, 56, filled(i));
-    b += `<rect x="${x}" y="160" width="56" height="18" fill="#fff" stroke="${RULE}"/><rect x="${x}" y="160" width="${f(56 * i / 4)}" height="18" fill="${RED}"/>`;
-  });
-  b += text(64, 206, 'empty', 'xs b') + text(240, 206, 'half', 'xs b') + text(416, 206, 'full', 'xs b');
-  b += text(20, 150, 'saturation', 'xs b', 'start');
-  b += arrow('M36 250 H446', INK, 3) + text(446, 278, 'oxygen pressure →', 'xs b', 'end');
+  b += text(16, 34, 'oxygen pressure around it', 'xs b', 'start');
+  b += `<g data-part="pressure"><rect x="16" y="46" width="448" height="22" fill="#fff" stroke="${RULE}"/><rect x="16" y="46" width="${f(448 * P / XMAX())}" height="22" fill="${RED}" opacity=".85"/></g>`;
+  b += text(16, 92, 'low', 'xs muted', 'start') + text(464, 92, 'high', 'xs muted', 'end');
+  b += molecule(70, 118, 120, filled(n));
+  b += text(318, 160, `${n} of 4`, 'lg b red') + text(318, 188, 'seats full', 'sm b');
+  b += text(16, 286, 'saturation: share of seats full', 'xs b', 'start');
+  b += `<g data-part="saturation"><rect x="16" y="298" width="448" height="22" fill="#fff" stroke="${RULE}"/><rect x="16" y="298" width="${f(448 * s)}" height="22" fill="${BLUE}"/></g>`;
+  b += text(16, 344, 'empty', 'xs muted', 'start') + text(240, 344, 'half', 'xs muted') + text(464, 344, 'full', 'xs muted', 'end');
   return b;
 }
 function teamPicture() {
   let b = DEFS;
   b += molecule(24, 60, 92, filled(0), { round: .08 }) + molecule(194, 60, 92, filled(1), { round: .2 }) + molecule(364, 60, 92, filled(4));
-  b += text(70, 186, 'empty, tight', 'xs b') + text(240, 186, 'first oxygen on', 'xs b') + text(410, 186, 'full, relaxed', 'xs b');
-  b += arrow('M124 106 H184', RED, 4) + text(154, 92, 'hard', 'xs b red');
-  b += arrow('M294 106 H354', BLUE, 4) + text(324, 92, 'easy', 'xs b blue');
+  b += text(70, 186, 'empty, tight', 'xs b') + text(240, 186, 'first one on', 'xs b') + text(410, 186, 'full, relaxed', 'xs b');
+  b += arrow('M124 106 H184', RED, 4) + text(154, 90, 'hard', 'xs b red');
+  b += arrow('M294 106 H354', BLUE, 4) + text(324, 90, 'easy', 'xs b blue');
   b += arrow('M410 220 C410 262 300 270 240 270 C180 270 70 262 70 228', INK, 2.5, 'stroke-dasharray="6 5"');
-  b += text(240, 296, 'letting go works the same way in reverse', 'xs');
+  b += text(240, 300, 'letting go works the same way in reverse', 'xs');
   return b;
 }
-function curvePicture(kind) {
+// The curve frame for the build steps, 330 tall.
+const CURVE_H = 330;
+function curvePicture(kind, t = 1) {
   const o = BASE;
   const opt = { yWord: kind === 'content' ? 'oxygen carried ↑' : 'seats filled ↑', lungs: false, tissues: false, given: false, half: false };
   if (kind === 'lungs') opt.lungs = true;
-  if (kind === 'tissues' || kind === 'given') Object.assign(opt, { lungs: true, tissues: true, given: kind === 'given' });
+  if (kind === 'tissues' || kind === 'given') Object.assign(opt, { lungs: true, tissues: true, given: false });
   if (kind === 'half') opt.half = true;
   if (kind === 'content') Object.assign(opt, { lungs: true, labels: false });
   let b = DEFS;
-  if (kind === 'content') b += `<rect data-content x="${f(px(o.pa) - 11)}" y="${py(o.ca)}" width="22" height="${f(CH.y0 - py(o.ca))}" fill="${RED}" opacity=".8"/>`;
-  if (kind === 'lungs') b += `<rect x="${px(o.pa * .72)}" y="${CH.top - 16}" width="${f(px(XMAX()) - px(o.pa * .72))}" height="${f(py(.8) - CH.top + 16)}" fill="${BLUE_FILL}" opacity=".7"/>`;
-  if (kind === 'tissues') b += `<rect x="${px(o.p50 * .55)}" y="${CH.top}" width="${f(px(o.pv * 1.2) - px(o.p50 * .55))}" height="${CH.y0 - CH.top}" fill="${BLUE_FILL}" opacity=".7"/>`;
+  if (kind === 'curve') opt.reveal = Math.max(.02, ease(span(t, .02, .92)));
+  if (kind === 'content') b += `<rect data-content data-part="content" x="${f(px(o.pa) - 11)}" y="${py(o.ca)}" width="22" height="${f(CH.y0 - py(o.ca))}" fill="${RED}" opacity=".8"/>`;
+  if (kind === 'lungs') b += `<rect data-part="plateau" x="${px(o.pa * .72)}" y="${CH.top - 16}" width="${f(px(XMAX()) - px(o.pa * .72))}" height="${f(py(.8) - CH.top + 16)}" fill="${BLUE_FILL}" opacity=".7"/>`;
+  if (kind === 'tissues') b += `<rect data-part="slope" x="${px(o.p50 * .55)}" y="${CH.top}" width="${f(px(o.pv * 1.2) - px(o.p50 * .55))}" height="${CH.y0 - CH.top}" fill="${BLUE_FILL}" opacity=".7"/>`;
   b += chart(o, opt);
   if (kind === 'curve') {
-    [[o.p50 * .45, -34, -76], [o.p50, -16, -52], [o.pa, -16, -52]].forEach(([P, dx, dy]) => {
-      const n = Math.round(4 * sat(P / o.p50)), x = px(P), y = py(contentAt(o, P));
-      b += `<circle cx="${x}" cy="${y}" r="5" fill="${INK}"/>` + molecule(f(x + dx), f(y + dy), 32, filled(n));
-    });
-    b += text(f(px(o.p50 * .45) + 14), CH.y0 - 10, 'slow start', 'xs b', 'start');
-    b += text(f(px(o.p50 * 1.05) + 34), f(py(.62) + 4), 'steep middle', 'xs b', 'start');
-    b += text(CH.x1, f(py(.86)), 'flat top', 'xs b', 'end');
+    // The curve draws itself from left to right; a molecule rides the tip, filling as it climbs.
+    const P = XMAX() * opt.reveal, x = px(P), y = py(contentAt(o, P)), n = clamp(Math.round(4 * sat(P / o.p50) - .2), 0, 4);
+    b += `<circle cx="${x}" cy="${y}" r="6" fill="${INK}"/>` + molecule(f(clamp(x - 18, CH.x0 + 4, CH.x1 - 40)), f(Math.max(y - 56, 34)), 36, filled(n));
+    b += text(f(px(o.p50 * .45) + 6), CH.y0 - 12, 'slow start', 'xs b', 'start', fade(span(opt.reveal, .12, .22)));
+    b += text(f(px(o.p50 * 1.1) + 26), f(py(.5) + 6), 'steep middle', 'xs b', 'start', fade(span(opt.reveal, .3, .42)));
+    b += text(CH.x1, f(py(.86) + 30), 'flat top', 'xs b', 'end', fade(span(opt.reveal, .8, .95)));
   }
   if (kind === 'lungs') {
     const P2 = o.pa * .8;
     b += `<circle cx="${px(P2)}" cy="${py(contentAt(o, P2))}" r="7" fill="#fff" stroke="${RED}" stroke-width="2.5"/>`;
-    b += arrow(`M${f(px(o.pa) - 14)} ${f(py(o.ca) + 52)} H${f(px(P2) + 4)}`, INK, 2.5);
-    b += text(CH.x1, f(py(o.ca) + 76), 'less lung oxygen:', 'xs b', 'end') + text(CH.x1, f(py(o.ca) + 94), 'still nearly full', 'xs b', 'end');
+    b += arrow(`M${f(px(o.pa) - 14)} ${f(py(o.ca) + 58)} H${f(px(P2) + 4)}`, INK, 2.5);
+    b += text(CH.x1, f(py(o.ca) + 84), 'less lung oxygen:', 'xs b', 'end') + text(CH.x1, f(py(o.ca) + 104), 'still nearly full', 'xs b', 'end');
     b += text(CH.x1, CH.top - 24, 'flat top', 'xs b blue', 'end');
   }
-  if (kind === 'tissues') {
-    b += text(px(o.p50 * .55) + 6, CH.top + 18, 'steep slope', 'xs b blue', 'start');
-  }
+  if (kind === 'tissues') b += text(px(o.p50 * .55) + 6, CH.top + 20, 'steep slope', 'xs b blue', 'start');
   if (kind === 'given') {
-    const x = f(px(o.pv) + 84);
-    b += `<path d="M${f(x - 6)} ${py(o.cv)} H${f(x + 6)} M${x} ${py(o.cv)} V${CH.y0} M${f(x - 6)} ${CH.y0} H${f(x + 6)}" stroke="${INK}" stroke-width="2"/>`;
-    b += text(f(x + 10), f((py(o.cv) + CH.y0) / 2), 'still on board:', 'xs b', 'start') + text(f(x + 10), f((py(o.cv) + CH.y0) / 2 + 18), 'the reserve', 'xs b', 'start');
+    // Moving: one red cell's trip down the curve, from the lungs to the tissues, handing oxygen over.
+    const u = ease(span(t, .1, .8)), P = o.pa + (o.pv - o.pa) * u, x = px(P), y = py(contentAt(o, P));
+    b += givenArrow(o, true, u);
+    b += `<ellipse cx="${x}" cy="${y}" rx="15" ry="10" fill="${CELL}" stroke="${RED}" stroke-width="2.5"/>`;
+    const a = span(t, .82, .98), xb = f(px(o.pv) + 88);
+    b += `<g data-part="reserve" ${fade(a)}><path d="M${f(xb - 6)} ${py(o.cv)} H${f(xb + 6)} M${xb} ${py(o.cv)} V${CH.y0} M${f(xb - 6)} ${CH.y0} H${f(xb + 6)}" stroke="${INK}" stroke-width="2"/>`;
+    b += text(f(xb + 10), f((py(o.cv) + CH.y0) / 2), 'still on board:', 'xs b', 'start') + text(f(xb + 10), f((py(o.cv) + CH.y0) / 2 + 20), 'the reserve', 'xs b', 'start') + '</g>';
   }
   if (kind === 'half') {
     const x = px(o.p50), y = py(.5);
-    b += arrow(`M${f(x + 16)} ${f(y + 40)} H${f(x + 90)}`, BLUE, 3.5) + text(f(x + 98), f(y + 45), 'right shift: lets go easily', 'xs b blue', 'start');
-    b += arrow(`M${f(x - 16)} ${f(y - 34)} H${f(x - 60)}`, RED, 3.5) + text(CH.x0 + 10, f(y - 60), 'left shift:', 'xs b red', 'start') + text(CH.x0 + 10, f(y - 42), 'holds tighter', 'xs b red', 'start');
+    b += arrow(`M${f(x + 16)} ${f(y + 40)} H${f(x + 84)}`, BLUE, 3.5) + text(f(x + 92), f(y + 46), 'right shift:', 'xs b blue', 'start') + text(f(x + 92), f(y + 66), 'lets go easily', 'xs b blue', 'start');
+    b += arrow(`M${f(x - 16)} ${f(y - 34)} H${f(x - 56)}`, RED, 3.5) + text(CH.x0 + 10, f(y - 74), 'left shift:', 'xs b red', 'start') + text(CH.x0 + 10, f(y - 54), 'holds tighter', 'xs b red', 'start');
   }
   if (kind === 'content') {
     const x = px(o.pa);
-    b += text(f(x + 20), f(py(o.ca) + 30), 'lungs', 'sm b red', 'start');
-    b += text(f(x - 50), f(py(.45) + 5), 'oxygen content', 'xs b', 'end');
-    b += arrow(`M${f(x - 44)} ${f(py(.45))} H${f(x - 16)}`, INK, 2);
-    b += text(CH.x1, f(py(o.seats) - 26), 'the ceiling: set by', 'xs b', 'end') + text(CH.x1, f(py(o.seats) - 8), 'the amount of hemoglobin', 'xs b', 'end');
+    b += text(f(x - 20), f(py(o.ca) + 26), 'lungs', 'sm b red', 'end');
+    b += text(f(x - 26), f(py(.42) + 6), 'oxygen content', 'xs b', 'end');
+    b += arrow(`M${f(x - 22)} ${f(py(.42) + 14)} L${f(x - 13)} ${f(py(.42) + 14)}`, INK, 2);
+    b += text(CH.x1, f(py(o.seats) - 30), 'the ceiling: set by', 'xs b', 'end') + text(CH.x1, f(py(o.seats) - 10), 'the amount of hemoglobin', 'xs b', 'end');
   }
   return b;
 }
@@ -338,120 +373,48 @@ function compare(o) {
   ];
 }
 const ARROW = { up: '↑', down: '↓', same: '↔' };
-const readout = o => `<ul class="readout" aria-label="Compared with normal">${compare(o).map(([k, [w, d]]) => `<li><b>${k}</b> <span class="${d}">${ARROW[d]} ${w}</span></li>`).join('')}</ul>`;
+const readout = o => `<ul class="readout" aria-label="Compared with normal"><li class="head">Compared with normal</li>${compare(o).map(([k, [w, d]]) => `<li><b>${k}</b> <span class="${d}">${ARROW[d]} ${w}</span></li>`).join('')}</ul>`;
 const describe = o => compare(o).map(([k, [w]]) => `${k.toLowerCase()}: ${w}`).join('; ');
 
-/* ---------- Lesson steps ---------- */
-const CORE = {
-  trip: () => svg('Lungs at the top and a block of body tissues at the bottom. A red arrow carries red blood cells, each holding oxygen, down from the lungs to the tissues; a grey arrow brings lighter, emptier cells back up to the lungs.', tripPicture(), 520),
-  cell: () => svg('A red blood cell, a flattened disc, packed with small hemoglobin molecules. One is enlarged: a rounded block with four seats; two hold red oxygen, two are empty.', cellPicture(), 350),
-  pressure: () => svg('Two boxes. On the left, an air sac in the lungs crowded with oxygen; its pressure bar is nearly full: high. On the right, working tissue with only a few oxygen dots; its pressure bar is short: low. An arrow points from high to low.', pressurePicture(), 380),
-  fill: () => svg('Five hemoglobin molecules in a row along an arrow of rising oxygen pressure. From left to right they hold none, one, two, three and four oxygen, and a bar under each fills from empty, through half, to full: saturation.', fillPicture(), 290),
-  team: () => svg('Three hemoglobin molecules. The first is empty and tight. A red arrow marked hard leads to the second, with one oxygen on and its shape starting to loosen. A blue arrow marked easy leads to the third, relaxed and full. A dashed arrow underneath notes that letting go works the same way in reverse.', teamPicture(), 310),
-  curve: () => svg('A graph with oxygen pressure across and seats filled upward. The blue curve is S-shaped: a slow start at low pressure, a steep middle, and a flat top near all seats full. Small hemoglobin molecules on the curve hold one, two and four oxygen.', curvePicture('curve'), 356),
-  lungs: () => svg('The S-shaped curve with a red dot on its flat top, labelled lungs, where almost every seat is full. A highlighted band covers the flat top. A second dot, with less lung oxygen pressure, is still nearly as high: still nearly full.', curvePicture('lungs'), 356),
-  tissues: () => svg('The S-shaped curve with a red dot for the lungs on the flat top and a hollow red dot for the tissues, lower down on the steep slope, which is highlighted.', curvePicture('tissues'), 356),
-  given: () => svg('The S-shaped curve with the lungs dot high on the flat top and the tissues dot lower on the slope. A red arrow drops from the lungs height to the tissues height: the oxygen unloaded. A bracket below the tissues dot marks the oxygen still on board: the reserve.', curvePicture('given'), 356),
-  half: () => svg('The S-shaped curve with a black dot where it is half full, and dashed lines from it down to the oxygen pressure axis: the half-saturation pressure. A blue arrow to the right reads right shift: lets go easily. A red arrow to the left reads left shift: holds tighter.', curvePicture('half'), 356),
-  content: () => svg('The curve redrawn with oxygen carried upward. The dotted ceiling, all seats full, is labelled as set by the amount of hemoglobin. A red column under the lungs dot shows the oxygen content: how much oxygen the blood carries.', curvePicture('content'), 356),
-  whole: () => pictureSvg('The whole picture. The S-shaped curve with the lungs dot on the flat top, the tissues dot on the steep slope, a red arrow for the oxygen unloaded between them, and the half-full point marking the half-saturation pressure. Below, six hemoglobin molecules leaving the lungs are almost all full; leaving the tissues, about a quarter of the seats are empty.', BASE)
-};
+/* ---------- The lesson's scenes, one per step kind ---------- */
 const CHANGE_WHERE = {
-  right: 'The blue curve has slid right of the dashed normal curve. At the normal tissue pressure, an arrow shows hemoglobin letting go of more oxygen, and the tissues dot sits at a higher pressure.',
-  left: 'The blue curve has slid left of the dashed normal curve. At the normal tissue pressure, an arrow shows hemoglobin holding on tighter, and the tissues dot has moved to a lower pressure.',
-  co: 'A grey band of seats taken by carbon monoxide lowers the ceiling to half, the blue curve is lower and slightly left, and black squares fill seats in every molecule.',
-  anemia: 'Three of the six molecules are missing. The ceiling and the blue curve are lower, though the curve keeps its shape, and the tissues dot has moved to a lower pressure.'
+  right: 'The blue curve slides right of the dashed normal curve. At the normal tissue pressure, an arrow shows hemoglobin letting go of more oxygen, and the tissues dot sits at a higher pressure.',
+  left: 'The blue curve slides left of the dashed normal curve. At the normal tissue pressure, an arrow shows hemoglobin holding on tighter, and the tissues dot moves to a lower pressure.',
+  co: 'A grey band of seats taken by carbon monoxide lowers the ceiling to half, the blue curve drops and moves slightly left, and black squares fill seats in every molecule.',
+  anemia: 'Three of the six molecules go missing. The ceiling and the blue curve drop, though the curve keeps its shape, and the tissues dot moves to a lower pressure.'
 };
-const LEGEND = { right: 'right shift', left: 'left shift', co: 'carbon monoxide', anemia: 'anemia' };
-function stateAt(kind, t) {
-  const ease = x => 1 - Math.pow(1 - clamp(x, 0, 1), 3);
-  return mix(NORMAL, { ...NORMAL, ...CHANGES[kind] }, ease(t));
-}
-function changePicture(el, t) {
-  const kind = el.dataset.kind, o = model(stateAt(kind, t));
-  const name = el.dataset.stepTitle.split(':')[0];
-  const label = `${name}, drawn over a faint dashed picture of normal. ${CHANGE_WHERE[kind]} Compared with normal: ${describe(o)}.`;
-  const grip = kind === 'right' || kind === 'left' ? kind : '';
-  return { pic: pictureSvg(label, o, { ghost: BASE, legend: LEGEND[kind], grip }), ro: readout(o) };
-}
-
-const steps = $$('[data-step]');
-const backBtn = $('[data-step-back]'), nextBtn = $('[data-step-next]'), progress = $('[data-step-progress]');
-let current = 0, frame = 0;
-const visualOf = el => el.querySelector('[data-visual]');
-const isAnimated = el => el.dataset.kind in CHANGES;
-const lastReadout = new WeakMap();
-function drawAt(el, t) {
-  const v = visualOf(el), { pic, ro } = changePicture(el, t), old = v.querySelector('svg');
-  if (!old) { v.innerHTML = pic + ro; lastReadout.set(v, ro); return; }
-  old.outerHTML = pic;
-  if (lastReadout.get(v) !== ro) { v.querySelector('.readout').outerHTML = ro; lastReadout.set(v, ro); }
-}
-function animate(el) {
-  cancelAnimationFrame(frame);
-  if (reducedMotion()) { drawAt(el, 1); return; }
-  let start = null;
-  drawAt(el, 0);
-  const tick = now => {
-    if (start === null) start = now;
-    const t = Math.min(1, (now - start) / 1800);
-    drawAt(el, t);
-    if (t < 1) frame = requestAnimationFrame(tick);
+const LEGEND = { right: 'right shift', left: 'left shift', co: 'with carbon monoxide', anemia: 'anemia' };
+const TITLE = { right: 'Right shift', left: 'Left shift', co: 'Carbon monoxide', anemia: 'Anemia' };
+function change(kind) {
+  return {
+    duration: 2800,
+    render(t) {
+      const o = model(mix(NORMAL, { ...NORMAL, ...CHANGES[kind] }, ease(t)));
+      const label = `${TITLE[kind]}, drawn over a faint dashed picture of normal. ${CHANGE_WHERE[kind]} Compared with normal: ${describe(o)}.`;
+      const grip = kind === 'right' || kind === 'left' ? kind : '';
+      return { svg: pictureSvg(label, o, { ghost: BASE, legend: LEGEND[kind], grip, kind, a: span(t, .55, .9) }), readout: readout(o) };
+    }
   };
-  frame = requestAnimationFrame(tick);
 }
-let started = false;
-function startLesson() {
-  steps.forEach(el => {
-    const kind = el.dataset.kind;
-    if (CORE[kind]) visualOf(el).innerHTML = CORE[kind]();
-    else drawAt(el, 1);
-    el.querySelector('.replay')?.addEventListener('click', () => animate(el));
-  });
-  started = true;
-  if (/^#step-\d+$/.test(location.hash)) fromHash(); else showStep(current);
-}
-function showStep(n, focus = false) {
-  if (!started) return;
-  cancelAnimationFrame(frame);
-  current = clamp(n, 0, steps.length - 1);
-  steps.forEach((el, i) => { el.hidden = i !== current; });
-  backBtn.disabled = current === 0;
-  nextBtn.textContent = current === steps.length - 1 ? 'Start again ↻' : 'Next →';
-  progress.textContent = `Step ${current + 1} of ${steps.length}`;
-  if (location.hash !== `#step-${current + 1}`) history.replaceState(null, '', `#step-${current + 1}`);
-  const el = steps[current];
-  if (isAnimated(el)) animate(el);
-  if (focus) { const h = el.querySelector('h2'); h.focus({ preventScroll: true }); h.scrollIntoView({ block: 'start' }); }
-}
-nextBtn.addEventListener('click', () => showStep(current === steps.length - 1 ? 0 : current + 1, true));
-backBtn.addEventListener('click', () => showStep(current - 1, true));
-$('#lesson').addEventListener('keydown', e => {
-  if (e.target.closest('input, select, textarea') || e.altKey || e.ctrlKey || e.metaKey) return;
-  if (e.key === 'ArrowRight' && current < steps.length - 1) { e.preventDefault(); showStep(current + 1, true); }
-  if (e.key === 'ArrowLeft' && current > 0) { e.preventDefault(); showStep(current - 1, true); }
-});
-
-/* ---------- Tabs ---------- */
-const tabs = $$('[role=tab]');
-function activate(tab, focus = false) {
-  tabs.forEach(t => { const on = t === tab; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; document.getElementById(t.getAttribute('aria-controls')).hidden = !on; });
-  if (focus) tab.focus();
-  if (tab.id === 'tab-lesson') { if (started && isAnimated(steps[current])) drawAt(steps[current], 1); } else cancelAnimationFrame(frame);
-  update();
-}
-tabs.forEach((t, i) => {
-  t.addEventListener('click', () => activate(t));
-  t.addEventListener('keydown', e => {
-    const n = { ArrowRight: (i + 1) % tabs.length, ArrowLeft: (i + tabs.length - 1) % tabs.length, Home: 0, End: tabs.length - 1 }[e.key];
-    if (n !== undefined) { e.preventDefault(); activate(tabs[n], true); }
-  });
-});
-function fromHash() {
-  const m = location.hash.match(/^#step-(\d+)$/);
-  if (m && started) { if (tabs[0].getAttribute('aria-selected') !== 'true') activate(tabs[0]); showStep(Number(m[1]) - 1); }
-}
-window.addEventListener('hashchange', fromHash);
+const still = (label, body, h) => () => svg(label, body(), h);
+const scenes = {
+  trip: still('Lungs at the top and a block of body tissues at the bottom. A red arrow carries red blood cells, each holding oxygen, down from the lungs to the tissues; a grey arrow brings lighter, emptier cells back up to the lungs.', tripPicture, 396),
+  cell: still('A red blood cell, a flattened disc, packed with small hemoglobin molecules. One is enlarged: a rounded block with four seats; two hold red oxygen, two are empty.', cellPicture, 320),
+  pressure: still('Two boxes. On the left, an air sac in the lungs crowded with oxygen; its pressure bar is nearly full: high. On the right, working tissue with only a few oxygen dots; its pressure bar is short: low. An arrow points from high to low.', pressurePicture, 362),
+  fill: { duration: 4200, render: t => svg('One hemoglobin molecule while the oxygen pressure around it rises from low to high. Its four seats fill one by one, and a saturation bar below fills from empty, through half, to full.', fillPicture(t), 356) },
+  team: still('Three hemoglobin molecules. The first is empty and tight. A red arrow marked hard leads to the second, with one oxygen on and its shape starting to loosen. A blue arrow marked easy leads to the third, relaxed and full. A dashed arrow underneath notes that letting go works the same way in reverse.', teamPicture, 312),
+  curve: { duration: 4600, render: t => svg('A graph with oxygen pressure across and seats filled upward. The blue curve draws itself from left to right in an S shape: a slow start at low pressure, a steep middle, and a flat top near all seats full. A small hemoglobin molecule rides the tip of the curve, filling as it climbs.', curvePicture('curve', t), CURVE_H) },
+  lungs: still('The S-shaped curve with a red dot on its flat top, labelled lungs, where almost every seat is full. A highlighted band covers the flat top. A second dot, with less lung oxygen pressure, is still nearly as high: still nearly full.', () => curvePicture('lungs'), CURVE_H),
+  tissues: still('The S-shaped curve with a red dot for the lungs on the flat top and a hollow red dot for the tissues, lower down on the steep slope, which is highlighted.', () => curvePicture('tissues'), CURVE_H),
+  given: { duration: 3600, render: t => svg('The S-shaped curve. A red blood cell slides down the curve from the lungs dot high on the flat top to the tissues dot lower on the slope, and a red arrow grows between their heights: the oxygen unloaded. A bracket below the tissues dot then marks the oxygen still on board: the reserve.', curvePicture('given', t), CURVE_H) },
+  half: still('The S-shaped curve with a black dot where it is half full, and dashed lines from it down to the oxygen pressure axis: the half-saturation pressure. A blue arrow to the right reads right shift: lets go easily. A red arrow to the left reads left shift: holds tighter.', () => curvePicture('half'), CURVE_H),
+  content: still('The curve redrawn with oxygen carried upward. The dotted ceiling, all seats full, is labelled as set by the amount of hemoglobin. A red column under the lungs dot shows the oxygen content: how much oxygen the blood carries.', () => curvePicture('content'), CURVE_H),
+  whole: () => pictureSvg('The whole picture. The S-shaped curve with the lungs dot on the flat top, the tissues dot on the steep slope, a red arrow for the oxygen unloaded between them, and the half-full point marking the half-saturation pressure. Below, six hemoglobin molecules leaving the lungs are almost all full; leaving the tissues, about a quarter of the seats are empty.', BASE),
+  right: change('right'),
+  left: change('left'),
+  co: change('co'),
+  anemia: change('anemia'),
+};
 
 /* ---------- Shared model state (Clinical values + Explore freely) ---------- */
 let params = { ...NORMAL }, data = null;
@@ -495,7 +458,7 @@ function update() {
   const o = model(params);
   const label = `Illustrative model with these settings, drawn over a faint dashed picture of normal. Compared with normal: ${describe(o)}.${o.short ? ' The tissues cannot get all the oxygen they need.' : ''}`;
   $('#explore-visual').innerHTML = pictureSvg(label, o, { ghost: BASE, legend: 'these settings' }) + readout(o);
-  $('#clinical-visual').innerHTML = svg(label, DEFS + `<g data-new-state="these settings" ${attrs(o)}>${chart(o, { ghost: BASE })}</g>`, 356);
+  $('#clinical-visual').innerHTML = svg(label, DEFS + `<g data-new-state="these settings" ${attrs(o)}>${chart(o, { ghost: BASE })}</g>`, CURVE_H);
   const shortNote = o.short ? ' Tissues short of oxygen: they would need more than the blood carries.' : '';
   if (!data) {
     $('#model-results').textContent = `Illustrative model, relative to normal: half-saturation pressure ×${(o.p50 / BASE.p50).toFixed(2)} · oxygen content ×${(o.ca / BASE.ca).toFixed(2)} · tissue oxygen pressure ×${(o.pv / BASE.pv).toFixed(2)}.${shortNote}`;
@@ -613,7 +576,7 @@ async function load() {
   }
   if (!K) K = { ...FALLBACK };
   BASE = model(NORMAL);
-  startLesson();
   update();
 }
-load();
+
+lesson({ scenes, before: load, onTab: { clinical: update, explore: update } });

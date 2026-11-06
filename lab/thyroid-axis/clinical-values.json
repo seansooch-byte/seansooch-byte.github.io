@@ -86,7 +86,7 @@
       },
       "shiftNotes": { "tsh": "back up through the feedback loop, as the excess hormone falls" },
       "source": "openstax-pharm-27.2",
-      "where": "OpenStax Pharmacology for Nurses, section 27.2 Thyroid and Antithyroid Drugs, Potassium Iodide: “Additional use includes radioactive iodine to ablate a hyperactive thyroid gland.” Section 27.1, Thyroid and Parathyroid Glands (follicular cells): “They absorb iodine from the blood and combine it with T3 and T4.” Section 27.2, adverse effects of antithyroid drugs: “Hypothyroidism—increased fatigue, weight gain, cold intolerance, constipation”",
+      "where": "OpenStax Pharmacology for Nurses, section 27.2 Thyroid and Antithyroid Drugs, Potassium Iodide: “Additional use includes radioactive iodine to ablate a hyperactive thyroid gland.” Section 27.1, Thyroid and Parathyroid Glands (follicular cells): “They absorb iodine from the blood and combine it with T3 and T4.” Section 27.2, adverse effects of antithyroid drugs: “Hypothyroidism – increased fatigue, weight gain, cold intolerance, constipation”",
       "modelNote": "The model applies it to untreated hyperthyroidism: about three quarters of the gland's tissue is destroyed. Destroying more would leave the gland underactive." },
     { "id": "betablocker", "label": "Beta-blockers (for symptoms)", "kind": "drug",
       "summary": "Blunt the heart's response to catecholamines, which excess thyroid hormone amplifies, easing a racing heartbeat; they do not change what the gland makes.",

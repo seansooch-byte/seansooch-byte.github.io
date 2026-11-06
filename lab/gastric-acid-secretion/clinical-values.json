@@ -40,7 +40,7 @@
         "gastric": "OpenStax Anatomy and Physiology 2e, section 26.4, Bicarbonate-Carbonic Acid Buffer: “When sodium bicarbonate (NaHCO 3 ), comes into contact with a strong acid, such as HCl, carbonic acid (H 2 CO 3 ), which is a weak acid, and NaCl are formed.” A strong acid turned into a weak one leaves the stomach less acidic, so its pH rises."
       },
       "source": "openstax-ap-26.5",
-      "where": "OpenStax Anatomy and Physiology 2e, section 26.5 Disorders of Acid-Base Balance, Metabolic Alkalosis: Primary Bicarbonate Excess: “A transient excess of bicarbonate in the blood can follow ingestion of excessive amounts of bicarbonate, citrate, or antacids for conditions such as stomach acid reflux—known as heartburn.”",
+      "where": "OpenStax Anatomy and Physiology 2e, section 26.5 Disorders of Acid-Base Balance, Metabolic Alkalosis: Primary Bicarbonate Excess: “A transient excess of bicarbonate in the blood can follow ingestion of excessive amounts of bicarbonate, citrate, or antacids for conditions such as stomach acid reflux – known as heartburn.”",
       "modelNote": "The model neutralises most of the acid in the stomach while the cell keeps making acid as before. At ordinary use no blood direction is shown; see the separate excess-antacid state." },
     { "id": "antacid-excess", "label": "Excessive antacid use", "kind": "drug",
       "summary": "Swallowing excessive amounts of an absorbable antacid such as bicarbonate neutralises stomach acid and can also leave a transient excess of bicarbonate in the blood, a metabolic alkalosis.",
@@ -48,11 +48,11 @@
       "shifts": { "gastric": "up", "bicarbonate": "up", "bloodph": "up" },
       "evidence": {
         "gastric": "OpenStax Anatomy and Physiology 2e, section 26.4, Bicarbonate-Carbonic Acid Buffer: “When sodium bicarbonate (NaHCO 3 ), comes into contact with a strong acid, such as HCl, carbonic acid (H 2 CO 3 ), which is a weak acid, and NaCl are formed.”",
-        "bicarbonate": "OpenStax Anatomy and Physiology 2e, section 26.5, Metabolic Alkalosis: “A transient excess of bicarbonate in the blood can follow ingestion of excessive amounts of bicarbonate, citrate, or antacids for conditions such as stomach acid reflux—known as heartburn.”",
+        "bicarbonate": "OpenStax Anatomy and Physiology 2e, section 26.5, Metabolic Alkalosis: “A transient excess of bicarbonate in the blood can follow ingestion of excessive amounts of bicarbonate, citrate, or antacids for conditions such as stomach acid reflux – known as heartburn.”",
         "bloodph": "OpenStax Anatomy and Physiology 2e, section 26.5, Metabolic Alkalosis: “It occurs when the blood is too alkaline (pH above 7.45) due to too much bicarbonate (called primary bicarbonate excess).”"
       },
       "source": "openstax-ap-26.5",
-      "where": "OpenStax Anatomy and Physiology 2e, section 26.5 Disorders of Acid-Base Balance, Metabolic Alkalosis: Primary Bicarbonate Excess: “Metabolic alkalosis is the opposite of metabolic acidosis.” and “A transient excess of bicarbonate in the blood can follow ingestion of excessive amounts of bicarbonate, citrate, or antacids for conditions such as stomach acid reflux—known as heartburn.”",
+      "where": "OpenStax Anatomy and Physiology 2e, section 26.5 Disorders of Acid-Base Balance, Metabolic Alkalosis: Primary Bicarbonate Excess: “Metabolic alkalosis is the opposite of metabolic acidosis.” and “A transient excess of bicarbonate in the blood can follow ingestion of excessive amounts of bicarbonate, citrate, or antacids for conditions such as stomach acid reflux – known as heartburn.”",
       "modelNote": "The model neutralises most stomach acid and adds bicarbonate to the blood, with breathing held fixed. No chloride direction is cited, so the chloride marker stays where it was." },
     { "id": "vomiting", "label": "Repeated vomiting (stomach acid lost)", "kind": "disease",
       "summary": "Vomiting throws hydrochloric acid out of the body; the blood is left with too little chloride and too much bicarbonate, a metabolic alkalosis.",

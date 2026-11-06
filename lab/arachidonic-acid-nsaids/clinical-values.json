@@ -12,7 +12,7 @@
     { "id": "temperature", "label": "Internal body temperature", "unit": "°C",
       "low": null, "high": null, "typical": 37,
       "source": "openstax-ap-18.1",
-      "where": "OpenStax Anatomy and Physiology 2e, section 18.1 An Overview of Blood, Characteristics of Blood: “The normal temperature of blood is slightly higher than normal body temperature—about 38 °C (or 100.4 °F), compared to 37 °C (or 98.6 °F) for an internal body temperature reading, although daily variations of 0.5 °C are normal.”",
+      "where": "OpenStax Anatomy and Physiology 2e, section 18.1 An Overview of Blood, Characteristics of Blood: “The normal temperature of blood is slightly higher than normal body temperature – about 38 °C (or 100.4 °F), compared to 37 °C (or 98.6 °F) for an internal body temperature reading, although daily variations of 0.5 °C are normal.”",
       "modelKey": "temperature",
       "note": "The source gives one typical value, not a range, so the bar shows a typical-value marker instead of a band. It adds that daily variations of 0.5 °C are normal." },
     { "id": "glucose", "label": "Blood glucose", "unit": "mg/dL",
@@ -36,7 +36,7 @@
         "glucose": "OpenStax Anatomy and Physiology 2e, section 17.6, Disorders Involving the Adrenal Glands: “In addition to hyperglycemia, chronically elevated glucocorticoids compromise immunity, resistance to infection, and memory, and can result in rapid weight gain and hair loss.” Hormones of the Zona Fasciculata: “In conditions of long-term stress, for example, cortisol promotes the catabolism of glycogen to glucose, the catabolism of stored triglycerides into fatty acids and glycerol, and the catabolism of muscle proteins into amino acids.”"
       },
       "source": "openstax-ap-17.6",
-      "where": "OpenStax Anatomy and Physiology 2e, section 17.6 The Adrenal Glands, Hormones of the Zona Fasciculata: “You are probably familiar with prescription and over-the-counter medications containing glucocorticoids, such as cortisone injections into inflamed joints, prednisone tablets and steroid-based inhalers used to manage severe asthma, and hydrocortisone creams applied to relieve itchy rashes. These drugs reflect another role of cortisol—the downregulation of the immune system, which inhibits the inflammatory response.”",
+      "where": "OpenStax Anatomy and Physiology 2e, section 17.6 The Adrenal Glands, Hormones of the Zona Fasciculata: “You are probably familiar with prescription and over-the-counter medications containing glucocorticoids, such as cortisone injections into inflamed joints, prednisone tablets and steroid-based inhalers used to manage severe asthma, and hydrocortisone creams applied to relieve itchy rashes. These drugs reflect another role of cortisol – the downregulation of the immune system, which inhibits the inflammatory response.”",
       "modelNote": "The model slows the phospholipase scissors and the making of COX-2, and raises blood glucose. No temperature or blood pH direction is cited, so those markers stay where they were." },
     { "id": "aspirin", "label": "Aspirin (as an antiplatelet drug)", "kind": "drug",
       "summary": "Aspirin is a cyclooxygenase inhibitor that strongly reduces platelet aggregation (clumping).",
@@ -50,10 +50,10 @@
       "comparedWith": "normal",
       "shifts": { "bloodph": "variable" },
       "evidence": {
-        "bloodph": "OpenStax Anatomy and Physiology 2e, section 26.5, Metabolic Acidosis: Primary Bicarbonate Deficiency: “The active form of aspirin is its metabolite, salicylic acid. An overdose of aspirin causes acidosis due to the acidity of this metabolite.” Respiratory Alkalosis: Primary Carbonic Acid/CO 2 Deficiency: “Surprisingly, aspirin overdose—salicylate toxicity—can result in respiratory alkalosis as the body tries to compensate for initial acidosis.” The two pull blood pH in opposite directions, so no single direction is shown."
+        "bloodph": "OpenStax Anatomy and Physiology 2e, section 26.5, Metabolic Acidosis: Primary Bicarbonate Deficiency: “The active form of aspirin is its metabolite, salicylic acid. An overdose of aspirin causes acidosis due to the acidity of this metabolite.” Respiratory Alkalosis: Primary Carbonic Acid/CO 2 Deficiency: “Surprisingly, aspirin overdose – salicylate toxicity – can result in respiratory alkalosis as the body tries to compensate for initial acidosis.” The two pull blood pH in opposite directions, so no single direction is shown."
       },
       "source": "openstax-ap-26.5",
-      "where": "OpenStax Anatomy and Physiology 2e, section 26.5 Disorders of Acid-Base Balance, Metabolic Acidosis: Primary Bicarbonate Deficiency: “An overdose of aspirin causes acidosis due to the acidity of this metabolite.” and Respiratory Alkalosis: Primary Carbonic Acid/CO 2 Deficiency: “Surprisingly, aspirin overdose—salicylate toxicity—can result in respiratory alkalosis as the body tries to compensate for initial acidosis.”",
+      "where": "OpenStax Anatomy and Physiology 2e, section 26.5 Disorders of Acid-Base Balance, Metabolic Acidosis: Primary Bicarbonate Deficiency: “An overdose of aspirin causes acidosis due to the acidity of this metabolite.” and Respiratory Alkalosis: Primary Carbonic Acid/CO 2 Deficiency: “Surprisingly, aspirin overdose – salicylate toxicity – can result in respiratory alkalosis as the body tries to compensate for initial acidosis.”",
       "modelNote": "The teaching model has no breathing, so it cannot net the acidosis against the alkalosis: the blood pH marker is held where it was and the row reads Variable. The picture shows COX tagged as aspirin does. No temperature or glucose direction is cited, so those markers stay where they were too." }
   ]
 }

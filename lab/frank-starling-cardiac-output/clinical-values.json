@@ -95,7 +95,7 @@
       "id": "beta",
       "label": "Beta-blockers",
       "kind": "drug",
-      "summary": "Reduced stress-signal stimulation slows the heart and weakens contraction. Slower beats fill for longer, so blood per beat changes little; the flow over a minute falls mainly because there are fewer beats.",
+      "summary": "Reduced stress-signal stimulation slows the heart and weakens contraction. Slower beats fill for longer, which offsets the weaker squeeze, so in this model blood per beat changes little; the flow over a minute falls because there are fewer beats.",
       "shifts": {
         "hr": "down",
         "sv": "variable",

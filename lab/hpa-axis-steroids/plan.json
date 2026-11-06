@@ -1,0 +1,204 @@
+{
+  "minutes": 28,
+  "prerequisites": [
+    "renin-angiotensin-aldosterone",
+    "thyroid-axis"
+  ],
+  "objectives": [
+    "Trace the HPA axis: CRH from the hypothalamus, ACTH from the pituitary, cortisol from the adrenal cortex; and tell it apart from aldosterone, run mostly by renin and potassium.",
+    "Explain how the cortisol brake turns CRH and ACTH down when cortisol runs high, and up when it runs low.",
+    "Tell primary from secondary adrenal insufficiency by ACTH and potassium, and Cushing’s disease from steroid medicine by ACTH.",
+    "Predict what glucocorticoid drugs, mineralocorticoid drugs and steroid synthesis inhibitors do to the axis and the blood tests."
+  ],
+  "checks": {
+    "cushing": {
+      "prompt": "In Cushing’s disease a pituitary tumor pours out ACTH that the brake barely slows. What happens to cortisol, and to CRH from the hypothalamus?",
+      "choices": [
+        "Cortisol rises; CRH falls, because the hypothalamus still obeys the brake",
+        "Cortisol rises; CRH rises too",
+        "Cortisol falls; CRH rises",
+        "Both stay normal, because the brake corrects it"
+      ],
+      "answer": 0,
+      "why": "More ACTH drives the cortex to make more cortisol. The hypothalamus still obeys the brake, so CRH falls, but the tumor barely does, so ACTH stays high or unexpectedly normal and cortisol stays high."
+    },
+    "addison": {
+      "prompt": "In Addison’s disease the cortex itself is destroyed, so it makes little cortisol and little aldosterone. What happens to ACTH?",
+      "choices": [
+        "It rises, because the weak brake lets the pituitary push harder",
+        "It falls, along with cortisol",
+        "It stays normal, because the pituitary is healthy",
+        "It drops to almost nothing"
+      ],
+      "answer": 0,
+      "why": "With little cortisol the brake eases and the pituitary pours out ACTH, but the destroyed cortex cannot answer. A high ACTH with a low cortisol points to the cortex itself."
+    },
+    "secondary": {
+      "prompt": "In secondary adrenal insufficiency the pituitary fails and makes little ACTH. Aldosterone is run mostly by the kidney’s renin system, not by ACTH. What happens to cortisol and to potassium?",
+      "choices": [
+        "Cortisol falls; potassium stays normal",
+        "Cortisol falls; potassium rises, as in Addison’s disease",
+        "Cortisol rises; potassium falls",
+        "Both stay normal"
+      ],
+      "answer": 0,
+      "why": "Without ACTH a healthy cortex makes little cortisol. Aldosterone depends mainly on the renin system and potassium, not on ACTH, so the kidneys still pass potassium and it stays normal: a key difference from Addison’s disease, where potassium rises."
+    },
+    "glucocorticoid": {
+      "prompt": "Prednisone acts like cortisol, and the brain reads it as cortisol. Someone takes it for months. What happens to their ACTH, and to the cortisol their own glands make?",
+      "choices": [
+        "Both fall: the brake is held on",
+        "Both rise, to keep up with the drug",
+        "ACTH falls but their own cortisol rises",
+        "Nothing changes, because the drug is not real cortisol"
+      ],
+      "answer": 0,
+      "why": "The brake reads the drug as cortisol, so CRH and ACTH fall, and the cortex, left without ACTH, makes little cortisol and shrinks. That is why a long course is tapered rather than stopped at once."
+    },
+    "mineralocorticoid": {
+      "prompt": "In Addison’s disease potassium runs high because aldosterone is missing. Fludrocortisone acts like aldosterone on the kidneys. What happens to potassium, and to ACTH?",
+      "choices": [
+        "Potassium falls back toward normal; ACTH stays high",
+        "Potassium falls; ACTH falls too",
+        "Potassium rises further; ACTH stays high",
+        "Potassium stays high; ACTH falls"
+      ],
+      "answer": 0,
+      "why": "Acting like aldosterone, the drug makes the kidneys pass potassium and keep sodium again, so potassium falls back. It does nothing for cortisol, so the brake stays weak and ACTH stays high until a glucocorticoid is given too."
+    },
+    "inhibitor": {
+      "prompt": "In Cushing’s disease, a steroid synthesis inhibitor blocks the cortex from building cortisol. The pituitary tumor is still there. What happens to cortisol and to ACTH?",
+      "choices": [
+        "Cortisol falls; ACTH climbs even higher",
+        "Cortisol falls; ACTH falls too",
+        "Cortisol rises; ACTH rises",
+        "Cortisol stays high; ACTH falls"
+      ],
+      "answer": 0,
+      "why": "Less cortisol is built, so cortisol falls back. With less cortisol the brake eases further, so ACTH, already high from the tumor, climbs higher still and pushes on the blocked cortex."
+    }
+  },
+  "quiz": [
+    {
+      "id": "chain",
+      "objective": 1,
+      "step": "hypothalamus",
+      "stem": "Which list puts the HPA axis in order, from the top down?",
+      "choices": [
+        "Hypothalamus (CRH), then pituitary (ACTH), then adrenal cortex (cortisol)",
+        "Pituitary (CRH), then hypothalamus (ACTH), then adrenal cortex (cortisol)",
+        "Adrenal medulla (ACTH), then pituitary (CRH), then hypothalamus (cortisol)",
+        "Hypothalamus (ACTH), then adrenal cortex (CRH), then pituitary (cortisol)"
+      ],
+      "answer": 0,
+      "why": "CRH from the hypothalamus tells the pituitary to release ACTH, and ACTH tells the adrenal cortex to make cortisol: the same pattern as TRH, TSH and the thyroid. The medulla is a different part of the gland."
+    },
+    {
+      "id": "aldo-control",
+      "objective": 1,
+      "step": "aldo",
+      "stem": "What mostly sets how much aldosterone the cortex makes?",
+      "choices": [
+        "The kidney’s renin system",
+        "ACTH from the pituitary",
+        "CRH from the hypothalamus",
+        "Blood sugar"
+      ],
+      "answer": 0,
+      "why": "Aldosterone answers mostly to renin and angiotensin from the kidney (Lesson 5), and to potassium; ACTH plays only a small part. That is why a failing pituitary leaves aldosterone, and potassium, close to normal."
+    },
+    {
+      "id": "brake",
+      "objective": 2,
+      "step": "brake",
+      "stem": "Why do CRH and ACTH fall when cortisol runs high?",
+      "choices": [
+        "High cortisol tells the hypothalamus and pituitary to release less",
+        "The cortex uses up the ACTH faster",
+        "Cortisol is turned into ACTH",
+        "High blood sugar switches off the pituitary"
+      ],
+      "answer": 0,
+      "why": "That is negative feedback: cortisol presses the brake on the hypothalamus and the pituitary. It keeps cortisol steady, and it is why steroid drugs switch the axis off."
+    },
+    {
+      "id": "stress",
+      "objective": 2,
+      "step": "stress",
+      "stem": "At the start of a typical stress response, such as an infection, which way do CRH, ACTH and cortisol move?",
+      "choices": [
+        "All three rise",
+        "CRH rises while ACTH and cortisol fall",
+        "All three fall",
+        "Cortisol rises while CRH and ACTH fall"
+      ],
+      "answer": 0,
+      "why": "Stress drives the hypothalamus to send more CRH, so ACTH and cortisol rise and blood sugar climbs to fuel the body. The brake still limits how far they rise; in a long, severe illness the pattern can change."
+    },
+    {
+      "id": "primary-secondary",
+      "objective": 3,
+      "step": "secondary",
+      "stem": "Two people have low cortisol. One has a high ACTH and a high potassium; the other has a low ACTH and a normal potassium. Where is the problem in each?",
+      "choices": [
+        "The first in the adrenal cortex, the second in the pituitary",
+        "The first in the pituitary, the second in the adrenal cortex",
+        "Both in the adrenal cortex",
+        "Both in the hypothalamus"
+      ],
+      "answer": 0,
+      "why": "A failing cortex loses cortisol and aldosterone, so ACTH climbs and potassium rises. A failing pituitary makes little ACTH; the cortex still makes aldosterone, so potassium stays normal."
+    },
+    {
+      "id": "steroid-cushing",
+      "objective": 3,
+      "step": "glucocorticoid",
+      "stem": "A man who has taken prednisone for months has the rounded face and high blood sugar of Cushing’s syndrome. What would his ACTH and his own cortisol show?",
+      "choices": [
+        "Both low, because the drug holds the brake on",
+        "Both high, because of a pituitary tumor",
+        "ACTH high and his own cortisol low",
+        "Both normal, because the drug is not cortisol"
+      ],
+      "answer": 0,
+      "why": "The drug causes the signs of too much cortisol, but the brain reads it as cortisol, so ACTH falls and his own cortisol falls. In Cushing’s disease, by contrast, cortisol is high and ACTH is high or unexpectedly normal."
+    },
+    {
+      "id": "taper",
+      "objective": 4,
+      "step": "glucocorticoid",
+      "stem": "Why is a long course of a glucocorticoid stopped slowly instead of all at once?",
+      "choices": [
+        "The body’s own cortisol was switched down and needs time to come back",
+        "The drug builds up in the liver",
+        "Stopping suddenly makes cortisol spike",
+        "The kidneys need time to clear the drug"
+      ],
+      "answer": 0,
+      "why": "While the drug held the brake on, ACTH stayed low and the cortex made little and shrank. Stopped at once, the body would be left short of cortisol; tapering gives the axis time to wake up."
+    },
+    {
+      "id": "fludro",
+      "objective": 4,
+      "step": "mineralocorticoid",
+      "stem": "Someone with Addison’s disease starts fludrocortisone alone. Which problem does it fix?",
+      "choices": [
+        "The high potassium and low sodium, as it acts like aldosterone",
+        "The low cortisol and low blood sugar",
+        "The high ACTH",
+        "Every problem, as it replaces each steroid of the cortex"
+      ],
+      "answer": 0,
+      "why": "Fludrocortisone acts like aldosterone, so the kidneys keep sodium and pass potassium again. It does not replace cortisol, so the cortisol shortfall and its risk of low blood sugar remain, and ACTH stays high until a glucocorticoid is added."
+    }
+  ],
+  "takeaways": [
+    "The HPA axis is a chain: CRH from the hypothalamus, ACTH from the pituitary, cortisol from the adrenal cortex, the same pattern as the thyroid axis.",
+    "Cortisol, a glucocorticoid, raises blood sugar and calms inflammation. Aldosterone, a mineralocorticoid, keeps sodium and passes potassium, and answers mainly to the kidney’s renin system.",
+    "Cortisol is the brake: high cortisol turns CRH and ACTH down, and low cortisol lets them rise, if the hypothalamus and pituitary can answer. Stress turns the whole chain up.",
+    "Cushing’s disease: a pituitary tumor makes ACTH, so cortisol is high and ACTH high or unexpectedly normal. Steroid medicine, the most common cause of Cushing’s syndrome, gives the same signs with ACTH low.",
+    "Primary adrenal insufficiency, Addison’s disease: the cortex fails, so cortisol and aldosterone fall, ACTH is high and potassium tends to rise. Secondary: the pituitary fails, so ACTH is low or unexpectedly normal and potassium usually stays normal.",
+    "Glucocorticoid drugs hold the brake on: CRH, ACTH and the body’s own cortisol fall, so a long course is tapered.",
+    "Fludrocortisone replaces aldosterone in Addison’s disease but not cortisol. Steroid synthesis inhibitors lower cortisol, so the brake eases and ACTH rises."
+  ]
+}

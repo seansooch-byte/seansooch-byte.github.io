@@ -11,8 +11,9 @@
 <meta property="og:url" content="https://seansooch.dev/lab/neuromuscular-junction/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/lab/kit/kit.css">
 <link rel="stylesheet" href="style.css">
-<script src="app.js" defer></script>
+<script type="module" src="app.js"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to the lesson</a>
@@ -28,16 +29,19 @@
     </nav>
   </div>
 </header>
-<main id="main">
+<main id="main" data-slug="neuromuscular-junction">
   <div class="intro">
-    <p class="eyebrow"><a href="/lab/">The Lab</a> / Core medicine / Lesson 8</p>
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / <a href="/lab/#signals">Unit 2: Nerves, rhythm and muscle</a> / Lesson 8</p>
     <h1>The neuromuscular<br><span>junction.</span></h1>
     <p class="lede">Every movement you make starts as a nerve signal that has to jump a gap too small to see. Follow one signal across it into a muscle, then watch how paralysing drugs, the drugs that reverse them, and one disease change the crossing.</p>
     <p class="note">Educational, not for clinical use</p>
+    <div class="lx-plan" data-lx-plan></div>
   </div>
 
   <div class="tabs" role="tablist" aria-label="Lesson views">
     <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-quiz" aria-controls="quiz" aria-selected="false" tabindex="-1">Quiz</button>
+    <button type="button" role="tab" id="tab-summary" aria-controls="summary" aria-selected="false" tabindex="-1">Summary</button>
     <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
     <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
   </div>
@@ -47,101 +51,97 @@
       <p class="eyebrow">Build the signal</p>
       <h2 tabindex="-1">Muscles move only when a nerve tells them</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Skeletal muscles</dfn>, the ones that move your bones, act only on orders from the <dfn>spinal cord</dfn>, the nerve column inside your backbone. A <dfn>motor nerve</dfn> carries them: a cable of <dfn>axons</dfn>, thin wires each reaching out from one nerve cell in the spinal cord.</p>
+      <p class="caption"><dfn data-part="muscle">Skeletal muscles</dfn>, the ones that move your bones, act only on orders from the brain and spinal cord. A <dfn data-part="nerve">motor nerve</dfn> carries them: a cable of axons, thin wires each reaching out from one <dfn data-part="cellbody">nerve cell</dfn> in the brainstem or spinal cord to the muscle.</p>
     </article>
     <article data-step="2" data-step-title="Each nerve ending meets one muscle fibre" data-kind="junctions" hidden>
       <p class="eyebrow">Build the signal</p>
       <h2 tabindex="-1">Each nerve ending meets one muscle fibre</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">A muscle is a bundle of long, thin cells called <dfn>muscle fibres</dfn>. The motor nerve branches, and each branch ends near the middle of one fibre. That meeting point is the <dfn>neuromuscular junction</dfn>. This lesson zooms into it.</p>
+      <p class="caption">A muscle is a bundle of long, thin cells called <dfn data-part="fibres">muscle fibres</dfn>. The motor nerve branches, and each branch ends near the middle of one fibre. That meeting point is the <dfn data-part="nmj">neuromuscular junction</dfn>. This lesson zooms into it.</p>
     </article>
     <article data-step="3" data-step-title="A gap, and a folded landing pad" data-kind="gap" hidden>
       <p class="eyebrow">Build the signal</p>
       <h2 tabindex="-1">A gap, and a folded landing pad</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">The nerve ending never touches the fibre. A tiny gap, the <dfn>synaptic gap</dfn>, separates them. Under the gap, the fibre’s surface is pleated into deep folds. This patch is the <dfn>end plate</dfn>, and it packs a lot of surface into a small space.</p>
+      <p class="caption">The nerve ending never touches the fibre. A tiny gap, the <dfn data-part="gap">synaptic gap</dfn>, separates them. Under the gap, the fibre’s surface is pleated into deep folds. This patch is the <dfn data-part="endplate">end plate</dfn>, and it packs a lot of surface into a small space.</p>
     </article>
     <article data-step="4" data-step-title="The messenger waits in packets" data-kind="packets" hidden>
       <p class="eyebrow">Build the signal</p>
       <h2 tabindex="-1">The messenger waits in packets</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">The signal crosses the gap as a chemical. The nerve ending makes <dfn>acetylcholine</dfn>, a <dfn>neurotransmitter</dfn> (a chemical messenger between cells), and stores it in <dfn>vesicles</dfn>: tiny bubbles, each holding thousands of acetylcholine molecules.</p>
+      <p class="caption">The signal crosses the gap as a chemical. The nerve ending makes acetylcholine, the same messenger as the brake nerves in <a href="/lab/autonomic-synapse/">Lesson 6</a>, and stores it in <dfn data-part="vesicles">vesicles</dfn>: tiny bubbles, each holding thousands of acetylcholine molecules.</p>
     </article>
     <article data-step="5" data-step-title="A nerve impulse spills the packets" data-kind="release" hidden>
       <p class="eyebrow">Build the signal</p>
       <h2 tabindex="-1">A nerve impulse spills the packets</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">A <dfn>nerve impulse</dfn> is the electrical signal racing down the nerve. When it reaches the ending, <dfn>calcium</dfn>, a charged mineral, flows in. Calcium makes many vesicles merge with the ending’s wall and spill their acetylcholine into the gap.</p>
+      <p class="caption">A <dfn>nerve impulse</dfn> is the electrical signal racing down the nerve. When it reaches the ending, calcium doors open and <dfn data-part="calcium">calcium</dfn> flows in. Calcium makes vesicles merge with the ending’s wall and spill their <dfn data-part="ach">acetylcholine</dfn> into the gap.</p>
     </article>
     <article data-step="6" data-step-title="Receptors are gates that acetylcholine opens" data-kind="receptors" hidden>
       <p class="eyebrow">Build the signal</p>
       <h2 tabindex="-1">Receptors are gates that acetylcholine opens</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">The end plate is studded with <dfn>acetylcholine receptors</dfn>: gates in the fibre’s surface that open only while acetylcholine is docked in them. An open gate lets <dfn>sodium</dfn>, a positively charged particle, rush into the fibre.</p>
+      <p class="caption">The end plate is studded with <dfn data-part="gates">acetylcholine receptors</dfn>: gates in the fibre’s surface. These are nicotinic receptors, a different kind from the organs’ muscarinic ones. A gate opens only while two acetylcholine molecules are docked in it, and an open gate lets <dfn data-part="sodium">sodium</dfn> rush into the fibre.</p>
     </article>
     <article data-step="7" data-step-title="Sodium makes the end plate’s voltage jump" data-kind="voltage" hidden>
       <p class="eyebrow">Build the signal</p>
       <h2 tabindex="-1">Sodium makes the end plate’s voltage jump</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">At rest, the inside of a fibre is slightly negative compared with the outside; that difference is its <dfn>voltage</dfn>. Incoming sodium makes the inside less negative, a change called <dfn>depolarization</dfn>. This brief bump at the end plate is the <dfn>end plate potential</dfn>.</p>
+      <p class="caption">At rest, the inside of a fibre is negative compared with the outside; that difference is its voltage. Incoming sodium makes the inside less negative, a change called <dfn data-part="trace">depolarization</dfn>. This brief bump at the end plate is the <dfn data-part="trace">end plate potential</dfn>.</p>
     </article>
     <article data-step="8" data-step-title="A wide margin of safety" data-kind="margin" hidden>
       <p class="eyebrow">Build the signal</p>
       <h2 tabindex="-1">A wide margin of safety</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">To fire, the fibre’s voltage must reach a set level, its <dfn>threshold</dfn>. A normal end plate potential overshoots the threshold by a wide margin, so every impulse fires the fibre. That spare room is the <dfn>safety margin</dfn>.</p>
+      <p class="caption">To fire, the fibre’s voltage must reach a set level, its <dfn data-part="threshold">threshold</dfn>. A normal end plate potential overshoots the threshold by a wide margin, so every impulse fires the fibre. That spare room is the <dfn data-part="margin">safety margin</dfn>.</p>
     </article>
     <article data-step="9" data-step-title="The fibre fires, then twitches" data-kind="fire" hidden>
       <p class="eyebrow">Build the signal</p>
       <h2 tabindex="-1">The fibre fires, then twitches</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Reaching threshold sets off a <dfn>muscle action potential</dfn>: a wave of voltage that sweeps along the whole fibre and makes it shorten. One impulse gives one quick contraction, a <dfn>twitch</dfn>. Then the end plate’s voltage settles back, ready for the next impulse.</p>
+      <p class="caption">Reaching threshold sets off a <dfn data-part="wave">muscle action potential</dfn>: a wave of voltage that sweeps along the whole fibre and makes it shorten. One impulse gives one quick contraction, a <dfn data-part="twitch">twitch</dfn>. Then the end plate’s voltage settles back, ready for the next impulse.</p>
     </article>
     <article data-step="10" data-step-title="An enzyme wipes the gap clean" data-kind="enzyme" hidden>
       <p class="eyebrow">Build the signal</p>
       <h2 tabindex="-1">An enzyme wipes the gap clean</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">An <dfn>enzyme</dfn> is a protein that speeds up one chemical change. <dfn>Cholinesterase</dfn>, waiting in the folds, chops acetylcholine apart within moments, so the gates close and each impulse gives just one twitch. <a href="/lab/autonomic-synapse/">Lesson 6</a> met the same enzyme.</p>
+      <p class="caption"><dfn data-part="enzyme">Cholinesterase</dfn>, an enzyme waiting in the folds, chops acetylcholine apart within moments, so the gates close and each impulse gives just one twitch. <a href="/lab/autonomic-synapse/">Lesson 6</a> met the same enzyme at the brake nerves’ synapses.</p>
     </article>
     <article data-step="11" data-step-title="Quick bursts test the margin" data-kind="burst" hidden>
       <p class="eyebrow">Build the signal</p>
       <h2 tabindex="-1">Quick bursts test the margin</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Fire the nerve several times in quick succession and each impulse releases a little less acetylcholine than the one before. The safety margin absorbs the drop: every end plate potential still clears threshold, so the twitches stay equally strong.</p>
+      <p class="caption">Fire the nerve several times in quick succession and each impulse releases a little less acetylcholine than the one before. The safety margin absorbs the drop: every end plate potential still clears threshold, so the twitches stay equally strong. Anesthetists test the junction with such a burst of four, the <dfn data-part="twitch">train of four</dfn>.</p>
     </article>
     <article data-step="12" data-step-title="The whole picture" data-kind="whole" hidden>
       <p class="eyebrow">Build the signal</p>
       <h2 tabindex="-1">The whole picture</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Impulse, calcium, acetylcholine, open gates, an end plate potential above threshold, a fired fibre, a twitch; then cholinesterase resets the gap. Two key measures: how far the end plate potential clears threshold, and whether twitches stay strong through a quick burst.</p>
+      <p class="caption">Impulse, calcium, acetylcholine, open gates, an end plate potential above threshold, a fired fibre, a twitch; then cholinesterase resets the gap. Two key measures: how far each end plate potential clears threshold, and whether the four twitches of a quick burst stay equally strong.</p>
     </article>
     <article data-step="13" data-step-title="Nondepolarizing blockers: gates jammed shut" data-kind="ndmb" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Nondepolarizing blockers: gates jammed shut</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">A <dfn>neuromuscular blocker</dfn> is a drug that stops muscles contracting, as during surgery. Nondepolarizing blockers sit in the receptors without opening them, crowding acetylcholine out. End plate potentials fall short of threshold in many fibres: twitches weaken, then fade through a burst.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption">A <dfn data-part="drug">neuromuscular blocker</dfn> is a drug that stops muscles contracting, as during surgery. Nondepolarizing blockers, such as rocuronium, sit in the gates without opening them, crowding acetylcholine out. End plate potentials fall below threshold in many fibres: twitches weaken, and fade through a burst.</p>
     </article>
-    <article data-step="14" data-step-title="Succinylcholine: gates held open" data-kind="sux" hidden>
+    <article data-step="14" data-step-title="Succinylcholine: the end plate held depolarized" data-kind="sux" hidden>
       <p class="eyebrow">What changes it</p>
-      <h2 tabindex="-1">Succinylcholine: gates held open</h2>
+      <h2 tabindex="-1">Succinylcholine: the end plate held depolarized</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Succinylcholine, a <dfn>depolarizing blocker</dfn>, opens the receptors like acetylcholine, but cholinesterase in the gap barely breaks it down. The end plate stays depolarized: a brief flurry of small twitches, then the fibre cannot reset to fire. Twitches shrink evenly, without fading.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption">Succinylcholine, a <dfn data-part="drug">depolarizing blocker</dfn>, is two acetylcholine molecules joined. It opens the gates again and again, and the junction’s cholinesterase cannot break it down, so the end plate stays depolarized: a brief flurry of small twitches, then the sodium doors around it lock and the fibre cannot fire. This phase I block shrinks twitches evenly, without fade, until an enzyme in the blood clears it.</p>
     </article>
     <article data-step="15" data-step-title="Cholinesterase inhibitors: reversing the block" data-kind="che" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Cholinesterase inhibitors: reversing the block</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">An <dfn>inhibitor</dfn> stops an enzyme working. After a nondepolarizing blocker, a cholinesterase inhibitor lets acetylcholine pile up, so it wins receptors back: end plate potentials clear threshold and twitches recover. It cannot undo succinylcholine’s first, held-open stage of block; it deepens it.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption">An <dfn data-part="enzyme">inhibitor</dfn> stops an enzyme. After a nondepolarizing blocker, an inhibitor such as neostigmine lets acetylcholine pile up, so it wins gates back and twitches recover. A muscarinic antagonist is given with it so the heart does not slow (<a href="/lab/autonomic-synapse/">Lesson 6</a>). It deepens succinylcholine’s phase I block instead, and too much can itself cause weakness.</p>
     </article>
     <article data-step="16" data-step-title="Myasthenia gravis: too few gates" data-kind="mg" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Myasthenia gravis: too few gates</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">In <dfn>myasthenia gravis</dfn>, the immune system makes <dfn>antibodies</dfn>, proteins that tag a target for attack, against acetylcholine receptors, blocking and destroying them. With fewer gates, end plate potentials barely reach threshold, so muscles tire with use. Cholinesterase inhibitors ease it.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption">In most <dfn data-part="antibody">myasthenia gravis</dfn>, the immune system makes <dfn data-part="antibody">antibodies</dfn>, proteins that tag a target for attack, against acetylcholine receptors, blocking and destroying them (in a few, against other junction proteins). With fewer gates, end plate potentials barely clear threshold, so muscles tire with use and twitches fade. Cholinesterase inhibitors such as pyridostigmine ease it; too much causes weakness of its own.</p>
     </article>
 
     <div class="step-nav">
@@ -149,8 +149,12 @@
       <span data-step-progress aria-live="polite">Step 1 of 16</span>
       <button type="button" data-step-next>Next →</button>
     </div>
-    <p class="hint">Start with Next, or use the arrow keys. Sizes, counts and heights are illustrative, not measurements.</p>
+    <p class="hint">Start with Next, or use the arrow keys. Under a moving picture: pause, drag to any moment, or slow it down. Underlined terms light up their part of the picture. Sizes, counts and heights are illustrative, not measurements.</p>
   </section>
+
+  <section id="quiz" role="tabpanel" aria-labelledby="tab-quiz" hidden></section>
+
+  <section id="summary" role="tabpanel" aria-labelledby="tab-summary" hidden></section>
 
   <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
     <h2>Reference values, beside the model.</h2>
@@ -178,8 +182,12 @@
     </div>
     <p id="state-summary" class="state-summary" aria-live="polite">Normal teaching baseline.</p>
     <p id="state-source" class="model-note"></p>
-    <p class="model-note">The blue line on each bar is an illustrative teaching model, not a patient measurement. A shaded band is the textbook range; a single black tick is the textbook’s typical value where it gives no range. Arrows come from the cited source for the selected state. Try the blocker slider, then turn cholinesterase down to watch a reversal.</p>
-    <p id="baseline-note" class="model-note"></p>
+    <p class="model-note">Try the blocker slider, then turn cholinesterase down to watch a reversal.</p>
+    <details class="lx-fine">
+      <summary>How to read these bars</summary>
+      <p>The blue line on each bar is an illustrative teaching model, not a patient measurement. A shaded band is the textbook range; a single black tick is the textbook’s typical value where it gives no range. Arrows come from the cited source for the selected state.</p>
+      <p id="baseline-note" class="model-note"></p>
+    </details>
     <div id="value-rows"></div>
     <p id="cv-live" class="visually-hidden" aria-live="polite"></p>
     <p class="model-note">Succinylcholine has a model slider here but no row arrows. This tab cites only standard physiology textbooks and major guidelines, and none of the locations it uses names succinylcholine with a direction for these values, so its arrows are left out rather than borrowed from a passage about similar drugs.</p>
@@ -216,7 +224,7 @@
     <p id="model-results" class="model-results" aria-live="polite"></p>
     <details>
       <summary>How this teaching model works</summary>
-      <p>Everything is relative to a normal junction. Acetylcholine in the gap is the amount released divided by how fast cholinesterase clears it. A nondepolarizing blocker competes with acetylcholine for the same receptors: the share of receptors opened by acetylcholine is its level divided by its level plus a constant scaled up by the blocker. Opened receptors, times the share of receptors still present, give the end plate potential, which levels off as more gates open because the voltage cannot rise forever. The safety margin is the end plate potential compared with threshold; the model takes a normal junction’s margin from the textbook safety factor in the Clinical values data file. Fibres differ a little, so as the margin shrinks some fibres miss first and the twitch weakens gradually rather than all at once. In a quick burst of impulses each impulse releases a little less acetylcholine; a nondepolarizing blocker also sits on the nerve ending’s own receptors and steepens that drop, which is why its twitches fade. Succinylcholine is treated as holding the end plate depolarized, so in a share of fibres the surrounding membrane cannot reset and that fibre does not fire at all, however much acetylcholine arrives; the other fibres keep their full margin, so its twitches shrink evenly without fading, and extra acetylcholine from a cholinesterase inhibitor deepens that first, held-open stage of block. Myasthenia gravis is shown as fewer receptors. The model leaves out calcium handling inside the muscle, the second phase of a long succinylcholine block, the drugs’ effects elsewhere in the body, and all timing; drug strengths are arbitrary, so only directions are meant to teach. In the Clinical values tab the relative results are scaled to the textbook values, as that tab explains.</p>
+      <p>Everything is relative to a normal junction. Acetylcholine in the gap is the amount released divided by how fast cholinesterase clears it. A nondepolarizing blocker competes with acetylcholine for the same receptors: the share of receptors opened by acetylcholine is its level divided by its level plus a constant scaled up by the blocker. Opened receptors, times the share of receptors still present, give the end plate potential, which levels off as more gates open because the voltage cannot rise forever. The safety margin is the end plate potential compared with threshold; the model takes a normal junction’s margin from the textbook safety factor in the Clinical values data file. Fibres differ a little, so as the margin shrinks some fibres miss first and the twitch weakens gradually rather than all at once. In a quick burst of impulses each impulse releases a little less acetylcholine; a nondepolarizing blocker also sits on the nerve ending’s own receptors and steepens that drop, which is why its twitches fade. Succinylcholine is treated as holding the end plate depolarized, so in a share of fibres the surrounding membrane cannot reset and that fibre does not fire at all, however much acetylcholine arrives; the other fibres keep their full margin, so its twitches shrink evenly without fading, and extra acetylcholine from a cholinesterase inhibitor deepens that first, held-open stage of block. Myasthenia gravis is shown as fewer receptors. The model leaves out calcium handling inside the muscle, the second phase of a long succinylcholine block, the weakness that too much cholinesterase inhibitor causes on its own, the drugs’ effects elsewhere in the body, and all timing; drug strengths are arbitrary, so only directions are meant to teach. In the Clinical values tab the relative results are scaled to the textbook values, as that tab explains.</p>
     </details>
   </section>
 

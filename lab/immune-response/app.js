@@ -1,487 +1,529 @@
-'use strict';
+// Lesson 20: The immune response. The kit (/lab/kit/kit.js) runs the page; this file is the pictures and the
+// Clinical values and Explore freely tabs. The teaching model is model.js (window.IRModel), a classic script loaded
+// before this module.
+//
+// Expected behaviour:
+//   - Every picture is 480 wide and at most 420 tall, one idea each, with the kit's type (20, .sm 18, .xs 17).
+//   - The response unfolds in time: germs get in, eating cells arrive, the alarm spreads, a tag travels to the lymph
+//     node, a T cell switches on and multiplies, B cells pour out antibodies, the timeline draws itself, and memory
+//     makes the second meeting faster. The whole response is a map that builds row by row, from hours to years.
+//   - Each "What changes it" step starts from the normal picture over a dashed ghost of normal, then the drug acts
+//     and what moved is named on the picture (blue: what moved; red: the drug). Its readout comes from the model.
+import { lesson } from '/lab/kit/kit.js';
+import { C, f, clamp, lerp, ease as EASE, span, svg, text, line, circle, rect, path, arrowTo, part, readout } from '/lab/kit/draw.js';
+
+const ease = EASE.out;
 const IM = window.IRModel;
+const NV = IM.NORMAL;
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
-const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
-const f = n => Number(n.toFixed(1));
-const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
-const NV = IM.NORMAL;
 
-/* ---------- Drawing helpers ---------- */
-const INK = '#171916', BLUE = '#254dff', AMBER = '#a34700', RED = '#b3261e', MUTED = '#53584d', RULE = '#babeb3';
-const PURPLE = '#6b3fa0', TISSUE = '#f8ecdf', SKIN = '#d9b38c', VESSEL = '#f1cdc6', NODE = '#e3e8ff', LOBE = '#7a5ea8';
-const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
-const text = (x, y, s, cls = '', anchor = 'middle', extra = '') => `<text x="${f(x)}" y="${f(y)}" text-anchor="${anchor}" class="${cls}" ${extra}>${s}</text>`;
-const H = 620;
-const svg = (label, body, h = H) => `<svg viewBox="0 0 480 ${h}" role="img" aria-label="${esc(label)}">${body}</svg>`;
-const line = (x1, y1, x2, y2, col, w, extra = '') => `<line x1="${f(x1)}" y1="${f(y1)}" x2="${f(x2)}" y2="${f(y2)}" stroke="${col}" stroke-width="${w}" stroke-linecap="round" ${extra}/>`;
-function arrow(x1, y1, x2, y2, col, w = 2.5, extra = '') {
-  const a = Math.atan2(y2 - y1, x2 - x1), s = 5 + w * 1.6;
-  const p = r => `${f(x2 - s * Math.cos(a + r))} ${f(y2 - s * Math.sin(a + r))}`;
-  return `<g ${extra}>${line(x1, y1, x2 - Math.cos(a) * s * 0.6, y2 - Math.sin(a) * s * 0.6, col, w)}<path d="M${f(x2)} ${f(y2)} L${p(0.5)} L${p(-0.5)} Z" fill="${col}"/></g>`;
-}
-// A germ: a round body with short spikes, optionally wearing its name tags (antigens).
-function germ(x, y, r = 7, extra = '', tags = false) {
+/* ---------- Drawing ---------- */
+const TISSUE = '#f8ecdf', SKIN = '#d9b38c', VESSEL = '#f1cdc6', VLINE = '#8c3a2e', NODE = '#e3e8ff', LOBE = '#7a5ea8', TWASH = '#dde3ff', SWELL = '#e39b8b', NUC = '#f1ede2';
+const fade = a => `opacity="${f(clamp(a, 0, 1))}"`;
+const show = (a, body) => (a <= 0.02 ? '' : `<g ${fade(a)}>${body}</g>`);
+const tri = (x, y, s, col = C.ink, extra = '') => `<path ${extra} d="M${f(x)} ${f(y - s)} L${f(x + s)} ${f(y + s * 0.8)} L${f(x - s)} ${f(y + s * 0.8)} Z" fill="${col}"/>`;
+// A germ: a round body with short spikes, wearing its name tags (antigens) as black triangles.
+function germ(x, y, r = 8, tags = true, extra = '') {
   let s = `<g ${extra}>`;
-  for (let k = 0; k < 8; k++) { const a = k * Math.PI / 4; s += line(x + r * Math.cos(a), y + r * Math.sin(a), x + (r + 3) * Math.cos(a), y + (r + 3) * Math.sin(a), AMBER, 1.6); }
-  s += `<circle cx="${f(x)}" cy="${f(y)}" r="${r}" fill="${AMBER}"/>`;
-  if (tags) for (let k = 0; k < 3; k++) { const a = -Math.PI / 2 + k * 2.1; s += tri(x + (r + 2) * Math.cos(a), y + (r + 2) * Math.sin(a), 3.6, INK); }
+  for (let k = 0; k < 8; k++) { const a = k * Math.PI / 4; s += line(x + r * Math.cos(a), y + r * Math.sin(a), x + (r + 3.5) * Math.cos(a), y + (r + 3.5) * Math.sin(a), C.amber, 1.8); }
+  s += circle(x, y, r, C.amber);
+  if (tags) for (let k = 0; k < 3; k++) { const a = -Math.PI / 2 + k * 2.1; s += tri(x + (r + 1) * Math.cos(a), y + (r + 1) * Math.sin(a), r * 0.42); }
   return s + '</g>';
 }
-const tri = (x, y, s, col, extra = '') => `<path ${extra} d="M${f(x)} ${f(y - s)} L${f(x + s)} ${f(y + s * 0.8)} L${f(x - s)} ${f(y + s * 0.8)} Z" fill="${col}"/>`;
-const macrophage = (x, y, s = 1, extra = '') => `<g ${extra}><path d="M${f(x - 20 * s)} ${f(y)} C${f(x - 22 * s)} ${f(y - 18 * s)} ${f(x + 4 * s)} ${f(y - 22 * s)} ${f(x + 18 * s)} ${f(y - 10 * s)} C${f(x + 28 * s)} ${f(y)} ${f(x + 16 * s)} ${f(y + 20 * s)} ${f(x)} ${f(y + 17 * s)} C${f(x - 12 * s)} ${f(y + 16 * s)} ${f(x - 18 * s)} ${f(y + 10 * s)} ${f(x - 20 * s)} ${f(y)} Z" fill="#fff" stroke="${INK}" stroke-width="2"/><ellipse cx="${f(x - 2 * s)}" cy="${f(y + 1 * s)}" rx="${f(7 * s)}" ry="${f(5 * s)}" fill="${MUTED}"/></g>`;
-const neutrophil = (x, y, extra = '') => `<g ${extra}><circle cx="${f(x)}" cy="${f(y)}" r="10" fill="#fff" stroke="${INK}" stroke-width="1.6"/><circle cx="${f(x - 4)}" cy="${f(y - 1)}" r="3" fill="${LOBE}"/><circle cx="${f(x + 1)}" cy="${f(y + 3)}" r="3" fill="${LOBE}"/><circle cx="${f(x + 4)}" cy="${f(y - 3)}" r="3" fill="${LOBE}"/></g>`;
-const cell = (x, y, r, letter, kind, extra = '') => {
-  const fill = kind === 'T' ? BLUE : kind === 'M' ? INK : '#fff', stroke = kind === 'B' ? BLUE : fill;
-  const big = r >= 18, cls = (kind === 'B' ? 'xs b blue nostroke' : 'xs b on') + (big ? ' big' : '');
-  return `<g ${extra}><circle cx="${f(x)}" cy="${f(y)}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="2.4"/>${text(x, y + (big ? 7 : 4), letter, cls)}</g>`;
-};
-const antibody = (x, y, s = 1, col = BLUE, extra = '', rot = 0) => `<path ${extra} transform="rotate(${rot} ${f(x)} ${f(y)})" d="M${f(x)} ${f(y + 8 * s)} L${f(x)} ${f(y)} L${f(x - 6 * s)} ${f(y - 7 * s)} M${f(x)} ${f(y)} L${f(x + 6 * s)} ${f(y - 7 * s)}" fill="none" stroke="${col}" stroke-width="${f(2.6 * s)}" stroke-linecap="round" stroke-linejoin="round"/>`;
-const signal = (x, y, extra = '', s = 4.5) => `<path ${extra} d="M${f(x)} ${f(y - s)} L${f(x + s)} ${f(y)} L${f(x)} ${f(y + s)} L${f(x - s)} ${f(y)} Z" fill="${PURPLE}"/>`;
-const ghostSignal = (x, y, s = 4.5) => `<path data-ghost-signal d="M${f(x)} ${f(y - s)} L${f(x + s)} ${f(y)} L${f(x)} ${f(y + s)} L${f(x - s)} ${f(y)} Z" fill="none" stroke="${MUTED}" stroke-width="1.3" stroke-dasharray="2 2"/>`;
-const hexagon = (x, y, r, extra = '') => { const p = []; for (let k = 0; k < 6; k++) { const a = Math.PI / 6 + k * Math.PI / 3; p.push(`${f(x + r * Math.cos(a))} ${f(y + r * Math.sin(a))}`); } return `<path ${extra} d="M${p.join(' L')} Z" fill="${RED}" stroke="#fff" stroke-width="1.5"/>`; };
-const block = (x, y, w, h, extra) => `<rect ${extra} x="${f(x - w / 2)}" y="${f(y - h / 2)}" width="${f(w)}" height="${f(h)}" rx="3" fill="${RED}" stroke="#fff" stroke-width="1.5"/>`;
-const countOf = (base, v, cap) => clamp(Math.round(base * v), 0, cap);
-
-/* ---------- The overview: a cut in the skin, and the nearest lymph node ---------- */
-const GERM_AT = [[140, 84], [118, 104], [162, 106], [96, 88], [184, 86], [140, 128], [206, 120], [80, 120], [116, 150], [228, 96], [170, 152], [60, 98], [246, 132], [92, 170], [214, 164], [256, 80]];
-const SIGNAL_AT = [[118, 134], [88, 150], [150, 172], [68, 136], [200, 136], [236, 150], [180, 178], [104, 186], [60, 172], [264, 118], [132, 190], [226, 186], [40, 150], [270, 168]];
-const NODE_X = 392, NODE_Y = 146;
-const NODE_SPOTS = (() => { const s = []; for (let r = 0; r < 7; r++) for (let c = 0; c < 4; c++) s.push([360 + c * 22 + (r % 2) * 11, 92 + r * 19]); return s; })();
-const AB_AT = [[226, 194], [250, 176], [204, 178], [272, 196], [182, 196], [156, 180], [282, 160], [132, 172], [260, 214], [110, 196], [300, 182], [86, 160], [64, 186], [298, 214]];
-function overview(cur, o) {
-  const sh = o.parts;
-  let b = '';
-  const alarm = sh.has('alarm') ? cur.alarm : 0;
-  b += `<rect x="14" y="66" width="290" height="140" fill="${TISSUE}"/>`;
-  if (sh.has('alarm')) b += `<rect data-swelling x="14" y="66" width="290" height="140" fill="#e39b8b" opacity="${clamp(0.32 * alarm, 0, 0.5).toFixed(2)}"/>`;
-  // Skin with a cut.
-  b += `<rect x="14" y="50" width="112" height="16" fill="${SKIN}" stroke="${INK}" stroke-width="1.4"/><rect x="154" y="50" width="150" height="16" fill="${SKIN}" stroke="${INK}" stroke-width="1.4"/>`;
-  // A blood vessel along the bottom; it widens with the alarm.
-  const vw = 20 + (sh.has('alarm') ? 8 * clamp(alarm, 0, 1.5) : 0);
-  b += `<rect data-vessel x="14" y="${f(210)}" width="290" height="${f(vw)}" fill="${VESSEL}" stroke="#8c3a2e" stroke-width="1.6"/>`;
-  b += text(22, 210 + vw / 2 + 5, 'blood vessel', 'xs', 'start');
-  // Germs.
-  const nG = countOf(7, cur.germs, GERM_AT.length);
-  for (let i = 0; i < nG; i++) b += germ(GERM_AT[i][0], GERM_AT[i][1], 6.5, 'data-germ', sh.has('tag'));
-  if (!sh.has('eat')) b += arrow(140, 34, 140, 62, AMBER, 2.2);
-  // Eating cells.
-  if (sh.has('eat')) {
-    b += macrophage(108, 132, 0.95, 'data-eater') + macrophage(214, 146, 0.95, 'data-eater');
-    const nN = sh.has('alarm') ? countOf(3, alarm, 5) : 2;
-    for (let i = 0; i < nN; i++) b += neutrophil(60 + i * 52, 196 - (i % 2) * 8, 'data-eater');
-  }
-  if (sh.has('alarm')) { const n = countOf(8, alarm, SIGNAL_AT.length); for (let i = 0; i < n; i++) b += signal(SIGNAL_AT[i][0], SIGNAL_AT[i][1], 'data-signal'); }
-  // The lymph node and the cells waiting in it.
-  if (sh.has('tag')) {
-    b += `<ellipse data-node cx="${NODE_X}" cy="${NODE_Y}" rx="68" ry="86" fill="${NODE}" stroke="${BLUE}" stroke-width="2"/>`;
-    b += text(NODE_X, 52, 'lymph node', 'xs b blue');
-    b += arrow(262, 102, 326, 102, INK, 2) + text(294, 92, 'tag', 'xs b');
-  }
-  let spot = 0;
-  if (sh.has('tcell')) {
-    const nT = sh.has('clone') ? countOf(6, cur.tcells, 12) : 1;
-    for (let i = 0; i < nT; i++, spot++) b += cell(NODE_SPOTS[spot][0], NODE_SPOTS[spot][1], 8.5, 'T', 'T', 'data-tcell');
-  }
-  if (sh.has('bcell')) {
-    spot = 12;
-    for (let i = 0; i < 3; i++, spot++) b += cell(NODE_SPOTS[spot][0], NODE_SPOTS[spot][1], 8.5, 'B', 'B', 'data-bcell');
-    const nA = countOf(6, cur.antibodies, AB_AT.length);
-    for (let i = 0; i < nA; i++) b += antibody(AB_AT[i][0], AB_AT[i][1] - 6, 1, BLUE, 'data-antibody', (i * 47) % 360);
-    b += arrow(330, 196, 306, 196, BLUE, 2);
-  }
-  if (sh.has('memory')) {
-    spot = 20;
-    const nM = countOf(3, cur.memory, 8);
-    for (let i = 0; i < nM; i++, spot++) b += cell(NODE_SPOTS[spot][0], NODE_SPOTS[spot][1], 8.5, 'M', 'M', 'data-mcell');
-  }
-  b += text(20, 46, 'skin', 'xs muted', 'start');
-  if (!sh.has('eat')) b += text(150, 30, 'germs get in', 'xs b amber', 'start');
-  return b;
-}
-
-/* ---------- Close-ups ---------- */
-const PANEL = title => `<rect x="12" y="252" width="456" height="190" fill="#fff" stroke="${RULE}"/>${text(26, 276, title, 'xs b muted', 'start')}`;
-function closeBarrier() {
-  let s = PANEL('close up: the skin, a wall with a gap');
-  s += `<rect x="30" y="318" width="186" height="34" fill="${SKIN}" stroke="${INK}" stroke-width="1.6"/><rect x="264" y="318" width="186" height="34" fill="${SKIN}" stroke="${INK}" stroke-width="1.6"/>`;
-  s += text(122, 340, 'skin', 'xs b') + text(358, 340, 'skin', 'xs b') + text(240, 304, 'a cut', 'xs b');
-  for (const [x, y] of [[70, 298], [130, 296], [380, 298], [430, 300]]) s += germ(x, y, 6);
-  s += arrow(100, 300, 100, 312, MUTED, 1.6) + arrow(410, 300, 410, 312, MUTED, 1.6);
-  for (const [x, y] of [[240, 334], [226, 370], [254, 388], [234, 408]]) s += germ(x, y, 6, 'data-entering');
-  s += arrow(282, 362, 282, 394, AMBER, 2.2);
-  s += text(120, 386, 'most germs are kept out', 'xs muted') + text(330, 424, 'inside: they multiply', 'xs b amber');
-  return s;
-}
-function closeEat() {
-  let s = PANEL('close up: an eating cell at work');
-  const y = 356;
-  s += macrophage(90, y, 1.6) + germ(132, y - 30, 7);
-  s += macrophage(240, y, 1.6) + germ(262, y - 14, 7);
-  s += `<path d="M${262 - 18} ${y - 28} q18 -12 30 6" fill="none" stroke="${INK}" stroke-width="2"/>`;
-  s += macrophage(390, y, 1.6);
-  for (const [dx, dy] of [[-6, -6], [6, 2], [-2, 8]]) s += `<circle cx="${390 + dx}" cy="${y + dy}" r="3" fill="${AMBER}"/>`;
-  s += arrow(140, 410, 180, 410, MUTED, 2) + arrow(290, 410, 330, 410, MUTED, 2);
-  s += text(90, 416, 'reach', 'xs b') + text(240, 416, 'swallow', 'xs b') + text(390, 416, 'break down', 'xs b');
-  return s + text(240, 436, 'macrophages and neutrophils both eat germs', 'xs muted');
-}
-const ALARM_AT = [[140, 300], [170, 322], [196, 300], [226, 322], [252, 298], [282, 318], [310, 300], [338, 322], [366, 300], [392, 320]];
-function closeAlarm(cur, o) {
-  let s = PANEL('close up: alarm signals at the cut');
-  s += macrophage(70, 330, 1.5) + germ(70, 290, 6);
-  const n = countOf(8, cur.alarm, ALARM_AT.length);
-  if (o.ghost) for (let i = 0; i < 8; i++) s += ghostSignal(ALARM_AT[i][0], ALARM_AT[i][1], 6);
-  for (let i = 0; i < n; i++) s += signal(ALARM_AT[i][0], ALARM_AT[i][1], 'data-close-signal', 6);
-  s += arrow(100, 316, 128, 308, PURPLE, 2);
-  s += text(420, 290, 'alarm', 'xs b purple', 'end') + text(420, 306, 'signals', 'xs b purple', 'end');
-  // The vessel wall: gaps open as the alarm rises, and neutrophils squeeze out.
-  const leak = clamp(cur.alarm, 0, 1.4);
-  const gap = 4 + 14 * leak;
-  s += `<rect x="130" y="382" width="320" height="34" fill="${VESSEL}"/>`;
-  let wall = '', x0 = 130;
-  for (const x of [200, 300, 400]) { wall += line(x0, 380, x - gap / 2, 380, '#8c3a2e', 3); x0 = x + gap / 2; }
-  wall += line(x0, 380, 450, 380, '#8c3a2e', 3) + line(130, 418, 450, 418, '#8c3a2e', 3);
-  s += `<g data-leak="${leak.toFixed(2)}">${wall}</g>`;
-  const nN = countOf(3, cur.alarm, 4);
-  for (let i = 0; i < nN; i++) s += neutrophil([200, 300, 400, 250][i], 366, 'data-squeeze');
-  s += text(290, 436, 'vessel leaks: eating cells get out', 'xs');
-  if (o.drug === 'antitnf') {
-    const op = clamp(o.markT, 0, 1).toFixed(2);
-    // Two antibody-type drugs (Y shapes) and one decoy catcher (a cup), each holding a signal.
-    const decoy = (x, y) => `<path data-drug="antitnf" d="M${x - 9} ${y - 8} L${x - 9} ${y + 4} Q${x} ${y + 14} ${x + 9} ${y + 4} L${x + 9} ${y - 8}" fill="none" stroke="${RED}" stroke-width="3.6" stroke-linecap="round"/>`;
-    s += `<g opacity="${op}">${antibody(226, 326, 1.5, RED, 'data-drug="antitnf"')}${decoy(252, 300)}${antibody(282, 322, 1.5, RED, 'data-drug="antitnf"')}</g>`;
-    s += text(26, 396, 'anti-TNF', 'xs red b', 'start') + text(26, 412, 'grabs TNF', 'xs red b', 'start');
-  }
-  return s;
-}
-function closeTag() {
-  let s = PANEL('close up: name tags on a germ');
-  s += germ(100, 350, 30, '', false);
-  for (let k = 0; k < 8; k++) { const a = k * Math.PI / 4 + 0.2; s += tri(100 + 36 * Math.cos(a), 350 + 36 * Math.sin(a), 7, INK, 'data-tag'); }
-  s += text(100, 418, 'name tags (antigens)', 'xs b');
-  // A tag-carrying eating cell on its way to the node.
-  s += `<path d="M262 330 L280 316 L292 334 L314 330 L302 350 L318 368 L294 370 L282 390 L270 370 L248 368 L258 350 L244 332 Z" fill="#fff" stroke="${INK}" stroke-width="2"/>` + tri(304, 322, 7, INK, 'data-carried');
-  s += text(282, 418, 'eating cell carries a tag', 'xs b');
-  s += arrow(150, 350, 236, 350, MUTED, 2) + arrow(334, 350, 392, 350, INK, 2.4);
-  s += `<ellipse cx="428" cy="350" rx="26" ry="34" fill="${NODE}" stroke="${BLUE}" stroke-width="2"/>`;
-  return s + text(428, 404, 'to the', 'xs b blue') + text(428, 420, 'lymph node', 'xs b blue');
-}
-const GROW_AT = [[284, 332], [304, 350], [324, 332], [344, 350], [364, 332], [384, 350]];
-const COPY_AT = (() => { const a = []; for (let r = 0; r < 2; r++) for (let c = 0; c < 4; c++) a.push([318 + c * 34, 394 + r * 26]); return a; })();
-function closeSwitch(cur, o) {
-  let s = PANEL('close up: a helper T cell switching on');
-  // The tag, held up by an eating cell, fits the T cell's receptor.
-  s += `<path d="M30 320 L56 318 L66 350 L56 382 L30 380 Z" fill="#fff" stroke="${INK}" stroke-width="2"/>` + tri(74, 350, 8, INK, 'data-shown-tag');
-  s += `<circle cx="170" cy="350" r="62" fill="#eef1ff" stroke="${BLUE}" stroke-width="3"/>`;
-  s += `<path d="M106 338 L94 350 L106 362" fill="none" stroke="${BLUE}" stroke-width="4"/>`;
-  s += text(240, 300, 'helper T cell', 'xs b blue', 'start');
-  s += `<rect data-switch x="138" y="338" width="64" height="26" rx="13" fill="#fff" stroke="${INK}" stroke-width="2"/>` + text(170, 356, 'switch', 'xs b');
-  s += arrow(110, 350, 134, 350, INK, 2);
-  s += text(170, 384, 'calcineurin', 'xs b');
-  s += arrow(206, 350, 260, 342, BLUE, 2.4);
-  const g = o.drug === 'cni' ? cur.tcells : 1;
-  const nG = countOf(6, g, 6);
-  if (o.ghost) for (const [x, y] of GROW_AT) s += `<circle data-ghost-grow cx="${x}" cy="${y}" r="5" fill="none" stroke="${MUTED}" stroke-width="1.3" stroke-dasharray="2 2"/>`;
-  for (let i = 0; i < nG; i++) s += `<circle data-grow cx="${GROW_AT[i][0]}" cy="${GROW_AT[i][1]}" r="5" fill="${BLUE}"/>`;
-  s += text(420, 346, 'grow', 'xs b blue', 'start');
-  if (o.drug === 'cni') {
-    s += `<g opacity="${clamp(o.markT, 0, 1).toFixed(2)}">${block(170, 330, 30, 16, 'data-drug="cni"')}</g>` + text(26, 434, 'calcineurin inhibitor blocks the switch', 'xs red b', 'start');
-    const nC = countOf(8, cur.tcells, 8);
-    for (const [x, y] of COPY_AT) s += `<circle data-ghost-copy cx="${x}" cy="${y}" r="9" fill="none" stroke="${MUTED}" stroke-width="1.3" stroke-dasharray="3 3"/>`;
-    for (let i = 0; i < nC; i++) s += cell(COPY_AT[i][0], COPY_AT[i][1], 8.5, 'T', 'T', 'data-copy');
-    s += text(290, 412, 'copies', 'xs b', 'end');
-  } else s += text(240, 432, 'the grow signal tells it to multiply', 'xs muted');
-  return s;
-}
-function closeClone() {
-  let s = PANEL('close up: one becomes many') + text(30, 300, 'days ↓', 'xs b', 'start');
-  [1, 2, 4, 8].forEach((n, r) => { for (let i = 0; i < n; i++) s += cell(240 + (i - (n - 1) / 2) * 38, 306 + r * 36, 12, 'T', 'T', `data-clone="${r}"`); });
-  return s + text(240, 436, 'every copy fits the same tag', 'xs b');
-}
-function closeBcell(cur) {
-  let s = PANEL('close up: a B cell becomes an antibody factory');
-  s += cell(70, 360, 24, 'B', 'B') + tri(70, 328, 7, INK) + cell(70, 306, 13, 'T', 'T');
-  s += text(70, 412, 'B cell, helped', 'xs b') + text(70, 428, 'by a helper T cell', 'xs');
-  s += arrow(102, 360, 142, 360, MUTED, 2);
-  s += `<ellipse data-plasma cx="190" cy="360" rx="40" ry="32" fill="#fff" stroke="${BLUE}" stroke-width="3"/>`;
-  for (let k = 0; k < 4; k++) s += `<path d="M164 ${344 + k * 9} q26 -6 52 0" fill="none" stroke="${BLUE}" stroke-width="1.6"/>`;
-  s += text(190, 412, 'plasma cell', 'xs b');
-  const n = countOf(10, cur.antibodies, 16);
-  for (let i = 0; i < n; i++) s += antibody(256 + (i % 6) * 34, 312 + Math.floor(i / 6) * 34 + (i % 2) * 10, 1.3, BLUE, 'data-close-antibody', (i * 53) % 360);
-  return s + text(352, 428, 'antibodies pour out', 'xs b blue');
-}
-function closeAttack() {
-  let s = PANEL('close up: clearing the germs');
-  s += germ(70, 340, 9) + germ(98, 330, 9) + germ(84, 364, 9);
-  s += antibody(84, 344, 1.2, BLUE, 'data-close-antibody', 0) + antibody(60, 318, 1.2, BLUE, 'data-close-antibody', -30) + antibody(110, 352, 1.2, BLUE, 'data-close-antibody', 40) + antibody(70, 382, 1.2, BLUE, 'data-close-antibody', 200);
-  s += macrophage(170, 350, 1.3) + arrow(150, 330, 126, 336, INK, 2);
-  s += text(110, 414, 'antibodies clump germs;', 'xs b') + text(110, 430, 'an eating cell swallows them', 'xs');
-  s += line(240, 290, 240, 430, RULE, 1);
-  s += `<circle data-infected cx="370" cy="350" r="40" fill="${TISSUE}" stroke="${INK}" stroke-width="2" stroke-dasharray="7 4"/>`;
-  for (const [dx, dy] of [[-12, -8], [10, -12], [0, 10], [16, 8]]) s += `<circle cx="${370 + dx}" cy="${350 + dy}" r="4" fill="${AMBER}"/>`;
-  s += cell(296, 334, 18, 'T', 'T', 'data-killer') + arrow(316, 340, 332, 344, INK, 2);
-  s += text(354, 414, 'killer T cell destroys', 'xs b') + text(354, 430, 'a cell a virus took over', 'xs');
-  return s;
-}
-// Time graph: germs, alarm and antibodies over time, scaled to the normal response's peaks.
-const GX0 = 56, GX1 = 448, GY0 = 414, GH = 112;
-const PEAK = { G: IM.BASE.raw.germs, Se: IM.BASE.raw.alarm, A: IM.BASE.raw.antibodies, T: IM.BASE.raw.tcells };
-function curvePath(xs, ys, peak, x0 = GX0, x1 = GX1, t0 = 0, t1 = IM.DAYS) {
+const macrophage = (x, y, s = 1, extra = '') => `<g ${extra}><path d="M${f(x - 20 * s)} ${f(y)} C${f(x - 22 * s)} ${f(y - 18 * s)} ${f(x + 4 * s)} ${f(y - 22 * s)} ${f(x + 18 * s)} ${f(y - 10 * s)} C${f(x + 28 * s)} ${f(y)} ${f(x + 16 * s)} ${f(y + 20 * s)} ${f(x)} ${f(y + 17 * s)} C${f(x - 12 * s)} ${f(y + 16 * s)} ${f(x - 18 * s)} ${f(y + 10 * s)} ${f(x - 20 * s)} ${f(y)} Z" fill="#fff" stroke="${C.ink}" stroke-width="2"/><ellipse cx="${f(x - 3 * s)}" cy="${f(y + 1 * s)}" rx="${f(7 * s)}" ry="${f(5 * s)}" fill="${C.muted}"/></g>`;
+const neutrophil = (x, y, r = 11, extra = '') => `<g ${extra}>${circle(x, y, r, '#fff', C.ink, 1.6)}${circle(x - r * 0.38, y - r * 0.1, r * 0.3, LOBE)}${circle(x + r * 0.1, y + r * 0.3, r * 0.3, LOBE)}${circle(x + r * 0.42, y - r * 0.26, r * 0.3, LOBE)}</g>`;
+// A dendritic cell: a star of long arms.
+function dendritic(x, y, s = 1, extra = '') {
   const pts = [];
-  xs.forEach((t, i) => { if (t >= t0 - 1e-9 && t <= t1 + 1e-9) pts.push(`${f(x0 + (x1 - x0) * (t - t0) / (t1 - t0))} ${f(GY0 - GH * clamp(ys[i] / peak, 0, 1.6) * 0.6)}`); });
-  return `M${pts.join(' L')}`;
+  for (let k = 0; k < 10; k++) { const a = -Math.PI / 2 + k * Math.PI / 5, r = (k % 2 ? 14 : 34) * s; pts.push(`${f(x + r * Math.cos(a))} ${f(y + r * Math.sin(a))}`); }
+  return `<g ${extra}><path d="M${pts.join(' L')} Z" fill="#fff" stroke="${C.ink}" stroke-width="2" stroke-linejoin="round"/>${circle(x, y, 7 * s, C.muted)}</g>`;
 }
-const CURVES = [['G', AMBER, 'germs'], ['Se', PURPLE, 'alarm'], ['A', BLUE, 'antibodies']];
-function axes(label = 'amount ↑') {
-  return line(GX0, 296, GX0, GY0, INK, 1.5) + line(GX0, GY0, GX1, GY0, INK, 1.5) + text(GX1, 434, 'time →', 'xs', 'end')
-    + `<text transform="rotate(-90 36 356)" x="36" y="356" text-anchor="middle" class="xs">${label}</text>`;
+// A T cell (filled blue, white letter), a B cell (white, blue rim) or a memory cell (black).
+function cell(x, y, r, kind = 'T', extra = '') {
+  const fill = kind === 'B' ? '#fff' : kind === 'M' ? C.ink : C.blue, stroke = kind === 'B' ? C.blue : fill;
+  const letter = kind === 'K' ? 'T' : kind;
+  const cls = kind === 'B' ? 'xs b blue on-white' : 'xs b in-cell';
+  return `<g ${extra}>${circle(x, y, r, fill, stroke, 2.4)}${r >= 12 ? text(x, y + 6, letter, cls) : ''}</g>`;
 }
-function closeCurve(o) {
-  let s = PANEL(o.ghostSeries ? 'one infection over time (illustrative model)' : 'one infection over time') + axes();
-  const ser = o.series;
-  if (o.ghostSeries) for (const [k] of CURVES) s += `<path data-ghost-curve="${k}" d="${curvePath(o.ghostSeries.t, o.ghostSeries[k], PEAK[k])}" fill="none" stroke="${MUTED}" stroke-width="1.8" stroke-dasharray="6 5"/>`;
-  for (const [k, col] of CURVES) s += `<path data-curve="${k}" d="${curvePath(ser.t, ser[k], PEAK[k])}" fill="none" stroke="${col}" stroke-width="${k === 'Se' ? 2.2 : 3.2}"/>`;
-  s += text(118, 294, 'germs', 'xs b amber') + text(86, 334, 'alarm', 'xs b purple', 'start') + text(250, 294, 'antibodies', 'xs b blue', 'start');
-  if (!o.ghostSeries) s += text(66, 404, 'innate', 'xs muted', 'start') + text(206, 404, 'adaptive', 'xs muted', 'start');
-  if (o.drug === 'vaccine') {
-    const op = clamp(o.markT, 0, 1).toFixed(2);
-    s += `<g opacity="${op}">${[0, 1, 2].map(i => tri(352 + i * 18, 322, 7, RED, 'data-drug="vaccine"')).join('')}${text(448, 346, 'vaccine given earlier:', 'xs red b', 'end')}${text(448, 362, 'harmless tags', 'xs red b', 'end')}</g>`;
+const antibody = (x, y, s = 1, col = C.blue, rot = 0, extra = '') => `<path ${extra} transform="rotate(${f(rot)} ${f(x)} ${f(y)})" d="M${f(x)} ${f(y + 9 * s)} L${f(x)} ${f(y)} L${f(x - 7 * s)} ${f(y - 8 * s)} M${f(x)} ${f(y)} L${f(x + 7 * s)} ${f(y - 8 * s)}" fill="none" stroke="${col}" stroke-width="${f(2.8 * s)}" stroke-linecap="round" stroke-linejoin="round"/>`;
+const signal = (x, y, s = 6, extra = '') => `<path ${extra} d="M${f(x)} ${f(y - s)} L${f(x + s)} ${f(y)} L${f(x)} ${f(y + s)} L${f(x - s)} ${f(y)} Z" fill="${C.purple}"/>`;
+const ghostSignal = (x, y, s = 6) => `<path d="M${f(x)} ${f(y - s)} L${f(x + s)} ${f(y)} L${f(x)} ${f(y + s)} L${f(x - s)} ${f(y)} Z" fill="none" stroke="${C.ghost}" stroke-width="1.4" stroke-dasharray="2 2"/>`;
+const hexagon = (x, y, r, extra = '') => { const p = []; for (let k = 0; k < 6; k++) { const a = Math.PI / 6 + k * Math.PI / 3; p.push(`${f(x + r * Math.cos(a))} ${f(y + r * Math.sin(a))}`); } return `<path ${extra} d="M${p.join(' L')} Z" fill="${C.red}" stroke="#fff" stroke-width="1.5"/>`; };
+const block = (x, y, w, h, extra = '') => rect(x - w / 2, y - h / 2, w, h, C.red, '#fff', 1.5, `rx="3" ${extra}`);
+const ghostCell = (x, y, r) => circle(x, y, r, 'none', C.ghost, 1.5, 'stroke-dasharray="3 3"');
+const at = (a, b, u) => [lerp(a[0], b[0], u), lerp(a[1], b[1], u)];
+
+/* ---------- 1. An invader gets in ---------- */
+const CUTX = [206, 252];
+function invaderPic(t) {
+  let s = rect(16, 120, 448, 168, TISSUE) + rect(16, 288, 448, 30, VESSEL, VLINE, 1.6);
+  s += text(24, 309, 'blood vessel', 'xs muted', 'start');
+  s += part('skin', rect(16, 96, CUTX[0] - 16, 24, SKIN, C.ink, 1.5) + rect(CUTX[1], 96, 464 - CUTX[1], 24, SKIN, C.ink, 1.5));
+  // Germs fall on the skin: most stay outside; one finds the cut.
+  let g = '';
+  for (const [x, d] of [[70, 0], [140, 0.1], [330, 0.06], [410, 0.16]]) {
+    const u = ease(span(t, d, d + 0.25));
+    if (u > 0) g += germ(x, lerp(18, 84, u), 8);
   }
+  const fall = ease(span(t, 0.12, 0.36)), dive = ease(span(t, 0.36, 0.5));
+  const inside = span(t, 0.52, 1), gens = Math.min(3, Math.floor(inside * 4)), n = 2 ** gens;
+  if (fall > 0 && dive < 1) g += germ(229, lerp(18, 84, fall) + 86 * dive, 8);
+  if (dive >= 1) {
+    const spots = [[229, 172], [200, 196], [258, 196], [229, 222], [176, 166], [282, 166], [176, 228], [282, 228]];
+    for (let i = 0; i < n; i++) g += germ(spots[i][0], spots[i][1], 8);
+  }
+  s += part('germ', g);
+  s += text(16, 36, 'germs land on the skin:', 'xs b', 'start') + text(16, 58, 'most are kept out', 'xs', 'start');
+  s += text(262, 84, 'a cut', 'xs b', 'start');
+  s += show(span(t, 0.6, 0.72), text(310, 186, 'inside,', 'xs b amber', 'start') + text(310, 208, 'they multiply', 'xs b amber', 'start'));
+  return s;
+}
+
+/* ---------- 2. First responders eat the germs ---------- */
+function eatPic(t) {
+  let s = rect(16, 20, 448, 244, TISSUE) + rect(16, 264, 448, 34, VESSEL) + line(16, 264, 464, 264, VLINE, 2.5) + line(16, 298, 464, 298, VLINE, 2.5);
+  // A macrophage already in the tissue reaches for a germ, swallows it and breaks it down.
+  const reach = ease(span(t, 0.08, 0.35)), digest = ease(span(t, 0.42, 0.85));
+  s += part('macrophage', macrophage(140, 140, 1.8));
+  const gp = at([218, 104], [138, 142], reach);
+  if (digest < 0.05) s += germ(gp[0], gp[1], 9, false);
+  else for (const [dx, dy] of [[-10, -6], [8, 2], [-2, 9], [10, -9]]) s += circle(138 + dx * (1 + digest), 142 + dy * (1 + digest), 4 * (1 - 0.5 * digest), C.amber, 'none', 0, fade(1 - 0.6 * digest));
+  if (reach > 0.02 && digest < 0.05) s += `<path d="M${f(170)} ${f(118)} Q${f(lerp(200, 180, reach))} ${f(lerp(90, 110, reach))} ${f(gp[0] + 12)} ${f(gp[1] - 6)}" fill="none" stroke="${C.ink}" stroke-width="2"/>`;
+  // Neutrophils squeeze out of the blood vessel and eat the germs further away.
+  let nt = '';
+  for (const [x0, gx, gy, d] of [[330, 312, 96, 0.05], [404, 404, 140, 0.2]]) {
+    const u = ease(span(t, d, d + 0.45)), eaten = span(t, d + 0.45, d + 0.55);
+    if (eaten < 1) nt += germ(gx, gy - 18, 8, false, fade(1 - eaten));
+    const [x, y] = at([x0, 281], [gx, gy + 6], u);
+    nt += neutrophil(x, y, 13);
+  }
+  s += part('neutrophil', nt);
+  s += text(140, 218, 'macrophage:', 'xs b') + text(140, 240, 'already in the tissue', 'xs');
+  s += text(464, 218, 'neutrophils rush in', 'xs b', 'end') + text(464, 240, 'from the blood', 'xs', 'end');
+  s += show(span(t, 0.45, 0.6), text(140, 48, 'swallow, then break down', 'xs b muted'));
+  s += text(24, 287, 'blood vessel', 'xs muted', 'start');
+  return s;
+}
+
+/* ---------- 3, 14. Alarm signals bring inflammation ---------- */
+const MAC = [110, 104];
+const SIG_AT = [[176, 74], [214, 112], [158, 156], [252, 70], [292, 120], [214, 186], [336, 82], [360, 150], [272, 176], [404, 104], [418, 176], [316, 214]];
+const GAPS = [150, 260, 370];
+function alarmScene(o) {
+  // o: { spread (0 to 1: signals out), leak (0 to 1), cells (0 to 1: eating cells out), keep (share of signals left),
+  //      grab (0 to 1: the drug catching TNF), ghost }
+  let s = rect(16, 20, 448, 236, TISSUE) + rect(16, 20, 448, 236, SWELL, 'none', 0, fade(0.34 * o.leak * o.keep));
+  s += part('macrophage', macrophage(MAC[0], MAC[1], 1.5)) + germ(64, 78, 8) + germ(70, 132, 8);
+  let sig = '', gh = '';
+  SIG_AT.forEach(([x, y], i) => {
+    const u = ease(clamp(o.spread * 1.4 - i * 0.03, 0, 1));
+    if (o.ghost) gh += ghostSignal(x, y);
+    const kept = i < Math.round(SIG_AT.length * o.keep);
+    if (u > 0.02 && (kept || o.grab < 0.98)) {
+      const [px, py] = at([MAC[0] + 20, MAC[1]], [x, y], u);
+      sig += kept ? signal(px, py) : `<g ${fade(1 - o.grab)}>${signal(px, py)}</g>`;
+    }
+  });
+  if (o.ghost) s += `<g class="ghost" data-ghost="normal">${gh}</g>`;
+  s += part('signal', sig);
+  // The vessel widens, and gaps open in its top wall.
+  const top = 262 - 10 * o.leak * o.keep, gap = (4 + 22 * o.leak * o.keep);
+  s += rect(16, top, 448, 330 - top - 14, VESSEL);
+  let wall = '', x0 = 16;
+  for (const g of GAPS) { wall += line(x0, top, g - gap / 2, top, VLINE, 3); x0 = g + gap / 2; }
+  wall += line(x0, top, 464, top, VLINE, 3) + line(16, 316, 464, 316, VLINE, 3);
+  if (o.ghost) wall += `<g class="ghost" data-ghost="normal">${line(16, 252, 464, 252, C.ghost, 1.6, 'stroke-dasharray="5 4"')}</g>`;
+  s += part('vessel', wall);
+  // Neutrophils squeeze out through the gaps.
+  const out = o.cells * o.keep;
+  GAPS.forEach((g, i) => {
+    const u = ease(clamp(out * 1.3 - i * 0.15, 0, 1));
+    s += neutrophil(g, lerp(292, 232, u), 12);
+  });
+  return s;
+}
+function alarmPic(t) {
+  let s = alarmScene({ spread: span(t, 0.05, 0.6), leak: ease(span(t, 0.35, 0.75)), cells: span(t, 0.55, 1), keep: 1, grab: 0 });
+  s += text(16, 336, 'vessel', 'xs muted', 'start');
+  s += show(span(t, 0.15, 0.3), text(464, 44, 'alarm signals: TNF and others', 'xs b purple', 'end'));
+  s += show(span(t, 0.6, 0.75), text(464, 344, 'the vessel widens and leaks', 'xs b', 'end'));
+  s += show(span(t, 0.8, 0.95), text(16, 36, 'inflammation:', 'xs b red', 'start') + text(16, 58, 'red, hot, swollen', 'xs b red', 'start'));
+  s += text(110, 172, 'macrophage', 'xs b');
+  return s;
+}
+function antiTnfPic(t) {
+  const grab = ease(span(t, 0.15, 0.5)), calm = ease(span(t, 0.45, 0.9));
+  let s = alarmScene({ spread: 1, leak: 1, cells: 1 - 0.6 * calm, keep: 1 - 0.65 * calm, grab, ghost: true });
+  // The drug: Y-shaped antibodies and a cup-shaped decoy, each holding a signal.
+  const cup = (x, y) => `<path d="M${x - 10} ${y - 9} L${x - 10} ${y + 4} Q${x} ${y + 15} ${x + 10} ${y + 4} L${x + 10} ${y - 9}" fill="none" stroke="${C.red}" stroke-width="3.8" stroke-linecap="round"/>`;
+  let d = '';
+  [[252, 70], [292, 120], [336, 82], [404, 104]].forEach(([x, y], i) => {
+    const [px, py] = at([x, y - 46], [x, y + 12], grab);
+    d += i === 2 ? cup(px, py) : antibody(px, py, 1.6, C.red);
+  });
+  s += part('drug', `<g ${fade(Math.min(1, grab * 3))}>${d}</g>`);
+  s += text(110, 172, 'macrophage', 'xs b');
+  s += show(span(t, 0.25, 0.4), text(464, 44, 'anti-TNF biologic grabs TNF', 'xs b red', 'end'));
+  s += show(span(t, 0.65, 0.8), text(464, 236, '↓ less swelling', 'xs b blue', 'end'));
+  s += show(span(t, 0.75, 0.9), text(464, 344, '↓ vessel leaks less, fewer cells out', 'xs b blue', 'end'));
+  s += text(16, 336, 'vessel', 'xs muted', 'start');
+  return s;
+}
+
+/* ---------- 4. Name tags travel to the lymph node ---------- */
+function tagPic(t) {
+  let s = rect(16, 20, 230, 300, TISSUE);
+  // The lymph vessel, from the tissue to the node.
+  s += path('M150 230 C210 236 250 250 316 214', '#c9d3f6', 16) + path('M150 230 C210 236 250 250 316 214', NODE, 10);
+  s += part('node', `<ellipse cx="384" cy="190" rx="78" ry="112" fill="${NODE}" stroke="${C.blue}" stroke-width="2.5"/>`);
+  for (const [x, y] of [[372, 130], [404, 150], [366, 176], [410, 196]]) s += cell(x, y, 13, 'T');
+  for (const [x, y] of [[376, 238], [412, 252], [372, 276]]) s += cell(x, y, 13, 'B');
+  s += part('tag', germ(84, 96, 20) + germ(176, 70, 9) + germ(186, 150, 9));
+  // A dendritic cell swallows a germ, shows a piece of its tag and travels to the node.
+  const swallow = ease(span(t, 0.05, 0.25)), shown = span(t, 0.28, 0.4), go = ease(span(t, 0.42, 0.92));
+  const travel = u => { const b = (p0, p1, p2, p3) => (1 - u) ** 3 * p0 + 3 * (1 - u) ** 2 * u * p1 + 3 * (1 - u) * u * u * p2 + u ** 3 * p3; return [b(150, 210, 250, 316), b(230, 236, 250, 214)]; };
+  const [dx, dy] = go > 0 ? travel(go) : [110, 236];
+  if (swallow < 1) s += germ(lerp(150, 110, swallow), lerp(196, 232, swallow), 8, true, fade(1 - swallow));
+  s += part('dendritic', dendritic(dx, dy, 1));
+  if (shown > 0.02) s += part('tag', tri(dx + 34, dy - 2, 8, C.ink, fade(shown)));
+  s += text(16, 40, 'a germ’s name tags', 'xs b', 'start') + text(16, 62, 'are its antigens', 'xs', 'start');
+  s += text(384, 60, 'lymph node', 'sm b blue') + text(384, 330, 'T and B cells wait here', 'xs blue');
+  s += show(1 - span(t, 0.4, 0.5), text(110, 296, 'dendritic cell', 'xs b'));
+  s += show(span(t, 0.88, 1), text(232, 296, 'it carries a tag in', 'xs b', 'middle'));
+  return s;
+}
+
+/* ---------- 5, 13. A helper T cell's on switch ---------- */
+const TC = [206, 176], COPY_AT = Array.from({ length: 8 }, (_, i) => [86 + i * 44, 318]);
+function switchScene(o) {
+  // o: { dock (0 to 1), on (0 to 1: the switch), flow (0 to 1: signal clock), signal (0 to 1: how much IL-2),
+  //      copies (0 to 8), ghost, drug (0 to 1) }
+  let s = text(16, 34, 'inside the lymph node', 'xs muted', 'start');
+  s += part('dendritic', dendritic(84, 176, 1.5));
+  s += part('tag', tri(140, 176, 10, C.ink));
+  const x = lerp(330, TC[0], o.dock);
+  let tc = circle(x, TC[1], 64, TWASH, C.blue, 3);
+  tc += `<path d="M${f(x - 64)} ${f(TC[1] - 13)} L${f(x - 50)} ${f(TC[1])} L${f(x - 64)} ${f(TC[1] + 13)}" fill="${TWASH}" stroke="${C.blue}" stroke-width="3" stroke-linejoin="round"/>`;
+  s += part('tcell', tc);
+  // The switch: a pill whose knob slides across and turns blue when it is on.
+  const knob = lerp(x - 14, x + 14, o.on);
+  s += part('switch', rect(x - 30, TC[1] - 32, 60, 28, '#fff', C.ink, 2, 'rx="14"') + circle(knob, TC[1] - 18, 10, o.on > 0.5 ? C.blue : C.muted));
+  s += text(x, TC[1] + 18, 'calcineurin', 'xs b');
+  // IL-2, the grow signal, streams out of the switched-on cell.
+  if (o.signal > 0.02) {
+    let d = '';
+    for (let k = 0; k < 6; k++) { const u = (o.flow + k / 6) % 1; d += circle(lerp(x + 46, 470, u), TC[1] + 30 + 18 * Math.sin(6.28 * u + k), 5, C.blue, '#fff', 1, fade(o.signal * Math.min(1, (1 - u) * 4))); }
+    s += part('il2', d);
+  }
+  if (o.drug > 0.02) s += part('drug', block(x, TC[1] - 18 - 50 * (1 - o.drug), 34, 18, fade(Math.min(1, o.drug * 2))));
+  if (o.copies !== undefined) {
+    if (o.ghost) s += `<g class="ghost" data-ghost="normal">${COPY_AT.map(([cx, cy]) => ghostCell(cx, cy, 14)).join('')}</g>`;
+    s += part('clone', COPY_AT.slice(0, Math.round(o.copies)).map(([cx, cy]) => cell(cx, cy, 14, 'T')).join(''));
+  }
+  return s;
+}
+function switchPic(t) {
+  const dock = ease(span(t, 0.05, 0.3)), on = ease(span(t, 0.35, 0.48)), signal = span(t, 0.5, 0.65);
+  let s = switchScene({ dock, on, flow: t * 3, signal });
+  s += text(84, 248, 'dendritic cell', 'xs b') + text(84, 270, 'shows the tag', 'xs');
+  s += text(206, 270, 'helper T cell', 'xs b blue');
+  s += show(span(t, 0.28, 0.38), text(84, 112, 'the tag fits', 'xs b'));
+  s += show(span(t, 0.6, 0.75), text(464, 112, 'IL-2: grow!', 'xs b blue', 'end'));
+  return s;
+}
+function cniPic(t) {
+  const drug = ease(span(t, 0.12, 0.3)), off = ease(span(t, 0.3, 0.45)), fadeSig = 1 - ease(span(t, 0.38, 0.55));
+  const copies = lerp(8, 1, ease(span(t, 0.5, 0.88)));
+  let s = switchScene({ dock: 1, on: 1 - off, flow: t * 3, signal: fadeSig, copies, ghost: true, drug });
+  s += text(84, 248, 'dendritic cell', 'xs b') + text(84, 270, 'shows the tag', 'xs');
+  s += text(206, 270, 'helper T cell', 'xs b blue');
+  s += show(span(t, 0.22, 0.36), text(464, 60, 'calcineurin inhibitor', 'xs b red', 'end') + text(464, 82, 'blocks the switch', 'xs b red', 'end'));
+  s += show(span(t, 0.5, 0.64), text(464, 112, 'less IL-2', 'xs b blue', 'end'));
+  s += show(span(t, 0.82, 0.96), text(16, 364, '↓ fewer T cells multiply', 'xs b blue', 'start') + text(464, 364, 'B cells get less help', 'xs b blue', 'end'));
+  return s;
+}
+
+/* ---------- 6. One matching cell becomes an army ---------- */
+const TREE_X = [[240], [132, 348], [78, 186, 294, 402], [51, 105, 159, 213, 267, 321, 375, 429]];
+const TREE_Y = [56, 124, 192, 260];
+function clonePic(t) {
+  let s = text(16, 34, 'days pass ↓', 'xs muted', 'start');
+  let c = '';
+  for (let g = 0; g < 4; g++) {
+    const u = g === 0 ? 1 : ease(span(t, (g - 1) * 0.3 + 0.05, (g - 1) * 0.3 + 0.28));
+    if (u <= 0) continue;
+    TREE_X[g].forEach((x, i) => {
+      const [px, py] = g === 0 ? [x, TREE_Y[0]] : [TREE_X[g - 1][i >> 1], TREE_Y[g - 1]];
+      const [cx, cy] = at([px, py], [x, TREE_Y[g]], u);
+      if (g > 0) s += line(px, py + 15, cx, cy - 15, C.rule, 2, fade(u));
+      c += cell(cx, cy, 15, 'T');
+    });
+  }
+  s += part('clone', c);
+  const n = [1, 2, 4, 8][Math.min(3, Math.floor(t / 0.3))];
+  s += text(464, 34, `${n} matching cell${n > 1 ? 's' : ''}`, 'xs b blue', 'end');
+  s += text(240, 314, 'a clone: every copy fits the same tag', 'xs b');
+  return s;
+}
+
+/* ---------- 7. B cells make antibodies ---------- */
+const AB_AT = Array.from({ length: 18 }, (_, i) => [250 + (i % 6) * 38 + (Math.floor(i / 6) % 2) * 16, 84 + Math.floor(i / 6) * 74 + ((i * 7) % 3) * 8]);
+function bcellPic(t) {
+  const bind = ease(span(t, 0.02, 0.22)), help = ease(span(t, 0.18, 0.38)), turn = ease(span(t, 0.42, 0.58)), pour = span(t, 0.56, 1);
+  let s = '';
+  // The B cell, with Y-shaped receptors that fit one tag; then it becomes a plasma cell.
+  const bx = 120, by = 176;
+  if (turn < 1) {
+    let b = cell(bx, by, 34, 'B', fade(1 - turn));
+    for (const a of [-2.2, -1.2, 0.2, 1.1]) b += antibody(bx + 40 * Math.cos(a), by + 40 * Math.sin(a), 0.9, C.blue, a * 57.3 + 90, fade(1 - turn));
+    s += part('bcell', b);
+  }
+  if (turn > 0) {
+    let p = `<ellipse cx="${bx}" cy="${by}" rx="${f(34 + 14 * turn)}" ry="${f(34 + 4 * turn)}" fill="#fff" stroke="${C.blue}" stroke-width="3" ${fade(turn)}/>`;
+    for (let k = 0; k < 4; k++) p += `<path d="M${bx - 28} ${by - 16 + k * 10} q28 -6 56 0" fill="none" stroke="${C.blue}" stroke-width="1.8" ${fade(turn)}/>`;
+    s += part('plasma', p);
+  }
+  // A germ's tag binds the receptor.
+  if (turn < 1) s += germ(lerp(40, bx - 32, bind), lerp(60, by - 46, bind), 9, true, fade(1 - turn));
+  // A helper T cell arrives and gives help.
+  const [hx, hy] = at([bx, 320], [bx + 2, by + 66], help);
+  s += cell(hx, hy, 16, 'T');
+  if (help > 0.95 && turn < 0.9) for (const a of [-2.4, -1.6, -0.8]) s += line(hx + 22 * Math.cos(a), hy + 22 * Math.sin(a), hx + 32 * Math.cos(a), hy + 32 * Math.sin(a), C.blue, 2.4);
+  // Antibodies pour out.
+  let ab = '';
+  AB_AT.forEach(([x, y], i) => {
+    const u = ease(clamp(pour * 2.2 - i * 0.07, 0, 1));
+    if (u > 0.02) { const [px, py] = at([bx + 48, by], [x, y], u); ab += antibody(px, py, 1.3, C.blue, (i * 53) % 360); }
+  });
+  s += part('antibody', ab);
+  s += show(1 - turn, text(120, 112, 'B cell', 'xs b'));
+  s += show(turn, text(120, 112, 'plasma cell', 'xs b'));
+  s += show(span(t, 0.3, 0.42), text(150, 302, 'helper T cell gives help', 'xs b blue', 'start'));
+  s += show(span(t, 0.8, 0.95), text(464, 40, 'antibodies pour out', 'xs b blue', 'end'));
+  return s;
+}
+
+/* ---------- 8. Antibodies and killer T cells clear the germs ---------- */
+function attackPic(t) {
+  let s = line(240, 20, 240, 270, C.rule, 1.5);
+  // Left: antibodies stick to germs, clump them, and an eating cell swallows the clump.
+  const coat = ease(span(t, 0.02, 0.3)), clump = ease(span(t, 0.3, 0.5)), eat = 0.8 * ease(span(t, 0.55, 0.85));
+  const G0 = [[60, 70], [150, 90], [96, 168]], CL = [[110, 118], [128, 128], [112, 140]];
+  let left = '';
+  G0.forEach((p, i) => {
+    const [x, y] = at(p, CL[i], clump), [x2, y2] = at([x, y], [x, y + 50], eat);
+    left += germ(x2, y2, 9, false);
+    left += antibody(x2 + 12, y2 - 12, 1.1, C.blue, 40 + i * 90, fade(coat));
+  });
+  s += part('antibody', left);
+  s += part('macrophage', macrophage(lerp(150, 118, eat), lerp(236, 214, eat), 1.6));
+  // Right: a killer T cell finds a body cell a virus has taken over and destroys it.
+  const come = ease(span(t, 0.08, 0.38)), hit = span(t, 0.42, 0.52), burst = ease(span(t, 0.58, 0.92));
+  let body = circle(370, 130, 52, TISSUE, C.ink, 2, burst > 0.02 ? `stroke-dasharray="${f(30 - 22 * burst)} ${f(4 + 18 * burst)}" ${fade(1 - 0.7 * burst)}` : '');
+  for (const [dx, dy] of [[-16, -10], [12, -18], [0, 10], [20, 12], [-20, 18]]) body += circle(370 + dx * (1 + 0.6 * burst), 130 + dy * (1 + 0.6 * burst), 4.5, C.amber, 'none', 0, fade(1 - 0.5 * burst));
+  s += part('infected', body);
+  const [kx, ky] = at([300, 250], [318, 186], come);
+  s += part('killer', cell(kx, ky, 20, 'K'));
+  if (hit > 0.02 && burst < 0.6) for (const a of [-0.9, -0.5, -0.1]) s += line(kx + 24 * Math.cos(a), ky + 24 * Math.sin(a), kx + 36 * Math.cos(a), ky + 36 * Math.sin(a), C.red, 2.6);
+  s += text(124, 300, 'antibodies clump germs;', 'xs b') + text(124, 322, 'eating cells swallow them', 'xs');
+  s += text(356, 300, 'a killer T cell kills', 'xs b') + text(356, 322, 'a cell a virus took over', 'xs');
+  return s;
+}
+
+/* ---------- 9, 10, 12. The response over time ---------- */
+const GR = { x0: 60, x1: 456, y0: 296, h: 236 };
+const PEAK = { G: IM.BASE.raw.germs, Se: IM.BASE.raw.alarm, A: IM.BASE.raw.antibodies, T: IM.BASE.raw.tcells, M: IM.run({}).series.M.reduce((a, b) => Math.max(a, b), 0) };
+const SCALE = { G: 0.9, Se: 0.55, A: 0.62, T: 0.7, M: 0.45 };
+const gyOf = (k, v) => GR.y0 - GR.h * SCALE[k] * clamp(v / PEAK[k], 0, 1.6);
+function curveD(series, k, upTo, x0 = GR.x0, x1 = GR.x1, t0 = 0, t1 = IM.DAYS) {
+  const pts = [];
+  for (let i = 0; i < series.t.length; i++) {
+    const tt = series.t[i];
+    if (tt < t0 - 1e-9 || tt > t1 + 1e-9 || tt > t0 + (t1 - t0) * upTo + 1e-9) continue;
+    pts.push(`${pts.length ? 'L' : 'M'}${f(x0 + (x1 - x0) * (tt - t0) / (t1 - t0))} ${f(gyOf(k, series[k][i]))}`);
+  }
+  return pts.join(' ');
+}
+const COL = { G: C.amber, Se: C.purple, A: C.blue, T: C.ink, M: C.ink };
+function axes() {
+  return line(GR.x0, 40, GR.x0, GR.y0, C.ink, 2) + line(GR.x0, GR.y0, GR.x1 + 8, GR.y0, C.ink, 2)
+    + text(16, 30, 'amount ↑', 'xs b', 'start') + text(GR.x1 + 8, GR.y0 + 58, 'time →', 'xs b', 'end');
+}
+const xOfDay = d => GR.x0 + (GR.x1 - GR.x0) * d / IM.DAYS;
+function curvePic(t) {
+  const up = ease(span(t, 0.04, 0.92)), S = IM.BASE.series;
+  let s = axes();
+  // Under the axis: the innate response in the first hours, the adaptive response over the days after.
+  s += rect(GR.x0, GR.y0 + 8, xOfDay(5) - GR.x0, 22, '#f1dcc4') + rect(xOfDay(5), GR.y0 + 8, xOfDay(22) - xOfDay(5), 22, TWASH);
+  s += text(GR.x0 + 4, GR.y0 + 25, 'innate', 'xs b amber', 'start') + text(xOfDay(5) + 6, GR.y0 + 25, 'adaptive: takes days', 'xs b blue', 'start');
+  s += part('germs', path(curveD(S, 'G', up), C.amber, 4));
+  s += part('alarm', path(curveD(S, 'Se', up), C.purple, 3));
+  s += part('antibody', path(curveD(S, 'A', up), C.blue, 4));
+  const day = up * IM.DAYS;
+  s += show(clamp((day - 4.5) / 2, 0, 1), text(xOfDay(4) - 8, gyOf('G', PEAK.G) - 10, 'germs', 'xs b amber', 'end'));
+  s += show(clamp((day - 5.5) / 2, 0, 1), text(xOfDay(5.6) + 8, gyOf('Se', PEAK.Se) + 4, 'alarm', 'xs b purple', 'start'));
+  s += show(clamp((day - 12) / 2, 0, 1), text(xOfDay(11.5) + 12, gyOf('A', PEAK.A) - 10, 'antibodies', 'xs b blue', 'start'));
   return s;
 }
 const REPEAT = IM.run({ reinfect: true }).series;
-function closeMemory() {
-  let s = PANEL('the same germ, met twice') + axes();
-  const segs = [[GX0, 244, 0, IM.DAYS], [262, GX1, 2 * IM.DAYS, 3 * IM.DAYS]];
-  for (const [x0, x1, t0, t1] of segs) for (const [k, col] of [['G', AMBER], ['A', BLUE]]) s += `<path data-mem-curve="${k}" d="${curvePath(REPEAT.t, REPEAT[k], PEAK[k], x0, x1, t0, t1)}" fill="none" stroke="${col}" stroke-width="3"/>`;
-  s += `<rect x="246" y="300" width="14" height="118" fill="#fff"/>` + line(244, 408, 252, 420, INK, 1.5) + line(254, 408, 262, 420, INK, 1.5);
-  s += text(150, 296, 'first meeting', 'xs b') + text(356, 296, 'same germ, later', 'xs b');
-  s += text(98, 330, 'germs', 'xs b amber', 'start') + text(196, 326, 'antibodies', 'xs b blue', 'start');
-  return s + text(300, 344, 'sooner, higher', 'xs b blue', 'start') + text(276, 392, 'germs barely rise', 'xs b amber', 'start');
-}
-function closeWhole() {
-  let s = PANEL('where medicines can steer it');
-  const items = [[96, 316, 'memory', INK], [330, 316, 'T cell on switch', BLUE], [96, 396, 'TNF alarm signal', PURPLE], [330, 396, 'alarm instructions', PURPLE]];
-  for (const [x, y, label, col] of items) s += `<g data-target><circle cx="${x - 56}" cy="${y - 5}" r="13" fill="none" stroke="${RED}" stroke-width="2.5"/><circle cx="${x - 56}" cy="${y - 5}" r="5" fill="${col}"/></g>` + text(x - 36, y, label, 'sm b', 'start');
-  return s + text(240, 436, 'four points, four kinds of medicine', 'xs muted');
-}
-const OUT_AT = [[250, 300], [278, 314], [306, 300], [334, 314], [362, 300], [390, 314], [418, 300], [446, 314]];
-const TOUT_AT = (() => { const a = []; for (let i = 0; i < 6; i++) a.push([262 + i * 34, 396]); return a; })();
-function closeSteroid(cur, o) {
-  let s = PANEL('close up: inside an immune cell');
-  s += `<circle cx="150" cy="362" r="56" fill="#fff" stroke="${INK}" stroke-width="2"/><circle cx="150" cy="362" r="25" fill="#f1ede2" stroke="${MUTED}" stroke-width="2"/>`;
-  s += text(150, 436, 'instructions inside', 'xs muted');
-  s += arrow(204, 334, 236, 312, PURPLE, 2) + arrow(204, 390, 236, 396, BLUE, 2);
-  if (o.ghost) {
-    for (const [x, y] of OUT_AT) s += ghostSignal(x, y, 6);
-    for (const [x, y] of TOUT_AT) s += `<circle data-ghost-copy cx="${x}" cy="${y}" r="10" fill="none" stroke="${MUTED}" stroke-width="1.3" stroke-dasharray="3 3"/>`;
+function memoryPic(t) {
+  const up = ease(span(t, 0.03, 0.95));
+  let s = axes();
+  const L = [GR.x0, 248, 0, IM.DAYS], R = [272, GR.x1, 2 * IM.DAYS, 3 * IM.DAYS];
+  const u1 = clamp(up * 2, 0, 1), u2 = clamp(up * 2 - 1, 0, 1);
+  // Memory cells: built in the first meeting, still there for the second.
+  s += part('memory', path(curveD(REPEAT, 'M', u1, ...L), C.ink, 3, 'stroke-dasharray="2 5"') + (u2 > 0 ? path(curveD(REPEAT, 'M', u2, ...R), C.ink, 3, 'stroke-dasharray="2 5"') : ''));
+  for (const k of ['G', 'A']) {
+    s += part(k === 'G' ? 'germs' : 'antibody', path(curveD(REPEAT, k, u1, ...L), COL[k], 4) + (u2 > 0 ? path(curveD(REPEAT, k, u2, ...R), COL[k], 4) : ''));
   }
-  const nS = countOf(8, cur.alarm, 8), nT = countOf(6, cur.tcells, 6);
-  for (let i = 0; i < nS; i++) s += signal(OUT_AT[i][0], OUT_AT[i][1], 'data-close-signal', 6);
-  for (let i = 0; i < nT; i++) s += cell(TOUT_AT[i][0], TOUT_AT[i][1], 9, 'T', 'T', 'data-copy');
-  s += text(448, 340, 'alarm signals made', 'xs b purple', 'end') + text(448, 428, 'T cells multiplying', 'xs b blue', 'end');
-  if (o.drug === 'gc') {
-    const op = clamp(o.markT, 0, 1).toFixed(2);
-    s += `<g opacity="${op}">${hexagon(40, 322, 10, 'data-drug="gc"')}${hexagon(150, 362, 10, 'data-drug="gc"')}${arrow(50, 330, 132, 356, RED, 2)}</g>` + text(26, 300, 'glucocorticoid', 'xs red b', 'start');
-  }
+  s += rect(250, 40, 20, GR.y0 - 30, '#ecefe5') + line(250, GR.y0 - 6, 258, GR.y0 + 6, C.ink, 2) + line(262, GR.y0 - 6, 270, GR.y0 + 6, C.ink, 2);
+  s += text(154, GR.y0 + 30, 'first meeting', 'xs b') + text(364, GR.y0 + 30, 'same germ, years later', 'xs b');
+  s += show(clamp(u1 * 3 - 1, 0, 1), text(76, 70, 'germs climb high', 'xs b amber', 'start'));
+  s += show(clamp(u1 * 2 - 1.2, 0, 1), text(150, 228, 'memory cells stay', 'xs b', 'start'));
+  s += show(clamp(u2 * 3 - 1.2, 0, 1), text(464, 52, 'antibodies: sooner, higher', 'xs b blue', 'end'));
+  s += show(clamp(u2 * 3 - 1.5, 0, 1), text(464, 258, 'germs climb less', 'xs b amber', 'end'));
   return s;
 }
-function closeGraph(o) {
-  const days = o.series.t[o.series.t.length - 1];
-  let s = PANEL('germs, alarm and antibodies over time (illustrative model)') + axes();
-  const all = [...CURVES, ['T', INK, 'T cells']];
-  for (const [k] of all) if (o.ghostSeries) s += `<path data-ghost-curve="${k}" d="${curvePath(o.ghostSeries.t, o.ghostSeries[k], PEAK[k], GX0, GX1, 0, days)}" fill="none" stroke="${MUTED}" stroke-width="1.6" stroke-dasharray="6 5"/>`;
-  for (const [k, col] of all) s += `<path data-curve="${k}" d="${curvePath(o.series.t, o.series[k], PEAK[k], GX0, GX1, 0, days)}" fill="none" stroke="${col}" stroke-width="${k === 'A' || k === 'G' ? 3.2 : 2}"/>`;
-  return s + text(448, 294, 'germs · alarm · T cells · antibodies', 'xs b', 'end');
+const VAC = IM.run({ vaccine: true }).series;
+const lerpSeries = (a, b, u) => { const o = { t: a.t }; for (const k of ['G', 'Se', 'T', 'A', 'M']) o[k] = a[k].map((v, i) => v + (b[k][i] - v) * u); return o; };
+function vaccinePic(t) {
+  const e = ease(span(t, 0.2, 0.85)), S = lerpSeries(IM.BASE.series, VAC, e);
+  let s = axes();
+  s += `<g class="ghost" data-ghost="normal">${['G', 'A', 'M'].map(k => path(curveD(IM.BASE.series, k, 1), C.ghost, 2.5, 'stroke-dasharray="6 5"')).join('')}</g>`;
+  s += part('memory', path(curveD(S, 'M', 1), C.ink, 3, 'stroke-dasharray="2 5"'));
+  s += part('germs', path(curveD(S, 'G', 1), C.amber, 4));
+  s += part('antibody', path(curveD(S, 'A', 1), C.blue, 4));
+  // The vaccine, given beforehand: harmless tags at the start of the timeline.
+  s += part('drug', show(span(t, 0.05, 0.2), [0, 1, 2].map(i => tri(GR.x0 + 14 + i * 16, 34, 7, C.red)).join('') + text(GR.x0 + 62, 40, 'vaccine beforehand: memory ready', 'xs b red', 'start')));
+  s += show(span(t, 0.6, 0.78), text(464, 70, '↑ antibodies sooner, higher', 'xs b blue', 'end'));
+  s += show(span(t, 0.7, 0.88), text(xOfDay(3) + 14, 262, '↓ germs climb less', 'xs b blue', 'start'));
+  s += text(GR.x1, GR.y0 + 30, 'dashed: no vaccine', 'xs muted', 'end');
+  return s;
 }
 
-/* ---------- Meters: how high each measure climbs ---------- */
-const METERS = [['alarm', ['alarm', 'signals'], PURPLE], ['tcells', ['T cells'], BLUE], ['memory', ['memory', 'cells'], INK], ['germs', ['germs'], AMBER], ['antibodies', ['antibodies'], BLUE]];
-const MX = i => 52 + i * 94, BASE_Y = 572, meterH = v => clamp(56 * v, 0, 84);
-function meters(cur, o) {
-  let s = line(12, 452, 468, 452, RULE, 1);
-  s += text(12, 474, o.key ? 'how high each one climbs' : 'taller bar: more of it', 'xs b muted', 'start');
-  if (o.key) s += `<rect data-key-measure x="${MX(3) - 44}" y="482" width="${MX(4) - MX(3) + 88}" height="134" fill="none" stroke="${BLUE}" stroke-width="2"/>` + text((MX(3) + MX(4)) / 2, 474, 'key measures', 'xs b blue');
-  METERS.forEach(([k, words, col], i) => {
-    if (!o.meters.includes(k)) return;
-    const x = MX(i), h = meterH(cur[k]);
-    s += line(x - 26, BASE_Y, x + 26, BASE_Y, INK, 1.5);
-    if (o.ghost) s += `<rect data-ghost-meter="${k}" x="${x - 18}" y="${f(BASE_Y - meterH(o.ghost[k]))}" width="36" height="${f(meterH(o.ghost[k]))}" fill="none" stroke="${INK}" stroke-width="1.5" stroke-dasharray="4 3"/>`;
-    s += `<rect data-meter="${k}" x="${x - 14}" y="${f(BASE_Y - h)}" width="28" height="${f(h)}" fill="${col}"/>`;
-    words.forEach((w, j) => { s += text(x, 592 + j * 17, w, 'xs b'); });
+/* ---------- 11. The whole response, row by row, and where drugs steer it ---------- */
+const MAP = [
+  ['germ gets in', '', 'g'],
+  ['eating cells, alarm signals (TNF)', 'anti-TNF, glucocorticoids', 'a'],
+  ['tag carried to a lymph node', '', 'd'],
+  ['helper T cell switch: calcineurin', 'calcineurin inhibitors', 's'],
+  ['T cells multiply, B cells make antibodies', '', 'b'],
+  ['memory cells stay', 'vaccines make them ahead of time', 'm'],
+];
+function wholePic(t) {
+  let s = '';
+  const rowY = i => 46 + i * 58;
+  // Time, down the left: hours, days, years.
+  const brace = (y1, y2, word) => line(52, y1, 52, y2, C.muted, 2) + line(52, y1, 60, y1, C.muted, 2) + line(52, y2, 60, y2, C.muted, 2) + `<text transform="rotate(-90 36 ${f((y1 + y2) / 2)})" x="36" y="${f((y1 + y2) / 2 + 6)}" text-anchor="middle" class="xs b muted">${word}</text>`;
+  const r = i => span(t, i * 0.13, i * 0.13 + 0.12);
+  s += show(r(0), brace(rowY(0) - 16, rowY(1) + 22, 'hours'));
+  s += show(r(2), brace(rowY(2) - 16, rowY(4) + 22, 'days'));
+  s += show(r(5), brace(rowY(5) - 16, rowY(5) + 22, 'years'));
+  MAP.forEach(([stage, drug, icon], i) => {
+    const y = rowY(i), a = r(i);
+    let row = '';
+    const ix = 86;
+    if (icon === 'g') row += germ(ix, y, 10);
+    if (icon === 'a') row += macrophage(ix - 2, y + 2, 0.9) + signal(ix + 24, y - 8, 6);
+    if (icon === 'd') row += dendritic(ix, y, 0.62);
+    if (icon === 's') row += cell(ix, y, 15, 'T');
+    if (icon === 'b') row += cell(ix - 6, y, 13, 'B') + antibody(ix + 20, y, 1, C.blue);
+    if (icon === 'm') row += cell(ix, y, 14, 'M');
+    row += text(118, y + 6, stage, 'sm b', 'start');
+    if (drug) row += part('drugpoint', text(118, y + 30, `← ${drug}`, 'xs b red', 'start'));
+    s += show(a, row);
+    if (i < MAP.length - 1) s += show(r(i + 1), arrowTo(86, y + (drug ? 20 : 18), 86, rowY(i + 1) - 20, C.muted, 2));
   });
+  s += show(span(t, 0.85, 1), text(240, 398, 'key measures: germ peak, antibodies made', 'xs muted'));
   return s;
 }
-function header(o) {
-  if (!o.legend) return text(12, 22, o.title, 'xs b muted', 'start');
-  return line(14, 17, 44, 17, INK, 2, 'stroke-dasharray="5 4"') + text(52, 22, 'normal', 'xs b', 'start')
-    + line(124, 17, 154, 17, INK, 5) + text(162, 22, o.legend, 'xs b', 'start');
-}
-function picture(cur, o) {
-  let close;
-  switch (o.focus) {
-    case 'barrier': close = closeBarrier(); break;
-    case 'eat': close = closeEat(); break;
-    case 'alarm': close = closeAlarm(cur, o); break;
-    case 'tag': close = closeTag(); break;
-    case 'switch': close = closeSwitch(cur, o); break;
-    case 'clone': close = closeClone(); break;
-    case 'bcell': close = closeBcell(cur); break;
-    case 'attack': close = closeAttack(); break;
-    case 'curve': close = closeCurve(o); break;
-    case 'memory': close = closeMemory(); break;
-    case 'steroid': close = closeSteroid(cur, o); break;
-    case 'graph': close = closeGraph(o); break;
-    default: close = closeWhole();
-  }
-  const ghost = o.ghost ? `<g data-ghost="normal" ${attrs(o.ghost)}></g>` : '';
-  return header(o) + ghost + `<g data-new-state ${attrs(cur)}>` + overview(cur, o) + close + meters(cur, o) + '</g>';
-}
-const attrs = v => IM.KEYS.map(k => `data-${k}="${v[k].toFixed(4)}"`).join(' ');
 
-/* ---------- Words for changes ---------- */
+/* ---------- 15. Glucocorticoids: many alarms turned down ---------- */
+const OUT_AT = [[300, 70], [336, 92], [372, 70], [408, 92], [444, 70], [318, 126], [354, 148], [390, 126], [426, 148]];
+function gcPic(t) {
+  const enter = ease(span(t, 0.08, 0.3)), inNuc = ease(span(t, 0.3, 0.45)), down = ease(span(t, 0.48, 0.88));
+  let s = '';
+  const cx = 150, cy = 190;
+  s += part('cell', circle(cx, cy, 104, '#fff', C.ink, 2.4) + circle(cx + 6, cy + 14, 46, NUC, C.muted, 2));
+  // The instructions in the nucleus: strands of DNA.
+  for (let k = 0; k < 3; k++) s += path(`M${cx - 30} ${cy + k * 12} q15 -8 30 0 t30 0`, C.blue, 2.5);
+  s += text(cx + 6, cy + 54, 'instructions', 'xs muted on-white');
+  // The drug: in through the membrane, into the nucleus, onto the instructions.
+  const [hx, hy] = inNuc > 0 ? at([cx - 50, cy - 50], [cx - 8, cy + 6], inNuc) : at([30, 50], [cx - 50, cy - 50], enter);
+  s += part('drug', hexagon(hx, hy, 11, fade(Math.min(1, enter * 3))));
+  // Out of the cell: many kinds of alarm signal, fewer and fewer as the instructions are turned down.
+  const shapes = [(x, y) => signal(x, y, 7), (x, y) => circle(x, y, 7, C.purple), (x, y) => tri(x, y, 8, C.purple)];
+  const keep = Math.round(OUT_AT.length * (1 - 0.7 * down));
+  s += `<g class="ghost" data-ghost="normal">${OUT_AT.map(([x, y]) => circle(x, y, 9, 'none', C.ghost, 1.4, 'stroke-dasharray="2 2"')).join('')}</g>`;
+  s += part('signal', OUT_AT.slice(0, keep).map(([x, y], i) => shapes[i % 3](x, y)).join(''));
+  s += arrowTo(250, 140, 282, 116, C.purple, 2.4);
+  // Below: T cells multiplying, fewer of them.
+  const copies = Math.round(8 - 5 * down);
+  const row = Array.from({ length: 8 }, (_, i) => [130 + i * 44, 350]);
+  s += `<g class="ghost" data-ghost="normal">${row.map(([x, y]) => ghostCell(x, y, 14)).join('')}</g>`;
+  s += part('clone', row.slice(0, copies).map(([x, y]) => cell(x, y, 14, 'T')).join(''));
+  s += text(464, 40, 'alarm signals made', 'xs b purple', 'end');
+  s += text(16, 312, 'T cells multiplying', 'xs b blue', 'start');
+  s += show(span(t, 0.2, 0.34), text(16, 30, 'glucocorticoid', 'xs b red', 'start'));
+  s += show(span(t, 0.42, 0.56), text(16, 384, 'it sits on the instructions', 'xs b red', 'start'));
+  s += show(span(t, 0.7, 0.85), text(464, 196, '↓ many alarms at once', 'xs b blue', 'end'));
+  s += show(span(t, 0.8, 0.94), text(464, 384, '↓ fewer T cells', 'xs b blue', 'end'));
+  return s;
+}
+
+/* ---------- Words: comparisons and text alternatives ---------- */
 const ROWS = [['germs', 'Germs at their worst', 'more', 'fewer'], ['alarm', 'Alarm signals', 'more', 'fewer'], ['tcells', 'T cells', 'more', 'fewer'], ['antibodies', 'Antibodies', 'more', 'fewer'], ['memory', 'Memory cells', 'more', 'fewer']];
-function more(a, b, up, down) {
-  if (Math.abs(a - b) < 0.03 * Math.max(b, 0.05)) return ['about the same', 'same'];
-  return a > b ? [up, 'up'] : [down, 'down'];
+function trend(a, b, up, down) {
+  if (Math.abs(a - b) < 0.03 * Math.max(b, 0.05)) return ['same', 'about the same'];
+  return a > b ? ['up', up] : ['down', down];
 }
-const compare = (v, ref) => ROWS.map(([k, name, up, down]) => [name, more(v[k], ref[k], up, down)]);
-const ARROW = { up: '↑', down: '↓', same: '↔' };
-const readout = (v, ref, head) => `<ul class="readout" aria-label="${esc(head)}"><li class="head">${head}</li>${compare(v, ref).map(([k, [w, d]]) => `<li><b>${k}</b> <span class="${d}">${ARROW[d]} ${w}</span></li>`).join('')}</ul>`;
-const describe = (v, ref) => compare(v, ref).map(([k, [w]]) => `${k.toLowerCase()}: ${w}`).join('; ');
+const compare = (v, ref) => ROWS.map(([k, name, up, down]) => { const [d, w] = trend(v[k], ref[k], up, down); return [name, d, w]; });
+const changedFirst = rows => [...rows.filter(r => r[1] !== 'same'), ...rows.filter(r => r[1] === 'same')];
+const describe = (v, ref) => compare(v, ref).map(([k, , w]) => `${k.toLowerCase()}: ${w}`).join('; ');
 
-/* ---------- Lesson steps ---------- */
-const P1 = [], P2 = ['eat'], P3 = [...P2, 'alarm'], P4 = [...P3, 'tag'], P5 = [...P4, 'tcell'], P6 = [...P5, 'clone'], P7 = [...P6, 'bcell'], P10 = [...P7, 'memory'];
-const M_ALL = METERS.map(m => m[0]);
-const CORE = {
-  invader: { parts: P1, focus: 'barrier', meters: ['germs'], title: 'a cut in the skin',
-    label: 'Germs, drawn as small spiky balls, enter the body through a cut in the skin and spread into the tissue above a blood vessel. Close up, the skin is a wall that keeps most germs out, but they pass through the gap of the cut and multiply inside. A bar gauge labelled germs shows how many there are.' },
-  eat: { parts: P2, focus: 'eat', meters: ['germs'], title: 'a cut in the skin',
-    label: 'Eating cells have arrived among the germs: two large macrophages and smaller neutrophils with lobed centres, some leaving the blood vessel. Close up, a macrophage reaches for a germ, swallows it and breaks it into pieces.' },
-  alarm: { parts: P3, focus: 'alarm', meters: ['alarm', 'germs'], title: 'a cut in the skin',
-    label: 'Small purple diamonds, the alarm signals, spread through the tissue, which turns pink and swollen, and the blood vessel widens. Close up, a macrophage that has met a germ sends out alarm signals; the vessel wall opens gaps and neutrophils squeeze out. A new gauge shows the alarm signals.' },
-  tag: { parts: P4, focus: 'tag', meters: ['alarm', 'germs'], title: 'the cut, and the nearest lymph node',
-    label: 'The germs now show small black triangles on their surface, their name tags. A lymph node, drawn as a large blue bean, sits beside the tissue, and an arrow carries a tag to it. Close up, a germ covered with tags, and a star-shaped eating cell carrying one tag toward the lymph node.' },
-  switch: { parts: P5, focus: 'switch', meters: ['alarm', 'germs'], title: 'the cut, and the nearest lymph node',
-    label: 'One blue T cell waits in the lymph node. Close up, an eating cell holds up a tag that fits the notch on a helper T cell. Inside the T cell, the fit flips a switch, calcineurin, which sends out a stream of blue dots: the grow signal.' },
-  clone: { parts: P6, focus: 'clone', meters: ['alarm', 'tcells', 'germs'], title: 'the cut, and the nearest lymph node',
-    label: 'The lymph node fills with blue T cells. Close up, one T cell becomes two, then four, then eight down the page as days pass, all fitting the same tag. A T cells gauge appears.' },
-  bcell: { parts: P7, focus: 'bcell', meters: ['alarm', 'tcells', 'germs', 'antibodies'], title: 'the cut, and the nearest lymph node',
-    label: 'B cells, white circles with a blue rim, sit in the lymph node, and Y-shaped antibodies flow from the node into the tissue. Close up, a B cell holding the tag is helped by a helper T cell, turns into a large plasma cell and pours out antibodies. An antibodies gauge appears.' },
-  attack: { parts: P7, focus: 'attack', meters: ['alarm', 'tcells', 'germs', 'antibodies'], title: 'the cut, and the nearest lymph node',
-    label: 'Close up, on the left, antibodies stick germs together in a clump and a macrophage moves in to swallow it. On the right, a killer T cell presses against a body cell full of virus and destroys it.' },
-  curve: { parts: P7, focus: 'curve', meters: ['alarm', 'tcells', 'germs', 'antibodies'], title: 'the cut, and the nearest lymph node',
-    label: 'A timeline with time to the right and amount upward. The germ curve rises first and falls; the alarm curve rises with the germs and fades after them; the antibody curve starts late, climbs high after the germs peak, and slowly drifts down. Innate is marked early and adaptive later.' },
-  memory: { parts: P10, focus: 'memory', meters: M_ALL, title: 'the cut, and the nearest lymph node',
-    label: 'Black memory cells now sit in the lymph node. Close up, two timelines side by side: the first meeting with a germ, where germs climb high and antibodies rise late, and the same germ met again later, where germs barely rise and antibodies rise sooner and higher. A memory cells gauge appears.' },
-  whole: { parts: P10, focus: 'whole', meters: M_ALL, key: true, title: 'the whole response',
-    label: 'The whole response: germs at the cut, eating cells, alarm signals and swelling, and the lymph node with T cells, B cells, antibodies and memory cells. Four targets are marked: memory, the T cell on switch, the TNF alarm signal and the instructions for alarm signals. The germs and antibodies gauges are framed as the key measures.' }
+/* ---------- The lesson's scenes, one per step kind ---------- */
+const CHANGES = { vaccine: { vaccine: true }, cni: { cni: true }, antitnf: { antitnf: true }, gc: { gc: true } };
+const ENDS = Object.fromEntries(Object.entries(CHANGES).map(([k, o]) => [k, IM.settle(o)]));
+const CHANGE_WHERE = {
+  vaccine: 'Red tags at the start of the timeline mark a vaccine given beforehand, so the dotted memory line starts high; when the germ arrives, the blue antibody curve rises sooner and higher and the amber germ curve climbs much less, against dashed normal curves.',
+  cni: 'A red calcineurin inhibitor block drops onto the T cell’s switch; the knob slides back to off, the blue IL-2 dots stop and the row of eight T cell copies shrinks to one among dashed outlines.',
+  antitnf: 'Red Y-shaped anti-TNF antibodies and a cup-shaped decoy catch the purple alarm signals, most of which vanish leaving dashed outlines; the pink swelling fades, the gaps in the vessel wall close and fewer neutrophils squeeze out.',
+  gc: 'A red glucocorticoid hexagon enters the immune cell and sits on the instructions in its nucleus; the purple alarm signals of several kinds drop from nine to three, and the row of T cell copies shrinks, against dashed outlines.'
 };
-const CHANGES = {
-  vaccine: { focus: 'curve', legend: 'after a vaccine', opt: { vaccine: true }, where: 'Close up, on the timeline, red tags mark a vaccine given earlier; when the real germ arrives the germ curve stays almost flat and the antibody curve rises early, against the dashed normal curves.' },
-  cni: { focus: 'switch', legend: 'with a calcineurin inhibitor', opt: { cni: true }, where: 'Close up, a red block sits on the T cell’s calcineurin switch, the blue grow signal dots fade away and only one or two T cell copies form among dashed outlines of the normal crowd.' },
-  antitnf: { focus: 'alarm', legend: 'with an anti-TNF biologic', opt: { antitnf: true }, where: 'Close up, red drug molecules, two Y-shaped antibodies and one cup-shaped decoy catcher, grab the alarm signals, most of the purple signals vanish leaving dashed outlines, the gaps in the vessel wall narrow and fewer neutrophils squeeze out.' },
-  gc: { focus: 'steroid', legend: 'with a glucocorticoid', opt: { gc: true }, where: 'Close up, a red glucocorticoid hexagon enters an immune cell and sits on its instructions; fewer alarm signals are made and fewer T cells multiply, against dashed outlines of the normal numbers.' }
-};
-const ENDS = Object.fromEntries(Object.entries(CHANGES).map(([k, c]) => [k, IM.settle(c.opt)]));
-const END_SERIES = Object.fromEntries(Object.entries(CHANGES).map(([k, c]) => [k, IM.run(c.opt).series]));
-const lerpSeries = (a, b, t) => { const o = { t: a.t }; for (const k of ['G', 'Se', 'T', 'A', 'M']) o[k] = a[k].map((v, i) => v + (b[k][i] - v) * t); return o; };
-function corePicture(kind) {
-  const c = CORE[kind];
-  return svg(c.label, picture(NV, { ...c, parts: new Set(c.parts), markT: 0, series: IM.BASE.series }));
-}
-const DURATION = 2200;
-const ease = x => 1 - Math.pow(1 - clamp(x, 0, 1), 3);
-function changePicture(el, t) {
-  const kind = el.dataset.kind, c = CHANGES[kind], e = ease(t);
-  const cur = IM.lerp(NV, ENDS[kind], e);
-  const name = el.dataset.stepTitle.split(':')[0];
-  const label = `${name}, drawn over faint dashed marks for normal, the untreated, unvaccinated response. ${c.where} Compared with normal: ${describe(cur, NV)}.`;
-  const o = { parts: new Set(P10), focus: c.focus, meters: M_ALL, key: true, ghost: NV, legend: c.legend, drug: kind, markT: t * 3,
-    series: lerpSeries(IM.BASE.series, END_SERIES[kind], e), ghostSeries: IM.BASE.series };
-  return { pic: svg(label, picture(cur, o)), ro: readout(cur, NV, 'Compared with normal') };
-}
-
-const steps = $$('[data-step]');
-const backBtn = $('[data-step-back]'), nextBtn = $('[data-step-next]'), progress = $('[data-step-progress]');
-let current = 0, frame = 0;
-const visualOf = el => el.querySelector('[data-visual]');
-const isAnimated = el => el.dataset.kind in CHANGES;
-const lastReadout = new WeakMap();
-function drawAt(el, t) {
-  const v = visualOf(el), { pic, ro } = changePicture(el, t), old = v.querySelector('svg');
-  if (!old) { v.innerHTML = pic + ro; lastReadout.set(v, ro); return; }
-  old.outerHTML = pic;
-  if (lastReadout.get(v) !== ro) { v.querySelector('.readout').outerHTML = ro; lastReadout.set(v, ro); }
-}
-function animate(el) {
-  cancelAnimationFrame(frame);
-  if (reducedMotion()) { drawAt(el, 1); return; }
-  let start = null;
-  drawAt(el, 0);
-  const tick = now => {
-    if (start === null) start = now;
-    const t = Math.min(1, (now - start) / DURATION);
-    drawAt(el, t);
-    if (t < 1) frame = requestAnimationFrame(tick);
+const TITLE = { vaccine: 'Vaccines', cni: 'Calcineurin inhibitors', antitnf: 'Anti-TNF biologics', gc: 'Glucocorticoids' };
+const DRAW = { vaccine: vaccinePic, cni: cniPic, antitnf: antiTnfPic, gc: gcPic };
+const HEIGHT = { vaccine: 362, cni: 378, antitnf: 356, gc: 396 };
+function change(kind) {
+  const order = changedFirst(compare(ENDS[kind], NV)).map(r => r[0]);
+  const sorted = rows => order.map(k => rows.find(r => r[0] === k));
+  return {
+    duration: 4600,
+    render(t) {
+      const cur = IM.lerp(NV, ENDS[kind], ease(span(t, 0.2, 0.9)));
+      const label = `${TITLE[kind]}, drawn over faint dashed marks for normal, the untreated, unvaccinated response. ${CHANGE_WHERE[kind]} Compared with normal: ${describe(cur, NV)}.`;
+      return { svg: svg(label, DRAW[kind](t), { h: HEIGHT[kind] }), readout: readout(sorted(compare(cur, NV))) };
+    }
   };
-  frame = requestAnimationFrame(tick);
 }
-let started = false;
-function startLesson() {
-  steps.forEach(el => {
-    const k = el.dataset.kind;
-    if (CORE[k]) visualOf(el).innerHTML = corePicture(k);
-    if (isAnimated(el)) drawAt(el, 1);
-    el.querySelector('.replay')?.addEventListener('click', () => animate(el));
-  });
-  started = true;
-  if (/^#step-\d+$/.test(location.hash)) fromHash(); else showStep(current);
-}
-function showStep(n, focus = false) {
-  if (!started) return;
-  cancelAnimationFrame(frame);
-  if (isAnimated(steps[current])) drawAt(steps[current], 1);   // a step left mid-morph keeps its end state
-  current = clamp(n, 0, steps.length - 1);
-  steps.forEach((el, i) => { el.hidden = i !== current; });
-  backBtn.disabled = current === 0;
-  nextBtn.textContent = current === steps.length - 1 ? 'Start again ↻' : 'Next →';
-  progress.textContent = `Step ${current + 1} of ${steps.length}`;
-  if (location.hash !== `#step-${current + 1}`) history.replaceState(null, '', `#step-${current + 1}`);
-  const el = steps[current];
-  if (isAnimated(el)) animate(el);
-  if (focus) { el.querySelector('h2').focus({ preventScroll: true }); el.scrollIntoView({ block: 'start' }); }
-}
-nextBtn.addEventListener('click', () => showStep(current === steps.length - 1 ? 0 : current + 1, true));
-backBtn.addEventListener('click', () => showStep(current - 1, true));
-$('#lesson').addEventListener('keydown', e => {
-  if (e.target.closest('input, select, textarea') || e.altKey || e.ctrlKey || e.metaKey) return;
-  if (e.key === 'ArrowRight' && current < steps.length - 1) { e.preventDefault(); showStep(current + 1, true); }
-  if (e.key === 'ArrowLeft' && current > 0) { e.preventDefault(); showStep(current - 1, true); }
-});
-
-/* ---------- Tabs ---------- */
-const tabs = $$('[role=tab]');
-function activate(tab, focus = false) {
-  tabs.forEach(t => { const on = t === tab; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; document.getElementById(t.getAttribute('aria-controls')).hidden = !on; });
-  if (focus) tab.focus();
-  cancelAnimationFrame(frame);   // a morph left running must not overwrite the end state drawn below
-  if (tab.id === 'tab-lesson' && started && isAnimated(steps[current])) drawAt(steps[current], 1);
-  if (tab.id === 'tab-clinical') updateClinical();
-  if (tab.id === 'tab-explore') updateExplore();
-}
-tabs.forEach((t, i) => {
-  t.addEventListener('click', () => activate(t));
-  t.addEventListener('keydown', e => {
-    const n = { ArrowRight: (i + 1) % tabs.length, ArrowLeft: (i + tabs.length - 1) % tabs.length, Home: 0, End: tabs.length - 1 }[e.key];
-    if (n !== undefined) { e.preventDefault(); activate(tabs[n], true); }
-  });
-});
-function fromHash() {
-  const m = location.hash.match(/^#step-(\d+)$/);
-  if (m && started) { if (tabs[0].getAttribute('aria-selected') !== 'true') activate(tabs[0]); showStep(Number(m[1]) - 1); }
-}
-window.addEventListener('hashchange', fromHash);
+const moving = (label, draw, h, duration, loop = false) => ({ duration, loop, render: t => svg(label, draw(t), { h }) });
+const scenes = {
+  invader: moving('Skin with a cut in it, over the tissue and a blood vessel. Germs, drawn as small spiky amber balls with black name tags, fall onto the skin; most stay outside, but one slips through the cut and, inside, multiplies to two, four and eight.', invaderPic, 330, 5200),
+  eat: moving('Inside the tissue, a large white macrophage that already lives there reaches out, swallows a germ and breaks it into pieces. Two neutrophils, round cells with purple lobes, squeeze out of the blood vessel below and swallow germs further away.', eatPic, 310, 5200),
+  alarm: moving('A macrophage next to germs sends out purple diamond alarm signals that spread through the tissue. The tissue turns pink and swollen, the blood vessel below widens, gaps open in its wall and neutrophils squeeze out toward the germs: inflammation.', alarmPic, 356, 5200),
+  tag: moving('On the left, germs in the tissue wear black triangle name tags, their antigens. A star-shaped dendritic cell swallows a germ, holds a piece of its tag up on one arm and travels along a lymph vessel into a lymph node, a large blue bean where T cells and B cells wait.', tagPic, 344, 5600),
+  switch: moving('Inside the lymph node, a star-shaped dendritic cell holds up a black triangle tag. A helper T cell, a large blue circle with a matching notch, slides in and fits the tag; the switch inside it, calcineurin, flips on and blue dots, the IL-2 grow signal, stream out of the cell.', switchPic, 290, 5200),
+  clone: moving('One T cell at the top divides into two, then four, then eight, drawn as a family tree down the picture as days pass: a clone in which every copy fits the same tag.', clonePic, 330, 5200),
+  bcell: moving('A B cell, a white circle with a blue rim and Y-shaped receptors, grips a germ by its tag. A helper T cell comes up from below and gives help; the B cell becomes a larger plasma cell, and Y-shaped antibodies pour out of it across the picture.', bcellPic, 322, 5600),
+  attack: moving('Two halves. Left: blue Y-shaped antibodies stick to germs and pull them into a clump, which a macrophage swallows. Right: a killer T cell presses on a body cell full of virus, sends a kill signal and the cell breaks apart.', attackPic, 334, 5600),
+  curve: moving('A timeline that draws itself from left to right. The amber germ curve rises first and falls; the purple alarm curve rises with the germs and fades after them; the blue antibody curve starts late, climbs high after the germs peak and slowly drifts down. A band under the axis marks the innate response in the first hours and the adaptive response, which takes days.', curvePic, 360, 5600),
+  memory: moving('Two timelines side by side. At the first meeting the amber germ curve climbs high and the blue antibody curve rises late; a dotted line of memory cells rises and stays. When the same germ comes back years later, the antibodies rise sooner and higher and the germs climb much less.', memoryPic, 340, 6000),
+  whole: moving('The whole response as a ladder, built row by row: a germ gets in; eating cells and alarm signals such as TNF, in the first hours; a tag carried to a lymph node; the helper T cell’s calcineurin switch; T cells multiplying and B cells making antibodies, over days; and memory cells that stay for years. Red notes mark where drugs steer it: anti-TNF biologics and glucocorticoids at the alarm, calcineurin inhibitors at the switch, and vaccines, which make memory ahead of time.', wholePic, 404, 6000),
+  vaccine: change('vaccine'),
+  cni: change('cni'),
+  antitnf: change('antitnf'),
+  gc: change('gc'),
+};
 
 /* ---------- Clinical values ----------
    The model's normal total sits at the middle of the quoted range, and its shares are the middles of the quoted share
@@ -499,8 +541,8 @@ const PLACE_ARROW = { inside: '↔', above: '↑', below: '↓' };
 const hasRange = v => Number.isFinite(v.low) && Number.isFinite(v.high);
 const num = (n, d = 0) => n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
 const rangeText = v => `${num(v.low)}–${num(v.high)}`;
-const span = v => hasRange(v) ? [Math.max(0, v.low - (v.high - v.low)), v.high + (v.high - v.low)] : [v.typical * 0.5, v.typical * 1.5];
-const barX = (v, n) => { const [a, b] = span(v); return f(20 + clamp((n - a) / (b - a), 0, 1) * 360); };
+const barSpan = v => hasRange(v) ? [Math.max(0, v.low - (v.high - v.low)), v.high + (v.high - v.low)] : [v.typical * 0.5, v.typical * 1.5];
+const barX = (v, n) => { const [a, b] = barSpan(v); return f(20 + clamp((n - a) / (b - a), 0, 1) * 360); };
 const roundFor = (v, n) => v.unit === '%' ? Math.round(n) : Math.round(n / 100) * 100;
 const fmt = (v, n) => v.unit === '%' ? `${num(roundFor(v, n))}%` : `${num(roundFor(v, n))} ${v.unit}`;
 function placeOf(v, n) {
@@ -518,14 +560,14 @@ const modelValue = v => IM.blood(cvInputs(), REF)[v.modelKey];
 const infectionWords = v => v < 0.05 ? 'none' : v < 0.6 ? 'mild' : v <= 1.2 ? 'an infection' : 'a heavy infection';
 
 const KIND_DRAW = {
-  n: (x, y) => `<g data-cell-kind="neutrophil"><circle cx="${x}" cy="${y}" r="14" fill="#fff" stroke="${MUTED}" stroke-width="1.5"/><circle cx="${x - 5}" cy="${y - 2}" r="4" fill="${LOBE}"/><circle cx="${x + 1}" cy="${y + 4}" r="4" fill="${LOBE}"/><circle cx="${x + 6}" cy="${y - 3}" r="4" fill="${LOBE}"/></g>`,
-  l: (x, y) => `<g data-cell-kind="lymphocyte"><circle cx="${x}" cy="${y}" r="12" fill="#fff" stroke="${MUTED}" stroke-width="1.5"/><circle cx="${x}" cy="${y}" r="9" fill="${BLUE}"/></g>`,
-  m: (x, y) => `<g data-cell-kind="monocyte"><circle cx="${x}" cy="${y}" r="15" fill="#fff" stroke="${MUTED}" stroke-width="1.5"/><path d="M${x - 7} ${y - 4} q7 12 14 0" fill="none" stroke="${INK}" stroke-width="5" stroke-linecap="round"/></g>`,
-  e: (x, y) => `<g data-cell-kind="eosinophil"><circle cx="${x}" cy="${y}" r="13" fill="#fff" stroke="${MUTED}" stroke-width="1.5"/><circle cx="${x - 4}" cy="${y}" r="4" fill="${AMBER}"/><circle cx="${x + 4}" cy="${y}" r="4" fill="${AMBER}"/><circle cx="${x}" cy="${y - 6}" r="2" fill="${RED}"/><circle cx="${x}" cy="${y + 6}" r="2" fill="${RED}"/></g>`
+  n: (x, y) => `<g data-cell-kind="neutrophil">${neutrophil(x, y, 14)}</g>`,
+  l: (x, y) => `<g data-cell-kind="lymphocyte">${circle(x, y, 12, '#fff', C.muted, 1.5)}${circle(x, y, 9, C.blue)}</g>`,
+  m: (x, y) => `<g data-cell-kind="monocyte">${circle(x, y, 15, '#fff', C.muted, 1.5)}<path d="M${x - 7} ${y - 4} q7 12 14 0" fill="none" stroke="${C.ink}" stroke-width="5" stroke-linecap="round"/></g>`,
+  e: (x, y) => `<g data-cell-kind="eosinophil">${circle(x, y, 13, '#fff', C.muted, 1.5)}${circle(x - 4, y, 4, C.amber)}${circle(x + 4, y, 4, C.amber)}${circle(x, y - 6, 2, C.red)}${circle(x, y + 6, 2, C.red)}</g>`
 };
 function bloodPicture(m, label) {
   // An illustrative drop of blood: white cells in proportion to the model.
-  let s = `<rect x="0" y="0" width="480" height="300" fill="#fbf1ef"/>` + text(16, 26, 'a drop of blood (illustrative model)', 'xs b muted', 'start');
+  let s = rect(0, 0, 480, 300, '#fbf1ef') + text(16, 28, 'a drop of blood (illustrative model)', 'xs b muted', 'start');
   const per = 30;
   const counts = { n: Math.round(per * m.relN), l: Math.round(per * m.relL), m: Math.max(m.relMo > 0.01 ? 1 : 0, Math.round(per * m.relMo)), e: Math.max(m.relE > 0.01 ? 1 : 0, Math.round(per * m.relE)) };
   let kinds = [...Array(counts.n).fill('n'), ...Array(counts.l).fill('l'), ...Array(counts.m).fill('m'), ...Array(counts.e).fill('e')];
@@ -536,8 +578,9 @@ function bloodPicture(m, label) {
     const col = i % 8, row = Math.floor(i / 8), x = 50 + col * 52 + (row % 2) * 24, y = 66 + row * 42;
     s += KIND_DRAW[k](x, y);
   });
-  const legend = `<g>${KIND_DRAW.n(24, 320).replace('data-cell-kind="neutrophil"', '')}${text(44, 325, 'neutrophil', 'xs', 'start')}${KIND_DRAW.l(146, 320).replace('data-cell-kind="lymphocyte"', '')}${text(164, 325, 'lymphocyte', 'xs', 'start')}${KIND_DRAW.m(270, 320).replace('data-cell-kind="monocyte"', '')}${text(290, 325, 'monocyte', 'xs', 'start')}${KIND_DRAW.e(384, 320).replace('data-cell-kind="eosinophil"', '')}${text(402, 325, 'eosinophil', 'xs', 'start')}</g>`;
-  return svg(label, s + legend, 344);
+  s += `<g>${KIND_DRAW.n(24, 322)}${text(44, 328, 'neutrophil', 'xs', 'start')}${KIND_DRAW.l(150, 322)}${text(168, 328, 'lymphocyte', 'xs', 'start')}</g>`;
+  s += `<g>${KIND_DRAW.m(24, 358)}${text(44, 364, 'monocyte', 'xs', 'start')}${KIND_DRAW.e(150, 358)}${text(168, 364, 'eosinophil', 'xs', 'start')}</g>`;
+  return svg(label, s, { h: 380 });
 }
 
 function updateClinical() {
@@ -608,6 +651,26 @@ const EX_NAMES = { vaccine: 'vaccinated beforehand', cni: 'a calcineurin inhibit
 const exploreOpts = () => { const o = { growth: ex.growth, reinfect: ex.reinfect }; for (const d of ex.drugs) o[d] = true; return o; };
 const pct = x => `${Math.round(100 * x)}%`;
 const growthWords = g => g < 0.8 ? 'slowly' : g <= 1.2 ? 'at the normal pace' : g <= 1.6 ? 'quickly' : 'very quickly';
+// Germs, alarm, T cells and antibodies over time on top; below, how high each measure climbs against normal.
+function explorePicture(cur, series, ghostSeries, label) {
+  const days = series.t[series.t.length - 1];
+  const E = { x0: 60, x1: 456, y0: 200, h: 156 };
+  const d = (ser, k) => ser.t.map((tt, i) => `${i ? 'L' : 'M'}${f(E.x0 + (E.x1 - E.x0) * tt / days)} ${f(E.y0 - E.h * SCALE[k] * clamp(ser[k][i] / PEAK[k], 0, 1.25))}`).join(' ');
+  let s = line(E.x0, 30, E.x0, E.y0, C.ink, 2) + line(E.x0, E.y0, E.x1 + 8, E.y0, C.ink, 2);
+  s += text(16, 22, 'amount ↑', 'xs b', 'start') + text(E.x1 + 8, E.y0 + 24, 'time →', 'xs b', 'end');
+  for (const k of ['G', 'A']) s += path(d(ghostSeries, k), C.ghost, 2.2, 'stroke-dasharray="6 5"');
+  for (const k of ['Se', 'T', 'G', 'A']) s += path(d(series, k), COL[k], k === 'G' || k === 'A' ? 4 : 2.4);
+  s += text(68, 58, 'germs', 'xs b amber', 'start') + text(180, 58, 'antibodies', 'xs b blue', 'start') + text(300, 58, 'alarm', 'xs b purple', 'start') + text(376, 58, 'T cells', 'xs b', 'start');
+  s += text(16, 254, 'how high each climbs (dashed: normal)', 'xs b muted', 'start');
+  const rows = [['germs', 'germs at worst', C.amber], ['alarm', 'alarm signals', C.purple], ['tcells', 'T cells', C.ink], ['antibodies', 'antibodies', C.blue], ['memory', 'memory cells', C.ink]];
+  rows.forEach(([k, w, col], i) => {
+    const y = 272 + i * 27;
+    s += text(16, y + 13, w, 'xs', 'start');
+    s += rect(190, y, 170, 15, 'none', C.ink, 1.5, 'stroke-dasharray="4 3"');
+    s += rect(190, y, 170 * clamp(cur[k], 0, 1.6), 15, col);
+  });
+  return svg(label, s, { h: 420 });
+}
 function updateExplore() {
   $('#growth').value = ex.growth; $('#growth-label').textContent = growthWords(ex.growth);
   $('#reinfect').checked = ex.reinfect;
@@ -616,9 +679,8 @@ function updateExplore() {
   const ghostSeries = ex.reinfect ? IM.run({ reinfect: true }).series : IM.BASE.series;
   const names = IM.DRUGS.filter(d => ex.drugs.has(d)).map(d => EX_NAMES[d]);
   const who = `a germ that multiplies ${growthWords(ex.growth)}${names.length ? `, ${names.join(', ')}` : ', untreated and unvaccinated'}${ex.reinfect ? ', and the same germ returning long after' : ''}`;
-  const label = `Illustrative model of ${who}, drawn over faint dashed marks for the untreated, unvaccinated response. The lower panel plots germs, alarm signals, T cells and antibodies over time. Compared with normal: ${describe(cur, NV)}.`;
-  const o = { parts: new Set(P10), focus: 'graph', meters: M_ALL, key: true, ghost: NV, legend: 'your settings', series, ghostSeries, markT: 0 };
-  $('#explore-visual').innerHTML = svg(label, picture(cur, o)) + readout(cur, NV, 'Compared with normal');
+  const label = `Illustrative model of ${who}, drawn over faint dashed marks for the untreated, unvaccinated response. The top panel plots germs, alarm signals, T cells and antibodies over time; the bars below show how high each climbs. Compared with normal: ${describe(cur, NV)}.`;
+  $('#explore-visual').innerHTML = explorePicture(cur, series, ghostSeries, label) + readout(changedFirst(compare(cur, NV)));
   const res = $('#model-results');
   res.textContent = `Illustrative model output, compared with the normal response: germs at their worst ${pct(cur.germs)} · alarm signals at their peak ${pct(cur.alarm)} · T cells at their peak ${pct(cur.tcells)} · antibodies at their peak ${pct(cur.antibodies)} · memory cells left after the first infection ${pct(cur.memory)}.`;
   for (const k of IM.KEYS) res.dataset[k] = cur[k].toFixed(4);
@@ -691,8 +753,8 @@ async function load() {
     $('#load-error').hidden = false;
     $('#load-error').textContent = 'The reference file did not load. Reload the page to try again; the lesson and Explore freely still work on an illustrative model.';
   }
-  startLesson();
   updateClinical();
   updateExplore();
 }
-load();
+
+lesson({ scenes, before: load, onTab: { clinical: updateClinical, explore: updateExplore } });

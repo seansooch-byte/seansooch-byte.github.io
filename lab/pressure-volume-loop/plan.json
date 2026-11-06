@@ -1,0 +1,201 @@
+{
+  "minutes": 30,
+  "prerequisites": [],
+  "objectives": [
+    "Trace one heartbeat round the pressure-volume loop: name its four phases and say what each valve is doing.",
+    "Read stroke volume and ejection fraction off a loop.",
+    "Explain which part of the loop preload, afterload and contractility each control.",
+    "Predict how fluids, a vasoconstrictor, a positive inotrope, a venodilator, a beta-blocker and heart failure with reduced ejection fraction change the loop."
+  ],
+  "checks": {
+    "fluids": {
+      "prompt": "A drip adds fluid, so more blood returns to the heart and the ventricle fills further before it squeezes. Which way does the loop move?",
+      "choices": [
+        "It grows to the right: the ventricle fills more",
+        "Its left edge moves left: the ventricle empties further",
+        "Its top edge drops: lower pressure",
+        "It stays the same: the heart pumps what it always pumps"
+      ],
+      "answer": 0,
+      "why": "More filling is more preload, and preload sets where the right edge sits. Stretched muscle also squeezes harder, so the loop grows wider: more blood per beat. In this model it also rises a little, as the extra blood raises the pressure in the arteries."
+    },
+    "constrict": {
+      "prompt": "The small arteries tighten, so the ventricle meets more push-back (more afterload). The muscle squeezes no harder than before. What happens to the loop?",
+      "choices": [
+        "It grows taller and narrower: more blood is left behind",
+        "It grows wider: more blood is pumped out",
+        "It grows to the right: the ventricle fills more",
+        "It stays the same height but moves left"
+      ],
+      "answer": 0,
+      "why": "Pumping against a higher pressure, the ventricle stops ejecting sooner, at a larger volume. So the left edge moves right and the top rises: a taller, narrower loop, less blood per beat."
+    },
+    "inotrope": {
+      "prompt": "A positive inotrope makes the same heart muscle squeeze harder, from the same filling. Which edge of the loop moves?",
+      "choices": [
+        "The left edge moves left: the ventricle empties further",
+        "The right edge moves right: the ventricle fills more",
+        "The bottom edge rises: filling happens at a higher pressure",
+        "No edge moves: only the heart rate changes"
+      ],
+      "answer": 0,
+      "why": "Contractility decides how far the ventricle can empty. A stronger squeeze reaches a smaller end volume, so the left edge moves left and the loop widens: more blood per beat, and a bigger share pumped out."
+    },
+    "venodil": {
+      "prompt": "A venodilator widens the veins, so more blood pools in them and less returns to the heart. What happens to the loop?",
+      "choices": [
+        "It shrinks from the right: the ventricle fills less",
+        "It grows wider: more blood per beat",
+        "It grows taller and narrower",
+        "Its left edge moves left"
+      ],
+      "answer": 0,
+      "why": "Less blood returning means less preload, so the right edge moves left and the loop narrows: less blood is pumped per beat."
+    },
+    "beta": {
+      "prompt": "A beta-blocker blocks the signals that tell the heart to speed up and squeeze harder, so the heart beats more slowly and squeezes less hard. Which part of the loop most clearly moves?",
+      "choices": [
+        "The top edge drops: the ventricle pumps at a lower pressure",
+        "The right edge moves far right: the ventricle fills much more",
+        "The left edge moves far left: the ventricle empties further",
+        "No edge moves: only the timing of the beat changes"
+      ],
+      "answer": 0,
+      "why": "A gentler squeeze builds less pressure, and between slower beats the pressure in the arteries falls further, so pumping happens at a lower pressure: the top drops. The weaker squeeze alone would leave more blood behind, but with less to push against, in this model the width changes little. Fewer beats a minute pump less blood each minute."
+    },
+    "hfref": {
+      "prompt": "In heart failure with reduced ejection fraction the heart muscle is weak, and over time the ventricle enlarges. Where does the loop go?",
+      "choices": [
+        "Right: a bigger ventricle that empties poorly",
+        "Left and taller: a small, strong ventricle",
+        "Wider in both directions: more blood per beat",
+        "It stays put: only the heart rate changes"
+      ],
+      "answer": 0,
+      "why": "Weak muscle leaves much more blood behind, so the left edge moves right; the enlarged ventricle also starts each beat fuller, so the right edge moves right too. It usually reaches a lower pressure, and the share it pumps out, the ejection fraction, falls."
+    }
+  },
+  "quiz": [
+    {
+      "id": "same-volume-squeeze",
+      "objective": 1,
+      "step": "contract",
+      "stem": "During isovolumic contraction, the right edge of the loop, which valves are open?",
+      "choices": [
+        "Neither: both are shut, so the volume cannot change",
+        "Only the mitral valve",
+        "Only the aortic valve",
+        "Both valves"
+      ],
+      "answer": 0,
+      "why": "The mitral valve has just shut and the aortic valve has not opened yet, so no blood gets in or out. Pressure climbs straight up at a fixed volume."
+    },
+    {
+      "id": "filling-edge",
+      "objective": 1,
+      "step": "fill",
+      "stem": "Which edge of the loop shows the ventricle filling?",
+      "choices": [
+        "The bottom edge: volume grows a lot while pressure stays low",
+        "The top edge: volume falls while pressure stays high",
+        "The right edge: pressure rises at a fixed volume",
+        "The left edge: pressure falls at a fixed volume"
+      ],
+      "answer": 0,
+      "why": "Filling happens while the muscle is relaxed and the mitral valve is open, so the dot slides right along the bottom. The top edge is ejection; the two upright edges are the same-volume phases."
+    },
+    {
+      "id": "stroke-volume",
+      "objective": 2,
+      "step": "sv",
+      "stem": "On a pressure-volume loop, what is the stroke volume?",
+      "choices": [
+        "The loop's width: the full volume minus the volume left after pumping",
+        "The loop's height: the highest pressure minus the lowest",
+        "The area inside the loop",
+        "The volume at the loop's left edge"
+      ],
+      "answer": 0,
+      "why": "Stroke volume is the blood pumped in one beat: from the right edge (full, before the squeeze) to the left edge (what is left). The area inside is the work of one beat, not its volume."
+    },
+    {
+      "id": "ejection-fraction",
+      "objective": 2,
+      "step": "ef",
+      "stem": "A ventricle holds 150 mL when full and 90 mL after it pumps. What is its ejection fraction?",
+      "choices": [
+        "40%",
+        "60%",
+        "90%",
+        "150%"
+      ],
+      "answer": 0,
+      "why": "The stroke volume is 150 minus 90, so 60 mL. The ejection fraction is the share pumped out: 60 of 150, which is 40%, less than the little over half a healthy ventricle pumps."
+    },
+    {
+      "id": "right-edge",
+      "objective": 3,
+      "step": "preload",
+      "stem": "Which of these mainly decides where the loop's right edge sits?",
+      "choices": [
+        "Preload: how full the ventricle is just before it squeezes",
+        "Afterload: how hard it must push to open the aortic valve",
+        "Contractility: how strongly the muscle squeezes",
+        "The heart rate alone"
+      ],
+      "answer": 0,
+      "why": "The right edge is the volume at the end of filling, which is what preload describes. Afterload shows in the top edge; contractility decides how far the left edge reaches."
+    },
+    {
+      "id": "left-edge",
+      "objective": 3,
+      "step": "contractility",
+      "stem": "Contractility mostly decides which part of the loop?",
+      "choices": [
+        "How far left the top left corner reaches: how far the ventricle empties",
+        "How far right the bottom edge reaches: how far it fills",
+        "How low the bottom edge sits",
+        "How fast the dot goes round"
+      ],
+      "answer": 0,
+      "why": "A stronger squeeze empties the ventricle further from the same filling, moving the top left corner, and with it the left edge, to the left."
+    },
+    {
+      "id": "tight-arteries",
+      "objective": 4,
+      "step": "constrict",
+      "stem": "A drug tightens a patient's small arteries and their blood pressure rises. If nothing else changes, what happens to the stroke volume?",
+      "choices": [
+        "It falls: more blood is left behind each beat",
+        "It rises: the higher pressure pushes more blood out",
+        "It stays exactly the same",
+        "It falls to zero"
+      ],
+      "answer": 0,
+      "why": "More afterload makes the ventricle stop ejecting at a larger volume. The loop narrows, so less blood leaves per beat, even though it leaves at a higher pressure."
+    },
+    {
+      "id": "failing-loop",
+      "objective": 4,
+      "step": "hfref",
+      "stem": "In heart failure with reduced ejection fraction, why does the loop sit further right?",
+      "choices": [
+        "The weak muscle leaves more blood behind, and the enlarged ventricle fills to a bigger volume",
+        "The heart is pumping more blood per beat than normal",
+        "The arteries have relaxed, so blood leaves more easily",
+        "The muscle is squeezing too hard"
+      ],
+      "answer": 0,
+      "why": "Both edges move right: the volume left after pumping rises because the squeeze is weak, and the ventricle enlarges, so it is fuller at the start of each beat too. The share pumped out falls."
+    }
+  ],
+  "takeaways": [
+    "The pressure-volume loop draws one beat of the left ventricle as one lap: volume across, pressure up, round anticlockwise.",
+    "Four phases: filling along the bottom (mitral valve open), isovolumic contraction up the right (both valves shut), ejection across the top (aortic valve open), isovolumic relaxation down the left (both shut).",
+    "Stroke volume is the loop's width. Ejection fraction is that width as a share of the full volume: a little over half in a healthy heart.",
+    "Preload sets the right edge, afterload shows in the top edge, and contractility sets how far the left edge reaches.",
+    "Fluids grow the loop to the right and venodilators shrink it from the right: more preload, less preload.",
+    "More afterload makes the loop taller and narrower; a positive inotrope widens it to the left; a beta-blocker lowers its top and slows the beat, and in this model its width changes little.",
+    "Heart failure with reduced ejection fraction moves the loop right, usually lower: a bigger ventricle, more blood left behind, a lower ejection fraction."
+  ]
+}

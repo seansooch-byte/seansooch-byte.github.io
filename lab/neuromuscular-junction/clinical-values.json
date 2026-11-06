@@ -8,7 +8,7 @@
       "low": 20, "high": 30, "typical": null,
       "scale": [0, 60],
       "source": "guyton13",
-      "where": "Chapter 7, Excitation of Skeletal Muscle: Neuromuscular Transmission and Excitation-Contraction Coupling: 'Physiologic Anatomy of the Neuromuscular Junction—The Motor End Plate' (the space between the terminal and the fiber membrane, the synaptic space or synaptic cleft, is 20 to 30 nanometers wide).",
+      "where": "Chapter 7, Excitation of Skeletal Muscle: Neuromuscular Transmission and Excitation-Contraction Coupling: 'Physiologic Anatomy of the Neuromuscular Junction: The Motor End Plate' (the space between the terminal and the fiber membrane, the synaptic space or synaptic cleft, is 20 to 30 nanometers wide).",
       "modelKey": null,
       "note": "Anatomy only: the teaching model does not change the width of the gap." },
     { "id": "vesicles", "label": "Acetylcholine vesicles released per nerve impulse", "unit": "vesicles",

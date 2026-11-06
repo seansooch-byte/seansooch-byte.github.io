@@ -1,0 +1,202 @@
+{
+  "minutes": 26,
+  "prerequisites": ["pressure-volume-loop", "frank-starling-cardiac-output"],
+  "objectives": [
+    "Explain blood pressure as flow times resistance, and name what sets each: heart rate, blood per beat and blood volume for flow; arteriole width for resistance.",
+    "Read a pressure trace: the systolic peak, the diastolic low point and the mean.",
+    "Trace the baroreflex from the stretch sensors through the brainstem and its nerves, and explain how it steadies pressure on standing up.",
+    "Predict, for each blood pressure drug and for blood loss, whether flow or resistance moves, and how the baroreflex answers."
+  ],
+  "checks": {
+    "ccb": {
+      "prompt": "Dihydropyridine calcium channel blockers relax arteriole muscle, so resistance falls. What happens to pressure, and how does the baroreflex answer?",
+      "choices": [
+        "Pressure falls, and the reflex speeds the heart a little",
+        "Pressure rises, and the reflex slows the heart",
+        "Pressure falls, and the reflex slows the heart",
+        "Pressure stays the same, so the reflex does nothing"
+      ],
+      "answer": 0,
+      "why": "Less resistance at the same flow means less pressure. The baroreceptors stretch less and fire less, so the brainstem sends more sympathetic signal: the heart speeds up a little, and flow rises a little, winning back part of the fall."
+    },
+    "alpha1": {
+      "prompt": "Alpha-1 blockers stop sympathetic signals from tightening arterioles and veins. What happens?",
+      "choices": [
+        "Resistance and pressure fall, most on standing; the heart speeds up a little",
+        "Resistance rises, and pressure climbs",
+        "The heart slows sharply, and pressure is unchanged",
+        "Only the veins change, so pressure rises"
+      ],
+      "answer": 0,
+      "why": "Relaxed arterioles lower resistance, and relaxed veins hold more blood, so less returns to the heart, especially when standing. The reflex can still speed the heart through its beta receptors, but cannot tighten the blocked vessels."
+    },
+    "alpha2": {
+      "prompt": "Central alpha-2 agonists turn down sympathetic signals at their source, in the brainstem, where the baroreflex itself is wired. What happens to the heart rate?",
+      "choices": [
+        "It slows, and the reflex does not speed it back up",
+        "It races, as with other drugs that lower pressure",
+        "It stays exactly the same",
+        "It slows at first, then races above normal"
+      ],
+      "answer": 0,
+      "why": "Less sympathetic signal slows the heart and relaxes arterioles, so flow, resistance and pressure all fall. Because the drug quiets the centre the reflex works through, the reflex does not answer with a fast heart."
+    },
+    "beta": {
+      "prompt": "Beta-blockers block sympathetic signals at the heart, so it beats more slowly. The reflex cannot speed the blocked heart. What happens to flow and pressure, and what does the reflex do instead?",
+      "choices": [
+        "Flow and pressure fall; the reflex tightens arterioles a little",
+        "Flow rises; the reflex relaxes arterioles",
+        "Flow falls but pressure rises above normal",
+        "Nothing changes, because the reflex cancels it fully"
+      ],
+      "answer": 0,
+      "why": "A slower heart pumps less each minute, so flow and pressure fall. The baroreceptors fire less, and the brainstem's extra sympathetic signal still reaches the arterioles, which tighten: at first resistance rises a little."
+    },
+    "vasodilator": {
+      "prompt": "Direct vasodilators relax arteriole muscle a lot, and pressure starts to fall. How does the baroreflex answer?",
+      "choices": [
+        "It speeds the heart, and flow rises: reflex tachycardia",
+        "It slows the heart to save energy",
+        "It does nothing, because the drug works on the vessels",
+        "It relaxes the arterioles even further"
+      ],
+      "answer": 0,
+      "why": "The fall in pressure means less stretch, so the sensors fire less and the brainstem turns sympathetic signals up. The heart races and pumps more, which wins back part of the pressure. Over days the kidneys also hold on to salt and water."
+    },
+    "hemorrhage": {
+      "prompt": "After a bleed, less blood returns to the heart, so each beat carries less and flow falls. What does the baroreflex do?",
+      "choices": [
+        "Speeds the heart and tightens arterioles, so pressure falls less than flow",
+        "Slows the heart to save blood",
+        "Relaxes the arterioles to let blood through",
+        "Nothing until the kidneys act, days later"
+      ],
+      "answer": 0,
+      "why": "Falling pressure unloads the sensors, so sympathetic signals rise: a faster heart wins back some flow, and tighter arterioles raise resistance. Pressure is propped up, so it falls less than flow does."
+    }
+  },
+  "quiz": [
+    {
+      "id": "double-resistance",
+      "objective": 1,
+      "step": "hose",
+      "stem": "Cardiac output stays the same while resistance doubles. What happens to mean arterial pressure?",
+      "choices": [
+        "It roughly doubles",
+        "It halves",
+        "It stays the same",
+        "It falls, because blood gets through less easily"
+      ],
+      "answer": 0,
+      "why": "Mean pressure is flow times resistance, so doubling resistance at the same flow doubles the pressure. Blood getting through less easily is exactly what pushes the pressure up behind the narrowing."
+    },
+    {
+      "id": "resistance-vessels",
+      "objective": 1,
+      "step": "resist",
+      "stem": "Which vessels set most of the body's resistance to blood flow?",
+      "choices": [
+        "The arterioles, the smallest arteries, wrapped in muscle",
+        "The large arteries leaving the heart",
+        "The veins",
+        "The heart's valves"
+      ],
+      "answer": 0,
+      "why": "Arterioles are narrow and their muscle can narrow them further, so small changes in their width change resistance a lot. The large arteries are wide, and the veins mostly store blood."
+    },
+    {
+      "id": "mean-nearer-low",
+      "objective": 2,
+      "step": "wave",
+      "stem": "Why does the mean arterial pressure sit nearer the diastolic pressure than the systolic?",
+      "choices": [
+        "Each beat spends longer near its low point than at its peak",
+        "Diastolic pressure is the pressure in the veins",
+        "Mean pressure is systolic minus diastolic",
+        "The systolic peak is not a real pressure"
+      ],
+      "answer": 0,
+      "why": "The surge to the peak is brief, and most of each beat is spent in the slow fall toward the low point, so the average over time sits nearer the diastolic pressure. Systolic minus diastolic is the pulse pressure, not the mean."
+    },
+    {
+      "id": "standing-sensors",
+      "objective": 3,
+      "step": "reflex",
+      "stem": "Someone stands up quickly. Blood pools in their legs and pressure dips. What do their baroreceptors do first?",
+      "choices": [
+        "Fire less often, because the artery walls stretch less",
+        "Fire faster, to signal the fall",
+        "Release a hormone into the blood",
+        "Slow the heart directly"
+      ],
+      "answer": 0,
+      "why": "Baroreceptors report stretch: lower pressure, less stretch, slower firing. The brainstem reads that slowdown as a fall and answers with more sympathetic signal and less through the vagus."
+    },
+    {
+      "id": "reflex-tachycardia",
+      "objective": 4,
+      "step": "vasodilator",
+      "stem": "A patient starts a direct vasodilator, and their pulse rate goes up. Why?",
+      "choices": [
+        "Falling pressure triggers the baroreflex, which speeds the heart: reflex tachycardia",
+        "The drug stimulates the heart muscle directly",
+        "The drug blocks the heart's beta receptors",
+        "Wider arterioles fill the heart with more blood"
+      ],
+      "answer": 0,
+      "why": "The drug only relaxes arterioles. The racing heart is the reflex answering the fall in pressure, which is why these drugs are often given with a beta-blocker and a diuretic."
+    },
+    {
+      "id": "flow-not-resistance",
+      "objective": 4,
+      "step": "beta",
+      "stem": "Which drug lowers blood pressure mainly by lowering flow rather than resistance?",
+      "choices": [
+        "A beta-blocker",
+        "A direct vasodilator",
+        "An alpha-1 blocker",
+        "A dihydropyridine calcium channel blocker"
+      ],
+      "answer": 0,
+      "why": "Beta-blockers slow the heart, so flow falls; resistance even rises a little at first as the reflex tightens arterioles. The other three relax blood vessels, lowering resistance."
+    },
+    {
+      "id": "clonidine-no-race",
+      "objective": 4,
+      "step": "alpha2",
+      "stem": "Clonidine and hydralazine both lower blood pressure, but only hydralazine makes the heart race. Why the difference?",
+      "choices": [
+        "Clonidine quiets the brainstem, where the reflex works, so it cannot answer with a fast heart",
+        "Clonidine blocks the heart's beta receptors",
+        "Clonidine raises blood volume",
+        "Hydralazine acts on the brainstem"
+      ],
+      "answer": 0,
+      "why": "Hydralazine relaxes arterioles and leaves the reflex free to speed the heart. Clonidine turns down sympathetic signals at their source, the same brainstem centre the reflex uses, so the heart slows instead."
+    },
+    {
+      "id": "bleed-compensation",
+      "objective": 4,
+      "step": "hemorrhage",
+      "stem": "After a bleed, a patient has a fast heart rate and cool, pale skin, while their blood pressure is only a little low. What explains this?",
+      "choices": [
+        "The baroreflex is speeding the heart and tightening arterioles, holding pressure up while flow is low",
+        "The bleed has raised their blood volume",
+        "Their vagus nerve is firing harder than normal",
+        "Their arterioles have relaxed to let more blood through"
+      ],
+      "answer": 0,
+      "why": "Cool, pale skin is the sign of tightened arterioles, and the fast heart is the same reflex. Together they keep pressure close to normal while flow has fallen, so a nearly normal pressure can hide real blood loss."
+    }
+  ],
+  "takeaways": [
+    "Mean blood pressure is flow (cardiac output) times resistance: more of either means more pressure.",
+    "Flow is heart rate times blood per beat, and blood volume fills each beat. Resistance is set mostly by the muscle around the arterioles.",
+    "Systolic pressure is the peak of each surge and diastolic the low point between beats; the mean sits nearer the low point.",
+    "The baroreflex steadies pressure within seconds: stretch sensors in the neck and chest arteries report to the brainstem, which answers through the sympathetic nerves and the vagus. The kidneys set the long-term level over days.",
+    "Dihydropyridine calcium channel blockers and direct vasodilators lower resistance, and the reflex answers by speeding the heart, strongly with direct vasodilators: reflex tachycardia.",
+    "Alpha-1 blockers lower resistance and let the veins hold blood, so pressure falls most on standing. Central alpha-2 agonists quiet the brainstem itself, so the heart slows rather than racing.",
+    "Beta-blockers lower flow by slowing the heart; at first the reflex tightens arterioles, so resistance rises a little.",
+    "After a bleed, flow falls; the reflex speeds the heart and tightens arterioles, so pressure falls less than flow does."
+  ]
+}

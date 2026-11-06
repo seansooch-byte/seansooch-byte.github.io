@@ -11,9 +11,10 @@
 <meta property="og:url" content="https://seansooch.dev/lab/thyroid-axis/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/lab/kit/kit.css">
 <link rel="stylesheet" href="style.css">
 <script src="model.js" defer></script>
-<script src="app.js" defer></script>
+<script type="module" src="app.js"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to the lesson</a>
@@ -29,122 +30,119 @@
     </nav>
   </div>
 </header>
-<main id="main">
+<main id="main" data-slug="thyroid-axis">
   <div class="intro">
-    <p class="eyebrow"><a href="/lab/">The Lab</a> / Core medicine / Lesson 14</p>
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / <a href="/lab/#hormones">Unit 4: Hormones</a> / Lesson 14</p>
     <h1>The <span>thyroid</span> <span class="axis">axis</span>.</h1>
-    <p class="lede">A small gland in your neck sets how fast your whole body runs, and your brain keeps it in check with a brake. Build the loop one piece at a time, see the two ways it tips over, then watch four kinds of treatment each act on a different part.</p>
+    <p class="lede">A small gland in your neck sets how fast your whole body runs, and your brain keeps it in check with a brake. Build the loop one piece at a time, watch the brake work, see the two ways the loop tips over, then watch four kinds of treatment each act on a different part.</p>
     <p class="note">Educational, not for clinical use</p>
+    <div class="lx-plan" data-lx-plan></div>
   </div>
 
   <div class="tabs" role="tablist" aria-label="Lesson views">
     <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-quiz" aria-controls="quiz" aria-selected="false" tabindex="-1">Quiz</button>
+    <button type="button" role="tab" id="tab-summary" aria-controls="summary" aria-selected="false" tabindex="-1">Summary</button>
     <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
     <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
   </div>
 
   <section id="lesson" role="tabpanel" aria-labelledby="tab-lesson">
     <article data-step="1" data-step-title="A small gland in the neck" data-kind="gland">
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">Build the loop</p>
       <h2 tabindex="-1">A small gland in the neck</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">The <dfn>thyroid</dfn> is a butterfly-shaped <dfn>gland</dfn>, an organ that makes and releases chemicals. It wraps around the front of the windpipe, just below the voice box. Its job is to set how fast the whole body runs.</p>
+      <p class="caption">The <dfn data-part="thyroid">thyroid</dfn> is a butterfly-shaped <dfn data-part="thyroid">gland</dfn>, an organ that makes and releases chemicals. It wraps around the front of the <dfn data-part="windpipe">windpipe</dfn>, just below the voice box. Its job is to set how fast the whole body runs.</p>
     </article>
     <article data-step="2" data-step-title="Its hormone sets the body’s pace" data-kind="pace" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">Build the loop</p>
       <h2 tabindex="-1">Its hormone sets the body’s pace</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">The gland releases <dfn>thyroid hormone</dfn> into the blood. A <dfn>hormone</dfn> is a chemical messenger carried in the blood. This one reaches almost every cell and sets the <dfn>metabolic rate</dfn>: how fast cells burn fuel at rest, and so how much heat they make.</p>
+      <p class="caption">The gland releases <dfn data-part="hormone">thyroid hormone</dfn> into the blood. A <dfn>hormone</dfn> is a chemical messenger carried in the blood. This one reaches almost every cell and sets the <dfn data-part="pace">metabolic rate</dfn>: how fast cells burn fuel at rest, and so how much heat they make. More hormone, a faster pace; less, a slower one.</p>
     </article>
     <article data-step="3" data-step-title="Built from iodine" data-kind="iodine" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">Build the loop</p>
       <h2 tabindex="-1">Built from iodine</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Thyroid hormone is built from <dfn>iodine</dfn>, a mineral we get from food such as iodized salt and seafood. Inside the gland, tiny hollow balls of cells called <dfn>follicles</dfn> pull iodine out of the blood and fix it onto a stored protein.</p>
+      <p class="caption">Thyroid hormone is built from <dfn data-part="iodine">iodine</dfn>, a mineral we get from food such as iodized salt and seafood. Inside the gland, tiny hollow balls of cells called <dfn data-part="follicle">follicles</dfn> pull iodine out of the blood and fix it onto a <dfn data-part="store">stored protein</dfn> in their middle.</p>
     </article>
     <article data-step="4" data-step-title="Two forms: T4 and T3" data-kind="forms" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">Build the loop</p>
       <h2 tabindex="-1">Two forms: T4 and T3</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">The gland mostly releases <dfn>T4</dfn> (thyroxine), which carries four iodine atoms, plus a little <dfn>T3</dfn>, with three. Cells around the body snip one iodine off T4 to make T3, the stronger form that does most of the work.</p>
+      <p class="caption">The gland mostly releases <dfn data-part="t4">T4</dfn> (thyroxine), which carries four iodine atoms, plus a little <dfn data-part="t3">T3</dfn>, with three. Cells around the body snip one iodine off T4 to make T3, the stronger form that does most of the work.</p>
     </article>
     <article data-step="5" data-step-title="The pituitary gives the order" data-kind="pituitary" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">Build the loop</p>
       <h2 tabindex="-1">The pituitary gives the order</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">The <dfn>pituitary</dfn>, a pea-sized gland at the base of the brain, sends <dfn>TSH</dfn> (thyroid-stimulating hormone) to the thyroid. TSH docks on the follicles and tells them to take up iodine and release T4 and T3. More TSH, more hormone.</p>
+      <p class="caption">The <dfn data-part="pituitary">pituitary</dfn>, a pea-sized gland at the base of the brain, sends <dfn data-part="tsh">TSH</dfn> (thyroid-stimulating hormone) through the blood to the thyroid. TSH docks on the follicles and tells them to take up iodine and release T4 and T3. More TSH, more hormone.</p>
     </article>
     <article data-step="6" data-step-title="The hypothalamus starts the chain" data-kind="hypothalamus" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">Build the loop</p>
       <h2 tabindex="-1">The hypothalamus starts the chain</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Just above sits the <dfn>hypothalamus</dfn>, a small brain region that links the nerves to the hormones. It sends <dfn>TRH</dfn> (thyrotropin-releasing hormone) down to the pituitary, telling it to release TSH. The chain runs brain, pituitary, thyroid.</p>
+      <p class="caption">Just above sits the <dfn data-part="hypothalamus">hypothalamus</dfn>, a small brain region that links nerves to hormones. It sends <dfn data-part="trh">TRH</dfn> (thyrotropin-releasing hormone) down to the pituitary, telling it to release TSH. The chain runs hypothalamus, pituitary, thyroid.</p>
     </article>
     <article data-step="7" data-step-title="Enough hormone puts on the brake" data-kind="brake" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">Build the loop</p>
       <h2 tabindex="-1">Enough hormone puts on the brake</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">T4 and T3 in the blood report back to the brain. When they run high, the hypothalamus and pituitary release less TRH and TSH, so the thyroid slows. The result switches off its own cause: <dfn>negative feedback</dfn>.</p>
+      <p class="caption">T4 and T3 in the blood report back to the brain. When they run high, the hypothalamus and pituitary release less TRH and TSH, so the thyroid slows and the level falls back. The result switches off its own cause: <dfn data-part="brake">negative feedback</dfn>, the loop’s brake.</p>
     </article>
     <article data-step="8" data-step-title="Too little hormone turns the order up" data-kind="lowbrake" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">Build the loop</p>
       <h2 tabindex="-1">Too little hormone turns the order up</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">When T4 and T3 run low, the brake eases. The pituitary releases more TSH and pushes the gland harder until levels climb back. So TSH moves the opposite way to thyroid hormone, the key clue for reading the loop.</p>
+      <p class="caption">When T4 and T3 run low, the brake eases and the pituitary releases more TSH to push the gland harder. A gland that can answer brings the levels back; a failing gland cannot, so TSH stays high while T4 stays low. When the gland is the problem, <dfn data-part="tsh">TSH</dfn> moves opposite to T4: the key clue for reading the loop.</p>
     </article>
     <article data-step="9" data-step-title="It also speeds the heart" data-kind="heart" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">Build the loop</p>
       <h2 tabindex="-1">It also speeds the heart</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Thyroid hormone adds docking sites for <dfn>catecholamines</dfn>, the body’s adrenaline-like alarm signals (<a href="/lab/autonomic-synapse/">Lesson 6</a>), so the heart and blood vessels answer them more strongly. More hormone: a faster, harder heartbeat. Less: a slower one.</p>
+      <p class="caption">Thyroid hormone adds <dfn data-part="receptor">docking sites</dfn> for <dfn>catecholamines</dfn>, the body’s adrenaline-like alarm signals (<a href="/lab/autonomic-synapse/">Lesson 6</a>), so the heart answers them more strongly, and it speeds the heart directly too. More hormone: a faster, harder heartbeat. Less: a slower one.</p>
     </article>
     <article data-step="10" data-step-title="The whole loop: the key measures" data-kind="whole" hidden>
-      <p class="eyebrow">Build the idea</p>
+      <p class="eyebrow">Build the loop</p>
       <h2 tabindex="-1">The whole loop: the key measures</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">Brain, pituitary and thyroid form one loop, held steady by the brake. It is read with <dfn>thyroid function tests</dfn>: blood tests of TSH and T4, often T3 too. Because of the brake, TSH usually moves opposite to T4 and T3.</p>
+      <p class="caption">Hypothalamus, pituitary and thyroid form one loop, held steady by the brake. It is read with <dfn data-part="tests">thyroid function tests</dfn>: blood tests of TSH and T4, often T3 too. When the gland is the problem, TSH moves opposite to T4.</p>
     </article>
     <article data-step="11" data-step-title="Hypothyroidism: an underactive gland" data-kind="hypo" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Hypothyroidism: an underactive gland</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">In <dfn>hypothyroidism</dfn> the gland makes too little hormone. The usual cause is <dfn>Hashimoto thyroiditis</dfn>: the <dfn>immune system</dfn>, the body’s defence against germs, attacks the gland. T4 and T3 fall, TSH climbs, and the body slows down and feels cold.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption">In <dfn data-part="thyroid">hypothyroidism</dfn> the gland makes too little hormone. Where diets have enough iodine, the usual cause is <dfn>Hashimoto thyroiditis</dfn>: the <dfn data-part="attack">immune system</dfn>, the body’s defence against germs, attacks the gland. T4 falls, the brake eases and TSH climbs; T3 often holds up for a while, as body cells make more of it. The body slows down and feels cold.</p>
     </article>
     <article data-step="12" data-step-title="Hyperthyroidism: an overactive gland" data-kind="graves" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Hyperthyroidism: an overactive gland</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">In <dfn>hyperthyroidism</dfn> the gland makes too much. In <dfn>Graves’ disease</dfn>, the usual cause, <dfn>antibodies</dfn>, immune proteins, latch onto the gland’s TSH docking sites and push it to grow and pour out hormone. The brake drives TSH down; the heart races.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption">In <dfn data-part="thyroid">hyperthyroidism</dfn> the gland makes too much. In <dfn>Graves’ disease</dfn>, the usual cause, <dfn data-part="antibody">antibodies</dfn>, immune proteins, latch onto the gland’s TSH docking sites and push it to grow and pour out hormone, raising T4, T3 or both. The brake tightens and drives TSH down, but the antibodies ignore it; the heart races.</p>
     </article>
     <article data-step="13" data-step-title="Levothyroxine: the missing hormone as a tablet" data-kind="levothyroxine" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Levothyroxine: the missing hormone as a tablet</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Levothyroxine</dfn> is a lab-made hormone identical to the body’s own T4, taken as a tablet for hypothyroidism. It tops up what the damaged gland cannot make. Cells turn it into T3 as usual, and the brake brings TSH back down.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn data-part="tablet">Levothyroxine</dfn> is a lab-made hormone identical to the body’s own T4, taken as a tablet for hypothyroidism. It tops up what the damaged gland cannot make. Cells turn it into T3 as usual, the brake tightens again and TSH falls back to normal.</p>
     </article>
     <article data-step="14" data-step-title="Thionamides: the gland builds less" data-kind="thionamide" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Thionamides: the gland builds less</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Thionamides</dfn>, such as <dfn>methimazole</dfn> and <dfn>propylthiouracil</dfn>, are tablets that enter the gland and stop it fixing iodine onto its stored protein and joining the pieces into hormone. Less T4 and T3 is made, the brake eases and TSH rises back.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn data-part="block">Thionamides</dfn>, <dfn>methimazole</dfn> and <dfn data-part="ptu">propylthiouracil</dfn> (PTU), are tablets that stop the gland fixing iodine onto its stored protein and joining the pieces into hormone. Less T4 and T3 is made and the brake eases; TSH rises back, often months later. PTU also slows the T4-to-T3 step in body cells, so T3 falls further.</p>
     </article>
     <article data-step="15" data-step-title="Radioactive iodine: shrinking the gland" data-kind="rai" hidden>
       <p class="eyebrow">What changes it</p>
       <h2 tabindex="-1">Radioactive iodine: shrinking the gland</h2>
       <div class="visual" data-visual></div>
-      <p class="caption">The thyroid pulls iodine from the blood, so <dfn>radioactive iodine</dfn>, a form that gives off damaging radiation, collects there and destroys overactive tissue. The gland shrinks, hormone falls and TSH rises back. Destroy too much and the gland becomes underactive.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption">The thyroid pulls iodine from the blood, so <dfn data-part="rai">radioactive iodine</dfn>, a form that gives off damaging radiation, collects there and destroys overactive tissue. The gland shrinks, hormone falls, the brake eases and TSH rises back, often months later. Destroy too much and the gland becomes underactive.</p>
     </article>
-    <article data-step="16" data-step-title="Beta-blockers: calming the heart only" data-kind="betablocker" hidden>
+    <article data-step="16" data-step-title="Beta-blockers: calming the symptoms, not the gland" data-kind="betablocker" hidden>
       <p class="eyebrow">What changes it</p>
-      <h2 tabindex="-1">Beta-blockers: calming the heart only</h2>
+      <h2 tabindex="-1">Beta-blockers: calming the symptoms, not the gland</h2>
       <div class="visual" data-visual></div>
-      <p class="caption"><dfn>Beta-blockers</dfn> block the heart’s docking sites for alarm signals, so a racing heartbeat slows. They do not touch the gland: T4, T3 and TSH stay where the disease put them, so they ease symptoms while another treatment fixes the gland.</p>
-      <button type="button" class="replay">Replay ↻</button>
+      <p class="caption"><dfn data-part="heart">Beta-blockers</dfn> block the docking sites for alarm signals, so a racing heart slows and shaky hands settle. They do not stop the gland making hormone: TSH and T4 stay where Graves’ disease put them, so another treatment must fix the gland. Propranolol, a common choice, also slightly slows the T4-to-T3 step.</p>
     </article>
 
     <div class="step-nav">
@@ -152,8 +150,12 @@
       <span data-step-progress aria-live="polite">Step 1 of 16</span>
       <button type="button" data-step-next>Next →</button>
     </div>
-    <p class="hint">Start with Next, or use the arrow keys. Pictures are illustrative, not measurements.</p>
+    <p class="hint">Start with Next, or use the arrow keys. Under a moving picture: pause, drag to any moment, or slow it down. Underlined terms light up their part of the picture. Levels and arrow widths are illustrative, not measurements.</p>
   </section>
+
+  <section id="quiz" role="tabpanel" aria-labelledby="tab-quiz" hidden></section>
+
+  <section id="summary" role="tabpanel" aria-labelledby="tab-summary" hidden></section>
 
   <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
     <h2>Reference values, beside the model.</h2>
@@ -180,8 +182,11 @@
     </div>
     <p id="state-summary" class="state-summary" aria-live="polite">Normal teaching baseline.</p>
     <p id="state-source" class="model-note"></p>
-    <p class="model-note">The blue line on each bar shows where an illustrative teaching model sits, not a patient measurement, and it is never given a number. The shaded bands are the reference ranges quoted under each row. Selecting a disease or drug shows the expected direction of each value from the cited passage. For a drug, the direction compares it with the untreated disease it is used for, and the model applies the drug to that disease.</p>
-    <p id="baseline-note" class="model-note"></p>
+    <details class="lx-fine">
+      <summary>How to read these bars</summary>
+      <p>The blue line on each bar shows where an illustrative teaching model sits, not a patient measurement, and it is never given a number. The shaded bands are the reference ranges quoted under each row. Selecting a disease or drug shows the expected direction of each value from the cited passage. For a drug, the direction compares it with the untreated disease it is used for, and the model applies the drug to that disease.</p>
+      <p id="baseline-note" class="model-note"></p>
+    </details>
     <div id="value-rows"></div>
     <p id="cv-live" class="visually-hidden" aria-live="polite"></p>
     <h3>Sources</h3>
@@ -207,7 +212,8 @@
           <legend>Treatments</legend>
           <div class="choice-grid" id="drugs">
             <label class="choice"><input type="checkbox" value="levothyroxine"> Levothyroxine</label>
-            <label class="choice"><input type="checkbox" value="thionamide"> Thionamide</label>
+            <label class="choice"><input type="checkbox" value="thionamide"> Methimazole</label>
+            <label class="choice"><input type="checkbox" value="ptu"> Propylthiouracil (PTU)</label>
             <label class="choice"><input type="checkbox" value="rai"> Radioactive iodine</label>
             <label class="choice"><input type="checkbox" value="betablocker"> Beta-blocker</label>
           </div>
@@ -229,8 +235,8 @@
     <div id="explore-chart" class="visual chart"></div>
     <details>
       <summary>How this teaching model works</summary>
-      <p>Every level is worked out relative to the normal body and settles to a steady state; there is no time course. The pituitary’s TSH falls steeply as T4 in the blood rises (in the model, in proportion to T4 raised to the power −2.2), which is the negative-feedback brake; TRH falls with T4 too. The gland’s release is its working tissue × the share of its hormone-building it can still do × its iodine supply × the drive from TSH, which saturates at twice normal, plus any push from antibodies acting like TSH. T4 in the blood is the gland’s release plus any T4 from a tablet; T3 is made mostly from T4 in body cells and a little by the gland. The loop settles where these agree, found by halving the search range seventy times.</p>
-      <p>The body’s pace follows T3, and the heartbeat follows the pace; a beta-blocker blunts the heartbeat only. Gland size grows with working tissue, with antibody push and with a high TSH, which is how a goiter (a swollen gland) forms when iodine runs short. Each treatment moves the model in the direction of its cited mechanism: levothyroxine adds T4 from outside the gland, a thionamide blocks most of the gland’s hormone-building, radioactive iodine destroys about three quarters of its tissue, and a beta-blocker leaves the loop alone. The sizes of all these effects are illustrative choices; only their directions are meant to teach.</p>
+      <p>Every level is worked out relative to the normal body and settles to a steady state; there is no time course. The pituitary’s TSH falls steeply as T4 in the blood rises (in the model, in proportion to T4 raised to the power −2.2), which is the negative-feedback brake; TRH falls with T4 too. The gland’s release is its working tissue × the share of its hormone-building it can still do × its iodine supply × the drive from TSH, which saturates at twice normal, plus any push from antibodies acting like TSH. T4 in the blood is the gland’s release plus any T4 from a tablet; T3 is made mostly from T4 in body cells and a little by the gland, and propylthiouracil (PTU) also slows that step in body cells. The brake follows T4, because the pituitary makes its own T3 from T4 by a step PTU does not block. The loop settles where these agree, found by halving the search range seventy times.</p>
+      <p>The body’s pace follows T3, and the heartbeat follows the pace; a beta-blocker blunts the heartbeat only. Gland size grows with working tissue, with antibody push and with a high TSH, which is how a goiter (a swollen gland) forms when iodine runs short. Each treatment moves the model in the direction of its cited mechanism: levothyroxine adds T4 from outside the gland, methimazole or PTU blocks most of the gland’s hormone-building (ticking both counts that block once), PTU also cuts the T4-to-T3 step by about two fifths, radioactive iodine destroys about three quarters of its tissue, and a beta-blocker leaves the loop alone. The sizes of all these effects are illustrative choices; only their directions are meant to teach.</p>
       <p>The model never turns its levels into lab numbers: the sources give only the direction of each change, so the readout says where each level sits against its healthy band, and the chart has no numbers at all; its shaded box is where TSH and T4 are both inside their healthy bands (the model’s normal sits in the middle of each band; for TSH, the middle on a ratio scale). The real reference numbers are in the Clinical values tab. Left out: binding proteins and free hormone, the weeks the loop takes to settle, pregnancy, illness, other medicines and every real-world difference between people. Nothing here is a prediction for a real person.</p>
     </details>
   </section>
