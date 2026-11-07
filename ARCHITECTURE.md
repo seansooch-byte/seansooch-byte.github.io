@@ -137,69 +137,45 @@ course page. A lesson is an app with one page, the same in every view.
 
 ## The Lab
 
-`lab/` is a course in core medicine: 21 lessons in six units, each a guided lesson plan with moving pictures. It is
-written here, by hand or by the lab pipeline (which runs outside this repo and opens a pull request for each lesson).
-Since 2026-11-06 this repo, not the pipeline, is the source of truth for the course page, its styles, its generator and
-this section: the pipeline's bootstrap copies must be refreshed from here before it syncs again.
+`lab/` is written here, by hand or by the daily lab pipeline (which runs outside this repo and opens a pull request for
+each app). Nothing in it is generated from a source on Sean's laptop.
 
-- **The course** is `lab/syllabus.json`: `units` (id, title, summary) and `modules` in teaching order (slug, title,
-  one-line description, the drug classes and disease states each lesson animates, its `unit`). A unit's modules sit
-  together. Sean reorders or edits it by hand; never rename a shipped lesson's slug. The pipeline builds the first module
-  that is neither shipped (`lab/apps.json`) nor withdrawn (`lab/rejected.json`).
-- **The course page** `/lab/` is `lab/index.html`, hand-written except the block between its `LAB:LIST` markers, which
-  `node tools/lab-index.mjs` rewrites from the syllabus, the ledger and each lesson's `plan.json`: the course's facts, a
-  map of the units with a dot per lesson, every unit with its lessons (time, steps, questions, what each builds on, its
-  goals), the mixed review, and a table of each lesson's step numbers. The same script adds `/lab/` and each lesson to
-  `sitemap.xml` and drops the entries of lessons no longer in the ledger. `lab/kit/course.js` draws the reader's own
-  progress over it (bars, the map's dots, "pick up where you left off") and runs the mixed review: ten questions from the
-  lessons the reader has started, each linked to the step that teaches it.
-- **Every lesson follows `lab/FORMAT.md`**: a plan (goals, time, prerequisites), 12 to 22 steps of one idea and one
-  picture each, the last stage "What changes it" with one step per drug class or disease state, a prediction before each
-  of those changes plays, a quiz of 6 to 10 questions tied to the goals and to the steps that teach them, a summary
-  (takeaways, the reader's score on each goal, every term the lesson defines, the next lesson; it prints on its own), a
-  Clinical values tab and an Explore freely tab.
-- **The kit** (`lab/kit/`) runs all of that, so a lesson holds only its words, pictures, model and reference tabs:
-  `kit.js` (tabs, steps, the step rail, the picture player, predictions, quiz, summary, glossary, terms that light parts
-  of a picture), `kit.css` (the one design system, including the shared vocabulary of the Clinical values and Explore
-  tabs), `draw.js` (SVG helpers and the colour set), `quiz.js` (choices in a fixed shuffled order per question),
-  `progress.js` (the reader's progress, in their browser only) and `course.js` (the course page). A picture is
-  `render(t)` on a timeline from 0 to 1 (or a scene that mounts its SVG once and updates it), 480 units wide and at most
-  420 tall, with type that reads at 12 px or more on a 375 px phone.
-- **`lab/<slug>/`** is one lesson: `index.html`, `app.js` (an ES module that imports the kit and calls `lesson()`),
-  `plan.json`, `clinical-values.json`, `style.css` (only its pictures' classes) and, where it has one, a model. Static
-  files from this origin only, no third-party requests except Google Fonts, no data sent anywhere. Each opens with the
-  site's shared top bar (the homepage's view A bar), whose CSS is part of `kit.css`; `/lab/` carries the same bar.
-- **Caching.** `_headers` serves everything under `/lab/` with `Cache-Control: no-cache` (Pages'
-  default for scripts and styles is four hours), because lesson pages ask for their files by plain
-  names and are edited often. That holds on the `*.pages.dev` hosts; on seansooch.dev the
-  Cloudflare zone's Browser Cache TTL (four hours, checked 2026-11-06) rewrites it to
-  `max-age=14400` for scripts and styles, so until that setting is "Respect Existing Headers" an
-  edited lesson script can reach a returning reader up to four hours late. The 21 lessons rebuilt
-  on 2026-11-06 ask for `style.css?v=2`, `app.js?v=2` and `model.js?v=2` to retire older copies.
-  `/lab/`'s own stylesheet is stamped `?v=` like the shared assets, and `tools/stage.sh` checks it.
-- **Checks.** `node tools/lab-check.mjs` checks every lesson against the format (structure, the plan's schema, answer
-  keys, that every goal is tested and every change has a prediction, no em dashes, nothing that looks like a dose).
-  `node tools/lab-walk.mjs <served base> [slug ...]` walks every step of every lesson in installed Chrome at 1280 x 900
-  and 375 x 553: one picture per step within its size, predictions holding the picture, no overlapping labels, no label
-  under 12 px on the phone, no sideways scroll, a working quiz and summary, no console errors. It plants a defect first
-  to prove its own detectors can fail. Neither runs in CI; run both before a lab change ships.
-- `lab/apps.json` is the ledger of shipped lessons (slug, title, date, description, builder, reviewer, and `revisions`:
-  later rebuilds, each with its date, what changed, builder and reviewer). `lab/rejected.json` lists lessons Sean turned
-  down and why. A withdrawn lesson is deleted from `lab/`, the ledger, the index and the sitemap in the same pull request
-  that records it there, so the pipeline never proposes it, or anything like it, again.
-- Lab lessons are deployed automatically after checks (Sean approved this for `lab/` only): a lab deploy is cut from a
+- `lab/syllabus.json` is the course: about twenty core-medicine modules in teaching order (slug, title, one-line
+  description, the drug classes and disease states each lesson animates). Sean reorders or edits it by hand. `/lab/`
+  renders it as the course: shipped lessons link to their page, the rest say "Coming soon" and link nowhere. The daily
+  pipeline builds the first module that is neither shipped nor withdrawn; never rename a shipped lesson's slug.
+- Every lesson is a guided, step-by-step lesson for a first-year student: a Lesson tab of plain-language steps (one idea,
+  one big visual, one short caption, Back/Next, "Step X of N"), then one animated step per drug class or disease state
+  with a ghost of the normal picture; a Clinical values tab; and an optional Explore freely tab for the technical model.
+- The Lab is presented on the site as a course in core medicine (step-by-step visual lessons in plain language); the
+  `/lab/` page and its list say nothing about how lessons are built. Who built and reviewed each one is recorded in
+  `lab/apps.json`, the commit and the pull request.
+- `lab/<slug>/` is one app: static HTML, CSS and JavaScript from this origin only, no third-party requests except Google
+  Fonts, no data sent anywhere. Each opens with the site's shared top bar (the homepage's view A bar: brand to `/`,
+  Work, Writing, Films, Editions, and The Lab to `/lab/`), copied exactly from the pipeline's
+  `templates/site-top-lesson.html` with `aria-current="true"` on The Lab, its CSS appended to the app's own stylesheet.
+  `/lab/` carries the same bar with `aria-current="page"`, its CSS at the end of `lab/lab.css`.
+- `lab/apps.json` is the ledger of shipped apps (slug, title, date, description, builder, reviewer).
+- `lab/rejected.json` lists apps Sean turned down and why. A withdrawn app is deleted from `lab/`, the ledger, the index
+  and the sitemap in the same pull request that records it here, so the pipeline never proposes it, or anything like
+  it, again. Its old URL then falls back to the homepage like any unknown path.
+- `lab/index.html` and `lab/lab.css` are hand-written in the pipeline's `bootstrap/lab/` and synced on every run;
+  `lab/index.html` is fixed except the block between its `LAB:LIST` markers, which `node tools/lab-index.mjs`
+  rewrites from `lab/apps.json`. The same script adds `/lab/` and each app to `sitemap.xml`, and drops the sitemap
+  entries of apps no longer in the ledger.
+- Lab apps are deployed automatically after checks (Sean approved this for `lab/` only): a lab deploy is cut from a
   pushed commit on `main` with `tools/stage.sh`, and is aborted if `tools/audit.sh` reports a difference outside `lab/`
   and the lab lines of `sitemap.xml`.
-- Lab lessons are never AI-themed (no AI opponents, no "learns your habits", no frontier-AI topics, no machine learning
-  as the gimmick), and games are optional rather than the default.
+- Lab apps are never AI-themed (no AI opponents, no "learns your habits", no frontier-AI topics, no machine learning as
+  the gimmick), and games are optional rather than the default.
 - Anything in the lab that touches medicine is educational, says it is not for clinical use, never gives drug doses,
   and never changes or restates the clinical values in the toolkit or Read This.
-- Every lesson has a "Clinical values" tab (Sean's sign-off, 2026-10-07): typical adult reference ranges from Guyton &
-  Hall, Costanzo, Boron & Boulpaep, OpenStax or a major guideline, each cited with its location, drawn as live range bars
-  against the lesson's model, with the expected direction of change in each disease and drug state, and the note
-  "Typical adult reference ranges; labs vary; not for clinical decisions." All of a lesson's values live in one file,
-  `lab/<slug>/clinical-values.json`, so they can be audited in one place; the second-opinion reviewer must verify each
-  against its source.
+- Every medicine or physiology lesson has a "Clinical values" tab (Sean's sign-off, 2026-10-07): typical adult
+  reference ranges from Guyton & Hall, Costanzo, Boron & Boulpaep or a major guideline, each cited with its location,
+  drawn as live range bars against the lesson's model, with the expected direction of change in each disease and drug
+  state, and the note "Typical adult reference ranges; labs vary; not for clinical decisions." All of a lesson's values
+  live in one file, `lab/<slug>/clinical-values.json`, so they can be audited in one place; the second-opinion
+  reviewer must verify each against its source.
 
 ## Monitoring the Situation (moved)
 
