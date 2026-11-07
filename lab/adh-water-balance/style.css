@@ -1,0 +1,122 @@
+/* Lesson 22: what this lesson's pictures, predictions and reference tabs need. Everything else is /lab/kit/kit.css. */
+
+/* The site bar stays put on phones too, so anchors and sticky parts clear it. */
+@media(max-width:620px){:root{--top:66px}}
+@media(max-width:850px) and (min-width:621px){:root{--top:70px}}
+
+/* Phones: the picture runs edge to edge, so the 480-wide drawing gets the full screen width and its
+   smallest label (17 units) renders at 12px or more from 340px wide up (12.75px at 360px). */
+@media(max-width:620px){
+  [data-step]>.visual,#explore-visual{margin-inline:-16px;border-left-width:0;border-right-width:0}
+  [data-step] .visual svg,#explore-visual svg{width:100%;max-width:none;max-height:none}
+}
+
+/* Every control is a full tap target. */
+.lx-player button,.adh-player button{min-height:44px;min-width:44px}
+.lx-player input[type=range]{min-height:44px}
+.lx-skip{min-height:44px}
+@media(max-width:620px){.lx-player button{min-height:44px;min-width:44px}.lx-player input[type=range]{min-height:44px}}
+.adh-banner{margin-bottom:4px}
+
+/* The step rail: each step is a full 44px tap target; the visible bar inside it stays thin.
+   On a narrow screen the rail scrolls sideways inside itself rather than shrinking its targets. */
+#lesson .lx-rail{overflow-x:auto;scrollbar-width:thin;padding-bottom:2px}
+#lesson .lx-rail>li{flex:var(--n) 0 auto;min-width:auto}
+#lesson .lx-rail ol li{flex:1 0 44px}
+#lesson .lx-rail button{height:44px;min-height:44px;min-width:44px;background:transparent}
+#lesson .lx-rail button::after{content:none}
+#lesson .lx-rail button::before{content:'';position:absolute;left:2px;right:2px;top:17px;height:10px;background:var(--rule)}
+#lesson .lx-rail button.is-seen::before{background:var(--ink)}
+#lesson .lx-rail button[aria-current=step]::before{background:var(--blue)}
+#lesson .lx-rail button:hover{background:transparent}
+#lesson .lx-rail button:hover::before{background:var(--blue-deep)}
+@media(max-width:620px){#lesson .lx-rail button::before{top:19px;height:6px}}
+
+/* A prediction the sources cannot grade: the pick is marked, nothing is right or wrong. */
+.lx-choices button.is-picked{border-color:var(--ink);background:var(--card);color:var(--ink);opacity:1}
+.lx-verdict.is-ungraded{color:var(--ink)}
+
+/* Predict first: no skipping; the prompt says what unlocks the change. */
+.lx-need{font-size:14px;color:var(--muted);margin:10px 0 0}
+.adh-ref{display:block;font-size:13px;color:var(--muted)}
+
+/* Predict first, in the reference tabs. */
+.adh-gate{margin:12px 0 0}
+.adh-choices{grid-template-columns:repeat(3,minmax(0,1fr))}
+.adh-choices button{grid-template-columns:minmax(0,1fr);text-align:center;min-height:46px}
+.adh-choices button::before{content:none}
+@media(max-width:400px){.adh-choices{grid-template-columns:minmax(0,1fr)}}
+
+/* Explore freely: one button per state. */
+.adh-states{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;margin:6px 0 4px}
+.adh-states button{text-align:left;background:var(--card);border-color:var(--rule);font-weight:500;padding:10px 14px}
+.adh-states button[aria-pressed=true]{border-color:var(--blue);border-left:6px solid var(--blue);color:var(--blue);font-weight:700}
+.adh-states button.is-pending{border-color:var(--ink);border-style:dashed}
+#explore-result{margin:14px 0}
+.adh-quotes{padding-left:18px;font-size:13px}
+.adh-quotes li{margin:8px 0}
+.adh-quotes b{display:block}
+.adh-quotes q{display:block;margin:2px 0}
+.adh-quotes cite{font-style:normal;color:var(--muted);font-size:12px}
+#explore-why{max-width:none}
+
+/* Clinical values: one bar per value, in its own unit. */
+.cv-gauge{height:auto;aspect-ratio:400/60}
+.cv-gauge .band{fill:#d1d8fd}
+.cv-gauge .zone{fill:#f3d9d4}
+.cv-gauge .line{stroke:#b3261e;stroke-width:4}
+.cv-gauge .limit{stroke:var(--ink);stroke-width:2}
+.cv-gauge .ghost-marker{stroke:var(--ink);stroke-width:3;stroke-dasharray:5 4}
+.cv-gauge .move{fill:none;stroke:var(--blue);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.cv-gauge .marker{stroke:var(--blue);stroke-width:6}
+.cv-row .reading{font-variant-numeric:tabular-nums}
+.cv-kind{font-size:13px;color:var(--muted);margin:2px 0 6px}
+.cv-row .status{font-size:14px;font-weight:600;margin:4px 0}
+.cv-row .direction{color:var(--blue)}
+.cv-in{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:10px 0 4px}
+.in-state{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:4px 6px;font-size:13px}
+.in-state li{border:1px solid var(--rule);background:var(--card);padding:2px 8px}
+.in-state li.is-unstated{color:var(--muted)}
+.in-state li.is-current{border-color:var(--blue);outline:2px solid var(--blue);outline-offset:-1px}
+.cv-source{font-size:13px}
+.cv-source summary{font-size:14px}
+.cv-source blockquote{margin:6px 0;padding:6px 12px;border-left:3px solid var(--rule);background:var(--card);color:var(--ink);font-size:14px}
+.cv-file,.cv-note{margin:4px 0;color:var(--muted);overflow-wrap:anywhere}
+.cv-why-head{margin:12px 0 2px;font-weight:700;color:var(--ink)}
+#cv-gate{max-width:none}
+
+/* Summary: the loop and the state table. */
+.adh-sum{grid-column:1/-1}
+.adh-sum h2{margin-top:22px}
+.adh-loop{font-size:17px;max-width:80ch}
+.adh-table{border-collapse:collapse;width:100%;font-size:14px;background:var(--card)}
+.adh-table th,.adh-table td{border:1px solid var(--rule);padding:8px 10px;text-align:left;vertical-align:top}
+.adh-table thead th{background:var(--panel);font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+@media(max-width:620px){
+  .adh-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .adh-table,.adh-table tbody,.adh-table tr,.adh-table th,.adh-table td{display:block;width:100%}
+  .adh-table tr{border:1px solid var(--ink);margin:0 0 10px}
+  .adh-table th[scope=row]{background:var(--panel)}
+  .adh-table td{border-width:0 0 1px;display:flex;justify-content:space-between;gap:12px}
+  .adh-table td::before{content:attr(data-label);font-weight:600;color:var(--muted)}
+}
+@media print{
+  .adh-sum{break-before:auto}
+  .adh-table{font-size:10pt}
+  .adh-table,.adh-table th,.adh-table td{border-color:#000}
+  #cv-gate,#explore-gate,.adh-player{display:none!important}
+}
+
+/* Site top bar, matching the homepage's view A (Astra) bar. Scoped names so it cannot collide with lab.css or a lesson's CSS. */
+.site-top{position:sticky;top:0;z-index:50;background:rgba(247,247,242,.96);border-bottom:1px solid #171916;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);font-family:'Space Grotesk',system-ui,-apple-system,'Segoe UI',sans-serif}
+.site-top-in{max-width:1600px;margin:0 auto;padding-inline:clamp(22px,4vw,64px);height:78px;display:flex;align-items:center;gap:28px}
+.site-brand{font-weight:700;font-size:27px;letter-spacing:-.08em;color:#171916;text-decoration:none;white-space:nowrap}
+.site-brand span{color:#254dff;padding-inline:5px}
+.site-nav{margin-left:auto;display:flex;align-items:center;gap:26px}
+.site-nav a{color:#171916;text-decoration:none;font-size:13px;white-space:nowrap}
+.site-nav a:hover{color:#254dff}
+.site-nav a[aria-current]{color:#254dff;font-weight:600;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px}
+.site-top a:focus-visible{outline:3px solid #254dff;outline-offset:3px}
+@media(max-width:850px){.site-top-in{height:70px}.site-nav{gap:17px}.site-nav a{font-size:12px}}
+@media(max-width:620px){.site-top-in{height:66px;gap:15px}.site-brand{font-size:24px}.site-nav{gap:18px}.site-nav a{display:none}.site-nav a.site-nav-home,.site-nav a.site-nav-lab{display:block}}
+@media print{.site-top{position:static}}

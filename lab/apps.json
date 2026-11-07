@@ -607,5 +607,20 @@
         }
       }
     ]
+  },
+  {
+    "slug": "adh-water-balance",
+    "title": "ADH and Water Balance",
+    "date": "2026-11-07",
+    "description": "Watch the brain sense blood saltiness, release ADH and open water channels in the kidney, then see urine change in DI, SIADH and polydipsia.",
+    "category": "medicine",
+    "builder": {
+      "tool": "Claude Code",
+      "model": "claude-opus-5-5"
+    },
+    "reviewer": {
+      "tool": "OpenAI Codex",
+      "model": "gpt-6.1-sol"
+    }
   }
 ]

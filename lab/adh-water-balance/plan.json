@@ -1,0 +1,180 @@
+{
+  "minutes": 20,
+  "prerequisites": [
+    "nephron-diuretics",
+    "renin-angiotensin-aldosterone"
+  ],
+  "prerequisiteTitles": {
+    "nephron-diuretics": "Lesson 2: The Nephron and Diuretics",
+    "renin-angiotensin-aldosterone": "Lesson 5: The Renin-Angiotensin-Aldosterone System"
+  },
+  "before": "renin-angiotensin-aldosterone",
+  "objectives": [
+    "Explain how the concentration of the blood controls the release of ADH, the water-saving hormone.",
+    "Trace how ADH opens water channels in the kidney's last tubes and changes the urine.",
+    "Predict how much urine is made, and how concentrated, when the body has too little or too much water.",
+    "Tell apart four ways the loop breaks: too little ADH, a kidney that ignores ADH, ADH that will not switch off, and drinking far too much."
+  ],
+  "checks": {
+    "deficit": {
+      "prompt": "Water has been lost, so the blood is more concentrated: the osmoreceptors fire and ADH rises. What happens to urine volume?",
+      "choices": ["It goes up", "It goes down", "No change"],
+      "answer": 1,
+      "why": "More ADH puts more water channels into the collecting duct, so more water returns to the blood and less is left in the urine. Source: OpenStax A&P 2e, section 17.3."
+    },
+    "excess": {
+      "prompt": "A lot of water has been drunk, so the blood is more dilute and less ADH is released. What happens to urine volume?",
+      "choices": ["It goes up", "It goes down", "No change"],
+      "answer": 0,
+      "why": "With less ADH, water channels are removed from the collecting duct, less water returns to the blood, and the extra leaves as more, dilute urine. Source: OpenStax A&P 2e, section 26.2."
+    },
+    "avpd": {
+      "prompt": "Sometimes the brain makes and releases too little ADH. What happens to urine volume?",
+      "choices": ["It goes up", "It goes down", "No change"],
+      "answer": 0,
+      "why": "Little ADH means few water channels, so little water is kept and large volumes of dilute urine pass: polyuria. Source: StatPearls NBK470458 and OpenStax A&P 2e, section 17.3."
+    },
+    "avpr": {
+      "prompt": "Sometimes ADH reaches the collecting duct, but its cells do not respond to it. What happens to urine volume?",
+      "choices": ["It goes up", "It goes down", "No change"],
+      "answer": 0,
+      "why": "ADH is present, but without a response from the cells the water channels are not put in, so the urine looks as it does when too little ADH is made: large in volume and dilute. Source: StatPearls NBK470458."
+    },
+    "siadh": {
+      "prompt": "Sometimes ADH keeps being released when it should be turned down. What happens to urine volume?",
+      "choices": ["It goes up", "It goes down", "No change"],
+      "answer": null,
+      "why": "The abstract says ADH that is not switched off impairs water excretion and leads to hyponatremia, but it does not say which way urine volume goes, so this prediction has no graded answer. Source: StatPearls NBK507777."
+    },
+    "pp": {
+      "prompt": "Sometimes a person drinks far more fluid than the body needs, every day. What happens to urine volume?",
+      "choices": ["It goes up", "It goes down", "No change"],
+      "answer": 0,
+      "why": "The excess fluid leads to polyuria with diluted urine and, ultimately, hyponatremia. Source: StatPearls NBK562251."
+    }
+  },
+  "quiz": [
+    {
+      "id": "sensor",
+      "objective": 1,
+      "step": "sensor",
+      "stem": "Which cells notice that the blood has become too concentrated?",
+      "choices": [
+        "Osmoreceptors in the hypothalamus",
+        "Cells of the posterior pituitary",
+        "Collecting duct cells in the kidney",
+        "Pressure sensors in the aorta and neck arteries"
+      ],
+      "answer": 0,
+      "why": "Osmoreceptors, sensor cells in the hypothalamus, monitor the concentration of solutes in the blood. The posterior pituitary only stores and releases ADH; the pressure sensors in the aorta and neck feel blood pressure, not concentration. Source: OpenStax A&P 2e, sections 26.2 and 17.3."
+    },
+    {
+      "id": "made-where",
+      "objective": 1,
+      "step": "release",
+      "stem": "Where is ADH made, and where is it released into the blood?",
+      "choices": [
+        "Made in the hypothalamus; released from the posterior pituitary",
+        "Made in the posterior pituitary; released from the hypothalamus",
+        "Made in the kidney; released into the urine",
+        "Made in the collecting duct; released into the blood beside it"
+      ],
+      "answer": 0,
+      "why": "ADH is produced in the hypothalamus and delivered to the posterior pituitary for storage and release. The pituitary stores it but does not make it. Source: OpenStax A&P 2e, section 26.2."
+    },
+    {
+      "id": "channels",
+      "objective": 2,
+      "step": "channels",
+      "stem": "ADH docks on a collecting duct cell. What does the cell do next?",
+      "choices": [
+        "Moves water channels from inside the cell into the membrane facing the urine",
+        "Pumps more sodium out of the urine, as aldosterone makes it do",
+        "Pulls its water channels out of the membrane",
+        "Makes the urine flow faster down the duct"
+      ],
+      "answer": 0,
+      "why": "ADH causes collecting duct cells to move aquaporins from the cell interior to the surface facing the urine, where they are inserted into the membrane, so more water passes back to the blood. Keeping sodium is aldosterone's job, from the previous lesson. Source: OpenStax A&P 2e, section 26.2."
+    },
+    {
+      "id": "urine",
+      "objective": 2,
+      "step": "output",
+      "stem": "With more water channels in the collecting duct membrane, how does the urine change?",
+      "choices": [
+        "Less urine, more concentrated",
+        "More urine, more dilute",
+        "Less urine, more dilute",
+        "No change, because the channels only carry sodium"
+      ],
+      "answer": 0,
+      "why": "More water is reabsorbed into the blood, so less is left in the urine, and the urine that remains is more concentrated. Source: OpenStax A&P 2e, section 17.3; StatPearls NBK441960."
+    },
+    {
+      "id": "hot-run",
+      "objective": 3,
+      "step": "deficit",
+      "stem": "After a long run on a hot day without drinking, a student's blood is more concentrated than usual. Which pattern fits?",
+      "choices": [
+        "ADH up; a small amount of concentrated urine",
+        "ADH down; a lot of dilute urine",
+        "ADH up; a lot of dilute urine",
+        "ADH down; a small amount of concentrated urine"
+      ],
+      "answer": 0,
+      "why": "Concentrated blood makes the osmoreceptors signal ADH release, and ADH makes the kidney keep water, so the urine is less and more concentrated. Source: OpenStax A&P 2e, sections 17.3 and 26.2."
+    },
+    {
+      "id": "big-drink",
+      "objective": 3,
+      "step": "excess",
+      "stem": "Someone drinks a large amount of water quickly. Which happens over the next hour?",
+      "choices": [
+        "ADH falls, water channels are removed, and more dilute urine is made",
+        "ADH rises, so the extra water is kept in the blood",
+        "ADH falls, but the urine becomes more concentrated",
+        "Nothing changes until the blood sodium crosses the hyponatremia line"
+      ],
+      "answer": 0,
+      "why": "As the blood is diluted, ADH secretion falls and aquaporins are removed from the collecting duct, so more water stays in the urine: diuresis. The loop responds long before sodium is out of range. Source: OpenStax A&P 2e, sections 17.3 and 26.2."
+    },
+    {
+      "id": "two-di",
+      "objective": 4,
+      "step": "avpr",
+      "stem": "In both kinds of diabetes insipidus, large volumes of dilute urine pass. What tells AVP resistance (nephrogenic) apart from AVP deficiency (central)?",
+      "choices": [
+        "In resistance, ADH is made but the kidney does not respond to it; in deficiency, too little ADH is made",
+        "In resistance, too little ADH is made; in deficiency, the kidney does not respond to it",
+        "In resistance, the urine is concentrated rather than dilute",
+        "In resistance, the person drinks too much; in deficiency, too little"
+      ],
+      "answer": 0,
+      "why": "The abstract separates insufficient ADH secretion (central causes, AVP deficiency) from insufficient renal response to AVP (nephrogenic causes, AVP resistance). Drinking too much is primary polydipsia. Source: StatPearls NBK470458."
+    },
+    {
+      "id": "siadh",
+      "objective": 4,
+      "step": "siadh",
+      "stem": "A condition is defined by ADH release that is not suppressed, with impaired water excretion leading to hyponatremia. Which is it?",
+      "choices": [
+        "SIADH",
+        "Primary polydipsia",
+        "AVP deficiency (central diabetes insipidus)",
+        "AVP resistance (nephrogenic diabetes insipidus)"
+      ],
+      "answer": 0,
+      "why": "That is the definition of SIADH. Primary polydipsia can also end in hyponatremia, but there the cause is drinking far too much fluid, not ADH left switched on. Source: StatPearls NBK507777 and NBK562251."
+    }
+  ],
+  "takeaways": [
+    "Osmolality is how concentrated the blood is: how many solute particles for its water. A healthy body holds it in a narrow range.",
+    "Osmoreceptors in the hypothalamus sense it. When the blood grows too concentrated, they make the posterior pituitary release ADH, also called vasopressin.",
+    "ADH docks on collecting duct cells and moves aquaporins, water channels, into the membrane facing the urine, so water returns to the blood.",
+    "More ADH: less urine, more concentrated. Less ADH: more urine, more dilute.",
+    "Negative feedback: as the blood dilutes, the osmoreceptors calm, ADH falls and the channels are pulled back out.",
+    "AVP deficiency (too little ADH) and AVP resistance (a kidney that does not respond to it) both give polyuria with dilute urine.",
+    "SIADH leaves ADH switched on: water is held back and sodium falls into hyponatremia.",
+    "Primary polydipsia is drinking far too much fluid: polyuria with diluted urine and, ultimately, hyponatremia."
+  ]
+}

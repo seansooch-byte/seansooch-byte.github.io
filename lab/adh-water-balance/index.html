@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ADH and Water Balance · The Lab · Sean Sooch</title>
+<meta name="description" content="A guided visual lesson: watch the brain sense blood saltiness, release ADH and open water channels in the kidney, then see urine change in diabetes insipidus, SIADH and primary polydipsia.">
+<link rel="canonical" href="https://seansooch.dev/lab/adh-water-balance/">
+<meta property="og:title" content="ADH and Water Balance">
+<meta property="og:description" content="Watch the brain sense blood saltiness, release ADH and open water channels in the kidney, then see urine change in DI, SIADH and polydipsia.">
+<meta property="og:url" content="https://seansooch.dev/lab/adh-water-balance/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../kit/kit.css">
+<link rel="stylesheet" href="style.css">
+<script src="js/sources.js" defer></script>
+<script src="js/draw.js" defer></script>
+<script src="js/states.js" defer></script>
+<script src="js/picture.js" defer></script>
+<script src="js/predict.js" defer></script>
+<script src="js/values.js" defer></script>
+<script src="js/explore.js" defer></script>
+<script src="js/quiz.js" defer></script>
+<script src="js/lesson.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the lesson</a>
+<header class="site-top">
+  <div class="site-top-in">
+    <a class="site-brand" href="/" aria-label="Sean Sooch, home">SS<span aria-hidden="true">—</span>03</a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="site-nav-home" href="/#ch3">Work</a>
+      <a href="/#ch4">Writing</a>
+      <a href="/#appb">Films</a>
+      <a href="/#appa">Editions</a>
+      <a class="site-nav-lab" href="/lab/" aria-current="true">The Lab</a>
+    </nav>
+  </div>
+</header>
+<main id="main" data-slug="adh-water-balance">
+  <div class="intro">
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / <a href="/lab/#circulation">Unit 1: The heart, the kidney and blood pressure</a> / Lesson 22</p>
+    <h1>ADH, the <span>water-saving hormone.</span></h1>
+    <p class="lede">The body controls its water apart from its salt. Watch the brain sense how concentrated the blood is and send out ADH, a hormone that tells the kidney to keep water, then see the urine change when that loop breaks in four different ways.</p>
+    <p class="note adh-banner">Educational, not for clinical use</p>
+    <div class="lx-plan" data-lx-plan></div>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Lesson views">
+    <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
+    <button type="button" role="tab" id="tab-quiz" aria-controls="quiz" aria-selected="false" tabindex="-1">Quiz</button>
+    <button type="button" role="tab" id="tab-summary" aria-controls="summary" aria-selected="false" tabindex="-1">Summary</button>
+    <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
+  </div>
+
+  <section id="lesson" role="tabpanel" aria-labelledby="tab-lesson">
+    <article data-step="1" data-step-title="How concentrated is the blood?" data-kind="osmo">
+      <p class="eyebrow">Build the loop</p>
+      <h2 tabindex="-1">How concentrated is the blood?</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Blood is mostly water carrying dissolved particles, called <dfn data-part="solute">solutes</dfn>. <dfn data-part="osmolality">Osmolality</dfn> is how concentrated the blood is: how many solute particles there are for its water. Lose water and it rises; drink water and it falls. A healthy body keeps it in a narrow range.</p>
+    </article>
+    <article data-step="2" data-step-title="A sensor in the brain" data-kind="sensor" hidden>
+      <p class="eyebrow">Build the loop</p>
+      <h2 tabindex="-1">A sensor in the brain</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The <dfn data-part="hypothalamus">hypothalamus</dfn> is a small region at the base of the brain. In it sit <dfn data-part="osmoreceptor">osmoreceptors</dfn>: sensor cells that check how concentrated the blood is, especially its <dfn data-part="blood">sodium</dfn>, the main part of table salt. When the blood grows too concentrated, they fire.</p>
+    </article>
+    <article data-step="3" data-step-title="The pituitary releases ADH" data-kind="release" hidden>
+      <p class="eyebrow">Build the loop</p>
+      <h2 tabindex="-1">The pituitary releases ADH</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Firing osmoreceptors make the <dfn data-part="pituitary">posterior pituitary</dfn>, the back of a small gland under the brain, release a hormone: a chemical messenger carried in the blood. It is <dfn data-part="adh">ADH</dfn>, antidiuretic hormone, also called <dfn data-part="adh">vasopressin</dfn>. The hypothalamus makes it; the pituitary stores and releases it.</p>
+    </article>
+    <article data-step="4" data-step-title="ADH travels to the kidney" data-kind="duct" hidden>
+      <p class="eyebrow">Build the loop</p>
+      <h2 tabindex="-1">ADH travels to the kidney</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">In the kidney, urine flows through tiny tubes. The last stretch is the <dfn data-part="duct">collecting duct</dfn>, lined by cells with urine on one side and blood on the other. ADH fits a <dfn data-part="receptor">receptor</dfn> on those cells: a docking site shaped for one messenger. <a href="/lab/nephron-diuretics/">Lesson 2</a> follows the tubes.</p>
+    </article>
+    <article data-step="5" data-step-title="ADH opens water channels" data-kind="channels" hidden>
+      <p class="eyebrow">Build the loop</p>
+      <h2 tabindex="-1">ADH opens water channels</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Docked ADH makes the cell move its <dfn data-part="aquaporin">aquaporins</dfn>, water channels kept in little bubbles inside it, into the membrane that faces the urine. Each channel is a tiny pore that water can pass through. More ADH, more channels in the membrane.</p>
+    </article>
+    <article data-step="6" data-step-title="Water goes back into the blood" data-kind="water" hidden>
+      <p class="eyebrow">Build the loop</p>
+      <h2 tabindex="-1">Water goes back into the blood</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">With channels in place, water moves out of the urine, through the cell and back into the blood. Taking something back from the urine like this is called <dfn data-part="water">reabsorption</dfn>. The water kept dilutes the blood.</p>
+    </article>
+    <article data-step="7" data-step-title="Less urine, and more concentrated" data-kind="output" hidden>
+      <p class="eyebrow">Build the loop</p>
+      <h2 tabindex="-1">Less urine, and more concentrated</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Water kept is water not lost. More ADH: less urine, more concentrated. Less ADH: more urine, more dilute. The flask marks a typical day’s output and the least the body needs to clear its wastes; the Clinical values tab gives their numbers.</p>
+    </article>
+    <article data-step="8" data-step-title="The loop switches itself off" data-kind="feedback" hidden>
+      <p class="eyebrow">Build the loop</p>
+      <h2 tabindex="-1">The loop switches itself off</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">As water returns, the blood becomes less concentrated. The osmoreceptors calm, less ADH is released, and the channels are pulled back out of the membrane. This is <dfn data-part="osmoreceptor adh">negative feedback</dfn>: a result that turns down its own cause, holding the blood in its narrow range.</p>
+    </article>
+    <article data-step="9" data-step-title="Sodium, the main particle" data-kind="sodium" hidden>
+      <p class="eyebrow">Build the loop</p>
+      <h2 tabindex="-1">Sodium, the main particle</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Sodium is the main solute outside cells, so extra water dilutes it and lost water concentrates it. Too little is <dfn data-part="sodium">hyponatremia</dfn>; too much is <dfn data-part="sodium">hypernatremia</dfn>: the two shaded ends of the sodium gauge.</p>
+    </article>
+    <article data-step="10" data-step-title="The whole loop" data-kind="whole" hidden>
+      <p class="eyebrow">Build the loop</p>
+      <h2 tabindex="-1">The whole loop</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Too concentrated: osmoreceptors fire, ADH rises, water channels move in, and less, concentrated urine is made until the blood is back in range. Too dilute: ADH falls, channels are removed, more dilute urine is made. Watch three measures: urine volume, urine concentration and blood sodium.</p>
+    </article>
+    <article data-step="11" data-step-title="Too little water" data-kind="deficit" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Too little water</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn data-part="blood">Dehydration</dfn> is a net loss of water, as after a long, hot run without drinking. The blood grows more concentrated, the osmoreceptors fire and ADH rises. More water channels open, so the kidney keeps water: urine becomes less, and more concentrated.</p>
+    </article>
+    <article data-step="12" data-step-title="Too much water" data-kind="excess" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Too much water</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Drink a large amount of water and the blood becomes more dilute. The osmoreceptors calm, ADH falls, and water channels are pulled out of the membrane. The kidney lets the extra water go as more, dilute urine: <dfn data-part="flask">diuresis</dfn>, making more urine than normal.</p>
+    </article>
+    <article data-step="13" data-step-title="When too little ADH is made" data-kind="avpd" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">When too little ADH is made</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn data-part="flask">Diabetes insipidus</dfn> means large volumes of dilute urine. In <dfn data-part="pituitary">AVP deficiency</dfn>, or central diabetes insipidus, too little ADH (AVP, arginine vasopressin) is made and released. Few channels open, so water is not kept: <dfn data-part="flask">polyuria</dfn>, passing far more urine than normal, and dilute.</p>
+    </article>
+    <article data-step="14" data-step-title="When the kidney ignores ADH" data-kind="avpr" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">When the kidney ignores ADH</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">In <dfn data-part="receptor">AVP resistance</dfn>, or nephrogenic diabetes insipidus, ADH is made and reaches the kidney, but the collecting duct does not respond to it. Channels stay inside the cells, so the result looks like AVP deficiency: polyuria with dilute urine, though ADH is in the blood.</p>
+    </article>
+    <article data-step="15" data-step-title="When ADH will not switch off" data-kind="siadh" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">When ADH will not switch off</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">In <dfn data-part="adh">SIADH</dfn>, the syndrome of inappropriate antidiuretic hormone, ADH keeps being released when it should be turned down, and water excretion is impaired: the water held back dilutes the blood’s sodium into hyponatremia. The source gives no direction for the water channels or the urine, so those gauges read “not stated”.</p>
+    </article>
+    <article data-step="16" data-step-title="When someone drinks far too much" data-kind="pp" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">When someone drinks far too much</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn data-part="blood">Primary polydipsia</dfn> is drinking far more fluid than the body needs. It leads to polyuria with diluted urine, as in diabetes insipidus, but caused by the drinking. Ultimately, sodium is diluted into hyponatremia. The source gives no direction for ADH, so its gauge reads “not stated”.</p>
+    </article>
+
+    <p id="lesson-live" class="visually-hidden" aria-live="polite"></p>
+    <div class="step-nav">
+      <button type="button" data-step-back disabled>← Back</button>
+      <span data-step-progress aria-live="polite">Step 1 of 16</span>
+      <button type="button" data-step-next>Next →</button>
+    </div>
+    <p class="hint">Start with Next, or use the arrow keys; Space plays or pauses a moving picture. Under it: pause, step forward, drag to any moment, slow it down or replay. Each change asks for your prediction first, every time it plays. Underlined terms light up their part of the picture. The pictures show directions only, never measurements.</p>
+  </section>
+
+  <section id="quiz" role="tabpanel" aria-labelledby="tab-quiz" hidden></section>
+
+  <section id="summary" role="tabpanel" aria-labelledby="tab-summary" hidden></section>
+
+  <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
+    <h2>Reference values, and which way each state moves them.</h2>
+    <p class="note">Educational, not for clinical use</p>
+    <p id="disclaimer" class="disclaimer">Loading reference values…</p>
+    <div class="cv-top">
+      <div class="cv-controls">
+        <div>
+          <label for="cv-state">Compare a state</label>
+          <select id="cv-state"></select>
+        </div>
+        <div id="cv-gate" hidden></div>
+      </div>
+      <div>
+        <p id="cv-summary" class="state-summary" aria-live="polite"></p>
+        <p id="cv-where" class="model-note"></p>
+      </div>
+    </div>
+    <details class="lx-fine">
+      <summary>How to read these bars</summary>
+      <p>Each bar has its own unit, printed exactly as its source writes it; bars in different units are never compared. A shaded band is a reference range; a red line with a shaded side is a threshold, and the shaded side is the condition the source names; a black line is a single typical value or a minimum.</p>
+      <p>The dashed line is the baseline and the blue line is the state you chose. The sources give directions, not amounts, so the blue line only moves a fixed step from baseline, and crosses a threshold only where a source names that condition for the state. “Not stated in sources” means no cited excerpt gives a direction, so none is drawn. Choosing a state asks for a prediction first.</p>
+    </details>
+    <div id="value-rows"></div>
+    <p id="cv-live" class="visually-hidden" aria-live="polite"></p>
+    <h3>Sources</h3>
+    <ul id="sources"></ul>
+    <p id="load-error" class="load-error" hidden></p>
+  </section>
+
+  <section id="explore" role="tabpanel" aria-labelledby="tab-explore" hidden>
+    <h2>Pick a state, predict, then watch.</h2>
+    <p class="model-intro">The whole loop in one picture. Choose a state; first say what you expect urine volume to do compared with the baseline, then watch the picture change from the state you were on, over dashed outlines of the baseline. Every gauge reads from a table of quoted directions; where the sources say nothing, the gauge stays at normal and says “not stated”.</p>
+    <div class="explore-grid">
+      <div class="visual" id="explore-visual">
+        <div id="explore-pic" class="lx-pic"></div>
+        <div class="lx-player adh-player" role="group" aria-label="Picture controls">
+          <button type="button" id="ex-restart" aria-label="Replay the change from the start">↻</button>
+          <button type="button" id="ex-play" aria-label="Play">▶︎</button>
+          <button type="button" id="ex-step" aria-label="Step forward">▸|</button>
+          <input type="range" id="ex-scrub" min="0" max="1000" step="1" value="1000" aria-label="Move through the change">
+          <span id="ex-when" class="lx-when" aria-hidden="true"></span>
+          <button type="button" id="ex-slow" aria-pressed="false" aria-label="Half speed">½×</button>
+        </div>
+      </div>
+      <div class="controls">
+        <fieldset>
+          <legend>Choose a state</legend>
+          <div id="explore-states" class="adh-states"></div>
+        </fieldset>
+        <div id="explore-gate" hidden></div>
+        <p id="explore-result" class="model-results" aria-live="polite">Baseline: everything in balance.</p>
+        <details id="explore-why" class="lx-fine"></details>
+      </div>
+    </div>
+  </section>
+
+  <footer>Lesson 22 of The Lab · Added 2026-11-07 · <a href="/lab/">All lessons</a></footer>
+</main>
+</body>
+</html>
