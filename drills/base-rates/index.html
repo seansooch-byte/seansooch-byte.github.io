@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Base-rate risk trainer · Drills · Sean Sooch</title>
+<meta name="description" content="A fictional drill on prevalence, PPV, NPV, NNE and NNT. Educational, not for clinical use. Ten invented alerts, a 1,000-patient table, and a prevalence slider.">
+<link rel="canonical" href="https://seansooch.dev/drills/base-rates/">
+<meta property="og:title" content="Base-rate risk trainer">
+<meta property="og:description" content="Estimate the PPV of a fictional alert, then see how the base rate changes PPV, NPV, NNE and NNT.">
+<meta property="og:url" content="https://seansooch.dev/drills/base-rates/">
+<meta name="theme-color" content="#f7f7f2">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the drill</a>
+<header class="site-top">
+  <div class="site-top-in">
+    <a class="site-brand" href="/" aria-label="Sean Sooch, home">SS<span aria-hidden="true">-</span>03</a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="site-nav-home" href="/#ch3">Work</a>
+      <a href="/#ch4">Writing</a>
+      <a href="/#appb">Films</a>
+      <a href="/#appa">Editions</a>
+      <a class="site-nav-lab" href="/lab/">The Lab</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+  <p class="eyebrow"><a href="/drills/">Drills</a> / R9</p>
+  <p class="banner">Fictional cases. Educational, not for clinical use.</p>
+  <h1>Base-rate risk trainer</h1>
+  <p class="lede">Estimate how often a fictional alert is a true case. Then look at 1,000 fictional patients and see why that percent collapses when the condition is rare.</p>
+
+  <section class="explain" aria-labelledby="why">
+    <h2 id="why">Why the base rate wins</h2>
+    <p>Sensitivity is the share of true cases the alert catches. Specificity is the share of people without the condition whom the alert correctly leaves alone. PPV, positive predictive value, is the share of alerts that are true cases. NPV, negative predictive value, is the share of clear results that are truly clear.</p>
+    <p>At a low prevalence, almost everyone is free of the condition. A small false-alarm rate then creates more false alerts than true ones. PPV falls even when sensitivity and specificity stay the same. After you lock an estimate, move the prevalence slider and watch the same alert change jobs.</p>
+    <p>NNE, the number needed to evaluate, is how many alerts you read for each true case. It is 1 / PPV. It is the headline burden number, and it needs no treatment input. NNT, the number needed to treat, divides that burden by the fictional relative risk reduction of the action the alert triggers: NNT = 1 / (PPV x RRR) = NNE / RRR. NNT assumes the action helps only patients who would have had the event, at that fixed fictional RRR, and harms no one.</p>
+    <p>The formulas, with p for prevalence, Se for sensitivity and Sp for specificity, are:</p>
+    <ul>
+      <li>PPV = Se x p / (Se x p + (1 - Sp) x (1 - p))</li>
+      <li>NPV = Sp x (1 - p) / (Sp x (1 - p) + (1 - Se) x p)</li>
+      <li>Risk after a positive alert = PPV. Risk after a clear result = 1 - NPV.</li>
+      <li>NNE = 1 / PPV. NNT = 1 / (PPV x RRR).</li>
+    </ul>
+    <p>If specificity is 100% and the alert still flags someone, PPV is 100% because there are no false alerts. If the threshold flags nobody, PPV is undefined: the page says so, and it does not print 100%. If alerts exist but none are true cases, PPV is 0% and NNE and NNT are undefined. Percents are rounded to one decimal. A value that is not exactly 100% is not shown as 100%, and a value that is not exactly 0% is not shown as 0%.</p>
+  </section>
+
+  <div class="score-row">
+    <p id="score-now">No estimates yet.</p>
+    <button type="button" id="restart">Start over</button>
+  </div>
+  <p class="note">Session score is the mean absolute error of your PPV estimates, in percentage points. A new estimate on a later visit replaces the saved score. The score stays in this browser only.</p>
+
+  <section class="case" aria-labelledby="case-title">
+    <p class="eyebrow" id="case-kicker">Case</p>
+    <h2 id="case-title">Loading a fictional case</h2>
+    <p class="scenario" id="case-scenario">Every number in a case is fictional.</p>
+    <dl class="facts" id="case-facts"></dl>
+    <form id="guess-form">
+      <label for="guess">Your PPV estimate: what percent of these alerts are true cases?</label>
+      <div class="guess-row">
+        <input id="guess" name="guess" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" required>
+        <button type="submit">Check estimate</button>
+      </div>
+      <p class="alert" id="guess-error" role="alert"></p>
+    </form>
+    <p class="result" id="estimate-result"></p>
+  </section>
+
+  <section class="reveal" id="reveal" tabindex="-1" hidden aria-labelledby="reveal-title">
+    <h2 id="reveal-title">Reveal</h2>
+    <div class="metrics">
+      <p class="metric"><span>PPV</span><b id="m-ppv"></b></p>
+      <p class="metric"><span>NPV</span><b id="m-npv"></b></p>
+      <p class="metric"><span>NNE</span><b id="m-nne"></b></p>
+      <p class="metric"><span>NNT</span><b id="m-nnt"></b></p>
+    </div>
+    <div class="risks">
+      <p>Risk if the alert fires: <strong id="m-flagged"></strong></p>
+      <p>Risk if the result is clear: <strong id="m-clear"></strong></p>
+    </div>
+    <p class="note" id="edge-notes"></p>
+    <p class="note" id="nnt-assumption"></p>
+    <div class="slider-block">
+      <label for="prevalence">Prevalence <output id="prev-out" for="prevalence"></output></label>
+      <input id="prevalence" type="range" min="0" max="10000" step="1" value="0" aria-describedby="prev-help">
+      <p class="note" id="prev-help">Log scale, from 0.1% to 50%. The table, the icons and the rates recompute as you move it. Your estimate stays scored against the case prevalence, not the slider.</p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <caption>Per 1,000 fictional patients</caption>
+        <thead>
+          <tr><th scope="col">Group</th><th scope="col">Alert</th><th scope="col">No alert</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Condition present</th><td data-cell="tp"></td><td data-cell="fn"></td></tr>
+          <tr><th scope="row">Condition absent</th><td data-cell="fp"></td><td data-cell="tn"></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note" id="rounding-note" hidden></p>
+    <ul class="legend">
+      <li><i class="swatch tp" aria-hidden="true"></i> True alert</li>
+      <li><i class="swatch fp" aria-hidden="true"></i> False alert</li>
+      <li><i class="swatch fn" aria-hidden="true"></i> Missed case</li>
+      <li><i class="swatch tn" aria-hidden="true"></i> No alert, no condition</li>
+    </ul>
+    <div class="icons" id="icons" role="img" aria-label="1,000 fictional patients"></div>
+    <p class="guess-row"><button type="button" id="next-case" hidden>Next case</button></p>
+  </section>
+
+  <p class="foot">Draft for review. This page does not claim physician sign-off or human validation. An independent check of the math and the wording is required before publication. No drug doses are stated.</p>
+</main>
+</body>
+</html>

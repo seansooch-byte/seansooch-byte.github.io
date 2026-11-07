@@ -68,6 +68,7 @@ flowchart LR
 | `music/media/<slug>/`, `music/three-roads/media/<slug>/` | One 720p HLS stream and poster per film, made by `tools/music-film.sh` (segments an H.264 720p master as is, re-encodes anything else); a song with no film is `song.m4a` + `cover.jpg` | No. Regenerate with `tools/music-film.sh`. |
 | `videos/`, `screenshots/`, `*.pdf`, `favicon.svg` | Films, card images, papers | Yes |
 | `lab/` | The Lab: one small app a day, its index and ledger (see The Lab below) | Yes |
+| `drills/` | Drills: a hub and scored practice drills, separate from the Lab (see Drills below). R9, the Base-rate risk trainer, is the first | Yes |
 | `_headers`, `_redirects`, `robots.txt`, `sitemap.xml` | Edge behaviour and crawl rules | Yes |
 | `CNAME` | Left over from GitHub Pages; still ships | Leave it |
 | `*.md`, `tools/`, `.gitattributes`, `.gitignore` | Never shipped | Yes |
@@ -200,6 +201,17 @@ this section: the pipeline's bootstrap copies must be refreshed from here before
   "Typical adult reference ranges; labs vary; not for clinical decisions." All of a lesson's values live in one file,
   `lab/<slug>/clinical-values.json`, so they can be audited in one place; the second-opinion reviewer must verify each
   against its source.
+
+## Drills
+
+`drills/` is its own section. It is not part of the Lab. Sean said on 2026-11-06 that the Lab is medicine only, and that a drill which is going to be published has to live in its own section. The hub is `/drills/`. Homepage rows and `sitemap.xml` are not part of this section: another pass adds them after review.
+
+- Pages are static HTML, CSS and JavaScript from this origin only. The only third-party requests are Google Fonts. Nothing is sent to a server. A drill may store its session score in `localStorage`, and that call is wrapped in try/catch.
+- Each Drills page copies the shared top bar the Lab lessons use: brand to `/`, then Work, Writing, Films, Editions, and The Lab to `/lab/`. The CSS for that bar is copied into the page, the same way a lesson appends it. The Lab link is not marked as the current page, because a drill is not a Lab lesson. The brand mark in the copied bar uses a hyphen. The lesson template uses an em dash there, and files in this section do not use em dashes or en dashes.
+- Cases are fictional, and the pages say so. The banner reads "Fictional cases. Educational, not for clinical use." Drills give no drug doses.
+- The hub lists one drill: R9, the Base-rate risk trainer, at `/drills/base-rates/`. The learner estimates positive predictive value, then sees a 2x2 table per 1,000 fictional patients, a 1,000-patient icon array, PPV, NPV, NNE and NNT, and a prevalence slider on a log scale from 0.1% to 50%. Expected values for the ten cases and the two worked checks live in `drills/base-rates/fixtures.json` as rationals. `node drills/base-rates/test.mjs` compares the page's math with that file. The fixture values were not produced by the page.
+- R9 needs an independent check of the math and the wording before publication. The page does not claim physician sign-off or human validation.
+- Drills are not on the automatic Lab deploy. Shipping this section, after that review, follows the site's normal sequence: commit, stage, audit, deploy, audit, push.
 
 ## Monitoring the Situation (moved)
 
