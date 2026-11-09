@@ -11,9 +11,12 @@
 #     edge copy is a false alarm.
 #   - Anything in the bundle that is not a regular file or a directory (a
 #     symlink, say) is a DIFF: it cannot be compared, and it should not ship.
+#   - 404.html is what Pages serves, with status 404, for a path that does not
+#     exist, so it is compared with the answer to a made-up path.
 #   - Prints one DIFF line per mismatch, then a tally. Exits 0 only when every
-#     file matched. An unknown path on Pages answers 200 with the homepage, so
-#     a file that is missing from live shows up as a DIFF, never as a 404.
+#     file matched. A file that is missing from live is a DIFF whether the
+#     site answers a missing path with a 404 (since Vol. 04) or, as before,
+#     with 200 and the homepage.
 #
 # Before a deploy the DIFF list should be exactly the files you meant to
 # change. After a deploy it should be empty.
@@ -29,6 +32,7 @@ origin="${2:-https://seansooch.dev}"
 
 digest() { shasum -a 256 | cut -d' ' -f1; }
 fetch() { curl -fsSL --max-time 180 "$1" 2>/dev/null || true; }
+fetch_missing() { curl -sSL --max-time 180 "$1" 2>/dev/null || true; }   # the 404 page arrives with status 404
 edge() {
   perl -0pe '
     s#<a href="[^"]*/cdn-cgi/content\?[^"]*"[^>]*></a>##g;
@@ -37,8 +41,9 @@ edge() {
 }
 
 check() {
-  local rel="${1#./}" url filter=cat want u
+  local rel="${1#./}" url filter=cat want u get=fetch
   case "$rel" in
+    404.html)     url="$origin/no-such-page-$RANDOM$RANDOM"; get=fetch_missing ;;
     index.html)   url="$origin/" ;;
     */index.html) url="$origin/${rel%index.html}" ;;
     *)            url="$origin/$rel" ;;
@@ -46,14 +51,14 @@ check() {
   case "$rel" in *.html) filter=edge ;; esac
   want=$($filter < "$rel" | digest)
   for u in "$url" "$url?audit=$RANDOM"; do
-    [ "$(fetch "$u" | $filter | digest)" = "$want" ] && return 0
+    [ "$($get "$u" | $filter | digest)" = "$want" ] && return 0
   done
   echo "DIFF  /$rel"
 }
 
 cd "$dir"
 export origin
-export -f digest fetch edge check
+export -f digest fetch fetch_missing edge check
 
 served=(find . ! -type d ! -name _headers ! -name _redirects)
 total=$("${served[@]}" | wc -l | tr -d ' ')

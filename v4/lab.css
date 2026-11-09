@@ -1,0 +1,101 @@
+/* The Lab's course page (/lab/), set in the site's current edition. Loaded after /v4/site.css, which gives it
+   the ground, the sheet, the two faces, the pair and the top bar. This file is only what the course page adds:
+   the facts, the resume card, the course map, the units and the mixed review. The page is written by
+   tools/build.py; lab/kit/course.js draws a reader's progress into it. Lessons have their own sheet (lab/kit). */
+
+.lab-mast h1,.page-lab .mast h1{font-size:clamp(56px,8.4vw,136px);line-height:.9;margin:.14em 0 .24em -.035em}
+.lab-mast .say-s{margin-top:16px;max-width:42em}
+.lab-facts{padding:6px 20px 16px}
+.lab-facts .facts{padding:0}
+.lab-facts .facts div{grid-template-columns:minmax(0,1fr) auto;align-items:baseline}
+.lab-facts .facts dd{font-size:clamp(22px,2.1vw,30px);letter-spacing:-.03em;text-align:right}
+.tally{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 16px;border-top:1px solid var(--ink);padding-top:10px}
+
+/* resume card: drawn by course.js */
+.resume:empty{display:none}
+.resume .card{border-top:1px solid var(--rule);margin-top:12px;padding-top:12px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 16px;align-items:end}
+.resume .label{font:500 13px/1.45 var(--meas);font-stretch:88%;letter-spacing:.01em;color:var(--ink-2);grid-column:1 / -1}
+.resume .what{font:480 20px/1.2 var(--said);letter-spacing:-.02em}
+.resume .sub{font:500 13px/1.45 var(--meas);font-stretch:88%;color:var(--ink-2);grid-column:1}
+.resume .go{grid-column:2;grid-row:2 / span 2;align-self:end}
+
+/* the course at a glance: one dot per lesson, filled as it is read */
+.map{margin-top:clamp(20px,3vw,40px)}
+.map>ol{list-style:none;padding:0;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:18px clamp(16px,2vw,28px)}
+.map-unit{display:block;text-decoration:none}
+.map-no{display:block}
+.map-title{display:block;font:500 16px/1.2 var(--said);letter-spacing:-.015em;margin-top:2px}
+.map-unit:hover .map-title{text-decoration:underline}
+.map-lessons{list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.map-lessons :is(a,.soon){display:block;width:14px;height:14px;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--ink)}
+.map-lessons .soon{box-shadow:inset 0 0 0 1.5px var(--rule)}
+.map-lessons a.is-started{background:linear-gradient(90deg,var(--ink) 50%,transparent 50%)}
+.map-lessons a.is-done{background:var(--ink)}
+.map-lessons a:hover{outline:2px solid var(--ink);outline-offset:2px}
+.map-key{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:16px}
+.map-key span{display:inline-flex;align-items:baseline;gap:6px}
+
+/* units: what the unit is, beside its lessons */
+.unit{border-top:1px solid var(--ink);padding-top:14px;margin-top:clamp(36px,5vw,72px);scroll-margin-top:calc(var(--bar) + 12px);align-items:start}
+.unit-head{position:sticky;top:calc(var(--bar) + 14px)}
+.unit-head h2{font-size:clamp(30px,3.6vw,56px);line-height:.98;margin:10px 0 12px}
+.unit-head .say-s{max-width:30em}
+.lessons{list-style:none;padding:0}
+.lesson{display:grid;grid-template-columns:3.2em minmax(0,1fr);border-top:1px solid var(--rule);padding:14px 0 16px}
+.lesson:first-child{border-top:1px solid var(--ink)}
+.lesson .no{font:500 13px/1.9 var(--meas);font-stretch:88%;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.lesson h3{font-size:clamp(20px,1.9vw,26px);letter-spacing:-.02em;line-height:1.12}
+.lesson h3 a{text-decoration:none}
+.lesson h3 a:hover{text-decoration:underline;text-decoration-thickness:2px}
+.lesson .desc{font:400 15.5px/1.5 var(--said);color:var(--ink-2);margin-top:6px;max-width:38em}
+.lesson .meta{margin-top:8px}
+.lesson.soon h3,.lesson.soon .desc{color:var(--ink-3)}
+.goals{margin-top:8px;font:500 13px/1.45 var(--meas);font-stretch:88%;color:var(--ink-2)}
+.goals summary{cursor:pointer;text-decoration:underline;text-underline-offset:.2em;width:fit-content}
+.goals ol{padding-left:1.4em;margin-top:6px;display:grid;gap:3px;font:400 14.5px/1.45 var(--said);font-stretch:100%;max-width:40em}
+.progress{display:flex;align-items:center;gap:12px;margin-top:10px}
+.track{flex:0 0 120px}
+.bar:where(.track .bar){display:block;height:6px;box-shadow:inset 0 0 0 1px var(--ink);position:static;background:none;border:0}
+.track .bar i{display:block;height:100%;width:0;background:var(--ink)}
+.lesson.is-done .state{color:var(--ink);font-weight:700}
+
+/* mixed review: drawn by course.js */
+.review{align-items:start}
+.review .unit-head{position:static}
+.review-box .rv-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 16px;border-top:1px solid var(--ink);padding-top:8px}
+.rv-from{font:500 13px/1.45 var(--meas);font-stretch:88%;color:var(--ink-2)}
+.rv-score{font:500 13px/1.45 var(--meas);font-stretch:88%}
+.rv-score b{font:480 22px/1 var(--said)}
+.rv-qs{list-style:none;padding:0;counter-reset:q}
+.rv-qs>li{counter-increment:q;display:grid;grid-template-columns:2.4em minmax(0,1fr);border-top:1px solid var(--rule);padding:16px 0}
+.rv-qs>li::before{content:counter(q,decimal-leading-zero);font:500 13px/1.9 var(--meas);font-stretch:88%;color:var(--ink-3)}
+.rv-stem{font:480 19px/1.3 var(--said);letter-spacing:-.015em;margin:4px 0 12px}
+.lx-choices{list-style:none;padding:0;display:grid;gap:6px}
+.lx-choices button{display:grid;grid-template-columns:1.8em minmax(0,1fr);width:100%;text-align:left;font:400 15.5px/1.4 var(--said);background:var(--sheet);border:1px solid var(--ink);padding:9px 12px;cursor:pointer}
+.lx-choices button::before{content:attr(data-mark);font:600 13px/1.6 var(--meas)}
+.lx-choices button:hover:not(:disabled){background:var(--ink);color:var(--sheet)}
+.lx-choices button:disabled{cursor:default}
+/* right and wrong without a colour: the right one is inked in, the wrong one is struck through */
+.lx-choices button.is-right{background:var(--ink);color:var(--sheet)}
+.lx-choices button.is-right::before{content:"✓"}
+.lx-choices button.is-wrong{text-decoration:line-through;text-decoration-thickness:2px}
+.lx-choices button.is-wrong::before{content:"✕";text-decoration:none}
+.lx-choices button.is-dim{opacity:.55;border-color:var(--rule)}
+.rv-verdict{font:650 15px/1.4 var(--meas);margin-top:12px}
+.rv-why{font:400 15.5px/1.5 var(--said);color:var(--ink-2);margin-top:4px;max-width:40em}
+.rv-link{font:500 13px/1.45 var(--meas);font-stretch:88%;margin-top:8px}
+.rv-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;border-top:1px solid var(--ink);padding-top:12px}
+.rv-foot p{font:500 13px/1.45 var(--meas);font-stretch:88%;color:var(--ink-2)}
+.rv-foot button,.review-box>button{font:500 13px/1 var(--meas);font-stretch:88%;letter-spacing:.01em;border:1px solid var(--ink);background:none;color:inherit;padding:8px 13px;border-radius:99px;cursor:pointer}
+.rv-foot button:hover,.review-box>button:hover{background:var(--ink);color:var(--ground)}
+
+@media (max-width:1100px){.map>ol{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:860px){
+  .unit-head{position:static}
+  .map>ol{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:520px){
+  .map>ol{grid-template-columns:minmax(0,1fr)}
+  .lesson{grid-template-columns:2.4em minmax(0,1fr)}
+}
+@media print{.map,.review,.progress,.resume{display:none}}

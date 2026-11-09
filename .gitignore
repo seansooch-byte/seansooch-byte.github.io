@@ -1,4 +1,5 @@
 # Local tool state. None of it is the site.
+__pycache__/
 .claude/
 .gstack/
 .wrangler/

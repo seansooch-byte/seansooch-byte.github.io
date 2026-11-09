@@ -41,6 +41,11 @@ for (const m of mods) {
   }
 }
 
+// What an older sync from outside this repo leaves behind (it happened on 2026-10-28 and 2026-11-07): name it here,
+// so it is deleted or restored before it ships.
+if (exists('lab/lab.css')) bad('lab/lab.css', "is not part of the site. The course page's sheet is v4/lab.css, written in this repo: delete this file and refresh the pipeline's copies from main");
+if (!read('tools/lab-index.mjs').includes('build.py')) bad('tools/lab-index.mjs', 'is not the wrapper that asks tools/build.py for the course page: restore it from main');
+
 /* ---------- One lesson ---------- */
 function strip(html) { return html.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim(); }
 function checkLesson(slug) {

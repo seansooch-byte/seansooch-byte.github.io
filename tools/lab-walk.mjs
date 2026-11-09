@@ -12,7 +12,9 @@
 //     summary lists the takeaways and at least one term.
 // Prints one line per problem; exit 1 if any.
 import { createRequire } from 'module';
-const require = createRequire('/Users/seansooch/aa-main/node_modules/');
+import os from 'node:os';
+import path from 'node:path';
+const require = createRequire(path.join(process.env.PLAYWRIGHT_FROM || path.join(os.homedir(), 'aa-main', 'node_modules'), '/'));
 const { chromium } = require('playwright-core');
 
 const [base, ...only] = process.argv.slice(2);

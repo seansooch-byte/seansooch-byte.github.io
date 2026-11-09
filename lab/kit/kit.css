@@ -326,10 +326,12 @@ footer{border-top:1px solid var(--ink);margin-top:44px;padding-top:18px;font-siz
   .lx-takeaways li,.lx-goals li{break-inside:avoid}
 }
 
-/* Site top bar, matching the homepage's view A (Astra) bar (from the pipeline's templates/site-top-lesson.html). */
+/* Site top bar. It names the site and links its sections and carries no edition number, so a new edition of the
+   site never has to touch a lesson; it keeps the lessons' own look. The pipeline's template for a new lesson
+   (templates/site-top-lesson.html, outside this repo) has to match the bar on these pages. */
 .site-top{position:sticky;top:0;z-index:50;background:rgba(247,247,242,.96);border-bottom:1px solid #171916;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);font-family:'Space Grotesk',system-ui,-apple-system,'Segoe UI',sans-serif}
 .site-top-in{max-width:1600px;margin:0 auto;padding-inline:clamp(22px,4vw,64px);height:78px;display:flex;align-items:center;gap:28px}
-.site-brand{font-weight:700;font-size:27px;letter-spacing:-.08em;color:#171916;text-decoration:none;white-space:nowrap}
+.site-brand{font-weight:700;font-size:21px;letter-spacing:-.035em;color:#171916;text-decoration:none;white-space:nowrap}
 .site-brand span{color:#254dff;padding-inline:5px}
 .site-nav{margin-left:auto;display:flex;align-items:center;gap:26px}
 .site-nav a{color:#171916;text-decoration:none;font-size:13px;white-space:nowrap}
@@ -337,6 +339,6 @@ footer{border-top:1px solid var(--ink);margin-top:44px;padding-top:18px;font-siz
 .site-nav a[aria-current]{color:#254dff;font-weight:600;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px}
 .site-top a:focus-visible{outline:3px solid #254dff;outline-offset:3px}
 @media(max-width:850px){.site-top-in{height:70px}.site-nav{gap:17px}.site-nav a{font-size:12px}}
-@media(max-width:620px){.site-top{position:relative}.site-top-in{height:66px;gap:15px}.site-brand{font-size:24px}.site-nav{gap:18px}.site-nav a{display:none}.site-nav a.site-nav-home,.site-nav a.site-nav-lab{display:block}}
+@media(max-width:620px){.site-top{position:relative}.site-top-in{height:66px;gap:15px}.site-brand{font-size:19px}.site-nav{gap:18px}.site-nav a{display:none}.site-nav a.site-nav-home,.site-nav a.site-nav-lab{display:block}}
 @media print{.site-top{position:static}}
 @media(max-height:500px) and (min-width:620px){.site-top{position:relative}}

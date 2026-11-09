@@ -1,5 +1,5 @@
 // The Lab kit, course page: the reader's own progress drawn over the course list that
-// tools/lab-index.mjs wrote into /lab/, and the mixed review.
+// tools/build.py wrote into /lab/, and the mixed review.
 //
 // Expected behaviour:
 //   - Each lesson row ([data-slug] with data-steps and data-quiz) gets a bar for the steps seen and
@@ -23,7 +23,7 @@ const rows = () => $$('.lesson[data-slug]');
 const titleOf = row => row.querySelector('h3')?.textContent.trim() || row.dataset.slug;
 const numberOf = row => row.querySelector('.no')?.textContent.trim().replace(/^0/, '') || '';
 let stepTable = {};
-try { stepTable = JSON.parse($('#lab-steps')?.textContent || '{}'); } catch { stepTable = {}; }
+try { stepTable = JSON.parse($('script#lab-steps')?.textContent || '{}'); } catch { stepTable = {}; }
 
 function draw() {
   const all = readAll().lessons;

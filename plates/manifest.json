@@ -1,0 +1,284 @@
+{
+ "agi": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://differential-c57.pages.dev/?still=1",
+  "taken": "2026-11-09"
+ },
+ "agi-e2": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://agi-tracker-v2.pages.dev",
+  "taken": "2026-11-09"
+ },
+ "agi-e3": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://agi-tracker-v3.pages.dev",
+  "taken": "2026-11-09"
+ },
+ "card": {
+  "w": 1200,
+  "h": 630,
+  "url": "http://localhost:8104/",
+  "taken": "2026-11-09"
+ },
+ "detroit": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://detroit-sports.pages.dev/",
+  "taken": "2026-11-09"
+ },
+ "detroit-e1": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://detroit-sports-v1.pages.dev",
+  "taken": "2026-11-09"
+ },
+ "edge": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://edge-7yj.pages.dev/",
+  "taken": "2026-11-09"
+ },
+ "ekg": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://seansooch.dev/ekg/",
+  "taken": "2026-11-09"
+ },
+ "ekg-e1": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://ekg-v1.pages.dev",
+  "taken": "2026-11-09"
+ },
+ "forge": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://forge-8ce.pages.dev/",
+  "taken": "2026-11-09"
+ },
+ "forge-e1": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://forge-v1.pages.dev",
+  "taken": "2026-11-09"
+ },
+ "greatbooks": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://great-books.pages.dev/",
+  "taken": "2026-11-09"
+ },
+ "greatbooks-e1": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://great-books-v1.pages.dev",
+  "taken": "2026-11-09"
+ },
+ "handoff": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://patient-handoff-tracker.onrender.com/",
+  "taken": "2026-11-09"
+ },
+ "handoff-e1": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://handoff-tracker-v1.pages.dev",
+  "taken": "2026-11-09"
+ },
+ "lab": {
+  "w": 1440,
+  "h": 900,
+  "url": "http://localhost:8104/lab/pressure-volume-loop/#step-9",
+  "taken": "2026-11-09"
+ },
+ "masters": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://masters-2026.pages.dev/",
+  "taken": "2026-11-09"
+ },
+ "masters-e1": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://masters-2026-v1.pages.dev",
+  "taken": "2026-11-09"
+ },
+ "microtd": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://micro-td.pages.dev/",
+  "taken": "2026-11-09"
+ },
+ "microtd-e1": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://micro-td-v1.pages.dev",
+  "taken": "2026-11-09"
+ },
+ "multipliers": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://seansooch.dev/force-multipliers/",
+  "taken": "2026-11-09"
+ },
+ "music": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://seansooch.dev/music/",
+  "taken": "2026-11-09"
+ },
+ "ncaat": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://ncaat-bracket-2026.pages.dev/",
+  "taken": "2026-11-09"
+ },
+ "ncaat-e1": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://ncaat-bracket-2026-v1.pages.dev",
+  "taken": "2026-11-09"
+ },
+ "philosophy": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://philosophy-room.pages.dev/",
+  "taken": "2026-11-09"
+ },
+ "philosophy-e1": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://philosophy-room-v1.pages.dev",
+  "taken": "2026-11-09"
+ },
+ "reading": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://reading-room.pages.dev/",
+  "taken": "2026-11-09"
+ },
+ "reading-e1": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://reading-room-v1.pages.dev",
+  "taken": "2026-11-09"
+ },
+ "sims": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://simulators-4lb.pages.dev/",
+  "taken": "2026-11-09"
+ },
+ "sims-e1": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://simulators-v1.pages.dev",
+  "taken": "2026-11-09"
+ },
+ "situation": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://situation.seansooch.dev/",
+  "taken": "2026-11-09"
+ },
+ "space": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://cic-dashboard.pages.dev/",
+  "taken": "2026-11-09"
+ },
+ "space-e1": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://cic-dashboard-v1.pages.dev",
+  "taken": "2026-11-09"
+ },
+ "step2": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://step2-ck.pages.dev/",
+  "taken": "2026-11-09"
+ },
+ "step2-e1": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://step2-ck-v1.pages.dev",
+  "taken": "2026-11-09"
+ },
+ "toolkit": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://seansooch.dev/toolkit/",
+  "taken": "2026-11-09"
+ },
+ "toolkit-e1": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://toolkit-v1.pages.dev/toolkit/",
+  "taken": "2026-11-09"
+ },
+ "vol1": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://seansooch-vol1.pages.dev/",
+  "taken": "2026-11-09"
+ },
+ "vol2": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://seansooch-vol2.pages.dev/",
+  "taken": "2026-11-09"
+ },
+ "vol3-a": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://seansooch.dev/",
+  "taken": "2026-11-09"
+ },
+ "vol3-c": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://seansooch.dev/designs/composer/",
+  "taken": "2026-11-09"
+ },
+ "vol3-f": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://seansooch.dev/designs/fable/",
+  "taken": "2026-11-09"
+ },
+ "vol3-g": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://seansooch.dev/designs/grok/",
+  "taken": "2026-11-09"
+ },
+ "vol3-o": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://seansooch.dev/designs/opus/",
+  "taken": "2026-11-09"
+ },
+ "vol4": {
+  "w": 1440,
+  "h": 900,
+  "url": "http://localhost:8104/",
+  "taken": "2026-11-09"
+ },
+ "warrior": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://warrior-ready.pages.dev/",
+  "taken": "2026-11-09"
+ },
+ "warrior-e1": {
+  "w": 1440,
+  "h": 900,
+  "url": "https://warrior-ready-v1.pages.dev",
+  "taken": "2026-11-09"
+ }
+}

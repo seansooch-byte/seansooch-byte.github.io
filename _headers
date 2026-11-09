@@ -21,20 +21,23 @@ https://:version.:project.pages.dev/*
 # Google Fonts, hls.js 1.7.3 from jsDelivr (the /music/ players), blob: media
 # and workers for HLS, inline <style>/<script> in the generated pages, the
 # homepage's host probes (connect-src, one origin per probed host plus the
-# www.admissionsacademy.org redirect target), and Cloudflare Web Analytics
-# (static.cloudflareinsights.com), which Pages injects into live HTML.
-# The Grok view's pictures are NASA's Astronomy Picture of the Day: the feed is read
-# from science.nasa.gov (connect-src) and the images load from assets.science.nasa.gov.
-# https://seansooch.dev is listed beside 'self' because the film buttons and
-# probes use absolute URLs, which are cross-origin on the *.pages.dev hosts.
-# A new probed host needs a connect-src entry here.
+# www.admissionsacademy.org redirect target), and Cloudflare Web Analytics'
+# two hosts, for when it is switched on (on 2026-11-09 live HTML carried no
+# beacon: Cloudflare adds only a challenge script and a hidden link, both
+# from this origin).
+# The edition's own pages (/, /two-stories/, /lab/, 404) hold no inline script or
+# style: 'unsafe-inline' stays for the tool pages and lessons, which do.
+# https://seansooch.dev is listed beside 'self' because the probes of the works
+# that live on this origin use absolute URLs, which are cross-origin on the
+# *.pages.dev hosts. A new probed host needs a connect-src entry here, and
+# tools/edition_test.py fails until it has one.
 /*
   Strict-Transport-Security: max-age=31536000
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: accelerometer=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), hid=(), magnetometer=(), microphone=(), midi=(), payment=(), serial=(), usb=(), xr-spatial-tracking=(), fullscreen=(self)
-  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/hls.js@1.7.3/ https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https://seansooch.dev https://assets.science.nasa.gov; media-src 'self' https://seansooch.dev blob:; worker-src 'self' blob:; connect-src 'self' https://seansooch.dev https://cloudflareinsights.com https://step2-ck.pages.dev https://patient-handoff-tracker.onrender.com https://micro-td.pages.dev https://warrior-ready.pages.dev https://differential-c57.pages.dev https://simulators-4lb.pages.dev https://edge-7yj.pages.dev https://ncaat-bracket-2026.pages.dev https://masters-2026.pages.dev https://detroit-sports.pages.dev https://great-books.pages.dev https://admissionsacademy.org https://www.admissionsacademy.org https://forge-8ce.pages.dev https://cic-dashboard.pages.dev https://reading-room.pages.dev https://philosophy-room.pages.dev https://situation.seansooch.dev https://science.nasa.gov; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'
+  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/hls.js@1.7.3/ https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https://seansooch.dev; media-src 'self' https://seansooch.dev blob:; worker-src 'self' blob:; connect-src 'self' https://seansooch.dev https://cloudflareinsights.com https://step2-ck.pages.dev https://patient-handoff-tracker.onrender.com https://micro-td.pages.dev https://warrior-ready.pages.dev https://differential-c57.pages.dev https://simulators-4lb.pages.dev https://edge-7yj.pages.dev https://ncaat-bracket-2026.pages.dev https://masters-2026.pages.dev https://detroit-sports.pages.dev https://great-books.pages.dev https://admissionsacademy.org https://www.admissionsacademy.org https://forge-8ce.pages.dev https://cic-dashboard.pages.dev https://reading-room.pages.dev https://philosophy-room.pages.dev https://situation.seansooch.dev; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'
 
 # The Lab is edited often, by hand and by the lab pipeline, and its lesson pages ask for their
 # scripts and styles by plain names. Every file under /lab/ is revalidated on each load (a 304

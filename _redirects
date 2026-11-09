@@ -18,6 +18,14 @@
 /designs/fable/monitor/*  https://situation.seansooch.dev/  301
 /designs/opus/monitor  https://situation.seansooch.dev/  301
 /designs/opus/monitor/*  https://situation.seansooch.dev/  301
+/designs/fable  https://seansooch-vol3.pages.dev/designs/fable/  301
+/designs/fable/*  https://seansooch-vol3.pages.dev/designs/fable/:splat  301
+/designs/opus  https://seansooch-vol3.pages.dev/designs/opus/  301
+/designs/opus/*  https://seansooch-vol3.pages.dev/designs/opus/:splat  301
+/designs/composer  https://seansooch-vol3.pages.dev/designs/composer/  301
+/designs/composer/*  https://seansooch-vol3.pages.dev/designs/composer/:splat  301
+/designs/grok  https://seansooch-vol3.pages.dev/designs/grok/  301
+/designs/grok/*  https://seansooch-vol3.pages.dev/designs/grok/:splat  301
 /toolkit/graph-vs-loop  /force-multipliers/graph-vs-loop/  301
 /toolkit/graph-vs-loop/*  /force-multipliers/graph-vs-loop/:splat  301
 /toolkit/obsidian-reader  /force-multipliers/obsidian-reader/  301

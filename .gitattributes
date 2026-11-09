@@ -5,3 +5,5 @@
 .gitignore      export-ignore
 *.md            export-ignore
 /tools          export-ignore
+/content        export-ignore
+/plates/manifest.json  export-ignore

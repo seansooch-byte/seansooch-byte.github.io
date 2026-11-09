@@ -1,0 +1,1413 @@
+{
+ "about": "The record of seansooch.dev: every work, paper, film and edition, in one file. tools/build.py renders the pages from it, and every count printed on a page is derived from it. Edit this file, then run tools/build.py. Never type a count into a sentence.",
+ "site": {
+  "name": "Sean Sooch",
+  "origin": "https://seansooch.dev",
+  "first_deploy": "2026-04",
+  "title": "Sean Sooch: Medicine, Military, Machines",
+  "worlds_line": "Medicine · Military · Machines",
+  "roles": "Medical student. Military officer. Builder."
+ },
+ "edition": {
+  "n": 4,
+  "vol": "Vol. 04",
+  "name": "Side by Side",
+  "by": "Claude Fable 5.2",
+  "issued": "2026-11-09",
+  "counted": "2026-11-09",
+  "faces": "Roboto Serif, by Greg Gazdowicz of Commercial Type, and Mona Sans, by GitHub"
+ },
+ "worlds": [
+  {
+   "id": "med",
+   "slug": "medicine",
+   "name": "Medicine"
+  },
+  {
+   "id": "mil",
+   "slug": "military",
+   "name": "Military"
+  },
+  {
+   "id": "mac",
+   "slug": "machines",
+   "name": "Machines"
+  },
+  {
+   "id": "spt",
+   "slug": "sports",
+   "name": "Sports"
+  },
+  {
+   "id": "hum",
+   "slug": "humanities",
+   "name": "Humanities"
+  },
+  {
+   "id": "mus",
+   "slug": "music",
+   "name": "Music"
+  }
+ ],
+ "prose": {
+  "lede": {
+   "tech": "**{Systems} working systems** where medicine, the military and frontier AI meet, built by a **medical student** and **military officer** with AI as the engineering tool. **{lines} lines** across {files} files. Every one is live, and this page asks each address to answer while you read.",
+   "plain": "{Systems} working apps, built by one person in spare time. I'm a **medical student** and **military officer**, and AI wrote most of the code with me. **Everything here is live**, and this page checks that for you the moment it loads."
+  },
+  "purpose": {
+   "tech": "This site documents {months} months of learning and building in spare hours. These projects were made possible by tools that lowered the technical barrier between an idea and working software. Others will bring different experience and build better things.",
+   "plain": "This page documents {months} months of learning and building {systems} working projects in spare time. New tools made it easier to turn ideas into software. Other people will bring different experience and build better things."
+  },
+  "scope": {
+   "tech": "Everything listed is deployed and public. The page does not take that on faith: when it loads, your browser asks every address in the directory to answer, and records what came back beside its name. The work is set out by world, then the writing and the films. The editions are the change record for the site itself.",
+   "plain": "Everything here is online and public. When the page loads, it checks each app from your own browser and shows the result beside its name. The apps come first, then the writing and the videos, and the last part explains why this site keeps getting rebuilt."
+  },
+  "method": {
+   "tech": "Every system was specified by the author and written with Claude, then verified the way a clinician verifies a lab: against a source, by a second reader, and against the live deployment rather than the local copy. Medical content carries its citations. Scoring tables cite the governing publication. Where a source deck was wrong, the question was corrected and the correction logged.",
+   "plain": "I describe what I want, the AI writes it, and then it gets checked the way a doctor checks a test result: against a trusted source, by a second reviewer, and on the real live site. Medical facts show where they came from."
+  },
+  "note": {
+   "tech": "Study tools on this site are for exam preparation and are not medical advice. Clinical calculators and field references are teaching aids; confirm with the governing guideline before use on a patient.",
+   "plain": "The study tools here are for exam practice and are not medical advice. The calculators and references are teaching aids: check the official guideline before using one on a patient."
+  },
+  "caution": {
+   "tech": "The probe is an opaque cross-origin fetch, so it can only report that a host answered, not that the answer was the right page. Treat a filled dot as \"the lights are on\", and click through for anything that matters.",
+   "plain": "The check only proves that each site answered, not that the page it sent back was the right one. A filled dot means the lights are on. Click through for anything that matters."
+  },
+  "practice": {
+   "tech": "This site is rebuilt from the ground up at every new Anthropic model class, as a personal benchmark of frontier capability. Each edition is designed end to end by the model it is named for, then **retired, not deleted**, when its successor arrives. The archive is the measurement: put two volumes side by side and you can see, in typography and judgment rather than benchmark scores, how far the frontier moved. Vol. 01 wore the newsroom, Vol. 02 wore the clinic, and Vol. 03 wore the uniform, then four more costumes at once. Vol. 04 wears nothing: it sets each work beside its own earlier edition and lets you look.",
+   "plain": "Every time a new class of Claude comes out, I have it redesign this entire site. The old version gets retired and archived, not deleted. Compare any two editions side by side and you can see how much better the models are getting: **taste is harder to fake than a test score**. This edition does the comparing for you."
+  },
+  "since": {
+   "tech": "What changed since Vol. 03 was issued in September, beyond the design. The five views are retired together and the site is one edition again, built from one record, so a count can no longer disagree with itself between pages. Great Books, AdmissionsAcademy, the music, Monitoring the Situation and Force Multipliers joined the work, and the Lab opened in October. {Kept} apps now have an earlier edition kept at its own address, most of them redesigned from a blank page by Claude Opus 5.5 in September. Every description was checked again on 9 November 2026 against the source and the live app, and corrected where the app had moved on or the claim was more than the record supports. The lines were recounted from source: {lines} in {files} files, up from {previous_lines} in {previous_files}. Two things this edition adds that no earlier volume had: the work itself, shown as it looks today, and each earlier edition set beside it.",
+   "plain": "Since the last edition: the five switchable designs were retired and the site is one design again. A medicine course was added, along with a tracker of what the internet is talking about, a set of how-to cards and a music page. Most of the apps were redesigned, and their old versions are still online. Every description was checked again against the real app. This edition also shows you a picture of every app, and can put the old version next to the new one."
+  }
+ },
+ "text": {
+  "colophon": "Designed and built by {designer} in {issued}, for {name}, who specified and built everything it describes. The page has no colour of its own: every colour on it belongs to the work. Nothing on it is a mockup.",
+  "films": "Rendered from code, captured from live sites. Sound on.",
+  "editions": "One redesign per model class. Nothing is deleted.",
+  "record": "What is counted, beside what your browser just measured.",
+  "vol3_story": "It began as a field manual and was not retired when the next class arrived: {views_more} more designers drew the same text, in the order below, and a switch at the foot of every page moved between them. They are retired together and kept together: the switch still works in the archive.",
+  "lost": "The page may have moved when an edition was retired. Retired editions are kept, and every one is linked from Editions.",
+  "lab_lede": "Core medicine, one picture at a time. Each lesson takes a single idea, starting with how the heart fills and empties, builds it step by step in plain language with moving pictures, then asks you to predict what each disease and drug class will do before it shows you.",
+  "lab_rules": "Every lesson opens with what you will be able to do and how long it takes, ends with a quiz and a one-page summary, and has a Clinical values tab: typical adult reference ranges from standard textbooks and guidelines, each one cited, drawn against the lesson as it runs. Educational only and not for clinical use; no drug doses. Your progress stays in this browser: no accounts, no trackers, and it works on a phone and with a keyboard.",
+  "lab_review": "Ten questions drawn from the lessons you have started, shuffled together, each with its answer explained and a link back to the step that teaches it. Mixing topics is harder than one lesson's quiz, which is what makes it stick.",
+  "lab_newest": "Shipped lessons that the syllabus does not place in a unit yet."
+ },
+ "works": [
+  {
+   "id": "step2",
+   "world": "med",
+   "also": [],
+   "tier": "major",
+   "kind": "system",
+   "counted": true,
+   "name": "Step 2 CK Qbank",
+   "sub": "Board preparation",
+   "url": "https://step2-ck.pages.dev/",
+   "host": "step2-ck.pages.dev",
+   "wake": false,
+   "note": null,
+   "tech": "Public study site over seven Anki-derived banks: 12,972 board-style questions and 12,357 guide facts across eight subjects, a UWorld-style test engine with tutor and exam modes, per-system performance, and three drill tools. Built by a chunk, author, review, adversarial-triage pipeline that caught and corrected about 100 factual errors in the commercial source decks during authoring and 90 more in triage.",
+   "plain": "Free practice questions and study guides for the Step 2 CK and COMLEX subjects: nearly 13,000 questions, every one checked against its source card and most read again by an independent reviewer, plus a test mode that works like the commercial question banks.",
+   "stats": [
+    [
+     "12,972",
+     "questions"
+    ],
+    [
+     "8",
+     "subjects"
+    ],
+    [
+     "7",
+     "question banks"
+    ]
+   ],
+   "go": "Open the question bank",
+   "index": "Step 2 CK Qbank",
+   "kw": "medicine questions anki uworld study guides usmle comlex",
+   "editions": [
+    {
+     "n": 1,
+     "name": null,
+     "by": "Claude",
+     "date": "2026-09",
+     "url": "https://step2-ck-v1.pages.dev"
+    },
+    {
+     "n": 2,
+     "name": "Workroom",
+     "by": "Claude Opus 5.5",
+     "date": "2026-09-22",
+     "current": true
+    }
+   ]
+  },
+  {
+   "id": "handoff",
+   "world": "med",
+   "also": [],
+   "tier": "major",
+   "kind": "system",
+   "counted": true,
+   "name": "Patient Handoff Tracker",
+   "sub": "Quality improvement",
+   "url": "https://patient-handoff-tracker.onrender.com/",
+   "host": "patient-handoff-tracker.onrender.com",
+   "wake": true,
+   "note": "30 to 60 s to wake",
+   "plate_note": "Synthetic patients, no real data",
+   "tech": "Full-stack I-PASS/SBAR handoff system built as an emergency medicine QI project: named-receiver read-back that only the receiver can acknowledge and verify, action items, Joint Commission compliance metrics with CSV export, and HIPAA-conscious audit logging over synthetic patients. Flask and SQLite on a free tier, so the first load wakes the server.",
+   "plain": "A digital checklist for doctors handing off patients between shifts, a step the Joint Commission names as a leading cause of serious safety events. Built as an emergency medicine quality improvement project, with made-up patients only. The first load can take 30 to 60 seconds while the free server wakes up.",
+   "stats": [
+    [
+     "22",
+     "API endpoints"
+    ],
+    [
+     "8",
+     "DB tables"
+    ],
+    [
+     "Flask",
+     "and SQLite"
+    ]
+   ],
+   "go": "Open the tracker",
+   "index": "Patient Handoff Tracker",
+   "kw": "medicine ipass sbar emergency department flask quality improvement",
+   "editions": [
+    {
+     "n": 1,
+     "name": null,
+     "by": "Claude",
+     "date": "2026-04",
+     "url": "https://handoff-tracker-v1.pages.dev"
+    },
+    {
+     "n": 2,
+     "name": "Chart Tab",
+     "by": "Claude Opus 5.5",
+     "date": "2026-09-22",
+     "current": true
+    }
+   ]
+  },
+  {
+   "id": "ekg",
+   "world": "med",
+   "also": [],
+   "tier": "major",
+   "kind": "system",
+   "counted": true,
+   "name": "Read This",
+   "sub": "Cardiology",
+   "url": "https://seansooch.dev/ekg/",
+   "host": "seansooch.dev/ekg",
+   "wake": false,
+   "note": null,
+   "tech": "Pattern-interpretation trainer: 28 procedurally generated rhythm strips at 25 mm/s with calipers and a live monitor, a fixed 8-step read of 14 twelve-lead cases with MI localization by territory, and an outside-in chest film read over synthesized radiographs and real films. Every case sourced.",
+   "plain": "Learn to read heart tracings and chest X-rays the same disciplined way every time. Draws realistic EKGs from medical criteria, then quizzes you.",
+   "stats": [
+    [
+     "28",
+     "rhythms"
+    ],
+    [
+     "8",
+     "read steps"
+    ],
+    [
+     "100%",
+     "sourced"
+    ]
+   ],
+   "go": "Open the trainer",
+   "index": "Read This (EKG and CXR trainer)",
+   "kw": "medicine ekg ecg rhythms 12-lead cardiology chest x-ray",
+   "editions": [
+    {
+     "n": 1,
+     "name": null,
+     "by": "Claude Opus 4.8 to Fable 5",
+     "date": "2026-05",
+     "url": "https://ekg-v1.pages.dev"
+    },
+    {
+     "n": 2,
+     "name": "Reading Room",
+     "by": "Claude Opus 5.5",
+     "date": "2026-09-22",
+     "current": true
+    }
+   ]
+  },
+  {
+   "id": "microtd",
+   "world": "med",
+   "also": [],
+   "tier": "major",
+   "kind": "system",
+   "counted": true,
+   "name": "MICRO TD",
+   "sub": "Game",
+   "url": "https://micro-td.pages.dev/",
+   "host": "micro-td.pages.dev",
+   "wake": false,
+   "note": "best on desktop",
+   "tech": "Tower defense where the body is the map: 16 guideline cases as levels, 34 real drugs as towers against 25 organisms, damage set by coverage and site penetration, resistance bred by antibiotic pressure, and organ toxicity, plus a one-patient Ward Rounds mode. TypeScript and Canvas, every fact sourced, 104 tests.",
+   "plain": "Treat infections as a tower defense game: every tower is a real antibiotic that only works where it reaches and against the germs it covers. Broad drugs breed resistance, and every drug costs the patient something. Built to make studying infectious disease feel like a game.",
+   "stats": [
+    [
+     "16",
+     "guideline cases"
+    ],
+    [
+     "34",
+     "drugs"
+    ],
+    [
+     "25",
+     "organisms"
+    ]
+   ],
+   "go": "Play",
+   "index": "MICRO TD",
+   "kw": "medicine game tower defense antibiotics microbiology typescript",
+   "editions": [
+    {
+     "n": 1,
+     "name": null,
+     "by": "Claude",
+     "date": "2026-04",
+     "url": "https://micro-td-v1.pages.dev"
+    },
+    {
+     "n": 2,
+     "name": "Oil Immersion",
+     "by": "Claude Opus 5.5",
+     "date": "2026-09-22",
+     "current": true
+    }
+   ]
+  },
+  {
+   "id": "lab",
+   "world": "med",
+   "also": [],
+   "tier": "major",
+   "kind": "course",
+   "counted": false,
+   "name": "The Lab",
+   "sub": "Course",
+   "url": "https://seansooch.dev/lab/",
+   "host": "seansooch.dev/lab",
+   "wake": false,
+   "note": null,
+   "tech": "A course in core medicine, taught one picture at a time. Each lesson takes a single idea, starting with how the heart fills and empties, builds it step by step in plain language with animated visuals, then shows how disease and common drug classes change the picture. Educational only, not for clinical use.",
+   "plain": "Short visual lessons that teach how the body works, one step at a time and in plain language. Start with the heart, then see what common medicines do to it. For learning only, not for patient care.",
+   "stats": "ledger",
+   "go": "Start the course",
+   "index": "The Lab",
+   "kw": "lab course lessons core medicine physiology pharmacology drugs teaching visual students",
+   "editions": [],
+   "plate_url": "/lab/pressure-volume-loop/#step-9",
+   "plate_scroll": "#lesson"
+  },
+  {
+   "id": "admissions",
+   "world": "med",
+   "also": [],
+   "tier": "major",
+   "kind": "organization",
+   "counted": true,
+   "name": "AdmissionsAcademy",
+   "sub": "Education",
+   "url": "https://admissionsacademy.org/",
+   "host": "admissionsacademy.org",
+   "wake": false,
+   "note": null,
+   "tech": "Founded by Paul Clancy to expand access to medical education: a free Pre-Med Essentials course, MCAT strategy, and application guidance for students from any background. Sean serves as Chief Technology Officer.",
+   "plain": "Founded by Paul Clancy to make the path to medical school easier to navigate, with free guides, MCAT help and mentorship for students from any background.",
+   "stats": [
+    [
+     "Free",
+     "premed course"
+    ],
+    [
+     "MCAT",
+     "strategy"
+    ],
+    [
+     "CTO",
+     "Sean's role"
+    ]
+   ],
+   "go": "Visit",
+   "index": "AdmissionsAcademy",
+   "kw": "medicine medical school admissions advising mentorship education access",
+   "editions": [],
+   "plate": false
+  },
+  {
+   "id": "toolkit",
+   "world": "med",
+   "also": [
+    "mil"
+   ],
+   "tier": "minor",
+   "kind": "system",
+   "counted": false,
+   "name": "Hospital and Field Toolkit",
+   "sub": "Reference and TCCC",
+   "url": "https://seansooch.dev/toolkit/",
+   "host": "seansooch.dev/toolkit",
+   "wake": false,
+   "note": null,
+   "tech": "Clinical calculators, antibiotic coverage matrix, differentials, lab reference with the CBC + CMP decoder, and TCCC MARCH: five tools, one hub.",
+   "plain": "Five quick medical references in one place: calculators, which antibiotic covers which bug, likely causes for common complaints, normal lab values with a decoder for the two most common blood panels, and a battlefield first-aid checklist. Teaching aids, not medical advice.",
+   "stats": [],
+   "go": "Open the toolkit",
+   "index": "Hospital and Field Toolkit",
+   "kw": "ancillary calculators antibiotics differentials lab values tccc march",
+   "editions": [
+    {
+     "n": 1,
+     "name": null,
+     "by": "Claude",
+     "date": "2026",
+     "url": "https://toolkit-v1.pages.dev/toolkit/"
+    },
+    {
+     "n": 2,
+     "name": "Pocket Cards",
+     "by": "Claude Opus 5.5",
+     "date": "2026-09-22",
+     "current": true
+    }
+   ]
+  },
+  {
+   "id": "warrior",
+   "world": "mil",
+   "also": [],
+   "tier": "major",
+   "kind": "system",
+   "counted": true,
+   "name": "Warrior Ready",
+   "sub": "Fitness standards",
+   "url": "https://warrior-ready.pages.dev/",
+   "host": "warrior-ready.pages.dev",
+   "wake": false,
+   "note": null,
+   "tech": "All-branch PT scorecard at 2026 standards: six services scored from their official charts with the source cited, per-service body composition screens, run pacer with lap splits, ruck planner, and score history. The build refuses to ship unless 72 spot checks read off the printed charts pass.",
+   "plain": "A fitness test calculator for every U.S. military branch, scored from each service's official 2026 charts with the source shown. Enter your numbers, see your score instantly. No account needed.",
+   "stats": [
+    [
+     "6",
+     "branches"
+    ],
+    [
+     "72",
+     "chart spot checks"
+    ],
+    [
+     "0",
+     "dependencies"
+    ]
+   ],
+   "go": "Open the scorecard",
+   "index": "Warrior Ready",
+   "kw": "military fitness pt test acft pfa pft calculator ruck",
+   "editions": [
+    {
+     "n": 1,
+     "name": null,
+     "by": "Claude",
+     "date": "2026-04",
+     "url": "https://warrior-ready-v1.pages.dev"
+    },
+    {
+     "n": 2,
+     "name": "Scorecard",
+     "by": "Claude Opus 5.5",
+     "date": "2026-09-22",
+     "current": true
+    }
+   ]
+  },
+  {
+   "id": "agi",
+   "world": "mac",
+   "also": [],
+   "tier": "major",
+   "kind": "system",
+   "counted": true,
+   "name": "AGI Capability Tracker",
+   "sub": "AI safety",
+   "url": "https://differential-c57.pages.dev/",
+   "host": "differential-c57.pages.dev",
+   "wake": false,
+   "note": null,
+   "tech": "The AI frontier as a 3D wavefront over 13 benchmarks, on one clock you can run back to March 2023: 65 models, 10 sectors in a weighted index with its method published, verified ARC-AGI cells, 10 capability events, a capability-against-control ledger, and a gated-tier toggle for what the labs hold back. Updated October 2026.",
+   "plain": "A dashboard tracking how close AI is to human-level ability across 10 skill areas, following 65 models, with a record of the moments that actually moved the frontier. A toggle shows what the labs keep back from public release.",
+   "stats": [
+    [
+     "65",
+     "models"
+    ],
+    [
+     "10",
+     "sectors"
+    ],
+    [
+     "10",
+     "events"
+    ]
+   ],
+   "go": "Open the tracker",
+   "index": "AGI Capability Tracker",
+   "kw": "machines ai benchmarks frontier models dashboard safety mythos",
+   "editions": [
+    {
+     "n": 1,
+     "name": null,
+     "by": "Claude Opus 4.6",
+     "date": "2026-04",
+     "url": null
+    },
+    {
+     "n": 2,
+     "name": null,
+     "by": "Claude Opus 4.6 to Opus 4.8",
+     "date": "2026-04",
+     "url": "https://agi-tracker-v2.pages.dev"
+    },
+    {
+     "n": 3,
+     "name": "The Ledger",
+     "by": "Claude Fable 5.1",
+     "date": "2026-09-16",
+     "url": "https://agi-tracker-v3.pages.dev"
+    },
+    {
+     "n": 4,
+     "name": "Blueshift",
+     "by": "Claude Opus 5.5",
+     "date": "2026-10-06",
+     "current": true
+    }
+   ],
+   "editions_note": "Edition 1 was not kept.",
+   "plate_url": "https://differential-c57.pages.dev/?still=1"
+  },
+  {
+   "id": "sims",
+   "world": "mac",
+   "also": [
+    "med"
+   ],
+   "tier": "major",
+   "kind": "system",
+   "counted": true,
+   "name": "Simulators",
+   "sub": "Simulation",
+   "url": "https://simulators-4lb.pages.dev/",
+   "host": "simulators-4lb.pages.dev",
+   "wake": false,
+   "note": null,
+   "tech": "Four sims, one umbrella: the Alignment Simulator (run a frontier lab, 12 decisions, 6 endings, built from the Risk Stack paper), Code Blue (spacebar CPR with live rate and depth feedback, AHA 2020), Half-Life Tracker (caffeine, hydration, and BAC pharmacokinetics), and Pocket Telescope (live night-sky ID and star quizzes).",
+   "plain": "Four browser tools: run an AI lab and live with your choices, perform CPR with real-time coaching, watch caffeine or alcohol clear your system over time, and learn tonight's sky from your location.",
+   "stats": [
+    [
+     "4",
+     "sims"
+    ],
+    [
+     "24",
+     "decisions"
+    ],
+    [
+     "11",
+     "endings"
+    ]
+   ],
+   "go": "Run a simulator",
+   "index": "Simulators",
+   "kw": "machines alignment simulator cpr code blue caffeine telescope",
+   "editions": [
+    {
+     "n": 1,
+     "name": null,
+     "by": "Claude Opus 4.x",
+     "date": "2026-04",
+     "url": "https://simulators-v1.pages.dev"
+    },
+    {
+     "n": 2,
+     "name": "Drawing Set",
+     "by": "Claude Opus 5.5",
+     "date": "2026-09-22",
+     "current": true
+    }
+   ]
+  },
+  {
+   "id": "situation",
+   "world": "mac",
+   "also": [],
+   "tier": "major",
+   "kind": "system",
+   "counted": true,
+   "name": "Monitoring the Situation",
+   "sub": "The internet",
+   "url": "https://situation.seansooch.dev/",
+   "host": "situation.seansooch.dev",
+   "wake": false,
+   "note": null,
+   "tech": "One record of what every corner of the internet is passing around. Grok reads X each hour across nineteen desks; Claude confirms every post with X, writes a line on what it is, and researches the larger stories, setting out how each world describes them and what is on the record.",
+   "plain": "Shows what is going viral across the whole internet, not just your own feed. Each post gets a plain sentence saying what it is, and the bigger stories show how different groups see them and what is actually established.",
+   "stats": [
+    [
+     "19",
+     "desks"
+    ],
+    [
+     "2",
+     "AI agents"
+    ],
+    [
+     "2",
+     "checks per post"
+    ]
+   ],
+   "go": "Read the record",
+   "index": "Monitoring the Situation",
+   "kw": "machines ai internet viral posts x twitter news pulse desks grok claude echo chamber",
+   "editions": [
+    {
+     "n": 1,
+     "name": "Record Section",
+     "by": "Claude Opus 5.5",
+     "date": "2026-10-09",
+     "url": null
+    },
+    {
+     "n": 2,
+     "name": "Glossy",
+     "by": "Claude Opus 5.5",
+     "date": "2026-10-09",
+     "current": true
+    }
+   ],
+   "editions_note": "Edition 1, Record Section, was replaced the day it shipped and was not kept."
+  },
+  {
+   "id": "forge",
+   "world": "mac",
+   "also": [],
+   "tier": "minor",
+   "kind": "system",
+   "counted": false,
+   "name": "Forge",
+   "sub": "Claude API, vision",
+   "url": "https://forge-8ce.pages.dev/",
+   "host": "forge-8ce.pages.dev",
+   "wake": false,
+   "note": null,
+   "tech": "Prompt-to-HTML site builder on the Anthropic streaming API, clone mode, component injector, live theme controls.",
+   "plain": "Type what you want and it writes a web page for you, using Claude. It can also copy the look of a screenshot, and you can restyle the result live.",
+   "stats": [],
+   "go": "Open",
+   "index": "Forge",
+   "kw": "ancillary claude api site builder prompt html",
+   "editions": [
+    {
+     "n": 1,
+     "name": null,
+     "by": "Claude",
+     "date": "2026-04",
+     "url": "https://forge-v1.pages.dev"
+    },
+    {
+     "n": 2,
+     "name": "Casting Floor",
+     "by": "Claude Opus 5.5",
+     "date": "2026-09-22",
+     "current": true
+    }
+   ]
+  },
+  {
+   "id": "space",
+   "world": "mac",
+   "also": [],
+   "tier": "minor",
+   "kind": "system",
+   "counted": false,
+   "name": "Space Explorer",
+   "sub": "NASA, live APIs",
+   "url": "https://cic-dashboard.pages.dev/",
+   "host": "cic-dashboard.pages.dev",
+   "wake": false,
+   "note": null,
+   "tech": "Live dashboard in eight sections over twelve public feeds, seven of them NASA's: APOD, the ISS over a map with its ground track, launch countdowns, EPIC Earth imagery and events, the Sun and its flares, near-Earth approaches, deep space, news.",
+   "plain": "A live space dashboard: today's astronomy picture, where the space station is right now, upcoming rocket launches, fresh pictures of Earth and the Sun, asteroids passing by, and space news, mostly from NASA's public data.",
+   "stats": [],
+   "go": "Explore",
+   "index": "Space Explorer",
+   "kw": "ancillary nasa apis iss asteroids apod",
+   "editions": [
+    {
+     "n": 1,
+     "name": null,
+     "by": "Claude",
+     "date": "2026-04",
+     "url": "https://cic-dashboard-v1.pages.dev"
+    },
+    {
+     "n": 2,
+     "name": "Flight Plan",
+     "by": "Claude Opus 5.5",
+     "date": "2026-09-22",
+     "current": true
+    }
+   ]
+  },
+  {
+   "id": "multipliers",
+   "world": "mac",
+   "also": [],
+   "tier": "minor",
+   "kind": "system",
+   "counted": false,
+   "name": "Force Multipliers",
+   "sub": "Methods, AI agents",
+   "url": "https://seansooch.dev/force-multipliers/",
+   "host": "seansooch.dev/force-multipliers",
+   "wake": false,
+   "note": null,
+   "tech": "Three briefing cards on the tools behind the work: graph versus loop engineering for AI agents, the reader in Obsidian, and the scheduler in Anki. Each ends with three check questions.",
+   "plain": "Three short explainers on the tools behind this work: how to organize AI agents, how to read and save articles in Obsidian, and how Anki schedules flashcards. Each ends with three questions to check yourself.",
+   "stats": [],
+   "go": "Open the cards",
+   "index": "Force Multipliers",
+   "kw": "ancillary graph engineering loop agents obsidian reader web clipper anki spaced repetition fsrs briefing cards",
+   "editions": [
+    {
+     "n": 1,
+     "name": "Briefing Cards",
+     "by": "Claude Opus 5.5",
+     "date": "2026-10-10",
+     "current": true
+    }
+   ]
+  },
+  {
+   "id": "edge",
+   "world": "spt",
+   "also": [],
+   "tier": "major",
+   "kind": "system",
+   "counted": true,
+   "name": "Edge Draft Terminal",
+   "sub": "Fantasy football",
+   "url": "https://edge-7yj.pages.dev/",
+   "host": "edge-7yj.pages.dev",
+   "wake": false,
+   "note": "data last harvested 6 Sep 2026",
+   "tech": "Draft intelligence terminal for a 12-team half-PPR league: an 862-player board valued on a weighted seven-source composite and read against the Sleeper room's market price, weekly projections priced as points above replacement, Monte Carlo pick-path simulation in a worker, an in-season wire of injuries and market movers, and read-only replay of a live Sleeper draft room. Static PWA with CI-gated deploys and a test suite that also runs against production.",
+   "plain": "A fantasy football draft assistant that blends seven rankings and markets into one value per player, flags bargains, simulates what happens before your next pick, and can follow a live Sleeper draft as it happens. Every update is tested end to end before it ships.",
+   "stats": [
+    [
+     "862",
+     "players"
+    ],
+    [
+     "7",
+     "sources"
+    ],
+    [
+     "21,761",
+     "lines of tests"
+    ]
+   ],
+   "go": "Open the draft terminal",
+   "index": "Edge Draft Terminal",
+   "kw": "sports fantasy football draft sleeper adp monte carlo",
+   "editions": [
+    {
+     "n": 1,
+     "name": null,
+     "by": null,
+     "date": "2026-08-04",
+     "current": true
+    }
+   ]
+  },
+  {
+   "id": "ncaat",
+   "world": "spt",
+   "also": [],
+   "tier": "major",
+   "kind": "system",
+   "counted": true,
+   "name": "NCAAT Bracket",
+   "sub": "Hoops",
+   "url": "https://ncaat-bracket-2026.pages.dev/",
+   "host": "ncaat-bracket-2026.pages.dev",
+   "wake": false,
+   "note": null,
+   "tech": "Archive of the finished 2026 men's tournament: all 67 games from a frozen ESPN snapshot, every first-edition model graded against the results, and an interactive bracket that scores your own picks. A sourced fact-check found 531 first-edition claims to correct, all listed on the page.",
+   "plain": "The finished 2026 March Madness, kept as an archive: every game, plus a report card on how each prediction model actually did. Fill in your own bracket to see how it would have scored.",
+   "stats": [
+    [
+     "67",
+     "games"
+    ],
+    [
+     "4",
+     "models graded"
+    ],
+    [
+     "531",
+     "corrections"
+    ]
+   ],
+   "go": "Open the archive",
+   "index": "NCAAT Bracket",
+   "kw": "sports basketball march madness bracket kenpom",
+   "editions": [
+    {
+     "n": 1,
+     "name": null,
+     "by": "Claude",
+     "date": "2026-03",
+     "url": "https://ncaat-bracket-2026-v1.pages.dev"
+    },
+    {
+     "n": 2,
+     "name": "Studio",
+     "by": "Claude Opus 5.5",
+     "date": "2026-09-23",
+     "current": true
+    }
+   ]
+  },
+  {
+   "id": "masters",
+   "world": "spt",
+   "also": [],
+   "tier": "major",
+   "kind": "system",
+   "counted": true,
+   "name": "Masters 2026 Hub",
+   "sub": "Golf",
+   "url": "https://masters-2026.pages.dev/",
+   "host": "masters-2026.pages.dev",
+   "wake": false,
+   "note": null,
+   "tech": "Archive of the 2026 Masters as a hand-operated leaderboard: the final board for all 91 players with hole-by-hole cards from a frozen ESPN snapshot, an 18-hole yardage-book course guide, a searchable field, the champions' roll, and a Remotion film rendered from code. 137 corrections to the first edition are listed.",
+   "plain": "The 2026 Masters, kept as a finished scoreboard: every player's final card hole by hole, all 18 holes at Augusta with notes, the full field and past champions, and a short video made in code.",
+   "stats": [
+    [
+     "91",
+     "players"
+    ],
+    [
+     "18",
+     "holes"
+    ],
+    [
+     "600",
+     "frames"
+    ]
+   ],
+   "go": "Open the board",
+   "index": "Masters 2026 Hub",
+   "kw": "sports golf augusta leaderboard remotion",
+   "editions": [
+    {
+     "n": 1,
+     "name": null,
+     "by": "Claude",
+     "date": "2026-04",
+     "url": "https://masters-2026-v1.pages.dev"
+    },
+    {
+     "n": 2,
+     "name": "Big Board",
+     "by": "Claude Opus 5.5",
+     "date": "2026-09-22",
+     "current": true
+    }
+   ]
+  },
+  {
+   "id": "detroit",
+   "world": "spt",
+   "also": [],
+   "tier": "major",
+   "kind": "system",
+   "counted": true,
+   "name": "Detroit Sports Hub",
+   "sub": "Detroit",
+   "url": "https://detroit-sports.pages.dev/",
+   "host": "detroit-sports.pages.dev",
+   "wake": false,
+   "note": null,
+   "tech": "Hub board for the Lions, Tigers, Pistons and Red Wings plus three trackers: a new Lions app (live down and distance on a drawn field, drive charts, win probability), Tigers with pitch-by-pitch tracking, Statcast and a 30-prospect farm system, and an archive of the Pistons' 14-68 to East #1 seed run with injury watch and a 2004 tribute.",
+   "plain": "Detroit's teams on one board, with three full trackers: a new Lions app with live drive charts and win probability, a Tigers tracker with live game updates and prospect rankings, and a Pistons page on last season's worst-to-first turnaround. Zero frameworks.",
+   "stats": [
+    [
+     "3",
+     "trackers"
+    ],
+    [
+     "29",
+     "tabs"
+    ],
+    [
+     "0",
+     "dependencies"
+    ]
+   ],
+   "go": "Open the hub",
+   "index": "Detroit Sports Hub",
+   "kw": "sports tigers pistons baseball basketball statcast",
+   "editions": [
+    {
+     "n": 1,
+     "name": null,
+     "by": "Claude Opus 4.x",
+     "date": "2026-04",
+     "url": "https://detroit-sports-v1.pages.dev"
+    },
+    {
+     "n": 2,
+     "name": "Woodward",
+     "by": "Claude Opus 5.5",
+     "date": "2026-09-22",
+     "current": true
+    }
+   ]
+  },
+  {
+   "id": "greatbooks",
+   "world": "hum",
+   "also": [],
+   "tier": "major",
+   "kind": "system",
+   "counted": true,
+   "name": "Great Books",
+   "sub": "Literature and philosophy",
+   "url": "https://great-books.pages.dev/",
+   "host": "great-books.pages.dev",
+   "wake": false,
+   "note": null,
+   "tech": "Continuous-zoom library of 46 works across existentialism, political order, liberty, machines, knowledge, and reality.",
+   "plain": "Explore 46 major books at any depth, from a one-sentence overview to detailed chapter maps.",
+   "stats": [
+    [
+     "46",
+     "books"
+    ],
+    [
+     "5",
+     "shelves"
+    ],
+    [
+     "4",
+     "depths"
+    ]
+   ],
+   "go": "Read",
+   "index": "Great Books",
+   "kw": "humanities philosophy literature liberty knowledge reading",
+   "editions": [
+    {
+     "n": 1,
+     "name": null,
+     "by": "Claude Fable 5.1",
+     "date": "2026-09-15",
+     "url": "https://great-books-v1.pages.dev"
+    },
+    {
+     "n": 2,
+     "name": "Tri-band",
+     "by": "Claude Opus 5.5",
+     "date": "2026-09-22",
+     "current": true
+    }
+   ]
+  },
+  {
+   "id": "reading",
+   "world": "hum",
+   "also": [],
+   "tier": "minor",
+   "kind": "system",
+   "counted": false,
+   "name": "Reading Room",
+   "sub": "Annotated reading",
+   "url": "https://reading-room.pages.dev/",
+   "host": "reading-room.pages.dev",
+   "wake": false,
+   "note": null,
+   "tech": "An annotated card catalogue of 64 AI papers, X threads and blog posts collected through April 2026, each with a technical summary, a plain-language version and a note on why it matters.",
+   "plain": "A catalogue of 64 AI papers, threads and blog posts, each explained twice, once technically and once in plain language, with a note on why it matters.",
+   "stats": [
+    [
+     "64",
+     "entries"
+    ]
+   ],
+   "go": "Enter",
+   "index": "Reading Room",
+   "kw": "doctrine annotated papers reading",
+   "editions": [
+    {
+     "n": 1,
+     "name": null,
+     "by": "Claude",
+     "date": "2026-04",
+     "url": "https://reading-room-v1.pages.dev"
+    },
+    {
+     "n": 2,
+     "name": "The Stacks",
+     "by": "Claude Opus 5.5",
+     "date": "2026-09-22",
+     "current": true
+    }
+   ],
+   "room": true
+  },
+  {
+   "id": "philosophy",
+   "world": "hum",
+   "also": [],
+   "tier": "minor",
+   "kind": "system",
+   "counted": false,
+   "name": "Philosophy Room",
+   "sub": "Essays",
+   "url": "https://philosophy-room.pages.dev/",
+   "host": "philosophy-room.pages.dev",
+   "wake": false,
+   "note": null,
+   "tech": "One thesis: every great question converges on alignment, whether we can build minds that want what we want. Cosmology, consciousness, AI, identity, theology and game theory, each question read twice: as the classical problem and through the AI lens.",
+   "plain": "Nineteen short essays arguing that the big questions, from the origin of the universe to consciousness and God, all lead back to one: can we build minds that want what we want? Each question is read the classic way and then through AI.",
+   "stats": [
+    [
+     "19",
+     "essays"
+    ],
+    [
+     "6",
+     "sections"
+    ],
+    [
+     "30 min",
+     "to read"
+    ]
+   ],
+   "go": "Enter",
+   "index": "Philosophy Room",
+   "kw": "doctrine essays alignment philosophy theology game theory",
+   "editions": [
+    {
+     "n": 1,
+     "name": null,
+     "by": "Claude",
+     "date": "2026-04",
+     "url": "https://philosophy-room-v1.pages.dev"
+    },
+    {
+     "n": 2,
+     "name": "Black-Figure",
+     "by": "Claude Opus 5.5",
+     "date": "2026-09-22",
+     "current": true
+    }
+   ],
+   "room": true
+  },
+  {
+   "id": "music",
+   "world": "mus",
+   "also": [],
+   "tier": "major",
+   "kind": "collection",
+   "counted": false,
+   "name": "Music",
+   "sub": null,
+   "url": "https://seansooch.dev/music/",
+   "host": "seansooch.dev/music",
+   "wake": false,
+   "note": null,
+   "tech": "The Claudia Bench: anabology's Claudia films, kept as the bar. Measured against it, our own: LAST LIGHT, a grunge countdown to the Sun's last light; The Glass, the Claudia character singing track 4 of the Three Roads EP; and Til It's Over, the newest song.",
+   "plain": "Music videos and songs made with AI. Up top, someone else's best work as the standard to beat; below it, our own songs, one of them sung by that same AI character.",
+   "stats": [
+    [
+     "4",
+     "bench films"
+    ],
+    [
+     "3",
+     "songs of ours"
+    ],
+    [
+     "1",
+     "paper sung"
+    ]
+   ],
+   "go": "Listen",
+   "index": "Music",
+   "kw": "music video song bench benchmark anabology claudia clodyssey last light the glass three roads til it's over suno film",
+   "editions": []
+  }
+ ],
+ "papers": [
+  {
+   "id": "the-frontier-ai-risk-stack",
+   "name": "The Frontier AI Risk Stack",
+   "when": "April 2026",
+   "tag": "Humanities · Independent research",
+   "href": "https://differential-c57.pages.dev/#analysis-section",
+   "tech": "Frontier AI risk is best understood not as a single category but as a stack of six interacting layers. The most serious dangers arise from the way failures compound across layers: a structured analytical tool for policymakers, developers, and civil society.",
+   "plain": "AI risk isn't one problem, it's six problems stacked on top of each other, and the biggest dangers come from these layers making each other worse.",
+   "points": [
+    [
+     "Model Risk",
+     "deception, unsafe knowledge, concealment"
+    ],
+    [
+     "System Risk",
+     "orchestration, tool use, parallel execution"
+    ],
+    [
+     "Deployment Risk",
+     "real permissions, production access"
+    ],
+    [
+     "Access Risk",
+     "concentration, cognitive inequality"
+    ],
+    [
+     "Governance Risk",
+     "weak audits, regulatory capture"
+    ],
+    [
+     "Civilizational Risk",
+     "compounding failures across all layers"
+    ]
+   ],
+   "links": [
+    {
+     "href": "https://differential-c57.pages.dev/#analysis-section",
+     "label": "Read on AGI Tracker"
+    },
+    {
+     "href": "https://differential-c57.pages.dev/frontier-risk-stack.pdf",
+     "label": "Technical PDF"
+    },
+    {
+     "href": "https://seansooch.dev/frontier-risk-stack-simple.pdf",
+     "label": "Plain-language PDF"
+    }
+   ],
+   "index": "The Frontier AI Risk Stack (paper)",
+   "kw": "doctrine paper ai risk layers policy"
+  },
+  {
+   "id": "three-roads-from-here",
+   "name": "Three Roads From Here",
+   "when": "June 2026",
+   "tag": "Humanities · Independent research",
+   "href": "https://seansooch.dev/three-roads-from-here.pdf",
+   "tech": "The three positions on frontier AI (safety through development, acceleration, pause) characterized on their strongest terms, with existential and suffering risk treated as separate axes that do not always move together. The central frame: the camps are reading three different payoff matrices for the same game.",
+   "plain": "Three camps argue about powerful AI: keep building carefully, go faster, or pause. This paper explains all three fairly, shows there are two different worst cases rather than one, and plays the future out as a game to find the most likely outcome.",
+   "points": [
+    [
+     "Steer",
+     "build inside guardrails and tripwires"
+    ],
+    [
+     "Speed",
+     "the race cannot be stopped, only won"
+    ],
+    [
+     "Stop",
+     "pause until alignment is solved"
+    ],
+    [
+     "X-risk",
+     "losing the future entirely"
+    ],
+    [
+     "S-risk",
+     "a future that continues, and hurts"
+    ],
+    [
+     "The game",
+     "one matrix, three readings, edit the payoffs"
+    ]
+   ],
+   "links": [
+    {
+     "href": "https://seansooch.dev/three-roads-from-here.pdf",
+     "label": "Academic PDF"
+    },
+    {
+     "href": "https://seansooch.dev/three-roads-simple-mode.pdf",
+     "label": "Simple Mode PDF"
+    },
+    {
+     "href": "https://seansooch.dev/three-roads-game-theory-mode.pdf",
+     "label": "Game Theory Mode PDF"
+    }
+   ],
+   "index": "Three Roads From Here (paper)",
+   "kw": "doctrine paper ai safety acceleration pause game theory"
+  },
+  {
+   "id": "two-stories-about-the-beginning",
+   "name": "Two Stories About the Beginning",
+   "when": "September 2026",
+   "tag": "Humanities · Independent research",
+   "href": "/two-stories/",
+   "tech": "The Big Bang and a generated origin are the same kind of story: a starting condition plus a rule, with the evidence only ever reaching the rule. Four objections (tidiness, cheating, motive, proving too much) are taken seriously; two of them force the second story to change, and it survives as a testable rival rather than an evasion.",
+   "plain": "Physics says the universe started hot and dense and then the rules ran. A second story keeps the same start and the same rules and only changes who set them running. From inside you cannot tell the two apart, and this paper explains why that is not a problem with either story.",
+   "points": [
+    [
+     "Start + rule",
+     "every origin story, and the evidence reaches only the rule"
+    ],
+    [
+     "Tidiness",
+     "the first story already carries the extra layer"
+    ],
+    [
+     "Cheating",
+     "no shortcuts; the saving is that the rule is short"
+    ],
+    [
+     "Motive",
+     "dropped; the process only has to exist and run"
+    ],
+    [
+     "Last Thursday",
+     "a rival commits to something, an evasion to nothing"
+    ],
+    [
+     "The tests",
+     "finite grain, finite information, more room outside"
+    ]
+   ],
+   "links": [
+    {
+     "href": "/two-stories/",
+     "label": "Read the paper"
+    },
+    {
+     "href": "/two-stories/#table43",
+     "label": "The two stories, side by side"
+    },
+    {
+     "href": "/two-stories/#part2",
+     "label": "Part II, stated in full"
+    }
+   ],
+   "index": "Two Stories About the Beginning (paper)",
+   "kw": "doctrine paper cosmology origin simulation big bang generated"
+  }
+ ],
+ "films": [
+  {
+   "id": "vol-03-launch-film",
+   "name": "Vol. 03 launch film",
+   "title": "Vol. 03 launch film",
+   "tech": "Vol. 03 in motion: the cover, the topology answering, the roll call, the record, the index.",
+   "plain": "The previous version of this site, shown in motion in 80 seconds.",
+   "length": "1:20",
+   "made_with": "Edition film",
+   "src": "/videos/vol3-launch-film.mp4",
+   "poster": "/videos/vol3-poster.jpg",
+   "index": "Vol. 03 launch film",
+   "kw": "films video edition launch"
+  },
+  {
+   "id": "vol-02-launch-film",
+   "name": "Vol. 02 launch film",
+   "title": "Vol. 02 launch film",
+   "tech": "The June 2026 edition in motion: the triad, the rhythm strip, and every system in sequence.",
+   "plain": "The June 2026 version of this site, shown in motion.",
+   "length": "2:02",
+   "made_with": "Edition film",
+   "src": "/videos/launch-film.mp4",
+   "poster": "/videos/launch-poster.jpg",
+   "index": "Vol. 02 launch film",
+   "kw": "films video edition"
+  },
+  {
+   "id": "edge-product-demo",
+   "name": "Edge product demo",
+   "title": "Edge product demo",
+   "tech": "Fourteen states of the live draft terminal walked by a headless browser, narrated, and rendered with HyperFrames.",
+   "plain": "A narrated walk through the fantasy football draft tool, recorded automatically from the live site.",
+   "length": "1:26",
+   "made_with": "HyperFrames",
+   "src": "/videos/edge-demo.mp4",
+   "poster": "/videos/edge-poster.jpg",
+   "index": "Edge product demo film",
+   "kw": "films video fantasy football hyperframes"
+  },
+  {
+   "id": "pika-ai-meeting-agent",
+   "name": "Pika: AI meeting agent",
+   "title": "Pika, an AI meeting agent",
+   "tech": "An autonomous agent that joins live Google Meet calls, listens, and participates in real time, run from Pika Labs' open-source meeting skill.",
+   "plain": "An AI assistant that joins a video meeting, listens and speaks up, built on a free tool from Pika Labs.",
+   "length": "0:15",
+   "made_with": "Agents",
+   "src": "/videos/pika-demo.mp4",
+   "poster": "/videos/pika-poster.jpg",
+   "index": "Pika: AI meeting agent (film)",
+   "kw": "films video agent google meet"
+  },
+  {
+   "id": "skubal-hype-reel",
+   "name": "Skubal hype reel",
+   "title": "Skubal hype reel",
+   "tech": "A broadcast-style hype reel for Tarik Skubal built from React components and frame math over real photographs.",
+   "plain": "A TV-style highlight intro for Tigers pitcher Tarik Skubal, with the type and motion drawn by code over real photographs.",
+   "length": "0:17",
+   "made_with": "Remotion",
+   "src": "/videos/skubal-hype.mp4",
+   "poster": "/videos/skubal-poster.jpg",
+   "index": "Skubal hype reel (film)",
+   "kw": "films video remotion tigers"
+  }
+ ],
+ "volumes": [
+  {
+   "vol": "Vol. 01",
+   "name": "The Magazine",
+   "design": "dark editorial, sixteen sections, terminal metrics",
+   "by": [
+    "Claude Opus 4.7"
+   ],
+   "issued": "April 2026",
+   "status": "retired",
+   "href": "https://seansooch-vol1.pages.dev/",
+   "kw": "editions archive opus",
+   "plate_click": "#intro-skip"
+  },
+  {
+   "vol": "Vol. 02",
+   "name": "Triad × Vitals",
+   "design": "three worlds, one chart, reactive ink",
+   "by": [
+    "Claude Fable 5"
+   ],
+   "issued": "June 2026",
+   "status": "retired",
+   "href": "https://seansooch-vol2.pages.dev/",
+   "kw": "editions archive fable 5 vitals ecg"
+  },
+  {
+   "vol": "Vol. 03",
+   "name": "Five views",
+   "design": "one text in five designs, switchable in place",
+   "issued": "September 2026",
+   "status": "retired",
+   "retired": "November 2026",
+   "href": "https://seansooch-vol3.pages.dev/",
+   "kw": "editions archive five views switcher",
+   "views": [
+    {
+     "siglum": "F",
+     "name": "The Field Manual",
+     "by": "Claude Fable 5.1",
+     "path": "designs/fable/",
+     "blurb": "Numbered chapters, live readiness, a printed index."
+    },
+    {
+     "siglum": "A",
+     "name": "The Personal Index",
+     "by": "OpenAI Astra",
+     "path": "",
+     "blurb": "A white exhibition catalogue: the name set huge, numbered editorial rows."
+    },
+    {
+     "siglum": "O",
+     "name": "The Commentary",
+     "by": "Claude Opus 5.5",
+     "path": "designs/opus/",
+     "blurb": "A glossed edition: the work in the centre, commentary in the margins, one rubric red."
+    },
+    {
+     "siglum": "C",
+     "name": "The Live Stack",
+     "by": "Cursor Composer 2.5",
+     "path": "designs/composer/",
+     "blurb": "An operations deck: dark telemetry, green reachability lights, monospace labels."
+    },
+    {
+     "siglum": "G",
+     "name": "The Night Orbit",
+     "by": "Grok 4.7",
+     "path": "designs/grok/",
+     "blurb": "A deep-space mission log: brass instruments, full-bleed plates, one night orbit of the same record."
+    }
+   ],
+   "plate": "vol3-a"
+  },
+  {
+   "vol": "Vol. 04",
+   "name": "Side by Side",
+   "design": "a neutral room: each work beside its own earlier edition, no colour but the work's",
+   "by": [
+    "Claude Fable 5.2"
+   ],
+   "issued": "November 2026",
+   "status": "current",
+   "kw": "editions current fable 5.2"
+  },
+  {
+   "vol": "Vol. 05",
+   "name": null,
+   "design": "To be designed",
+   "by": [
+    "The next class"
+   ],
+   "issued": null,
+   "status": "awaiting"
+  }
+ ],
+ "counts": {
+  "lines": 174183,
+  "files": 466,
+  "test_lines": 32946,
+  "questions": 12972,
+  "banks": 7,
+  "subjects": 8,
+  "tracked": null,
+  "previous": {
+   "vol": "Vol. 03",
+   "counted": "14 September 2026",
+   "lines": 150906,
+   "files": 247
+  },
+  "notes": {
+   "lines": "unique source files, generated pages and data left out; {test_lines} of these are tests",
+   "files": "html, css, javascript, typescript, python, shell and sql",
+   "questions": "{banks} question banks, {subjects} subjects; every item checked against its source card, most read again by an independent reviewer",
+   "lessons": "in {units} units when this page was built; a lesson shipped since is added as you read",
+   "months": "{first} to {now}, evenings and weekends"
+  }
+ }
+}
