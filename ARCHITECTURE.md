@@ -198,9 +198,9 @@ build record. `_redirects` sends every `/designs/...` address to the same path i
 | `lab-values/cbc-cmp/` | CBC and CMP decoder | No. Copied from `~/lab-decoder`. |
 | `ekg/index.html` | Read This, Edition 2 | No. Generated. |
 | `ekg/*.js`, `ekg/films/` | Read This data and chest films; `ekg/ARCHITECTURE.md` describes them | Yes, with care |
-| `music/index.html`, `music/last-light/index.html`, `music/three-roads/index.html` | `/music/` is the Claudia Bench (anabology's films, kept as the reference) above the Music list (our songs); LAST LIGHT; The Glass (track 4 of Three Roads From Here). `/music/claudia-bench/` 301s to `/music/` | Yes |
+| `music/index.html`, `music/last-light/index.html`, `music/three-roads/index.html` | `/music/` is the Claudia Bench (anabology's films, kept as the reference), then the Fable 5.2 section (a bench film made by that model), above the Music list (our songs); LAST LIGHT; The Glass (track 4 of Three Roads From Here). `/music/claudia-bench/` 301s to `/music/` | Yes |
 | `music/last-light/media/` | HLS video segments (most of the repo's size) | No. Rendered elsewhere. |
-| `music/films.js`, `music/music.css` | The shared player (reads the page's `<script id="films">` list, streams `media/<slug>/` beside the page) and stylesheet of `/music/` and `/music/three-roads/`. LAST LIGHT keeps its own | Yes |
+| `music/films.js`, `music/music.css` | The shared player: drives every `.bench` block on a page (each its own video, tabs, note and `<script class="films">` list; `#<slug>` opens the bench holding it; playing one pauses the rest), streams `media/<slug>/` beside the page and stylesheet of `/music/` and `/music/three-roads/`. LAST LIGHT keeps its own | Yes |
 | `music/media/<slug>/`, `music/three-roads/media/<slug>/` | One 720p HLS stream and poster per film, made by `tools/music-film.sh` (segments an H.264 720p master as is, re-encodes anything else); a song with no film is `song.m4a` + `cover.jpg` | No. Regenerate with `tools/music-film.sh`. |
 | `videos/`, `*.pdf`, `favicon.svg` | Films and their posters, papers, the site's mark | Yes |
 | `screenshots/` | Share images that the tool pages and Read This name in their `og:image` | Yes |

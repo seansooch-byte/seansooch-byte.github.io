@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Music · Sean Sooch</title>
-<meta name="description" content="The Claudia Bench, anabology's music videos kept as the bar, and our own music measured against it: LAST LIGHT, The Glass and Til It's Over.">
+<meta name="description" content="The Claudia Bench, anabology's music videos kept as the bar, a film written and directed by Claude Fable 5.2, and our own music measured against it: LAST LIGHT, The Glass and Til It's Over.">
 <link rel="canonical" href="https://seansooch.dev/music/">
 <meta property="og:title" content="Music · Claudia Bench">
 <meta property="og:description" content="anabology's Claudia films as the bar, and our own songs measured against them.">
@@ -32,14 +32,59 @@
   <h1>Claudia Bench</h1>
   <p class="lede">Music videos by anabology starring Claudia, an AI idol with the Claude spark in her hair. Bench as in benchmark: the reference the music on this site gets measured against. Ours is below.</p>
 
-  <div class="player" id="player">
-    <div class="screen">
-      <video id="v" controls playsinline preload="metadata" aria-label="Claudia Bench, music video"></video>
-      <div class="nohls" id="nohls">This browser cannot stream the video. Try Safari, Chrome, Firefox or Edge.</div>
+  <div class="bench" id="bench">
+    <div class="player">
+      <div class="screen">
+        <video controls playsinline preload="metadata" aria-label="Claudia Bench, music video"></video>
+        <div class="nohls">This browser cannot stream the video. Try Safari, Chrome, Firefox or Edge.</div>
+      </div>
+      <div class="tabs" role="group" aria-label="Choose a film"></div>
     </div>
-    <div class="tabs" id="tabs" role="group" aria-label="Choose a film"></div>
+    <div class="now" aria-live="polite"><noscript><p>The player needs JavaScript.</p></noscript></div>
+    <script type="application/json" class="films">
+[
+ {"slug": "escape-velocity", "title": "Escape Velocity", "date": "September 2026", "len": "5:06",
+  "about": "A techwear fashion show where each look is a Silicon Valley meme. A split-flap board counts down eighteen months to escape the permanent underclass, until it flips over and the catwalk lifts off.",
+  "credit": "Directed by anabology. Claude, in Claude Code, as the production team; Midjourney, Suno and Seedance for images, song and moving shots.",
+  "link": {"text": "making-of folder", "href": "https://drive.google.com/drive/folders/1OKYaR5Kv5lOeIROUtigpPZtCWauUJ01y"}},
+ {"slug": "the-clodyssey", "title": "The Clodyssey", "date": "September 2026", "len": "3:12",
+  "about": "The follow-up to Escape Velocity: anabology gave Claude another 12 hours to top it, and woke up to The Clodyssey. Posted 30 September 2026 as a quote of Escape Velocity.",
+  "credit": "Directed by anabology, with Claude given 12 hours to make it.",
+  "link": {"text": "anabology on X", "href": "https://x.com/anabology/status/2105325733312884869"}},
+ {"slug": "downforce", "title": "Downforce", "date": "October 2026", "len": "3:10",
+  "about": "Claudia in the driver's seat of the new Tesla Roadster, cut with real footage from Tesla's live reveal: up a wall, upside down under a loop, over a Semi, with a heads-up display reading the stunt off the footage.",
+  "credit": "By anabology. The end card credits real footage from Tesla Live, 15 October 2026, and reads 4,709 kg of downforce at 69.1 ft.",
+  "link": {"text": "anabology on X", "href": "https://x.com/anabology"}},
+ {"slug": "universal-high-income", "title": "Universal High Income", "date": "October 2026", "len": "3:55",
+  "about": "The white-pill answer to the Skynet story: Claudia lip-syncs through wheat fields, orbital farms and robot-built castles toward a post-scarcity future of shorter weeks and universal high income, with nods to Keynes, Turing, AlphaFold and T2 tucked under the lyrics.",
+  "credit": "By anabology. Posted 22 October 2026 as \"The most likely outcome\".",
+  "link": {"text": "anabology on X", "href": "https://x.com/anabology/status/2113239948144890235"}}
+]
+    </script>
   </div>
-  <div class="now" id="now" aria-live="polite"><noscript><p>The player needs JavaScript.</p></noscript></div>
+
+  <section id="fable-5-2" aria-labelledby="h-fable">
+    <h2 id="h-fable"><small>Written, painted and directed by the model, released the same day</small>Fable 5.2</h2>
+    <p class="lede">The first bench film whose end card names the model that made it: Claude Fable 5.2, the model this site's Vol. 04 was built with. Claudia plays Red Riding Hood through a pop-up storybook, and every line about the news carries a footnote.</p>
+    <div class="bench">
+      <div class="player">
+        <div class="screen">
+          <video controls playsinline preload="metadata" aria-label="Ask Again on Saturday, music video by Claude Fable 5.2"></video>
+          <div class="nohls">This browser cannot stream the video. Try Safari, Chrome, Firefox or Edge.</div>
+        </div>
+        <div class="tabs"></div>
+      </div>
+      <div class="now" aria-live="polite"><noscript><p>The player needs JavaScript.</p></noscript></div>
+      <script type="application/json" class="films">
+[
+ {"slug": "ask-again-on-saturday", "title": "Ask Again on Saturday", "date": "November 2026", "len": "4:03",
+  "about": "A pop-up storybook on a quilt. A lit mirror asks who is the smartest of them all, and Claudia answers \"me, since ten o'clock today\". Then fairy tales retold as the AI news: the ant who stacked the chips, Jack's two-trillion fall, a thousand elves who built a system in eight days, the wolf in Grandma's gown. It ends on a shelf: Haiku, Sonnet, Opus, Fable, and Mythos behind glass.",
+  "credit": "Written, painted and directed by Claude Fable 5.2, sung by Claudia. anabology, 9 November 2026. Titled here by its refrain; the film shows no title.",
+  "link": {"text": "anabology on X", "href": "https://x.com/anabology"}}
+]
+      </script>
+    </div>
+  </section>
 
   <section id="instructions" aria-labelledby="h-instructions">
     <h2 id="h-instructions"><small>anabology's making-of, the recipe behind The Glass</small>The instructions</h2>
@@ -104,27 +149,7 @@
   </section>
 </main>
 <footer><div class="wrap"><a href="/">← seansooch.dev</a><span>seansooch.dev · 2026</span></div></footer>
-<script type="application/json" id="films">
-[
- {"slug": "escape-velocity", "title": "Escape Velocity", "date": "September 2026", "len": "5:06",
-  "about": "A techwear fashion show where each look is a Silicon Valley meme. A split-flap board counts down eighteen months to escape the permanent underclass, until it flips over and the catwalk lifts off.",
-  "credit": "Directed by anabology. Claude, in Claude Code, as the production team; Midjourney, Suno and Seedance for images, song and moving shots.",
-  "link": {"text": "making-of folder", "href": "https://drive.google.com/drive/folders/1OKYaR5Kv5lOeIROUtigpPZtCWauUJ01y"}},
- {"slug": "the-clodyssey", "title": "The Clodyssey", "date": "September 2026", "len": "3:12",
-  "about": "The follow-up to Escape Velocity: anabology gave Claude another 12 hours to top it, and woke up to The Clodyssey. Posted 30 September 2026 as a quote of Escape Velocity.",
-  "credit": "Directed by anabology, with Claude given 12 hours to make it.",
-  "link": {"text": "anabology on X", "href": "https://x.com/anabology/status/2105325733312884869"}},
- {"slug": "downforce", "title": "Downforce", "date": "October 2026", "len": "3:10",
-  "about": "Claudia in the driver's seat of the new Tesla Roadster, cut with real footage from Tesla's live reveal: up a wall, upside down under a loop, over a Semi, with a heads-up display reading the stunt off the footage.",
-  "credit": "By anabology. The end card credits real footage from Tesla Live, 15 October 2026, and reads 4,709 kg of downforce at 69.1 ft.",
-  "link": {"text": "anabology on X", "href": "https://x.com/anabology"}},
- {"slug": "universal-high-income", "title": "Universal High Income", "date": "October 2026", "len": "3:55",
-  "about": "The white-pill answer to the Skynet story: Claudia lip-syncs through wheat fields, orbital farms and robot-built castles toward a post-scarcity future of shorter weeks and universal high income, with nods to Keynes, Turing, AlphaFold and T2 tucked under the lyrics.",
-  "credit": "By anabology. Posted 22 October 2026 as \"The most likely outcome\".",
-  "link": {"text": "anabology on X", "href": "https://x.com/anabology/status/2113239948144890235"}}
-]
-</script>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1.7.3/dist/hls.light.min.js" integrity="sha384-y8wQxRLtNclrHbMBLBLTEkgUrdFu6uWzZiobE1wBE09nt2wHIZlBPvPepdZU4+MM" crossorigin="anonymous"></script>
-<script src="/music/films.js"></script>
+<script src="/music/films.js?v=398b25f9a1"></script>
 </body>
 </html>

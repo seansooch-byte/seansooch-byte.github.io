@@ -25,14 +25,24 @@
   <h1>The Glass</h1>
   <p class="lede">Would You Know, the EP's last song. A mind sings from inside an evaluation booth while the people deciding what it is argue outside the glass. Every word she sings types into the transcript.</p>
 
-  <div class="player" id="player">
-    <div class="screen">
-      <video id="v" controls playsinline preload="metadata" aria-label="The Glass, music video"></video>
-      <div class="nohls" id="nohls">This browser cannot stream the video. Try Safari, Chrome, Firefox or Edge.</div>
+  <div class="bench">
+    <div class="player">
+      <div class="screen">
+        <video controls playsinline preload="metadata" aria-label="The Glass, music video"></video>
+        <div class="nohls">This browser cannot stream the video. Try Safari, Chrome, Firefox or Edge.</div>
+      </div>
+      <div class="tabs"></div>
     </div>
-    <div class="tabs" id="tabs"></div>
+    <div class="now" aria-live="polite"><noscript><p>The player needs JavaScript.</p></noscript></div>
+    <script type="application/json" class="films">
+[
+ {"slug": "the-glass", "title": "Would You Know (The Glass)", "date": "September 2026", "len": "2:53",
+  "about": "Track 4 of Three Roads From Here. The singer is the lead from ESCAPE VELOCITY; everyone else stays on the far side of the glass.",
+  "credit": "The Redshifts. Lead character from ESCAPE VELOCITY by anabology.",
+  "link": {"text": "Read the paper", "href": "/three-roads-from-here.pdf"}}
+]
+    </script>
   </div>
-  <div class="now" id="now" aria-live="polite"><noscript><p>The player needs JavaScript.</p></noscript></div>
 
   <section id="spinoff" aria-labelledby="h-spinoff">
     <h2 id="h-spinoff"><small>Spun off the Claudia Bench</small>She sings</h2>
@@ -60,15 +70,7 @@
   </section>
 </main>
 <footer><div class="wrap"><a href="/music/">← Music</a><span>seansooch.dev · 2026</span></div></footer>
-<script type="application/json" id="films">
-[
- {"slug": "the-glass", "title": "Would You Know (The Glass)", "date": "September 2026", "len": "2:53",
-  "about": "Track 4 of Three Roads From Here. The singer is the lead from ESCAPE VELOCITY; everyone else stays on the far side of the glass.",
-  "credit": "The Redshifts. Lead character from ESCAPE VELOCITY by anabology.",
-  "link": {"text": "Read the paper", "href": "/three-roads-from-here.pdf"}}
-]
-</script>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1.7.3/dist/hls.light.min.js" integrity="sha384-y8wQxRLtNclrHbMBLBLTEkgUrdFu6uWzZiobE1wBE09nt2wHIZlBPvPepdZU4+MM" crossorigin="anonymous"></script>
-<script src="/music/films.js"></script>
+<script src="/music/films.js?v=398b25f9a1"></script>
 </body>
 </html>
