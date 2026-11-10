@@ -1284,6 +1284,19 @@
  ],
  "films": [
   {
+   "id": "vol-04-launch-film",
+   "name": "Vol. 04 launch film",
+   "title": "Vol. 04 launch film",
+   "tech": "Vol. 04 in motion: one work set beside its earlier edition, all sixteen pairs on the beat, the four volumes, the directory answering, the colors posted from the bar.",
+   "plain": "This version of the site, shown in motion in 48 seconds.",
+   "length": "0:48",
+   "made_with": "Edition film",
+   "src": "/videos/vol4-launch-film.mp4",
+   "poster": "/videos/vol4-poster.jpg",
+   "index": "Vol. 04 launch film",
+   "kw": "films video edition launch side by side"
+  },
+  {
    "id": "vol-03-launch-film",
    "name": "Vol. 03 launch film",
    "title": "Vol. 03 launch film",
