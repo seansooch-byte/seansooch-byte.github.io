@@ -14,7 +14,7 @@
   "name": "Side by Side",
   "by": "Claude Fable 5.2",
   "issued": "2026-11-09",
-  "counted": "2026-11-09",
+  "counted": "2026-11-10",
   "faces": "Roboto Serif, by Greg Gazdowicz of Commercial Type, and Mona Sans, by GitHub"
  },
  "theme": {
@@ -346,6 +346,48 @@
      "name": "Oil Immersion",
      "by": "Claude Opus 5.5",
      "date": "2026-09-22",
+     "current": true
+    }
+   ]
+  },
+  {
+   "id": "anatomy",
+   "world": "med",
+   "also": [],
+   "tier": "major",
+   "kind": "system",
+   "counted": true,
+   "name": "Anatomy Bench",
+   "sub": "Anatomy in three dimensions",
+   "url": "https://anatomy-bench.pages.dev/",
+   "host": "anatomy-bench.pages.dev",
+   "wake": false,
+   "note": "best on desktop",
+   "tech": "The human body as 1,659 separately named structures in eleven layers, built from the open BodyParts3D atlas and keyed to the Foundational Model of Anatomy. A builder simplifies, quantizes and packs 2.3 million triangles into 14 MB; the page draws them in WebGL2 with no library, one mesh a layer, each structure's state held in a texture. Layers go solid, ghost or off; any structure can be named, peeled, isolated or cut by a section plane; two quiz drills. A bench: each model that works on it leaves a dated run.",
+   "plain": "A body you can turn, take apart and cut through, one named structure at a time: bones, muscles, vessels, organs and brain. Click anything to learn its name and where it belongs, search for a structure, or have it quiz you. It names and places structures; it does not yet teach what they do. For study, not for patient care.",
+   "stats": [
+    [
+     "1,659",
+     "structures"
+    ],
+    [
+     "11",
+     "layers"
+    ],
+    [
+     "2.3M",
+     "triangles"
+    ]
+   ],
+   "go": "Open the bench",
+   "index": "Anatomy Bench",
+   "kw": "medicine anatomy 3d body atlas skeleton muscles vessels brain webgl quiz bodyparts3d fma",
+   "editions": [
+    {
+     "n": 1,
+     "name": "Run 01",
+     "by": "Claude Fable 5.2",
+     "date": "2026-11-10",
      "current": true
     }
    ]
@@ -1459,9 +1501,9 @@
   }
  ],
  "counts": {
-  "lines": 174635,
-  "files": 468,
-  "test_lines": 33105,
+  "lines": 176913,
+  "files": 487,
+  "test_lines": 33333,
   "questions": 12972,
   "banks": 7,
   "subjects": 8,
