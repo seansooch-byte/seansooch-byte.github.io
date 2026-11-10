@@ -435,13 +435,15 @@ class Hygiene(Base):
             if not path.endswith('.html'):
                 continue
             for tag, a in Doc(text).els:
-                ref = a.get('src') if tag == 'script' else a.get('href') if tag == 'link' and a.get('rel') == 'stylesheet' else None
-                if ref and ref.startswith('/v4/'):
-                    asset, _, stamp = ref.partition('?v=')
-                    now = hashlib.md5((ROOT / asset.lstrip('/')).read_bytes()).hexdigest()[:10]
-                    self.assertEqual(stamp, now, f'{path} asks for {asset} by {stamp or "no stamp"}; the file is {now}')
-                    seen.add(asset)
-        self.assertEqual(seen, {f'/v4/{p.name}' for p in (ROOT / 'v4').iterdir()}, 'a file in v4/ that no page asks for, or the reverse')
+                refs = [a.get('src')] if tag in ('script', 'img') else [a.get('href')] if tag == 'link' and a.get('rel') == 'stylesheet' else []
+                refs += [part.split()[0] for part in a.get('srcset', '').split(',') if part.strip()] if tag == 'img' else []
+                for ref in refs:
+                    if ref and ref.startswith('/v4/'):
+                        asset, _, stamp = ref.partition('?v=')
+                        now = hashlib.md5((ROOT / asset.lstrip('/')).read_bytes()).hexdigest()[:10]
+                        self.assertEqual(stamp, now, f'{path} asks for {asset} by {stamp or "no stamp"}; the file is {now}')
+                        seen.add(asset)
+        self.assertEqual(seen, {'/' + p.relative_to(ROOT).as_posix() for p in (ROOT / 'v4').rglob('*') if p.is_file()}, 'a file in v4/ that no page asks for, or the reverse')
 
     def test_every_class_is_styled_or_read(self):
         """A class on a page is in a sheet that page loads or in a script that reads it: a typed-wrong class, or a
@@ -524,6 +526,8 @@ class Hygiene(Base):
             for link in p['links']:
                 if link['href'].startswith('https://'):
                     allowed.add(re.sub(r'^https://([^/]+).*$', r'\1', link['href']))
+        for photo in self.rec['theme']['photos']:
+            allowed.add(re.sub(r'^https://([^/]+).*$', r'\1', photo['source']))
         essay = json.loads((ROOT / 'content' / 'two-stories.json').read_text(encoding='utf-8'))
         for h in re.findall(r'href="https://([^/"]+)', json.dumps(essay, ensure_ascii=False).replace('\\"', '"')):
             allowed.add(h)
@@ -578,6 +582,35 @@ class Hygiene(Base):
             hues = {max(int(h[i:i + 2], 16) for i in (1, 3, 5)) - min(int(h[i:i + 2], 16) for i in (1, 3, 5)) for h in pal.values()}
             self.assertLessEqual(max(hues), 4, f'{name}: a token has a colour; the page has none of its own')
 
+    def test_the_usa_theme_is_red_white_and_blue_and_reads(self):
+        """The one palette with colour. Every ink clears 4.5 to 1 on the ground, the sheet and the bar; the rule clears
+        3 to 1 on the ground; and no token is anything but red, white or blue (Sean: no yellow)."""
+        import colorsys
+        css = (ROOT / 'v4' / 'site.css').read_text(encoding='utf-8')
+        start = css.index(':root[data-theme=usa]{')
+        pal = dict(re.findall(r'--([a-z0-9-]+):\s*(#[0-9a-fA-F]{6})', css[start:css.index('}', start)]))
+        self.assertLessEqual({'ground', 'sheet', 'ink', 'ink-2', 'ink-3', 'union', 'on-union', 'on-union-2', 'stripe'}, set(pal))
+
+        def lum(h):
+            c = [int(h[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+            c = [v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4 for v in c]
+            return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]
+
+        def ratio(a, b):
+            hi, lo = sorted((lum(pal[a]), lum(pal[b])), reverse=True)
+            return (hi + 0.05) / (lo + 0.05)
+        for ink, grounds in (('ink', ('ground', 'sheet')), ('ink-2', ('ground', 'sheet')), ('ink-3', ('ground', 'sheet')),
+                             ('on-union', ('union',)), ('on-union-2', ('union',))):
+            for g in grounds:
+                self.assertGreaterEqual(ratio(ink, g), 4.5, f'usa: {ink} on {g} is {ratio(ink, g):.2f} to 1')
+        self.assertGreaterEqual(ratio('stripe', 'ground'), 3, f"usa: the rule on the ground is {ratio('stripe', 'ground'):.2f} to 1")
+        self.assertLess(lum(pal['ground']), 0.02, 'usa: the ground is dark')
+        for name, h in pal.items():
+            hue, light, sat = colorsys.rgb_to_hls(*(int(h[i:i + 2], 16) / 255 for i in (1, 3, 5)))
+            if sat > 0.12 and 0.03 < light < 0.97:
+                self.assertTrue(hue * 360 >= 335 or hue * 360 <= 8 or 205 <= hue * 360 <= 235, f'usa: --{name} {h} is neither red, white nor blue')
+        self.assertTrue(any(colorsys.rgb_to_hls(*(int(h[i:i + 2], 16) / 255 for i in (1, 3, 5)))[0] * 360 >= 335 for h in pal.values()), 'CONTROL: the palette holds a red')
+
     def test_one_h1_and_a_title_per_page(self):
         for path, text in self.out.items():
             if path.endswith('.html'):
@@ -585,6 +618,50 @@ class Hygiene(Base):
                 self.assertEqual(sum(1 for t, _a in d.els if t == 'h1'), 1, path)
                 self.assertEqual(sum(1 for t, _a in d.els if t == 'title'), 1, path)
                 self.assertTrue(any(t == 'meta' and a.get('name') == 'description' and a.get('content') for t, a in d.els), path)
+
+
+class Theme(Base):
+    """The USA theme: a fourth appearance a reader can post from the bar of every page."""
+
+    def test_every_page_offers_it_in_the_bar_and_in_the_colophon(self):
+        for path, text in self.out.items():
+            if not path.endswith('.html'):
+                continue
+            flips = re.findall(r'<button[^>]*data-theme-flip="usa"[^>]*>(.*?)</button>', text, flags=re.S)
+            self.assertEqual(len(flips), 1, f'{path}: one button in the bar posts the theme')
+            self.assertIn(self.rec['theme']['label'], norm(flips[0]), path)
+            self.assertEqual(len(re.findall(r'data-theme-set="usa"', text)), 1, f'{path}: the colophon offers it beside light and dark')
+
+    def test_each_photograph_is_held_sized_credited_and_named(self):
+        held = set(tracked(ROOT))
+        photos = self.rec['theme']['photos']
+        self.assertEqual([p['id'] for p in photos], ['f22', 'f35'])
+        for path, text in self.out.items():
+            if not path.endswith('.html'):
+                continue
+            imgs = {a['src'].split('?')[0]: a for t, a in Doc(text).els if t == 'img' and a.get('src', '').startswith('/v4/usa/')}
+            for p in photos:
+                a = imgs.get(f"/v4/usa/{p['id']}-800.webp")
+                self.assertTrue(a, f"{path}: {p['id']} is not on the page")
+                self.assertEqual(a.get('alt'), p['alt'], path)
+                self.assertEqual(a.get('loading'), 'lazy', f'{path}: a reader who never posts the theme must not download it')
+                for name in (f"v4/usa/{p['id']}.webp", f"v4/usa/{p['id']}-800.webp"):
+                    self.assertIn(name, held, f'{name} is not in the repo, so it would not ship')
+                # a lossy WebP says its size at bytes 26 to 29
+                data = (ROOT / 'v4' / 'usa' / f"{p['id']}.webp").read_bytes()
+                self.assertEqual(data[12:16], b'VP8 ', 'CONTROL: a simple lossy WebP')
+                w, h = int.from_bytes(data[26:28], 'little') & 0x3fff, int.from_bytes(data[28:30], 'little') & 0x3fff
+                self.assertEqual((a.get('width'), a.get('height')), (str(w), str(h)), f"{path}: {p['id']}")
+                self.assertIn(html.escape(p['credit']), text, path)
+                self.assertIn(f'href="{html.escape(p["source"])}"', text, path)
+            words = norm(text)
+            self.assertIn(self.rec['theme']['notice'], words, f'{path}: the imagery notice is printed word for word')
+            self.assertIn(self.rec['theme']['note'], words, path)
+
+    def test_the_theme_shows_aircraft_and_says_nothing_about_the_author(self):
+        said = json.dumps(self.rec['theme'], ensure_ascii=False)
+        self.assertNotRegex(said, r'(?i)pilot|airman|crew|officer', 'aircraft only: no person is named or described')
+        self.assertNotRegex(said, r'<[a-z/]')
 
 
 class Essay(Base):

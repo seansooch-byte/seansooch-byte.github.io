@@ -1,6 +1,8 @@
 /* seansooch.dev, Vol. 04 "Side by Side" (Claude Fable 5.2, November 2026).
    Three rules, and the sheet follows from them:
    1. The page has no colour of its own. Ground, sheet and ink; every colour on it belongs to a capture of the work.
+      One appearance is the exception, and only when a reader posts it: USA, which is red, white and blue on a dark
+      ground. It is a set of tokens and one strip of photographs; no rule below knows it is there.
    2. Everything comes in pairs: two equal halves under one ink hairline. Strips are the only other figure.
    3. Two voices, two faces. What is said is serif (--said); what is measured or operated is sans (--meas).
    Pages are written by tools/build.py; nothing here is page-specific except the three blocks named at the end. */
@@ -9,6 +11,8 @@
   color-scheme:light dark;
   --ground:#d1d1ce; --sheet:#ffffff; --ink:#0c0c0c; --ink-2:#3a3a38; --ink-3:#555553; --rule:rgb(12 12 12 / .22);
   --pad:clamp(16px,3.2vw,48px); --gap:clamp(20px,3.4vw,56px); --bar:56px;
+  /* the rule over a section, the bar and what is written on it, and the hem under the bar: ink and ground until a theme says otherwise */
+  --stripe:var(--ink); --stripe-w:1px; --union:var(--ground); --on-union:var(--ink); --on-union-2:var(--ink-2); --hem:0 0 #0000;
   --said:"Roboto Serif",Georgia,"Times New Roman",serif;
   --meas:"Mona Sans",system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
 }
@@ -18,6 +22,9 @@
 :root[data-theme=dark]{--ground:#1b1b1a; --sheet:#2a2a29; --ink:#efefec; --ink-2:#c6c6c2; --ink-3:#9c9c98; --rule:rgb(239 239 236 / .24)}
 :root[data-theme=light]{color-scheme:light}
 :root[data-theme=dark]{color-scheme:dark}
+/* USA: Old Glory blue for the bar, one red, white ink. The hem is bunting, blue above, white, then red (4 U.S.C. 8(d)). */
+:root[data-theme=usa]{color-scheme:dark; --ground:#060c1c; --sheet:#0c1a36; --ink:#f6f8fc; --ink-2:#c6d0e4; --ink-3:#98a7c6; --rule:rgb(246 248 252 / .24);
+  --stripe:#c8102e; --stripe-w:4px; --union:#0a3161; --on-union:#ffffff; --on-union-2:#c9d6ea; --hem:0 3px 0 #fff,0 7px 0 var(--stripe)}
 
 *,*::before,*::after{box-sizing:border-box}
 *{margin:0}
@@ -57,7 +64,7 @@ kbd{font:500 11px/1.4 var(--meas);border:1px solid currentColor;border-radius:4p
 .dot{display:inline-block;flex:none;width:8px;height:8px;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--ink-3)}
 .dot.is-yes{background:var(--ink);box-shadow:none}
 .dot.is-wake{background:linear-gradient(90deg,var(--ink) 50%,transparent 50%);box-shadow:inset 0 0 0 1.5px var(--ink)}
-.dot.is-no{box-shadow:inset 0 0 0 1.5px var(--ink)}
+.dot.is-no{box-shadow:inset 0 0 0 1.5px var(--stripe)}
 .dot.is-asking{animation:ask 1.1s ease-in-out infinite}
 @keyframes ask{50%{opacity:.25}}
 
@@ -72,12 +79,12 @@ h1,h2,h3,h4{font-weight:480;letter-spacing:-.03em;line-height:1}
 .say.note{border-left:2px solid var(--ink);padding-left:14px}
 .wide{max-width:60em}
 .wide + .strip{margin-top:20px}
-.go{font:600 15px/1.3 var(--meas);text-decoration:none;border-bottom:2px solid var(--ink);padding-bottom:1px;display:inline-block}
+.go{font:600 15px/1.3 var(--meas);text-decoration:none;border-bottom:2px solid var(--stripe);padding-bottom:1px;display:inline-block}
 .go:hover{background:var(--ink);color:var(--ground)}
 .quiet{color:var(--ink-3)}
 
 /* top bar */
-.topbar{position:sticky;top:0;z-index:20;background:var(--ground);border-bottom:1px solid var(--ink)}
+.topbar{--ground:var(--union);--ink:var(--on-union);--ink-2:var(--on-union-2);position:sticky;top:0;z-index:20;background:var(--ground);color:var(--ink);border-bottom:1px solid var(--ink);box-shadow:var(--hem)}
 .topbar-in{display:flex;align-items:center;gap:28px;height:var(--bar)}
 .mark{font:650 17px/1 var(--meas);font-stretch:112%;letter-spacing:-.02em;text-decoration:none;white-space:nowrap;padding-block:10px}
 .mark-vol{font-weight:450;font-stretch:88%;font-size:13px;letter-spacing:.01em;color:var(--ink-2);margin-left:10px}
@@ -85,6 +92,24 @@ h1,h2,h3,h4{font-weight:480;letter-spacing:-.03em;line-height:1}
 .topbar-nav a{text-decoration:none;white-space:nowrap;padding-block:8px}
 .topbar-nav a:hover,.topbar-nav a[aria-current]{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px}
 .js .topbar-ctl{display:flex;gap:8px}
+
+/* the USA theme: its button in the bar, and its photographs side by side under the bar while it is posted */
+.star{display:inline-block;width:.95em;height:.95em;margin-right:6px;vertical-align:-.1em;background:currentColor;clip-path:polygon(50% 0,61.2% 34.5%,97.6% 34.5%,68.2% 55.9%,79.4% 90.5%,50% 69.1%,20.6% 90.5%,31.8% 55.9%,2.4% 34.5%,38.8% 34.5%)}
+.posted,.when-posted{display:none}
+:root[data-theme=usa] .when-posted{display:block;margin-top:.7em}
+:root[data-theme=usa] .posted{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);height:clamp(170px,27vw,430px);background:#000;overflow:hidden;border-bottom:1px solid var(--rule)}
+.jet{position:relative;min-width:0;overflow:hidden}
+.jet img{width:100%;height:100%;object-fit:cover}
+.jet::after{content:"";position:absolute;inset:auto 0 0 0;height:60%;background:linear-gradient(transparent,rgb(0 0 0 / .8));pointer-events:none}
+/* one seam, cut on the diagonal; the second photograph is printed in the red */
+.jet-f22 img{object-position:30% 12%}
+.jet-f22{margin-right:-5vw;clip-path:polygon(0 0,100% 0,calc(100% - 10vw) 100%,0 100%)}
+.jet-f35{margin-left:-5vw;clip-path:polygon(10vw 0,100% 0,100% 100%,0 100%);background:var(--stripe)}
+.jet-f35 img{mix-blend-mode:multiply;object-position:70% 40%}
+.jet figcaption{position:absolute;z-index:1;left:var(--pad);bottom:clamp(10px,1.6vw,22px);display:grid;gap:4px;color:#fff;max-width:calc(100% - 12vw)}
+.jet-f35 figcaption{left:auto;right:var(--pad);text-align:right;justify-items:end}
+.craft{font:900 clamp(30px,5.6vw,88px)/.86 var(--meas);font-stretch:125%;letter-spacing:-.02em}
+.jet .lbl{color:#e6ebf5}
 
 /* masthead: who, beside everything there is */
 .mast{padding-block:clamp(28px,5vw,72px) clamp(20px,3vw,40px);align-items:start}
@@ -112,7 +137,7 @@ h1,h2,h3,h4{font-weight:480;letter-spacing:-.03em;line-height:1}
 .dir-key span:last-child{margin-left:auto}
 
 /* sections */
-.sec{border-top:1px solid var(--ink);padding-top:14px;margin-top:clamp(40px,6vw,88px)}
+.sec{border-top:var(--stripe-w) solid var(--stripe);padding-top:14px;margin-top:clamp(40px,6vw,88px)}
 .sec-h{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;padding-bottom:clamp(18px,3vw,36px)}
 .sec-h h2{font-size:clamp(40px,5.4vw,84px);line-height:.92}
 .sec-ctl{display:flex;flex-wrap:wrap;gap:10px 18px;justify-content:flex-end}
@@ -255,7 +280,7 @@ figcaption.lbl{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px
 .ix:hover{text-decoration:underline}
 
 /* colophon */
-.colophon{border-top:1px solid var(--ink);margin-top:clamp(48px,7vw,104px);padding:22px 0 clamp(32px,5vw,64px)}
+.colophon{border-top:var(--stripe-w) solid var(--stripe);margin-top:clamp(48px,7vw,104px);padding:22px 0 clamp(32px,5vw,64px)}
 .colophon-name{font-weight:480;font-size:clamp(22px,2.2vw,30px);letter-spacing:-.025em;line-height:1.1;margin-bottom:10px}
 .colophon .say-s{max-width:36em}
 .colophon-facts{display:grid;gap:6px;align-content:start}
@@ -285,7 +310,7 @@ dialog::backdrop{background:rgb(12 12 12 / .82)}
 .abstract .facts{padding:0;border-top:1px solid var(--ink)}
 .abstract .facts dd{font:400 14.5px/1.45 var(--said);letter-spacing:0;color:var(--ink-2)}
 .essay-toc{display:flex;flex-wrap:wrap;gap:4px 18px;border-top:1px solid var(--rule);padding-top:10px}
-.part{border-top:1px solid var(--ink);padding-top:14px;margin-top:clamp(40px,6vw,88px);scroll-margin-top:calc(var(--bar) + 12px)}
+.part{border-top:var(--stripe-w) solid var(--stripe);padding-top:14px;margin-top:clamp(40px,6vw,88px);scroll-margin-top:calc(var(--bar) + 12px)}
 .part .sec-h h2{font-size:clamp(34px,4.2vw,64px)}
 .part:last-of-type{border-top:0;margin-top:clamp(28px,4vw,48px);padding-top:0}
 .para{display:grid;grid-template-columns:4.6em minmax(0,40em);column-gap:18px;align-items:baseline;scroll-margin-top:calc(var(--bar) + 12px)}
@@ -338,6 +363,10 @@ dialog::backdrop{background:rgb(12 12 12 / .82)}
   .outline-cols,.vols,.films,.views{grid-template-columns:minmax(0,1fr)}
   .mark-vol{display:none}
   .btn{padding:8px 11px}
+  .topbar-in{gap:10px}
+  .flip .star{margin-right:0}
+  .flip-w{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  .jet .lbl{font-size:11px;line-height:1.3}
   .stats dd{font-size:22px}
   .facts div{grid-template-columns:minmax(0,1fr)}
   .facts div dt{margin-bottom:-8px}
@@ -350,7 +379,9 @@ dialog::backdrop{background:rgb(12 12 12 / .82)}
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
 @media print{
-  :root{--ground:#fff; --sheet:#fff; --ink:#000; --ink-2:#222; --ink-3:#444; --rule:#999}
+  :root{--ground:#fff!important; --sheet:#fff!important; --ink:#000!important; --ink-2:#222!important; --ink-3:#444!important; --rule:#999!important;
+    --stripe:#000!important; --stripe-w:1px!important; --union:#fff!important; --on-union:#000!important; --on-union-2:#222!important; --hem:0 0 #0000!important}
+  .posted,.when-posted{display:none!important}
   .topbar{position:static}
   .topbar-ctl,.topbar-nav,.js-only,.skip,dialog,.films,.play,#index{display:none!important}
   .sec,.part{margin-top:28px;break-inside:auto}

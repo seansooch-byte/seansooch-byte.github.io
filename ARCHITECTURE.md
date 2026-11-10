@@ -131,6 +131,15 @@ record it renders outlives it.
   step table, the structured data). Each asset is asked for as `/v4/<file>?v=<first 10 hex of its MD5>`; the builder
   writes the stamp and `tools/stage.sh` refuses a stale one. The next edition gets `v5/`, so an archive of this one
   keeps working paths.
+- **The USA theme.** A fourth appearance beside "as your device", light and dark: `data-theme="usa"` on `<html>`, kept
+  under the same storage key. It is a set of tokens in `v4/site.css` (a dark ground, Old Glory blue for the bar, one
+  red for the rule over each section, white ink) plus one strip under the bar that only shows while it is posted: two
+  U.S. Air Force photographs, an F-22A and an F-35A, set side by side. The button in the bar posts it and, pressed
+  again, gives back the theme the reader had; the colophon lists it with the others and, while it is posted, prints
+  the theme's note and the imagery notice word for word. The photographs are named in the record (`theme.photos`: the
+  Commons file, the part of the frame kept, the filter, the credit) and made by `python3 tools/photos.py` (Pillow,
+  numpy, cwebp) into `v4/usa/`; they are lazy, so a reader who never posts the theme downloads nothing. Aircraft only:
+  no photograph shows a person.
 - **Plates.** Every capture on the page is taken by `node tools/plates.mjs` from the record's addresses with the
   installed Chrome (1440 by 900, light, reduced motion, naming itself as the ordinary Chrome it is, because some feeds
   refuse a headless one) and written twice as WebP into `plates/`, with `plates/manifest.json` saying which exist,

@@ -176,6 +176,19 @@ def stamp(root, asset):
     return hashlib.md5((root / asset.lstrip('/')).read_bytes()).hexdigest()[:10]
 
 
+def webp_size(path):
+    """(width, height) of a WebP file, read from its header: lossy, lossless or extended."""
+    d = path.read_bytes()[:40]
+    if d[12:16] == b'VP8 ':
+        return int.from_bytes(d[26:28], 'little') & 0x3fff, int.from_bytes(d[28:30], 'little') & 0x3fff
+    if d[12:16] == b'VP8L':
+        bits = int.from_bytes(d[21:25], 'little')
+        return (bits & 0x3fff) + 1, ((bits >> 14) & 0x3fff) + 1
+    if d[12:16] == b'VP8X':
+        return int.from_bytes(d[24:27], 'little') + 1, int.from_bytes(d[27:30], 'little') + 1
+    raise ValueError(f'{path.name} is not a WebP file the pages can size')
+
+
 # ---------------------------------------------------------------- reading
 
 def real_day(d):
@@ -250,6 +263,12 @@ def validate(record, essay, plates):
         for view in v.get('views', []):
             need(re.match(r'^[A-Z]\Z', str(view.get('siglum', ''))) and re.match(r'^([a-z]+/)*\Z', str(view.get('path', 'x'))), f"{v['vol']}: a view needs a one-letter siglum and a plain path")
             claim(f"{vol_key(v)}-{view['siglum'].lower()}", f"view {view['siglum']}")
+    theme = record['theme']
+    need(ID.match(str(theme.get('id', ''))) and all(isinstance(theme.get(k), str) and theme[k].strip() for k in ('label', 'hint', 'note', 'notice')), 'the theme needs a plain id, a label, a hint, a note and the imagery notice')
+    for photo in theme['photos']:
+        need(ID.match(str(photo.get('id', ''))), f"theme photograph id {photo.get('id')!r} is not plain lowercase letters and digits")
+        need(HTTPS.match(str(photo.get('source', ''))), f"{photo['id']}: a photograph names the https address it came from")
+        need(dated(photo.get('taken')), f"{photo['id']}: a photograph is dated 2026-11-09")
     for name, p in plates.items():
         need(SLUG.match(name) and type(p.get('w')) is int and type(p.get('h')) is int, f'plates/manifest.json: {name!r} needs a plain name and whole-number sizes')
         need(real_day(p.get('taken')), f'plates/manifest.json: {name!r} needs the day it was taken')
@@ -377,7 +396,7 @@ def head(site, title, description, path, kind='website', more=''):
 
 
 def bar(site, here=None, voices=False):
-    ed = site['record']['edition']
+    ed, theme = site['record']['edition'], site['record']['theme']
     links = [('work', '/#work', 'Work'), ('lab', '/lab/', 'The Lab'), ('writing', '/#writing', 'Writing'),
              ('films', '/#films', 'Films'), ('editions', '/#editions', 'Editions'), ('record', '/#record', 'Record')]
     nav = ''.join(f'<a href="{h}"{" aria-current=" + chr(34) + "page" + chr(34) if key == here else ""}>{label}</a>' for key, h, label in links)
@@ -387,10 +406,28 @@ def bar(site, here=None, voices=False):
     <nav class="topbar-nav" aria-label="Sections">{nav}</nav>
     <div class="topbar-ctl js-only">
       {'<button class="btn" type="button" data-voice-toggle aria-pressed="false">Plain language</button>' if voices else ''}
+      <button class="btn flip" type="button" data-theme-flip="{theme['id']}" aria-pressed="false" title="{esc(theme['hint'])}"><i class="star" aria-hidden="true"></i><span class="flip-w">{esc(theme['label'])}</span></button>
       <button class="btn" type="button" data-palette-open aria-haspopup="dialog">Index<kbd aria-hidden="true">/</kbd></button>
     </div>
   </div>
-</header>'''
+</header>
+{posted(site)}'''
+
+
+def posted(site):
+    """What the theme adds under the bar: its photographs, side by side. /v4/site.css shows it only while the theme is
+    posted, and the images are lazy, so a reader who never posts it downloads nothing."""
+    root, figs = site['root'], []
+    for p in site['record']['theme']['photos']:
+        full, small = f"/v4/{site['record']['theme']['id']}/{p['id']}.webp", f"/v4/{site['record']['theme']['id']}/{p['id']}-800.webp"
+        w, h = webp_size(root / full.lstrip('/'))
+        figs.append(f'''<figure class="jet jet-{p['id']}">
+    <img src="{small}?v={stamp(root, small)}" srcset="{small}?v={stamp(root, small)} 800w, {full}?v={stamp(root, full)} {w}w" sizes="(max-width: 860px) 100vw, 50vw" width="{w}" height="{h}" alt="{esc(p['alt'])}" loading="lazy" decoding="async">
+    <figcaption><b class="craft">{esc(p['craft'])}</b><span class="lbl">{esc(p['name'])} · {esc(p['where'])}, {day(p['taken'])} · <a href="{esc(p['source'])}" target="_blank" rel="noopener">{esc(p['credit'])}</a></span></figcaption>
+  </figure>''')
+    return f'''<div class="posted" role="group" aria-label="{esc(site['record']['theme']['hint'])}">
+  {''.join(figs)}
+</div>'''
 
 
 def colophon(site, home=False):
@@ -405,10 +442,12 @@ def colophon(site, home=False):
     <div>
       <p class="colophon-name">{esc(ed['vol'])}, {esc(ed['name'])}</p>
       <p class="say-s">{told(site, 'colophon')}</p>
+      <p class="say-s when-posted">{esc(r['theme']['note'])}</p>
+      <p class="lbl when-posted">{esc(r['theme']['notice'])}</p>
     </div>
     <div class="colophon-facts">
       <p class="lbl">Set in {esc(ed['faces'])}.</p>{dated}
-      <p class="lbl js-only" role="group" aria-label="Appearance">Appearance: <button class="link" type="button" data-theme-set="auto" aria-pressed="true">as your device</button> <button class="link" type="button" data-theme-set="light" aria-pressed="false">light</button> <button class="link" type="button" data-theme-set="dark" aria-pressed="false">dark</button></p>
+      <p class="lbl js-only" role="group" aria-label="Appearance">Appearance: <button class="link" type="button" data-theme-set="auto" aria-pressed="true">as your device</button> <button class="link" type="button" data-theme-set="light" aria-pressed="false">light</button> <button class="link" type="button" data-theme-set="dark" aria-pressed="false">dark</button> <button class="link" type="button" data-theme-set="{r['theme']['id']}" aria-pressed="false">{esc(r['theme']['label'])}</button></p>
       <p class="lbl">© 2026 {esc(r['site']['name'])} · <a href="/#editions">Earlier volumes are kept</a> · <a href="#top">Top</a></p>
     </div>
   </div>

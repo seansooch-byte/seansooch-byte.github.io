@@ -17,6 +17,63 @@
   "counted": "2026-11-09",
   "faces": "Roboto Serif, by Greg Gazdowicz of Commercial Type, and Mona Sans, by GitHub"
  },
+ "theme": {
+  "id": "usa",
+  "label": "USA",
+  "hint": "Post the colors",
+  "photos": [
+   {
+    "id": "f22",
+    "craft": "F-22A",
+    "name": "Raptor",
+    "alt": "An F-22 Raptor seen from below against a black sky, its weapons bay doors open",
+    "credit": "U.S. Air Force photo by Johnathon Green",
+    "taken": "2014-07-26",
+    "where": "Joint Base Elmendorf-Richardson, Alaska",
+    "file": "File:Arctic Thunder 2014 140726-F-QV568-119.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Arctic_Thunder_2014_140726-F-QV568-119.jpg",
+    "keep": [
+     0.154,
+     0.176,
+     0.7,
+     0.724
+    ],
+    "mix": [
+     1.15,
+     0.0,
+     -0.15
+    ],
+    "black": 0.07,
+    "contrast": 0.55
+   },
+   {
+    "id": "f35",
+    "craft": "F-35A",
+    "name": "Lightning II",
+    "alt": "An F-35A Lightning II climbing in afterburner against a black sky, vapor streaming over its wings",
+    "credit": "U.S. Air Force photo by Staff Sgt. Zachary Rufus",
+    "taken": "2026-04-08",
+    "where": "Santiago, Chile",
+    "file": "File:F-35A Demonstration Team @ FIDAE (9654323).jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:F-35A_Demonstration_Team_@_FIDAE_(9654323).jpg",
+    "keep": [
+     0.093,
+     0.047,
+     1.0,
+     0.953
+    ],
+    "mix": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "black": 0.06,
+    "contrast": 0.5
+   }
+  ],
+  "note": "The colors are posted: red, white and blue on a dark ground, with the blue above. The two photographs are the Air Force's, cropped and set in black and white for this page; nothing is drawn on them and nothing is taken out.",
+  "notice": "The appearance of U.S. Department of War (DoW) visual information does not imply or constitute DoW endorsement."
+ },
  "worlds": [
   {
    "id": "med",
@@ -1389,9 +1446,9 @@
   }
  ],
  "counts": {
-  "lines": 174183,
-  "files": 466,
-  "test_lines": 32946,
+  "lines": 174635,
+  "files": 468,
+  "test_lines": 33105,
   "questions": 12972,
   "banks": 7,
   "subjects": 8,

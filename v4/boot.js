@@ -11,6 +11,6 @@
   try {
     if (localStorage.getItem('voice') === 'plain') d.setAttribute('data-voice', 'plain');
     var t = localStorage.getItem('theme');
-    if (t === 'light' || t === 'dark') d.setAttribute('data-theme', t);
+    if (t === 'light' || t === 'dark' || t === 'usa') d.setAttribute('data-theme', t);
   } catch (e) { /* defaults stand */ }
 })();

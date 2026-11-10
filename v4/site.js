@@ -2,6 +2,8 @@
 //
 // Expected behaviour:
 //   - Telling: "Plain language" switches every sentence that has two tellings, on every page, and is remembered.
+//   - Theme: the colophon sets the appearance (as the device, light, dark, USA); the button in the bar posts the USA
+//     theme and, pressed again, gives back what the reader had. It is remembered, and the browser's bar follows.
 //   - Asking: each address in #probes is asked once from this tab (an opaque fetch with no cookies and no referrer,
 //     stopped as soon as the host answers, so no page is downloaded). Its dots fill, its round trip is printed wherever it is named, and the
 //     tallies (directory, record) follow. A host that has to wake reads "waking" after four seconds and gets
@@ -41,16 +43,29 @@
   });
   drawVoice();
 
+  // The browser's own bar follows the page's bar whenever a theme is chosen; "as your device" gives it back.
+  var chrome = $$('meta[name="theme-color"]').map(function (m) { return [m, m.getAttribute('content')]; });
   function drawTheme() {
     var t = root.getAttribute('data-theme') || 'auto';
     $$('[data-theme-set]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-theme-set') === t)); });
+    $$('[data-theme-flip]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-theme-flip') === t)); });
+    var bar = t === 'auto' ? '' : getComputedStyle(root).getPropertyValue('--union').trim();
+    chrome.forEach(function (c) { c[0].setAttribute('content', bar || c[1]); });
+  }
+  function setTheme(t) {
+    if (t === 'auto') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', t);
+    store('theme', t === 'auto' ? null : t);
+    drawTheme();
   }
   $$('[data-theme-set]').forEach(function (b) {
+    b.addEventListener('click', function () { setTheme(b.getAttribute('data-theme-set')); });
+  });
+  // The button in the bar posts its theme, and pressed again gives back whatever the reader had before.
+  $$('[data-theme-flip]').forEach(function (b) {
     b.addEventListener('click', function () {
-      var t = b.getAttribute('data-theme-set');
-      if (t === 'auto') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', t);
-      store('theme', t === 'auto' ? null : t);
-      drawTheme();
+      var mine = b.getAttribute('data-theme-flip'), now = root.getAttribute('data-theme') || 'auto', was = read('theme-before');
+      if (now === mine) { setTheme(was === 'light' || was === 'dark' ? was : 'auto'); store('theme-before', null); }
+      else { store('theme-before', now === 'auto' ? null : now); setTheme(mine); }
     });
   });
   drawTheme();

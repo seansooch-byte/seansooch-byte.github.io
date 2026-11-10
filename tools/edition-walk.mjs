@@ -20,6 +20,9 @@
 //   - an address with a broken percent sign in it does not stop the page's scripts;
 //   - a film opens in its dialog with its own file and lets go of it on close;
 //   - the theme buttons set and clear the theme;
+//   - the USA theme: the button in the bar posts it (the bar turns Old Glory blue, both photographs arrive, the
+//     browser's bar follows), it survives a reload, pressed again it gives back the theme the reader had, and with it
+//     posted every page at every size still loads whole and never scrolls sideways; unposted, no photograph is fetched;
 //   - a lesson the ledger adds after the build appears in the outline, in the printed index in its alphabetical
 //     place and in the searched index, as text; the counts follow; a bad slug, a day that does not exist, a
 //     title that is not text and a second copy are dropped; a title that looks like markup stays text;
@@ -86,6 +89,50 @@ for (const size of SIZES) {
       await page.evaluate(() => { const d = document.createElement('div'); d.id = 'planted'; d.style.cssText = 'width:2000px;height:1px'; document.body.append(d); });
       ok(await sideways(page) > 0, where, 'CONTROL: a planted 2,000 px element did not trip the sideways-scroll check');
       await page.evaluate(() => document.getElementById('planted').remove());
+    }
+    ok(errors.length === 0, where, `errors: ${errors.slice(0, 3).join(' | ')}`);
+    await ctx.close();
+  }
+}
+
+// ---------- the USA theme, posted, on every page at every size
+for (const size of SIZES) {
+  for (const [label, path] of PAGES) {
+    const { ctx, page, errors, name } = await open(size, '/404.html');
+    const where = `${label}, ${name}, USA`;
+    const fetched = [];
+    page.on('request', r => { if (r.url().includes('/v4/usa/')) fetched.push(r.url()); });
+    await page.goto(base + path, { waitUntil: 'load' });
+    await page.evaluate(() => scrollTo(0, 0));
+    await page.waitForTimeout(300);
+    ok(fetched.length === 0, where, `unposted, the page fetched ${fetched.length} of the theme's photographs`);
+    ok(await page.evaluate(() => !document.querySelector('.posted').offsetParent && !document.querySelector('.when-posted').offsetParent), where, 'unposted, the theme shows');
+    await page.locator('[data-theme-flip=usa]').click();
+    ok(await page.evaluate(() => document.documentElement.getAttribute('data-theme') === 'usa' && getComputedStyle(document.querySelector('.topbar')).backgroundColor === 'rgb(10, 49, 97)'), where, 'the button did not post the theme, or the bar is not Old Glory blue');
+    ok(await page.locator('[data-theme-flip=usa]').getAttribute('aria-pressed') === 'true', where, 'the button does not say the theme is posted');
+    ok(await page.evaluate(() => [...document.querySelectorAll('meta[name="theme-color"]')].every(m => m.content === '#0a3161')), where, "the browser's bar did not follow");
+    await page.waitForFunction(() => [...document.querySelectorAll('.jet img')].every(i => i.complete && i.naturalWidth > 0), null, { timeout: 8000 }).catch(() => {});
+    ok(await page.evaluate(() => { const i = [...document.querySelectorAll('.jet img')]; return i.length === 2 && i.every(x => x.naturalWidth > 0 && x.getBoundingClientRect().height >= 120); }), where, 'a photograph did not arrive');
+    await page.reload({ waitUntil: 'load' });
+    ok(await page.evaluate(() => document.documentElement.getAttribute('data-theme') === 'usa'), where, 'the theme was forgotten on reload');
+    await page.waitForFunction(() => [...document.querySelectorAll('.jet img')].every(i => i.complete && i.naturalWidth > 0), null, { timeout: 8000 }).catch(() => {});
+    ok(await page.evaluate(() => [...document.querySelectorAll('.jet img')].every(i => i.naturalWidth > 0)), where, 'after a reload a photograph did not arrive');
+    const broken = await walkDown(page);
+    ok(broken.length === 0, where, `images did not load: ${broken.join(', ')}`);
+    ok(await sideways(page) <= 0, where, `the page scrolls sideways by ${await sideways(page)} px`);
+    const small = await page.evaluate(() => [...document.querySelectorAll('.topbar a, .topbar button')].filter(e => e.offsetParent).map(e => e.getBoundingClientRect()).filter(r => r.height < 24 || r.right > innerWidth).length);
+    ok(small === 0, where, `${small} controls in the bar are under 24 px tall or off the screen`);
+    ok(await page.evaluate(() => { const c = document.querySelector('.colophon'); return [...c.querySelectorAll('.when-posted')].every(e => e.offsetParent) && c.textContent.includes('does not imply or constitute'); }), where, 'the imagery notice does not show');
+    await page.locator('[data-theme-flip=usa]').click();
+    ok(await page.evaluate(() => !document.documentElement.hasAttribute('data-theme') && !document.querySelector('.posted').offsetParent), where, 'pressed again, the button did not take the theme down');
+    if (label === 'home' && name === 'wide') {
+      await page.locator('[data-theme-set=dark]').scrollIntoViewIfNeeded();
+      await page.locator('[data-theme-set=dark]').click();
+      await page.locator('[data-theme-flip=usa]').click();
+      await page.locator('[data-theme-flip=usa]').click();
+      ok(await page.evaluate(() => document.documentElement.getAttribute('data-theme') === 'dark'), where, 'a reader who had chosen dark did not get dark back');
+      await page.locator('[data-theme-set=usa]').click();
+      ok(await page.evaluate(() => document.documentElement.getAttribute('data-theme') === 'usa' && document.querySelector('[data-theme-flip=usa]').getAttribute('aria-pressed') === 'true'), where, 'the colophon did not post the theme');
     }
     ok(errors.length === 0, where, `errors: ${errors.slice(0, 3).join(' | ')}`);
     await ctx.close();
