@@ -622,5 +622,20 @@
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
     }
+  },
+  {
+    "slug": "calcium-pth-vitamin-d",
+    "title": "Calcium, PTH and Vitamin D",
+    "date": "2026-11-11",
+    "description": "Follow PTH from the parathyroid to bone and kidney, then calcitriol to the gut, and see calcium shift in four parathyroid, vitamin D and kidney states.",
+    "category": "medicine",
+    "builder": {
+      "tool": "Claude Code",
+      "model": "claude-opus-5-5"
+    },
+    "reviewer": {
+      "tool": "OpenAI Codex",
+      "model": "gpt-6.1-sol"
+    }
   }
 ]
