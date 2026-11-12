@@ -1,0 +1,395 @@
+{
+  "disclaimer": "Typical adult reference ranges; labs vary; not for clinical decisions.",
+  "sources": {
+    "NBK430912": "Anastasopoulou C, Goyal A. Hypocalcemia. In: StatPearls [Internet]. Treasure Island (FL): StatPearls Publishing; 2026. NCBI Bookshelf NBK430912 (abstract as indexed by Europe PMC, PMID 28613662).",
+    "NBK532266": "Kaur J, Khare S, Givler A. Vitamin D Deficiency. In: StatPearls [Internet]. Treasure Island (FL): StatPearls Publishing; 2025. NCBI Bookshelf NBK532266 (abstract as indexed by Europe PMC, PMID 30335299).",
+    "NBK493172": "Kaur J, Castro D. Hypophosphatemia. In: StatPearls [Internet]. Treasure Island (FL): StatPearls Publishing; 2024. NCBI Bookshelf NBK493172 (abstract as indexed by Europe PMC, PMID 29630224).",
+    "NBK482423": "Anastasopoulou C, Mewawalla P. Malignancy-Related Hypercalcemia. In: StatPearls [Internet]. Treasure Island (FL): StatPearls Publishing; 2025. NCBI Bookshelf NBK482423 (abstract as indexed by Europe PMC, PMID 29494030).",
+    "NBK441895": "Helbing A, Leslie SW, Levine SN. Primary Hyperparathyroidism. In: StatPearls [Internet]. Treasure Island (FL): StatPearls Publishing; 2026. NCBI Bookshelf NBK441895 (abstract as indexed by Europe PMC, PMID 28722924).",
+    "NBK441899": "Hans SK, Levine SN. Hypoparathyroidism. In: StatPearls [Internet]. Treasure Island (FL): StatPearls Publishing; 2024. NCBI Bookshelf NBK441899 (abstract as indexed by Europe PMC, PMID 28722928).",
+    "OpenStax-26.3": "Betts JG, Young KA, Wise JA, et al. Anatomy and Physiology 2e, section 26.3 Electrolyte Balance. OpenStax, Rice University; 2022 (CC BY 4.0).",
+    "OpenStax-17.5": "Betts JG, Young KA, Wise JA, et al. Anatomy and Physiology 2e, section 17.5 The Parathyroid Glands. OpenStax, Rice University; 2022 (CC BY 4.0)."
+  },
+  "values": [
+    {
+      "id": "total_ca",
+      "label": "Total serum calcium",
+      "unit": "mg/dL (mmol/L)",
+      "low": 8.5,
+      "high": 10.5,
+      "lowAlt": 2.12,
+      "highAlt": 2.62,
+      "unitMain": "mg/dL",
+      "unitAlt": "mmol/L",
+      "zones": [
+        "below range",
+        "normal range",
+        "above range"
+      ],
+      "source": "NBK430912",
+      "where": "StatPearls NBK430912, Hypocalcemia, abstract",
+      "quoteId": "q912_total",
+      "modelKey": null,
+      "note": "Read with albumin: see the quoted correction below."
+    },
+    {
+      "id": "ionized_ca",
+      "label": "Ionized calcium",
+      "unit": "mg/dL (mmol/L)",
+      "low": 4.65,
+      "high": 5.25,
+      "lowAlt": 1.16,
+      "highAlt": 1.31,
+      "unitMain": "mg/dL",
+      "unitAlt": "mmol/L",
+      "zones": [
+        "below range",
+        "normal range",
+        "above range"
+      ],
+      "source": "NBK430912",
+      "where": "StatPearls NBK430912, Hypocalcemia, abstract",
+      "quoteId": "q912_ionized",
+      "modelKey": null
+    },
+    {
+      "id": "vitd25",
+      "label": "25-hydroxyvitamin D",
+      "unit": "ng/mL",
+      "low": 30,
+      "high": null,
+      "unitMain": "ng/mL",
+      "cuts": [
+        12,
+        30
+      ],
+      "zones": [
+        "deficiency",
+        "insufficiency",
+        "sufficiency"
+      ],
+      "zoneText": [
+        "below 12",
+        "12 to 30",
+        "greater than 30"
+      ],
+      "source": "NBK532266",
+      "where": "StatPearls NBK532266, Vitamin D Deficiency, abstract (2019 Endocrine Society definitions)",
+      "quoteId": [
+        "q266_suff",
+        "q266_insuff",
+        "q266_def"
+      ],
+      "modelKey": null,
+      "note": "Three zones by definition: the band marks sufficiency."
+    }
+  ],
+  "definitions": [
+    {
+      "id": "hypophos",
+      "label": "Hypophosphatemia (adult)",
+      "text": "serum phosphate less than 2.5 mg/dL",
+      "source": "NBK493172",
+      "where": "StatPearls NBK493172, Hypophosphatemia, abstract",
+      "quoteId": "q172_def"
+    }
+  ],
+  "albuminNote": {
+    "source": "NBK430912",
+    "where": "StatPearls NBK430912, Hypocalcemia, abstract (why); StatPearls NBK482423, Malignancy-Related Hypercalcemia, abstract (the correction, in mg/dL)",
+    "quoteIds": [
+      "q912_albumin1",
+      "q423_albumin"
+    ]
+  },
+  "states": [
+    {
+      "id": "normal",
+      "label": "Normal",
+      "short": "Normal",
+      "kind": "physiologic",
+      "summary": "The teaching baseline: calcium inside its normal range, PTH answering the calcium sensors.",
+      "shifts": {},
+      "quotes": {},
+      "directions": {},
+      "source": "NBK430912",
+      "where": "StatPearls NBK430912, Hypocalcemia, abstract (normal ranges)"
+    },
+    {
+      "id": "phpt",
+      "label": "Primary hyperparathyroidism",
+      "short": "Primary hyperparathyroidism",
+      "kind": "disease",
+      "summary": "A parathyroid gland overproduces PTH on its own and keeps secreting it even though calcium is already high.",
+      "shifts": {
+        "total_ca": "up"
+      },
+      "quotes": {
+        "total_ca": [
+          "q895_def",
+          "q895_dx"
+        ]
+      },
+      "directions": {
+        "calcium": {
+          "dir": "up",
+          "word": "calcium",
+          "quotes": [
+            "q895_def",
+            "q263_hypercalc"
+          ]
+        },
+        "pth": {
+          "dir": "up",
+          "word": "PTH",
+          "note": "elevated or inappropriately elevated",
+          "quotes": [
+            "q895_dx"
+          ]
+        },
+        "boneRelease": {
+          "dir": "up",
+          "word": "bone resorption",
+          "quotes": [
+            "q895_mech"
+          ]
+        },
+        "kidneyCa": {
+          "dir": "up",
+          "word": "renal calcium reabsorption",
+          "quotes": [
+            "q895_mech"
+          ]
+        },
+        "gutCa": {
+          "dir": "up",
+          "word": "intestinal calcium absorption",
+          "quotes": [
+            "q895_mech"
+          ]
+        }
+      },
+      "source": "NBK441895",
+      "where": "StatPearls NBK441895, Primary Hyperparathyroidism, abstract"
+    },
+    {
+      "id": "hypopara",
+      "label": "Hypoparathyroidism",
+      "short": "Hypoparathyroidism",
+      "kind": "disease",
+      "summary": "The parathyroid glands make too little PTH, most often after injury during neck surgery.",
+      "shifts": {
+        "total_ca": "down"
+      },
+      "quotes": {
+        "total_ca": [
+          "q899_dx"
+        ]
+      },
+      "directions": {
+        "calcium": {
+          "dir": "down",
+          "word": "calcium",
+          "quotes": [
+            "q899_def",
+            "q899_dx"
+          ]
+        },
+        "pth": {
+          "dir": "down",
+          "word": "PTH",
+          "note": "decreased or undetectable",
+          "quotes": [
+            "q899_dx"
+          ]
+        },
+        "phosphate": {
+          "dir": "up",
+          "word": "phosphorus",
+          "note": "hyperphosphatemia; elevated serum phosphorus",
+          "quotes": [
+            "q899_def",
+            "q899_dx"
+          ]
+        },
+        "calcitriol": {
+          "dir": "down",
+          "word": "calcitriol",
+          "note": "decreased 1,25-dihydroxyvitamin D",
+          "quotes": [
+            "q899_dx"
+          ]
+        }
+      },
+      "source": "NBK441899",
+      "where": "StatPearls NBK441899, Hypoparathyroidism, abstract"
+    },
+    {
+      "id": "vitd",
+      "label": "Vitamin D deficiency",
+      "short": "Vitamin D deficiency",
+      "kind": "disease",
+      "summary": "Too little vitamin D, so the gut absorbs less calcium from food.",
+      "shifts": {
+        "vitd25": "down",
+        "total_ca": "down"
+      },
+      "quotes": {
+        "vitd25": [
+          "q266_def"
+        ],
+        "total_ca": [
+          "q912_def",
+          "q912_causes"
+        ]
+      },
+      "directions": {
+        "calcium": {
+          "dir": "down",
+          "word": "calcium",
+          "note": "vitamin D deficiency is a common cause of low calcium",
+          "quotes": [
+            "q912_def",
+            "q912_causes"
+          ]
+        },
+        "vitd25": {
+          "dir": "down",
+          "word": "25-hydroxyvitamin D",
+          "note": "in the deficiency zone, by definition",
+          "quotes": [
+            "q266_def"
+          ]
+        },
+        "boneStore": {
+          "dir": "down",
+          "word": "calcium stores in bone, over time",
+          "quotes": [
+            "q263_vitd"
+          ]
+        },
+        "gutCa": {
+          "dir": "down",
+          "word": "calcium absorbed from food",
+          "quotes": [
+            "q263_vitd"
+          ]
+        }
+      },
+      "source": "NBK532266",
+      "where": "StatPearls NBK532266, Vitamin D Deficiency, abstract; NBK430912, Hypocalcemia, abstract"
+    },
+    {
+      "id": "ckd",
+      "label": "Decreased renal function / CKD",
+      "short": "Decreased renal function",
+      "kind": "disease",
+      "summary": "The kidneys work less well, so they handle ions less well.",
+      "shifts": {
+        "total_ca": "down"
+      },
+      "quotes": {
+        "total_ca": [
+          "q912_def",
+          "q912_causes"
+        ]
+      },
+      "directions": {
+        "calcium": {
+          "dir": "down",
+          "word": "calcium",
+          "note": "chronic kidney disease is a common cause of low calcium",
+          "quotes": [
+            "q912_def",
+            "q912_causes"
+          ]
+        },
+        "phosphate": {
+          "dir": "up",
+          "word": "phosphate",
+          "note": "hyperphosphatemia",
+          "quotes": [
+            "q263_hyperphos"
+          ]
+        },
+        "kidneyFn": {
+          "dir": "down",
+          "word": "kidney function",
+          "quotes": [
+            "q263_hyperphos"
+          ]
+        }
+      },
+      "source": "NBK430912",
+      "where": "StatPearls NBK430912, Hypocalcemia, abstract; OpenStax A&P 2e 26.3, Phosphate"
+    }
+  ],
+  "directionNote": "States: every displayed direction (hormones, ions and processes) with the SOURCES records that state it. Anything absent is not stated in the sources. The bar shifts above (shifts) are the same directions applied to the rows that have a range.",
+  "sourceRecords": {
+    "q175_calcitriol": {
+      "file": "openstax-ap2e-17-5-the-parathyroid-glands.txt",
+      "section": "OpenStax A&P 2e, 17.5 The Parathyroid Glands, paragraph before Figure 17.16",
+      "quote": "In addition, PTH initiates the production of the steroid hormone calcitriol (also known as 1,25-dihydroxyvitamin D), which is the active form of vitamin D 3 , in the kidneys."
+    },
+    "q912_total": {
+      "file": "statpearls-NBK430912-abstract.txt",
+      "section": "StatPearls NBK430912, Hypocalcemia, abstract",
+      "quote": "Most laboratories report total serum calcium concentration, with a normal range of 8.5 to 10.5 mg/dL (2.12-2.62 mmol/L)."
+    },
+    "q912_ionized": {
+      "file": "statpearls-NBK430912-abstract.txt",
+      "section": "StatPearls NBK430912, Hypocalcemia, abstract",
+      "quote": "Ionized calcium can also be measured, with a normal range of 4.65 to 5.25 mg/dL (1.16-1.31 mmol/L)."
+    },
+    "q128_ionized": {
+      "file": "statpearls-NBK482128-abstract.txt",
+      "section": "StatPearls NBK482128, Physiology, Calcium, abstract",
+      "quote": "Ionized calcium, which comprises roughly 50% of total serum calcium, is the biologically active form and is tightly regulated by parathyroid hormone (PTH), vitamin D metabolites, and, to a lesser extent, calcitonin."
+    },
+    "q128_complexed": {
+      "file": "statpearls-NBK482128-abstract.txt",
+      "section": "StatPearls NBK482128, Physiology, Calcium, abstract",
+      "quote": "The remaining 9% of serum calcium exists in complexes with small anions, such as phosphate, bicarbonate, citrate, and oxalate. This fraction is diffusible but not biologically active."
+    },
+    "q128_fractions": {
+      "file": "statpearls-NBK482128-abstract.txt",
+      "section": "StatPearls NBK482128, Physiology, Calcium, abstract",
+      "quote": "Serum calcium exists in 3 distinct fractions in the extracellular fluid: ionized (free), protein-bound, and complexed (chelated)."
+    },
+    "q940_kidneys": {
+      "file": "statpearls-NBK499940-abstract.txt",
+      "section": "StatPearls NBK499940, Physiology, Parathyroid Hormone, abstract",
+      "quote": "PTH facilitates the synthesis of active vitamin D and calcitriol (1,25-dihydroxycholecalciferol) in the kidneys."
+    },
+    "q899_dx": {
+      "file": "statpearls-NBK441899-abstract.txt",
+      "section": "StatPearls NBK441899, Hypoparathyroidism, abstract",
+      "quote": "Hypoparathyroidism is typically diagnosed with laboratory studies confirming a low corrected calcium level as well as a decreased or undetectable parathyroid hormone level. Other findings that support this diagnosis include elevated serum phosphorus, decreased 1,25-dihydroxyvitamin D, and elevated urinary fractional calcium excretion levels."
+    },
+    "q266_suff": {
+      "file": "statpearls-NBK532266-abstract.txt",
+      "section": "StatPearls NBK532266, Vitamin D Deficiency, abstract",
+      "quote": "According to the 2019 Endocrine Society guidelines, vitamin D sufficiency is defined as having a serum total 25-hydroxyvitamin D level greater than 30 ng/mL"
+    },
+    "q266_insuff": {
+      "file": "statpearls-NBK532266-abstract.txt",
+      "section": "StatPearls NBK532266, Vitamin D Deficiency, abstract",
+      "quote": "Vitamin D insufficiency is defined as having a total 25-hydroxyvitamin D level between 12 and 30 ng/mL"
+    },
+    "q266_def": {
+      "file": "statpearls-NBK532266-abstract.txt",
+      "section": "StatPearls NBK532266, Vitamin D Deficiency, abstract",
+      "quote": "while vitamin D deficiency is defined as having a level below 12 ng/mL"
+    },
+    "q172_def": {
+      "file": "statpearls-NBK493172-abstract.txt",
+      "section": "StatPearls NBK493172, Hypophosphatemia, abstract",
+      "quote": "Hypophosphatemia is defined as an adult serum phosphate level of less than 2.5 mg/dL."
+    },
+    "q423_albumin": {
+      "file": "statpearls-NBK482423-abstract.txt",
+      "section": "StatPearls NBK482423, Malignancy-Related Hypercalcemia, abstract",
+      "quote": "The corrected calcium could also be calculated using the below formula: Serum calcium + 0.8 × (4 − patient’s albumin level), where 4.0 g/dL is the normal albumin level."
+    }
+  }
+}

@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calcium, PTH and Vitamin D · The Lab · Sean Sooch</title>
+<meta name="description" content="A guided visual lesson: follow parathyroid hormone from the parathyroid glands to bone and kidney, watch the kidney make calcitriol for the gut, and see calcium, PTH, calcitriol and phosphate shift in four parathyroid, vitamin D and kidney states. Every claim is quoted from its source.">
+<link rel="canonical" href="https://seansooch.dev/lab/calcium-pth-vitamin-d/">
+<meta property="og:title" content="Calcium, PTH and Vitamin D">
+<meta property="og:description" content="Follow PTH from the parathyroid to bone and kidney, then calcitriol to the gut, and see calcium shift in four parathyroid, vitamin D and kidney states.">
+<meta property="og:url" content="https://seansooch.dev/lab/calcium-pth-vitamin-d/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script src="data.js" defer></script>
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the lesson</a>
+<header class="site-top">
+  <div class="site-top-in">
+    <a class="site-brand" href="/" aria-label="Sean Sooch, home">Sean Sooch</a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="site-nav-home" href="/#work">Work</a>
+      <a href="/#writing">Writing</a>
+      <a href="/#films">Films</a>
+      <a href="/#editions">Editions</a>
+      <a class="site-nav-lab" href="/lab/" aria-current="true">The Lab</a>
+    </nav>
+  </div>
+</header>
+<main id="main" data-slug="calcium-pth-vitamin-d">
+  <div class="intro">
+    <p class="eyebrow"><a href="/lab/">All lessons</a> / Hormones / Lesson 23</p>
+    <h1>Calcium, <span class="c-pth">PTH</span> and <span class="c-ctr">vitamin&nbsp;D</span></h1>
+    <p class="lede">Blood calcium is held inside a narrow band. Follow parathyroid hormone from four tiny glands to bone and kidney, watch PTH make the kidney produce calcitriol, the active form of vitamin D that acts on the gut, then see what shifts in four conditions.</p>
+    <p class="note banner"><strong>Educational, not for clinical use.</strong> Every claim here is quoted from a cached source; open any “Source” to read it.</p>
+    <details class="plan" id="plan">
+      <summary><span class="plan-facts"><b>20 min</b> · 12 steps · 10 questions</span> <span class="plan-more">Goals and what it builds on</span></summary>
+      <div class="plan-body">
+        <div>
+          <h2 class="kicker">You will be able to</h2>
+          <ol class="goals" id="goals"></ol>
+        </div>
+        <div>
+          <h2 class="kicker">Builds on</h2>
+          <ul class="builds">
+            <li><a href="/lab/thyroid-axis/">Lesson 14: The Thyroid Axis</a></li>
+            <li><a href="/lab/nephron-diuretics/">Lesson 2: The Nephron</a>, how the kidney tubule handles what is filtered</li>
+            <li>The idea of negative feedback: a result that switches off its own cause</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Lesson views">
+    <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
+    <button type="button" role="tab" id="tab-quiz" aria-controls="quiz" aria-selected="false" tabindex="-1">Quiz</button>
+    <button type="button" role="tab" id="tab-summary" aria-controls="summary" aria-selected="false" tabindex="-1">Summary</button>
+    <button type="button" role="tab" id="tab-sources" aria-controls="sources" aria-selected="false" tabindex="-1">Sources</button>
+  </div>
+
+  <section id="lesson" role="tabpanel" aria-labelledby="tab-lesson">
+    <p class="hint">Each step asks for a prediction first; answer it (or skip) to play the picture. Move with Next and Back, or the ← → keys.</p>
+
+    <article data-step="1" data-step-title="Calcium in the blood" data-kind="blood">
+      <div class="step-left"><div class="fig-slot">
+        <figure class="stage" id="stage">
+          <svg id="pic" role="img" aria-labelledby="pic-title pic-desc" viewBox="0 0 780 690" xmlns="http://www.w3.org/2000/svg"><title id="pic-title">Calcium, PTH and vitamin D: the body map</title><desc id="pic-desc">The parathyroid glands on the back of the thyroid, the blood calcium pool, bone, kidney and small intestine.</desc></svg>
+          <figcaption class="legend" id="legend">
+            <span class="key"><i class="k-ca" aria-hidden="true"></i>Ca²⁺ calcium</span>
+            <span class="key"><i class="k-pth" aria-hidden="true"></i>PTH</span>
+            <span class="key"><i class="k-ctr" aria-hidden="true"></i>calcitriol</span>
+            <span class="key"><i class="k-ph" aria-hidden="true"></i>phosphate</span>
+            <span class="key"><i class="k-ct" aria-hidden="true"></i>calcitonin</span>
+            <span class="key-state" data-legend hidden></span>
+          </figcaption>
+        </figure>
+      </div></div>
+      <div class="step-right">
+        <p class="eyebrow">Build the picture</p>
+        <h2 tabindex="-1">Calcium in the blood</h2>
+        <div class="predict" data-predict></div>
+        <div class="reveal" data-reveal hidden>
+          <p class="caption">Blood carries calcium in three forms. A large part is bound to proteins, mainly one called <dfn>albumin</dfn>. Another large part is <dfn>ionized calcium</dfn>: free, electrically charged calcium (teal dots, Ca²⁺), the active form. A small share sits in complexes with small ions. <dfn>Total calcium</dfn> counts all three.</p>
+          <p class="aside">Because so much calcium rides on albumin, a total calcium result is read alongside albumin. The Clinical values tab quotes the exact correction and the reference ranges.</p>
+        </div>
+      </div>
+    </article>
+
+    <article data-step="2" data-step-title="When calcium falls, the parathyroid glands answer" data-kind="sense" hidden>
+      <div class="step-left"><div class="fig-slot"></div></div>
+      <div class="step-right">
+        <p class="eyebrow">Build the picture</p>
+        <h2 tabindex="-1">When calcium falls, the parathyroid glands answer</h2>
+        <div class="predict" data-predict></div>
+        <div class="reveal" data-reveal hidden>
+          <p class="caption">Usually four tiny <dfn>parathyroid glands</dfn> sit on the back of the thyroid, and their cells carry calcium sensors. When blood calcium drops, they release more of a <dfn>hormone</dfn> (a chemical messenger carried in the blood) called <dfn>parathyroid hormone</dfn>, or PTH: the amber hexagons.</p>
+        </div>
+      </div>
+    </article>
+
+    <article data-step="3" data-step-title="PTH at bone: calcium comes out of the store" data-kind="bone" hidden>
+      <div class="step-left"><div class="fig-slot"></div></div>
+      <div class="step-right">
+        <p class="eyebrow">Build the picture</p>
+        <h2 tabindex="-1">PTH at bone: calcium comes out of the store</h2>
+        <div class="predict" data-predict></div>
+        <div class="reveal" data-reveal hidden>
+          <p class="caption">Bone is the body’s calcium store. PTH stimulates <dfn>osteoclasts</dfn>, bone cells that break bone down and release its calcium into the blood. It also holds back <dfn>osteoblasts</dfn>, the bone-building cells, which spares blood calcium.</p>
+        </div>
+      </div>
+    </article>
+
+    <article data-step="4" data-step-title="PTH at the kidney: less calcium lost in urine" data-kind="kidney" hidden>
+      <div class="step-left"><div class="fig-slot"></div></div>
+      <div class="step-right">
+        <p class="eyebrow">Build the picture</p>
+        <h2 tabindex="-1">PTH at the kidney: less calcium lost in urine</h2>
+        <div class="predict" data-predict></div>
+        <div class="reveal" data-reveal hidden>
+          <p class="caption">In the kidney, fluid filtered out of the blood flows along tubules and becomes urine. PTH makes the tubules <dfn>reabsorb</dfn> more calcium, taking it back from that fluid into the blood, so less calcium is lost in urine.</p>
+        </div>
+      </div>
+    </article>
+
+    <article data-step="5" data-step-title="The kidney makes calcitriol for the gut" data-kind="activate" hidden>
+      <div class="step-left"><div class="fig-slot"></div></div>
+      <div class="step-right">
+        <p class="eyebrow">Build the picture</p>
+        <h2 tabindex="-1">The kidney makes calcitriol for the gut</h2>
+        <div class="predict" data-predict></div>
+        <div class="reveal" data-reveal hidden>
+          <p class="caption"><dfn>Calcitriol</dfn> (violet triangles) is the active form of vitamin D. OpenStax gives this step in two sentences:</p>
+          <blockquote class="caption-quote" data-quote="q175_calcitriol q175_gut"></blockquote>
+          <p class="path-line" aria-label="The path: PTH to kidney, kidney makes calcitriol, calcitriol to gut">PTH → kidney → calcitriol → gut</p>
+        </div>
+      </div>
+    </article>
+
+    <article data-step="6" data-step-title="Enough calcium turns PTH down; calcitonin" data-kind="feedback" hidden>
+      <div class="step-left"><div class="fig-slot"></div></div>
+      <div class="step-right">
+        <p class="eyebrow">Build the picture</p>
+        <h2 tabindex="-1">Enough calcium turns PTH down; calcitonin</h2>
+        <div class="predict" data-predict></div>
+        <div class="reveal" data-reveal hidden>
+          <p class="caption">Rising calcium inhibits further PTH release: <dfn>negative feedback</dfn>, a loop whose result switches off its cause. If calcium runs high, the thyroid’s <dfn>C cells</dfn> release <dfn>calcitonin</dfn> (blue squares), which inhibits osteoclasts, reduces gut absorption and signals the kidneys to reabsorb less calcium.</p>
+        </div>
+      </div>
+    </article>
+
+    <article data-step="7" data-step-title="Phosphate: the kidney sends it the other way" data-kind="phosphate" hidden>
+      <div class="step-left"><div class="fig-slot"></div></div>
+      <div class="step-right">
+        <p class="eyebrow">Build the picture</p>
+        <h2 tabindex="-1">Phosphate: the kidney sends it the other way</h2>
+        <div class="predict" data-predict></div>
+        <div class="reveal" data-reveal hidden>
+          <p class="caption"><dfn>Phosphate</dfn> is a mineral that bone stores alongside calcium (grey rings). When PTH breaks bone down, calcium-phosphate salts come out together. At the kidney PTH treats them oppositely: it keeps calcium but increases the loss of phosphate in urine.</p>
+        </div>
+      </div>
+    </article>
+
+    <article data-step="8" data-step-title="Primary hyperparathyroidism: PTH that ignores calcium" data-kind="phpt" data-state="phpt" hidden>
+      <div class="step-left"><div class="fig-slot"></div></div>
+      <div class="step-right">
+        <p class="eyebrow">What changes it</p>
+        <h2 tabindex="-1">Primary hyperparathyroidism: PTH that ignores calcium</h2>
+        <div class="predict" data-predict></div>
+        <div class="reveal" data-reveal hidden>
+          <p class="caption">In <dfn>primary hyperparathyroidism</dfn> a parathyroid gland overproduces PTH on its own, and keeps secreting it even when calcium is already high. Bone breakdown, kidney reabsorption and gut absorption of calcium all increase, so calcium climbs.</p>
+          <div class="changes" data-changes></div>
+          <button type="button" class="replay" data-replay>↺ Replay the change</button>
+        </div>
+      </div>
+    </article>
+
+    <article data-step="9" data-step-title="Hypoparathyroidism: too little PTH" data-kind="hypopara" data-state="hypopara" hidden>
+      <div class="step-left"><div class="fig-slot"></div></div>
+      <div class="step-right">
+        <p class="eyebrow">What changes it</p>
+        <h2 tabindex="-1">Hypoparathyroidism: too little PTH</h2>
+        <div class="predict" data-predict></div>
+        <div class="reveal" data-reveal hidden>
+          <p class="caption">In <dfn>hypoparathyroidism</dfn> the glands make too little PTH, most often after injury during neck surgery. Calcium falls and phosphate rises, and calcitriol, the active vitamin D the kidney makes, is decreased.</p>
+          <div class="changes" data-changes></div>
+          <button type="button" class="replay" data-replay>↺ Replay the change</button>
+        </div>
+      </div>
+    </article>
+
+    <article data-step="10" data-step-title="Vitamin D deficiency: the gut absorbs less" data-kind="vitd" data-state="vitd" hidden>
+      <div class="step-left"><div class="fig-slot"></div></div>
+      <div class="step-right">
+        <p class="eyebrow">What changes it</p>
+        <h2 tabindex="-1">Vitamin D deficiency: the gut absorbs less</h2>
+        <div class="predict" data-predict></div>
+        <div class="reveal" data-reveal hidden>
+          <p class="caption">With too little vitamin D, the gut absorbs less calcium from food, and over time calcium stores are drawn out of the skeleton. It is a common cause of low blood calcium. The blood test that defines it, <dfn>25-hydroxyvitamin D</dfn> (25-OH D), reads in the deficiency zone.</p>
+          <div class="changes" data-changes></div>
+          <button type="button" class="replay" data-replay>↺ Replay the change</button>
+        </div>
+      </div>
+    </article>
+
+    <article data-step="11" data-step-title="Decreased renal function: phosphate builds up" data-kind="ckd" data-state="ckd" hidden>
+      <div class="step-left"><div class="fig-slot"></div></div>
+      <div class="step-right">
+        <p class="eyebrow">What changes it</p>
+        <h2 tabindex="-1">Decreased renal function: phosphate builds up</h2>
+        <div class="predict" data-predict></div>
+        <div class="reveal" data-reveal hidden>
+          <p class="caption">The kidneys are the main exit for ions. When they work less well, as in <dfn>chronic kidney disease</dfn> (CKD), phosphate builds up in the blood: <dfn>hyperphosphatemia</dfn>. CKD is also a common cause of low blood calcium.</p>
+          <div class="changes" data-changes></div>
+          <button type="button" class="replay" data-replay>↺ Replay the change</button>
+        </div>
+      </div>
+    </article>
+
+    <article data-step="12" data-step-title="Compare the four states" data-kind="compare" hidden>
+      <div class="step-left"><div class="fig-slot"></div></div>
+      <div class="step-right">
+        <p class="eyebrow">Put it together</p>
+        <h2 tabindex="-1">Compare the four states</h2>
+        <div class="predict" data-predict></div>
+        <div class="reveal" data-reveal hidden>
+          <p class="caption">Pick a state. The picture replays from normal into it: solid arrows and labels mark each change, and whatever these sources do not state is drawn dotted and listed as not stated.</p>
+          <fieldset class="state-pick" data-state-pick>
+            <legend>State</legend>
+          </fieldset>
+          <div class="changes" data-changes></div>
+        </div>
+      </div>
+    </article>
+
+    <div class="dock" id="dock">
+      <div class="player" role="group" aria-label="Animation player">
+        <p class="beat" id="beat"><span class="beat-n"></span> <span class="beat-t"></span></p>
+        <div class="player-row">
+          <button type="button" class="pl" data-pl="restart" aria-label="Restart">↺</button>
+          <button type="button" class="pl" data-pl="back" aria-label="Step back">⏮</button>
+          <button type="button" class="pl pl-main" data-pl="play" aria-label="Play">▶</button>
+          <button type="button" class="pl" data-pl="fwd" aria-label="Step forward">⏭</button>
+          <div class="speed" role="group" aria-label="Speed">
+            <button type="button" data-speed="0.5" aria-pressed="false">0.5×</button>
+            <button type="button" data-speed="1" aria-pressed="true">1×</button>
+            <button type="button" data-speed="2" aria-pressed="false">2×</button>
+          </div>
+        </div>
+      </div>
+      <div class="step-nav">
+        <button type="button" data-step-back disabled>← Back</button>
+        <span data-step-progress aria-live="polite">Step 1 of 12</span>
+        <button type="button" data-step-next>Next →</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
+    <h2 tabindex="-1">Clinical values</h2>
+    <p class="disclaimer" id="cv-disclaimer">Loading the reference values…</p>
+    <fieldset class="state-pick" id="cv-pick">
+      <legend>Compare a state</legend>
+    </fieldset>
+    <p class="cv-state" id="cv-state" aria-live="polite"></p>
+    <div id="cv-rows" class="cv-rows"></div>
+    <h3>Direction only</h3>
+    <p class="no-range" id="no-range">No reference range is shown for PTH, calcitriol or phosphate: the sources used here give none.</p>
+    <div id="cv-dirs" class="cv-dirs"></div>
+    <div id="cv-defs" class="cv-defs"></div>
+    <h3>Reading total calcium with albumin</h3>
+    <div id="cv-albumin"></div>
+    <h3>Sources for this tab</h3>
+    <ul id="cv-sources" class="cv-sources"></ul>
+    <p class="load-error" id="cv-error" hidden></p>
+  </section>
+
+  <section id="quiz" role="tabpanel" aria-labelledby="tab-quiz" hidden></section>
+  <section id="summary" role="tabpanel" aria-labelledby="tab-summary" hidden></section>
+  <section id="sources" role="tabpanel" aria-labelledby="tab-sources" hidden></section>
+
+  <p id="live" class="visually-hidden" aria-live="polite"></p>
+  <footer>Lesson 23 of The Lab · Added 2026-11-11 · <a href="/lab/">All lessons</a></footer>
+</main>
+</body>
+</html>
