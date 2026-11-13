@@ -51,6 +51,7 @@ import hashlib   # noqa: E402
 import html      # noqa: E402
 import json      # noqa: E402
 import re        # noqa: E402
+import unicodedata  # noqa: E402
 from collections import Counter  # noqa: E402
 from pathlib import Path         # noqa: E402
 
@@ -83,17 +84,28 @@ BRACE = re.compile(r'\{([a-z][a-z0-9_]*)\}')
 STORY = re.compile(r'^\d{4}-\d{2}-\d{2}(-[a-z0-9]+)+\Z')
 POST_ID = re.compile(r'^\d{10,20}\Z')
 HANDLE = re.compile(r'^[A-Za-z0-9_]{1,15}\Z')
-FIGURE = re.compile(r'^[$]?\d[\d,.:/-]*( ?(%|[KMB]|thousand|million|billion|trillion))?\Z')
+FIGURE = re.compile(r'^[+-]?[$]?\d[\d,.:/-]*( ?(%|[KMBT]|x|percent|thousand|million|billion|trillion))?\Z')
 YEAR = re.compile(r'^(19|20)\d\ds?\Z')
 CURRENCY = '$' + ''.join(chr(c) for c in (0xA3, 0xA5, 0x20AC))
 # Letters after digits that make a quantity, not a name: 40pts and 35mph are numbers, 49ers and 4chan are not.
-UNITS = {'mph', 'kph', 'pts', 'min', 'mins', 'sec', 'secs', 'yds', 'lbs', 'pct', 'mil', 'bil', 'usd', 'eur', 'gbp', 'yrs', 'hrs',
-         'days', 'games', 'wins', 'points', 'yards', 'votes', 'seats', 'views', 'times', 'fold'}
+UNITS = {'mph', 'kph', 'pts', 'min', 'mins', 'sec', 'secs', 'yds', 'lbs', 'pct', 'pc', 'percent', 'mil', 'bil', 'usd', 'eur', 'gbp',
+         'yrs', 'hrs', 'days', 'games', 'wins', 'points', 'yards', 'votes', 'seats', 'views', 'times', 'fold'}
 SCALES = {'K', 'M', 'B', 'T', 'BN', 'MM', 'X'}      # 40K and 5B are numbers; 5G, 3D and 2FA are names
-DOSE = re.compile(r'\d\s*(mg|mcg|ml|iu|meq|milligrams?|micrograms?|units?/kg)\b', re.I)
-ADDRESS = re.compile(r'https?:|www\.|\b[A-Za-z0-9-]+\.(com|org|net|io|dev|gov|edu|co|ai|app)\b', re.I)
+SCALE_WORDS = {'hundred', 'thousand', 'million', 'billion', 'trillion', 'percent', 'pct', 'bn', 'mn'}      # "Tesla 40 billion" is a sum
+NAMED_NUMBERS = {'9/11', '7-Eleven'}      # names that begin with digits and are not caught by a rule below
+# A capitalised word that is not a name, so the number after it is a count: "About 40 people", not "Game 7".
+NOT_NAMES = set('about around roughly nearly almost over under some only just the a an at in on by with for from to after before and '
+                'but then now still all another up down top plus minus between among of its their his her our that this these those '
+                'more less fewer exactly approximately within when while if as since until per each every both than'.split())
+# A quantity of a drug. The short units are matched as written (mL, IU), so ML engineers and an IU win are not doses.
+DOSE = re.compile(r'(?:\d|\b(?:half|one|two|three|four|five|six|seven|eight|nine|ten|twenty|fifty|hundred)\b)\s*'
+                  r'(?:mg|mcg|[' + chr(0xB5) + chr(0x3BC) + r']g|mL|ml|IU(?! win| loss| game| fans)|mEq|(?i:milligrams?|micrograms?|units?/kg|units? of insulin))'
+                  r'(?![A-Za-z])')
+# An address a reader could follow: a scheme, a www, or a host with a path. A name with a dot in it (Crypto.com Arena)
+# is not one; nothing typed becomes a link in any case, because every string is escaped.
+ADDRESS = re.compile(r'[A-Za-z][A-Za-z0-9+.-]*://|\bwww\.|\b[A-Za-z0-9-]+\.[A-Za-z]{2,}/\S', re.I)
 NOTE_DASHES = ''.join(chr(c) for c in (0x2012, 0x2013, 0x2014, 0x2015, 0x2212))
-NOTE_QUOTES = '"' + ''.join(chr(c) for c in (0x201C, 0x201D, 0x201E, 0xAB, 0xBB))
+NOTE_QUOTES = '"' + ''.join(chr(c) for c in (0x201C, 0x201D, 0x201E, 0xAB, 0xBB, 0x2018, 0x201A, 0x201B, 0x2039, 0x203A))
 MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 WORDS = ('zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen '
          'seventeen eighteen nineteen').split()
@@ -386,12 +398,15 @@ def note_text(where, s, numbers=True):
     bad = []
     if any(c in s for c in NOTE_DASHES) or '--' in s:
         bad.append(f'{where} has a dash that is not a hyphen')
-    if any(c in s for c in NOTE_QUOTES):
+    # A double mark of any kind, a single one that opens (a curly one, or a straight one before a word). An apostrophe is not one.
+    if any(c in s for c in NOTE_QUOTES) or re.search(r"(?:^|[\s(])'(?=[A-Za-z])", s):
         bad.append(f'{where} has a quotation mark (nothing is quoted)')
     if ADDRESS.search(s):
         bad.append(f'{where} has a web address typed into it')
-    if any(0x1F000 <= ord(c) <= 0x1FAFF or 0x2600 <= ord(c) <= 0x27BF or ord(c) in (0xFE0F, 0x200D) for c in s):
-        bad.append(f'{where} has an emoji')
+    if any(0x1F000 <= ord(c) <= 0x1FAFF or ord(c) in (0xFE0F, 0x200D) or unicodedata.category(c) == 'So' for c in s):
+        bad.append(f'{where} has an emoji or a pictograph')
+    if DOSE.search(s):
+        bad.append(f'{where} reads as a dose')
     if re.search(r'[\x00-\x1f\x7f]', s):
         bad.append(f'{where} has a line break or a control character')
     if numbers:
@@ -407,8 +422,9 @@ def typed_numbers(s):
     Not a number: a year (2026, the 1990s); a name that starts with a letter (GPT-5, F-35, COVID-19); a name that
     starts with digits (49ers, 4chan, 5G, 3D); and a plain version or ordinal straight after a name inside a
     sentence (Gemini 4, Fable 5.2, Game 7, November 12). Anything else with a digit in it is: 35.7M, 12%, $40B,
-    31-17, ~40%, +12, 12-point, 40-year-old, 40pts, 7th, and a count after an ordinary word (about 40 people).
-    This is a net with holes a careful writer could find (top-10); the reviewer and the figures list are the rest."""
+    31-17, ~40%, +12, 12-point, 40-year-old, 40pts, 7th, a count after an ordinary word (about 40 people), and a
+    number before a scale word (Tesla 40 billion). This is a net with holes a careful writer could find (top-10,
+    Lions 31, cut 2000 jobs); the reviewer and the figures list are the rest."""
     out = []
     tokens = BRACE.sub('figure', s).split()
     for i, token in enumerate(tokens):
@@ -416,13 +432,15 @@ def typed_numbers(s):
             continue
         core = re.sub(r'^[^0-9A-Za-z' + re.escape(CURRENCY) + r']+|[^0-9A-Za-z%]+\Z', '', token)
         core = re.sub("['" + chr(0x2019) + r"]s\Z", '', core)
-        if not core or YEAR.match(core) or core[0].isalpha():
+        if not core or YEAR.match(core) or core[0].isalpha() or core in NAMED_NUMBERS:
             continue
         tail = re.match(r'^\d+([A-Za-z]+)\Z', core)
         if tail and (len(tail.group(1)) >= 3 and tail.group(1).lower() not in UNITS
                      or tail.group(1).isupper() and tail.group(1) not in SCALES):
             continue
-        named = i >= 2 and any(c.isupper() for c in tokens[i - 1]) and tokens[i - 1][-1:].isalnum() and tokens[i - 2][-1:] not in '.!?:'
+        before = tokens[i - 1] if i else ''
+        after = re.sub(r'[^A-Za-z]+', '', tokens[i + 1]).lower() if i + 1 < len(tokens) else ''
+        named = any(c.isupper() for c in before) and before[-1:].isalnum() and before.lower() not in NOT_NAMES and after not in SCALE_WORDS
         if re.match(r'^\d+(\.\d+)*\Z', core) and named:
             continue
         out.append(core)
@@ -572,7 +590,7 @@ def note_problems(stem, post, desks):
             asked.add(key)
             if key not in figures:
                 bad.append(f'{where} asks for {{{key}}}, which is not a figure')
-        if DOSE.search(BRACE.sub(lambda m: values.get(m.group(1), ''), s)):
+        if not DOSE.search(s) and DOSE.search(BRACE.sub(lambda m: values.get(m.group(1), ''), s)):      # a figure beside a unit
             bad.append(f'{where} reads as a dose')
     for k in sources:
         if k not in cited:

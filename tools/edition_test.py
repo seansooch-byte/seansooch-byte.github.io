@@ -1477,7 +1477,21 @@ class Notes(Base):
             'a dose in words': (lambda p: (p['figures'].update(dose={'value': '500', 'of': 'what was given', 'source': 'viral'}),
                                            p['lead']['text'].append('They gave {dose} Milligrams at once.')), 'reads as a dose'),
             'a typed address': (lead('Read it at https://example.com/x now.'), 'address'),
-            'a bare site name': (lead('Read it at example.com now.'), 'address'),
+            'an address with no scheme': (lead('Read it at example.xyz/page now.'), 'address'),
+            'a short link': (lead('Read it at bit.ly/abc now.'), 'address'),
+            'an address with another scheme': (lead('Fetch it from ftp://files.example/x now.'), 'address'),
+            'a single quotation': (lead("He said 'never' and left."), 'quotation'),
+            'a curly single quotation': (lead('He said ' + chr(0x2018) + 'never' + chr(0x2019) + ' and left.'), 'quotation'),
+            'a star': (lead('Big day ' + chr(0x2B50)), 'emoji'),
+            'an hourglass': (lead('Big day ' + chr(0x23F3)), 'emoji'),
+            'a sum after a name': (lead('It cost Tesla 40 billion in a day.'), 'the number 40 ('),
+            'a share joined to its word': (lead('It rose 12percent on the day.'), 'the number 12percent ('),
+            'a dose in a label': (lambda p: p['sources']['merger'].update(label='Semaglutide 2.4 mg weekly'), 'reads as a dose'),
+            'a dose with its number in words': (lead('They gave five mg at once.'), 'reads as a dose'),
+            'a dose in micrograms': (lambda p: (p['figures'].update(dose={'value': '50', 'of': 'what was given', 'source': 'viral'}),
+                                                p['lead']['text'].append('They gave {dose} ' + chr(0xB5) + 'g at once.')), 'reads as a dose'),
+            'a dose of insulin': (lambda p: (p['figures'].update(dose={'value': '10', 'of': 'what was given', 'source': 'viral'}),
+                                             p['lead']['text'].append('They gave {dose} units of insulin at once.')), 'reads as a dose'),
             'an emoji': (lead('Big day ' + chr(0x1F680)), 'emoji'),
             'a key the format does not name': (lambda p: p.update(context='what the writer was thinking'), 'context'),
             'a source key the format does not name': (lambda p: p['sources']['merger'].update(url='https://example.com'), 'url'),
@@ -1528,11 +1542,27 @@ class Notes(Base):
         for said in ('It runs on GPT-5 and the F-35 flies.', 'This was COVID-19 again in the 2020s.', 'Google shipped Gemini 4 today.',
                      'It was built with Claude Fable 5.2 this week.', 'The Lions won Game 7 at home.', 'It happened on November 12 in Detroit.',
                      'The 49ers and the 76ers both won.', 'It spread on 4chan first.', 'The carriers sell 5G and the film is in 3D.',
-                     'It was a big year (2026).', "It was 2026's largest deal."):
+                     'It was a big year (2026).', "It was 2026's largest deal.", 'Gemini 4 arrives today.', 'Game 7 is tonight.',
+                     'They met at 7-Eleven, years after 9/11.', 'It was at Crypto.com Arena, said Character.AI.',
+                     "It was the team's best year, and the players' too.", 'The ML team at IU shipped it.'):
             with self.subTest(said):
                 post = self.post()
                 post['take']['text'] = [post['take']['text'][0] + ' ' + said]
                 self.assertEqual(build.note_problems(self.DAY, post, desks), [])
+
+    def test_a_figure_is_a_number_as_a_reader_writes_one(self):
+        desks = build.read_notes(self.tree())['desks']
+        for value, of in (('35.7M', 'views'), ('12%', 'of the vote'), ('$40 billion', 'the price'), ('31-17', 'the score'), ('-3.2%', 'the fall'),
+                          ('+4', 'the swing'), ('$1.2T', 'the value'), ('3x', 'the rise'), ('12', 'ML models released'), ('3', 'IU wins this year')):
+            with self.subTest(value):
+                post = self.post()
+                post['figures']['views'].update(value=value, of=of)
+                self.assertEqual(build.note_problems(self.DAY, post, desks), [])
+        for value in ('a lot', '', 'about 40', '40 or so', '<b>4</b>', '4; drop'):
+            with self.subTest(value):
+                post = self.post()
+                post['figures']['views'].update(value=value)
+                self.assertTrue(any('value is not a number' in b for b in build.note_problems(self.DAY, post, desks)), value)
 
     def test_a_file_that_is_not_a_post_stops_the_build(self):
         tmp = self.tree()

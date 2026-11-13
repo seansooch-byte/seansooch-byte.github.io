@@ -75,21 +75,28 @@ A sentence holds no number of its own. A number is a figure: `figures` gives it 
 every figure in the margin beside the paragraph that uses it, over its source, so a reader can check each one.
 
 - Refused in a sentence: `35.7M`, `12%`, `$40B`, `31-17`, `5-4`, `24/7`, `3x`, `7th`, `~40%`, `+12`,
-  `12-point`, `40-year-old`, `98mph`, and a count after an ordinary word (`about 40 people`).
+  `12-point`, `40-year-old`, `98mph`, a count after an ordinary word (`about 40 people`), and a number before
+  a scale word (`Tesla 40 billion`).
 - Allowed, because they are names and not measurements: a year (`2026`, `the 2020s`); a name with digits in
-  it (`GPT-5`, `F-35`, `COVID-19`, `49ers`, `5G`); a plain version or ordinal straight after a capitalised
-  name inside a sentence (`Gemini 4`, `Fable 5.2`, `Game 7`, `November 12`).
+  it (`GPT-5`, `F-35`, `COVID-19`, `49ers`, `5G`, `9/11`); a plain version or ordinal straight after a
+  capitalised name (`Gemini 4`, `Fable 5.2`, `Game 7`, `November 12`).
 - Small counts are words: three, a dozen.
 - The title and the dek may not ask for a figure. They have no margin to print its source in.
+- A figure's `value` is a number as a reader writes one: `35.7M`, `12%`, `-3.2%`, `$1.2T`, `$40 billion`,
+  `31-17`, `3x`. Not words, and not `about 40`.
 
 The rule is a net, not a proof: a determined writer can get `top-10` through it. Do not look for the holes.
 
 ## Words
 
 - No em dash, no en dash, no double hyphen.
-- No quotation marks. Nothing is quoted; say what was said in your own words and cite it.
-- No emoji. No web addresses. `**bold**` is the only markup.
-- Nothing that reads as a dose (a number with mg, mcg, mL, IU and the like), anywhere.
+- No quotation marks, double or single. An apostrophe is fine. Nothing is quoted; say what was said in your
+  own words and cite it.
+- No emoji or pictographs. `**bold**` is the only markup.
+- No web addresses: nothing with a scheme, a `www.` or a host and a path. A name with a dot in it
+  (`Crypto.com Arena`) is fine.
+- Nothing that reads as a dose (a number, in digits or words, with mg, mcg, mL, IU, units of insulin and the
+  like), anywhere, including a source's label.
 - No private person and no minor. No personal, academic, calendar or relationship detail about Sean or
   anyone he knows. If it is not in the situation's record, it is not in the post.
 - No financial advice and no bets. Say what happened and what it means, not what to buy.
