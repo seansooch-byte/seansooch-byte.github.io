@@ -1370,7 +1370,69 @@
    ]
   ],
   "index": "AMA guidance on agentic AI in medicine",
-  "kw": "ama governance framework agentic ai clinical authority accountability oversight evidence"
+  "kw": "ama governance framework agentic ai clinical authority accountability oversight evidence",
+  "note": "This section tracks the AMA's guidance as it is issued. Each new publication gets an entry in the timeline, and the site is checked against it again, so it stays aligned with the AMA.",
+  "timeline": [
+   {
+    "kind": "First correspondence",
+    "published": "2026-11-12",
+    "checked": "2026-11-13",
+    "title": "A Governance Framework for Agentic AI Assuming Clinical Functions",
+    "text": "The framework governs AI that takes on clinical functions in practice: an agent that documents, triages, diagnoses or treats inside a patient's care. That is the frontier as it lands in practice, and it is a separate realm from the study tools found here, which teach and never act. The site was checked against the framework's four questions and its flywheel.",
+    "checks": [
+     [
+      "Function",
+      "Every medical work states its use: teaching and exam preparation, not medical advice.",
+      true
+     ],
+     [
+      "Function",
+      "No work documents, triages, diagnoses, treats or prescribes for a patient.",
+      true
+     ],
+     [
+      "Evidence + risk",
+      "Medical facts carry their citations, and scoring tables cite the governing publication.",
+      true
+     ],
+     [
+      "Evidence + risk",
+      "Every description was checked again against its live app on 9 November 2026.",
+      true
+     ],
+     [
+      "Evidence + risk",
+      "Where a review did not run, the page says so rather than claim it.",
+      true
+     ],
+     [
+      "Authority + oversight",
+      "The tools inform and never decide or act; the calculators say to verify against current references before clinical use.",
+      true
+     ],
+     [
+      "Authority + oversight",
+      "Known clinical defects are held for a clinician's sign-off before they change.",
+      true
+     ],
+     [
+      "Accountability",
+      "The author, who specified every system, answers for it; AI is the engineering tool.",
+      true
+     ],
+     [
+      "Accountability",
+      "Corrections are logged, and earlier editions are kept rather than deleted.",
+      true
+     ],
+     [
+      "The flywheel",
+      "Every address is asked to answer each time this page loads.",
+      true
+     ]
+    ]
+   }
+  ]
  },
  "films": [
   {

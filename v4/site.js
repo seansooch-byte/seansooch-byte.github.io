@@ -19,6 +19,8 @@
 //     outline and to the printed index, in their alphabetical place, and both counts follow. An entry that is not
 //     a lesson (a slug that is not plain words, a day that does not exist, a title that is not text) is left out,
 //     and a title is only ever set as text.
+//   - AMA guidance: two tabs, the framework open first and the timeline beside it. Arrows move between them;
+//     a link to #guidance-timeline (or #guidance-framework) opens that tab. Without scripts both panels show.
 //   - Nothing here is needed to read the page: without it every link, plate and sentence is still there.
 (function () {
   'use strict';
@@ -372,4 +374,28 @@
       if (printed) $$('[data-ix-n]').forEach(function (el) { el.textContent = String($$('a.ix', printed).length); });
     });
   }
+  // AMA guidance: tabs. The framework panel carries is-open from the build; the sheet hides the rest when scripts run.
+  var gtabs = $$('[data-gtab]');
+  function openTab(tab, focus) {
+    gtabs.forEach(function (t) {
+      var on = t === tab, panel = doc.getElementById(t.getAttribute('aria-controls'));
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+      if (panel) panel.classList.toggle('is-open', on);
+    });
+    if (focus) tab.focus();
+  }
+  gtabs.forEach(function (t, i) {
+    t.addEventListener('click', function () { openTab(t); });
+    t.addEventListener('keydown', function (e) {
+      var step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (step) { e.preventDefault(); openTab(gtabs[(i + step + gtabs.length) % gtabs.length], true); }
+    });
+  });
+  function tabFromHash() {
+    var t = gtabs.filter(function (b) { return '#' + b.getAttribute('aria-controls') === location.hash; })[0];
+    if (t) { openTab(t); doc.getElementById('guidance').scrollIntoView(); }
+  }
+  window.addEventListener('hashchange', tabFromHash);
+  tabFromHash();
 })();

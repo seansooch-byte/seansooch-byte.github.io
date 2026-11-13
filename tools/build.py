@@ -253,6 +253,10 @@ def validate(record, essay, plates):
     g = record['guidance']
     need(re.match(r'^https://www\.ama-assn\.org/', str(g.get('href', ''))), 'the guidance links to its source at the issuer')
     need(real_day(g.get('published')), 'the guidance needs the day the issuer published it, as 2026-11-12')
+    need(isinstance(g.get('note'), str) and g['note'].strip(), 'the guidance needs its note on tracking what the issuer publishes next')
+    for e in g.get('timeline', []):
+        need(real_day(e.get('published')) and real_day(e.get('checked')), 'a timeline entry needs the day it was published and the day the site was checked against it')
+        need(all(isinstance(c, list) and len(c) == 3 and type(c[2]) is bool for c in e.get('checks', [])), 'a timeline check is an area, the check, and true or false')
     need(re.match(r'^/figures/[a-z0-9-]+\.webp\Z', str(g['figure'].get('src', ''))) and type(g['figure'].get('w')) is int and type(g['figure'].get('h')) is int,
          'the guidance figure is a sized webp under /figures/')
     need(all(isinstance(pt, list) and len(pt) == 3 for pt in g['points']), 'a guidance point is a heading, the question and the answer')
@@ -737,14 +741,31 @@ def writing(site):
 
 
 def guidance(site):
-    """An outside standard, set beside this site's answer to each of its questions. The issuer's figure is held here,
-    credited, and linked to the source; the section says the issuer has not reviewed the site."""
+    """An outside standard, set beside this site's answer to each of its questions, and a timeline of the site's
+    alignment with each publication since. Two tabs; without scripts both panels show, one after the other. The
+    issuer's figure is held here, credited and linked; the section says the issuer has not reviewed the site."""
     g, root = site['record']['guidance'], site['root']
     fig = g['figure']
     points = ''.join(f'<li><b>{esc(h)}</b><span class="g-q">{esc(q)}</span><span class="g-a">{esc(a)}</span></li>' for h, q, a in g['points'])
+    entries = []
+    for i, e in enumerate(g['timeline']):
+        met = sum(1 for c in e['checks'] if c[2] is True)
+        checks = ''.join(f'<li class="{"is-met" if ok else "is-open"}"><b>{esc(area)}</b><span>{esc(check)}</span>'
+                         f'<span class="g-mark">{"Met" if ok else "Open"}</span></li>' for area, check, ok in e['checks'])
+        entries.append(f'''<li class="g-entry">
+            <p class="cap-top lbl"><span>{i + 1:02d} · {esc(e['kind'])}</span><span>Published <time datetime="{e['published']}">{day(e['published'])}</time> · checked <time datetime="{e['checked']}">{day(e['checked'])}</time></span></p>
+            <div class="g-entry-h"><h4>{esc(e['title'])}</h4><p class="g-score"><strong>{met}/{len(e["checks"])}</strong><span>checks met</span></p></div>
+            <p class="say">{esc(e['text'])}</p>
+            <ol class="g-checks">{checks}</ol>
+          </li>''')
     return f'''<section class="sec" id="guidance" aria-labelledby="guidance-h">
     <header class="sec-h"><h2 id="guidance-h">{esc(g['title'])}</h2><p class="lbl">{esc(g['label'])}</p></header>
-    <article class="guide pair">
+    <p class="guide-note g-track">{esc(g['note'])}</p>
+    <div class="g-tabs js-only" role="tablist" aria-label="AMA guidance">
+      <button class="btn" type="button" role="tab" id="guidance-framework-tab" aria-controls="guidance-framework" aria-selected="true" data-gtab>Framework</button>
+      <button class="btn" type="button" role="tab" id="guidance-timeline-tab" aria-controls="guidance-timeline" aria-selected="false" tabindex="-1" data-gtab>Timeline</button>
+    </div>
+    <article class="guide pair g-panel is-open" id="guidance-framework" role="tabpanel" aria-labelledby="guidance-framework-tab">
       <figure class="guide-fig sheet">
         <a href="{esc(g['href'])}" target="_blank" rel="noopener"><img src="{esc(fig['src'])}?v={stamp(root, fig['src'])}" width="{fig['w']}" height="{fig['h']}" alt="{esc(fig['alt'])}" loading="lazy" decoding="async"></a>
         <figcaption class="lbl">{esc(g['rights'])}</figcaption>
@@ -761,6 +782,10 @@ def guidance(site):
         <p class="paper-links"><a class="go" href="{esc(g['href'])}" target="_blank" rel="noopener">{esc(g['link'])}<span aria-hidden="true"> ↗</span></a></p>
       </div>
     </article>
+    <div class="g-panel" id="guidance-timeline" role="tabpanel" aria-labelledby="guidance-timeline-tab">
+      <p class="lbl g-panel-h">Timeline: the site's alignment with each AMA publication, newest last</p>
+      <ol class="g-timeline">{''.join(entries)}</ol>
+    </div>
   </section>'''
 
 
@@ -929,6 +954,7 @@ def index_entries(site, lessons=True):
         out.append({'t': p['index'], 'h': f'#{p["id"]}', 'k': p['kw'], 's': 'Writing'})
     out.append({'t': 'The two stories, side by side (table)', 'h': '/two-stories/#table43', 'k': 'paper cosmology comparison big bang', 's': 'Writing'})
     out.append({'t': r['guidance']['index'], 'h': '#guidance', 'k': r['guidance']['kw'], 's': 'Writing'})
+    out.append({'t': 'AMA guidance: the alignment timeline', 'h': '#guidance-timeline', 'k': 'ama alignment timeline correspondence checks', 's': 'Writing'})
     for f in r['films']:
         out.append({'t': f['index'], 'h': f'#{f["id"]}', 'k': f['kw'], 's': 'Films'})
     for v in r['volumes']:
