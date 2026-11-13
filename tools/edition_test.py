@@ -216,6 +216,33 @@ class Census(Base):
                 for link in p['links']:
                     self.assertIn(link['href'], hrefs)
 
+    def test_the_outside_guidance_reaches_the_page_with_its_source(self):
+        """The guidance section: the issuer's own figure (held here, sized, stamped, credited, linked to the
+        source), every question with this site's answer, and the line that the issuer has not reviewed the site."""
+        g = self.rec['guidance']
+        section = re.search(r'<section class="sec" id="guidance".*?</section>', self.home, flags=re.S)
+        self.assertTrue(section, 'the home page has a guidance section')
+        part, hrefs = section.group(0), Doc(section.group(0)).attr('href')
+        flat = squash(part)
+        for s in ('title', 'name', 'issuer', 'rights', 'reviewed'):
+            self.assertIn(squash(html.escape(g[s], quote=False)), flat, s)
+        for voice in ('tech', 'plain'):
+            self.assertIn(squash(build.inline(g[voice])), flat, voice)
+        self.assertEqual(len(g['points']), 5, 'four questions and the flywheel')
+        for head, question, answer in g['points']:
+            for s in (head, question, answer):
+                self.assertIn(squash(html.escape(s, quote=False)), flat)
+        self.assertTrue(g['href'].startswith('https://www.ama-assn.org/'))
+        self.assertIn(g['href'], hrefs)
+        fig, path = g['figure'], ROOT / g['figure']['src'].lstrip('/')
+        self.assertEqual(build.webp_size(path), (fig['w'], fig['h']), 'the figure is sized as the file is')
+        img = [a for t, a in Doc(part).els if t == 'img']
+        self.assertEqual(len(img), 1)
+        self.assertEqual(img[0]['src'], f"{fig['src']}?v={build.stamp(ROOT, fig['src'])}")
+        self.assertEqual((img[0]['width'], img[0]['height']), (str(fig['w']), str(fig['h'])))
+        self.assertGreater(len(img[0]['alt']), 40, 'the figure is described in words')
+        self.assertIn(fig['src'].lstrip('/'), tracked(ROOT), 'the figure is in git, so the bundle carries it')
+
     def test_every_film_reaches_the_page(self):
         films = self.doc.attr('data-film')
         for f in self.rec['films']:
@@ -528,6 +555,7 @@ class Hygiene(Base):
                     allowed.add(re.sub(r'^https://([^/]+).*$', r'\1', link['href']))
         for photo in self.rec['theme']['photos']:
             allowed.add(re.sub(r'^https://([^/]+).*$', r'\1', photo['source']))
+        allowed.add(re.sub(r'^https://([^/]+).*$', r'\1', self.rec['guidance']['href']))
         essay = json.loads((ROOT / 'content' / 'two-stories.json').read_text(encoding='utf-8'))
         for h in re.findall(r'href="https://([^/"]+)', json.dumps(essay, ensure_ascii=False).replace('\\"', '"')):
             allowed.add(h)

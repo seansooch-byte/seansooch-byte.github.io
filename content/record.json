@@ -1324,6 +1324,54 @@
    "kw": "doctrine paper cosmology origin simulation big bang generated"
   }
  ],
+ "guidance": {
+  "title": "AMA guidance",
+  "label": "An outside standard, and this site's answers to it.",
+  "name": "A Governance Framework for Agentic AI Assuming Clinical Functions",
+  "issuer": "American Medical Association, Center for Digital Health and AI",
+  "when": "2026",
+  "href": "https://www.ama-assn.org/practice-management/digital-health/ai-and-practice-medicine-accountability",
+  "link": "Read it at the AMA",
+  "tech": "The AMA's framework sets out four questions for any AI that takes on clinical work, under one principle: **clinical authority is earned through evidence and maintained through demonstrated performance**. Nothing here is that kind of AI. The questions are still the right ones to ask of software built for medicine with AI, so each is answered below.",
+  "plain": "The American Medical Association published four questions to ask of any AI doing medical work: what does it do, what proves it works, what is it allowed to do, and who answers for it. **Authority has to be earned with evidence.** None of these apps is a clinical AI, but the questions still apply, so here are the answers.",
+  "reviewed": "The AMA has not reviewed or endorsed this site. The answers are the author's.",
+  "rights": "Figure © 2026 American Medical Association. All rights reserved. Shown for reference, with a link to the source.",
+  "figure": {
+   "src": "/figures/ama-agentic-ai-framework.webp",
+   "w": 876,
+   "h": 1141,
+   "alt": "The AMA's governance framework for agentic AI in clinical functions: four steps (function, evidence and risk, authority and oversight, accountability), the governing principle that clinical authority is earned through evidence and maintained through demonstrated performance, and a continuous flywheel of deploy, monitor, learn and reassess."
+  },
+  "points": [
+   [
+    "Function",
+    "What clinical function is the AI performing?",
+    "None. The medical works teach and help people study. None documents, triages, diagnoses or prescribes for a patient, and each one says so."
+   ],
+   [
+    "Evidence + risk",
+    "What shows it can perform, and what happens if it fails?",
+    "Claims are checked against a source and against the live app, and medical facts carry their citations. Where a review did not run, the page says so rather than claim it."
+   ],
+   [
+    "Authority + oversight",
+    "What should it be permitted to do, and under what conditions?",
+    "Inform, never decide or act. The calculators carry a visible note that they are flagged for clinician review, and known clinical defects wait for a clinician before they change."
+   ],
+   [
+    "Accountability",
+    "Who is responsible for the risks and outcomes?",
+    "The author, who specified every system. AI wrote most of the code and answers for none of it. Corrections are logged, and earlier editions are kept, not deleted."
+   ],
+   [
+    "The flywheel",
+    "Deploy, monitor, learn, reassess.",
+    "This page asks every address to answer while you read, every description was checked again against its live app for this edition, and the next model class rebuilds the site from a blank page."
+   ]
+  ],
+  "index": "AMA guidance on agentic AI in medicine",
+  "kw": "ama governance framework agentic ai clinical authority accountability oversight evidence"
+ },
  "films": [
   {
    "id": "vol-04-launch-film",

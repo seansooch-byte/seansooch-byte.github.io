@@ -58,7 +58,7 @@ HTTPS = re.compile(r'^https://[A-Za-z0-9.-]+(:\d+)?(/[^\\\x00-\x20]*)?\Z')
 PATH = re.compile(r'^/(?![/\\])[^\\\x00-\x20]*\Z')
 DAY = re.compile(r'^\d{4}(-\d{2}){0,2}\Z')
 # Anchors the pages use for themselves: no work, paper or film may take one.
-RESERVED = {'top', 'name', 'work', 'writing', 'films', 'editions', 'record', 'index', 'about', 'course', 'review', 'more',
+RESERVED = {'top', 'name', 'work', 'writing', 'guidance', 'films', 'editions', 'record', 'index', 'about', 'course', 'review', 'more',
             'palette', 'ld', 'probes', 'ch1', 'ch2', 'ch3', 'ch4', 'ch5', 'appa', 'appb', 'indexsec'}
 LAB_PAGES = ('lab/index.html', 'sitemap.xml')    # what a lesson's own deploy rewrites (--lab)
 LEDGER_FED = 'index.html'                        # the one other page that lists lessons: it may be behind the ledger
@@ -250,6 +250,12 @@ def validate(record, essay, plates):
         need(SLUG.match(str(p.get('id', ''))), f"paper id {p.get('id')!r} is not a slug")
         claim(p['id'], f"paper {p['id']}")
         need(all(HTTPS.match(str(link.get('href', ''))) or PATH.match(str(link.get('href', ''))) for link in p['links']), f"{p['id']}: a link is https or a path on this site")
+    g = record['guidance']
+    need(re.match(r'^https://www\.ama-assn\.org/', str(g.get('href', ''))), 'the guidance links to its source at the issuer')
+    need(re.match(r'^/figures/[a-z0-9-]+\.webp\Z', str(g['figure'].get('src', ''))) and type(g['figure'].get('w')) is int and type(g['figure'].get('h')) is int,
+         'the guidance figure is a sized webp under /figures/')
+    need(all(isinstance(pt, list) and len(pt) == 3 for pt in g['points']), 'a guidance point is a heading, the question and the answer')
+    need(all(isinstance(g.get(k), str) and g[k].strip() for k in ('title', 'label', 'name', 'issuer', 'reviewed', 'rights', 'link')), 'the guidance needs its title, label, name, issuer, link, rights line and the line that it has not reviewed this site')
     for f in record['films']:
         need(SLUG.match(str(f.get('id', ''))), f"film id {f.get('id')!r} is not a slug")
         claim(f['id'], f"film {f['id']}")
@@ -729,6 +735,34 @@ def writing(site):
   </section>'''
 
 
+def guidance(site):
+    """An outside standard, set beside this site's answer to each of its questions. The issuer's figure is held here,
+    credited, and linked to the source; the section says the issuer has not reviewed the site."""
+    g, root = site['record']['guidance'], site['root']
+    fig = g['figure']
+    points = ''.join(f'<li><b>{esc(h)}</b><span class="g-q">{esc(q)}</span><span class="g-a">{esc(a)}</span></li>' for h, q, a in g['points'])
+    return f'''<section class="sec" id="guidance" aria-labelledby="guidance-h">
+    <header class="sec-h"><h2 id="guidance-h">{esc(g['title'])}</h2><p class="lbl">{esc(g['label'])}</p></header>
+    <article class="guide pair">
+      <figure class="guide-fig sheet">
+        <a href="{esc(g['href'])}" target="_blank" rel="noopener"><img src="{esc(fig['src'])}?v={stamp(root, fig['src'])}" width="{fig['w']}" height="{fig['h']}" alt="{esc(fig['alt'])}" loading="lazy" decoding="async"></a>
+        <figcaption class="lbl">{esc(g['rights'])}</figcaption>
+      </figure>
+      <div>
+        <p class="cap-top lbl"><span>{esc(g['issuer'])}</span><span>{esc(g['when'])}</span></p>
+        <h3>{esc(g['name'])}</h3>
+        {said(site, g)}
+        <p class="guide-note">{esc(g['reviewed'])}</p>
+        <div class="paper-parts sheet">
+          <p class="lbl">Its questions, and this site's answers</p>
+          <ol class="guide-qs">{points}</ol>
+        </div>
+        <p class="paper-links"><a class="go" href="{esc(g['href'])}" target="_blank" rel="noopener">{esc(g['link'])}<span aria-hidden="true"> ↗</span></a></p>
+      </div>
+    </article>
+  </section>'''
+
+
 def films(site):
     r = site['record']
     items = []
@@ -893,6 +927,7 @@ def index_entries(site, lessons=True):
     for p in r['papers']:
         out.append({'t': p['index'], 'h': f'#{p["id"]}', 'k': p['kw'], 's': 'Writing'})
     out.append({'t': 'The two stories, side by side (table)', 'h': '/two-stories/#table43', 'k': 'paper cosmology comparison big bang', 's': 'Writing'})
+    out.append({'t': r['guidance']['index'], 'h': '#guidance', 'k': r['guidance']['kw'], 's': 'Writing'})
     for f in r['films']:
         out.append({'t': f['index'], 'h': f'#{f["id"]}', 'k': f['kw'], 's': 'Films'})
     for v in r['volumes']:
@@ -954,6 +989,7 @@ def render_home(site):
   {mast(site)}
   {work(site)}
   {writing(site)}
+  {guidance(site)}
   {films(site)}
   {editions(site)}
   {record_section(site)}
