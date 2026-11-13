@@ -10,6 +10,9 @@
 //   - the page never scrolls sideways;
 //   - the quiz lists every question, an answer gets its explanation and a link to a real step, and the
 //     summary lists the takeaways and at least one term.
+// A lesson that draws its own page instead of the kit (no lx- markup once ready) is walked only for what binds
+// every lesson: it loads, reports ready, logs no errors and never scrolls sideways. The run names it. An
+// exception inside one lesson is reported as that lesson's problem and the walk goes on to the next.
 // Prints one line per problem; exit 1 if any.
 import { createRequire } from 'module';
 import os from 'node:os';
@@ -25,6 +28,7 @@ const problems = [];
 let checks = 0, controlled = false;
 const bad = (where, what) => problems.push(`${where}: ${what}`);
 const ok = (cond, where, what) => { checks++; if (!cond) bad(where, what); return cond; };
+const offKit = new Set();
 
 const browser = await chromium.launch({ channel: 'chrome' });
 const SIZES = [{ name: 'wide', width: 1280, height: 900 }, { name: 'phone', width: 375, height: 553, isMobile: true, hasTouch: true }];
@@ -70,6 +74,15 @@ for (const slug of slugs) {
     await page.goto(`${base}/lab/${slug}/`, { waitUntil: 'networkidle' });
     const ready = await page.waitForFunction(() => document.documentElement.dataset.lesson === 'ready', null, { timeout: 15000 }).then(() => true, () => false);
     if (!ok(ready, where, 'the kit never reported ready')) { await ctx.close(); continue; }
+    if (!(await page.evaluate(() => !!document.querySelector('[class*="lx-"]')))) {
+      offKit.add(slug);
+      const sw = await page.evaluate(() => [document.documentElement.scrollWidth, innerWidth]);
+      ok(sw[0] <= sw[1], where, `page scrolls sideways (${sw[0]} > ${sw[1]})`);
+      ok(!errors.length, where, `errors: ${errors.slice(0, 3).join(' | ')}`);
+      await ctx.close();
+      continue;
+    }
+    try {
     const kinds = await page.$$eval('[data-step][data-step-title]', a => a.map(e => e.dataset.kind));
     // Positive control, once per run: plant an overlapping, too-small label in step 1 and make sure both
     // detectors see it (a detector that cannot fail proves nothing). The page is reloaded after.
@@ -133,11 +146,15 @@ for (const slug of slugs) {
       ok(sw[0] <= sw[1], where, `${tab} tab scrolls sideways (${sw[0]} > ${sw[1]})`);
     }
     ok(!errors.length, where, `errors: ${errors.slice(0, 3).join(' | ')}`);
+    } catch (e) {
+      bad(where, `the walk stopped on this lesson: ${String(e.message || e).split('\n')[0]}`);
+    }
     await ctx.close();
   }
   process.stdout.write('.');
 }
 await browser.close();
 console.log('');
+if (offKit.size) console.log(`not on the kit, so walked only for loading, errors and sideways scroll: ${[...offKit].join(', ')}`);
 if (problems.length) { console.log(problems.join('\n')); console.log(`\n${problems.length} problems, ${checks} checks.`); process.exit(1); }
 console.log(`lab-walk: ${slugs.length} lessons, ${checks} checks, all pass.`);
