@@ -280,10 +280,14 @@ builder's, the course page's sheet lives outside `lab/`, and `tools/lab-check.mj
   picture each, the last stage "What changes it" with one step per drug class or disease state, a prediction before each
   of those changes plays, a quiz of 6 to 10 questions tied to the goals and to the steps that teach them, a summary
   (takeaways, the reader's score on each goal, every term the lesson defines, the next lesson; it prints on its own), a
-  Clinical values tab and an Explore freely tab. **One lesson does not yet**: `adh-water-balance`, shipped by the
-  pipeline on 2026-11-07, is not in the syllabus and not on the kit (its own `js/` and `data/` folders, and its own
-  copy of the top bar's CSS). `tools/lab-check.mjs` reports it until it is placed in a unit and rebuilt on the kit;
-  the course page lists it as lesson 22, under "Added since the units were set".
+  Clinical values tab and an Explore freely tab. **Three shipped lessons are placed and not yet on the kit.**
+  `adh-water-balance` (2026-11-07) and `calcium-pth-vitamin-d` (2026-11-11) are lessons 22 and 23, in
+  `water-and-calcium`. `spirometry-lung-volumes` (2026-11-14) is lesson 24, in `lung-volumes`, after that unit
+  and before the unshipped batch: it is the lung-volumes lesson, and appending it to `breath-and-blood` would
+  split that unit or renumber lessons 1 to 23. The ADH lesson has its own `js/` and `data/` folders and its own
+  copy of the top bar's CSS; the calcium and spirometry pages are shells of their own. `tools/lab-check.mjs`
+  reports a lesson until it is rebuilt on the kit. A shipped lesson the syllabus has not placed is still listed
+  after the units, under "Added since the units were set"; with these three placed, that section is empty.
 - **The kit** (`lab/kit/`) runs all of that, so a lesson holds only its words, pictures, model and reference tabs:
   `kit.js` (tabs, steps, the step rail, the picture player, predictions, quiz, summary, glossary, terms that light parts
   of a picture), `kit.css` (the lessons' own design system, including the shared vocabulary of the Clinical values and

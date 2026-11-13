@@ -365,7 +365,13 @@ class Census(Base):
     def test_every_sentence_of_the_record_is_set(self):
         everything = squash(''.join(text for path, text in self.out.items() if path.endswith('.html')))
         for key, sentence in self.rec['text'].items():
-            self.assertIn(squash(build.inline(build.fill(self.site, sentence))), everything, f'text.{key} is in the record and on no page')
+            want = squash(build.inline(build.fill(self.site, sentence)))
+            # lab_newest is the line under "Added since the units were set". It is printed only
+            # while a shipped lesson is still unplaced; with none, that line would be false.
+            if key == 'lab_newest' and not self.site['lab']['extra']:
+                self.assertNotIn(want, everything, 'lab_newest is on a page even though every shipped lesson is placed')
+                continue
+            self.assertIn(want, everything, f'text.{key} is in the record and on no page')
         for path, text in self.out.items():
             if path.endswith('.html'):
                 self.assertNotRegex(Doc(text).words, r'\{[A-Za-z_]+\}', f'{path}: a brace was printed instead of filled')
@@ -1195,6 +1201,7 @@ class Ledger(Base):
         for slug, n in (('aa-newer', last + 1), ('zz-newest', last + 2)):
             self.assertRegex(page, rf'<li class="lesson" data-slug="{slug}"[^>]*>\s*<span class="no" aria-hidden="true">{n:02d}</span>')
             self.assertIn(f'data-lab-dot="{slug}" title="Lesson {n}: ', page)
+        self.assertIn(site['record']['text']['lab_newest'], page, 'an unplaced lesson is listed without the line that introduces it')
 
     def test_a_plan_that_is_not_what_it_should_be_puts_no_markup_on_a_page(self):
         evil = '<img src=x onerror=alert(1)>'
