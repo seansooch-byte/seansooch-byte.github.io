@@ -77,10 +77,10 @@ if [ -n "$stale" ]; then
   exit 1
 fi
 
-# The edition's pages must be the builder's. Checked against the committed tree, which is the working
+# The edition's pages, and Field Notes' pages, must be the builder's. Checked against the committed tree, which is the working
 # tree here (a dirty tree was refused above). The builder prints what is wrong and the command that fixes it.
 if ! built=$(python3 -I tools/build.py --check 2>&1); then
-  echo "refusing to stage: an edition page is not what tools/build.py writes" >&2
+  echo "refusing to stage: a page tools/build.py writes is not what it writes" >&2
   echo "$built" | sed 's/^/  /' >&2
   exit 1
 fi
