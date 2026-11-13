@@ -1329,7 +1329,7 @@
   "label": "An outside standard, and this site's answers to it.",
   "name": "A Governance Framework for Agentic AI Assuming Clinical Functions",
   "issuer": "American Medical Association, Center for Digital Health and AI",
-  "when": "2026",
+  "published": "2026-11-12",
   "href": "https://www.ama-assn.org/practice-management/digital-health/ai-and-practice-medicine-accountability",
   "link": "Read it at the AMA",
   "tech": "The AMA's framework sets out four questions for any AI that takes on clinical work, under one principle: **clinical authority is earned through evidence and maintained through demonstrated performance**. Nothing here is that kind of AI. The questions are still the right ones to ask of software built for medicine with AI, so each is answered below.",

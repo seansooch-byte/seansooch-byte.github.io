@@ -228,6 +228,9 @@ class Census(Base):
             self.assertIn(squash(html.escape(g[s], quote=False)), flat, s)
         for voice in ('tech', 'plain'):
             self.assertIn(squash(build.inline(g[voice])), flat, voice)
+        self.assertTrue(build.real_day(g['published']), 'the guidance carries the day the AMA published it')
+        self.assertIn(squash(f"Published {build.day(g['published'])}"), flat)
+        self.assertIn(f'<time datetime="{g["published"]}">', part)
         self.assertEqual(len(g['points']), 5, 'four questions and the flywheel')
         for head, question, answer in g['points']:
             for s in (head, question, answer):

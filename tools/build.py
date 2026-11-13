@@ -252,6 +252,7 @@ def validate(record, essay, plates):
         need(all(HTTPS.match(str(link.get('href', ''))) or PATH.match(str(link.get('href', ''))) for link in p['links']), f"{p['id']}: a link is https or a path on this site")
     g = record['guidance']
     need(re.match(r'^https://www\.ama-assn\.org/', str(g.get('href', ''))), 'the guidance links to its source at the issuer')
+    need(real_day(g.get('published')), 'the guidance needs the day the issuer published it, as 2026-11-12')
     need(re.match(r'^/figures/[a-z0-9-]+\.webp\Z', str(g['figure'].get('src', ''))) and type(g['figure'].get('w')) is int and type(g['figure'].get('h')) is int,
          'the guidance figure is a sized webp under /figures/')
     need(all(isinstance(pt, list) and len(pt) == 3 for pt in g['points']), 'a guidance point is a heading, the question and the answer')
@@ -749,7 +750,7 @@ def guidance(site):
         <figcaption class="lbl">{esc(g['rights'])}</figcaption>
       </figure>
       <div>
-        <p class="cap-top lbl"><span>{esc(g['issuer'])}</span><span>{esc(g['when'])}</span></p>
+        <p class="cap-top lbl"><span>{esc(g['issuer'])}</span><span>Published <time datetime="{g['published']}">{day(g['published'])}</time></span></p>
         <h3>{esc(g['name'])}</h3>
         {said(site, g)}
         <p class="guide-note">{esc(g['reviewed'])}</p>
