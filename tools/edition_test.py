@@ -922,6 +922,25 @@ class Tree(Base):
         self.assertNotIn('/designs/', sm)
         self.assertEqual(len(re.findall(r'<loc>', sm)), len(set(re.findall(r'<loc>(.*?)</loc>', sm))))
 
+    def test_the_sitemap_dates_each_page_by_the_newest_day_the_record_gives_for_it(self):
+        """Google re-crawls a page sooner when its <lastmod> moves, so a redesign is not shown under the old title
+        for weeks. A date is only ever one the record or the ledger states; a page built elsewhere gets none."""
+        sm = self.out['sitemap.xml']
+        got = dict(re.findall(r'<loc>https://seansooch\.dev(\S*?)</loc>(?:<lastmod>(\d{4}-\d{2}-\d{2})</lastmod>)?', sm))
+        r, ed = self.rec, self.rec['edition']
+        home = max([ed['issued'], ed['counted'], r['guidance']['published']]
+                   + [d for t in r['guidance']['timeline'] for d in (t['published'], t['checked'])]
+                   + [e['date'] for w in r['works'] for e in w.get('editions', [])])
+        lessons = {a['slug']: max([a['date']] + [v['date'] for v in a.get('revisions', []) if isinstance(v, dict) and re.fullmatch(r'\d{4}-\d{2}-\d{2}', str(v.get('date')))])
+                   for a in self.site['lab']['apps']}
+        posts = [p['date'] for p in self.site['notes']['posts']]
+        want = {'/': home, '/record/': max(ed['issued'], ed['counted']), '/two-stories/': ed['issued'], '/lab/': max(lessons.values()), '/notes/': max(posts)}
+        want |= {f'/lab/{s}/': d for s, d in lessons.items()} | {f'/notes/{d}/': d for d in posts}
+        self.assertEqual({p: d for p, d in got.items() if d}, want)
+        self.assertEqual(home, '2026-11-14', 'the home page is dated by the newest edition of a work it shows')
+        self.assertEqual(sm.count('<changefreq>'), 0, 'Google ignores changefreq and priority; lastmod is the signal')
+        self.assertEqual(sm.count('<priority>'), 0)
+
     def test_retired_addresses_are_sent_to_the_archive(self):
         rules = [line.split() for line in (ROOT / '_redirects').read_text(encoding='utf-8').splitlines() if line.strip() and not line.startswith('#')]
         archive = next(v['href'] for v in self.rec['volumes'] if v['vol'] == 'Vol. 03')

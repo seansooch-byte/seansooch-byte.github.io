@@ -110,14 +110,13 @@ MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'Augus
 WORDS = ('zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen '
          'seventeen eighteen nineteen').split()
 TENS = 'twenty thirty forty fifty sixty seventy eighty ninety'.split()
-# Sections of this origin that are not built here. They ship from their own sources; the sitemap lists them.
+# Sections of this origin that are not built here. They ship from their own sources; the sitemap lists them, undated,
+# because nothing here knows when they last changed.
 ELSEWHERE = [
-    ('/ekg/', 'monthly', '0.9'), ('/antibiotic-coverage/', 'monthly', '0.8'), ('/calculators/', 'monthly', '0.8'),
-    ('/lab-values/cbc-cmp/', 'monthly', '0.8'), ('/lab-values/', 'monthly', '0.8'), ('/differentials/', 'monthly', '0.8'),
-    ('/tccc/', 'monthly', '0.8'), ('/toolkit/', 'monthly', '0.7'), ('/force-multipliers/', 'monthly', '0.7'),
-    ('/force-multipliers/graph-vs-loop/', 'monthly', '0.6'), ('/force-multipliers/obsidian-reader/', 'monthly', '0.6'),
-    ('/force-multipliers/anki/', 'monthly', '0.6'), ('/music/', 'monthly', '0.7'), ('/music/last-light/', 'yearly', '0.7'),
-    ('/music/three-roads/', 'yearly', '0.6'),
+    '/ekg/', '/antibiotic-coverage/', '/calculators/', '/lab-values/cbc-cmp/', '/lab-values/', '/differentials/',
+    '/tccc/', '/toolkit/', '/force-multipliers/', '/force-multipliers/graph-vs-loop/',
+    '/force-multipliers/obsidian-reader/', '/force-multipliers/anki/', '/music/', '/music/last-light/',
+    '/music/three-roads/',
 ]
 
 
@@ -1839,11 +1838,22 @@ def render_404(site):
 
 
 def render_sitemap(site):
-    lab = site['lab']
-    rows = [('/', 'weekly', '1.0'), ('/record/', 'weekly', '0.6'), ('/two-stories/', 'yearly', '0.7')] + ELSEWHERE + [('/lab/', 'daily', '0.7')] + [
-        (f'/lab/{a["slug"]}/', 'monthly', '0.6') for a in lab['apps']] + [(f'/{NOTES}/', 'daily', '0.7')] + [
-        (f'/{NOTES}/{p["date"]}/', 'yearly', '0.5') for p in site['notes']['posts']]
-    body = '\n'.join(f'  <url><loc>{ORIGIN}{p}</loc><changefreq>{f}</changefreq><priority>{q}</priority></url>' for p, f, q in rows)
+    """Every address, each built page dated by the newest day the record or the ledger gives for what it shows
+    (the record page: the edition and its counts).
+    Google reads <lastmod> to decide what to crawl again (it ignores changefreq and priority), so a page whose date
+    moves is fetched again soon. Only days that are written down are used, never the day of the build: the
+    sitemap is the same bytes from the same record. The home page's day leaves the ledger out, so a lesson
+    shipping moves the Lab's dates and not the front page's, as with the page itself (see verdicts)."""
+    r, ed, lab, posts = site['record'], site['record']['edition'], site['lab'], site['notes']['posts']
+    g = r.get('guidance') or {}
+    home = [ed['issued'], ed['counted'], g.get('published')] + [d for t in g.get('timeline', []) for d in (t.get('published'), t.get('checked'))]
+    home += [e.get('date') for w in r['works'] for e in w.get('editions', [])]
+    lessons = [(a['slug'], max([a['date']] + [v.get('date') for v in a.get('revisions') or [] if isinstance(v, dict) and real_day(v.get('date'))]))
+               for a in lab['apps']]
+    rows = [('/', max(d for d in home if real_day(d))), ('/record/', max(ed['issued'], ed['counted'])), ('/two-stories/', ed['issued'])] + [(p, None) for p in ELSEWHERE]
+    rows += [('/lab/', max((d for _, d in lessons), default=None))] + [(f'/lab/{s}/', d) for s, d in lessons]
+    rows += [(f'/{NOTES}/', max((p['date'] for p in posts), default=None))] + [(f'/{NOTES}/{p["date"]}/', p['date']) for p in posts]
+    body = '\n'.join(f'  <url><loc>{ORIGIN}{p}</loc>' + (f'<lastmod>{d}</lastmod>' if d else '') + '</url>' for p, d in rows)
     return f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{body}\n</urlset>\n'
 
 
