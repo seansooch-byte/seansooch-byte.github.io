@@ -3,7 +3,8 @@
 seansooch.dev is a static site: HTML, CSS, JavaScript and media, served as files. There is no server, and nothing to
 install to serve it. Branch `main` is the site. The edition's own pages (the home page, the Two Stories paper, the
 Lab's course page and the not-found page) are written by one script, `python3 tools/build.py` (standard library only),
-from one record, and their output is committed like every other file.
+from one record, and their output is committed like every other file. The same script writes Field Notes' pages
+(`/notes/`) from the daily posts in `notes/posts/`.
 
 **What the tools need.** Building, checking and staging need `python3` (3.9 or later), `git`, `bash` and `curl`; the
 lab pipeline needs `python3` too, because `node tools/lab-index.mjs` runs the builder. The browser walks
@@ -20,7 +21,7 @@ flowchart LR
     L["lab/: syllabus, ledger,<br>lessons, kit"]
     P["plates/: captures,<br>their manifest, the share card"]
     B["tools/build.py"]
-    E["index.html, two-stories/, lab/index.html,<br>404.html, sitemap.xml"]
+    E["index.html, two-stories/, lab/index.html,<br>404.html, sitemap.xml,<br>and Field Notes' pages under notes/"]
     V["v4/: site.css, lab.css,<br>boot.js, site.js"]
     R --> B
     L --> B
@@ -40,6 +41,8 @@ flowchart LR
   end
   T & FM & LD & EK & M -->|built output copied in| Repo
   Pipe["lab pipeline<br>(outside this repo)"] -->|"pull request per lesson: lab/ and the lab<br>lines of sitemap.xml, by build.py --lab"| Repo
+  Writer["Soochiebot<br>(outside this repo)"] -->|"pull request per day: notes/posts/DAY.json and<br>the notes pages and sitemap, by build.py --notes"| Repo
+  Sit["Monitoring the Situation<br>(its own repo and site)"] -.->|"read by the writer; its ledger<br>checks each cited post (notes_check.py)"| Writer
   Repo -->|git push| GH["GitHub, private"]
   Repo -->|"tools/stage.sh: runs build.py --check,<br>then git archive minus export-ignore"| Bundle["/tmp/seansooch-bundle"]
   Bundle -->|tools/audit.sh| Check{"equal to live,<br>or only the intended diffs"}
@@ -56,9 +59,9 @@ flowchart LR
   would serve the Markdown, `tools/` and `content/` that the bundle leaves out. `CNAME` is left over from when it was on,
   and still ships because it always has.
 - **The bundle** is a commit minus everything marked `export-ignore` in `.gitattributes` (Markdown, `tools/`, `content/`,
-  `plates/manifest.json`, git plumbing). That file is the only definition of the difference between the repo and the site.
+  `plates/manifest.json`, `notes/posts/`, `notes/desks.json`, git plumbing). That file is the only definition of the difference between the repo and the site.
   `tools/stage.sh` refuses to stage from an uncommitted working tree, from a commit that holds a symlink, from a commit
-  in which a page asks for an asset by a stale `?v=` stamp, from a commit in which an edition page is not what
+  in which a page asks for an asset by a stale `?v=` stamp, from a commit in which an edition page or a Field Notes page is not what
   `tools/build.py` writes (it runs `python3 -I tools/build.py --check`, which prints what is wrong and the command that
   fixes it), and from a commit whose `_redirects` sends readers to an address on another host that does not answer. It
   notes, and does not refuse, the one thing that is expected: the home page behind the ledger after a lesson's own
@@ -83,7 +86,9 @@ record it renders outlives it.
 - **`content/record.json` is the record**: every work (name, world, address, both tellings, figures, the editions it
   has had and where each is kept), the papers, the films, the volumes of this site with Vol. 03's five views, the
   sentences that have two tellings, and the counts. Edit it by hand, then run `python3 tools/build.py`.
-  `content/two-stories.json` is the paper, word for word. Neither is served.
+  `content/two-stories.json` is the paper, word for word. Neither is served. The record also names Field Notes
+  (`notes`: its name, its writer, what it reads, its index words) and holds the four sentences its pages print
+  (`text.notes_*`, which may ask for `{note_writer}`).
 - **Counts are computed, never typed.** A sentence in the record asks for one with braces (`{Systems}`, `{lines}`,
   `{lessons}`); the builder fills it from the record and the Lab's ledger, so two pages cannot disagree. An unknown
   brace stops the build. The counts that cannot be computed here (lines, files, questions) are recounted at each
@@ -91,8 +96,9 @@ record it renders outlives it.
 - **Two tellings.** Every sentence that has a technical and a plain telling is in the page twice; the `data-voice`
   attribute on `<html>` shows one. Nothing is swapped by script, so the page reads the same with scripts off. A sentence
   with one telling lives in the record's `text` block; no sentence a reader sees is typed in the builder.
-- **`tools/build.py` writes exactly five files**: `index.html`, `two-stories/index.html`, `lab/index.html`, `404.html`
-  and `sitemap.xml`. A second run changes nothing, on any Python from 3.9. `--lab` writes only the Lab page and the
+- **`tools/build.py` writes the edition's five files**: `index.html`, `two-stories/index.html`, `lab/index.html`, `404.html`
+  and `sitemap.xml`, **and Field Notes' pages** (`notes/index.html`, `notes/index.json`, `notes/<day>/index.html`; see
+  Field Notes below). A second run changes nothing, on any Python from 3.9. `--lab` writes only the Lab page and the
   sitemap (what a lesson's own deploy changes). The sitemap's lines for sections built outside this repo are typed in
   the builder (`ELSEWHERE`).
 - **What the builder refuses.** The record, the plates manifest, the syllabus, the ledger and each lesson's plan can be
@@ -111,7 +117,9 @@ record it renders outlives it.
   not plain words, a day that does not exist, a title that is not text, no folder) is left out, and a plan's minutes,
   lists and goals are used only if they are what they should be.
 - **`--check`: stale, or only behind.** `python3 tools/build.py --check` writes nothing, prints each page that is not
-  what the builder writes, and exits 1 if any is stale. A Lab page or the sitemap that differs is put right by `--lab`.
+  what the builder writes, and exits 1 if any is stale. A Lab page or the sitemap that differs is put right by `--lab`; a Field Notes page, or the
+  sitemap when a post is what moved it, by `--notes`. It also exits 1 on a post's page left behind by a post that was
+  taken down.
   The home page is allowed one difference: lessons that shipped after it was built, because a lesson's own deploy
   rewrites only the Lab's pages. The check does not guess at that. It builds the home page again from this record,
   this design and a ledger cut down to the lessons the page on disk lists, and calls the page **behind** only if the
@@ -159,7 +167,7 @@ record it renders outlives it.
   kept edition, paper, film, volume, view, lesson and sentence of the record reaches a page; derived counts (the chips,
   "side by side", each world's kept editions, no count typed into a sentence); no em dash; unique ids and links that
   land; legacy anchors; every asset asked for by its stamp; every class styled or read; no inline script or style;
-  outside links only to hosts the record names, and none to a host this site must never link (kept as hashes); every
+  outside links only to hosts the record names (and x.com, where Field Notes links the posts it cites), and none to a host this site must never link (kept as hashes); every
   address the page asks allowed by the policy; contrast of every ink on both grounds in both themes; the paper word for
   word; the tree built, by any process. It also breaks things on purpose, in a copy of the tree: a record that cannot be
   set safely must stop the build (with the unbroken record as the control); a ledger, syllabus or plan that is not what
@@ -191,6 +199,9 @@ build record. `_redirects` sends every `/designs/...` address to the same path i
 |---|---|---|
 | `content/` | The record and the paper (see above) | Yes. Then run `tools/build.py` |
 | `index.html`, `two-stories/index.html`, `lab/index.html`, `404.html`, `sitemap.xml` | The edition's pages | No. Written by `tools/build.py` |
+| `notes/index.html`, `notes/index.json`, `notes/<day>/index.html` | Field Notes: the list of posts, the same list as data, and one page per post | No. Written by `tools/build.py` from `notes/posts/` |
+| `notes/posts/<day>.json`, `notes/desks.json`, `notes/FORMAT.md`, `notes/VOICE.md` | The posts as written, the desks they may name, the contract and the voice | Posts by the writer's pull request; never shipped (`export-ignore`) |
+| `notes/kit/notes.css`, `notes/kit/notes.js` | Field Notes' own design | Yes, by hand; then run the builder, which stamps them |
 | `v4/` | The edition's stylesheets and scripts, the course page's sheet among them | Yes. Then run `tools/build.py` for the stamps |
 | `plates/` | Captures of every work, kept edition and volume, and the share image `card.jpg` | No. Retake with `tools/plates.mjs` |
 | `antibiotic-coverage/`, `calculators/`, `clinical-calculators/`, `differentials/`, `lab-values/index.html`, `tccc/`, `toolkit/` | Field Toolkit, Edition 2 "Pocket Cards" | No. Generated. |
@@ -207,10 +218,11 @@ build record. `_redirects` sends every `/designs/...` address to the same path i
 | `lab/` | The Lab: the course, its kit and its lessons (see The Lab below) | Yes, except `lab/index.html` |
 | `_headers`, `_redirects`, `robots.txt` | Edge behaviour and crawl rules | Yes |
 | `CNAME` | Left over from GitHub Pages; still ships | Leave it |
-| `*.md`, `tools/`, `content/`, `plates/manifest.json`, `.gitattributes`, `.gitignore` | Never shipped | Yes |
+| `*.md`, `tools/`, `content/`, `plates/manifest.json`, `notes/posts/`, `notes/desks.json`, `.gitattributes`, `.gitignore` | Never shipped | Yes |
 
 A generated page is overwritten the next time its source is rebuilt, so a hand edit to one does not last. The edition's
-pages are generated here, from `content/`. The others have their source on Sean's laptop, outside this repo:
+pages are generated here, from `content/`, and Field Notes' pages from `notes/posts/`. The others have their source
+on Sean's laptop, outside this repo:
 
 - **Field Toolkit.** `~/app-redesign/work/toolkit/build.py` writes the seven pages and `toolkit/pocket.css` from
   `src/<page>/index.html`.
@@ -322,6 +334,61 @@ builder's, the course page's sheet lives outside `lab/`, and `tools/lab-check.mj
   "Typical adult reference ranges; labs vary; not for clinical decisions." All of a lesson's values live in one file,
   `lab/<slug>/clinical-values.json`, so they can be audited in one place; the second-opinion reviewer must verify each
   against its source.
+
+## Field Notes
+
+`/notes/` is one post a day about the day before, written by Soochiebot: a program set to sound like Sean, which reads
+Monitoring the Situation and writes the day up. It runs outside this repo and opens a pull request per post, as the lab
+pipeline does per lesson. `notes/FORMAT.md` is the whole contract between it and this repo; `notes/VOICE.md` is the
+only thing of Sean's it is given.
+
+```mermaid
+flowchart LR
+  S["situation.seansooch.dev<br>stories and pulse"] -->|read| W["Soochiebot"]
+  V["notes/VOICE.md"] --> W
+  W -->|"one file"| P["notes/posts/DAY.json"]
+  P --> B["tools/build.py --notes<br>refuses a post that breaks FORMAT.md"]
+  D["notes/desks.json"] --> B
+  K["notes/kit/"] -->|"a stamp of each file's bytes"| B
+  B --> O["notes/index.html<br>notes/index.json<br>notes/DAY/index.html<br>sitemap.xml"]
+  L["the situation's ledger<br>verified/posts.json, moments/"] -.->|"tools/notes_check.py --situation,<br>where the writer runs"| P
+```
+
+- **The writer writes data, never a page.** A post is `notes/posts/<day>.json` (schema `notes.post/1`): a lead, two to
+  four notes from other desks, a take, the sources it cites and the figures it uses. The builder writes every page from
+  it. The raw posts and the desk list never ship (`export-ignore`); what ships is what the builder wrote.
+- **A post is never trusted, and never dropped quietly.** The builder stops, naming the file and every rule broken, on:
+  a key the format does not name, a typed number (a sentence asks for a figure with `{braces}`, and each figure names
+  its source), a quotation mark, an em or en dash, an emoji, a typed web address, anything that reads as a dose, a desk
+  that is not in `notes/desks.json`, a cite with no source, a source nothing cites, more than 450 or fewer than 150
+  words. A Lab entry that is malformed is left out; a post is refused, because a post that vanished would look like a
+  day with nothing to say.
+- **No address is typed.** A source is a story's slug or a post's id and handle. The builder makes the link:
+  `https://situation.seansooch.dev/story/<slug>/` or `https://x.com/<handle>/status/<id>`.
+- **`tools/notes_check.py`** is the writer's check, run where the situation's repo is: every cited post must be `ok` in
+  the situation's ledger under that handle and every cited story must exist. It also lists each capitalised name a post
+  uses that no source label accounts for, for the reviewer to read first. It reads only.
+- **Field Notes is an app with a design of its own** (Edition 1, "Daybook"), as a lesson is: its pages load
+  `/notes/kit/` and nothing of the edition's sheet or scripts, and name the site without an edition number, so a new
+  edition of the site never touches them. The edition links to it from its bar, the home page's phone menu and its
+  index, and prints nothing else
+  about it, so a day's post changes only the notes' pages and the sitemap. `tools/edition_test.py` holds the notes'
+  pages to the hygiene (no inline script or style, unique ids, stamped assets, no em dash) and not to the edition's
+  chrome.
+- **`build.py --notes`** writes the notes' pages and the sitemap and nothing else. `--check` names a stale notes page
+  and prints that command. A post taken down leaves its page behind, because the builder never deletes: `--check`
+  refuses until the page is deleted too.
+- **`notes/desks.json` is a hand copy** of the desk ids and names in the situation's `contract/desks.json`. Nothing
+  syncs it: a desk added there is added here in the pull request of the first post that uses it.
+- **One bad post stops every build, the Lab's too.** The posts are read in every mode, because the sitemap lists
+  them, so a post that breaks the format on `main` also stops `build.py --lab`, which the lab pipeline runs. That is
+  meant: a refused post is loud. It is also why a post is built and checked before its pull request is merged.
+- **Shipping.** A post is deployed like anything else here: merged, then staged, audited and uploaded. Whether a
+  post that passes every check may be deployed without Sean reading it is his decision and is not made yet; until it
+  is, each post waits for him as a pull request. The lab pipeline's own deploy aborts on any difference outside
+  `lab/`, so a merged, undeployed post holds a lesson's deploy until the post ships.
+- **Not built:** the writer itself and its schedule (they live with Soochiebot's keeper), a weekly wrap, a feed in
+  RSS or Atom, a record entry and plate for Field Notes as a work.
 
 ## Monitoring the Situation (moved)
 

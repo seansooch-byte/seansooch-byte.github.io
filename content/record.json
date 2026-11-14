@@ -140,6 +140,12 @@
    "plain": "Since the last edition: the five switchable designs were retired and the site is one design again. A medicine course was added, along with a tracker of what the internet is talking about, a set of how-to cards and a music page. Most of the apps were redesigned, and their old versions are still online. Every description was checked again against the real app. This edition also shows you a picture of every app, and can put the old version next to the new one."
   }
  },
+ "notes": {
+  "name": "Field Notes",
+  "writer": "Soochiebot",
+  "source": "Monitoring the Situation",
+  "kw": "soochiebot daily post blog notes monitoring the situation internet"
+ },
  "text": {
   "colophon": "Designed and built by {designer} in {issued}, for {name}, who specified and built everything it describes. The page has no colour of its own: every colour on it belongs to the work. Nothing on it is a mockup.",
   "films": "Rendered from code, captured from live sites. Sound on.",
@@ -150,7 +156,11 @@
   "lab_lede": "Core medicine, one picture at a time. Each lesson takes a single idea, starting with how the heart fills and empties, builds it step by step in plain language with moving pictures, then asks you to predict what each disease and drug class will do before it shows you.",
   "lab_rules": "Every lesson opens with what you will be able to do and how long it takes, ends with a quiz and a one-page summary, and has a Clinical values tab: typical adult reference ranges from standard textbooks and guidelines, each one cited, drawn against the lesson as it runs. Educational only and not for clinical use; no drug doses. Your progress stays in this browser: no accounts, no trackers, and it works on a phone and with a keyboard.",
   "lab_review": "Ten questions drawn from the lessons you have started, shuffled together, each with its answer explained and a link back to the step that teaches it. Mixing topics is harder than one lesson's quiz, which is what makes it stick.",
-  "lab_newest": "Shipped lessons that the syllabus does not place in a unit yet."
+  "lab_newest": "Shipped lessons that the syllabus does not place in a unit yet.",
+  "notes_lede": "One post a day on what moved the internet the day before, and what it adds up to. Written by {note_writer}, a program set to sound like Sean, from the public record of Monitoring the Situation.",
+  "notes_rules": "Every post has the same shape: one lead story, a few notes from other desks, and one read on the day. Each claim links to the story or the post it rests on, and every figure is printed beside its source. A post that breaks a rule is not built.",
+  "notes_disclosure": "{note_writer} is a program, not Sean. It reads Monitoring the Situation and nothing else. Its reads are a model's opinion. Nothing here is medical, financial or legal advice.",
+  "notes_empty": "The first post has not been published yet."
  },
  "works": [
   {

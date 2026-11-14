@@ -7,3 +7,5 @@
 /tools          export-ignore
 /content        export-ignore
 /plates/manifest.json  export-ignore
+/notes/posts            export-ignore
+/notes/desks.json       export-ignore
