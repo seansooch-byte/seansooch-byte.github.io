@@ -1,0 +1,280 @@
+{
+  "minutes": 20,
+  "prerequisites": [
+    "thyroid-axis",
+    "nephron-diuretics"
+  ],
+  "prerequisiteTitles": {
+    "thyroid-axis": "Lesson 14: The Thyroid Axis",
+    "nephron-diuretics": "Lesson 2: The Nephron and Diuretics"
+  },
+  "objectives": [
+    "Tell total serum calcium apart from ionized calcium, state the cited reference ranges, and read the albumin correction exactly as quoted.",
+    "Describe how the parathyroid glands respond to blood calcium, and what PTH does at bone and at the kidney.",
+    "Explain the kidney activation step: PTH reaches the kidney, the kidney makes calcitriol, and calcitriol makes the gut absorb more calcium.",
+    "Describe calcitonin as OpenStax 17.5 describes it.",
+    "Predict the direction of calcium, PTH, calcitriol and phosphate in four parathyroid, vitamin D and kidney states, as far as the sources allow."
+  ],
+  "checks": {
+    "blood": {
+      "prompt": "A routine blood test reports total calcium. Which part of it is the active form the body responds to?",
+      "choices": [
+        "The free, ionized calcium",
+        "The calcium bound to albumin",
+        "Both parts count equally"
+      ],
+      "answer": 0,
+      "why": "Ionized calcium is the biologically active form. The albumin-bound part is inactive, but it still counts in total calcium, so a total is read with albumin in mind."
+    },
+    "sense": {
+      "prompt": "Blood calcium has just dropped below normal. What do the parathyroid glands do?",
+      "choices": [
+        "Release more PTH",
+        "Release less PTH",
+        "Release calcium straight into the blood"
+      ],
+      "answer": 0,
+      "why": "The glands sense calcium directly. As calcium drops, they secrete more PTH, the hormone that brings calcium back up."
+    },
+    "bone": {
+      "prompt": "PTH reaches bone. Which way does calcium move?",
+      "choices": [
+        "Out of bone into the blood",
+        "Out of the blood into bone",
+        "Neither: PTH does not act on bone"
+      ],
+      "answer": 0,
+      "why": "PTH stimulates osteoclasts, which break bone down and release its calcium, and it holds back the bone-building osteoblasts."
+    },
+    "kidney": {
+      "prompt": "PTH reaches the kidney. What happens to the calcium that would leave in urine?",
+      "choices": [
+        "Less is lost: more is taken back into the blood",
+        "More is lost in urine",
+        "Nothing: PTH does not act on the kidney"
+      ],
+      "answer": 0,
+      "why": "PTH makes the kidney tubules reabsorb more calcium from the fluid that becomes urine, so the calcium returns to the blood."
+    },
+    "activate": {
+      "prompt": "PTH has reached the kidney. How does it get the gut to absorb more calcium from food?",
+      "choices": [
+        "The kidney makes calcitriol, which travels to the gut",
+        "PTH travels straight to the gut",
+        "Low blood calcium acts on the gut by itself"
+      ],
+      "answer": 0,
+      "why": "PTH starts calcitriol production in the kidneys; calcitriol then stimulates the intestines to absorb more dietary calcium. The path runs PTH, kidney, calcitriol, gut."
+    },
+    "feedback": {
+      "prompt": "Calcium is climbing back to normal. What happens to PTH release?",
+      "choices": [
+        "It slows: rising calcium inhibits it",
+        "It keeps rising",
+        "It stays the same until calcitonin arrives"
+      ],
+      "answer": 0,
+      "why": "Rising blood calcium inhibits further PTH release: a negative feedback loop. If calcium runs high, calcitonin from the thyroid lowers it."
+    },
+    "phosphate": {
+      "prompt": "PTH acts on the kidney. What happens to phosphate there?",
+      "choices": [
+        "More phosphate is lost in urine",
+        "More phosphate is kept",
+        "Phosphate is turned into calcium"
+      ],
+      "answer": 0,
+      "why": "At the kidney PTH keeps calcium but increases the loss of phosphate, so the two move opposite ways there."
+    },
+    "phpt": {
+      "prompt": "A parathyroid gland keeps making PTH whatever the calcium level. What happens to blood calcium?",
+      "choices": [
+        "It rises",
+        "It falls",
+        "Feedback keeps it exactly normal"
+      ],
+      "answer": 0,
+      "why": "Overproduction of PTH results in high blood calcium: bone gives up more calcium, the kidneys keep more and the gut absorbs more."
+    },
+    "hypopara": {
+      "prompt": "The glands make almost no PTH. Which pattern follows?",
+      "choices": [
+        "Calcium down, phosphate up",
+        "Calcium up, phosphate down",
+        "Calcium down, phosphate down"
+      ],
+      "answer": 0,
+      "why": "Too little PTH results in low calcium and high phosphate, and 1,25-dihydroxyvitamin D (calcitriol) is decreased."
+    },
+    "vitd": {
+      "prompt": "Vitamin D runs short. Which process does the source say decreases?",
+      "choices": [
+        "Calcium absorption from food in the gut",
+        "PTH release from the parathyroid glands",
+        "Calcium reabsorption in the kidney"
+      ],
+      "answer": 0,
+      "why": "Calcium is absorbed through the intestines under the influence of activated vitamin D, and the source says a deficiency leads to a decrease in absorbed calcium. It gives no direction for PTH release or kidney reabsorption in this state."
+    },
+    "ckd": {
+      "prompt": "The kidneys work less well. What happens to phosphate in the blood?",
+      "choices": [
+        "It rises",
+        "It falls",
+        "It cannot change"
+      ],
+      "answer": 0,
+      "why": "Abnormally high blood phosphate, hyperphosphatemia, occurs with decreased renal function."
+    },
+    "compare": {
+      "prompt": "A picture shows calcium down, PTH down, phosphate up and calcitriol down. Which state is it?",
+      "choices": [
+        "Hypoparathyroidism",
+        "Primary hyperparathyroidism",
+        "Decreased renal function / CKD"
+      ],
+      "answer": 0,
+      "why": "This quoted pattern identifies hypoparathyroidism: low calcium, decreased PTH, high phosphorus and decreased 1,25-dihydroxyvitamin D. Where the sources give no direction for another state, it stays unknown."
+    }
+  },
+  "quiz": [
+    {
+      "id": "active",
+      "objective": 1,
+      "step": "blood",
+      "stem": "Which form of blood calcium is the biologically active one?",
+      "choices": [
+        "Ionized (free) calcium",
+        "Calcium bound to albumin",
+        "Calcium in complexes with small anions"
+      ],
+      "answer": 0,
+      "why": "Ionized calcium is the biologically active form; the protein-bound part is physiologically inactive."
+    },
+    {
+      "id": "range",
+      "objective": 1,
+      "step": "blood",
+      "stem": "What normal range does StatPearls (NBK430912) give for total serum calcium?",
+      "choices": [
+        "{range:total_ca}",
+        "{range:ionized_ca}",
+        "{zone:vitd25:2}"
+      ],
+      "answer": 0,
+      "why": "Total serum calcium: {range:total_ca}. The {range:ionized_ca} range is for ionized calcium, and {zone:vitd25:2} defines vitamin D sufficiency."
+    },
+    {
+      "id": "albumin",
+      "objective": 1,
+      "step": "blood",
+      "stem": "Why is total calcium read alongside the albumin level?",
+      "choices": [
+        "A large share of blood calcium is bound to albumin, so low albumin lowers total calcium",
+        "Albumin makes PTH",
+        "Albumin is the active form of calcium"
+      ],
+      "answer": 0,
+      "why": "Because so much calcium rides on albumin, total calcium is corrected for albumin. The source states the size of the correction exactly."
+    },
+    {
+      "id": "trigger",
+      "objective": 2,
+      "step": "sense",
+      "stem": "What makes the parathyroid glands release more PTH?",
+      "choices": [
+        "Falling blood calcium",
+        "Rising blood calcium",
+        "Calcitriol arriving from the gut"
+      ],
+      "answer": 0,
+      "why": "As serum calcium drops, PTH secretion increases."
+    },
+    {
+      "id": "bone",
+      "objective": 2,
+      "step": "bone",
+      "stem": "How does PTH release calcium from bone?",
+      "choices": [
+        "By stimulating osteoclasts, which break bone down",
+        "By stimulating osteoblasts to lay down bone",
+        "By blocking all bone cells"
+      ],
+      "answer": 0,
+      "why": "PTH stimulates osteoclasts, which degrade bone and release calcium; it inhibits the bone-building osteoblasts."
+    },
+    {
+      "id": "where",
+      "objective": 3,
+      "step": "activate",
+      "stem": "Where is calcitriol produced when PTH starts its production?",
+      "choices": [
+        "In the kidneys",
+        "In the small intestine",
+        "In the parathyroid glands"
+      ],
+      "answer": 0,
+      "why": "PTH initiates the production of calcitriol in the kidneys."
+    },
+    {
+      "id": "path",
+      "objective": 3,
+      "step": "activate",
+      "stem": "Which path traces how PTH raises calcium absorption from food?",
+      "choices": [
+        "PTH → kidney → calcitriol → gut",
+        "PTH → gut, directly",
+        "Blood calcium → gut → calcitriol"
+      ],
+      "answer": 0,
+      "why": "PTH acts on the kidney, the kidney makes calcitriol, and calcitriol stimulates the intestines to absorb more dietary calcium. Nothing goes from PTH straight to the gut."
+    },
+    {
+      "id": "calcitonin",
+      "objective": 4,
+      "step": "feedback",
+      "stem": "According to OpenStax 17.5, what does calcitonin do?",
+      "choices": [
+        "Inhibits osteoclasts, reduces gut absorption and signals the kidneys to reabsorb less calcium",
+        "Stimulates osteoclasts and the gut to raise calcium",
+        "Starts calcitriol production in the kidneys"
+      ],
+      "answer": 0,
+      "why": "Calcitonin, made by the parafollicular cells of the thyroid when calcium is high, inhibits osteoclasts, reduces dietary calcium absorption and signals the kidneys to reabsorb less calcium."
+    },
+    {
+      "id": "id-phpt",
+      "objective": 5,
+      "step": "phpt",
+      "stem": "{arrows:phpt}. Which state is this?",
+      "choices": [
+        "Primary hyperparathyroidism",
+        "Hypoparathyroidism",
+        "Decreased renal function / CKD"
+      ],
+      "answer": 0,
+      "why": "Primary hyperparathyroidism is confirmed by elevated or inappropriately elevated PTH in the presence of high calcium."
+    },
+    {
+      "id": "id-hypo",
+      "objective": 5,
+      "step": "hypopara",
+      "stem": "{arrows:hypopara}. Which state is this?",
+      "choices": [
+        "Hypoparathyroidism",
+        "Vitamin D deficiency",
+        "Primary hyperparathyroidism"
+      ],
+      "answer": 0,
+      "why": "Hypoparathyroidism: low corrected calcium, decreased PTH, elevated serum phosphorus and decreased 1,25-dihydroxyvitamin D."
+    }
+  ],
+  "takeaways": [
+    "Blood calcium comes in three forms: bound to proteins (mainly albumin), free (ionized) and a small share in complexes with small ions. The ionized calcium is the active form, and total calcium counts all three, so it is read with albumin in mind.",
+    "When blood calcium drops, the parathyroid glands secrete more PTH; rising calcium inhibits further release (negative feedback).",
+    "At bone, PTH stimulates osteoclasts to release calcium. At the kidney, it increases calcium reabsorption and increases phosphate loss.",
+    "PTH starts calcitriol production in the kidneys; calcitriol then makes the intestines absorb more dietary calcium. The path is PTH → kidney → calcitriol → gut.",
+    "When calcium is high, the thyroid’s parafollicular cells release calcitonin, which inhibits osteoclasts, reduces gut absorption and signals the kidneys to reabsorb less calcium.",
+    "{allstates}"
+  ]
+}

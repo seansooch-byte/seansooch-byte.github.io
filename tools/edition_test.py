@@ -216,6 +216,69 @@ class Census(Base):
                 for link in p['links']:
                     self.assertIn(link['href'], hrefs)
 
+    def test_the_outside_guidance_reaches_the_page_with_its_source(self):
+        """The guidance section: the issuer's own figure (held here, sized, stamped, credited, linked to the
+        source), every question with this site's answer, and the line that the issuer has not reviewed the site."""
+        g = self.rec['guidance']
+        section = re.search(r'<section class="sec" id="guidance".*?</section>', self.home, flags=re.S)
+        self.assertTrue(section, 'the home page has a guidance section')
+        part, hrefs = section.group(0), Doc(section.group(0)).attr('href')
+        flat = squash(part)
+        for s in ('title', 'name', 'issuer', 'rights', 'reviewed'):
+            self.assertIn(squash(html.escape(g[s], quote=False)), flat, s)
+        for voice in ('tech', 'plain'):
+            self.assertIn(squash(build.inline(g[voice])), flat, voice)
+        self.assertTrue(build.real_day(g['published']), 'the guidance carries the day the AMA published it')
+        self.assertIn(squash(f"Published {build.day(g['published'])}"), flat)
+        self.assertIn(f'<time datetime="{g["published"]}">', part)
+        self.assertEqual(len(g['points']), 5, 'four questions and the flywheel')
+        for head, question, answer in g['points']:
+            for s in (head, question, answer):
+                self.assertIn(squash(html.escape(s, quote=False)), flat)
+        self.assertTrue(g['href'].startswith('https://www.ama-assn.org/'))
+        self.assertIn(g['href'], hrefs)
+        fig, path = g['figure'], ROOT / g['figure']['src'].lstrip('/')
+        self.assertEqual(build.webp_size(path), (fig['w'], fig['h']), 'the figure is sized as the file is')
+        img = [a for t, a in Doc(part).els if t == 'img']
+        self.assertEqual(len(img), 1)
+        self.assertEqual(img[0]['src'], f"{fig['src']}?v={build.stamp(ROOT, fig['src'])}")
+        self.assertEqual((img[0]['width'], img[0]['height']), (str(fig['w']), str(fig['h'])))
+        self.assertGreater(len(img[0]['alt']), 40, 'the figure is described in words')
+        self.assertIn(fig['src'].lstrip('/'), tracked(ROOT), 'the figure is in git, so the bundle carries it')
+
+    def test_the_guidance_keeps_a_timeline_of_alignment(self):
+        """Two tabs: the framework, open, and the timeline beside it. Each entry is dated, says what it answers,
+        lists its checks, and prints a score counted from them, never typed. Without scripts both panels show."""
+        g = self.rec['guidance']
+        part = re.search(r'<section class="sec" id="guidance".*?</section>', self.home, flags=re.S).group(0)
+        flat, d = squash(part), Doc(part)
+        self.assertIn(squash(html.escape(g['note'], quote=False)), flat, 'the note that future guidance is tracked')
+        tabs = [a for t, a in d.els if a.get('role') == 'tab']
+        self.assertEqual([a['aria-controls'] for a in tabs], ['guidance-framework', 'guidance-timeline'])
+        self.assertEqual([a['aria-selected'] for a in tabs], ['true', 'false'], 'the framework is open first')
+        panels = {a['id']: a for t, a in d.els if a.get('role') == 'tabpanel'}
+        self.assertEqual(set(panels), {'guidance-framework', 'guidance-timeline'})
+        self.assertTrue(all('hidden' not in a for a in panels.values()), 'without scripts both panels are on the page')
+        self.assertIn('is-open', panels['guidance-framework']['class'])
+        self.assertNotIn('is-open', panels['guidance-timeline']['class'])
+        self.assertGreaterEqual(len(g['timeline']), 1)
+        first = g['timeline'][0]
+        self.assertEqual(first['kind'], 'First correspondence')
+        self.assertEqual(first['published'], g['published'], 'the first entry is the framework this section shows')
+        for e in g['timeline']:
+            for k in ('published', 'checked'):
+                self.assertTrue(build.real_day(e[k]))
+                self.assertIn(f'<time datetime="{e[k]}">', part)
+            for s in (e['kind'], e['title'], e['text']):
+                self.assertIn(squash(html.escape(s, quote=False)), flat)
+            met = sum(1 for c in e['checks'] if c[2] is True)
+            self.assertIn(squash(f'{met}/{len(e["checks"])}'), flat, 'the score is counted from the checks')
+            for area, check, ok in e['checks']:
+                self.assertIs(type(ok), bool)
+                self.assertIn(squash(html.escape(check, quote=False)), flat)
+        self.assertEqual(len(first['checks']), 10)
+        self.assertIn('separate realm from the study tools', first['text'])
+
     def test_every_film_reaches_the_page(self):
         films = self.doc.attr('data-film')
         for f in self.rec['films']:
@@ -528,6 +591,7 @@ class Hygiene(Base):
                     allowed.add(re.sub(r'^https://([^/]+).*$', r'\1', link['href']))
         for photo in self.rec['theme']['photos']:
             allowed.add(re.sub(r'^https://([^/]+).*$', r'\1', photo['source']))
+        allowed.add(re.sub(r'^https://([^/]+).*$', r'\1', self.rec['guidance']['href']))
         essay = json.loads((ROOT / 'content' / 'two-stories.json').read_text(encoding='utf-8'))
         for h in re.findall(r'href="https://([^/"]+)', json.dumps(essay, ensure_ascii=False).replace('\\"', '"')):
             allowed.add(h)
