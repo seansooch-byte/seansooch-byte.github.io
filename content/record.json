@@ -677,8 +677,8 @@
    "host": "situation.seansooch.dev",
    "wake": false,
    "note": null,
-   "tech": "One record of what every corner of the internet is passing around. Grok reads X each hour across nineteen desks; Claude confirms every post with X, writes a line on what it is, and researches the larger stories, setting out how each world describes them and what is on the record.",
-   "plain": "Shows what is going viral across the whole internet, not just your own feed. Each post gets a plain sentence saying what it is, and the bigger stories show how different groups see them and what is actually established.",
+   "tech": "A daily newspaper of what every corner of the internet paid attention to. Grok reads X each hour across nineteen desks; Claude confirms every post with X and writes the news; each Eastern day becomes an edition whose front page is ranked by the views its stories gained, with the posts nobody has covered yet printed beside them. The live pulse is its wire.",
+   "plain": "Open it and see what the whole internet paid attention to yesterday, ranked by how many people actually saw it, not by anyone's choice. Each story is checked and explained, with how different groups see it, and the big posts nobody has reported yet are shown too.",
    "stats": [
     [
      "19",
@@ -693,9 +693,9 @@
      "checks per post"
     ]
    ],
-   "go": "Read the record",
+   "go": "Read today's paper",
    "index": "Monitoring the Situation",
-   "kw": "machines ai internet viral posts x twitter news pulse desks grok claude echo chamber",
+   "kw": "machines ai internet viral posts x twitter news newspaper edition pulse desks grok claude soochiebot echo chamber",
    "editions": [
     {
      "n": 1,
@@ -709,10 +709,17 @@
      "name": "Glossy",
      "by": "Claude Opus 5.5",
      "date": "2026-10-09",
+     "url": null
+    },
+    {
+     "n": 3,
+     "name": "The Broadsheet",
+     "by": "Claude Opus 5.5",
+     "date": "2026-11-14",
      "current": true
     }
    ],
-   "editions_note": "Edition 1, Record Section, was replaced the day it shipped and was not kept."
+   "editions_note": "Edition 1, Record Section, was replaced the day it shipped, and Edition 2, Glossy, the day the site became a newspaper; neither was kept."
   },
   {
    "id": "forge",
