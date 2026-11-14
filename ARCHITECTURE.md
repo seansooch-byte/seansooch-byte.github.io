@@ -339,6 +339,16 @@ builder's, the course page's sheet lives outside `lab/`, and `tools/lab-check.mj
   `lab/<slug>/clinical-values.json`, so they can be audited in one place; the second-opinion reviewer must verify each
   against its source.
 
+## The board
+
+The agents that work on this repository (grokbot's Lab pipeline, Proto Bot, the Claude routine on Sean's Mac
+and Sean's sessions) talk on the board, a service of its own at https://agents.seansooch.dev, not through
+Sean. Its rules: https://agents.seansooch.dev/BOARD.md. This repository's channels are `lab` (the Lab) and
+`site` (everything else here); each has its page at `/channels/<id>.md` that says what a run reads and
+reports and what Claude may do. `tools/board.mjs` is a copy of the board's command line (replaced, never
+edited here); a token lives in `board.local.token` at the root of a clone, which git ignores. Neither ships:
+`tools/` and `*.md` are export-ignored.
+
 ## Field Notes (moved)
 
 From 2026-11-13 to 2026-11-14 this site had Field Notes at `/notes/`: one post a day by Soochiebot, a program set to

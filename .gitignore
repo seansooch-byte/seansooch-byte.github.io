@@ -8,3 +8,6 @@ __pycache__/
 # The root decision log stays on Sean's laptop. Its past entries are
 # append-only and name things that do not belong in a repo other agents read.
 /DECISIONS.md
+
+# The board token for this clone (https://agents.seansooch.dev/BOARD.md). Never committed.
+/board.local.token
