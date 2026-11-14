@@ -108,16 +108,16 @@
  ],
  "prose": {
   "lede": {
-   "tech": "**{Systems} working systems** where medicine, the military and frontier AI meet, built by a **medical student** and **military officer** with AI as the engineering tool. **{lines} lines** across {files} files. Every one is live, and this page asks each address to answer while you read.",
-   "plain": "{Systems} working apps, built by one person in spare time. I'm a **medical student** and **military officer**, and AI wrote most of the code with me. **Everything here is live**, and this page checks that for you the moment it loads."
+   "tech": "**{Works} live works** where medicine, the military and frontier AI meet, built by a **medical student** and **military officer** with AI as the engineering tool. **{lines} lines** across {files} files in {systems} of them. Every one is live, and this page asks each address to answer while you read.",
+   "plain": "{Works} working projects, built by one person in spare time. I'm a **medical student** and **military officer**, and AI wrote most of the code with me. **Everything here is live**, and this page checks that for you the moment it loads."
   },
   "purpose": {
    "tech": "This site documents {months} months of learning and building in spare hours. These projects were made possible by tools that lowered the technical barrier between an idea and working software. Others will bring different experience and build better things.",
-   "plain": "This page documents {months} months of learning and building {systems} working projects in spare time. New tools made it easier to turn ideas into software. Other people will bring different experience and build better things."
+   "plain": "This site documents {months} months of learning and building {works} working projects in spare time. New tools made it easier to turn ideas into software. Other people will bring different experience and build better things."
   },
   "scope": {
-   "tech": "Everything listed is deployed and public. The page does not take that on faith: when it loads, your browser asks every address in the directory to answer, and records what came back beside its name. The work is set out by world, then the writing and the films. The editions are the change record for the site itself.",
-   "plain": "Everything here is online and public. When the page loads, it checks each app from your own browser and shows the result beside its name. The apps come first, then the writing and the videos, and the last part explains why this site keeps getting rebuilt."
+   "tech": "Everything listed is deployed and public. The site does not take that on faith: when a page loads, your browser asks every address to answer, and records what came back beside its name. The front page sets out the work by world, then the writing and the films. This page is the change record for the site itself.",
+   "plain": "Everything here is online and public. When a page loads, it checks each app from your own browser and shows the result beside its name. The front page has the apps, then the writing and the videos. This page explains why the site keeps getting rebuilt."
   },
   "method": {
    "tech": "Every system was specified by the author and written with Claude, then verified the way a clinician verifies a lab: against a source, by a second reader, and against the live deployment rather than the local copy. Medical content carries its citations. Scoring tables cite the governing publication. Where a source deck was wrong, the question was corrected and the correction logged.",
@@ -151,6 +151,7 @@
   "films": "Rendered from code, captured from live sites. Sound on.",
   "editions": "One redesign per model class. Nothing is deleted.",
   "record": "What is counted, beside what your browser just measured.",
+  "record_page": "How this site is made and kept, apart from the work: every edition it has had, what is counted from source, what your browser measures as you read, and an index of everything on it.",
   "vol3_story": "It began as a field manual and was not retired when the next class arrived: {views_more} more designers drew the same text, in the order below, and a switch at the foot of every page moved between them. They are retired together and kept together: the switch still works in the archive.",
   "lost": "The page may have moved when an edition was retired. Retired editions are kept, and every one is linked from Editions.",
   "lab_lede": "Core medicine, one picture at a time. Each lesson takes a single idea, starting with how the heart fills and empties, builds it step by step in plain language with moving pictures, then asks you to predict what each disease and drug class will do before it shows you.",
@@ -1638,7 +1639,6 @@
    "lines": "unique source files, generated pages and data left out; {test_lines} of these are tests",
    "files": "html, css, javascript, typescript, python, shell and sql",
    "questions": "{banks} question banks, {subjects} subjects; every item checked against its source card, most read again by an independent reviewer",
-   "lessons": "in {units} units when this page was built; a lesson shipped since is added as you read",
    "months": "{first} to {now}, evenings and weekends"
   }
  }

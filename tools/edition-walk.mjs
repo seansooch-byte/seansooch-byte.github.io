@@ -43,7 +43,7 @@ let checks = 0;
 const ok = (cond, where, what) => { checks++; if (!cond) problems.push(`${where}: ${what}`); return !!cond; };
 
 const SIZES = [['wide', 1280, 900, false], ['phone', 393, 659, true], ['small phone', 375, 553, true]];
-const PAGES = [['home', '/'], ['paper', '/two-stories/'], ['lab', '/lab/'], ['not found', '/404.html']];
+const PAGES = [['home', '/'], ['record', '/record/'], ['paper', '/two-stories/'], ['lab', '/lab/'], ['not found', '/404.html']];
 const browser = await chromium.launch({ channel: 'chrome', headless: true });
 
 async function open(size, path, extra = {}) {
@@ -154,12 +154,7 @@ for (const size of [SIZES[0], SIZES[1]]) {
   const tally = await page.locator('[data-tally]').innerText();
   ok(new RegExp(`\\d+ of ${total} answered`).test(tally), where, `the tally reads "${tally}"`);
   ok(/^\d+ ms$/.test(await page.locator('.dir [data-ms]').first().innerText()), where, 'a round trip is not printed in the directory');
-  ok(/\d/.test(await page.locator('[data-answered]').innerText()), where, 'the record does not say how many answered');
-  await page.locator('[data-ask]').first().scrollIntoViewIfNeeded();
-  await page.locator('[data-ask]').first().click();
-  ok(await page.evaluate(() => document.querySelectorAll('.dir .dot.is-asking').length > 0 || /asking/.test(document.querySelector('[data-tally]').textContent)), where, '"Ask them all again" did not ask again');
-  await page.waitForFunction(() => !document.querySelector('.dot.is-asking'), null, { timeout: 100000 }).catch(() => {});
-  ok(new RegExp(`\\d+ of ${total} answered`).test(await page.locator('[data-tally]').innerText()), where, `after asking again the tally reads "${await page.locator('[data-tally]').innerText()}"`);
+  ok(await page.locator('[data-answered], [data-ask]').count() === 0, where, 'the record\'s measure is still on the home page');
 
   // worlds
   const visibleWorks = () => page.evaluate(() => [...document.querySelectorAll('article.work')].filter(a => a.offsetParent).map(a => a.id));
@@ -258,8 +253,9 @@ for (const size of [SIZES[0], SIZES[1]]) {
   await page.keyboard.type('record');
   const entry = page.locator('#palette-list li', { hasText: 'Counted and measured' });
   await entry.click();
-  await page.waitForTimeout(150);
-  ok(await page.evaluate(() => !document.getElementById('palette').open && location.hash === '#record'), where, 'a click on an entry did not go to it');
+  await page.waitForURL('**/record/#record', { timeout: 5000 }).catch(() => {});
+  ok(await page.evaluate(() => location.pathname === '/record/' && location.hash === '#record'), where, 'a click on an entry on another page did not go to it');
+  await page.goto(base + '/', { waitUntil: 'load' });
 
   // films
   await page.locator('[data-film]').first().scrollIntoViewIfNeeded();
@@ -281,6 +277,34 @@ for (const size of [SIZES[0], SIZES[1]]) {
   await ctx.close();
 }
 
+// ---------- the record page: its measure, and the anchors the home page sends on to it
+for (const size of [SIZES[0], SIZES[1]]) {
+  const { ctx, page, errors, name } = await open(size, '/record/');
+  const where = `record, ${name}`;
+  const total = await page.evaluate(() => JSON.parse(document.getElementById('probes').textContent).length);
+  await page.waitForFunction(() => !document.querySelector('.dot.is-asking'), null, { timeout: 100000 }).catch(() => {});
+  ok(/\d/.test(await page.locator('[data-answered]').innerText()), where, 'the record does not say how many answered');
+  const states = await page.evaluate(() => [...document.querySelectorAll('[data-state]')].map(e => e.textContent));
+  ok(states.length === total && states.every(t => t !== 'not asked yet'), where, `the status table has ${states.length} rows for ${total} addresses, or one was never asked`);
+  await page.locator('[data-ask]').first().scrollIntoViewIfNeeded();
+  await page.locator('[data-ask]').first().click();
+  ok(await page.evaluate(() => document.querySelectorAll('.dot.is-asking').length > 0 || /…/.test(document.querySelector('[data-answered]').textContent)), where, '"Ask them all again" did not ask again');
+  await page.waitForFunction(() => !document.querySelector('.dot.is-asking'), null, { timeout: 100000 }).catch(() => {});
+  ok(/\d/.test(await page.locator('[data-answered]').innerText()), where, 'after asking again the record does not say how many answered');
+  for (const a of ['editions', 'record', 'index', 'vol3', 'appa']) {
+    await page.goto(base + '/#' + a, { waitUntil: 'load' });
+    ok(await page.evaluate(x => location.pathname === '/record/' && location.hash === '#' + x && !!document.getElementById(x), a), where, `/#${a} was not sent on to /record/#${a}`);
+  }
+  await page.goto(base + '/', { waitUntil: 'load' });
+  await page.evaluate(() => { location.hash = 'editions'; });
+  await page.waitForURL('**/record/#editions', { timeout: 5000 }).catch(() => {});
+  ok(await page.evaluate(() => location.pathname === '/record/'), where, 'a hash changed to #editions on an open home page was not sent on');
+  await page.goto(base + '/#work', { waitUntil: 'load' });
+  ok(await page.evaluate(() => location.pathname === '/' && location.hash === '#work'), where, 'an anchor the home page keeps was sent away');
+  ok(errors.length === 0, where, `errors: ${errors.slice(0, 3).join(' | ')}`);
+  await ctx.close();
+}
+
 // ---------- a ledger that has moved on, and is not to be trusted
 {
   const { ctx, page, errors } = await open(SIZES[0], '/404.html');
@@ -298,19 +322,27 @@ for (const size of [SIZES[0], SIZES[1]]) {
   const good = ['a-new-lesson', 'constructor', 'zebra-stripes'];
   await page.route('**/lab/apps.json', r => r.fulfill({ json: hostile }));
   await page.goto(base + '/', { waitUntil: 'load' });
+  const unplaced = await page.evaluate(async () =>
+    new DOMParser().parseFromString(await (await fetch(location.href)).text(), 'text/html').querySelectorAll('[data-lab-new] a').length);
+  await page.waitForFunction(() => document.querySelector('[data-lab-new] a[data-lesson="zebra-stripes"]'), null, { timeout: 8000 }).catch(() => {});
+  const home = await page.evaluate(() => ({
+    added: [...document.querySelectorAll('[data-lab-new] a')].map(a => [a.getAttribute('href'), a.textContent]),
+    img: document.querySelectorAll('[data-lab-new] img').length, pwned: !!window.pwned, ns: [...document.querySelectorAll('[data-lab-n]')].map(e => e.textContent),
+    shown: !document.querySelector('[data-lab-more]').hidden,
+  }));
+  // The record page types no lesson into its printed index: the ledger brings every one, the hostile entries left out.
+  await page.goto(base + '/record/', { waitUntil: 'load' });
   const before = await page.evaluate(async () => {
     const built = new DOMParser().parseFromString(await (await fetch(location.href)).text(), 'text/html');
-    return { ix: built.querySelectorAll('a.ix').length, said: +built.querySelector('[data-ix-n]').textContent, unplaced: built.querySelectorAll('[data-lab-new] a').length };
+    return { ix: built.querySelectorAll('a.ix').length, said: +built.querySelector('[data-ix-n]').textContent, lessons: built.querySelectorAll('a.ix[href^="/lab/"]:not([href="/lab/"])').length };
   });
-  ok(before.ix === before.said && before.ix > 0, where, `as built, the index prints ${before.ix} entries and says ${before.said}`);
-  await page.waitForFunction(() => document.querySelector('[data-lab-new] a[data-lesson="zebra-stripes"]'), null, { timeout: 8000 }).catch(() => {});
+  ok(before.ix === before.said && before.ix > 0 && before.lessons === 0, where, `as built, the record's index prints ${before.ix} entries, says ${before.said}, and types ${before.lessons} lessons`);
+  await page.waitForFunction(() => document.querySelector('a.ix[href="/lab/zebra-stripes/"]'), null, { timeout: 8000 }).catch(() => {});
   const got = await page.evaluate(() => {
     const key = t => t.toLowerCase().replace(/^(the|a) /, '');
     const groups = [...document.querySelectorAll('.ix-g')];
     return {
-      added: [...document.querySelectorAll('[data-lab-new] a')].map(a => [a.getAttribute('href'), a.textContent]),
-      img: document.querySelectorAll('[data-lab-new] img, .ix-cols img').length, pwned: !!window.pwned, ns: [...document.querySelectorAll('[data-lab-n]')].map(e => e.textContent),
-      shown: !document.querySelector('[data-lab-more]').hidden,
+      img: document.querySelectorAll('.ix-cols img').length, pwned: !!window.pwned,
       ix: [...document.querySelectorAll('a.ix')].map(a => [a.getAttribute('href'), a.textContent]),
       ixSaid: +document.querySelector('[data-ix-n]').textContent,
       letters: groups.map(g => g.querySelector('h3').textContent),
@@ -318,13 +350,13 @@ for (const size of [SIZES[0], SIZES[1]]) {
       underLetter: groups.every(g => [...g.querySelectorAll('a.ix')].every(a => { const c = key(a.textContent)[0]; return (c.toUpperCase() !== c.toLowerCase() ? c.toUpperCase() : '#') === g.querySelector('h3').textContent; })),
     };
   });
-  ok(got.added.some(([h, t]) => h === '/lab/a-new-lesson/' && t.includes('<img')), where, 'a lesson added after the build did not appear as text');
-  ok(good.every(g => got.added.filter(([h]) => h === `/lab/${g}/`).length === 1), where, `the outline added ${got.added.map(([h]) => h).join(' ')}; wanted each of ${good.join(', ')} once`);
-  ok(got.added.length === before.unplaced + good.length, where, `a bad slug, a day that does not exist, a title that is not text or a second copy was listed: ${got.added.map(([h]) => h).join(' ')}`);
-  ok(got.img === 0 && !got.pwned, where, 'a title became markup');
-  ok(got.ns.length === 3 && got.ns.every(n => +n === real.length + good.length) && got.shown, where, `the page counts its lessons as ${got.ns.join(', ')}; wanted ${real.length + good.length} in the Lab's row, its outline and the record`);
-  ok(good.every(g => got.ix.filter(([h]) => h === `/lab/${g}/`).length === 1), where, 'the printed index did not take each new lesson once');
-  ok(got.ix.length === before.ix + good.length && got.ixSaid === got.ix.length, where, `the printed index holds ${got.ix.length} entries and says ${got.ixSaid}; it was built with ${before.ix}`);
+  ok(home.added.some(([h, t]) => h === '/lab/a-new-lesson/' && t.includes('<img')), where, 'a lesson added after the build did not appear as text');
+  ok(good.every(g => home.added.filter(([h]) => h === `/lab/${g}/`).length === 1), where, `the outline added ${home.added.map(([h]) => h).join(' ')}; wanted each of ${good.join(', ')} once`);
+  ok(home.added.length === unplaced + good.length, where, `a bad slug, a day that does not exist, a title that is not text or a second copy was listed: ${home.added.map(([h]) => h).join(' ')}`);
+  ok(home.img === 0 && !home.pwned && got.img === 0 && !got.pwned, where, 'a title became markup');
+  ok(home.ns.length === 2 && home.ns.every(n => +n === real.length + good.length) && home.shown, where, `the home page counts its lessons as ${home.ns.join(', ')}; wanted ${real.length + good.length} in the Lab's row and its outline`);
+  ok([...real.map(a => a.slug), ...good].every(g => got.ix.filter(([h]) => h === `/lab/${g}/`).length === 1), where, 'the printed index did not take each lesson once');
+  ok(got.ix.length === before.ix + real.length + good.length && got.ixSaid === got.ix.length, where, `the printed index holds ${got.ix.length} entries and says ${got.ixSaid}; it was built with ${before.ix}`);
   ok(got.inOrder && got.underLetter && got.letters.join() === [...got.letters].sort().join(), where, `the printed index is out of order after the new lessons (letters ${got.letters.join('')})`);
   ok(got.letters.includes('Z'), where, 'CONTROL: no letter had to be added for the new lessons, so adding one was not checked');
   await page.keyboard.press('/');

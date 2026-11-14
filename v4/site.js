@@ -150,10 +150,13 @@
   }
   if (work) $$('button[data-filter]', work).forEach(function (b) { b.addEventListener('click', function () { filter(b.getAttribute('data-filter')); }); });
 
-  // A link to a work the filter hides shows everything again, then goes there.
+  // A link to a work the filter hides shows everything again, then goes there. An anchor the home page gave up to the
+  // record page (boot.js sends a fresh load on; this catches a hash changed on a page already open) goes there.
+  var moved = (doc.documentElement.getAttribute('data-moved') || '').split(' ');
   function reveal() {
     var id = '';
     try { id = decodeURIComponent(location.hash.slice(1)); } catch (e) { /* not an address this page made */ }
+    if (id && moved.indexOf(id) > -1) { location.replace('/record/#' + id); return; }
     var target = id && doc.getElementById(id);
     if (!target || !work || !work.contains(target)) return;
     if (!target.offsetParent && work.getAttribute('data-filter') !== 'all') { filter('all'); target.scrollIntoView(); }
@@ -331,7 +334,7 @@
     });
   }
 
-  /* ---------- the home page: lessons shipped after it was built ---------- */
+  /* ---------- lessons from the ledger: those shipped after the home page was built, and every one in the printed index ---------- */
   var fresh = $('[data-lab-new]'), printed = $('.ix-cols');
   // A lesson's line in the printed index: under its letter, in its alphabetical place.
   function indexLine(e) {
@@ -351,7 +354,7 @@
     line.textContent = e.t;
     group.insertBefore(line, $$('a.ix', group).filter(function (x) { return indexKey(x.textContent) > key; })[0] || null);
   }
-  if (fresh && window.fetch) {
+  if ((fresh || printed) && window.fetch) {
     lessons().then(function (found) {
       var have = Object.create(null), added = 0;
       $$('[data-lesson]').forEach(function (a) { have[a.getAttribute('data-lesson')] = true; });
@@ -362,13 +365,13 @@
         link.setAttribute('data-lesson', e.slug);
         link.textContent = e.title;
         li.append(link);
-        fresh.append(li);
+        if (fresh) fresh.append(li);
         if (printed) indexLine(e);
         have[e.slug] = true;
         added++;
       });
       if (!added) return;
-      var box = fresh.closest('[data-lab-more]');
+      var box = fresh && fresh.closest('[data-lab-more]');
       if (box) box.hidden = false;
       $$('[data-lab-n]').forEach(function (el) { el.textContent = String(Object.keys(have).length); });
       if (printed) $$('[data-ix-n]').forEach(function (el) { el.textContent = String($$('a.ix', printed).length); });

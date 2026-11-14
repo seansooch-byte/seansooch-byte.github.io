@@ -656,7 +656,8 @@ def load(root=ROOT, only=None):
     kept = sum(1 for w in record['works'] if has_kept(w))
     views = next((len(v['views']) for v in record['volumes'] if v.get('views')), 0)
     n = {
-        'systems': word(systems), 'Systems': word(systems).capitalize(), 'works': word(len(record['works'])),
+        # One count of the work: every work, once. {systems} is only the works whose lines are counted, and says so where it is used.
+        'works': word(len(record['works'])), 'Works': word(len(record['works'])).capitalize(), 'systems': word(systems),
         'addresses': len(record['works']), 'lines': f"{c['lines']:,}", 'files': f"{c['files']:,}", 'test_lines': f"{c['test_lines']:,}",
         'previous_lines': f"{c['previous']['lines']:,}", 'previous_files': f"{c['previous']['files']:,}",
         'months': word(months), 'Months': word(months).capitalize(),
@@ -673,16 +674,17 @@ def load(root=ROOT, only=None):
 
 # ---------------------------------------------------------------- shared parts
 
-def head(site, title, description, path, kind='website', more=''):
+def head(site, title, description, path, kind='website', more='', moved=()):
     """The head every edition page shares. A page with no address of its own (the not-found page) passes path=None;
-    a page with a sheet or script of its own passes them as `more`."""
+    a page with a sheet or script of its own passes them as `more`. The home page passes the anchors it gave up to
+    the record page as `moved`: /v4/boot.js sends an address to one of them on before the first paint."""
     root = site['root']
     where = (f'\n<link rel="canonical" href="{ORIGIN}{path}">', f'\n<meta property="og:url" content="{ORIGIN}{path}">') if path else ('', '')
     card = site['plates'].get('card')
     share = (f'\n<meta property="og:image" content="{ORIGIN}/plates/card.jpg">\n<meta property="og:image:width" content="{card["w"]}">\n'
              f'<meta property="og:image:height" content="{card["h"]}">\n<meta name="twitter:card" content="summary_large_image">') if card else ''
     return f'''<!doctype html>
-<html lang="en" data-voice="tech">
+<html lang="en" data-voice="tech"{f' data-moved="{" ".join(moved)}"' if moved else ''}>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -705,7 +707,7 @@ def bar(site, here=None, voices=False):
     ed, theme = site['record']['edition'], site['record']['theme']
     links = [('work', '/#work', 'Work'), ('lab', '/lab/', 'The Lab'), ('notes', f'/{NOTES}/', site['record']['notes']['name']),
              ('writing', '/#writing', 'Writing'),
-             ('films', '/#films', 'Films'), ('editions', '/#editions', 'Editions'), ('record', '/#record', 'Record')]
+             ('films', '/#films', 'Films'), ('record', '/record/', 'Record')]
     nav = ''.join(f'<a href="{h}"{" aria-current=" + chr(34) + "page" + chr(34) if key == here else ""}>{esc(label)}</a>' for key, h, label in links)
     return f'''<header class="topbar">
   <div class="wrap topbar-in">
@@ -737,13 +739,13 @@ def posted(site):
 </div>'''
 
 
-def colophon(site, home=False):
+def colophon(site, dated=False):
     r = site['record']
     ed = r['edition']
     taken = sorted(p['taken'] for p in site['plates'].values())
     plates = f' Plates captured {day(taken[0])}.' if taken and taken[0] == taken[-1] else f' Plates captured {day(taken[0])} to {day(taken[-1])}.' if taken else ''
-    dated = (f'\n      <p class="lbl">Counts recounted {day(ed["counted"])}.{plates} Round trips measured in your browser, now.</p>'
-             if home else '')
+    when = (f'\n      <p class="lbl">Counts recounted {day(ed["counted"])}.{plates} Round trips measured in your browser, now.</p>'
+            if dated else '')
     return f'''<footer class="colophon">
   <div class="wrap pair">
     <div>
@@ -753,9 +755,9 @@ def colophon(site, home=False):
       <p class="lbl when-posted">{esc(r['theme']['notice'])}</p>
     </div>
     <div class="colophon-facts">
-      <p class="lbl">Set in {esc(ed['faces'])}.</p>{dated}
+      <p class="lbl">Set in {esc(ed['faces'])}.</p>{when}
       <p class="lbl js-only" role="group" aria-label="Appearance">Appearance: <button class="link" type="button" data-theme-set="auto" aria-pressed="true">as your device</button> <button class="link" type="button" data-theme-set="light" aria-pressed="false">light</button> <button class="link" type="button" data-theme-set="dark" aria-pressed="false">dark</button> <button class="link" type="button" data-theme-set="{r['theme']['id']}" aria-pressed="false">{esc(r['theme']['label'])}</button></p>
-      <p class="lbl">© 2026 {esc(r['site']['name'])} · <a href="/#editions">Earlier volumes are kept</a> · <a href="#top">Top</a></p>
+      <p class="lbl">© 2026 {esc(r['site']['name'])} · <a href="/record/#editions">Earlier volumes are kept</a> · <a href="#top">Top</a></p>
     </div>
   </div>
 </footer>'''
@@ -819,8 +821,8 @@ def mast(site):
       <h1 id="name">{name}</h1>
       <p class="roles">{esc(r['site']['roles'])}</p>
       {said(site, r['prose']['lede'], 'lede')}
-      <nav class="lbl mast-nav" aria-label="Sections"><a href="#work">Work</a><a href="/lab/">The Lab</a><a href="/{NOTES}/">{esc(r['notes']['name'])}</a><a href="#writing">Writing</a><a href="#films">Films</a><a href="#editions">Editions</a><a href="#record">Record</a><a href="#index">Index</a></nav>
-      <p class="lbl mast-ed"><span>{esc(ed['vol'])}, {esc(ed['name'])} · {month(ed['issued'])}</span><span>Designed by {esc(ed['by'])}</span><a href="#editions">{word(len([v for v in r['volumes'] if v['status'] == 'retired'])).capitalize()} earlier volumes are kept</a></p>
+      <nav class="lbl mast-nav" aria-label="Sections"><a href="#work">Work</a><a href="/lab/">The Lab</a><a href="/{NOTES}/">{esc(r['notes']['name'])}</a><a href="#writing">Writing</a><a href="#films">Films</a><a href="/record/">Record</a></nav>
+      <p class="lbl mast-ed"><span>{esc(ed['vol'])}, {esc(ed['name'])} · {month(ed['issued'])}</span><span>Designed by {esc(ed['by'])}</span><a href="/record/#editions">{word(len([v for v in r['volumes'] if v['status'] == 'retired'])).capitalize()} earlier volumes are kept</a></p>
     </div>
     {directory(site)}
   </section>'''
@@ -973,8 +975,9 @@ def work(site):
     sections = []
     for world in r['worlds']:
         mine = [w for w in r['works'] if w['world'] == world['id']]
-        shown = [w for w in r['works'] if world['id'] == w['world'] or world['id'] in w['also']]
-        chips.append(f'<button class="btn" type="button" data-filter="{world["id"]}" aria-pressed="false">{esc(world["name"])} <span class="n">{len(shown)}</span></button>')
+        # A world's button carries no count. It also shows works that live in another world, so a count there would
+        # disagree with the directory and the world's own heading, which count each work once, in its own world.
+        chips.append(f'<button class="btn" type="button" data-filter="{world["id"]}" aria-pressed="false">{esc(world["name"])}</button>')
         if not mine:
             continue
         majors = ''.join(major(site, w) for w in mine if w['tier'] == 'major')
@@ -1151,7 +1154,7 @@ def editions(site):
             continue
         cur = w['editions'][-1]
         kept = ', '.join(f'<a href="{esc(e["url"])}" target="_blank" rel="noopener">{esc(edition_label(e))}</a>' for e in reversed(w['editions'][:-1]) if e.get('url')) or '<span class="quiet">none yet</span>'
-        rows.append(f'<tr><th scope="row"><a href="#{w["id"]}">{breakable(w["name"])}</a></th><td>{esc(edition_label(cur))}</td>'
+        rows.append(f'<tr><th scope="row"><a href="/#{w["id"]}">{breakable(w["name"])}</a></th><td>{esc(edition_label(cur))}</td>'
                     f'<td>{esc(cur.get("by") or "")}</td><td>{day(cur["date"]) if cur.get("date") else ""}</td><td>{kept}</td></tr>')
     nxt = next(v for v in r['volumes'] if v['status'] == 'awaiting')
     n_models = len({b for v in r['volumes'] if v['status'] != 'awaiting' for b in (v.get('by') or [x['by'] for x in v['views']])})
@@ -1185,26 +1188,23 @@ def editions(site):
 def record_section(site):
     r = site['record']
     c = r['counts']
-    lab = site['lab']
     ed = r['edition']
     note = {k: fill(site, v) for k, v in c['notes'].items()}
     counted = [
         ('Lines of source', f"{c['lines']:,}", note['lines'], ''),
         ('Source files', f"{c['files']:,}", note['files'], ''),
         ('Board-style questions', f"{c['questions']:,}", note['questions'], ''),
-        ('Lessons in the Lab', str(lab['n_lessons']), note['lessons'], ' data-lab-n'),
         ('Months since first deploy', str(site['months']), note['months'], ''),
-    ]
+    ]      # no lesson count: the record page reads nothing from the Lab's ledger, so a lesson shipped tomorrow leaves it as it is
     left = ''.join(f'<div><dt>{esc(k)}</dt><dd{live}>{esc(v)}</dd><dd class="std lbl">{esc(s)}</dd></div>' for k, v, s, live in counted)
     world = {w['id']: w['name'] for w in r['worlds']}
     rows = ''.join(
-        f'<tr><th scope="row"><a href="#{w["id"]}">{breakable(w["name"])}</a></th><td><a href="{esc(w["url"])}" target="_blank" rel="noopener">{esc(w["host"])}</a></td>'
+        f'<tr><th scope="row"><a href="/#{w["id"]}">{breakable(w["name"])}</a></th><td><a href="{esc(w["url"])}" target="_blank" rel="noopener">{esc(w["host"])}</a></td>'
         f'<td>{esc(world[w["world"]])}</td><td><i class="dot" data-dot="{w["id"]}"></i><span data-state="{w["id"]}">not asked yet</span></td><td class="num" data-ms="{w["id"]}" data-bare></td></tr>'
         for w in r['works'])
-    probes = json.dumps([{'id': w['id'], 'url': w['url'], 'wake': bool(w['wake'])} for w in r['works']], separators=(',', ':')).replace('<', '\\u003c')
     return f'''<section class="sec" id="record" aria-labelledby="record-h">
     <span class="alias" id="ch1"></span><span class="alias" id="ch2"></span>
-    <header class="sec-h"><h2 id="record-h">Record</h2><p class="lbl">{told(site, 'record')}</p></header>
+    <header class="sec-h"><h2 id="record-h">Counted and measured</h2><p class="lbl">{told(site, 'record')}</p></header>
     <div class="pair">
       <div>
         <h3 class="sub-h first">Counted <span class="lbl">from source, {day(ed['counted'])}</span></h3>
@@ -1231,44 +1231,48 @@ def record_section(site):
       <div>{said(site, r['prose']['purpose'])}{said(site, r['prose']['scope'])}</div>
       <div>{said(site, r['prose']['method'])}{said(site, r['prose']['note'], 'say note')}</div>
     </div>
-    <script type="application/json" id="probes">{probes}</script>
   </section>'''
 
 
-def index_entries(site, lessons=True):
-    """Everything a reader can look up: its title, where it is, and the words it answers to. The printed index on the
-    home page lists the lessons; the index a reader searches (on every page) leaves them out and reads them from the
-    ledger in the browser, so a lesson shipped tomorrow is found there with no rebuild of any page but the Lab's."""
+def probes(site):
+    """The addresses /v4/site.js asks, on each page that prints their answers."""
+    data = json.dumps([{'id': w['id'], 'url': w['url'], 'wake': bool(w['wake'])} for w in site['record']['works']], separators=(',', ':')).replace('<', '\\u003c')
+    return f'<script type="application/json" id="probes">{data}</script>'
+
+
+def index_entries(site):
+    """Everything a reader can look up: its title, the address of the page and the place that hold it, and the words it
+    answers to. Every entry is addressed as a path, so the same index works from any page. No lesson is typed into it:
+    the browser reads them from the ledger (into the index a reader searches when it first opens, and into the printed
+    one on the record page), so a lesson shipped tomorrow leaves every page but the Lab's and the home page as it is."""
     r = site['record']
-    lab = site['lab']
     out = []
     for w in r['works']:
-        out.append({'t': w['index'], 'h': f'#{w["id"]}', 'k': w['kw'], 's': 'Work'})
-    for a in lab['apps'] if lessons else []:
-        out.append({'t': f'{a["title"]} (lesson)', 'h': f'/lab/{a["slug"]}/', 'k': 'lab lesson medicine ' + str(a.get('description', '')), 's': 'The Lab'})
+        out.append({'t': w['index'], 'h': f'/#{w["id"]}', 'k': w['kw'], 's': 'Work'})
     for p in r['papers']:
-        out.append({'t': p['index'], 'h': f'#{p["id"]}', 'k': p['kw'], 's': 'Writing'})
+        out.append({'t': p['index'], 'h': f'/#{p["id"]}', 'k': p['kw'], 's': 'Writing'})
     out.append({'t': 'The two stories, side by side (table)', 'h': '/two-stories/#table43', 'k': 'paper cosmology comparison big bang', 's': 'Writing'})
-    out.append({'t': r['guidance']['index'], 'h': '#guidance', 'k': r['guidance']['kw'], 's': 'Writing'})
-    out.append({'t': 'AMA guidance: the alignment timeline', 'h': '#guidance-timeline', 'k': 'ama alignment timeline correspondence checks', 's': 'Writing'})
+    out.append({'t': r['guidance']['index'], 'h': '/#guidance', 'k': r['guidance']['kw'], 's': 'Writing'})
+    out.append({'t': 'AMA guidance: the alignment timeline', 'h': '/#guidance-timeline', 'k': 'ama alignment timeline correspondence checks', 's': 'Writing'})
     for f in r['films']:
-        out.append({'t': f['index'], 'h': f'#{f["id"]}', 'k': f['kw'], 's': 'Films'})
+        out.append({'t': f['index'], 'h': f'/#{f["id"]}', 'k': f['kw'], 's': 'Films'})
     for v in r['volumes']:
         if v['status'] == 'awaiting':
             continue
         key = vol_key(v)
-        out.append({'t': f'{v["vol"]}, {v["name"]}' + (' (archive)' if v['status'] == 'retired' else ''), 'h': f'#{key}', 'k': v.get('kw', 'editions'), 's': 'Editions'})
+        out.append({'t': f'{v["vol"]}, {v["name"]}' + (' (archive)' if v['status'] == 'retired' else ''), 'h': f'/record/#{key}', 'k': v.get('kw', 'editions'), 's': 'Editions'})
         for view in v.get('views', []):
-            out.append({'t': f'{view["name"]} ({v["vol"]}, view {view["siglum"]})', 'h': f'#{key}-{view["siglum"].lower()}', 'k': f'editions archive view {view["by"]}', 's': 'Editions'})
-    for t, h, k in [('Work', '#work', 'section apps systems'), ('Writing', '#writing', 'section papers'), ('Films', '#films', 'section video'),
-                    ('Editions', '#editions', 'section volumes archive'), ('Record', '#record', 'section counts status'),
-                    ('Every address on this page (directory)', '#dir-h', 'status reachability live hosts'),
-                    ('Counted and measured (record)', '#record', 'lines files questions round trip readiness'),
-                    ('How it was made, and how it is checked', '#about', 'purpose scope method verification'),
-                    ('App editions (table)', '#editions', 'retired editions redesign'),
+            out.append({'t': f'{view["name"]} ({v["vol"]}, view {view["siglum"]})', 'h': f'/record/#{key}-{view["siglum"].lower()}', 'k': f'editions archive view {view["by"]}', 's': 'Editions'})
+    for t, h, k in [('Work', '/#work', 'section apps systems'), ('Writing', '/#writing', 'section papers'), ('Films', '/#films', 'section video'),
+                    ('Every address on the front page (directory)', '/#dir-h', 'status reachability live hosts'),
+                    ('Record: how this site is made and kept', '/record/', 'section record colophon about'),
+                    ('Editions', '/record/#editions', 'section volumes archive'),
+                    ('Counted and measured (record)', '/record/#record', 'lines files questions round trip readiness status'),
+                    ('How it was made, and how it is checked', '/record/#about', 'purpose scope method verification'),
+                    ('App editions (table)', '/record/#editions', 'retired editions redesign'),
                     ('The Lab, the course page', '/lab/', 'course lessons units progress'),
                     (f"{r['notes']['name']}, the daily post", f'/{NOTES}/', r['notes']['kw'])]:
-        out.append({'t': t, 'h': h, 'k': k, 's': 'This page'})
+        out.append({'t': t, 'h': h, 'k': k, 's': 'Sections'})
     return sorted(out, key=lambda e: re.sub(r'^(the|a) ', '', e['t'].lower()))
 
 
@@ -1297,31 +1301,73 @@ def film_dialog():
 </dialog>'''
 
 
+def anchors(fragment):
+    return re.findall(r'\sid="([^"]*)"', fragment)
+
+
+def record_parts(site):
+    """What the record page holds below its title: the editions, what is counted and measured, and the index."""
+    return f'''{editions(site)}
+  {record_section(site)}
+  {index_section(site, index_entries(site))}'''
+
+
 def render_home(site):
     r = site['record']
-    entries = index_entries(site)
     description = re.sub(r'\*\*', '', fill(site, r['prose']['lede']['tech']))
     ld = json.dumps({'@context': 'https://schema.org', '@type': 'Person', 'name': r['site']['name'], 'url': ORIGIN + '/',
                      'description': r['site']['roles']}, ensure_ascii=False).replace('<', '\\u003c')
-    return f'''{head(site, r['site']['title'], description, '/')}
+    main = f'''{mast(site)}
+  {work(site)}
+  {writing(site)}
+  {guidance(site)}
+  {films(site)}'''
+    # Anchors an older page or a lesson's bar may still ask of the home page, now on the record page.
+    moved = sorted(set(anchors(record_parts(site))) - set(anchors(main)))
+    return f'''{head(site, r['site']['title'], description, '/', moved=moved)}
 <script type="application/ld+json" id="ld">{ld}</script>
 </head>
 <body>
 <a class="skip" href="#work">Skip to the work</a>
 {bar(site, voices=True)}
 <main class="wrap" id="top">
-  {mast(site)}
-  {work(site)}
-  {writing(site)}
-  {guidance(site)}
-  {films(site)}
-  {editions(site)}
-  {record_section(site)}
-  {index_section(site, entries)}
+  {main}
 </main>
-{colophon(site, home=True)}
+{colophon(site, dated=True)}
 {film_dialog()}
-{palette(site, index_entries(site, lessons=False))}
+{palette(site, index_entries(site))}
+{probes(site)}
+</body>
+</html>
+'''
+
+
+def render_record(site):
+    """The record of the site itself, apart from the work: its editions, what is counted and what the reader's
+    browser measures, how it was made and checked, and the index. It reads nothing from the Lab's ledger."""
+    r = site['record']
+    return f'''{head(site, 'Record · ' + r['site']['name'], fill(site, r['text']['record_page']), '/record/')}
+</head>
+<body class="page-record">
+<a class="skip" href="#top">Skip to the page</a>
+{bar(site, here='record', voices=True)}
+<main class="wrap" id="top">
+  <section class="mast pair" aria-labelledby="record-top">
+    <div>
+      <p class="lbl">{esc(r['site']['name'])} · {esc(r['edition']['vol'])}</p>
+      <h1 id="record-top">Record</h1>
+      <p class="lede">{told(site, 'record_page')}</p>
+    </div>
+    <aside class="sheet lost">
+      <p class="lbl">On this page</p>
+      <p class="lost-links"><a class="go" href="#editions">Editions</a><a class="go" href="#record">Counted and measured</a><a class="go" href="#about">How it was made</a><a class="go" href="#index">Index</a></p>
+    </aside>
+  </section>
+  {record_parts(site)}
+</main>
+{colophon(site, dated=True)}
+{palette(site, index_entries(site))}
+{probes(site)}
 </body>
 </html>
 '''
@@ -1404,15 +1450,10 @@ def render_essay(site):
   </section>
 </main>
 {colophon(site)}
-{palette(site, index_entries_for_other_pages(site))}
+{palette(site, index_entries(site))}
 </body>
 </html>
 '''
-
-
-def index_entries_for_other_pages(site):
-    """The same index from another page: an entry on the home page is addressed there."""
-    return [dict(e, h=('/' + e['h']) if e['h'].startswith('#') else e['h']) for e in index_entries(site, lessons=False)]
 
 
 # ---------------------------------------------------------------- the Lab's course page
@@ -1531,7 +1572,7 @@ def render_lab(site):
   <script type="application/json" id="lab-steps">{steps}</script>
 </main>
 {colophon(site)}
-{palette(site, index_entries_for_other_pages(site))}
+{palette(site, index_entries(site))}
 </body>
 </html>
 '''
@@ -1781,14 +1822,14 @@ def render_404(site):
     </div>
     <aside class="sheet lost">
       <p class="lbl">Where things are</p>
-      <p class="lost-links"><a class="go" href="/">The front page</a><a class="go" href="/lab/">The Lab</a><a class="go" href="/#writing">Writing</a><a class="go" href="/#editions">Editions</a></p>
+      <p class="lost-links"><a class="go" href="/">The front page</a><a class="go" href="/lab/">The Lab</a><a class="go" href="/#writing">Writing</a><a class="go" href="/record/#editions">Editions</a></p>
       <p class="lbl">The work, by world</p>
       <p class="lost-links">{worlds}</p>
     </aside>
   </section>
 </main>
 {colophon(site)}
-{palette(site, index_entries_for_other_pages(site))}
+{palette(site, index_entries(site))}
 </body>
 </html>
 '''
@@ -1796,7 +1837,7 @@ def render_404(site):
 
 def render_sitemap(site):
     lab = site['lab']
-    rows = [('/', 'weekly', '1.0'), ('/two-stories/', 'yearly', '0.7')] + ELSEWHERE + [('/lab/', 'daily', '0.7')] + [
+    rows = [('/', 'weekly', '1.0'), ('/record/', 'weekly', '0.6'), ('/two-stories/', 'yearly', '0.7')] + ELSEWHERE + [('/lab/', 'daily', '0.7')] + [
         (f'/lab/{a["slug"]}/', 'monthly', '0.6') for a in lab['apps']] + [(f'/{NOTES}/', 'daily', '0.7')] + [
         (f'/{NOTES}/{p["date"]}/', 'yearly', '0.5') for p in site['notes']['posts']]
     body = '\n'.join(f'  <url><loc>{ORIGIN}{p}</loc><changefreq>{f}</changefreq><priority>{q}</priority></url>' for p, f, q in rows)
@@ -1808,6 +1849,7 @@ def render_sitemap(site):
 def pages(site):
     out = {
         'index.html': render_home(site),
+        'record/index.html': render_record(site),
         'two-stories/index.html': render_essay(site),
         'lab/index.html': render_lab(site),
         '404.html': render_404(site),
