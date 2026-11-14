@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Art library gallery: vessels (tools, not linked)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/lab/kit/kit.css">
+<style>
+  body{margin:0;padding:16px;background:#fff;font-family:'Space Grotesk',sans-serif;color:#171916}
+  h1{font-size:22px;margin:0 0 4px}
+  h2{font-size:18px;margin:24px 0 8px;border-top:1px solid #babeb3;padding-top:10px}
+  p.note{margin:0 0 8px;color:#53584d;font-size:14px;max-width:1100px}
+  .row{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
+  figure{margin:0}
+  figcaption{font-size:12px;color:#53584d;margin-top:3px;max-width:480px}
+  .visual{display:inline-block}
+  .lx-pic svg{display:block;width:100%;height:auto;background:#ecefe5}
+</style>
+</head>
+<body>
+<h1>vessels.js: vessel, vesselSection, capillaryBed, streamline, flowArrow</h1>
+<p class="note">Every primitive in a 480-unit picture shown at 480 px, at the phone width (375 px) and small (200 px), with its state parameters swept. Not linked from anywhere; tools/ is never shipped. ?only=&lt;section letter&gt; shows one section.</p>
+<div id="out"></div>
+<script type="module">
+import { P, scopeArt, artGhost, placeLabels } from '/lab/kit/art/core.js';
+import { vessel, vesselSection, capillaryBed, streamline, flowArrow } from '/lab/kit/art/vessels.js';
+
+const out = document.getElementById('out');
+const only = new URLSearchParams(location.search).get('only');
+const WIDTHS = (new URLSearchParams(location.search).get('w') || '480,375,200').split(',').map(Number);
+const section = (letter, title, note) => {
+  if (only && !only.split(',').includes(letter)) return null;
+  out.insertAdjacentHTML('beforeend', `<h2>${letter}. ${title}</h2>${note ? `<p class="note">${note}</p>` : ''}<div class="row"></div>`);
+  return out.lastElementChild;
+};
+function fig(row, name, h, body, label = name) {
+  if (!row) return;
+  for (const w of WIDTHS) row.insertAdjacentHTML('beforeend', `<figure data-cell="${name}-w${w}"><div class="visual"><div class="lx-pic" style="width:${w}px">${scopeArt(`<svg viewBox="0 0 480 ${h}" role="img" aria-label="${label}">${body}</svg>`)}</div></div><figcaption>${label}, ${w} px</figcaption></figure>`);
+}
+const T = (x, y, s, cls = 'sm b', anchor = 'start') => `<text x="${x}" y="${y}" class="${cls}" text-anchor="${anchor}">${s}</text>`;
+
+/* A. every kind, cut away, labelled in one column */
+{
+  const row = section('A', 'Every kind, cut away (see-through convention)', 'Wall material by type, lumen by oxygen content. Lumen widths are the model widths a lesson would pass.');
+  const kinds = [['artery', 18, 'Artery', 'thick muscular wall'], ['arteriole', 8, 'Arteriole', 'wall about its radius'], ['capillary', 6, 'Capillary', 'one cell thick'], ['venule', 12, 'Venule', 'thin wall'], ['vein', 22, 'Vein', 'thin wall, wide lumen'], ['lymphatic', 12, 'Lymphatic', 'lymph, no blood']];
+  let body = '';
+  kinds.forEach(([k, L, name, sub], i) => {
+    const y = 34 + i * 62;
+    body += vessel({ d: `M10 ${y} C90 ${y - 8} 190 ${y + 8} 290 ${y}`, kind: k, lumen: L });
+    body += T(306, y - 2, name) + T(306, y + 18, sub, 'xs muted');
+  });
+  fig(row, 'A-kinds', 400, body, 'six vessel kinds');
+}
+
+/* B. artery against vein, the BP picture */
+{
+  const row = section('B', 'Artery against vein (blood-pressure-regulation)', 'Same scale. Cells flowing; the vein holds more blood behind a thin wall, with a limb-vein valve open (forward flow) and shut (backflow fills the pockets).');
+  for (const open of [1, 0]) {
+    const a = vessel({ d: 'M16 70 L300 70', kind: 'artery', lumen: 22, cells: { n: 7, phase: 0.3 }, cut: 'start' });
+    const v = vessel({ d: 'M16 190 L300 190', kind: 'vein', lumen: 34, cells: { n: 9, phase: 0.3 }, valves: { n: 1, open, at: [0.62] }, cut: 'start' });
+    const labels = placeLabels([
+      { text: 'Artery', sub: 'thick muscular wall', at: a.at.wall },
+      { text: 'Vein', sub: 'thin wall', at: v.at.wall },
+      { text: open ? 'Valve open' : 'Valve shut', sub: open ? 'toward heart' : 'no backflow', at: [v.at.valve[0] + 12, v.at.valve[1] - 9] },
+    ], { column: 322, side: 'right', top: 8, bottom: 270 });
+    fig(row, `B-art-vein-${open ? 'open' : 'shut'}`, 270, a + v + labels.map(l => l.leader + l.svg).join(''), `artery and vein, valve ${open ? 'open' : 'shut'}`);
+  }
+  const ext = vessel({ d: 'M16 60 C110 40 200 80 300 60', kind: 'artery', lumen: 20, cutaway: false, cut: 'end' }) + vessel({ d: 'M16 150 C110 130 200 170 300 150', kind: 'vein', lumen: 28, cutaway: false, cut: 'end' });
+  fig(row, 'B-exterior', 210, ext + T(316, 66, 'Artery') + T(316, 156, 'Vein') + T(316, 86, 'exterior, cut end', 'xs muted'), 'exterior views with cut ends');
+}
+
+/* C. arteriole tone: the model narrows the lumen, the wall keeps its area */
+{
+  const row = section('C', 'Arteriole constriction swept (restLumen 16, lumen 16 to 6), ghost of the normal outline', 'tone shades the media toward smooth muscle and crimps the elastic lamina; the wall thickens because its area is conserved.');
+  for (const [L, tone] of [[16, 0], [11, 0.5], [6, 1]]) {
+    const d = 'M20 90 L300 90';
+    const v = vessel({ d, kind: 'arteriole', lumen: L, restLumen: 16, tone, flow: { phase: 0.2 } });
+    const ghost = artGhost(v.outline({ lumen: 16 }));
+    fig(row, `C-tone-${L}`, 180, v + ghost + T(316, 84, `Lumen ${L}`) + T(316, 104, `tone ${tone}`, 'xs muted') + (L < 16 ? `<path d="M160 52 L160 66" stroke="${P.ui.blue}" stroke-width="3"/><path d="M154 62 L160 70 L166 62" fill="none" stroke="${P.ui.blue}" stroke-width="3"/>` + T(172, 46, 'narrows', 'sm b blue') : ''), `arteriole lumen ${L}`);
+  }
+}
+
+/* D. pulmonary vessels and mixed blood */
+{
+  const row = section('D', 'Vessel rule: pulmonary artery is artery wall with venous blood; pulmonary vein is vein wall with oxygenated blood; blood as a 0..1 mix', '');
+  let body = vessel({ d: 'M16 50 L300 50', kind: 'artery', blood: 'deoxy', lumen: 22 }) + T(316, 46, 'Pulmonary artery') + T(316, 66, 'artery wall, venous blood', 'xs muted');
+  body += vessel({ d: 'M16 130 L300 130', kind: 'vein', blood: 'oxy', lumen: 24 }) + T(316, 126, 'Pulmonary vein') + T(316, 146, 'vein wall, oxygenated', 'xs muted');
+  [0, 0.25, 0.5, 0.75, 1].forEach((k, i) => { body += vessel({ d: `M${20 + i * 56} 210 L${66 + i * 56} 210`, kind: 'artery', blood: k, lumen: 16 }) + T(43 + i * 56, 250, String(k), 'xs muted', 'middle'); });
+  body += T(316, 216, 'blood 0 to 1', 'sm b');
+  fig(row, 'D-pulmonary', 270, body, 'pulmonary vessels and blood mix');
+}
+
+/* E. cells and flow, phase swept (loops every 1) */
+{
+  const row = section('E', 'Cells and streamline: phase 0, 0.33, 0.66 (1 = 0)', '');
+  for (const ph of [0, 0.33, 0.66]) {
+    const body = vessel({ d: 'M10 60 C100 30 200 100 300 60', kind: 'artery', lumen: 24, cells: { n: 8, phase: ph } }) + vessel({ d: 'M10 150 C100 120 200 190 300 150', kind: 'vein', lumen: 26, flow: { phase: ph } }) + T(316, 66, 'cells') + T(316, 156, 'streamline');
+    fig(row, `E-phase-${ph}`, 200, body, `phase ${ph}`);
+  }
+}
+
+/* F. venule gaps (leak) and the capillary */
+{
+  const row = section('F', 'Postcapillary venule, gaps 0, 0.5, 1 (immune-response leak); capillary single file', '');
+  for (const g of [0, 0.5, 1]) {
+    const body = vessel({ d: 'M16 50 L300 50', kind: 'venule', lumen: 16, gaps: g, cells: { n: 6, phase: 0.2 } }) + T(316, 56, `gaps ${g}`) + vessel({ d: 'M16 120 C110 100 200 140 300 120', kind: 'capillary', lumen: 7, cells: { n: 5, phase: 0.4 } }) + T(316, 126, 'Capillary');
+    fig(row, `F-gaps-${g}`, 160, body, `venule gaps ${g}`);
+  }
+}
+
+/* G. vessel sections */
+{
+  const row = section('G', 'vesselSection: artery, arteriole (tone 0 and 1, restR 12, r 12 then 6), vein, capillary', 'Flat section shading; artery shows intima, internal elastic lamina, media with smooth muscle nuclei, external elastic lamina, adventitia. A vein lumen is a flattened oval of the same area.');
+  const a = vesselSection({ r: 46, kind: 'artery', x: 110, y: 120, key: 'ga' });
+  const lab = placeLabels([
+    { text: 'Intima', sub: 'endothelium', at: a.at.intima },
+    { text: 'Media', sub: 'smooth muscle', at: a.at.media },
+    { text: 'Adventitia', sub: 'connective tissue', at: a.at.adventitia },
+    { text: 'Lumen', sub: 'blood', at: [a.at.lumen[0] + 20, a.at.lumen[1] + 10] },
+  ], { column: 250, side: 'right', top: 20, bottom: 230 });
+  fig(row, 'G-artery', 240, a + lab.map(l => l.leader + l.svg).join(''), 'artery section with labels');
+  let body = '';
+  [[12, 0], [9, 0.5], [6, 1]].forEach(([r, tone], i) => { const s = vesselSection({ r, restR: 12, kind: 'arteriole', tone, x: 70 + i * 130, y: 70, key: `gt${i}` }); body += s + artGhost(s.outline({ r: 12 }).replace(/(-?\d*\.?\d+) (-?\d*\.?\d+)/g, (m0, x, y) => `${+x} ${+y}`)) + T(70 + i * 130, 150, `r ${r}`, 'xs muted', 'middle'); });
+  fig(row, 'G-arteriole', 170, body, 'arteriole sections, tone swept');
+  body = vesselSection({ r: 40, kind: 'vein', x: 110, y: 100, cells: true, key: 'gv' }) + T(110, 186, 'Vein', 'sm b', 'middle') + vesselSection({ r: 7, kind: 'capillary', x: 300, y: 100, s: 3, cells: true, key: 'gc' }) + T(300, 186, 'Capillary', 'sm b', 'middle') + T(300, 206, 'drawn 3 x', 'xs muted', 'middle') + vesselSection({ r: 10, kind: 'venule', x: 410, y: 100, key: 'gvn' }) + T(410, 186, 'Venule', 'sm b', 'middle');
+  fig(row, 'G-vein-cap', 216, body, 'vein, capillary, venule sections');
+}
+
+/* H. capillary beds */
+{
+  const row = section('H', 'capillaryBed: systemic in polygonal tissue, in striated muscle (O2 step), lung (deoxy to oxy, no tissue)', 'Arteriole in at the upper left, venule out at the upper right; capillaries change colour across the bed.');
+  for (const [nm, o] of [['polygon', {}], ['muscle', { tissue: 'muscle' }], ['lung', { from: 'deoxy', to: 'oxy', tissue: 'none' }]]) {
+    const b = capillaryBed({ x: 10, y: 10, w: 300, h: 200, cells: { n: 3, phase: 0.3 }, flow: { phase: 0.3 }, key: `h${nm}`, ...o });
+    const lab = placeLabels([
+      { text: 'Arteriole', at: b.at.arteriole },
+      { text: 'Capillary', at: b.at.capillary },
+      { text: 'Venule', at: b.at.venule },
+      ...(nm === 'lung' ? [] : [{ text: nm === 'muscle' ? 'Muscle fibre' : 'Tissue cells', at: b.at.tissue }]),
+    ], { column: 330, side: 'right', top: 12, bottom: 212, keepOut: [] });
+    fig(row, `H-${nm}`, 220, b + lab.map(l => l.leader + l.svg).join(''), `capillary bed, ${nm}`);
+  }
+}
+
+/* I. streamline and J. flowArrow */
+{
+  const row = section('I', 'streamline (string, no parts) over a chamber-sized lumen, phase 0, 0.5; opacity 0.5', '');
+  for (const [ph, op] of [[0, 1], [0.5, 1], [0.25, 0.5]]) fig(row, `I-stream-${ph}-${op}`, 120, `<rect x="10" y="20" width="300" height="80" rx="40" fill="${P.oxy.base}"/>` + streamline({ d: 'M40 60 C120 30 200 90 290 60', phase: ph, opacity: op }) + T(326, 66, `phase ${ph}`), `streamline ${ph}`);
+}
+{
+  const row = section('J', 'flowArrow: model-width shaft, fixed head; ghost of normal (12) above; w swept 0, 4, 12, 20; curved; drug colour', '');
+  let body = '';
+  [0, 4, 12, 20].forEach((w, i) => { const y = 40 + i * 60; body += flowArrow({ d: `M20 ${y} L260 ${y}`, w, ghostW: 12, phase: 0.3 }) + T(290, y + 6, `w ${w}`); });
+  fig(row, 'J-widths', 270, body, 'flow arrow widths');
+  fig(row, 'J-curved', 220, flowArrow({ d: 'M30 190 C40 80 160 40 260 70', w: 10, ghostW: 18, col: 'purple', part: 'drug' }) + flowArrow({ d: 'M300 40 C360 60 380 140 330 190', w: 6, col: 'water' }) + T(120, 210, 'drug', 'sm b purple') + T(360, 210, 'water'), 'curved flow arrows');
+}
+document.body.dataset.ready = '1';
+</script>
+</body>
+</html>

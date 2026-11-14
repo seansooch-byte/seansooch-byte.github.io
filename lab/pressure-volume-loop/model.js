@@ -1,4 +1,4 @@
-// Pressure–Volume Loop · The Lab
+// Pressure-Volume Loop · The Lab
 // A deterministic lumped model of the left ventricle: time-varying elastance
 // (Suga & Sagawa), ideal-diode mitral and aortic valves with linear resistance,
 // constant left atrial pressure, and a two-element Windkessel arterial load.

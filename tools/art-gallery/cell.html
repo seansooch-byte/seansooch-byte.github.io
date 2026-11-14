@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg">
+<title>Cell primitives gallery (tools, not linked)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/lab/kit/kit.css">
+<style>
+  body{margin:0;padding:16px;background:#fff;font-family:'Space Grotesk',sans-serif;color:#171916}
+  h1{font-size:22px;margin:0 0 4px}
+  h2{font-size:18px;margin:24px 0 8px;border-top:1px solid #babeb3;padding-top:10px}
+  p.note{margin:0 0 8px;color:#53584d;font-size:14px;max-width:1100px}
+  .row{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
+  figure{margin:0}
+  figcaption{font-size:12px;color:#53584d;margin-top:3px;max-width:480px}
+  .visual{display:inline-block}
+  .lx-pic svg{display:block;width:100%;height:auto}
+</style>
+</head>
+<body>
+<h1>The Lab: cell primitives (lab/kit/art/cell.js)</h1>
+<p class="note">Every cell primitive at 480 px, at the phone width (375 px) and small (200 px), with its state parameters swept. Not linked; tools/ is never shipped. ?only=&lt;section id&gt;[,id] shows chosen sections; ?w=480,375 chooses widths.</p>
+<div id="out"></div>
+<script type="module">
+import { P, scopeArt, placeLabels } from '/lab/kit/art/core.js';
+import { MEMBRANE, bilayer, membraneBand, gpcr, channel, transporter, vesicle, cellBody, nucleus, epithelium, enzyme, nuclearReceptor } from '/lab/kit/art/cell.js';
+
+const q = new URLSearchParams(location.search), only = q.get('only'), WIDTHS = (q.get('w') || '480,375,200').split(',').map(Number);
+const out = document.getElementById('out');
+let n = 0;
+const section = (id, title, note) => {
+  if (only && !only.split(',').includes(id)) return null;
+  out.insertAdjacentHTML('beforeend', `<h2 id="${id}">${title}</h2>${note ? `<p class="note">${note}</p>` : ''}<div class="row"></div>`);
+  return out.lastElementChild;
+};
+function fig(row, name, h, body, label = name, widths = WIDTHS) {
+  if (!row) return;
+  for (const w of widths) {
+    row.insertAdjacentHTML('beforeend', `<figure data-cell="${name}-w${w}"><div class="visual"><div class="lx-pic" style="width:${w}px">${scopeArt(`<svg viewBox="0 0 480 ${h}" role="img" aria-label="${label}">${body}</svg>`)}</div></div><figcaption>${label}, ${w} px</figcaption></figure>`);
+    n++;
+  }
+}
+// A membrane strip: outside above, cytoplasm below, a bilayer along y.
+const strip = (y, h, { band = false } = {}) => `<rect x="0" y="0" width="480" height="${y}" fill="${P.space.ecf}"/><rect x="0" y="${y}" width="480" height="${h - y}" fill="${P.cytoplasm.base}"/>`
+  + (band ? membraneBand({ d: `M0 ${y} L480 ${y}`, w: band }) : bilayer({ x1: 0, y1: y, x2: 480, y2: y }));
+const t = (x, y, s, cls = 'xs muted', anchor = 'middle') => `<text x="${x}" y="${y}" text-anchor="${anchor}" class="${cls}">${s}</text>`;
+
+/* membranes */
+{
+  const row = section('membrane', 'bilayer and membraneBand', 'Bilayer: heads and tails are ax-d2 detail over the golden core band (the band alone below 300 px). Highlight 0.35 to 0.6; lipids 30 and 33 snipped (sn-2 tail released, cytoplasmic leaflet); a cleared stretch where a protein sits. Band: the icon membrane.');
+  fig(row, 'bilayer', 170, `<rect width="480" height="170" fill="${P.ui.panel}"/>${bilayer({ x1: 10, y1: 46, x2: 470, y2: 46, highlight: [0.35, 0.6], snipped: [30, 33] })}${bilayer({ d: 'M10 120 C120 90 200 150 300 118 C360 100 440 100 470 126', clear: [[230, 22]] })}${membraneBand({ d: 'M10 160 L470 160', w: 8 })}`, 'bilayer, curved bilayer with clear, band');
+  fig(row, 'bilayer-cell', 260, `${bilayer({ d: 'M240 30 C330 30 400 80 400 130 C400 190 330 230 240 230 C150 230 80 190 80 130 C80 70 150 30 240 30 Z', key: 'cellm' })}`, 'bilayer round a cell');
+}
+/* gpcr */
+{
+  const row = section('gpcr', 'gpcr', 'Seven helices, ECL and ICL loops, binding pocket, G protein trimer (alpha, beta, gamma). Sweeps: agonist bound 0, .5, 1; gprotein 0, .5, 1; antagonist.');
+  const h = 190, y = 70;
+  fig(row, 'gpcr-bind', h, strip(y, h) + [0, 0.5, 1].map((b, i) => gpcr({ x: 85 + i * 150, y, s: 1.45, ligand: 'agonist', ligandCol: P.noradrenaline.base, bound: b, gprotein: 0 })).join('') + [0, 0.5, 1].map((b, i) => t(85 + i * 150, h - 8, `bound ${b}`)).join(''), 'gpcr agonist docking');
+  fig(row, 'gpcr-g', h, strip(y, h) + [0, 0.5, 1].map((g, i) => gpcr({ x: 70 + i * 150, y, s: 1.45, ligand: 'agonist', bound: 1, gprotein: g })).join('') + [0, 0.5, 1].map((g, i) => t(85 + i * 150, h - 8, `gprotein ${g}`)).join(''), 'gpcr G protein activation');
+  fig(row, 'gpcr-ant', h, strip(y, h) + gpcr({ x: 120, y, s: 1.45, ligand: 'antagonist', bound: 1 }) + gpcr({ x: 330, y, s: 1.45, gprotein: null }) + t(120, h - 8, 'antagonist') + t(330, h - 8, 'no G protein'), 'gpcr antagonist, bare');
+}
+/* channels */
+{
+  const row = section('channel', 'channel', 'True assembly per kind. Each pair: shut, then open (ion lit). Nav inactivation lid swings on the III to IV linker; Kv ball and chain; K-ATP with SUR1 and a sulfonylurea on SUR1; ligand-gated pentamer binding two ligands.');
+  const h = 200, y = 84;
+  const pair = (kind, ion, extra = {}) => strip(y, h) + channel({ kind, x: 130, y, s: 1.5, ion, ...extra }) + channel({ kind, x: 350, y, s: 1.5, ion, open: 1, ...extra }) + t(130, h - 6, `${kind} open 0`) + t(350, h - 6, `${kind} open 1`);
+  fig(row, 'ch-nav', h, pair('nav', 'na'), 'Nav shut and open');
+  fig(row, 'ch-nav-inact', h, strip(y, h) + [0, 0.5, 1].map((k, i) => channel({ kind: 'nav', x: 85 + i * 155, y, s: 1.4, ion: 'na', open: 1 - k * 0.0, inactivated: k })).join('') + [0, 0.5, 1].map((k, i) => t(85 + i * 155, h - 6, `inactivated ${k}`)).join(''), 'Nav inactivation');
+  fig(row, 'ch-cav', h, pair('cav', 'ca'), 'Cav shut and open');
+  fig(row, 'ch-kv', h, strip(y, h) + channel({ kind: 'kv', x: 85, y, s: 1.4, ion: 'k' }) + channel({ kind: 'kv', x: 240, y, s: 1.4, ion: 'k', open: 1 }) + channel({ kind: 'kv', x: 395, y, s: 1.4, ion: 'k', open: 1, inactivated: 1 }) + t(85, h - 6, 'shut') + t(240, h - 6, 'open') + t(395, h - 6, 'ball in'), 'Kv shut, open, inactivated');
+  fig(row, 'ch-kir', h, pair('kir', 'k'), 'Kir shut and open');
+  fig(row, 'ch-katp', h, strip(y, h) + channel({ kind: 'katp', x: 120, y, s: 1.35, ion: 'k', open: 1 }) + channel({ kind: 'katp', x: 360, y, s: 1.35, ion: 'k', open: 0, plug: 1 }) + t(120, h - 6, 'K-ATP open') + t(360, h - 6, 'drug on SUR1, shut'), 'K-ATP');
+  fig(row, 'ch-enac', h, strip(y, h) + channel({ kind: 'enac', x: 130, y, s: 1.4, ion: 'na', open: 1 }) + channel({ kind: 'enac', x: 350, y, s: 1.4, ion: 'na', open: 0.2, plug: 1 }) + t(130, h - 6, 'ENaC open') + t(350, h - 6, 'pore blocked'), 'ENaC');
+  fig(row, 'ch-lgic', h, strip(y, h) + [0, 0.5, 1].map((k, i) => channel({ kind: 'lgic', x: 85 + i * 155, y, s: 1.35, ion: 'na', bound: k, open: k > 0.9 ? 1 : 0, ligandCol: P.ach.base })).join('') + [0, 0.5, 1].map((k, i) => t(85 + i * 155, h - 6, `bound ${k}`)).join(''), 'ligand-gated');
+  fig(row, 'ch-generic', h, pair('generic', 'cl') , 'generic Cl channel');
+  fig(row, 'ch-icon', 120, strip(60, 120, { band: 8 }) + ['nav', 'kv', 'cav', 'katp', 'enac'].map((k, i) => channel({ kind: k, x: 50 + i * 95, y: 60, s: 8 / MEMBRANE.thick * 1.6, ion: 'na', open: 1, collar: false })).join(''), 'channels at icon scale on a band');
+}
+/* transporters */
+{
+  const row = section('transporter', 'transporter', 'Alternating access, phase 0 (open out), .25, .5 (open in), .75. Symporter cargo both in; antiporter in and out; pump Na out, K in, with beta subunit and ATP.');
+  const h = 210, y = 80, ph = [0, 0.25, 0.5, 0.75];
+  const sweep = (kind, o) => strip(y, h) + ph.map((p, i) => transporter({ kind, x: 62 + i * 118, y, s: 1.3, phase: p, ...o })).join('') + ph.map((p, i) => t(62 + i * 118, h - 6, `phase ${p}`)).join('');
+  fig(row, 'tr-sym', h, sweep('symporter', { cargo: ['na', 'glucose'] }), 'symporter (Na, glucose)');
+  fig(row, 'tr-anti', h, sweep('antiporter', { cargo: ['na', 'h'] }), 'antiporter (Na in, H out)');
+  fig(row, 'tr-pump', h, sweep('pump', { cargo: [{ key: 'na', n: 3 }, { key: 'k', n: 2 }], beta: true, atp: true }), 'Na/K pump with beta and ATP');
+  fig(row, 'tr-uni', h, strip(y, h) + transporter({ kind: 'uniporter', x: 90, y, s: 1.4, phase: 0.15 }) + transporter({ kind: 'reuptake', x: 250, y, s: 1.4, phase: 0.2 }) + transporter({ kind: 'reuptake', x: 400, y, s: 1.4, blocked: 1 }) + t(90, h - 6, 'uniporter') + t(250, h - 6, 'reuptake') + t(400, h - 6, 'blocked'), 'uniporter, reuptake, blocked');
+}
+/* vesicles */
+{
+  const row = section('vesicle', 'vesicle', 'Docked, then fuse .2, .4, .6, .8, 1 on a band of the same width. Cargo leaves through the omega pore; the vesicle protein ends in the plasma membrane.');
+  const h = 150, y = 50, r = 14, w = 6, fs = [0, 0.2, 0.4, 0.6, 0.8, 1];
+  fig(row, 've-fuse', h, strip(y, h, { band: w }) + fs.map((fu, i) => vesicle({ x: 42 + i * 79, y: y + r + w, r, w, cargo: 'ach', n: 6, fuse: fu, proteins: ['generic'] })).join('') + fs.map((fu, i) => t(42 + i * 79, h - 6, `fuse ${fu}`)).join(''), 'vesicle fusion');
+  fig(row, 've-aqp', h, strip(y, h, { band: w }) + [0, 0.5, 1].map((fu, i) => vesicle({ x: 90 + i * 150, y: y + 18 + w, r: 18, w, fuse: fu, proteins: ['aquaporin', 'aquaporin', 'aquaporin'] })).join(''), 'aquaporin vesicles inserting');
+}
+/* cells */
+{
+  const row = section('cellBody', 'cellBody and nucleus', 'Every shape with its nucleus and organelles (mitochondria ax-d3, ER and Golgi ax-d2).');
+  const shapes = ['round', 'cuboidal', 'columnar', 'polygon', 'pyramidal', 'squamous', 'spindle'];
+  const size = { round: [130, 110], cuboidal: [110, 100], columnar: [70, 150], polygon: [130, 115], pyramidal: [120, 140], squamous: [170, 50], spindle: [190, 54] };
+  fig(row, 'cells-a', 200, shapes.slice(0, 4).map((s, i) => cellBody({ shape: s, x: 65 + i * 115, y: 90, w: size[s][0] * 0.8, h: size[s][1] * 0.8 })).join('') + shapes.slice(0, 4).map((s, i) => t(65 + i * 115, 192, s)).join(''), 'cells 1');
+  fig(row, 'cells-b', 200, shapes.slice(4).map((s, i) => cellBody({ shape: s, x: 85 + i * 155, y: 90, w: size[s][0] * 0.8, h: size[s][1] * 0.8 })).join('') + shapes.slice(4).map((s, i) => t(85 + i * 155, 192, s)).join(''), 'cells 2');
+  fig(row, 'cell-big', 300, cellBody({ shape: 'round', x: 240, y: 150, w: 300, h: 260, membrane: 'bilayer', key: 'big' }), 'large cell with a bilayer membrane');
+  const row2 = section('nucleus', 'nucleus', 'Loose chromatin with nucleolus; dna slot; condensed (M phase); breakdown .5 and 1.');
+  fig(row2, 'nuc', 140, [{}, { dna: true }, { chromatin: 'condensed' }, { chromatin: 'condensed', breakdown: 0.5 }, { chromatin: 'condensed', breakdown: 1 }].map((o, i) => nucleus({ x: 50 + i * 95, y: 62, r: 38, ...o })).join('') + ['loose', 'dna', 'condensed', 'breakdown .5', 'breakdown 1'].map((s, i) => t(50 + i * 95, 134, s)).join(''), 'nucleus states');
+}
+/* epithelium */
+{
+  const row = section('epithelium', 'epithelium', 'Columnar with brush border; cuboidal; squamous; and a composed principal-cell-like scene with labels.');
+  fig(row, 'epi-kinds', 250, `<rect width="480" height="250" fill="${P.space.ecf}"/>` + epithelium({ n: 5, x: 20, y: 20, brush: true }) + epithelium({ n: 5, kind: 'cuboidal', x: 20, y: 115 }) + epithelium({ n: 5, kind: 'squamous', x: 20, y: 200 }) + t(250, 50, 'columnar, brush', 'xs muted', 'start') + t(250, 140, 'cuboidal', 'xs muted', 'start') + t(250, 215, 'squamous', 'xs muted', 'start'), 'epithelium kinds');
+  // composed: a polarised cell row, a channel on the apical side, a pump on the basolateral side, a nuclear receptor
+  const ep = epithelium({ n: 3, kind: 'columnar', cw: 92, h: 150, x: 14, y: 70, apical: 1, basal: 1, key: 'scene' });
+  const s = 12 / MEMBRANE.thick * 1.8;
+  const ap = ep.slots.apical[1], bs = ep.slots.basal[1];
+  const ch = channel({ kind: 'enac', x: ap[0], y: ap[1], s, ion: 'na', open: 1, collar: false });
+  const pu = transporter({ kind: 'pump', x: bs[0], y: bs[1], s, rot: 180, phase: 0.62, arrows: false, collar: false });
+  const nr = nuclearReceptor({ x: ep.at.cell1[0] - 4, y: ep.at.cell1[1] - 22, s: 1.2, ligand: 'aldosterone', bound: 1 });
+  const labels = placeLabels([
+    { text: 'lumen', cls: 'sm b', at: [ap[0] + 60, 40] },
+    { text: 'channel', cls: 'sm b', sub: 'apical', at: ch.at.right },
+    { text: 'receptor', cls: 'sm b', sub: 'in the cytoplasm', at: nr.at.lbd },
+    { text: 'tight junction', cls: 'sm b', at: [ep.at.junction[0] + 92, ep.at.junction[1]] },
+    { text: 'pump', cls: 'sm b', sub: 'basolateral', at: pu.at.left },
+  ], { column: 312, side: 'right', top: 12, bottom: 300 });
+  const scene = `<rect width="480" height="310" fill="${P.space.ecf}"/>${ep}${ch}${pu}${nr}` + labels.map(l => l.leader + l.svg).join('');
+  fig(row, 'epi-scene', 310, scene, 'composed epithelial scene with labels');
+}
+/* enzymes */
+{
+  const row = section('enzyme', 'enzyme', 'Globular with cleft; zymogen with propeptide; bilobed; dimer with side pockets and a selective plug; aspirin acetyl flag; reversible plug; membrane-anchored; tethered by collagen with glow.');
+  const list = [[{}, 'active'], [{ state: 'zymogen' }, 'zymogen'], [{ shape: 'bilobed' }, 'bilobed'], [{ state: 'blocked', plug: 'reversible' }, 'reversible']];
+  fig(row, 'enz-a', 140, list.map(([o], i) => enzyme({ x: 62 + i * 118, y: 60, s: 1.4, ...o })).join('') + list.map(([, l], i) => t(62 + i * 118, 132, l)).join(''), 'enzymes 1');
+  fig(row, 'enz-b', 180, `<rect x="0" y="0" width="480" height="180" fill="${P.ui.panel}"/>` + enzyme({ x: 90, y: 60, s: 1.3, shape: 'dimer', sidePocket: true, state: 'blocked', plug: 'selective' }) + enzyme({ x: 225, y: 60, s: 1.3, state: 'blocked', plug: 'acetyl' })
+    + bilayer({ x1: 280, y1: 112, x2: 470, y2: 112 }) + enzyme({ x: 320, y: 112 - 38 * 1.3, s: 1.3, anchor: 'membrane' }) + enzyme({ x: 420, y: 52, s: 1.3, anchor: 'tethered', glow: 1 }) + t(90, 172, 'dimer, selective') + t(225, 172, 'acetyl') + t(320, 172, 'membrane') + t(420, 172, 'tethered, glow'), 'enzymes 2');
+}
+/* nuclear receptors */
+{
+  const row = section('nuclearReceptor', 'nuclearReceptor', 'Cortisol docking (bound 0, .5, 1); T3 bound; glucocorticoid drug; aldosterone receptor on DNA inside a nucleus.');
+  fig(row, 'nr', 150, [[{ ligand: 'cortisol', bound: 0 }, 'bound 0'], [{ ligand: 'cortisol', bound: 0.5 }, 'bound .5'], [{ ligand: 'cortisol', bound: 1 }, 'cortisol'], [{ ligand: 'thyronine', bound: 1 }, 'T3'], [{ ligand: 'glucocorticoid', bound: 1 }, 'drug']].map(([o], i) => nuclearReceptor({ x: 50 + i * 95, y: 70, s: 1.6, ...o })).join('')
+    + ['bound 0', 'bound .5', 'cortisol', 'T3', 'drug'].map((s, i) => t(50 + i * 95, 142, s)).join(''), 'nuclear receptors');
+  fig(row, 'nr-nuc', 200, nucleus({ x: 240, y: 100, r: 90, aspect: 0.95 }) + nuclearReceptor({ x: 250, y: 120, s: 1.8, ligand: 'aldosterone', bound: 1, where: 'nucleus' }), 'receptor on DNA in the nucleus');
+}
+document.body.dataset.figures = n;
+document.body.dataset.ready = '1';
+</script>
+</body>
+</html>

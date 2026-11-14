@@ -1,0 +1,194 @@
+{
+  "disclaimer": "Typical adult reference ranges; labs vary; not for clinical decisions.",
+  "sources": {
+    "openstax": "Betts JG et al. Anatomy and Physiology 2e. OpenStax, 2022. Chapter 22.3, The Process of Breathing.",
+    "atsers2022": "Stanojevic S et al. ERS/ATS technical standard on interpretive strategies for routine lung function tests. European Respiratory Journal. 2022;60:2101499.",
+    "sp-compliance": "Desai JP, Moustarah F. Pulmonary Compliance (Archived). StatPearls / NCBI Bookshelf. Updated September 12, 2022.",
+    "sp-pft": "Ponce MC, Sankari A, Sharma S. Pulmonary Function Tests. StatPearls / NCBI Bookshelf. Updated August 28, 2023.",
+    "openstax-biology": "OpenStax. Biology for AP® Courses. Section 30.2, Gas Exchange across Respiratory Surfaces, Table 30.1."
+  },
+  "sourceDetails": [
+    {
+      "id": "openstax",
+      "citation": "Betts JG et al. Anatomy and Physiology 2e. OpenStax, 2022. Chapter 22.3, The Process of Breathing.",
+      "url": "https://openstax.org/books/anatomy-and-physiology-2e/pages/22-3-the-process-of-breathing",
+      "accessed": "2026-11-14"
+    },
+    {
+      "id": "atsers2022",
+      "citation": "Stanojevic S et al. ERS/ATS technical standard on interpretive strategies for routine lung function tests. European Respiratory Journal. 2022;60:2101499.",
+      "url": "https://lwfiles.mycourse.app/6438c06a5d76f37a1d904274-public/publicFiles/ATS%20ERS%20interpretative%20strategies%202022.pdf",
+      "accessed": "2026-11-14"
+    },
+    {
+      "id": "sp-compliance",
+      "citation": "Desai JP, Moustarah F. Pulmonary Compliance (Archived). StatPearls / NCBI Bookshelf. Updated September 12, 2022.",
+      "url": "https://www.ncbi.nlm.nih.gov/books/NBK538324/?report=printable",
+      "accessed": "2026-11-14"
+    },
+    {
+      "id": "sp-pft",
+      "citation": "Ponce MC, Sankari A, Sharma S. Pulmonary Function Tests. StatPearls / NCBI Bookshelf. Updated August 28, 2023.",
+      "url": "https://www.ncbi.nlm.nih.gov/sites/books/NBK482339/?report=printable",
+      "accessed": "2026-11-14"
+    },
+    {
+      "id": "openstax-biology",
+      "citation": "OpenStax. Biology for AP® Courses. Section 30.2, Gas Exchange across Respiratory Surfaces, Table 30.1.",
+      "url": "https://openstax.org/books/biology-ap-courses/pages/30-2-gas-exchange-across-respiratory-surfaces",
+      "accessed": "2026-11-14"
+    }
+  ],
+  "values": [
+    {
+      "id": "tv",
+      "label": "Tidal volume",
+      "unit": "mL",
+      "low": null,
+      "high": null,
+      "typical": 500,
+      "display": "≈500",
+      "source": "openstax",
+      "location": "22.3, Respiratory Volumes and Capacities; Figure 22.18 (current web edition)",
+      "where": "22.3, Respiratory Volumes and Capacities; Figure 22.18 (current web edition)",
+      "excerpt": "Tidal volume (TV) is the amount of air that normally enters the lungs during quiet breathing, which is about 500 milliliters.",
+      "note": "A typical teaching value, not a universal reference.",
+      "modelKey": null
+    },
+    {
+      "id": "rv",
+      "label": "Residual volume",
+      "unit": "mL",
+      "low": null,
+      "high": null,
+      "typical": 1200,
+      "display": "≈1200",
+      "source": "openstax-biology",
+      "location": "Table 30.1, Lung Volumes and Capacities (Avg Adult Male)",
+      "where": "Table 30.1, Lung Volumes and Capacities (Avg Adult Male)",
+      "excerpt": "Air left in the lungs after a forced exhalation",
+      "note": "Table 30.1 lists 1.2 under Volume (liters): 1.2 L × 1000 = 1200 mL. Average adult male teaching value, not a universal reference range.",
+      "modelKey": null
+    },
+    {
+      "id": "frc",
+      "label": "Functional residual capacity",
+      "unit": "mL",
+      "low": null,
+      "high": null,
+      "typical": 2400,
+      "display": "≈2400",
+      "source": "openstax-biology",
+      "location": "Table 30.1, Lung Volumes and Capacities (Avg Adult Male)",
+      "where": "Table 30.1, Lung Volumes and Capacities (Avg Adult Male)",
+      "excerpt": "Volume of air remaining after a normal exhalation",
+      "note": "Table 30.1 lists 2.4 under Volume (liters): 2.4 L × 1000 = 2400 mL. Average adult male teaching value, not a universal reference range.",
+      "modelKey": null
+    },
+    {
+      "id": "tlc",
+      "label": "Total lung capacity",
+      "unit": "mL",
+      "low": 4200,
+      "high": 6000,
+      "typical": null,
+      "display": "4200–6000",
+      "source": "openstax",
+      "location": "22.3, Respiratory Volumes and Capacities; Figure 22.18 (current web edition)",
+      "where": "22.3, Respiratory Volumes and Capacities; Figure 22.18 (current web edition)",
+      "excerpt": "about 6000 mL air for males, and about 4200 mL for females.",
+      "note": "Approximate young adult, female–male; real reference values depend on age, sex and height.",
+      "modelKey": null
+    },
+    {
+      "id": "vc",
+      "label": "Vital capacity",
+      "unit": "mL",
+      "low": 4000,
+      "high": 5000,
+      "typical": null,
+      "display": "4000–5000",
+      "source": "openstax",
+      "location": "22.3, Respiratory Volumes and Capacities; Figure 22.18 (current web edition)",
+      "where": "22.3, Respiratory Volumes and Capacities; Figure 22.18 (current web edition)",
+      "excerpt": "which is between 4000 and 5000 milliliters.",
+      "note": "Approximate young adult, female–male; real reference values depend on age, sex and height.",
+      "modelKey": null
+    },
+    {
+      "id": "compliance",
+      "label": "Lung compliance",
+      "unit": "mL/cmH₂O",
+      "low": null,
+      "high": null,
+      "typical": 200,
+      "display": "≈200",
+      "source": "sp-compliance",
+      "location": "Definition/Introduction",
+      "where": "Definition/Introduction",
+      "excerpt": "Normally, the total compliance of both lungs in an adult is approximately 200 mL/cm H₂O.",
+      "note": "Combined compliance of both lungs. The source is archived; this is a physiology teaching value.",
+      "modelKey": null
+    },
+    {
+      "id": "fev1fvc",
+      "label": "FEV1/FVC",
+      "unit": "z-score",
+      "low": -1.645,
+      "high": null,
+      "typical": null,
+      "display": "Normal at or above LLN",
+      "source": "atsers2022",
+      "location": "Limits of normal; Interpretation of spirometry",
+      "where": "Limits of normal; Interpretation of spirometry",
+      "excerpt": "5th percentile (corresponding to a z score of -1.645)",
+      "note": "LLN = lower limit of normal, z = −1.645. A z-score describes distance from predicted in standard deviations. Interpret with history and test quality; this is not a diagnosis.",
+      "modelKey": null
+    },
+    {
+      "id": "bdr",
+      "label": "Bronchodilator response",
+      "unit": "% of predicted",
+      "low": 10,
+      "high": null,
+      "typical": null,
+      "display": "Positive response: >10% of predicted",
+      "source": "atsers2022",
+      "location": "Bronchodilator responsiveness testing, Box 1: Determination of a bronchodilator response; accepted manuscript PDF page 12",
+      "where": "Bronchodilator responsiveness testing, Box 1: Determination of a bronchodilator response; accepted manuscript PDF page 12",
+      "excerpt": "A change of >10% is considered a significant BDR response.",
+      "note": "Change in FEV1 or FVC divided by its predicted value; not percent change from baseline. Response alone does not diagnose asthma or exclude COPD. This is a decision threshold, not a typical normal response; no baseline response is assigned. Verbatim wording from Box 1 of the accepted manuscript of this standard.",
+      "modelKey": null,
+      "threshold": 10,
+      "thresholdOperator": ">",
+      "referenceKind": "threshold"
+    }
+  ],
+  "states": [
+    {
+      "id": "normal",
+      "label": "Normal",
+      "kind": "disease",
+      "mechanism": "Reference pattern: air moves freely and lung stretch is balanced.",
+      "summary": "Reference pattern: air moves freely and lung stretch is balanced.",
+      "source": "openstax",
+      "location": "22.3, Respiratory Volumes and Capacities; Figure 22.18 (current web edition)",
+      "where": "22.3, Respiratory Volumes and Capacities; Figure 22.18 (current web edition)",
+      "excerpt": "Respiratory capacity is the combination of two or more selected volumes",
+      "shifts": {
+        "tv": "none",
+        "rv": "none",
+        "frc": "none",
+        "tlc": "none",
+        "vc": "none",
+        "compliance": "none",
+        "fev1fvc": "none",
+        "bdr": "none"
+      },
+      "evidence": {
+        "all": "Reference teaching pattern; none denotes baseline, not a measured patient."
+      }
+    }
+  ],
+  "evidencePolicy": "strict"
+}

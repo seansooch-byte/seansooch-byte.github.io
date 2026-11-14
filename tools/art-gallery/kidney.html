@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Art library gallery: kidney (tools, not linked)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/lab/kit/kit.css">
+<style>
+  body{margin:0;padding:16px;background:#fff;font-family:'Space Grotesk',sans-serif;color:#171916}
+  h1{font-size:22px;margin:0 0 4px}
+  h2{font-size:18px;margin:24px 0 8px;border-top:1px solid #babeb3;padding-top:10px}
+  p.note{margin:0 0 8px;color:#53584d;font-size:14px;max-width:1000px}
+  .row{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
+  figure{margin:0}
+  figcaption{font-size:12px;color:#53584d;margin-top:3px;max-width:480px}
+  .visual{display:inline-block}
+  .lx-pic svg{display:block;width:100%;height:auto}
+</style>
+</head>
+<body>
+<h1>kidney.js: kidneySection, walledTubule, tubuleCellRow</h1>
+<p class="note">Each primitive at 480 px, at the phone width (375 px) and small (200 px), then its parameters swept. Labels are placed here as a lesson would place them (the primitives emit no text). Not linked; tools/ is never shipped.</p>
+<div id="out"></div>
+<script type="module">
+import { P, scopeArt, placeLabels, labelBudget, artGhost, magnifier } from '/lab/kit/art/core.js';
+import { kidneySection, walledTubule, tubuleCellRow } from '/lab/kit/art/kidney.js';
+
+const out = document.getElementById('out');
+const ALL = [480, 375, 200], ONE = [480], PHONE = [375];
+let n = 0;
+const section = (title, note) => { out.insertAdjacentHTML('beforeend', `<h2>${title}</h2>${note ? `<p class="note">${note}</p>` : ''}<div class="row"></div>`); return out.lastElementChild; };
+function fig(row, name, h, body, widths = ALL, label = name) {
+  for (const w of widths) {
+    row.insertAdjacentHTML('beforeend', `<figure data-fig="${name}-w${w}"><div class="visual"><div class="lx-pic" style="width:${w}px">${scopeArt(`<svg viewBox="0 0 480 ${h}" role="img" aria-label="${label}"><rect width="480" height="${h}" fill="${P.ui.panel}"/>${body}</svg>`)}</div></div><figcaption>${label}, ${w} px</figcaption></figure>`);
+    n++;
+  }
+}
+const labelled = (art, items, column, opt = {}) => placeLabels(items.map(([text, k, sub]) => ({ text, sub, at: art.at[k] })), { column, side: 'right', top: 8, bottom: opt.bottom || 412, ...opt }).map(l => l.leader + l.svg).join('');
+
+/* ---------- A. kidneySection ---------- */
+{
+  const row = section('kidneySection: the coronal section (lesson layout, label column on the right)', 'Right kidney (hilum toward the viewer\'s right). s chosen from the label budget. Pyramids, papillae in minor calyces, pelvis in sinus fat, ureter, renal artery above renal vein.');
+  const items = [['Cortex', 'cortex'], ['Medulla', 'medulla', 'pyramids'], ['Renal artery', 'renal-artery'], ['Renal vein', 'renal-vein'], ['Renal pelvis', 'pelvis'], ['Ureter', 'ureter']];
+  const budget = labelBudget(items.map(([text, , sub]) => ({ text, sub })));
+  const s = 1.75, a = kidneySection({ x: 30 + 94 * s, y: 12 + 104 * s, s, key: 'kA' });
+  fig(row, 'section-labelled', 392, a.svg + labelled(a, items, 480 - 8 - budget.width), ALL, 'kidney section with labels');
+  const b = kidneySection({ x: 30 + 94 * s, y: 12 + 104 * s, s, key: 'kB', nephron: true });
+  fig(row, 'section-nephron', 392, b.svg + labelled(b, [['A nephron', 'nephron'], ['Medulla', 'lobe'], ['Ureter', 'ureter']], 300), ALL, 'kidney section with a nephron in one lobe');
+}
+{
+  const row = section('kidneySection: both sides, adrenal, size', 'Anterior view: the patient\'s right kidney on the viewer\'s left, hila medial; adrenal pyramidal on the right, crescentic on the left.');
+  const r = kidneySection({ x: 150, y: 200, s: 1.1, side: 'right', adrenal: true, key: 'kR' }), l = kidneySection({ x: 330, y: 200, s: 1.1, side: 'left', adrenal: true, key: 'kL' });
+  fig(row, 'section-pair', 380, r.svg + l.svg, ALL, 'right and left kidneys with adrenals');
+  for (const s of [0.6, 0.35]) { const k = kidneySection({ x: 240, y: 110, s, key: `ks${s}` }); fig(row, `section-s${s}`, 220, k.svg, ONE, `section at s ${s}`); }
+}
+{
+  const row = section('kidneySection: shrink and scar swept, normal outline as the art ghost', 'shrink 0, 0.5, 1 and scar 1; the dashed outline is outline({}) drawn with artGhost above the art.');
+  for (const [sh, sc] of [[0, 0], [0.5, 0], [1, 0], [0.6, 1]]) {
+    const k = kidneySection({ x: 240, y: 190, s: 1.5, shrink: sh, scar: sc, key: `sh${sh}-${sc}` });
+    fig(row, `section-shrink${sh}-scar${sc}`, 360, k.svg + (sh || sc ? artGhost(k.outline({ shrink: 0, scar: 0 })) : ''), ONE, `shrink ${sh}, scar ${sc}`);
+  }
+}
+
+/* ---------- B. walledTubule ---------- */
+{
+  const row = section('walledTubule: one juxtamedullary nephron (lesson layout)', 'Corpuscle with afferent (wider, JG cells in its wall) and efferent arteriole; proximal tubule with brush border; thin limbs; thick ascending limb whose macula densa touches the vascular pole; distal tubule back past its corpuscle; collecting duct shared with other nephrons; peritubular capillary and vasa recta from the efferent arteriole.');
+  const s = 1.04, t = walledTubule({ x: 4, y: 8, s, key: 'nA' });
+  const items = [['Glomerulus', 'glomerulus'], ['Proximal tubule', 'proximal'], ['Ascending limb', 'tal', 'thick part'], ['Distal tubule', 'distal'], ['Collecting duct', 'collecting'], ['Loop of Henle', 'bend']];
+  const col = 480 - 8 - labelBudget(items.map(([text, , sub]) => ({ text, sub }))).width;
+  fig(row, 'nephron-labelled', 412, t.svg + labelled(t, items, col, { bottom: 404 }), ALL, 'nephron with labels');
+  const big = walledTubule({ x: -60, y: -40, s: 2.6, key: 'nZ', jg: 0.6 });
+  fig(row, 'nephron-corpuscle-zoom', 360, big.svg + labelled(big, [['Afferent arteriole', 'afferent'], ['JG cells', 'jg', 'make renin'], ['Macula densa', 'macula-densa'], ['Efferent arteriole', 'efferent'], ['Bowman capsule', 'capsule']], 330, { bottom: 350 }), ALL, 'the corpuscle and juxtaglomerular apparatus, zoomed');
+}
+{
+  const row = section('walledTubule: parameters swept', 'focus (one segment lit, rest at .35), jg 0 / .5 / 1, g (medulla washed out by a loop diuretic), afferent narrowed, a cortical (short-looped) nephron without vasa recta, small sizes.');
+  for (const fk of [['pt'], ['desc'], ['tal'], ['dct'], ['cd'], ['glom']]) { const t = walledTubule({ x: 90, y: 10, s: 1, focus: fk, key: `f${fk}` }); fig(row, `nephron-focus-${fk}`, 400, t.svg, PHONE, `focus ${fk}`); }
+  for (const j of [0, 0.5, 1]) { const t = walledTubule({ x: -40, y: -20, s: 2.2, jg: j, key: `j${j}` }); fig(row, `nephron-jg${j}`, 240, t.svg, PHONE, `jg ${j}`); }
+  for (const g of [1, 0.4, 0]) { const t = walledTubule({ x: 90, y: 10, g, key: `g${g}` }); fig(row, `nephron-g${g}`, 400, t.svg, PHONE, `medulla g ${g}`); }
+  { const t = walledTubule({ x: 90, y: 10, afferentW: 6, key: 'aw6' }); fig(row, 'nephron-afferent6', 400, t.svg, PHONE, 'afferent narrowed to 6'); }
+  { const t = walledTubule({ x: 90, y: 10, juxtamedullary: false, key: 'cort' }); fig(row, 'nephron-cortical', 400, t.svg, PHONE, 'cortical nephron, short loop'); }
+  { const t = walledTubule({ x: 140, y: 10, s: 0.55, key: 'sm' }); fig(row, 'nephron-small', 230, t.svg, ONE, 'nephron at s 0.55'); }
+}
+
+/* ---------- C. tubuleCellRow ---------- */
+{
+  const row = section('tubuleCellRow: the four segments (lumen above, capillary below)', 'Proximal (SGLT, NHE3; pump, GLUT2), thick ascending limb (NKCC2, ROMK; pump, Cl channel), distal (NCC; pump, Cl channel), principal cell (ENaC, ROMK, aquaporin-2; pump, aquaporin). Carriers sage, channels lilac. phase 0.3.');
+  const NAMES = { sglt: 'SGLT2', nhe3: 'NHE3', nkcc2: 'NKCC2', ncc: 'NCC', enac: 'ENaC', romk: 'ROMK', aqp2: 'Aquaporin-2', nak: 'Na/K pump', glut2: 'GLUT2', clc: 'Cl channel', aqp: 'Aquaporin' };
+  for (const seg of ['pct', 'tal', 'dct', 'principal']) {
+    const c = tubuleCellRow({ x: 8, y: 8, w: 300, h: 190, segment: seg, phase: 0.3, key: `c${seg}` });
+    const kinds = [...new Set(c.slots.map(s => s.kind))];
+    const items = [['lumen', 'lumen'], ...kinds.map(k => [NAMES[k], k]), ['blood', 'capillary']];
+    fig(row, `cells-${seg}`, 206, c.svg + labelled(c, items, 336, { bottom: 200 }), ALL, `${seg} cells`);
+  }
+}
+{
+  const row = section('tubuleCellRow: parameters swept', 'phase 0 / 0.33 / 0.66 (ions ride through), loop-diuretic block on NKCC2 and thiazide block on NCC, aquaporin-2 from vesicles (0, 0.5, 1), facing down (INS layout), left and right, CA on the brush border, 4 cells.');
+  for (const ph of [0, 0.33, 0.66]) fig(row, `cells-tal-phase${ph}`, 206, tubuleCellRow({ x: 90, y: 8, w: 300, h: 190, segment: 'tal', phase: ph, key: `tp${ph}` }).svg, PHONE, `tal phase ${ph}`);
+  fig(row, 'cells-tal-block', 206, tubuleCellRow({ x: 90, y: 8, w: 300, h: 190, segment: 'tal', block: { nkcc2: 1 }, phase: 0.3, key: 'tb' }).svg, PHONE, 'tal, NKCC2 blocked');
+  fig(row, 'cells-dct-block', 206, tubuleCellRow({ x: 90, y: 8, w: 300, h: 190, segment: 'dct', block: { ncc: 1 }, phase: 0.3, key: 'db' }).svg, PHONE, 'dct, NCC blocked');
+  for (const q of [0, 0.5, 1]) fig(row, `cells-principal-aqp${q}`, 206, tubuleCellRow({ x: 90, y: 8, w: 300, h: 190, segment: 'principal', aqp2: q, phase: 0.3, key: `pq${q}` }).svg, PHONE, `principal, aqp2 ${q}`);
+  fig(row, 'cells-pct-down', 206, tubuleCellRow({ x: 90, y: 8, w: 300, h: 190, segment: 'pct', facing: 'down', phase: 0.3, key: 'pd' }).svg, PHONE, 'pct facing down (capillary above)');
+  fig(row, 'cells-principal-left', 316, tubuleCellRow({ x: 140, y: 8, w: 190, h: 300, segment: 'principal', facing: 'left', phase: 0.3, key: 'pl' }).svg, PHONE, 'principal facing left');
+  fig(row, 'cells-dct-right', 316, tubuleCellRow({ x: 140, y: 8, w: 190, h: 300, segment: 'dct', facing: 'right', phase: 0.3, key: 'dr' }).svg, PHONE, 'dct facing right');
+  fig(row, 'cells-pct-ca', 206, tubuleCellRow({ x: 90, y: 8, w: 300, h: 190, segment: 'pct', apical: ['nhe3', 'ca', 'nhe3'], basolateral: ['nak', 'nbc', 'nak'], phase: 0.3, key: 'pca' }).svg, PHONE, 'pct with CA and NBC (acid-base)');
+  fig(row, 'cells-pct-n4', 206, tubuleCellRow({ x: 8, y: 8, w: 464, h: 190, n: 4, segment: 'pct', repeat: false, phase: 0.5, key: 'p4' }).svg, ONE, 'pct, 4 cells, 464 wide');
+}
+document.body.dataset.figures = n;
+</script>
+</body>
+</html>

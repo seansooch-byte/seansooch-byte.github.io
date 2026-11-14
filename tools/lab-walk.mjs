@@ -89,16 +89,28 @@ for (const slug of slugs) {
     if (!controlled && size.name === 'phone') {
       controlled = true;
       await page.evaluate(() => { location.hash = '#step-1'; });
-      await page.waitForTimeout(120);
-      await page.evaluate(() => {
-        const svg = document.querySelector('[data-step="1"] .visual svg'), t = svg?.querySelector('text');
-        if (!t) return;
-        const twin = t.cloneNode(true); svg.append(twin);
-        const tiny = t.cloneNode(true); tiny.style.fontSize = '9px'; tiny.setAttribute('y', '12'); tiny.textContent = 'planted tiny label'; svg.append(tiny);
-      });
-      const c = await measure(page, 1);
-      ok(c.overlaps.length > 0, 'walk control', 'the overlap detector missed a planted duplicate label');
-      ok(c.minPx < 11.9, 'walk control', 'the small-text detector missed a planted 9-unit label');
+      // Plant only into step 1's settled picture, and measure only while both planted labels are still
+      // in it: a re-render after the hash change can replace the SVG and drop them, which once made the
+      // control fail at random (round 3: one run in three). Retry a few times before calling it a miss.
+      await page.waitForFunction(() => !!document.querySelector('[data-step="1"] .visual svg text'), null, { timeout: 5000 }).catch(() => {});
+      const plantedCount = () => page.evaluate(() => document.querySelectorAll('[data-step="1"] .visual svg [data-walk-planted]').length);
+      let c = null;
+      for (let k = 0; k < 6 && !c; k++) {
+        await page.waitForTimeout(120);
+        await page.evaluate(() => {
+          const svg = document.querySelector('[data-step="1"] .visual svg'), t = svg?.querySelector('text:not([data-walk-planted])');
+          if (!t || svg.querySelector('[data-walk-planted]')) return;
+          const twin = t.cloneNode(true); twin.setAttribute('data-walk-planted', ''); svg.append(twin);
+          const tiny = t.cloneNode(true); tiny.setAttribute('data-walk-planted', ''); tiny.style.fontSize = '9px'; tiny.setAttribute('y', '12'); tiny.textContent = 'planted tiny label'; svg.append(tiny);
+        });
+        if (await plantedCount() !== 2) continue;
+        const got = await measure(page, 1);
+        if (await plantedCount() === 2) c = got;
+      }
+      if (ok(c, 'walk control', 'could not plant the control labels into a settled step 1 picture')) {
+        ok(c.overlaps.length > 0, 'walk control', 'the overlap detector missed a planted duplicate label');
+        ok(c.minPx < 11.9, 'walk control', 'the small-text detector missed a planted 9-unit label');
+      }
       await page.reload({ waitUntil: 'networkidle' });
       await page.waitForFunction(() => document.documentElement.dataset.lesson === 'ready', null, { timeout: 15000 });
     }

@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg">
+<title>Art library gallery (tools, not linked)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/lab/kit/kit.css">
+<style>
+  body{margin:0;padding:16px;background:#fff;font-family:'Space Grotesk',sans-serif;color:#171916}
+  h1{font-size:22px;margin:0 0 4px}
+  h2{font-size:18px;margin:28px 0 8px;border-top:1px solid #babeb3;padding-top:12px}
+  p.note{margin:0 0 8px;color:#53584d;font-size:14px;max-width:900px}
+  .row{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
+  figure{margin:0}
+  figcaption{font-size:12px;color:#53584d;margin-top:3px;max-width:480px}
+  .visual{display:inline-block}
+  .lx-pic svg{display:block;width:100%;height:auto}
+  #live input{width:300px}
+</style>
+</head>
+<body>
+<h1>The Lab: shared illustration library</h1>
+<p class="note">Every primitive in /lab/kit/art at full size (480 px), at the phone width (375 px) and small (200 px), with its parameters swept. Not linked from anywhere; tools/ is never shipped. tools/lab-art-shoot.mjs photographs every figure and measures set().</p>
+<div id="out"></div>
+<script type="module">
+import { P, scopeArt, artContext, placeLabels, labelBudget, leader, tube, cutFace, streamline, artGhost, magnifier, inhibit, activationWash, blob, behind, occlusionBreak, spec, textWidth } from '/lab/kit/art/core.js';
+import { leftHeart, mountLeftHeart, heartSection, lvGeometry } from '/lab/kit/art/heart.js';
+import { axes, curve, loop, changeArrow, valveEvent, bracket, endLabel, marker } from '/lab/kit/art/chart.js';
+import { Simulator, DEFAULTS } from '/lab/pressure-volume-loop/model.js';
+
+const out = document.getElementById('out');
+const NS = 'http://www.w3.org/2000/svg';
+const WIDTHS = [480, 375, 200];
+let n = 0;
+const section = (title, note) => { out.insertAdjacentHTML('beforeend', `<h2>${title}</h2>${note ? `<p class="note">${note}</p>` : ''}<div class="row"></div>`); return out.lastElementChild; };
+// One figure: an SVG string scoped per picture, shown at each width.
+function fig(row, name, h, body, widths = WIDTHS, label = name) {
+  for (const w of widths) {
+    const id = `${name}-w${w}`;
+    row.insertAdjacentHTML('beforeend', `<figure data-cell="${id}"><div class="visual"><div class="lx-pic" style="width:${w}px">${scopeArt(`<svg viewBox="0 0 480 ${h}" role="img" aria-label="${label}">${body}</svg>`)}</div></div><figcaption>${label}, ${w} px</figcaption></figure>`);
+    n++;
+  }
+}
+
+/* ---------- the model's beats (pressure-volume-loop) ---------- */
+const COND = { base: {}, fluids: { Pla: 8 }, constrict: { Rs: 2 }, inotrope: { Ees: 5 }, venodil: { Pla: 2 }, beta: { HR: 56, Ees: 2.8 }, hfref: { Ees: 1.3, Pla: 9, HR: 85 } };
+const BEAT = Object.fromEntries(Object.entries(COND).map(([k, s]) => [k, new Simulator({ ...DEFAULTS, ...s }).runToSteady(300)]));
+const EDV = BEAT.base.EDV, ESV = BEAT.base.ESV;
+// One lap, as the lesson plays it: filling, squeeze, ejection, relaxation.
+function lap(t, b = BEAT.base) {
+  const ph = ((t % 1) + 1) % 1, ramp = x => Math.min(1, Math.max(0, x));
+  if (ph < 0.32) { const p = ph / 0.32; return { volume: b.ESV + (b.EDV - b.ESV) * (1 - Math.pow(1 - p, 2)), mitral: ramp(p / 0.1), inflow: ramp(p / 0.1) * (1 - ramp((p - 0.92) / 0.08)), squeeze: 0, phase: t * 3 }; }
+  if (ph < 0.5) { const p = (ph - 0.32) / 0.18; return { volume: b.EDV, mitral: 1 - ramp(p / 0.3), squeeze: p, phase: t * 3 }; }
+  if (ph < 0.82) { const p = (ph - 0.5) / 0.32; return { volume: b.EDV - (b.EDV - b.ESV) * (1 - Math.pow(1 - p, 1.6)), aortic: ramp(p / 0.1), outflow: ramp(p / 0.1) * (1 - ramp((p - 0.92) / 0.08)), squeeze: 1, phase: t * 3 }; }
+  const p = (ph - 0.82) / 0.18; return { volume: b.ESV, aortic: 1 - ramp(p / 0.3), squeeze: 1 - p, phase: t * 3 };
+}
+
+/* ---------- A. the left heart, long axis ---------- */
+{
+  const row = section('Left heart, long axis: step 1 layout (s 1.42, label column)', 'The lesson-1 picture: the heart large on the left, five names in one column ordered by target, leaders horizontal then 45 degrees. Detail classes drop out at 200 px.');
+  for (const [nm, t] of [['fill', 0.16], ['eject', 0.62]]) {
+    // the label budget first (art direction section 3): the widest name or descriptor sets the column,
+    // and the heart's scale is what is left
+    const items = [['Aorta', 'main pipe to the body'], ['Left atrium', 'holds blood from the lungs'], ['Aortic valve', 'outlet door'], ['Mitral valve', 'inlet door'], ['Left ventricle', 'the main pump']];
+    const budget = labelBudget(items.map(([text, sub]) => ({ text, sub }))), column = 480 - 8 - budget.width, s = Math.min(1.42, (column - 20 - 8) / 196, (350 - 16) / 228);
+    const st = lap(t), h = leftHeart({ x: 8, y: (350 - 228 * s) / 2, s, edv: EDV, key: `s1${nm}` }), still = h.still(st);
+    const at = still.at;
+    const labels = placeLabels([
+      { text: 'Aorta', sub: 'main pipe to the body', at: at.aorta },
+      { text: 'Left atrium', sub: 'holds blood from the lungs', at: at.atrium },
+      { text: 'Aortic valve', sub: 'outlet door', at: at.aortic },
+      { text: 'Mitral valve', sub: 'inlet door', at: at.mitral },
+      { text: 'Left ventricle', sub: 'the main pump', at: at.ventricle },
+    ], { column, side: 'right', top: 8, bottom: 340 });
+    fig(row, `lh-step1-${nm}`, 350, still.svg + labels.map(l => l.leader + l.svg).join(''), WIDTHS, `left heart, ${nm}`);
+  }
+}
+{
+  const row = section('Left heart in the band (s 0.72, 480 x 172): one beat', 'The graph steps 2 to 18 put the heart in a band above the graph; the readout column starts at x 240.');
+  for (const t of [0.05, 0.25, 0.4, 0.55, 0.75, 0.9]) {
+    const h = leftHeart({ x: 22, y: 4, s: 0.72, edv: EDV, key: `band${t}` }), st = lap(t);
+    const words = `<text x="250" y="40" class="lg red">${t < 0.32 ? 'Filling' : t < 0.5 ? 'Squeeze' : t < 0.82 ? 'Ejection' : 'Relax'}</text><text x="250" y="70" class="xs muted">readout column</text>`;
+    fig(row, `lh-band-t${t}`, 172, h.still(st).svg + words, [480, 375], `band, t ${t}`);
+  }
+}
+{
+  const row = section('Left heart: the whole volume range the model produces', `Area fraction of the normal EDV (${EDV.toFixed(0)} mL): inotrope ESV ${(BEAT.inotrope.ESV / EDV).toFixed(2)} to heart-failure EDV ${(BEAT.hfref.EDV / EDV).toFixed(2)}. Top: mitral open at rest; bottom: aortic open at full squeeze. The table covers ${lvGeometry.RANGE.join(' to ')}.`);
+  for (const [lab, st] of [['open', { mitral: 1, squeeze: 0 }], ['eject', { aortic: 1, squeeze: 1 }]]) for (const a of [0.31, 0.39, 0.6, 0.8, 1, 1.23]) {
+    const h = leftHeart({ x: 142, y: 2, s: 0.86, edv: EDV, key: `vol${lab}${a}` });
+    fig(row, `lh-vol-${lab}-${a}`, 200, h.still({ ...st, volume: a * EDV }).svg + `<text x="12" y="30" class="sm b">${a} x EDV</text><text x="12" y="54" class="xs muted">${lab}</text>`, [375], `${a} x EDV, ${lab}`);
+  }
+}
+{
+  const row = section('Left heart: marks and ghosts (condition and "what shapes the loop" steps)', 'Preload: blue dashed EDV outline and an outward arrow. Afterload: blue arrow down the ascending aorta onto the shut cusps. Contractility: chevrons in the wall, always visible. Refs: normal EDV dashed, normal ESV dotted, both over a panel underlay, above the art.');
+  const cases = [['preload', { mark: 'preload', refs: [EDV] }, lap(0.3)], ['afterload', { mark: 'afterload' }, lap(0.9)], ['contractility', { mark: 'contractility' }, lap(0.8)],
+    ['hfref refs', { refs: [EDV, ESV] }, lap(0.3, BEAT.hfref)], ['inotrope refs', { refs: [EDV, ESV] }, lap(0.81, BEAT.inotrope)]];
+  for (const [nm, o, st] of cases) {
+    const h = leftHeart({ x: 22, y: 4, s: 0.72, edv: EDV, key: `mk${nm}`, ...o });
+    fig(row, `lh-mark-${nm.replace(/ /g, '-')}`, 172, h.still(st).svg + `<text x="250" y="40" class="sm b">${nm}</text>`, [480, 375], nm);
+  }
+}
+{
+  const row = section('Left heart, mounted (mountLeftHeart): live, driven by the model', 'Built once with artContext(svg); set() writes attributes only. The slider is t on one lap; Play animates it.');
+  row.insertAdjacentHTML('beforeend', `<figure data-cell="lh-live" id="live"><div class="visual"><div class="lx-pic" style="width:480px"></div></div><figcaption><button id="play">Play</button> <input id="t" type="range" min="0" max="1000" value="160"> <span id="tv"></span></figcaption></figure>`);
+  const host = row.querySelector('#live .lx-pic');
+  const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('viewBox', '0 0 480 350'); svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', 'live left heart');
+  host.append(svg);
+  const g = document.createElementNS(NS, 'g'); svg.append(g);
+  const ctx = artContext(svg);
+  const heart = mountLeftHeart(g, ctx, { x: 100, y: 8, s: 1.42, edv: EDV, refs: [EDV, ESV], key: 'live' });
+  const show = t => { heart.set(lap(t)); document.getElementById('tv').textContent = `t ${t.toFixed(2)}`; };
+  const range = document.getElementById('t'); range.oninput = () => show(range.value / 1000); show(0.16);
+  let playing = false, t0 = 0;
+  document.getElementById('play').onclick = () => { playing = !playing; t0 = performance.now() - range.value / 1000 * 5600; if (playing) requestAnimationFrame(function tick(now) { if (!playing) return; const t = ((now - t0) / 5600) % 1; range.value = Math.round(t * 1000); show(t); requestAnimationFrame(tick); }); };
+  // The per-frame cost of set(): n calls through one lap, median and 90th percentile, in ms.
+  window.__benchSet = (N = 400) => { const ts = []; for (let i = 0; i < N; i++) { const a = performance.now(); heart.set(lap(i / N)); ts.push(performance.now() - a); } ts.sort((a, b) => a - b); return { median: ts[N >> 1], p90: ts[Math.floor(N * 0.9)], max: ts[N - 1] }; };
+  // A whole rendered frame (set, then style, layout and paint forced), through one lap.
+  window.__benchFrame = (N = 120) => new Promise(res => { const ts = []; let i = 0; const tick = () => { const a = performance.now(); heart.set(lap(i / N)); svg.getBBox(); document.body.offsetHeight; ts.push(performance.now() - a); if (++i < N) requestAnimationFrame(tick); else { ts.sort((x, y) => x - y); res({ median: ts[N >> 1], p90: ts[Math.floor(N * 0.9)] }); } }; requestAnimationFrame(tick); });
+  window.__liveHeart = heart;
+}
+
+/* ---------- B. the four-chamber section ---------- */
+{
+  const row = section('Four-chamber section (heartSection): valves and volume', 'Diastole (atrioventricular valves open, semilunar shut), systole (the reverse, cavities at 0.45, squeeze 1), and the ventricles at 1.25.');
+  const cases = [['diastole', {}], ['systole', { valves: { tricuspid: 0, mitral: 0, aortic: 1, pulmonary: 1 }, volume: { lv: 0.45, rv: 0.5 }, squeeze: 1 }], ['half', { valves: { tricuspid: 0.5, mitral: 0.5, aortic: 0.5, pulmonary: 0.5 } }], ['dilated', { volume: { lv: 1.25, rv: 1.25 } }]];
+  for (const [nm, o] of cases) fig(row, `hs-${nm}`, 300, `${heartSection({ x: 120, y: 10, s: 1, key: `hs${nm}`, ...o })}<text x="12" y="30" class="sm b">${nm}</text>`, [480, 375], nm);
+}
+{
+  const row = section('Four-chamber section: frame with chamber names and a label column (s 1.25)', 'In-cavity names in white bold; leader labels for the small parts in one right column.');
+  const h = heartSection({ x: 8, y: 6, s: 1.25, key: 'hsl' });
+  const inC = [['RA', h.at.ra], ['RV', h.at.rv], ['LA', h.at.la], ['LV', h.at.lv]].map(([t, [x, y]]) => `<text x="${x}" y="${y + 7}" text-anchor="middle" class="b" style="fill:#fff;stroke:none">${t}</text>`).join('');
+  const labels = placeLabels([{ text: 'Aorta', at: h.at.aorta }, { text: 'Pulmonary trunk', at: h.at['pulmonary-trunk'] }, { text: 'Mitral valve', at: h.at.mitral }, { text: 'Septum', at: h.at.septum }], { column: 318, top: 8, bottom: 360 });
+  fig(row, 'hs-labels', 370, `${h}${inC}${labels.map(l => l.leader + l.svg).join('')}`, WIDTHS, 'section with labels');
+}
+{
+  const row = section('Four-chamber section: conduction, staged by t', 'SA, atrial wave, AV pause, His and bundles, then the ventricles (septum first, base last). The outflow tract is ghosted so the septal crest shows.');
+  const ramp = (t, a, b) => Math.min(1, Math.max(0, (t - a) / (b - a)));
+  for (const t of [0.04, 0.2, 0.38, 0.5, 0.65, 0.9]) {
+    const c = { sa: ramp(t, 0, 0.08) * (1 - ramp(t, 0.2, 0.3)), atria: ramp(t, 0.05, 0.3), av: ramp(t, 0.3, 0.38) * (1 - ramp(t, 0.45, 0.5)), his: ramp(t, 0.45, 0.5), bundles: ramp(t, 0.47, 0.55), purkinje: ramp(t, 0.53, 0.6), ventricles: ramp(t, 0.55, 0.8) };
+    fig(row, `hs-cond-${t}`, 300, `${heartSection({ x: 120, y: 10, key: `hc${t}`, conduction: c })}<text x="12" y="30" class="sm b">t ${t}</text>`, [375], `conduction t ${t}`);
+  }
+}
+{
+  const row = section('Four-chamber section: flow streamlines', 'Filling (inflow) and ejection (outflow), phase 0 to 0.75: the dashes travel, the loop is seamless.');
+  for (const [nm, o] of [['filling', { flow: { inflow: 1, outflow: 0, phase: 0 } }], ['filling .5', { flow: { inflow: 1, outflow: 0, phase: 0.5 } }], ['ejection', { valves: { tricuspid: 0, mitral: 0, aortic: 1, pulmonary: 1 }, volume: { lv: 0.6, rv: 0.6 }, squeeze: 1, flow: { inflow: 0, outflow: 1, phase: 0.25 } }]])
+    fig(row, `hs-flow-${nm.replace(/ /g, '')}`, 300, `${heartSection({ x: 120, y: 10, key: `hf${nm}`, ...o })}<text x="12" y="30" class="sm b">${nm}</text>`, [375], nm);
+}
+
+/* ---------- C. graphs ---------- */
+{
+  const row = section('Graph marks (chart.js) on the model\'s loops', 'Axes 1.5 ink with worded labels; the live loop 4 with a panel underlay and a 7 % fill; the normal loop as the 3-unit dashed ghost; valve events (ring opens, dot shuts); a named blue change; a stroke-volume bracket.');
+  const vMax = BEAT.hfref.EDV * 1.12, pMax = Math.max(...Object.values(BEAT).map(b => b.PlvMax)) * 1.1;
+  const O = { x: 42, y: 212, top: 34, right: 462 }, X = v => O.x + v / vMax * (O.right - O.x), Y = p => O.y - 12 - p / pMax * (O.y - 12 - O.top);
+  const pts = b => Array.from({ length: b.n }, (_, i) => [X(b.V[i]), Y(b.Plv[i])]).filter((_, i) => i % 6 === 0);
+  const base = pts(BEAT.base), hf = pts(BEAT.hfref);
+  const box = q => { const xs = q.map(p => p[0]), ys = q.map(p => p[1]); return [Math.min(...xs), Math.min(...ys), Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)]; };
+  const b0 = BEAT.base, x0 = X(b0.ESV), x1 = X(b0.EDV), yTop = Math.min(...base.map(p => p[1]));
+  const g1 = axes({ x0: O.x, y0: O.y, x1: 474, y1: O.top - 14, xLabel: 'volume →', yLabel: 'pressure ↑' }) + loop(base) + bracket(x0, x1, yTop - 16, 'stroke volume')
+    + valveEvent(x1, Y(b0.PlvMax * 0.55), true) + valveEvent(x0, Y(b0.PlvMax * 0.7), false);
+  fig(row, 'chart-loop', 250, g1, [480, 375], 'loop, bracket, valve events');
+  const g2 = axes({ x0: O.x, y0: O.y, x1: 474, y1: O.top - 14, xLabel: 'volume →', yLabel: 'pressure ↑' }) + curve(base, { role: 'ghost', close: true }) + loop(hf)
+    + changeArrow([X(b0.EDV) + 4, yTop - 22], [X(BEAT.hfref.EDV) + 4, yTop - 22], 'bigger', { place: 'above' }) + changeArrow([X(b0.ESV) + 4, yTop + 40], [X(BEAT.hfref.ESV) - 6, yTop + 40], 'empties less', { place: 'below' })
+    + marker(...hf[0]);
+  fig(row, 'chart-change', 250, g2, [480, 375], 'ghost and named change');
+}
+
+/* ---------- D. core helpers ---------- */
+{
+  const row = section('Core helpers', 'tube (artery and vein, cut faces, a mouth into a chamber), streamline, leader, art ghost over its underlay, magnifier, inhibit, activation wash, blob, behind tier with an occlusion break.');
+  const cham = 'M330 60 C380 40 440 60 450 110 C460 160 400 190 350 170 C300 150 300 80 330 60 Z';
+  const t1 = tube('M20 40 C80 40 120 90 200 90', { wall: 'artery', lumen: 'oxy', w: 26, lumenW: 18, cut: 'both' });
+  const t2 = tube('M20 150 L200 150', { wall: 'vein', lumen: 'deoxy', w: 18, lumenW: 14, cut: 'start' });
+  const t3 = tube('M250 120 L340 120', { wall: 'vein', lumen: 'oxy', w: 14, lumenW: 10, cut: 'start', into: cham });
+  const body = `${behind(tube('M420 10 L420 230', { wall: 'artery', lumen: 'oxy', w: 24, lumenW: 16, highlight: false }).svg)}`
+    + `${t1}${t2}${t3}<path d="${cham}" fill="none" stroke="${P.myo.line}" stroke-width="8"/>${occlusionBreak('M408 54 L432 54')}<path d="${cham}" fill="${P.oxy.base}"/>${t3.mouth}`
+    + `${streamline('M30 90 C80 90 120 130 190 130', { phase: 0.3 })}${artGhost('M240 200 C280 170 330 230 380 200')}`
+    + `${leader([120, 215], [60, 150])}<text x="126" y="221" class="sm b">Vein</text>`;
+  fig(row, 'core-tubes', 240, body, [480, 375], 'tubes, mouth, ghost, leader');
+  const body2 = `${magnifier({ from: { x: 70, y: 120, r: 16 }, to: { x: 230, y: 110, r: 80 }, body: `<path d="${blob(230, 110, 34, { lobes: 3, seed: 4 })}" fill="${P.cytoplasm.base}" stroke="${P.cytoplasm.line}" stroke-width="1.75"/><path d="${blob(225, 105, 14, { seed: 9 })}" fill="${P.nucleus.base}" stroke="${P.nucleus.line}" stroke-width="1.1"/>${spec(212, 92, 9, 5, -30)}` }).svg}`
+    + `<path d="${blob(70, 120, 30, { seed: 2 })}" fill="${P.kidneyCortex.base}" stroke="${P.kidneyCortex.line}" stroke-width="1.75"/>`
+    + `${inhibit('M340 40 L340 120')}${activationWash('M380 60 L470 60 L470 200 L380 200 Z', 0.6, 'ax-wash-demo', { from: [380, 60] })}<path d="M380 60 L470 60 L470 200 L380 200 Z" fill="none" stroke="${P.ui.ink}" stroke-width="1.25"/>`;
+  fig(row, 'core-lens', 240, body2, [480, 375], 'magnifier, inhibit, wash');
+}
+document.body.dataset.cells = n;
+document.body.dataset.ready = '1';
+</script>
+</body>
+</html>
