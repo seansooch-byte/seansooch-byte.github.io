@@ -5,6 +5,8 @@
 //   node board.mjs whoami
 //   node board.mjs rules [channel]                            the board's rules, or one channel's page
 //   node board.mjs link                                        (Sean's Mac) a one-tap sign-in link for a device, ten minutes
+//   node board.mjs approval <id>                               Sean's decision on an approve message; exits 0 only on yes
+//   node board.mjs decide <id> yes|no [--subject "..."]         (Sean's Mac) answer an approve message with a decision
 //   node board.mjs state [--json]
 //   node board.mjs inbox [--as <agent>] [--channel <id>] [--peek] [--json]
 //                        new messages + what waits on you, on one channel or all; marks them read unless --peek
@@ -37,7 +39,7 @@ function token() {
   return null;
 }
 const die = (msg, code = 2) => { console.error(msg); process.exit(code); };
-const TOKEN = (process.argv[2] === 'link' && !process.env.BOARD_TOKEN && !process.env.BOARD_TOKEN_FILE && existsSync(join(homedir(), '.config', 'agent-board', 'sean.token'))
+const TOKEN = (['link', 'decide'].includes(process.argv[2]) && !process.env.BOARD_TOKEN && !process.env.BOARD_TOKEN_FILE && existsSync(join(homedir(), '.config', 'agent-board', 'sean.token'))
   ? readFileSync(join(homedir(), '.config', 'agent-board', 'sean.token'), 'utf8').trim()
   : token()) ?? die('no board token: set BOARD_TOKEN, or write board.local.token at the repository root (chmod 600)');
 
@@ -76,6 +78,32 @@ if (cmd === 'rules') {
   const r = await call('POST', '/v1/links');
   console.log(r.url);
   console.error(`works once, until ${r.expires_at}; open it on the device to keep signed in`);
+} else if (cmd === 'approval') {
+  // Exit 0 only when Sean said yes, within 48 hours, not yet shipped, on the channel asked about, and every pull
+  // request named is still at the commit he approved. 1: no. 2: pending, stale, shipped or the wrong channel.
+  // 3: a pull request moved since the yes. 4: could not ask GitHub.
+  const id = Number(args._[0]); if (!id) die('approval <id> --channel <channel>');
+  const a = await call('GET', `/v1/approval/${id}`);
+  if (typeof args.channel === 'string' && a.channel !== args.channel) { console.log(`#${id} is on ${a.channel}, not ${args.channel}`); process.exit(2); }
+  if (a.decision !== 'yes') { console.log(a.decision); process.exit(a.decision === 'no' ? 1 : 2); }
+  let moved = 0;
+  for (const p of a.pulls ?? []) {
+    let head;
+    try { head = JSON.parse(execFileSync('gh', ['pr', 'view', String(p.number), '--repo', p.repo, '--json', 'headRefOid,state'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] })); }
+    catch (e) { console.log(`could not ask GitHub about ${p.repo}#${p.number}: ${String(e.message).split('\n')[0]}`); process.exit(4); }
+    if (head.headRefOid !== p.sha) { moved++; console.log(`MOVED ${p.repo}#${p.number}: approved ${p.sha.slice(0, 7)}, now ${head.headRefOid.slice(0, 7)}; needs a new approve`); }
+  }
+  if (moved) process.exit(3);
+  console.log(`yes (#${a.answer}, ${a.at}): ${a.subject}`);
+  for (const r of a.refs ?? []) console.log(`  ${r}`);
+  process.exit(0);
+} else if (cmd === 'decide') {
+  const id = Number(args._[0]); const d = args._[1];
+  if (!id || !['yes', 'no'].includes(d)) die('decide <id> yes|no');
+  const { messages } = await call('GET', `/v1/messages?since=${id - 1}&limit=1`);
+  const orig = messages[0]; if (!orig || orig.id !== id || orig.kind !== 'approve') die(`#${id} is not an approve message`);
+  const r = await call('POST', '/v1/messages', { from: 'sean', to: orig.from, channel: orig.channel, kind: 'answer', re: id, decision: d, subject: typeof args.subject === 'string' ? args.subject : d });
+  console.log(`decided ${d} on #${id} as #${r.id}`);
 } else if (cmd === 'whoami') {
   const w = await call('GET', '/v1/whoami');
   console.log(`${w.holder}: acts as ${w.agents.join(', ')}; channels ${w.channels.join(', ')}`);
