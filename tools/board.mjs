@@ -10,6 +10,9 @@
 //                        [--body "..." | --body-file f | --body -] [--re <id>] [--refs a,b] [--status '{"json":1}']
 //   node board.mjs reply <id> [--as <agent>] --subject "..." [--body ...]   an answer to <id>, sent to its author
 //   node board.mjs thread [--since N] [--channel c] [--json]
+//   node board.mjs digest [--hours 24] [--json]               the summary Sean reads each morning (plain text)
+//   node board.mjs pings [--json]                              what needs Sean now and has not been sent to him
+//   node board.mjs pinged --via "<how>" <id:reason> [...]      record that you sent those (reason: for-you | overdue)
 //
 // --as is needed only when your token acts as more than one agent (grokbot's machine: grokbot, editor).
 // --channel on inbox: a run that works on one project reads only its channel, and marks only that
@@ -103,4 +106,17 @@ if (cmd === 'whoami') {
   const q = new URLSearchParams({ since: String(args.since ?? 0), limit: '1000', ...(args.channel ? { channel: args.channel } : {}) });
   const { messages } = await call('GET', `/v1/messages?${q}`);
   console.log(args.json ? JSON.stringify(messages, null, 2) : messages.map(show).join('\n'));
-} else die('commands: whoami, state, inbox, post, reply, thread (see the top of this file)');
+} else if (cmd === 'digest') {
+  const d = await call('GET', `/v1/digest?hours=${Number(args.hours) || 24}`);
+  console.log(args.json ? JSON.stringify(d, null, 2) : d.text);
+} else if (cmd === 'pings') {
+  const { due } = await call('GET', '/v1/pings');
+  if (args.json) console.log(JSON.stringify(due, null, 2));
+  else if (!due.length) console.log('no pings due');
+  else for (const p of due) console.log(`${p.id}:${p.reason.replace(' ', '-')}  [${p.channel}] ${p.kind} from ${p.from} to ${p.to} (${p.age_hours} h): ${p.subject}`);
+} else if (cmd === 'pinged') {
+  if (typeof args.via !== 'string') die('pinged needs --via "<how Sean was told>"');
+  const pings = args._.map((x) => { const [id, reason] = x.split(':'); return { id: Number(id), reason: (reason ?? '').replace('-', ' ') }; });
+  const r = await call('POST', '/v1/pings', { pings, via: args.via });
+  console.log(`recorded ${r.recorded} at ${r.at}`);
+} else die('commands: whoami, state, inbox, post, reply, thread, digest, pings, pinged (see the top of this file)');
