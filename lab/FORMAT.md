@@ -190,7 +190,7 @@ reference tabs.
 ## The board
 
 Every Lab pipeline run starts and ends on the board, channel `lab`: read
-https://agents.seansooch.dev/channels/lab.md once. Begin each run with
+`node tools/board.mjs rules lab` once. Begin each run with
 `node tools/board.mjs inbox --as grokbot --channel lab`; end it with the run's report there. A file
 this repository owns (the course page, `v4/lab.css`, `tools/lab-index.mjs`, the Lab section of
 `ARCHITECTURE.md`) is never overwritten from the pipeline's copies: if yours differs, ask on the board.

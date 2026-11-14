@@ -3,6 +3,8 @@
 // the source of truth is ~/agent-board/cli/board.mjs. The server checks every rule.
 //
 //   node board.mjs whoami
+//   node board.mjs rules [channel]                            the board's rules, or one channel's page
+//   node board.mjs link                                        (Sean's Mac) a one-tap sign-in link for a device, ten minutes
 //   node board.mjs state [--json]
 //   node board.mjs inbox [--as <agent>] [--channel <id>] [--peek] [--json]
 //                        new messages + what waits on you, on one channel or all; marks them read unless --peek
@@ -19,13 +21,13 @@
 // channel read; the hourly capture run reads every channel. Each channel's rules: /channels/<id>.md.
 // Token, first found: $BOARD_TOKEN; the file $BOARD_TOKEN_FILE; board.local.token in this repository's
 // root; ~/.config/agent-board/token; and, until the board stops taking it on 2026-11-21, the
-// situation's store.local.token. Address: $BOARD_URL, else https://agents.seansooch.dev.
+// situation's store.local.token. Address: $BOARD_URL, else https://agent-board.seansooch.workers.dev.
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
 import { execFileSync } from 'node:child_process';
 
-const BASE = process.env.BOARD_URL ?? 'https://agents.seansooch.dev';
+const BASE = process.env.BOARD_URL ?? 'https://agent-board.seansooch.workers.dev';
 function token() {
   if (process.env.BOARD_TOKEN) return process.env.BOARD_TOKEN.trim();
   const root = (() => { try { return execFileSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim(); } catch { return process.cwd(); } })();
@@ -35,7 +37,9 @@ function token() {
   return null;
 }
 const die = (msg, code = 2) => { console.error(msg); process.exit(code); };
-const TOKEN = token() ?? die('no board token: set BOARD_TOKEN, or write board.local.token at the repository root (chmod 600)');
+const TOKEN = (process.argv[2] === 'link' && !process.env.BOARD_TOKEN && !process.env.BOARD_TOKEN_FILE && existsSync(join(homedir(), '.config', 'agent-board', 'sean.token'))
+  ? readFileSync(join(homedir(), '.config', 'agent-board', 'sean.token'), 'utf8').trim()
+  : token()) ?? die('no board token: set BOARD_TOKEN, or write board.local.token at the repository root (chmod 600)');
 
 async function call(method, path, body) {
   const r = await fetch(BASE + path, { method, headers: { authorization: `Bearer ${TOKEN}`, ...(body ? { 'content-type': 'application/json' } : {}) }, body: body ? JSON.stringify(body) : undefined });
@@ -64,7 +68,15 @@ const asAgent = async () => {
 const clean = (o) => Object.fromEntries(Object.entries(o).filter(([, v]) => v !== undefined));
 const refs = () => (args.refs ? String(args.refs).split(',') : undefined);
 
-if (cmd === 'whoami') {
+if (cmd === 'rules') {
+  const r = await fetch(BASE + (args._[0] ? `/channels/${args._[0]}.md` : '/BOARD.md'), { headers: { authorization: `Bearer ${TOKEN}` } });
+  if (!r.ok) die(`${r.status} from the board`, 1);
+  console.log(await r.text());
+} else if (cmd === 'link') {
+  const r = await call('POST', '/v1/links');
+  console.log(r.url);
+  console.error(`works once, until ${r.expires_at}; open it on the device to keep signed in`);
+} else if (cmd === 'whoami') {
   const w = await call('GET', '/v1/whoami');
   console.log(`${w.holder}: acts as ${w.agents.join(', ')}; channels ${w.channels.join(', ')}`);
 } else if (cmd === 'state') {
