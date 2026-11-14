@@ -1,0 +1,134 @@
+{
+  "minutes": 20,
+  "prerequisites": [],
+  "objectives": [
+    "Name the four lung volumes and four capacities, and explain why spirometry cannot measure residual air.",
+    "Read the air exhaled early and the total forced breath from two linked curves.",
+    "Explain how resistance and lung stretch affect illustrative curves, and why a fraction alone cannot establish lung size.",
+    "Check effort and test quality before interpreting a forced breath."
+  ],
+  "checks": {},
+  "quiz": [
+    {
+      "id": "after-strongest",
+      "objective": 1,
+      "step": "volumes",
+      "stem": "Which air remains in the lungs after the strongest possible exhalation?",
+      "choices": [
+        "Residual volume",
+        "Tidal volume",
+        "Inspiratory reserve volume",
+        "Expiratory reserve volume"
+      ],
+      "answer": 0,
+      "why": "Residual volume stays inside even after a maximal breath out. Expiratory reserve is the extra air that can be pushed out after a quiet breath out, so it does leave."
+    },
+    {
+      "id": "vital-parts",
+      "objective": 1,
+      "step": "capacities",
+      "stem": "Which combination of volumes makes vital capacity?",
+      "choices": [
+        "Inspiratory reserve, tidal and expiratory reserve volumes",
+        "Tidal, expiratory reserve and residual volumes",
+        "Inspiratory reserve and residual volumes only",
+        "All four volumes, including residual"
+      ],
+      "answer": 0,
+      "why": "Vital capacity is all the movable air: both reserves plus tidal air. Adding residual air as well gives total lung capacity, the tempting wrong answer."
+    },
+    {
+      "id": "hidden-air",
+      "objective": 1,
+      "step": "hidden",
+      "stem": "Why can spirometry alone not measure total lung capacity or functional residual capacity?",
+      "choices": [
+        "Both include residual air, which never passes through the mouthpiece",
+        "Both need a stronger breath than most people can give",
+        "Both depend on the speed of emptying, which spirometry cannot time",
+        "Both are defined by the first second of a forced breath"
+      ],
+      "answer": 0,
+      "why": "A spirometer sees only air that moves through it. Residual air stays inside, so another method, such as body plethysmography or gas dilution, is needed. Blowing harder does not release it."
+    },
+    {
+      "id": "early-part",
+      "objective": 2,
+      "step": "forced",
+      "stem": "On a forced breath, what does the early exhaled volume (FEV1) measure?",
+      "choices": [
+        "The air blown out in the first second",
+        "The air left inside after the breath",
+        "All the air in the lung",
+        "The air moved in a quiet breath"
+      ],
+      "answer": 0,
+      "why": "FEV1 is the early part of the total forced breath. The total forced breath is FVC; the ratio of the two is the fraction that leaves early."
+    },
+    {
+      "id": "loop-axis",
+      "objective": 2,
+      "step": "linked",
+      "stem": "What is on the horizontal axis of a flow-volume loop, and which limb shows breathing out?",
+      "choices": [
+        "Volume exhaled; the upper limb shows breathing out",
+        "Time; the upper limb shows breathing out",
+        "Volume exhaled; the lower limb shows breathing out",
+        "Pressure; the lower limb shows breathing out"
+      ],
+      "answer": 0,
+      "why": "The loop trades the time axis for exhaled volume, and outward flow draws the upper limb while the volume-time curve rises. The lower limb is breathing in."
+    },
+    {
+      "id": "pattern-meaning",
+      "objective": 3,
+      "step": "forced",
+      "stem": "A forced breath shows slow early emptying and a low early fraction. Which pattern does this suggest, and what would confirm a restrictive pattern instead?",
+      "choices": [
+        "Obstructive; a measured low total lung capacity defines restrictive",
+        "Restrictive; a low early fraction defines restrictive",
+        "Obstructive; a response to airway opening defines restrictive",
+        "Restrictive; a high early fraction alone defines restrictive"
+      ],
+      "answer": 0,
+      "why": "A low fraction suggests air has difficulty getting out, an obstructive pattern. A reduced measured total capacity is what defines a restrictive pattern, so the fraction alone cannot settle it."
+    },
+    {
+      "id": "fraction-size",
+      "objective": 3,
+      "step": "forced",
+      "stem": "A person's early exhaled volume and total forced breath are both smaller than predicted, but their fraction looks preserved. What can be said?",
+      "choices": [
+        "The fraction describes speed of emptying, so it cannot show that lung size is normal",
+        "The preserved fraction proves total lung capacity is normal",
+        "The preserved fraction proves the airways are blocked",
+        "The smaller volumes prove residual air is missing"
+      ],
+      "answer": 0,
+      "why": "Both volumes can fall while their ratio stays similar. A fraction describes how fast air leaves, not how large the lung is, so size must be read alongside it."
+    },
+    {
+      "id": "effort-first",
+      "objective": 4,
+      "step": "linked",
+      "stem": "A forced breath gives unusually low volumes and flows. What should come before naming a pattern?",
+      "choices": [
+        "Check the quality of the effort and compare repeated acceptable breaths",
+        "Name the most likely disease straight away",
+        "Treat the lowest value as the true one",
+        "Ignore the curve and rely on the fraction"
+      ],
+      "answer": 0,
+      "why": "A forced test needs a deep breath in, a strong start and continued exhalation. Low effort can mimic an abnormal pattern, so quality comes first."
+    }
+  ],
+  "takeaways": [
+    "A spirometer sees only moving air. Residual air stays inside, so residual volume and the capacities that contain it (functional residual capacity and total lung capacity) need another method.",
+    "Vital capacity is all the movable air: tidal volume plus both reserve volumes. Total lung capacity adds residual volume.",
+    "Read the total forced breath and the part exhaled early together. Their ratio is the fraction of the breath that leaves early.",
+    "The early fraction describes speed of emptying, not lung size. Obstruction slows emptying, while restriction is defined by a reduced measured total lung capacity.",
+    "More compliance means easier stretch, not necessarily better emptying. Resistance slows emptying, and the lesson's model curves are illustrative, not patient values.",
+    "Check effort and test quality before interpreting any forced breath: low effort can imitate disease.",
+    "A bronchodilator response measures a change. It is not a stand-alone diagnosis."
+  ]
+}
