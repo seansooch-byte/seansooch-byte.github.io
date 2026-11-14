@@ -679,7 +679,7 @@ def head(site, title, description, path, kind='website', more=''):
     root = site['root']
     where = (f'\n<link rel="canonical" href="{ORIGIN}{path}">', f'\n<meta property="og:url" content="{ORIGIN}{path}">') if path else ('', '')
     card = site['plates'].get('card')
-    share = (f'\n<meta property="og:image" content="{ORIGIN}/plates/card.jpg">\n<meta property="og:image:width" content="{card["w"]}">\n'
+    share = (f'\n<meta property="og:image" content="{ORIGIN}/plates/card.jpg?v={stamp(root, "/plates/card.jpg")}">\n<meta property="og:image:width" content="{card["w"]}">\n'
              f'<meta property="og:image:height" content="{card["h"]}">\n<meta name="twitter:card" content="summary_large_image">') if card else ''
     return f'''<!doctype html>
 <html lang="en" data-voice="tech">
@@ -781,8 +781,11 @@ def plate_img(site, name, alt, sizes, eager=False):
     p = site['plates'].get(name)
     if not p:
         return None
-    small = f'/plates/{name}-720.webp'
-    full = f'/plates/{name}.webp'
+    # A plate is retaken under the same name and the host keeps an image four hours, so each is asked for by a
+    # stamp of its bytes, as the sheets and scripts are: a retaken plate reaches a returning reader at once.
+    root = site['root']
+    small = f'/plates/{name}-720.webp?v={stamp(root, f"/plates/{name}-720.webp")}'
+    full = f'/plates/{name}.webp?v={stamp(root, f"/plates/{name}.webp")}'
     return (f'<img src="{small}" srcset="{small} 720w, {full} {p["w"]}w" sizes="{sizes}" width="{p["w"]}" height="{p["h"]}" '
             f'alt="{esc(alt)}" decoding="async"{"" if eager else " loading=" + chr(34) + "lazy" + chr(34)}>')
 

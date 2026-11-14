@@ -516,6 +516,25 @@ class Hygiene(Base):
                         seen.add(asset)
         self.assertEqual(seen, {'/' + p.relative_to(ROOT).as_posix() for p in (ROOT / 'v4').rglob('*') if p.is_file()}, 'a file in v4/ that no page asks for, or the reverse')
 
+    def test_plates_are_asked_for_by_their_stamp(self):
+        """A plate is retaken under the same name, and the host keeps an image four hours: so every plate a page shows,
+        and the share card, is asked for by a stamp of its current bytes, or a returning reader sees the old capture
+        (2026-11-14: the situation's new plate did not show for Sean though the live file was new)."""
+        seen = 0
+        for path, text in self.out.items():
+            if not path.endswith('.html'):
+                continue
+            refs = [a.get('src') for t, a in Doc(text).els if t == 'img']
+            refs += [part.split()[0] for t, a in Doc(text).els if t == 'img' for part in a.get('srcset', '').split(',') if part.strip()]
+            refs += re.findall(r'property="og:image" content="https://seansooch\.dev(/plates/[^"]+)"', text)
+            for ref in refs:
+                if ref and ref.startswith('/plates/'):
+                    asset, _, stamp = ref.partition('?v=')
+                    now = hashlib.md5((ROOT / asset.lstrip('/')).read_bytes()).hexdigest()[:10]
+                    self.assertEqual(stamp, now, f'{path} asks for {asset} by {stamp or "no stamp"}; the file is {now}')
+                    seen += 1
+        self.assertGreater(seen, 50, 'CONTROL: the pages show plates')
+
     def test_every_class_is_styled_or_read(self):
         """A class on a page is in a sheet that page loads or in a script that reads it: a typed-wrong class, or a
         sheet from another edition, shows here before it shows on a screen."""
@@ -551,7 +570,7 @@ class Hygiene(Base):
         for path, text in self.worn.items():
             if path.endswith('.html'):
                 meta = {a.get('property'): a.get('content') for tag, a in Doc(text).els if tag == 'meta' and a.get('property')}
-                self.assertEqual(meta.get('og:image'), 'https://seansooch.dev/plates/card.jpg', path)
+                self.assertEqual(meta.get('og:image', '').partition('?v=')[0], 'https://seansooch.dev/plates/card.jpg', path)
                 self.assertEqual((meta.get('og:image:width'), meta.get('og:image:height')), (str(card['w']), str(card['h'])), path)
 
     def test_a_plate_note_goes_wherever_the_plate_goes(self):
@@ -559,7 +578,7 @@ class Hygiene(Base):
         self.assertIn('handoff', [w['id'] for w in noted], 'the handoff tracker shows a board of patients: its plates must say they are made up')
         for w in noted:
             block = re.search(rf'<article class="work[^"]*" id="{w["id"]}".*?</article>', self.home, flags=re.S).group(0)
-            alts = re.findall(rf'<img src="/plates/{w["id"]}(?:-e\d+)?-720\.webp"[^>]*alt="([^"]*)"', block)
+            alts = re.findall(rf'<img src="/plates/{w["id"]}(?:-e\d+)?-720\.webp(?:\?v=[0-9a-f]{{10}})?"[^>]*alt="([^"]*)"', block)
             captions = re.findall(r'<figcaption.*?</figcaption>', block, flags=re.S)
             self.assertGreaterEqual(len(alts), 2, f"{w['id']}: CONTROL: the current plate and an earlier one")
             for said in alts + [norm(c) for c in captions]:
@@ -866,7 +885,7 @@ class Tree(Base):
     def test_plates_exist_at_both_sizes(self):
         for src in set(re.findall(r'(?:src|srcset)="([^"]+)"', self.home)):
             for part in src.split(','):
-                p = part.strip().split(' ')[0]
+                p = part.strip().split(' ')[0].partition('?v=')[0]
                 if p.startswith('/plates/'):
                     self.assertTrue((ROOT / p.lstrip('/')).is_file(), f'{p} is not captured: run tools/plates.mjs')
 
