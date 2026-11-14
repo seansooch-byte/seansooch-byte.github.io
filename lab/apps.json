@@ -637,5 +637,20 @@
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
     }
+  },
+  {
+    "slug": "spirometry-lung-volumes",
+    "title": "Spirometry and Lung Volumes",
+    "date": "2026-11-14",
+    "description": "Blow out a model breath and watch the spirogram, flow\u2013volume loop and lung-volume bars redraw in asthma, emphysema, fibrosis and after a bronchodilator.",
+    "category": "medicine",
+    "builder": {
+      "tool": "OpenAI Codex",
+      "model": "gpt-6.1-sol"
+    },
+    "reviewer": {
+      "tool": "OpenAI Codex",
+      "model": "gpt-6.1-sol"
+    }
   }
 ]

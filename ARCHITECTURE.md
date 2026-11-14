@@ -278,20 +278,6 @@ builder's, the course page's sheet lives outside `lab/`, and `tools/lab-check.mj
   `render(t)` on a timeline from 0 to 1 (or a scene that mounts its SVG once and updates it), 480 units wide and at most
   420 tall, with type that reads at 12 px or more on a 375 px phone. The lessons are an app with an edition of its own:
   a new site edition restyles the course page, not the lessons.
-- **The illustration library** (`lab/kit/art/`, added 2026-11-13 for the redraw) is the lessons' shared art: `core.js`
-  (the palette `P`, every hex the art uses; per-picture id scoping for string scenes through `draw.js` `svg()` and for
-  mount scenes through `artContext(svg)`; stroke tiers, tubes, path, label and leader helpers), `heart.js` (the
-  four-chamber section and the left heart in long axis, whose cavity is the long-axis cut of a half ellipsoid
-  whose volume follows the model's; a lit caption term dims the left heart's other pieces in place with a colour-matrix
-  filter, so depth never changes), `chart.js` (graph
-  marks), `metrics.js` (Space Grotesk widths, written by `tools/lab-art-measure.mjs`) and `global.js` (`window.LabArt`
-  for classic-script lessons). Modules are imported unversioned by one path; detail classes `ax-d2` / `ax-d3` are hidden
-  in small pictures by a container query on `.lx-pic` in `kit.css`. `tools/lab-art-test.mjs` (node) and
-  `tools/lab-art-shoot.mjs` (Chrome, over the unlinked `tools/lab-art-gallery.html`) test it. Lesson 1
-  (`pressure-volume-loop`) is the first lesson drawn on it: its `app.js` mounts `mountLeftHeart` in all 18 pictures,
-  and its pure arithmetic (the lap, valve states, the phase word, the heart's state, word placement clear of the loops)
-  lives in `beat.js`, tested in node by `tools/pv-beat-test.mjs`; `tools/pv-light-probe.mjs` (Chrome) lights every
-  caption term and checks the heart keeps its painted order.
 - **`lab/<slug>/`** is one lesson: `index.html`, `app.js` (an ES module that imports the kit and calls `lesson()`),
   `plan.json`, `clinical-values.json`, `style.css` (only its pictures' classes) and, where it has one, a model. Static
   files from this origin only, no third-party requests except Google Fonts, no data sent anywhere. Each opens with a
