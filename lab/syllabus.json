@@ -1,5 +1,5 @@
 {
-  "about": "The Lab's core-medicine course, in teaching order. The daily pipeline builds the first module that is neither shipped (in lab/apps.json) nor withdrawn (in lab/rejected.json). Reorder, add or remove modules by editing this list; never change the slug of a shipped lesson. drugClasses are the drug classes and disease states each lesson animates (never doses). Units group the modules into the course's six parts; a module's unit is one of the ids in units, and modules of one unit sit together.",
+  "about": "The Lab's core-medicine course, in teaching order. The daily pipeline builds the first module that is neither shipped (in lab/apps.json) nor withdrawn (in lab/rejected.json). Reorder, add or remove modules by editing this list; never change the slug of a shipped lesson. drugClasses are the drug classes and disease states each lesson animates (never doses). Units group the modules; a module's unit is one of the ids in units, and modules of one unit sit together.",
   "units": [
     {
       "id": "circulation",
@@ -30,6 +30,31 @@
       "id": "defence",
       "title": "Inflammation, infection, immunity and cancer",
       "summary": "How the body raises inflammation, fights bacteria, mounts an immune response and keeps cell division in check, and the drugs that act at each point."
+    },
+    {
+      "id": "water-and-calcium",
+      "title": "Water and calcium balance",
+      "summary": "How antidiuretic hormone sets how much water the kidney keeps, and how parathyroid hormone and vitamin D move calcium among the gut, bone and kidney."
+    },
+    {
+      "id": "lung-volumes",
+      "title": "Lung volumes",
+      "summary": "How a forced breath is measured, which air a spirometer can see, and how obstruction and restriction change the curves."
+    },
+    {
+      "id": "cells-membranes-signals",
+      "title": "Cells, membranes and signals",
+      "summary": "How water and ions cross a membrane, how a nerve fires and a receptor answers, and what a cell does when oxygen runs short or the cell is injured."
+    },
+    {
+      "id": "heart-and-vessels",
+      "title": "Heart and vessels",
+      "summary": "The cardiac cycle and the valves, coronary flow, failure and rhythm, and the circulation in shock and before birth."
+    },
+    {
+      "id": "kidney-fluids-electrolytes",
+      "title": "Kidney, fluids and electrolytes",
+      "summary": "How the kidney filters, reabsorbs and clears, and the sodium, potassium and acid problems that follow when a segment, or the whole kidney, fails."
     }
   ],
   "modules": [
@@ -300,6 +325,754 @@
         "CDK4/6 inhibitors"
       ],
       "unit": "defence"
+    },
+    {
+      "slug": "adh-water-balance",
+      "title": "ADH and Water Balance",
+      "description": "Watch the brain sense blood saltiness, release ADH and open water channels in the kidney, then see urine change in DI, SIADH and polydipsia.",
+      "drugClasses": [
+        "Water deficit (blood more concentrated, ADH rises)",
+        "Water excess (blood more dilute, ADH falls)",
+        "Central diabetes insipidus (too little ADH made)",
+        "Nephrogenic diabetes insipidus (the kidney ignores ADH)",
+        "SIADH (ADH that will not switch off)",
+        "Primary polydipsia"
+      ],
+      "notes": "Owns the ADH loop and its breaks: water deficit, water excess, central and nephrogenic diabetes insipidus, SIADH and primary polydipsia. Hyponatremia sorting and osmotic demyelination belong to hyponatremia-osmotic-demyelination.",
+      "unit": "water-and-calcium"
+    },
+    {
+      "slug": "calcium-pth-vitamin-d",
+      "title": "Calcium, PTH and Vitamin D",
+      "description": "Follow PTH from the parathyroid to bone and kidney, then calcitriol to the gut, and see calcium shift in four parathyroid, vitamin D and kidney states.",
+      "drugClasses": [
+        "Primary hyperparathyroidism (PTH that ignores the calcium)",
+        "Hypoparathyroidism (too little PTH)",
+        "Vitamin D deficiency (the gut absorbs less calcium)",
+        "Decreased renal function (phosphate retained, less calcitriol made)"
+      ],
+      "unit": "water-and-calcium"
+    },
+    {
+      "slug": "spirometry-lung-volumes",
+      "title": "Spirometry and Lung Volumes",
+      "description": "Blow out a model breath and watch the spirogram, flow–volume loop and lung-volume bars redraw in asthma, emphysema, fibrosis and after a bronchodilator.",
+      "drugClasses": [
+        "Asthma (obstruction: emptying slows)",
+        "Emphysema (obstruction, the lung stretches more easily)",
+        "Fibrosis (restriction: total lung capacity falls)",
+        "Bronchodilator response (the forced breath changes)",
+        "Poor effort (the curves fall without establishing disease)"
+      ],
+      "notes": "The spirogram, the flow-volume loop and the volume bars. oxygen-hemoglobin-dissociation owns gas carriage and ventilation-perfusion owns matching air to blood. Do not rebuild those. Obstruction and restriction here are patterns on these curves, not a second lesson on either of those.",
+      "unit": "lung-volumes"
+    },
+    {
+      "slug": "diffusion-osmosis-iv-fluids",
+      "title": "Diffusion, Osmosis and IV Fluids",
+      "description": "How water and a dissolved substance cross a membrane, and why the tonicity of an intravenous fluid decides whether a cell swells, shrinks or holds its size.",
+      "drugClasses": [
+        "Isotonic crystalloid (cell volume unchanged)",
+        "Hypotonic fluid (cells swell)",
+        "Hypertonic fluid (cells shrink)",
+        "Colloid (stays in the vascular space)",
+        "Free water, including a glucose solution once the sugar is taken up"
+      ],
+      "unit": "cells-membranes-signals"
+    },
+    {
+      "slug": "na-k-pump-digoxin",
+      "title": "The Na⁺/K⁺ Pump (digoxin)",
+      "description": "The pump that keeps sodium outside the cell and potassium inside, and how digoxin slows that pump so the heart cell holds more calcium and squeezes harder.",
+      "drugClasses": [
+        "Cardiac glycosides (Na+/K+ ATPase block)",
+        "Hypokalemia (digoxin binds the pump more readily)",
+        "Hyperkalemia (digoxin binds the pump less readily)",
+        "Delayed afterdepolarizations of digoxin toxicity"
+      ],
+      "unit": "cells-membranes-signals"
+    },
+    {
+      "slug": "resting-membrane-potential-potassium",
+      "title": "Resting Membrane Potential and Potassium",
+      "description": "Why a resting cell is negative inside, and how the potassium outside the cell moves that voltage toward or away from the point where it fires.",
+      "drugClasses": [
+        "Resting potential as a potassium diffusion potential",
+        "Hyperkalemia (resting potential less negative)",
+        "Hypokalemia (resting potential more negative)",
+        "Sodium-channel inactivation when the membrane stays depolarized"
+      ],
+      "unit": "cells-membranes-signals"
+    },
+    {
+      "slug": "nerve-action-potential-local-anesthetics",
+      "title": "Nerve Action Potential and Local Anesthetics",
+      "description": "The sodium rush that carries an impulse along a nerve, and how a local anesthetic binds the sodium channel and stops the impulse.",
+      "drugClasses": [
+        "Voltage-gated sodium channel block",
+        "Use-dependent block of open and inactivated channels",
+        "Acidic tissue (more of the drug stays charged outside the nerve)",
+        "Amide and ester local anesthetics"
+      ],
+      "unit": "cells-membranes-signals"
+    },
+    {
+      "slug": "myelin-conduction-velocity",
+      "title": "Myelin and Conduction Velocity (MS, GBS)",
+      "description": "How myelin lets an impulse jump from node to node, and how that jump fails when myelin is lost in the brain and spinal cord or in a peripheral nerve.",
+      "drugClasses": [
+        "Saltatory conduction",
+        "Multiple sclerosis (central myelin lost)",
+        "Guillain-Barre syndrome (peripheral myelin lost)",
+        "Conduction block and slowed velocity"
+      ],
+      "unit": "cells-membranes-signals"
+    },
+    {
+      "slug": "ion-channels-channelopathies",
+      "title": "Ion Channels and Channelopathies (CFTR, congenital long QT)",
+      "description": "A channel as a gated pore, told through two broken pores: chloride that cannot leave the airway, and a heart muscle cell that cannot finish repolarizing.",
+      "drugClasses": [
+        "CFTR failure (chloride cannot leave the airway)",
+        "CFTR modulators",
+        "Congenital long QT from loss of a repolarizing potassium current",
+        "A sodium channel that fails to inactivate"
+      ],
+      "notes": "The channel, with CFTR and a congenital long-QT current as the examples. long-qt-torsades owns the ECG, the pause and drug-induced torsades. Do not draw torsades here.",
+      "unit": "cells-membranes-signals"
+    },
+    {
+      "slug": "gpcrs-second-messengers",
+      "title": "GPCRs and Second Messengers (cholera and pertussis toxin)",
+      "description": "How a receptor on the cell surface turns a signal into a second messenger inside, and how cholera toxin and pertussis toxin lock a G protein on or off.",
+      "drugClasses": [
+        "Gs (more cyclic AMP)",
+        "Gi (less cyclic AMP)",
+        "Gq (IP3 and a rise in cell calcium)",
+        "Cholera toxin (Gs locked on)",
+        "Pertussis toxin (Gi locked off)"
+      ],
+      "unit": "cells-membranes-signals"
+    },
+    {
+      "slug": "dose-response-curve",
+      "title": "Dose–Response: Agonists, Antagonists and Partial Agonists",
+      "description": "How occupying more of a receptor gives a larger effect, up to a ceiling, and how a full agonist, a partial agonist and an antagonist each move that curve.",
+      "drugClasses": [
+        "Full agonists",
+        "Partial agonists (a lower ceiling)",
+        "Competitive antagonists (the curve shifts right, the ceiling holds)",
+        "Noncompetitive antagonists (the ceiling falls)",
+        "Spare receptors"
+      ],
+      "unit": "cells-membranes-signals"
+    },
+    {
+      "slug": "enzyme-kinetics-inhibitors",
+      "title": "Enzyme Kinetics and Inhibitors",
+      "description": "How an enzyme's speed rises with its substrate and then levels off, and how a competitive inhibitor and a noncompetitive inhibitor bend that curve differently.",
+      "drugClasses": [
+        "Competitive inhibitors (same ceiling, more substrate needed)",
+        "Noncompetitive inhibitors (a lower ceiling)",
+        "Irreversible inhibitors",
+        "Allosteric modulators"
+      ],
+      "unit": "cells-membranes-signals"
+    },
+    {
+      "slug": "oxidative-phosphorylation",
+      "title": "Oxidative Phosphorylation",
+      "description": "How the electron transport chain stores energy as a proton gradient and ATP synthase spends it, and what fails when the chain, the gradient or the oxygen at the end is blocked.",
+      "drugClasses": [
+        "Cyanide (complex IV blocked)",
+        "Carbon monoxide (complex IV blocked)",
+        "Uncouplers (the proton gradient spent as heat)",
+        "ATP synthase block",
+        "No oxygen as the final acceptor"
+      ],
+      "notes": "Carbon monoxide here blocks complex IV. oxygen-hemoglobin-dissociation already owns carbon monoxide bound to hemoglobin. Do not redraw that curve.",
+      "unit": "cells-membranes-signals"
+    },
+    {
+      "slug": "glycolysis-lactate-lactic-acidosis",
+      "title": "Glycolysis, Lactate and Lactic Acidosis",
+      "description": "How glucose is split to pyruvate, when pyruvate is turned to lactate instead of entering the mitochondrion, and why lactate then rises in the blood.",
+      "drugClasses": [
+        "Anaerobic glycolysis",
+        "Pyruvate dehydrogenase block",
+        "Shock (lactate from hypoperfusion)",
+        "Impaired hepatic clearance of lactate",
+        "Metformin when lactate cannot be cleared"
+      ],
+      "unit": "cells-membranes-signals"
+    },
+    {
+      "slug": "cell-adaptation",
+      "title": "Cell Adaptation",
+      "description": "How a cell grows, shrinks, multiplies or changes its type when the demand on it changes, and what each of those looks like in an organ.",
+      "drugClasses": [
+        "Hypertrophy",
+        "Hyperplasia",
+        "Atrophy",
+        "Metaplasia",
+        "Dysplasia"
+      ],
+      "unit": "cells-membranes-signals"
+    },
+    {
+      "slug": "cell-injury-necrosis-apoptosis",
+      "title": "Cell Injury, Necrosis and Apoptosis",
+      "description": "Where reversible injury ends, and how necrosis and apoptosis take a cell apart in different ways.",
+      "drugClasses": [
+        "Reversible injury (swelling)",
+        "Coagulative necrosis",
+        "Liquefactive necrosis",
+        "Apoptosis (caspases, membrane intact)",
+        "Free-radical injury"
+      ],
+      "unit": "cells-membranes-signals"
+    },
+    {
+      "slug": "hypoxia-ischemic-cascade",
+      "title": "Hypoxia and the Ischemic Cascade",
+      "description": "What a cell does in the minutes after its blood flow stops: ATP falls, sodium and calcium come in, and the membrane fails.",
+      "drugClasses": [
+        "Ischemia (flow stopped)",
+        "Hypoxia with flow preserved",
+        "ATP depletion and sodium-pump failure",
+        "Calcium overload",
+        "Reperfusion injury"
+      ],
+      "unit": "cells-membranes-signals"
+    },
+    {
+      "slug": "starling-forces-edema",
+      "title": "Starling Forces and Edema",
+      "description": "The four forces that decide whether fluid stays in a capillary or leaves it, and the ways that balance tips into edema.",
+      "drugClasses": [
+        "Raised capillary hydrostatic pressure",
+        "Low plasma oncotic pressure",
+        "Lymphatic obstruction",
+        "Increased capillary permeability",
+        "Raised interstitial oncotic pressure"
+      ],
+      "unit": "cells-membranes-signals"
+    },
+    {
+      "slug": "cardiac-cycle-wiggers",
+      "title": "The Cardiac Cycle in Time",
+      "description": "One heartbeat drawn against time: atrial, ventricular and aortic pressure, ventricular volume, and the moments the valves open and shut.",
+      "drugClasses": [
+        "A shorter diastole at a faster rate",
+        "A higher afterload",
+        "A lower preload",
+        "Atrial contraction lost"
+      ],
+      "notes": "The time plot of one beat. pressure-volume-loop already owns the loop and how drugs reshape it. Keep this lesson to timing, the valve events and the pressure curves.",
+      "unit": "heart-and-vessels"
+    },
+    {
+      "slug": "heart-sounds-murmurs",
+      "title": "Heart Sounds and Murmurs",
+      "description": "Where the first and second heart sounds come from, and how the timing and shape of a murmur, and where it is loudest, point to a valve.",
+      "drugClasses": [
+        "Stenosis",
+        "Regurgitation",
+        "High flow across a normal valve",
+        "A change in preload or afterload (the murmur louder or softer)",
+        "Inspiration (right-sided murmurs louder)"
+      ],
+      "notes": "How a sound is made and how a murmur is described. The four valve lessons own aortic stenosis, mitral regurgitation, mitral stenosis and aortic regurgitation. Do not reteach each lesion here.",
+      "unit": "heart-and-vessels"
+    },
+    {
+      "slug": "aortic-stenosis",
+      "title": "Aortic Stenosis",
+      "description": "A narrowed aortic valve the left ventricle must force blood through, the slow-rising pulse that follows, and why the ventricle thickens and can then fail.",
+      "drugClasses": [
+        "Fixed outflow obstruction",
+        "Concentric hypertrophy",
+        "A slow-rising, low-volume pulse",
+        "Arterial vasodilation (output cannot rise, coronary perfusion falls)",
+        "Atrial fibrillation (the atrial kick lost)"
+      ],
+      "unit": "heart-and-vessels"
+    },
+    {
+      "slug": "mitral-regurgitation",
+      "title": "Mitral Regurgitation",
+      "description": "A mitral valve that leaks into the atrium while the ventricle is ejecting, so part of each stroke goes backward and the atrium and ventricle enlarge.",
+      "drugClasses": [
+        "Primary regurgitation (the valve itself)",
+        "Secondary regurgitation (the ventricle has dilated)",
+        "Arterial vasodilation (more forward flow, less backward)",
+        "A higher afterload (more backward flow)",
+        "Acute regurgitation into an atrium that has not enlarged"
+      ],
+      "unit": "heart-and-vessels"
+    },
+    {
+      "slug": "mitral-stenosis",
+      "title": "Mitral Stenosis",
+      "description": "A narrowed mitral valve that holds blood in the left atrium, raises pressure back into the lungs, and leaves the left ventricle underfilled.",
+      "drugClasses": [
+        "Fixed inflow obstruction",
+        "Pulmonary venous hypertension",
+        "A faster rate (less time for diastolic filling)",
+        "Atrial fibrillation (the atrial kick lost)",
+        "Right-heart strain"
+      ],
+      "unit": "heart-and-vessels"
+    },
+    {
+      "slug": "aortic-regurgitation",
+      "title": "Aortic Regurgitation",
+      "description": "An aortic valve that leaks back into the ventricle during diastole, so the ventricle fills from two directions and the pulse pressure widens.",
+      "drugClasses": [
+        "Chronic volume load (the ventricle enlarges)",
+        "Acute regurgitation into a ventricle that has not enlarged",
+        "Arterial vasodilation (less leak)",
+        "A slower rate (a longer diastole, more leak)",
+        "A wide pulse pressure"
+      ],
+      "unit": "heart-and-vessels"
+    },
+    {
+      "slug": "coronary-flow-oxygen-demand",
+      "title": "Coronary Flow and Oxygen Demand",
+      "description": "Why heart muscle receives its blood in diastole, what raises its need for oxygen, and how nitrates, beta-blockers and calcium channel blockers change the demand or the supply.",
+      "drugClasses": [
+        "Nitrates (less preload, less wall tension)",
+        "Beta-blockers (slower rate, less contractility)",
+        "Dihydropyridine calcium channel blockers (coronary and arterial dilation)",
+        "Non-dihydropyridine calcium channel blockers (slower rate, less contractility)",
+        "A faster rate (less time for coronary flow in diastole)",
+        "Less oxygen carried (anemia, hypoxia)"
+      ],
+      "unit": "heart-and-vessels"
+    },
+    {
+      "slug": "atherosclerosis-plaque-rupture",
+      "title": "Atherosclerosis and Plaque Rupture",
+      "description": "How a plaque grows inside an artery wall, what tears its cap, and how that tear becomes a clot that narrows or blocks the lumen.",
+      "drugClasses": [
+        "A stable plaque (thick cap)",
+        "A vulnerable plaque (thin cap, large lipid core)",
+        "Plaque rupture with thrombosis",
+        "Statins (less lipid in the core)",
+        "Antiplatelet drugs (the clot grows less)"
+      ],
+      "unit": "heart-and-vessels"
+    },
+    {
+      "slug": "acs-troponin",
+      "title": "Acute Coronary Syndromes and Troponin",
+      "description": "How a coronary clot shows up as unstable angina or as an infarction with or without ST elevation, and why troponin rises only after muscle has died.",
+      "drugClasses": [
+        "Unstable angina (ischemia, muscle still alive)",
+        "Non-ST elevation myocardial infarction",
+        "ST elevation myocardial infarction",
+        "Antiplatelet and anticoagulant drugs",
+        "Reperfusion"
+      ],
+      "unit": "heart-and-vessels"
+    },
+    {
+      "slug": "heart-failure-neurohormonal",
+      "title": "Heart Failure: The Neurohormonal Spiral",
+      "description": "How a weak left ventricle turns on sympathetic drive, the renin axis and antidiuretic hormone, and how those same responses then make the failure worse.",
+      "drugClasses": [
+        "Neurohormonal activation (sympathetic drive, the renin axis, antidiuretic hormone)",
+        "ACE inhibitors and angiotensin receptor blockers",
+        "ARNIs (neprilysin inhibition plus angiotensin receptor block)",
+        "Beta-blockers",
+        "Mineralocorticoid receptor antagonists",
+        "SGLT2 inhibitors"
+      ],
+      "notes": "The spiral, and the drugs that interrupt it. renin-angiotensin-aldosterone already owns the axis itself. Loop diuretics lower the congestion and do not stop the spiral.",
+      "unit": "heart-and-vessels"
+    },
+    {
+      "slug": "diastolic-dysfunction-hfpef",
+      "title": "Diastolic Dysfunction and HFpEF",
+      "description": "A ventricle that still ejects a normal share of its volume but fills stiffly, so pressure rises and the lungs flood while the ejection fraction looks preserved.",
+      "drugClasses": [
+        "A stiff ventricle with a preserved ejection fraction",
+        "Loss of the atrial kick",
+        "A faster rate (less filling time)",
+        "SGLT2 inhibitors",
+        "Mineralocorticoid receptor antagonists"
+      ],
+      "unit": "heart-and-vessels"
+    },
+    {
+      "slug": "cardiomyopathies",
+      "title": "Cardiomyopathies",
+      "description": "Three diseases of the muscle itself: one that dilates and weakens, one that thickens and can obstruct outflow, and one that only stiffens.",
+      "drugClasses": [
+        "Dilated cardiomyopathy",
+        "Hypertrophic cardiomyopathy with outflow obstruction",
+        "Restrictive cardiomyopathy",
+        "More preload (hypertrophic obstruction lessens)",
+        "Less preload (hypertrophic obstruction worsens)"
+      ],
+      "unit": "heart-and-vessels"
+    },
+    {
+      "slug": "tamponade-pulsus-paradoxus",
+      "title": "Tamponade and Pulsus Paradoxus",
+      "description": "Fluid under pressure in the pericardial sac, the diastolic pressures that come together, and the fall in systolic pressure that a deep breath produces.",
+      "drugClasses": [
+        "Pericardial fluid under pressure",
+        "Diastolic pressures equalized",
+        "Pulsus paradoxus",
+        "Inspiration (the septum shifts left)",
+        "The constraint removed by drainage"
+      ],
+      "unit": "heart-and-vessels"
+    },
+    {
+      "slug": "ecg-vectors-to-waves",
+      "title": "The ECG: Vectors to Waves",
+      "description": "How the heart's electrical vector, read from the limb and chest leads, becomes the P wave, the QRS complex and the T wave.",
+      "drugClasses": [
+        "The P wave as the atrial vector",
+        "The QRS as the ventricular vector",
+        "The T wave as repolarization",
+        "A lead as a viewpoint on that vector",
+        "The mean QRS axis"
+      ],
+      "notes": "Mechanism only: how a vector becomes a wave. Not a strip trainer, and distinct from the site's EKG trainer (Read This, at /ekg/). Do not drill rhythm names or ask the reader to call a tracing.",
+      "unit": "heart-and-vessels"
+    },
+    {
+      "slug": "conduction-system-heart-block",
+      "title": "The Conduction System and Heart Block",
+      "description": "The path of an impulse from the sinus node to the ventricular muscle, and what the rhythm does when that path delays or blocks.",
+      "drugClasses": [
+        "First-degree AV block",
+        "Second-degree AV block",
+        "Third-degree AV block",
+        "Bundle branch block",
+        "Beta-blockers and non-dihydropyridine calcium channel blockers (slower nodal conduction)",
+        "Raised vagal tone"
+      ],
+      "notes": "The wiring and the blocks. ecg-vectors-to-waves owns how a vector becomes a wave. Do not reteach the leads here.",
+      "unit": "heart-and-vessels"
+    },
+    {
+      "slug": "atrial-fibrillation",
+      "title": "Atrial Fibrillation: Rate, Rhythm and Stroke",
+      "description": "Atria that quiver instead of contracting, a ventricular rate set by how many impulses cross the AV node, and clot forming in the atrial appendage.",
+      "drugClasses": [
+        "Rate control at the AV node (beta-blockers, non-dihydropyridine calcium channel blockers)",
+        "Rhythm control (class Ic and class III antiarrhythmics)",
+        "Loss of atrial contraction",
+        "Stasis and thrombus in the appendage",
+        "Anticoagulation"
+      ],
+      "unit": "heart-and-vessels"
+    },
+    {
+      "slug": "reentry-ventricular-tachycardia",
+      "title": "Reentry and Ventricular Tachycardia",
+      "description": "A circuit that runs around a scar or a split pathway and keeps restarting itself, and how an impulse that enters the circuit at the right moment can stop it.",
+      "drugClasses": [
+        "Reentry around a scar",
+        "Ventricular tachycardia",
+        "A circuit that can be entered and extinguished",
+        "Sodium channel blockers (conduction in the circuit slows)",
+        "Electrical cardioversion"
+      ],
+      "unit": "heart-and-vessels"
+    },
+    {
+      "slug": "long-qt-torsades",
+      "title": "Long QT and Torsades",
+      "description": "A ventricular action potential that takes too long to finish, the early afterdepolarization that follows a pause, and the twisting tachycardia that comes next.",
+      "drugClasses": [
+        "Repolarizing potassium current blocked (class III and other QT-prolonging drugs)",
+        "Congenital long QT",
+        "Hypokalemia and hypomagnesemia",
+        "A pause, then an early afterdepolarization",
+        "Torsades de pointes",
+        "Magnesium (early afterdepolarizations suppressed)"
+      ],
+      "notes": "The rhythm: a long QT, a pause and torsades. ion-channels-channelopathies owns the channel itself, including congenital long QT as a broken repolarizing current. Do not reteach channel structure here.",
+      "unit": "heart-and-vessels"
+    },
+    {
+      "slug": "shock-four-kinds",
+      "title": "Shock: Four Kinds on One Picture",
+      "description": "The same failure of perfusion drawn four ways: too little volume, a pump that cannot eject, vessels that have opened too wide, and a flow that is obstructed.",
+      "drugClasses": [
+        "Hypovolemic shock",
+        "Cardiogenic shock",
+        "Distributive shock",
+        "Obstructive shock",
+        "Lactate rising as perfusion falls"
+      ],
+      "notes": "Four patterns on one picture. tamponade-pulsus-paradoxus owns the pericardial constraint and the paradox. Obstructive shock here is one of the four, not a second tamponade lesson.",
+      "unit": "heart-and-vessels"
+    },
+    {
+      "slug": "vasopressors-inotropes-receptors",
+      "title": "Vasopressors and Inotropes at the Receptor",
+      "description": "Which receptor each vasopressor and inotrope acts on, and what that does to heart rate, the strength of the squeeze, and the vessels.",
+      "drugClasses": [
+        "Phenylephrine (alpha-1)",
+        "Norepinephrine (alpha-1 and beta-1)",
+        "Epinephrine (alpha-1, beta-1 and beta-2)",
+        "Vasopressin (V1)",
+        "Dobutamine (beta-1)",
+        "Milrinone (phosphodiesterase-3, an inodilator)"
+      ],
+      "notes": "One step per receptor effect. Do not draw an infusion-rate ladder, and do not sort dopamine by how fast it is run.",
+      "unit": "heart-and-vessels"
+    },
+    {
+      "slug": "pulmonary-hypertension-right-heart",
+      "title": "Pulmonary Hypertension and the Right Heart",
+      "description": "A right ventricle pumping into a high-pressure lung circuit, and the three places that pressure can come from: the lung arteries, the left heart, or low oxygen.",
+      "drugClasses": [
+        "Pulmonary arterial disease",
+        "Pressure passed back from the left heart",
+        "Hypoxic pulmonary vasoconstriction",
+        "Prostacyclin analogues",
+        "Endothelin receptor antagonists",
+        "Phosphodiesterase-5 inhibitors and nitric oxide"
+      ],
+      "unit": "heart-and-vessels"
+    },
+    {
+      "slug": "fetal-circulation-congenital-shunts",
+      "title": "Fetal Circulation and Congenital Shunts",
+      "description": "How blood bypasses the lungs before birth, what closes those bypasses with the first breaths, and how a hole between the two circuits sends blood the wrong way.",
+      "drugClasses": [
+        "Ductus venosus, foramen ovale and ductus arteriosus open",
+        "The first breaths (pulmonary resistance falls and the bypasses close)",
+        "Left-to-right shunt (septal defects, a patent ductus)",
+        "Right-to-left shunt once right-sided pressure exceeds left",
+        "Prostaglandin E (the ductus held open)",
+        "Indomethacin and ibuprofen (the ductus closed)"
+      ],
+      "unit": "heart-and-vessels"
+    },
+    {
+      "slug": "glomerular-filtration",
+      "title": "Glomerular Filtration and GFR",
+      "description": "How pressure in the glomerular capillary pushes a protein-free filtrate into Bowman's space, and which way the arterioles have to change for that filtration to rise or fall.",
+      "drugClasses": [
+        "Afferent constriction (filtration falls)",
+        "Efferent constriction (filtration rises)",
+        "A damaged filter (protein leaks)",
+        "ACE inhibitors and angiotensin receptor blockers (efferent dilation, filtration falls)",
+        "Low renal plasma flow"
+      ],
+      "unit": "kidney-fluids-electrolytes"
+    },
+    {
+      "slug": "clearance-creatinine",
+      "title": "Clearance and Creatinine",
+      "description": "Clearance as the volume of plasma completely freed of a substance each minute, and why the creatinine in the blood rises only after a large share of filtration is already gone.",
+      "drugClasses": [
+        "Inulin (filtered only, the measure of GFR)",
+        "Creatinine (filtered, and a little secreted)",
+        "PAH (filtered and secreted, a measure of renal plasma flow)",
+        "A late rise in blood creatinine as GFR falls",
+        "Drugs that block creatinine secretion (the blood level rises, filtration unchanged)"
+      ],
+      "unit": "kidney-fluids-electrolytes"
+    },
+    {
+      "slug": "autoregulation-tubuloglomerular-feedback",
+      "title": "Autoregulation and Tubuloglomerular Feedback",
+      "description": "How the kidney holds filtration nearly steady as arterial pressure changes, by afferent tone and by the macula densa tasting the salt leaving the thick limb.",
+      "drugClasses": [
+        "A rise in arterial pressure (afferent constriction)",
+        "A fall in arterial pressure (afferent dilation)",
+        "Tubuloglomerular feedback (more salt at the macula densa, afferent constriction)",
+        "NSAIDs (afferent prostaglandin dilation lost)",
+        "ACE inhibitors and angiotensin receptor blockers when renal flow is already low"
+      ],
+      "unit": "kidney-fluids-electrolytes"
+    },
+    {
+      "slug": "proximal-tubule-sglt2",
+      "title": "The Proximal Tubule and SGLT2 Inhibitors",
+      "description": "The first segment of the nephron, which takes back most of the filtered sodium, bicarbonate and glucose, and what stays in the tubule when the glucose transporter is blocked.",
+      "drugClasses": [
+        "SGLT2 inhibitors (glucose stays in the tubule)",
+        "Carbonic anhydrase inhibitors (bicarbonate stays in the tubule)",
+        "Osmotic diuresis from unreabsorbed glucose",
+        "Fanconi syndrome (proximal reclaim fails across the board)",
+        "Volume contraction from proximal sodium loss"
+      ],
+      "notes": "This segment, and the glucose that stays in the tubule. nephron-diuretics already maps every diuretic class along the whole nephron. Do not redraw that map.",
+      "unit": "kidney-fluids-electrolytes"
+    },
+    {
+      "slug": "countercurrent-multiplier",
+      "title": "The Countercurrent Multiplier",
+      "description": "How the loop of Henle and the vasa recta lay down a salty medulla, and why urine can be concentrated only while that gradient is there.",
+      "drugClasses": [
+        "The salt pump of the thick ascending limb",
+        "Loop diuretics (that pump stops, the gradient collapses)",
+        "The vasa recta (the gradient washed out, or held)",
+        "Antidiuretic hormone spending the gradient at the collecting duct",
+        "Osmotic diuresis"
+      ],
+      "notes": "Build the medullary gradient. adh-water-balance owns ADH, the water channels and the clinical water states: here ADH only spends a gradient this lesson has built. nephron-diuretics owns the diuretic map; the loop diuretic appears only as the pump that makes the gradient.",
+      "unit": "kidney-fluids-electrolytes"
+    },
+    {
+      "slug": "renal-potassium-handling",
+      "title": "Renal Potassium Handling",
+      "description": "Potassium filtered and mostly reclaimed, then secreted again by the collecting duct under aldosterone, and the common ways that secretion runs too high or too low.",
+      "drugClasses": [
+        "Aldosterone (principal cells secrete more potassium)",
+        "Mineralocorticoid receptor antagonists (they secrete less)",
+        "Loop and thiazide diuretics (more sodium arrives downstream, more secretion)",
+        "A low distal sodium delivery (less secretion)",
+        "Insulin and beta-2 agonists (potassium shifted into cells, not lost in the urine)"
+      ],
+      "unit": "kidney-fluids-electrolytes"
+    },
+    {
+      "slug": "hyponatremia-osmotic-demyelination",
+      "title": "Hyponatremia and Osmotic Demyelination",
+      "description": "How a low sodium is sorted by the concentration of the blood and of the urine, and why raising that sodium too quickly strips myelin.",
+      "drugClasses": [
+        "Hypovolemic hyponatremia",
+        "SIADH (euvolemia, urine more concentrated than the blood)",
+        "Hypervolemic hyponatremia (heart failure, cirrhosis)",
+        "Hypertonic hyponatremia (another solute, such as glucose, holds water in the blood)",
+        "Correction that is too fast (osmotic demyelination)",
+        "Vaptans (the collecting duct ignores antidiuretic hormone)"
+      ],
+      "notes": "Complement adh-water-balance. Do not repeat it. That lesson owns the ADH loop, diabetes insipidus, SIADH as a broken loop, and primary polydipsia. This lesson owns how a low sodium is sorted, and the myelin injury when it is corrected too fast. SIADH is one box in that sorting, not a second ADH lesson.",
+      "unit": "kidney-fluids-electrolytes"
+    },
+    {
+      "slug": "renal-tubular-acidosis",
+      "title": "Renal Tubular Acidosis",
+      "description": "Three ways the tubule fails to reclaim bicarbonate or to excrete acid, and how the potassium and the urine's acidity tell them apart.",
+      "drugClasses": [
+        "Distal renal tubular acidosis (the urine cannot be acidified, potassium is low)",
+        "Proximal renal tubular acidosis (bicarbonate is wasted)",
+        "Hyperkalemic renal tubular acidosis (too little aldosterone effect)",
+        "Amphotericin and toluene (distal)",
+        "Carbonic anhydrase inhibitors (proximal)"
+      ],
+      "unit": "kidney-fluids-electrolytes"
+    },
+    {
+      "slug": "aki-prerenal-intrinsic-postrenal",
+      "title": "Acute Kidney Injury: Prerenal, Intrinsic and Postrenal",
+      "description": "A sudden fall in filtration sorted by where it broke: too little blood arriving, the kidney tissue itself injured, or the urine blocked on the way out.",
+      "drugClasses": [
+        "Prerenal azotemia (low flow, tubules still working)",
+        "Acute tubular necrosis",
+        "Acute interstitial nephritis",
+        "Postrenal obstruction",
+        "The urine sodium and the sediment that separate them"
+      ],
+      "unit": "kidney-fluids-electrolytes"
+    },
+    {
+      "slug": "nephrotoxic-drugs",
+      "title": "Nephrotoxic Drugs",
+      "description": "Drugs that injure the kidney at a named place, the arteriole, the tubule, the interstitium or the filter, each with its own picture.",
+      "drugClasses": [
+        "NSAIDs (afferent constriction, and interstitial nephritis)",
+        "ACE inhibitors and angiotensin receptor blockers (efferent dilation when flow is low)",
+        "Aminoglycosides (tubular injury)",
+        "Iodinated contrast (tubular injury)",
+        "Amphotericin (tubular injury)",
+        "Beta-lactams and other drugs that cause interstitial nephritis"
+      ],
+      "unit": "kidney-fluids-electrolytes"
+    },
+    {
+      "slug": "chronic-kidney-disease",
+      "title": "Chronic Kidney Disease and Its Complications",
+      "description": "Filtration lost for good, and what follows: phosphate, potassium, acid, salt and water retained, plus anemia and bone disease.",
+      "drugClasses": [
+        "Phosphate retention and secondary hyperparathyroidism",
+        "Less erythropoietin (anemia)",
+        "Potassium retention",
+        "Metabolic acidosis",
+        "Salt and water retention",
+        "Erythropoiesis-stimulating agents and phosphate binders"
+      ],
+      "notes": "The consequences of filtration that is gone. calcium-pth-vitamin-d already owns PTH, vitamin D and decreased renal function as one of its four states. Name the bone disease here as one consequence among the others, and do not rebuild that lesson.",
+      "unit": "kidney-fluids-electrolytes"
+    },
+    {
+      "slug": "nephrotic-nephritic",
+      "title": "Nephrotic versus Nephritic",
+      "description": "Two glomerular pictures: one that leaks protein until the oncotic pressure falls, and one that inflames the filter, spills blood and cuts filtration.",
+      "drugClasses": [
+        "Nephrotic syndrome (heavy protein loss, edema)",
+        "Nephritic syndrome (blood and casts in the urine, filtration falls)",
+        "Minimal change and membranous nephropathy as protein-leak states",
+        "Rapidly progressive glomerulonephritis",
+        "ACE inhibitors and angiotensin receptor blockers (less pressure across a leaking filter)"
+      ],
+      "unit": "kidney-fluids-electrolytes"
+    },
+    {
+      "slug": "dialysis",
+      "title": "Dialysis",
+      "description": "How diffusion across a membrane clears urea, potassium and acid from the blood, and how a pressure difference pulls water off when the kidney no longer can.",
+      "drugClasses": [
+        "Hemodialysis",
+        "Peritoneal dialysis",
+        "Diffusion down a concentration gradient",
+        "Ultrafiltration (water pulled by a pressure difference)",
+        "Disequilibrium when solute leaves the blood faster than it leaves the brain"
+      ],
+      "unit": "kidney-fluids-electrolytes"
+    },
+    {
+      "slug": "kidney-stones",
+      "title": "Kidney Stones",
+      "description": "How a salt dissolved in the urine comes out of solution, and how citrate, calcium, oxalate, acidity and volume each favor a different stone.",
+      "drugClasses": [
+        "Calcium oxalate stones",
+        "Uric acid stones in acid urine",
+        "Struvite stones in infected, alkaline urine",
+        "Citrate (calcium stays dissolved)",
+        "Thiazides (less calcium in the urine)",
+        "A low urine volume"
+      ],
+      "unit": "kidney-fluids-electrolytes"
+    },
+    {
+      "slug": "bladder-micturition",
+      "title": "The Bladder and Micturition",
+      "description": "How the detrusor and the sphincters trade jobs to store urine and then to empty it, and how antimuscarinic and beta-3 drugs tip that trade toward storage.",
+      "drugClasses": [
+        "Parasympathetic emptying (the detrusor contracts)",
+        "Storage (beta-3 relaxes the detrusor, alpha-1 tightens the internal sphincter)",
+        "Antimuscarinic drugs (less detrusor contraction)",
+        "Beta-3 agonists (the detrusor stays relaxed)",
+        "Overflow from a bladder that cannot empty"
+      ],
+      "unit": "kidney-fluids-electrolytes"
+    },
+    {
+      "slug": "benign-prostatic-hyperplasia",
+      "title": "Benign Prostatic Hyperplasia",
+      "description": "A prostate that narrows the urethra two ways, by smooth-muscle tone and by bulk, and the two drug classes that each act on one of those.",
+      "drugClasses": [
+        "Alpha-1 blockers (smooth muscle relaxes)",
+        "5-alpha reductase inhibitors (glandular bulk shrinks)",
+        "Bladder outlet obstruction",
+        "Detrusor thickening against the obstruction",
+        "Alpha-1 block together with 5-alpha reductase inhibition"
+      ],
+      "unit": "kidney-fluids-electrolytes"
     }
   ]
 }
