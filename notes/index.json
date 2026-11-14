@@ -1,4 +1,19 @@
 {
  "schema": "notes.index/1",
- "posts": []
+ "posts": [
+  {
+   "date": "2026-11-12",
+   "published": "2026-11-13",
+   "title": "SpaceX and Tesla talk, and the tools of the day move with them",
+   "dek": "Merger talks would join a rocket company, a car company and the lab behind Grok, while Claude sits in on meetings, Detroit posts a rare line and X widens a post.",
+   "desks": [
+    "business",
+    "ai",
+    "world",
+    "sports",
+    "internet"
+   ],
+   "url": "https://seansooch.dev/notes/2026-11-12/"
+  }
+ ]
 }

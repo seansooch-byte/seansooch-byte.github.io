@@ -348,6 +348,11 @@ class Census(Base):
     def test_every_sentence_of_the_record_is_set(self):
         everything = squash(''.join(text for path, text in self.out.items() if path.endswith('.html')))
         for key, sentence in self.rec['text'].items():
+            # notes_empty is the section's empty state, true only while no post is published. A published post
+            # replaces it. The no-post case is still held by test_with_no_post_the_section_says_so.
+            if key == 'notes_empty' and self.site['notes']['posts']:
+                self.assertNotIn(squash(sentence), everything, 'a published post still says none has been')
+                continue
             self.assertIn(squash(build.inline(build.fill(self.site, sentence))), everything, f'text.{key} is in the record and on no page')
         for path, text in self.out.items():
             if path.endswith('.html'):
