@@ -12,6 +12,8 @@
 /alignment-simulator/*  https://simulators-4lb.pages.dev/alignment/:splat  302
 /music/claudia-bench  /music/  301
 /music/claudia-bench/*  /music/  301
+/notes  https://situation.seansooch.dev/newsletter/  301
+/notes/*  https://situation.seansooch.dev/newsletter/:splat  301
 /monitor  https://situation.seansooch.dev/  301
 /monitor/*  https://situation.seansooch.dev/  301
 /designs/fable/monitor  https://situation.seansooch.dev/  301

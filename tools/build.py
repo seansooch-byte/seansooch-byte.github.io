@@ -3,7 +3,6 @@
 
     python3 tools/build.py            write every edition page
     python3 tools/build.py --lab      write only the Lab course page and sitemap.xml (what a new lesson changes)
-    python3 tools/build.py --notes    write only the Field Notes pages and sitemap.xml (what a day's post changes)
     python3 tools/build.py --check    write nothing; say which pages are not what the builder writes; exit 1 if
                                       any is stale (the home page merely behind the Lab's ledger is not: see verdicts)
 
@@ -24,14 +23,6 @@ Expected behaviour:
     address that is not https, a film that is not under /videos/, a unit id that is not a slug, or two things
     wanting one anchor stops the build with a sentence saying which. A lesson whose slug or date is not what
     it should be is left out, as the Lab's own generator always did.
-  - Field Notes (/notes/) is one post a day, written outside this repo as notes/posts/<day>.json to the contract in
-    notes/FORMAT.md. The builder writes notes/index.html, notes/index.json and notes/<day>/index.html from them, in
-    the notes' own design (/notes/kit/, never the edition's sheet: it is an app, as a lesson is). A
-    post is never trusted and never left out quietly: one that breaks a rule of the format (a typed number, a
-    quotation mark, a dash, an address, a source that is not an id, a key the format does not name) stops the
-    build with a sentence naming the file and every rule it breaks. Every link on a post's page is made here from
-    an id, and every number in a sentence is one of the post's figures, printed beside its source. No other page
-    says anything about the posts, so a day's post changes only those pages and the sitemap.
   - The home page prints only what stays true of the Lab when a lesson is added: the lessons it lists, by unit,
     and how many. Hours and question counts are the course page's to print. So a lesson's own deploy, which
     rewrites only the Lab's pages, leaves a home page that is behind and never wrong.
@@ -51,7 +42,6 @@ import hashlib   # noqa: E402
 import html      # noqa: E402
 import json      # noqa: E402
 import re        # noqa: E402
-import unicodedata  # noqa: E402
 from collections import Counter  # noqa: E402
 from pathlib import Path         # noqa: E402
 
@@ -72,40 +62,6 @@ RESERVED = {'top', 'name', 'work', 'writing', 'guidance', 'films', 'editions', '
             'palette', 'ld', 'probes', 'ch1', 'ch2', 'ch3', 'ch4', 'ch5', 'appa', 'appb', 'indexsec'}
 LAB_PAGES = ('lab/index.html', 'sitemap.xml')    # what a lesson's own deploy rewrites (--lab)
 LEDGER_FED = 'index.html'                        # the one other page that lists lessons: it may be behind the ledger
-NOTES = 'notes'                                  # Field Notes: the folder, and the address /notes/
-SITUATION = 'https://situation.seansooch.dev'    # the only thing a post is written from, and the only site it cites
-NOTE_SCHEMA = 'notes.post/1'
-NOTE_FONTS = 'https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@400..600&family=Bitter:ital,wght@0,400..800;1,400..600&display=swap'
-WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-NOTE_KEYS = {'schema', 'date', 'published', 'model', 'title', 'dek', 'lead', 'notes', 'take', 'sources', 'figures'}
-NOTE_WORDS = (150, 450)
-KEY = re.compile(r'^[a-z][a-z0-9_]*\Z')
-BRACE = re.compile(r'\{([a-z][a-z0-9_]*)\}')
-STORY = re.compile(r'^\d{4}-\d{2}-\d{2}(-[a-z0-9]+)+\Z')
-POST_ID = re.compile(r'^\d{10,20}\Z')
-HANDLE = re.compile(r'^[A-Za-z0-9_]{1,15}\Z')
-FIGURE = re.compile(r'^[+-]?[$]?\d[\d,.:/-]*( ?(%|[KMBT]|x|percent|thousand|million|billion|trillion))?\Z')
-YEAR = re.compile(r'^(19|20)\d\ds?\Z')
-CURRENCY = '$' + ''.join(chr(c) for c in (0xA3, 0xA5, 0x20AC))
-# Letters after digits that make a quantity, not a name: 40pts and 35mph are numbers, 49ers and 4chan are not.
-UNITS = {'mph', 'kph', 'pts', 'min', 'mins', 'sec', 'secs', 'yds', 'lbs', 'pct', 'pc', 'percent', 'mil', 'bil', 'usd', 'eur', 'gbp',
-         'yrs', 'hrs', 'days', 'games', 'wins', 'points', 'yards', 'votes', 'seats', 'views', 'times', 'fold'}
-SCALES = {'K', 'M', 'B', 'T', 'BN', 'MM', 'X'}      # 40K and 5B are numbers; 5G, 3D and 2FA are names
-SCALE_WORDS = {'hundred', 'thousand', 'million', 'billion', 'trillion', 'percent', 'pct', 'bn', 'mn'}      # "Tesla 40 billion" is a sum
-NAMED_NUMBERS = {'9/11', '7-Eleven'}      # names that begin with digits and are not caught by a rule below
-# A capitalised word that is not a name, so the number after it is a count: "About 40 people", not "Game 7".
-NOT_NAMES = set('about around roughly nearly almost over under some only just the a an at in on by with for from to after before and '
-                'but then now still all another up down top plus minus between among of its their his her our that this these those '
-                'more less fewer exactly approximately within when while if as since until per each every both than'.split())
-# A quantity of a drug. The short units are matched as written (mL, IU), so ML engineers and an IU win are not doses.
-DOSE = re.compile(r'(?:\d|\b(?:half|one|two|three|four|five|six|seven|eight|nine|ten|twenty|fifty|hundred)\b)\s*'
-                  r'(?:mg|mcg|[' + chr(0xB5) + chr(0x3BC) + r']g|mL|ml|IU(?! win| loss| game| fans)|mEq|(?i:milligrams?|micrograms?|units?/kg|units? of insulin))'
-                  r'(?![A-Za-z])')
-# An address a reader could follow: a scheme, a www, or a host with a path. A name with a dot in it (Crypto.com Arena)
-# is not one; nothing typed becomes a link in any case, because every string is escaped.
-ADDRESS = re.compile(r'[A-Za-z][A-Za-z0-9+.-]*://|\bwww\.|\b[A-Za-z0-9-]+\.[A-Za-z]{2,}/\S', re.I)
-NOTE_DASHES = ''.join(chr(c) for c in (0x2012, 0x2013, 0x2014, 0x2015, 0x2212))
-NOTE_QUOTES = '"' + ''.join(chr(c) for c in (0x201C, 0x201D, 0x201E, 0xAB, 0xBB, 0x2018, 0x201A, 0x201B, 0x2039, 0x203A))
 MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 WORDS = ('zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen '
          'seventeen eighteen nineteen').split()
@@ -390,255 +346,6 @@ def read_lab(root, only=None):
     return out
 
 
-def note_text(where, s, numbers=True):
-    """What is wrong with one string of a post. Sentences (numbers=True) may not hold a number of their own."""
-    if not isinstance(s, str) or not s.strip():
-        return [f'{where} is not text']
-    bad = []
-    if any(c in s for c in NOTE_DASHES) or '--' in s:
-        bad.append(f'{where} has a dash that is not a hyphen')
-    # A double mark of any kind, a single one that opens (a curly one, or a straight one before a word). An apostrophe is not one.
-    if any(c in s for c in NOTE_QUOTES) or re.search(r"(?:^|[\s(])'(?=[A-Za-z])", s):
-        bad.append(f'{where} has a quotation mark (nothing is quoted)')
-    if ADDRESS.search(s):
-        bad.append(f'{where} has a web address typed into it')
-    if any(0x1F000 <= ord(c) <= 0x1FAFF or ord(c) in (0xFE0F, 0x200D) or unicodedata.category(c) == 'So' for c in s):
-        bad.append(f'{where} has an emoji or a pictograph')
-    if DOSE.search(s):
-        bad.append(f'{where} reads as a dose')
-    if re.search(r'[\x00-\x1f\x7f]', s):
-        bad.append(f'{where} has a line break or a control character')
-    if numbers:
-        for typed in typed_numbers(s):
-            bad.append(f'{where} types the number {typed} (make it a figure and ask for it in braces)')
-        if '{' in BRACE.sub('', s) or '}' in BRACE.sub('', s):
-            bad.append(f'{where} has a brace that is not a figure')
-    return bad
-
-
-def typed_numbers(s):
-    """The numbers a sentence types for itself, which the format refuses: every number is a figure with a source.
-    Not a number: a year (2026, the 1990s); a name that starts with a letter (GPT-5, F-35, COVID-19); a name that
-    starts with digits (49ers, 4chan, 5G, 3D); and a plain version or ordinal straight after a name inside a
-    sentence (Gemini 4, Fable 5.2, Game 7, November 12). Anything else with a digit in it is: 35.7M, 12%, $40B,
-    31-17, ~40%, +12, 12-point, 40-year-old, 40pts, 7th, a count after an ordinary word (about 40 people), and a
-    number before a scale word (Tesla 40 billion). This is a net with holes a careful writer could find (top-10,
-    Lions 31, cut 2000 jobs); the reviewer and the figures list are the rest."""
-    out = []
-    tokens = BRACE.sub('figure', s).split()
-    for i, token in enumerate(tokens):
-        if not re.search(r'\d', token):
-            continue
-        core = re.sub(r'^[^0-9A-Za-z' + re.escape(CURRENCY) + r']+|[^0-9A-Za-z%]+\Z', '', token)
-        core = re.sub("['" + chr(0x2019) + r"]s\Z", '', core)
-        if not core or YEAR.match(core) or core[0].isalpha() or core in NAMED_NUMBERS:
-            continue
-        tail = re.match(r'^\d+([A-Za-z]+)\Z', core)
-        if tail and (len(tail.group(1)) >= 3 and tail.group(1).lower() not in UNITS
-                     or tail.group(1).isupper() and tail.group(1) not in SCALES):
-            continue
-        before = tokens[i - 1] if i else ''
-        after = re.sub(r'[^A-Za-z]+', '', tokens[i + 1]).lower() if i + 1 < len(tokens) else ''
-        named = any(c.isupper() for c in before) and before[-1:].isalnum() and before.lower() not in NOT_NAMES and after not in SCALE_WORDS
-        if re.match(r'^\d+(\.\d+)*\Z', core) and named:
-            continue
-        out.append(core)
-    return out
-
-
-def note_problems(stem, post, desks):
-    """Every rule of notes/FORMAT.md that a post breaks, as sentences. An empty list is a post that can be built.
-    The post is written outside this repo by a program, so nothing about its shape is assumed."""
-    if not isinstance(post, dict):
-        return ['it is not a post (one JSON object)']
-    bad = []
-    extra, missing = sorted(str(k) for k in set(post) - NOTE_KEYS), sorted(NOTE_KEYS - set(post))
-    if extra:
-        bad.append(f"it has a key the format does not name: {', '.join(extra)}")
-    if missing:
-        return bad + [f"it lacks: {', '.join(missing)}"]
-
-    def shaped(where, obj, keys):
-        """Is this an object with exactly these keys? If a key is missing, what reads it is skipped."""
-        if not isinstance(obj, dict):
-            bad.append(f'{where} is not an object')
-            return False
-        more, less = sorted(str(k) for k in set(obj) - keys), sorted(keys - set(obj))
-        if more:
-            bad.append(f"{where} has a key the format does not name: {', '.join(more)}")
-        if less:
-            bad.append(f"{where} lacks: {', '.join(less)}")
-        return not less
-
-    if post['schema'] != NOTE_SCHEMA:
-        bad.append(f'its schema is not {NOTE_SCHEMA}')
-    if not real_day(post['date']) or post['date'] != stem:
-        bad.append('its date is not the day its file is named for')
-    if not real_day(post['published']) or (real_day(post['date']) and post['published'] <= post['date']):
-        bad.append('published is not a real day after the day it covers')
-    bad += note_text('model', post['model'], numbers=False)
-    if isinstance(post['model'], str) and len(post['model']) > 60:
-        bad.append('model is longer than 60 characters')
-    if isinstance(post['title'], str) and not 20 <= len(post['title']) <= 90:
-        bad.append('its title is not 20 to 90 characters')
-    if isinstance(post['dek'], str) and len(post['dek']) > 200:
-        bad.append('its dek is longer than 200 characters')
-    for where in ('title', 'dek'):      # a figure is printed in the margin of the block that asks for it; these have none
-        if isinstance(post[where], str) and BRACE.search(post[where]):
-            bad.append(f'the {where} asks for a figure: figures belong in the lead, a note or the take, beside their source')
-
-    sources = post['sources'] if isinstance(post['sources'], dict) else {}
-    figures = post['figures'] if isinstance(post['figures'], dict) else {}
-    if not isinstance(post['sources'], dict) or not isinstance(post['figures'], dict):
-        bad.append('sources and figures are objects, each entry under a key')
-    for k, src in sources.items():
-        where = f'source {k}'
-        if not KEY.match(str(k)):
-            bad.append(f'{where}: its key is not plain lowercase')
-        if not isinstance(src, dict) or ('story' in src) == ('post' in src):
-            bad.append(f'{where} must be either a story or a post')
-            continue
-        if not shaped(where, src, {'story', 'label'} if 'story' in src else {'post', 'handle', 'label'}):
-            continue
-        if 'story' in src and not (isinstance(src['story'], str) and STORY.match(src['story'])):
-            bad.append(f"{where}: story is not the slug of one of the situation's stories")
-        if 'post' in src and not (isinstance(src['post'], str) and POST_ID.match(src['post'])):
-            bad.append(f'{where}: post is not the id of a post on X')
-        if 'post' in src and not (isinstance(src['handle'], str) and HANDLE.match(src['handle'])):
-            bad.append(f'{where}: handle is not an account name')
-        bad += note_text(f'{where}: label', src['label'], numbers=False)
-        if isinstance(src['label'], str) and len(src['label']) > 90:
-            bad.append(f'{where}: label is longer than 90 characters')
-    values = {}
-    for k, fig in figures.items():
-        where = f'figure {k}'
-        if not KEY.match(str(k)):
-            bad.append(f'{where}: its key is not plain lowercase')
-        if not shaped(where, fig, {'value', 'of', 'source'}):
-            continue
-        if isinstance(fig['value'], str) and FIGURE.match(fig['value']):
-            values[k] = fig['value']
-        else:
-            bad.append(f'{where}: value is not a number as a reader writes one (35.7M, 12%, $40 billion, 31-17)')
-        bad += note_text(f'{where}: of', fig['of'], numbers=False)
-        if isinstance(fig['of'], str) and len(fig['of']) > 60:
-            bad.append(f'{where}: of is longer than 60 characters')
-        if not isinstance(fig['source'], str) or fig['source'] not in sources:
-            bad.append(f"{where} names {fig['source']!r}, which is not a source")
-        if k in values and isinstance(fig['of'], str) and DOSE.search(f"{values[k]} {fig['of']}"):
-            bad.append(f'{where} reads as a dose')
-
-    prose, body, cited = [('title', post['title']), ('dek', post['dek'])], [], []      # (where, sentence); the words counted; every cite
-
-    def cites(where, obj, least):
-        got = obj['cites']
-        if not isinstance(got, list) or not all(isinstance(c, str) for c in got):
-            bad.append(f'{where}: cites is not a list of source keys')
-            return
-        for c in got:
-            if c not in sources:
-                bad.append(f'{where} cites {c!r}, which is not a source')
-        if len(got) < least:
-            bad.append(f'{where} cites nothing')
-        cited.extend(got)
-
-    def paragraphs(where, text, most):
-        if not isinstance(text, list) or not 1 <= len(text) <= most:
-            bad.append(f'{where}: text is not a list of one to {word(most)} paragraphs')
-            return
-        for i, para in enumerate(text):
-            prose.append((f'{where} paragraph {i + 1}', para))
-            body.append(para)
-
-    if shaped('the lead', post['lead'], {'desk', 'head', 'text', 'cites'}):
-        lead = post['lead']
-        if not isinstance(lead['desk'], str) or lead['desk'] not in desks:
-            bad.append(f"the lead names a desk that is not one: {lead['desk']!r}")
-        prose.append(('the lead heading', lead['head']))
-        paragraphs('the lead', lead['text'], 3)
-        cites('the lead', lead, 1)
-    notes = post['notes'] if isinstance(post['notes'], list) else []
-    if not 2 <= len(notes) <= 4:
-        bad.append(f"it has {word(len(notes)) if len(notes) < 20 else 'too many'} notes, not two to four")
-    seen = [post['lead']['desk']] if isinstance(post['lead'], dict) and isinstance(post['lead'].get('desk'), str) else []      # other desks than the lead's
-    for i, note in enumerate(notes[:8]):
-        where = f'note {i + 1}'
-        if not shaped(where, note, {'desk', 'head', 'text', 'cites'}):
-            continue
-        if not isinstance(note['desk'], str) or note['desk'] not in desks:
-            bad.append(f"{where} names a desk that is not one: {note['desk']!r}")
-        elif note['desk'] in seen:
-            bad.append(f"{where} uses the desk {note['desk']} twice")
-        seen.append(note['desk'])
-        prose.append((f'{where} heading', note['head']))
-        prose.append((where, note['text']))
-        body.append(note['text'])
-        if isinstance(note['text'], str) and len(note['text'].split()) > 80:
-            bad.append(f'{where} is longer than 80 words')
-        cites(where, note, 1)
-    if shaped('the take', post['take'], {'text', 'cites'}):
-        paragraphs('the take', post['take']['text'], 2)
-        cites('the take', post['take'], 0)
-
-    asked = set()
-    for where, s in prose:
-        bad += note_text(where, s)
-        if not isinstance(s, str):
-            continue
-        for key in BRACE.findall(s):
-            asked.add(key)
-            if key not in figures:
-                bad.append(f'{where} asks for {{{key}}}, which is not a figure')
-        if not DOSE.search(s) and DOSE.search(BRACE.sub(lambda m: values.get(m.group(1), ''), s)):      # a figure beside a unit
-            bad.append(f'{where} reads as a dose')
-    for k in sources:
-        if k not in cited:
-            bad.append(f'source {k} is cited nowhere')
-    for k in figures:
-        if k not in asked:
-            bad.append(f'figure {k} is asked for nowhere')
-    count = sum(len(s.split()) for s in body if isinstance(s, str))
-    if count > NOTE_WORDS[1]:
-        bad.append(f'it is {count} words: the most is {NOTE_WORDS[1]}')
-    if count < NOTE_WORDS[0]:
-        bad.append(f'it is {count} words: the least is {NOTE_WORDS[0]}')
-    return bad
-
-
-def read_notes(root):
-    """The daily posts, newest first, and the desks they may name. A post that breaks the format stops the build."""
-    folder = root / NOTES
-    desks = {}
-    if (folder / 'desks.json').is_file():
-        listed = json.loads((folder / 'desks.json').read_text(encoding='utf-8'))
-        desks = {d['id']: d['name'] for d in listed if isinstance(d, dict) and ID.match(str(d.get('id', '')))
-                 and isinstance(d.get('name'), str) and d['name'].strip()} if isinstance(listed, list) else {}
-    posts, refused = [], []
-    for f in sorted((folder / 'posts').glob('*.json')) if (folder / 'posts').is_dir() else []:
-        try:
-            post = json.loads(f.read_text(encoding='utf-8'))
-        except ValueError:
-            refused.append(f'{NOTES}/posts/{f.name}: it is not JSON')
-            continue
-        bad = note_problems(f.stem, post, desks)
-        if bad:
-            refused.append(f"{NOTES}/posts/{f.name}: {'; '.join(bad)}")
-            continue
-        # What a sentence of the post becomes: as text, its figures filled in; on a page, escaped, with **bold**, and
-        # each figure marked as one, so a reader sees which numbers were read from a source.
-        values = {k: v['value'] for k, v in post['figures'].items()}
-        post['plain'] = lambda s, values=values: BRACE.sub(lambda m: values[m.group(1)], s)
-        post['say'] = lambda s, values=values: BRACE.sub(lambda m: f'<span class="fig">{esc(values[m.group(1)])}</span>', inline(s))
-        post['desks'] = list(dict.fromkeys([post['lead']['desk']] + [n['desk'] for n in post['notes']]))
-        for src in post['sources'].values():      # every address on a post's page is made here, from an id
-            src['href'] = f"{SITUATION}/story/{src['story']}/" if 'story' in src else f"https://x.com/{src['handle']}/status/{src['post']}"
-        posts.append(post)
-    if refused:
-        raise ValueError('a daily post does not meet notes/FORMAT.md. ' + ' | '.join(refused))
-    posts.sort(key=lambda p: p['date'], reverse=True)
-    return {'desks': desks, 'posts': posts}
-
-
 def load(root=ROOT, only=None):
     record = json.loads((root / 'content' / 'record.json').read_text(encoding='utf-8'))
     essay = json.loads((root / 'content' / 'two-stories.json').read_text(encoding='utf-8'))
@@ -646,7 +353,6 @@ def load(root=ROOT, only=None):
     plates = json.loads(manifest.read_text(encoding='utf-8')) if manifest.is_file() else {}
     validate(record, essay, plates)
     lab = read_lab(root, only)
-    notes = read_notes(root)
     c = record['counts']
     first = record['site']['first_deploy'].split('-')
     counted = record['edition']['counted'].split('-')
@@ -666,9 +372,8 @@ def load(root=ROOT, only=None):
         'first': month(record['site']['first_deploy']), 'now': month(record['edition']['counted']),
         'designer': record['edition']['by'], 'issued': month(record['edition']['issued']), 'name': record['site']['name'],
         'views': word(views), 'views_more': word(max(views - 1, 0)),
-        'note_writer': record['notes']['writer'],
     }
-    return {'root': root, 'record': record, 'essay': essay, 'lab': lab, 'notes': notes, 'plates': plates, 'n': n, 'months': months}
+    return {'root': root, 'record': record, 'essay': essay, 'lab': lab, 'plates': plates, 'n': n, 'months': months}
 
 
 # ---------------------------------------------------------------- shared parts
@@ -704,8 +409,7 @@ def head(site, title, description, path, kind='website', more='', moved=()):
 
 def bar(site, here=None, voices=False):
     ed, theme = site['record']['edition'], site['record']['theme']
-    links = [('work', '/#work', 'Work'), ('lab', '/lab/', 'The Lab'), ('notes', f'/{NOTES}/', site['record']['notes']['name']),
-             ('writing', '/#writing', 'Writing'),
+    links = [('work', '/#work', 'Work'), ('lab', '/lab/', 'The Lab'), ('writing', '/#writing', 'Writing'),
              ('films', '/#films', 'Films'), ('record', '/record/', 'Record')]
     nav = ''.join(f'<a href="{h}"{" aria-current=" + chr(34) + "page" + chr(34) if key == here else ""}>{esc(label)}</a>' for key, h, label in links)
     return f'''<header class="topbar">
@@ -823,7 +527,7 @@ def mast(site):
       <h1 id="name">{name}</h1>
       <p class="roles">{esc(r['site']['roles'])}</p>
       {said(site, r['prose']['lede'], 'lede')}
-      <nav class="lbl mast-nav" aria-label="Sections"><a href="#work">Work</a><a href="/lab/">The Lab</a><a href="/{NOTES}/">{esc(r['notes']['name'])}</a><a href="#writing">Writing</a><a href="#films">Films</a><a href="/record/">Record</a></nav>
+      <nav class="lbl mast-nav" aria-label="Sections"><a href="#work">Work</a><a href="/lab/">The Lab</a><a href="#writing">Writing</a><a href="#films">Films</a><a href="/record/">Record</a></nav>
       <p class="lbl mast-ed"><span>{esc(ed['vol'])}, {esc(ed['name'])} · {month(ed['issued'])}</span><span>Designed by {esc(ed['by'])}</span><a href="/record/#editions">{word(len([v for v in r['volumes'] if v['status'] == 'retired'])).capitalize()} earlier volumes are kept</a></p>
     </div>
     {directory(site)}
@@ -1272,8 +976,7 @@ def index_entries(site):
                     ('Counted and measured (record)', '/record/#record', 'lines files questions round trip readiness status'),
                     ('How it was made, and how it is checked', '/record/#about', 'purpose scope method verification'),
                     ('App editions (table)', '/record/#editions', 'retired editions redesign'),
-                    ('The Lab, the course page', '/lab/', 'course lessons units progress'),
-                    (f"{r['notes']['name']}, the daily post", f'/{NOTES}/', r['notes']['kw'])]:
+                    ('The Lab, the course page', '/lab/', 'course lessons units progress')]:
         out.append({'t': t, 'h': h, 'k': k, 's': 'Sections'})
     return sorted(out, key=lambda e: re.sub(r'^(the|a) ', '', e['t'].lower()))
 
@@ -1580,230 +1283,6 @@ def render_lab(site):
 '''
 
 
-# ---------------------------------------------------------------- Field Notes: the daily post
-#
-# Field Notes is an app with a design of its own ("Daybook"), as the Lab's lessons are: its pages load only
-# /notes/kit/, never the edition's sheet or scripts, so a new edition of the site never has to touch them. A post is a
-# leaf of a day calendar; the list of posts is the calendar; what a sentence rests on sits in the margin beside it.
-
-def note_head(site, title, description, path, kind='website'):
-    root = site['root']
-    return f'''<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{esc(title)}</title>
-<meta name="description" content="{esc(description)}">
-<link rel="canonical" href="{ORIGIN}{path}">
-<meta property="og:title" content="{esc(title)}">
-<meta property="og:description" content="{esc(description)}">
-<meta property="og:type" content="{kind}">
-<meta property="og:url" content="{ORIGIN}{path}">
-<meta name="twitter:card" content="summary">
-<meta name="theme-color" content="#f4f0e7" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#111316" media="(prefers-color-scheme: dark)">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="{NOTE_FONTS.replace('&', '&amp;')}">
-<link rel="stylesheet" href="/{NOTES}/kit/notes.css?v={stamp(root, f'/{NOTES}/kit/notes.css')}">
-<script src="/{NOTES}/kit/notes.js?v={stamp(root, f'/{NOTES}/kit/notes.js')}" defer></script>
-</head>'''
-
-
-def note_top(site, index=False):
-    r = site['record']
-    here = ' aria-current="page"' if index else ''
-    return f'''<header class="top">
-  <a class="name" href="/{NOTES}/"{here}>{esc(r['notes']['name'])}</a>
-  <span class="by">a post a day, by {esc(r['notes']['writer'])}</span>
-  <a class="site" href="/">{esc(r['site']['name'])}</a>
-</header>'''
-
-
-def leaf_date(iso):
-    """The face of a day-calendar leaf: weekday, day of the month, month and year."""
-    d = datetime.date.fromisoformat(iso)
-    return (f'<span class="date" aria-hidden="true"><span class="dow">{WEEKDAYS[d.weekday()][:3]}</span>'
-            f'<span class="dom">{d.day}</span><span class="my">{MONTHS[d.month - 1][:3]} {d.year}</span></span>')
-
-
-def long_day(iso):
-    d = datetime.date.fromisoformat(iso)
-    return f'{WEEKDAYS[d.weekday()]} {d.day} {MONTHS[d.month - 1]} {d.year}'
-
-
-def desk_names(site, post):
-    return [site['notes']['desks'][d] for d in post['desks']]
-
-
-def note_foot(site, inner=''):
-    r = site['record']
-    return f'''<footer class="colophon">{inner}
-  <p class="fine">{told(site, 'notes_disclosure')}</p>
-  <p class="k">Read from <a href="{SITUATION}/" target="_blank" rel="noopener">{esc(r['notes']['source'])}</a> · <a href="/{NOTES}/">Every post</a> · <a href="/">{esc(r['site']['name'])}</a></p>
-</footer>'''
-
-
-def render_notes_index(site):
-    r, notes = site['record'], site['notes']
-    name, posts = r['notes']['name'], notes['posts']
-    by_day = {p['date']: p for p in posts}
-    months = {}
-    for p in posts:
-        months.setdefault(p['date'][:7], []).append(p)
-    sections = []
-    for m, group in months.items():
-        year, mon = int(m[:4]), int(m[5:7])
-        first = datetime.date(year, mon, 1)
-        length = ((datetime.date(year + mon // 12, mon % 12 + 1, 1)) - first).days
-        cells = ''.join(f'<li class="wd">{w[0]}</li>' for w in WEEKDAYS) + '<li class="pad"></li>' * first.weekday()
-        for n in range(1, length + 1):
-            p = by_day.get(f'{m}-{n:02d}')
-            cells += (f'''<li class="day has" data-desks="{' '.join(p['desks'])}"><a href="/{NOTES}/{p['date']}/" title="{esc(p['plain'](p['title']))}">{n}</a></li>'''
-                      if p else f'<li class="day">{n}</li>')
-        rows = ''.join(f'''<li class="row" data-desks="{' '.join(p['desks'])}">
-        <a href="/{NOTES}/{p['date']}/">
-          <time class="when" datetime="{p['date']}">{WEEKDAYS[datetime.date.fromisoformat(p['date']).weekday()][:3]} {int(p['date'][8:])}</time>
-          <span class="t">{p['say'](p['title'])}</span>
-          <span class="d">{p['say'](p['dek'])}</span>
-          <span class="desks">{esc(' · '.join(desk_names(site, p)))}</span>
-        </a>
-      </li>''' for p in group)
-        sections.append(f'''<section class="month" id="m-{m}" aria-labelledby="m-{m}-h" data-notes-month>
-    <div class="month-cal">
-      <h2 id="m-{m}-h">{month(m)}</h2>
-      <p class="k count">{len(group)} post{'' if len(group) == 1 else 's'}</p>
-      <ol class="cal" aria-label="{month(m)}, by day">{cells}</ol>
-    </div>
-    <ol class="rows">
-      {rows}
-    </ol>
-  </section>''')
-    used = Counter(d for p in posts for d in p['desks'])
-    buttons = ''.join(f'<button type="button" data-desk="{d}" aria-pressed="false">{esc(n)} <span class="count">{used[d]}</span></button>'
-                      for d, n in notes['desks'].items() if used[d])
-    picker = f'''<nav class="filter" aria-label="Posts by desk" data-notes-filter hidden>
-    <button type="button" data-desk="" aria-pressed="true">Every desk <span class="count">{len(posts)}</span></button>{buttons}
-  </nav>''' if len(posts) > 1 else ''
-    latest = ''
-    if posts:
-        p = posts[0]
-        latest = f'''<a class="leaf latest" href="/{NOTES}/{p['date']}/">
-    {leaf_date(p['date'])}
-    <span class="what">
-      <span class="k">The latest · {long_day(p['date'])}</span>
-      <span class="t">{p['say'](p['title'])}</span>
-      <span class="d">{p['say'](p['dek'])}</span>
-      <span class="desks">{esc(' · '.join(desk_names(site, p)))}</span>
-    </span>
-  </a>'''
-    listing = ''.join(sections) if posts else f'<p class="none">{told(site, "notes_empty")}</p>'
-    return f'''{note_head(site, name + ' · ' + r['site']['name'], fill(site, r['text']['notes_lede']), f'/{NOTES}/')}
-<body>
-<a class="skip" href="#posts">Skip to the posts</a>
-{note_top(site, index=True)}
-<main id="top">
-  <section class="intro">
-    <h1>{esc(name)}</h1>
-    <p class="lede">{told(site, 'notes_lede')}</p>
-    <p class="fine">{told(site, 'notes_rules')}</p>
-  </section>
-  {latest}
-  {picker}
-  <div id="posts">
-  {listing}
-  </div>
-</main>
-{note_foot(site)}
-</body>
-</html>
-'''
-
-
-def render_note(site, post, newer, older):
-    r = site['record']
-    name, say, desks, source = r['notes']['name'], post['say'], site['notes']['desks'], esc(r['notes']['source'])
-
-    def margin(what, texts, keys):
-        """What a block rests on, set beside it: each figure its sentences ask for, then each source it cites."""
-        asked = list(dict.fromkeys(k for t in texts for k in BRACE.findall(t)))
-        figs = ''.join(f'<p class="figure"><b>{esc(post["figures"][k]["value"])}</b> {esc(post["figures"][k]["of"])}</p>' for k in asked)
-        also = [post['figures'][k]['source'] for k in asked]
-        links = ''.join(
-            f'''<a class="source" href="{esc(post['sources'][k]['href'])}" target="_blank" rel="noopener">{esc(post['sources'][k]['label'])}
-          <span class="kind">{'A story on ' + source if 'story' in post['sources'][k] else 'A post on X by @' + esc(post['sources'][k]['handle'])}</span></a>'''
-            for k in dict.fromkeys(list(keys) + also))
-        return f'<aside class="margin" aria-label="What {what} rests on">{figs}{links}</aside>' if figs or links else ''
-
-    lead, take = post['lead'], post['take']
-    blocks = [f'''<section class="block lead" id="lead" aria-labelledby="lead-h">
-      <div class="said">
-        <p class="k">The lead · {esc(desks[lead['desk']])}</p>
-        <h2 id="lead-h">{say(lead['head'])}</h2>
-        {''.join(f'<p>{say(p)}</p>' for p in lead['text'])}
-      </div>
-      {margin('the lead', [lead['head']] + lead['text'], lead['cites'])}
-    </section>''']
-    for i, n in enumerate(post['notes']):
-        blocks.append(f'''<section class="block" id="note-{i + 1}" aria-labelledby="note-{i + 1}-h">
-      <div class="said">
-        <p class="k">{esc(desks[n['desk']])}</p>
-        <h3 id="note-{i + 1}-h">{say(n['head'])}</h3>
-        <p>{say(n['text'])}</p>
-      </div>
-      {margin('this note', [n['head'], n['text']], n['cites'])}
-    </section>''')
-    blocks.append(f'''<section class="block read" id="read" aria-labelledby="read-h">
-      <div class="said">
-        <h2 class="k" id="read-h">The read</h2>
-        {''.join(f'<p>{say(p)}</p>' for p in take['text'])}
-      </div>
-      {margin('the read', take['text'], take['cites'])}
-    </section>''')
-    turn = ''.join(x for x in [
-        f'<a href="/{NOTES}/{older["date"]}/">Earlier: {day(older["date"])}</a>' if older else '',
-        f'<a href="/{NOTES}/{newer["date"]}/">Later: {day(newer["date"])}</a>' if newer else ''] if x)
-    turn = f'\n  <nav class="turn" aria-label="Other days">{turn}</nav>' if turn else ''
-    facts = f'''
-  <dl class="facts">
-    <div><dt>Covers</dt><dd>{day(post['date'])}</dd></div>
-    <div><dt>Published</dt><dd>{day(post['published'])}</dd></div>
-    <div><dt>Written by</dt><dd>{esc(r['notes']['writer'])}, a program ({esc(post['model'])})</dd></div>
-    <div><dt>Desks</dt><dd>{esc(', '.join(desk_names(site, post)))}</dd></div>
-  </dl>{turn}'''
-    title = f"{post['plain'](post['title'])} · {name} · {r['site']['name']}"
-    return f'''{note_head(site, title, post['plain'](post['dek']), f'/{NOTES}/{post["date"]}/', 'article')}
-<body>
-<a class="skip" href="#lead">Skip to the post</a>
-{note_top(site)}
-<main id="top">
-  <article class="leaf">
-    <header class="leaf-head">
-      {leaf_date(post['date'])}
-      <div class="what">
-        <p class="k">The day of <time datetime="{post['date']}">{long_day(post['date'])}</time></p>
-        <h1>{say(post['title'])}</h1>
-        <p class="lede">{say(post['dek'])}</p>
-      </div>
-    </header>
-    {''.join(blocks)}
-  </article>
-</main>
-{note_foot(site, facts)}
-</body>
-</html>
-'''
-
-
-def render_notes_feed(site):
-    """The posts as data, for anything that wants to list them: what each is called and where it is, never its words."""
-    posts = [{'date': p['date'], 'published': p['published'], 'title': p['plain'](p['title']), 'dek': p['plain'](p['dek']),
-              'desks': p['desks'], 'url': f"{ORIGIN}/{NOTES}/{p['date']}/"} for p in site['notes']['posts']]
-    # No "<" as itself, as in the pages' own data blocks: whatever reads this may set it into a page.
-    return json.dumps({'schema': 'notes.index/1', 'posts': posts}, ensure_ascii=False, indent=1).replace('<', chr(92) + 'u003c') + '\n'
-
-
 # ---------------------------------------------------------------- not found, sitemap
 
 def render_404(site):
@@ -1844,7 +1323,7 @@ def render_sitemap(site):
     moves is fetched again soon. Only days that are written down are used, never the day of the build: the
     sitemap is the same bytes from the same record. The home page's day leaves the ledger out, so a lesson
     shipping moves the Lab's dates and not the front page's, as with the page itself (see verdicts)."""
-    r, ed, lab, posts = site['record'], site['record']['edition'], site['lab'], site['notes']['posts']
+    r, ed, lab = site['record'], site['record']['edition'], site['lab']
     g = r.get('guidance') or {}
     home = [ed['issued'], ed['counted'], g.get('published')] + [d for t in g.get('timeline', []) for d in (t.get('published'), t.get('checked'))]
     home += [e.get('date') for w in r['works'] for e in w.get('editions', [])]
@@ -1852,7 +1331,6 @@ def render_sitemap(site):
                for a in lab['apps']]
     rows = [('/', max(d for d in home if real_day(d))), ('/record/', max(ed['issued'], ed['counted'])), ('/two-stories/', ed['issued'])] + [(p, None) for p in ELSEWHERE]
     rows += [('/lab/', max((d for _, d in lessons), default=None))] + [(f'/lab/{s}/', d) for s, d in lessons]
-    rows += [(f'/{NOTES}/', max((p['date'] for p in posts), default=None))] + [(f'/{NOTES}/{p["date"]}/', p['date']) for p in posts]
     body = '\n'.join(f'  <url><loc>{ORIGIN}{p}</loc>' + (f'<lastmod>{d}</lastmod>' if d else '') + '</url>' for p, d in rows)
     return f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{body}\n</urlset>\n'
 
@@ -1867,12 +1345,7 @@ def pages(site):
         'lab/index.html': render_lab(site),
         '404.html': render_404(site),
         'sitemap.xml': render_sitemap(site),
-        f'{NOTES}/index.html': render_notes_index(site),
-        f'{NOTES}/index.json': render_notes_feed(site),
     }
-    posts = site['notes']['posts']      # newest first
-    for i, post in enumerate(posts):
-        out[f"{NOTES}/{post['date']}/index.html"] = render_note(site, post, posts[i - 1] if i else None, posts[i + 1] if i + 1 < len(posts) else None)
     # No two elements of a page share an id. A film or a unit named after one of the page's own parts (its index
     # data, say) would otherwise be found in that part's place by the page's script.
     for p, text in out.items():
@@ -1898,7 +1371,6 @@ def verdicts(site, out):
       'behind'   the home page, when lessons shipping is all that has happened since it was built (see behind). A
                  lesson's own deploy rewrites only the Lab's pages, and the reader's browser adds the new lessons to
                  this one, so it is correct as it stands: a note, not a fault;
-      'notes'    one of the Field Notes pages: a day's post rewrites those (--notes), and the sitemap with them;
       'edition'  anything else: the record, the design or the builder has changed since, a lesson the home page lists
                  was renamed or withdrawn, or a page was edited by hand or came from somewhere else. Only a full build
                  puts that right, so the Lab's build cannot pass any of it."""
@@ -1906,56 +1378,36 @@ def verdicts(site, out):
     for p, text in out.items():
         on_disk = (site['root'] / p).read_text(encoding='utf-8') if (site['root'] / p).is_file() else ''
         if on_disk != text:
-            found[p] = ('notes' if p.startswith(NOTES + '/') else 'lab' if p in LAB_PAGES
-                        else 'behind' if p == LEDGER_FED and behind(site, on_disk) else 'edition')
-    # The sitemap lists lessons and posts. When a post is what moved it, the notes build is what puts it right.
-    if 'sitemap.xml' in found and 'lab/index.html' not in found and 'notes' in found.values():
-        found['sitemap.xml'] = 'notes'
+            found[p] = 'lab' if p in LAB_PAGES else 'behind' if p == LEDGER_FED and behind(site, on_disk) else 'edition'
     return found
 
 
-def left_behind(site, every):
-    """A post's page with no post: the post was taken down and the builder, which never deletes, left its page."""
-    folder = site['root'] / NOTES
-    return [f'{NOTES}/{d.name}/index.html' for d in sorted(folder.iterdir()) if d.is_dir() and (d / 'index.html').is_file()
-            and f'{NOTES}/{d.name}/index.html' not in every] if folder.is_dir() else []
-
-
 def main(argv, root=ROOT):
-    unknown = [a for a in argv if a not in ('--lab', '--notes', '--check')]
+    unknown = [a for a in argv if a not in ('--lab', '--check')]
     if unknown:
-        print(f"usage: build.py [--lab] [--notes] [--check]   (unknown: {' '.join(unknown)})", file=sys.stderr)
+        print(f"usage: build.py [--lab] [--check]   (unknown: {' '.join(unknown)})", file=sys.stderr)
         return 2
     site = load(root)
-    every = out = pages(site)
-    if '--lab' in argv or '--notes' in argv:
-        keep = set(LAB_PAGES if '--lab' in argv else ())
-        keep |= {p for p in every if p.startswith(NOTES + '/')} | {'sitemap.xml'} if '--notes' in argv else set()
-        out = {p: every[p] for p in every if p in keep}
+    out = pages(site)
+    if '--lab' in argv:
+        out = {p: out[p] for p in LAB_PAGES}
     found = verdicts(site, out)
-    orphans = left_behind(site, every)
     if '--check' in argv:
         says = {'lab': "stale: {} (not what the builder writes from the Lab's ledger)",
-                'notes': 'stale: {} (not what the builder writes from notes/posts/)',
                 'edition': 'stale: {} (the record, the design or the builder has changed since it was written, a lesson it lists was renamed or withdrawn, or it was edited by hand)',
                 'behind': "behind: {} (correct; a reader's browser adds the lessons shipped since, and the next full build catches it up)"}
         for p, why in found.items():
             print(says[why].format(p))
-        for p in orphans:
-            print(f'stale: {p} (no post in notes/posts/ has this day: delete the page)')
         stale = {why for why in found.values() if why != 'behind'}
         if stale:
-            modes = ' '.join(f'--{m}' for m in ('lab', 'notes') if m in stale)
-            print(f'run: python3 tools/build.py {modes}, then commit' if stale <= {'lab', 'notes'} else 'run: python3 tools/build.py, then commit')
-        return 1 if stale or orphans else 0
+            print('run: python3 tools/build.py --lab, then commit' if stale == {'lab'} else 'run: python3 tools/build.py, then commit')
+        return 1 if stale else 0
     for p in found:
         (root / p).parent.mkdir(parents=True, exist_ok=True)
         (root / p).write_text(out[p], encoding='utf-8')
-    for p in orphans:
-        print(f'left behind: {p} has no post in notes/posts/ (delete the page)')
     lab = site['lab']
     print(f"built {len(out)} pages ({len(found)} changed): {len(site['record']['works'])} works, {lab['n_lessons']} lessons in {lab['n_units']} units, "
-          f"{len(site['notes']['posts'])} posts, {len(site['plates'])} plates")
+          f"{len(site['plates'])} plates")
     return 0
 
 

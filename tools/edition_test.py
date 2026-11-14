@@ -108,9 +108,6 @@ class Base(unittest.TestCase):
         cls.site = build.load(ROOT)
         cls.rec = cls.site['record']
         cls.out = build.pages(cls.site)
-        # The pages that wear the edition: its bar, its index, its theme, its share image. Field Notes is an app with a
-        # design of its own (/notes/kit/), as a lesson is, so its pages are held to the hygiene and not to the chrome.
-        cls.worn = {p: t for p, t in cls.out.items() if not p.startswith('notes/')}
         cls.home = cls.out['index.html']
         cls.doc = Doc(cls.home)
         cls.flat = squash(cls.home)
@@ -345,7 +342,7 @@ class Census(Base):
         self.assertIn(f'<span data-ix-n>{printed}</span> entries', self.record, 'the index says how many entries it prints')
         ids = {'/': set(self.doc.attr('id')), '/record/': set(self.rdoc.attr('id'))}
         printed = [html.unescape(h) for h in re.findall(r'<a class="ix" href="([^"]*)"', self.record)]
-        for path, text in self.worn.items():
+        for path, text in self.out.items():
             if not path.endswith('.html'):
                 continue
             palette = json.loads(Doc(text).data['index-data'])
@@ -357,7 +354,7 @@ class Census(Base):
                     self.assertIn(m.group(2), ids[m.group(1)], f'{path}: the index sends a reader to {h}, which lands nowhere')
 
     def test_the_index_a_reader_searches_leaves_lessons_to_the_ledger(self):
-        for path, text in self.worn.items():
+        for path, text in self.out.items():
             if path.endswith('.html'):
                 palette = json.loads(Doc(text).data['index-data'])
                 self.assertFalse([e['t'] for e in palette if re.match(r'^/lab/[^/]+/$', e['h'])], f'{path}: a lesson is typed into the searched index')
@@ -368,11 +365,6 @@ class Census(Base):
     def test_every_sentence_of_the_record_is_set(self):
         everything = squash(''.join(text for path, text in self.out.items() if path.endswith('.html')))
         for key, sentence in self.rec['text'].items():
-            # notes_empty is the section's empty state, true only while no post is published. A published post
-            # replaces it. The no-post case is still held by test_with_no_post_the_section_says_so.
-            if key == 'notes_empty' and self.site['notes']['posts']:
-                self.assertNotIn(squash(sentence), everything, 'a published post still says none has been')
-                continue
             self.assertIn(squash(build.inline(build.fill(self.site, sentence))), everything, f'text.{key} is in the record and on no page')
         for path, text in self.out.items():
             if path.endswith('.html'):
@@ -558,7 +550,7 @@ class Hygiene(Base):
         boot = (ROOT / 'v4' / 'boot.js').read_text(encoding='utf-8')
         self.assertIn("getAttribute('data-moved')", boot)
         self.assertIn("location.replace('/record/#'", boot)
-        for path, text in self.worn.items():
+        for path, text in self.out.items():
             if path.endswith('.html'):
                 self.assertNotRegex(text, r'href="/#(editions|record|index|about)"', f'{path} still links an anchor that moved')
                 if path != 'record/index.html':
@@ -605,12 +597,10 @@ class Hygiene(Base):
         sheet from another edition, shows here before it shows on a screen."""
         site_css, lab_css = (ROOT / 'v4' / 'site.css').read_text(encoding='utf-8'), (ROOT / 'v4' / 'lab.css').read_text(encoding='utf-8')
         scripts = (ROOT / 'v4' / 'site.js').read_text(encoding='utf-8') + (ROOT / 'lab' / 'kit' / 'course.js').read_text(encoding='utf-8')
-        # Field Notes is an app with a design of its own: its pages load its kit and nothing of the edition's.
-        notes_kit = (ROOT / 'notes' / 'kit' / 'notes.css').read_text(encoding='utf-8') + (ROOT / 'notes' / 'kit' / 'notes.js').read_text(encoding='utf-8')
         for path, text in self.out.items():
             if not path.endswith('.html'):
                 continue
-            known = notes_kit if path.startswith('notes/') else site_css + scripts + (lab_css if path == 'lab/index.html' else '')
+            known = site_css + scripts + (lab_css if path == 'lab/index.html' else '')
             for cls in sorted({c for a in Doc(text).attr('class') for c in a.split()}):
                 self.assertRegex(known, r'\.' + re.escape(cls) + r'(?![\w-])', f'{path}: nothing styles or reads the class "{cls}"')
 
@@ -632,7 +622,7 @@ class Hygiene(Base):
         card = self.site['plates'].get('card')
         self.assertTrue(card, 'no share image in the manifest: node tools/plates.mjs card')
         self.assertEqual(jpeg_size((ROOT / 'plates' / 'card.jpg').read_bytes()), (card['w'], card['h']))
-        for path, text in self.worn.items():
+        for path, text in self.out.items():
             if path.endswith('.html'):
                 meta = {a.get('property'): a.get('content') for tag, a in Doc(text).els if tag == 'meta' and a.get('property')}
                 self.assertEqual(meta.get('og:image', '').partition('?v=')[0], 'https://seansooch.dev/plates/card.jpg', path)
@@ -671,7 +661,6 @@ class Hygiene(Base):
 
     def test_outside_links_are_named_in_the_record_and_safe(self):
         allowed = {'seansooch.dev', 'fonts.googleapis.com', 'fonts.gstatic.com', 'schema.org'}
-        allowed.add('x.com')      # Field Notes: a post's page links the posts it cites, at addresses the builder makes from ids
         for w in self.rec['works']:
             allowed.add(re.sub(r'^https://([^/]+).*$', r'\1', w['url']))
             for e in w['editions']:
@@ -783,7 +772,7 @@ class Theme(Base):
     """The USA theme: a fourth appearance a reader can post from the bar of every page."""
 
     def test_every_page_offers_it_in_the_bar_and_in_the_colophon(self):
-        for path, text in self.worn.items():
+        for path, text in self.out.items():
             if not path.endswith('.html'):
                 continue
             flips = re.findall(r'<button[^>]*data-theme-flip="usa"[^>]*>(.*?)</button>', text, flags=re.S)
@@ -795,7 +784,7 @@ class Theme(Base):
         held = set(tracked(ROOT))
         photos = self.rec['theme']['photos']
         self.assertEqual([p['id'] for p in photos], ['f22', 'f35'])
-        for path, text in self.worn.items():
+        for path, text in self.out.items():
             if not path.endswith('.html'):
                 continue
             imgs = {a['src'].split('?')[0]: a for t, a in Doc(text).els if t == 'img' and a.get('src', '').startswith('/v4/usa/')}
@@ -913,10 +902,8 @@ class Tree(Base):
 
     def test_the_sitemap_lists_the_edition_and_nothing_retired(self):
         sm = self.out['sitemap.xml']
-        for path in ('/', '/record/', '/two-stories/', '/lab/', '/notes/'):
+        for path in ('/', '/record/', '/two-stories/', '/lab/'):
             self.assertIn(f'<loc>https://seansooch.dev{path}</loc>', sm)
-        for p in self.site['notes']['posts']:
-            self.assertIn(f"<loc>https://seansooch.dev/notes/{p['date']}/</loc>", sm)
         for a in self.site['lab']['apps']:
             self.assertIn(f"<loc>https://seansooch.dev/lab/{a['slug']}/</loc>", sm)
         self.assertNotIn('/designs/', sm)
@@ -933,9 +920,8 @@ class Tree(Base):
                    + [e['date'] for w in r['works'] for e in w.get('editions', [])])
         lessons = {a['slug']: max([a['date']] + [v['date'] for v in a.get('revisions', []) if isinstance(v, dict) and re.fullmatch(r'\d{4}-\d{2}-\d{2}', str(v.get('date')))])
                    for a in self.site['lab']['apps']}
-        posts = [p['date'] for p in self.site['notes']['posts']]
-        want = {'/': home, '/record/': max(ed['issued'], ed['counted']), '/two-stories/': ed['issued'], '/lab/': max(lessons.values()), '/notes/': max(posts)}
-        want |= {f'/lab/{s}/': d for s, d in lessons.items()} | {f'/notes/{d}/': d for d in posts}
+        want = {'/': home, '/record/': max(ed['issued'], ed['counted']), '/two-stories/': ed['issued'], '/lab/': max(lessons.values())}
+        want |= {f'/lab/{s}/': d for s, d in lessons.items()}
         self.assertEqual({p: d for p, d in got.items() if d}, want)
         self.assertEqual(home, '2026-11-14', 'the home page is dated by the newest edition of a work it shows')
         self.assertEqual(sm.count('<changefreq>'), 0, 'Google ignores changefreq and priority; lastmod is the signal')
@@ -946,6 +932,10 @@ class Tree(Base):
         archive = next(v['href'] for v in self.rec['volumes'] if v['vol'] == 'Vol. 03')
         for view in ('fable', 'opus', 'composer', 'grok'):
             self.assertIn([f'/designs/{view}/*', f'{archive}designs/{view}/:splat', '301'], rules)
+        # Field Notes moved to the situation as its Newsletter on 2026-11-14: every address it had answers there, day for day.
+        self.assertIn(['/notes', 'https://situation.seansooch.dev/newsletter/', '301'], rules)
+        self.assertIn(['/notes/*', 'https://situation.seansooch.dev/newsletter/:splat', '301'], rules)
+        self.assertFalse((ROOT / 'notes').exists(), 'nothing is served under /notes/ here any more')
         self.assertLessEqual(sum(1 for r in rules if '*' in r[0] or ':' in r[0]), 100, 'Pages allows 100 dynamic redirects')
         self.assertLessEqual(len(rules), 2000)
 
@@ -1425,356 +1415,6 @@ class Hostile(unittest.TestCase):
         for path, text in build.pages(site).items():
             self.assertNotIn('<i>x</i>', text, path)
             self.assertNotIn('<svg onload', text, path)
-
-
-class Notes(Base):
-    """Field Notes (/notes/): one post a day, written outside this repo as notes/posts/<day>.json and never trusted.
-    These tests build in a copy of the tree, with a post that is made up here."""
-
-    copy, edit, run_build = Ledger.tree, Ledger.edit, Ledger.run_build
-    DAY = '2026-11-12'
-
-    def tree(self):
-        """A copy of the repo with no post in it, built: whatever posts the real tree holds by now, these tests start
-        from none, so a real post on the made up day, or beside it, cannot change what they find."""
-        tmp = self.copy()
-        folder = tmp / 'notes' / 'posts'
-        if folder.is_symlink():      # the copy links what it only reads: a post written through the link would land in the real tree
-            folder.unlink()
-        elif folder.is_dir():
-            shutil.rmtree(folder)
-        folder.mkdir()
-        for page in (tmp / 'notes').glob('*/index.html'):      # the pages of the real posts, which the copy holds as files
-            shutil.rmtree(page.parent)
-        self.assertEqual(self.run_build(tmp, '--notes')[0], 0)
-        self.assertEqual(self.run_build(tmp, '--check'), (0, ''), 'CONTROL: the copy with no post is as the builder builds it')
-        return tmp
-
-    def post(self):
-        return {
-            'schema': 'notes.post/1', 'date': self.DAY, 'published': '2026-11-13', 'model': 'Test Model 5',
-            'title': 'A made up day for the tests to read', 'dek': 'One sentence that says what the day was about.',
-            'lead': {'desk': 'business', 'head': 'The lead heading',
-                     'text': ['The first paragraph of the lead, about GPT-5 and the F-35 in 2026. ' + 'Filler words go here. ' * 20,
-                              'The second paragraph says the post drew {views} views.'],
-                     'cites': ['merger', 'viral']},
-            'notes': [
-                {'desk': 'ai', 'head': 'The AI heading', 'text': 'A note about the AI desk. ' + 'More filler here. ' * 10, 'cites': ['merger']},
-                {'desk': 'sports', 'head': 'The sports heading', 'text': 'A note about the sports desk. ' + 'More filler here. ' * 10, 'cites': ['viral']},
-            ],
-            'take': {'text': ['What the day adds up to, in **one** paragraph. ' + 'Closing filler. ' * 10], 'cites': []},
-            'sources': {
-                'merger': {'story': '2026-11-12-a-made-up-story', 'label': 'The made up story'},
-                'viral': {'post': '2120640219871384044', 'handle': 'Some_Account', 'label': 'The made up post'},
-            },
-            'figures': {'views': {'value': '35.7M', 'of': 'views on the post', 'source': 'viral'}},
-        }
-
-    def put(self, tmp, post, name=None):
-        folder = tmp / 'notes' / 'posts'
-        self.assertFalse(folder.is_symlink(), 'a post written here would land in the real tree')
-        for old in folder.glob('*.json'):
-            old.unlink()
-        (folder / f'{name or post["date"]}.json').write_text(json.dumps(post, ensure_ascii=False), encoding='utf-8')
-
-    def built(self, post=None):
-        tmp = self.tree()
-        self.put(tmp, post or self.post())
-        return tmp, build.pages(build.load(tmp))
-
-    def test_the_copy_these_tests_build_in_is_not_the_real_tree(self):
-        tmp = self.tree()
-        self.put(tmp, self.post())
-        self.assertFalse((ROOT / 'notes' / 'posts' / f'{self.DAY}.json').is_file() and 'made up' in
-                         (ROOT / 'notes' / 'posts' / f'{self.DAY}.json').read_text(encoding='utf-8'), 'the made up post reached the real tree')
-
-    def test_a_post_reaches_its_page_the_index_the_feed_and_the_sitemap(self):
-        post = self.post()
-        tmp, out = self.built(post)
-        page = out[f'notes/{self.DAY}/index.html']
-        words = Doc(page).words
-        for said in (post['title'], post['dek'], post['lead']['head'], 'The second paragraph says the post drew 35.7M views.',
-                     post['notes'][0]['head'], post['notes'][1]['text'].strip(), 'What the day adds up to, in one paragraph.',
-                     'The made up story', 'views on the post', 'Test Model 5', '12 Nov 2026', '13 Nov 2026', 'Business', 'AI', 'Sports'):
-            self.assertIn(norm(said), words, f'the post page does not say: {said}')
-        self.assertIn('<b>one</b>', page)
-        hrefs = Doc(page).attr('href', 'a')
-        self.assertIn('https://situation.seansooch.dev/story/2026-11-12-a-made-up-story/', hrefs)
-        self.assertIn('https://x.com/Some_Account/status/2120640219871384044', hrefs)
-        index = out['notes/index.html']
-        self.assertIn(f'/notes/{self.DAY}/', Doc(index).attr('href', 'a'))
-        self.assertIn(post['title'], Doc(index).words)
-        feed = json.loads(out['notes/index.json'])
-        self.assertEqual([(p['date'], p['title'], p['url'], p['desks']) for p in feed['posts']],
-                         [(self.DAY, post['title'], f'https://seansooch.dev/notes/{self.DAY}/', ['business', 'ai', 'sports'])])
-        self.assertIn(f'<loc>https://seansooch.dev/notes/{self.DAY}/</loc>', out['sitemap.xml'])
-        self.assertIn('<loc>https://seansooch.dev/notes/</loc>', out['sitemap.xml'])
-
-    def test_every_page_links_the_section_and_the_index_finds_it(self):
-        for path, text in self.out.items():
-            if path.endswith('.html'):
-                self.assertIn('/notes/', Doc(text).attr('href', 'a'), f'{path} has no link to the notes')
-        self.assertIn('/notes/', [e['h'] for e in build.index_entries(self.site)])
-
-    def test_a_days_post_changes_only_the_notes_pages_and_the_sitemap(self):
-        tmp = self.tree()
-        before = build.pages(build.load(tmp))
-        self.assertIn('notes/index.html', before, 'CONTROL: the section is built with no post in it')
-        self.put(tmp, self.post())
-        out = build.pages(build.load(tmp))
-        changed = sorted(p for p in out if out[p] != before.get(p))
-        self.assertEqual(changed, sorted(['notes/index.html', 'notes/index.json', f'notes/{self.DAY}/index.html', 'sitemap.xml']))
-
-    def test_the_check_a_deploy_runs_is_walked_through_a_post(self):
-        tmp = self.tree()
-        self.assertEqual(self.run_build(tmp, '--check'), (0, ''), 'CONTROL: the copy starts as built')
-        self.put(tmp, self.post())
-        code, said = self.run_build(tmp, '--check')
-        self.assertEqual(code, 1)
-        for line in ('stale: notes/index.html', f'stale: notes/{self.DAY}/index.html', 'stale: sitemap.xml', 'run: python3 tools/build.py --notes, then commit'):
-            self.assertIn(line, said)
-        self.assertNotIn('index.html (the record', said, 'a post made an edition page stale')
-        home = (tmp / 'index.html').read_bytes()
-        self.assertEqual(self.run_build(tmp, '--notes')[0], 0)
-        self.assertEqual((tmp / 'index.html').read_bytes(), home, 'a post rebuilt the home page')
-        self.assertEqual(self.run_build(tmp, '--check'), (0, ''), 'the notes build did not leave the tree built')
-        # A post taken down leaves its page behind: the builder never deletes, so the check has to say so.
-        (tmp / 'notes' / 'posts' / f'{self.DAY}.json').unlink()
-        self.run_build(tmp, '--notes')
-        code, said = self.run_build(tmp, '--check')
-        self.assertEqual(code, 1)
-        self.assertIn(f'stale: notes/{self.DAY}/index.html (no post in notes/posts/ has this day: delete the page)', said)
-
-    def test_with_no_post_the_section_says_so(self):
-        tmp = self.tree()
-        site = build.load(tmp)
-        out = build.pages(site)
-        self.assertEqual([p for p in out if p.startswith('notes/')], ['notes/index.html', 'notes/index.json'])
-        self.assertIn(norm(site['record']['text']['notes_empty']), Doc(out['notes/index.html']).words)
-
-    def test_a_post_that_breaks_a_rule_stops_the_build(self):
-        em, en, lq, rq = chr(0x2014), chr(0x2013), chr(0x201C), chr(0x201D)
-
-        def lead(s):
-            return lambda p: p['lead']['text'].append(s)
-
-        def drop_note(p):
-            p['notes'].pop()
-            p['lead']['cites'] = ['merger', 'viral']
-
-        broken = {
-            'an em dash': (lead(f'One thing {em} then another.'), 'dash'),
-            'an en dash': (lambda p: p.update(title=f'A made up day {en} for the tests'), 'dash'),
-            'a double hyphen': (lead('One thing -- then another.'), 'dash'),
-            'a quotation': (lead(f'He said {lq}never{rq} and left.'), 'quotation'),
-            'a straight quotation': (lambda p: p['notes'][0].update(text=p['notes'][0]['text'] + ' He said "never".'), 'quotation'),
-            'a typed count': (lead('It drew 35.7M views.'), '35.7M'),
-            'a typed share': (lead('It rose 12% on the day.'), '12%'),
-            'a typed score': (lead('They won 31-17 at home.'), '31-17'),
-            'a typed sum': (lambda p: p['take']['text'].append('The deal is worth $40B.'), '$40B'),
-            'a number behind a sign': (lead('It rose (~40%) on the day.'), 'the number 40% ('),
-            'a number with a plus': (lead('They are now +12 on the year.'), 'the number 12 ('),
-            'a number joined to a word': (lead('They hold a 12-point lead.'), 'the number 12-point ('),
-            'an age': (lead('The 40-year-old said so.'), 'the number 40-year-old ('),
-            'a number joined to a unit': (lead('He threw 98mph all night.'), 'the number 98mph ('),
-            'an ordinal': (lead('It is their 7th win.'), 'the number 7th ('),
-            'a count after an ordinary word': (lead('There were roughly 40 people.'), 'the number 40 ('),
-            'a count that opens a sentence': (lead('It ended. About 40 people stayed.'), 'the number 40 ('),
-            'a count after a price': (lead('Shares of Tesla $40 lower.'), 'the number $40 ('),
-            'a share after a name': (lead('It left Tesla 40% lower.'), 'the number 40% ('),
-            'a figure in the title': (lambda p: (p.update(title='A made up day that drew {views} views'), p['lead'].update(text=p['lead']['text'][:1])), 'the title asks for a figure'),
-            'a dose in words': (lambda p: (p['figures'].update(dose={'value': '500', 'of': 'what was given', 'source': 'viral'}),
-                                           p['lead']['text'].append('They gave {dose} Milligrams at once.')), 'reads as a dose'),
-            'a typed address': (lead('Read it at https://example.com/x now.'), 'address'),
-            'an address with no scheme': (lead('Read it at example.xyz/page now.'), 'address'),
-            'a short link': (lead('Read it at bit.ly/abc now.'), 'address'),
-            'an address with another scheme': (lead('Fetch it from ftp://files.example/x now.'), 'address'),
-            'a single quotation': (lead("He said 'never' and left."), 'quotation'),
-            'a curly single quotation': (lead('He said ' + chr(0x2018) + 'never' + chr(0x2019) + ' and left.'), 'quotation'),
-            'a star': (lead('Big day ' + chr(0x2B50)), 'emoji'),
-            'an hourglass': (lead('Big day ' + chr(0x23F3)), 'emoji'),
-            'a sum after a name': (lead('It cost Tesla 40 billion in a day.'), 'the number 40 ('),
-            'a share joined to its word': (lead('It rose 12percent on the day.'), 'the number 12percent ('),
-            'a dose in a label': (lambda p: p['sources']['merger'].update(label='Semaglutide 2.4 mg weekly'), 'reads as a dose'),
-            'a dose with its number in words': (lead('They gave five mg at once.'), 'reads as a dose'),
-            'a dose in micrograms': (lambda p: (p['figures'].update(dose={'value': '50', 'of': 'what was given', 'source': 'viral'}),
-                                                p['lead']['text'].append('They gave {dose} ' + chr(0xB5) + 'g at once.')), 'reads as a dose'),
-            'a dose of insulin': (lambda p: (p['figures'].update(dose={'value': '10', 'of': 'what was given', 'source': 'viral'}),
-                                             p['lead']['text'].append('They gave {dose} units of insulin at once.')), 'reads as a dose'),
-            'an emoji': (lead('Big day ' + chr(0x1F680)), 'emoji'),
-            'a key the format does not name': (lambda p: p.update(context='what the writer was thinking'), 'context'),
-            'a source key the format does not name': (lambda p: p['sources']['merger'].update(url='https://example.com'), 'url'),
-            'a desk that is not one': (lambda p: p['lead'].update(desk='gossip'), 'gossip'),
-            'a desk twice': (lambda p: p['notes'][1].update(desk='ai'), 'twice'),
-            "a note on the lead's desk": (lambda p: p['notes'][1].update(desk='business'), 'twice'),
-            'one note': (drop_note, 'two to four'),
-            'five notes': (lambda p: p['notes'].extend({'desk': d, 'head': 'More', 'text': 'A short note.', 'cites': ['merger']} for d in ('tech', 'music', 'gaming')), 'two to four'),
-            'a cite with no source': (lambda p: p['lead']['cites'].append('ghost'), 'ghost'),
-            'a source nothing cites': (lambda p: p['sources'].update(spare={'story': '2026-11-12-spare', 'label': 'Spare'}), 'spare'),
-            'a lead that cites nothing': (lambda p: (p['lead'].update(cites=[]), p['notes'][0]['cites'].append('viral')), 'lead'),
-            'a figure nothing asks for': (lambda p: p['figures'].update(extra={'value': '9', 'of': 'things', 'source': 'viral'}), 'extra'),
-            'a brace with no figure': (lead('It drew {reposts} reposts.'), 'reposts'),
-            'a figure with no source': (lambda p: p['figures']['views'].update(source='ghost'), 'ghost'),
-            'a figure that is not a number': (lambda p: p['figures']['views'].update(value='a great many'), 'value'),
-            'a day that is not the file': (lambda p: p.update(date='2026-11-11'), 'file'),
-            'published before its day': (lambda p: p.update(published='2026-11-12'), 'published'),
-            'a day that does not exist': (lambda p: p.update(published='2026-11-31'), 'published'),
-            'a story that is not a slug': (lambda p: p['sources']['merger'].update(story='../../etc/passwd'), 'story'),
-            'a post id that is not one': (lambda p: p['sources']['viral'].update(post='12 OR 1=1'), 'post'),
-            'a handle that is not one': (lambda p: p['sources']['viral'].update(handle='some/account'), 'handle'),
-            'a source that is both': (lambda p: p['sources']['viral'].update(story='2026-11-12-both'), 'either'),
-            'a dose': (lambda p: (p['figures'].update(dose={'value': '500', 'of': 'what was given', 'source': 'viral'}), p['lead']['text'].append('They gave {dose} mg at once.')), 'reads as a dose'),
-            'too many words': (lead('Padding words. ' * 200), '450'),
-            'too few words': (lambda p: (p['lead'].update(text=['Short.']), p['take'].update(text=['Short.']), p['figures'].clear(),
-                                         [n.update(text='Short.') for n in p['notes']]), '150'),
-            'a title too long': (lambda p: p.update(title='A very long title ' * 8), 'title'),
-            'a schema that is not this one': (lambda p: p.update(schema='notes.post/2'), 'schema'),
-            'a paragraph that is not text': (lambda p: p['lead'].update(text=[{'html': '<b>x</b>'}]), 'lead'),
-        }
-        tmp = self.tree()
-        self.put(tmp, self.post())
-        self.assertIn(f'notes/{self.DAY}/index.html', build.pages(build.load(tmp)), 'CONTROL: the unbroken post is built')
-        for what, (change, names) in broken.items():
-            with self.subTest(what):
-                post = self.post()
-                change(post)
-                self.put(tmp, post, name=self.DAY)
-                with self.assertRaises(ValueError) as stop:
-                    build.load(tmp)
-                self.assertIn(f'notes/posts/{self.DAY}.json', str(stop.exception))
-                self.assertIn(names, str(stop.exception), f'{what}: the build stopped without naming it')
-
-    def test_a_name_with_digits_in_it_is_not_a_typed_number(self):
-        """The other side of the number rule: what a sentence may hold. Each of these is built."""
-        desks = build.read_notes(self.tree())['desks']
-        self.assertIn('business', desks, 'CONTROL: the desks were read')
-        for said in ('It runs on GPT-5 and the F-35 flies.', 'This was COVID-19 again in the 2020s.', 'Google shipped Gemini 4 today.',
-                     'It was built with Claude Fable 5.2 this week.', 'The Lions won Game 7 at home.', 'It happened on November 12 in Detroit.',
-                     'The 49ers and the 76ers both won.', 'It spread on 4chan first.', 'The carriers sell 5G and the film is in 3D.',
-                     'It was a big year (2026).', "It was 2026's largest deal.", 'Gemini 4 arrives today.', 'Game 7 is tonight.',
-                     'They met at 7-Eleven, years after 9/11.', 'It was at Crypto.com Arena, said Character.AI.',
-                     "It was the team's best year, and the players' too.", 'The ML team at IU shipped it.'):
-            with self.subTest(said):
-                post = self.post()
-                post['take']['text'] = [post['take']['text'][0] + ' ' + said]
-                self.assertEqual(build.note_problems(self.DAY, post, desks), [])
-
-    def test_a_figure_is_a_number_as_a_reader_writes_one(self):
-        desks = build.read_notes(self.tree())['desks']
-        for value, of in (('35.7M', 'views'), ('12%', 'of the vote'), ('$40 billion', 'the price'), ('31-17', 'the score'), ('-3.2%', 'the fall'),
-                          ('+4', 'the swing'), ('$1.2T', 'the value'), ('3x', 'the rise'), ('12', 'ML models released'), ('3', 'IU wins this year')):
-            with self.subTest(value):
-                post = self.post()
-                post['figures']['views'].update(value=value, of=of)
-                self.assertEqual(build.note_problems(self.DAY, post, desks), [])
-        for value in ('a lot', '', 'about 40', '40 or so', '<b>4</b>', '4; drop'):
-            with self.subTest(value):
-                post = self.post()
-                post['figures']['views'].update(value=value)
-                self.assertTrue(any('value is not a number' in b for b in build.note_problems(self.DAY, post, desks)), value)
-
-    def test_a_file_that_is_not_a_post_stops_the_build(self):
-        tmp = self.tree()
-        self.put(tmp, self.post())
-        for text in ('not json', '[]', '"a string"', 'null'):
-            with self.subTest(text):
-                (tmp / 'notes' / 'posts' / f'{self.DAY}.json').write_text(text, encoding='utf-8')
-                with self.assertRaises(ValueError):
-                    build.load(tmp)
-
-    def test_a_post_cannot_become_markup_or_type_an_address(self):
-        post = self.post()
-        post['lead']['head'] = '<i>x</i> heading'
-        post['sources']['merger']['label'] = "'><svg onload=1> label"
-        post['dek'] = 'A dek with <script>alert(1)</script> in it.'
-        tmp, out = self.built(post)
-        ours = {'https://situation.seansooch.dev/story/2026-11-12-a-made-up-story/', 'https://x.com/Some_Account/status/2120640219871384044'}
-        for path, text in out.items():
-            self.assertNotIn('<i>x</i>', text, path)
-            self.assertNotIn('<svg onload', text, path)
-            self.assertNotIn('<script>alert', text, path)
-        page = Doc(out[f'notes/{self.DAY}/index.html'])
-        outside = {h for h in page.attr('href', 'a') if h.startswith('http') and 'x.com' in h or '/story/' in h}
-        self.assertEqual(outside, ours, 'the post page links an address the builder did not make from an id')
-        for t, a in page.els:
-            if t == 'a' and a.get('href', '').startswith('https://x.com'):
-                self.assertIn('noopener', a.get('rel', ''))
-
-    def test_the_post_pages_keep_the_editions_hygiene(self):
-        tmp, out = self.built()
-        for path in ('notes/index.html', f'notes/{self.DAY}/index.html'):
-            text = out[path]
-            d = Doc(text)
-            self.assertNotIn(EM, text, path)
-            ids = [a['id'] for _t, a in d.els if 'id' in a]
-            self.assertEqual(len(ids), len(set(ids)), f'{path}: an id twice')
-            for h in d.attr('href', 'a'):
-                if h.startswith('#'):
-                    self.assertIn(h[1:], ids, f'{path}: {h} lands nowhere')
-            for t, a in d.els:
-                self.assertNotIn('style', a, f'{path}: inline style on <{t}>')
-                if t == 'script' and 'src' not in a:
-                    self.assertIn(a.get('type'), ('application/json', 'application/ld+json'), f'{path}: inline script')
-            asked = re.findall(r'"(/notes/kit/[a-z.]+)\?v=([0-9a-f]+)"', text)
-            self.assertEqual(sorted(ref for ref, _ in asked), ['/notes/kit/notes.css', '/notes/kit/notes.js'], path)
-            for ref, stamp in asked:
-                self.assertEqual(stamp, hashlib.md5((ROOT / ref.lstrip('/')).read_bytes()).hexdigest()[:10], f'{path}: {ref} by a stale stamp')
-            self.assertNotIn('/v4/', text, f"{path} loads the edition's sheet or scripts: the notes have a design of their own")
-            known = ''.join((ROOT / f).read_text(encoding='utf-8') for f in ('notes/kit/notes.css', 'notes/kit/notes.js'))
-            for cls in sorted({c for a in d.attr('class') for c in a.split()}):
-                self.assertRegex(known, r'\.' + re.escape(cls) + r'(?![\w-])', f'{path}: nothing styles or reads the class "{cls}"')
-
-    def situation(self, ledger, stories=('2026-11-12-a-made-up-story',)):
-        """A folder shaped like the situation's repo: its ledger of checked posts, and its stories."""
-        tmp = Path(tempfile.mkdtemp(prefix='situation-test-'))
-        self.addCleanup(shutil.rmtree, tmp)
-        (tmp / 'verified').mkdir()
-        (tmp / 'verified' / 'posts.json').write_text(json.dumps(ledger), encoding='utf-8')
-        for slug in stories:
-            (tmp / 'moments' / slug[:4] / slug[5:7]).mkdir(parents=True, exist_ok=True)
-            (tmp / 'moments' / slug[:4] / slug[5:7] / f'{slug}.json').write_text('{}', encoding='utf-8')
-        return tmp
-
-    def check(self, tmp, *argv):
-        import notes_check
-        with contextlib.redirect_stdout(io.StringIO()) as said:
-            code = notes_check.main(list(argv), tmp)
-        return code, said.getvalue()
-
-    def test_the_writers_check_holds_a_post_to_the_situations_ledger(self):
-        tmp = self.tree()
-        self.put(tmp, self.post())
-        ok = {'2120640219871384044': {'result': 'ok', 'handle': 'some_account'}}
-        code, said = self.check(tmp, '--situation', str(self.situation(ok)))
-        self.assertEqual(code, 0, f'CONTROL: a post whose sources the ledger holds passes ({said})')
-        for what, ledger, stories, names in (
-                ('a post the ledger does not hold', {}, ('2026-11-12-a-made-up-story',), '2120640219871384044'),
-                ('a post X did not confirm', {'2120640219871384044': {'result': 'missing', 'handle': 'some_account'}}, ('2026-11-12-a-made-up-story',), 'missing'),
-                ('a post under another handle', {'2120640219871384044': {'result': 'ok', 'handle': 'someone_else'}}, ('2026-11-12-a-made-up-story',), 'someone_else'),
-                ('a story that is not there', ok, (), '2026-11-12-a-made-up-story')):
-            with self.subTest(what):
-                code, said = self.check(tmp, '--situation', str(self.situation(ledger, stories)))
-                self.assertEqual(code, 1, what)
-                self.assertIn(names, said, what)
-
-    def test_the_writers_check_lists_names_no_source_accounts_for(self):
-        post = self.post()
-        post['take']['text'][0] += ' Ask Barnaby Quillfeather about the made up story.'
-        tmp = self.tree()
-        self.put(tmp, post)
-        code, said = self.check(tmp)
-        self.assertEqual(code, 0, 'a name to read is a note for the reviewer, not a refusal')
-        self.assertIn('Barnaby Quillfeather', said)
-        self.assertNotIn('The made up story', said.split('names')[-1], 'a name a source label holds was listed')
-
-    def test_the_writers_check_reports_a_broken_post_and_does_not_crash(self):
-        post = self.post()
-        post['lead']['text'].append('It drew 35.7M views.')
-        tmp = self.tree()
-        self.put(tmp, post)
-        code, said = self.check(tmp)
-        self.assertEqual(code, 1)
-        self.assertIn('35.7M', said)
 
 
 if __name__ == '__main__':
