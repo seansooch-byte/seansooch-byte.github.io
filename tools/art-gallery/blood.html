@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg">
+<title>Blood primitives gallery (tools, not linked)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/lab/kit/kit.css">
+<style>
+  body{margin:0;padding:16px;background:#fff;font-family:'Space Grotesk',sans-serif;color:#171916}
+  h1{font-size:22px;margin:0 0 4px}
+  h2{font-size:18px;margin:24px 0 8px;border-top:1px solid #babeb3;padding-top:10px}
+  p.note{margin:0 0 8px;color:#53584d;font-size:14px;max-width:1100px}
+  .row{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
+  figure{margin:0}
+  figcaption{font-size:12px;color:#53584d;margin-top:3px;max-width:480px}
+  .visual{display:inline-block}
+  .lx-pic svg{display:block;width:100%;height:auto}
+</style>
+</head>
+<body>
+<h1>The Lab: blood primitives (lab/kit/art/blood.js)</h1>
+<p class="note">Red cells, red-cell streams and hemoglobin at 480 px, at the phone width (375 px) and small (200 px), with their parameters swept. Not linked; tools/ is never shipped. ?only=&lt;section id&gt;[,id] shows chosen sections; ?w=480,375 chooses widths.</p>
+<div id="out"></div>
+<script type="module">
+import { P, scopeArt, placeLabels, tube, magnifier, leader } from '/lab/kit/art/core.js';
+import { rbc, rbcStream, hemoglobin, hbGeometry } from '/lab/kit/art/blood.js';
+
+const q = new URLSearchParams(location.search), only = q.get('only');
+if (only) document.querySelectorAll('h1, body > p.note').forEach(e => e.remove());
+const WIDTHS = (q.get('w') || '480,375,200').split(',').map(Number);
+const out = document.getElementById('out');
+const section = (id, title, note) => {
+  if (only && !only.split(',').includes(id)) return null;
+  out.insertAdjacentHTML('beforeend', `<h2 id="${id}">${title}</h2>${note ? `<p class="note">${note}</p>` : ''}<div class="row"></div>`);
+  return out.lastElementChild;
+};
+function fig(row, name, h, body, label = name, widths = WIDTHS) {
+  if (!row) return;
+  for (const w of widths) row.insertAdjacentHTML('beforeend', `<figure data-cell="${name}-w${w}"><div class="visual"><div class="lx-pic" style="width:${w}px">${scopeArt(`<svg viewBox="0 0 480 ${h}" role="img" aria-label="${label}">${body}</svg>`)}</div></div><figcaption>${label}, ${w} px</figcaption></figure>`);
+}
+const T = (x, y, s, cls = 'sm b', anchor = 'middle') => `<text x="${x}" y="${y}" text-anchor="${anchor}" class="${cls}">${s}</text>`;
+const labelled = (items, column, opts = {}) => placeLabels(items, { column, ...opts }).map(l => l.leader + l.svg).join('');
+
+/* A. red cell views and oxygen */
+{
+  const row = section('views', 'rbc: face, oblique and edge views; oxygen 1, 0.5, 0', 'One measured biconcave surface projected three ways. Oxygen tints from the deoxygenated cell colour (darker, bluer red) to the oxygenated one; never blue.');
+  let b = '';
+  [1, 0.5, 0].forEach((ox, j) => ['face', 'oblique', 'edge'].forEach((v, i) => { b += rbc({ x: 92 + i * 148, y: 62 + j * 112, r: 44, view: v, ox, key: `v${i}${j}` }); }));
+  b += T(92, 384, 'face') + T(240, 384, 'oblique') + T(388, 384, 'edge');
+  fig(row, 'rbc-views', 400, b, 'red cells in three views at three oxygen levels');
+}
+/* B. red cells at their default size */
+{
+  const row = section('small', 'rbc at r 7 (the default) and r 12: oxygen swept 0 to 1', 'The size a lesson scatters through a vessel or a tissue. At 200 px the fine highlights drop out (ax-d2).');
+  let b = '';
+  for (let i = 0; i < 9; i++) for (const [j, v] of ['face', 'oblique', 'edge'].entries()) b += rbc({ x: 40 + i * 50, y: 30 + j * 30, r: 7, view: v, ox: i / 8 });
+  for (let i = 0; i < 7; i++) b += rbc({ x: 50 + i * 63, y: 150, r: 12, view: ['face', 'oblique', 'edge'][i % 3], ox: i / 6, rot: i * 25 });
+  fig(row, 'rbc-small', 180, b, 'small red cells, oxygen rising left to right');
+}
+/* C. the step-2 picture: a cell cut away, hemoglobin enlarged */
+{
+  const row = section('cutaway', 'rbc cutaway with a hemoglobin lens (the O2 lesson, step 2)', 'A face-on cell, r 105, with its lower-right quarter cut away to show the packed hemoglobin (symbol size, 12.6). A core magnifier enlarges one molecule (s 1.55, two seats full). Labels laid out by placeLabels.');
+  const cell = rbc({ x: 122, y: 168, r: 105, cutaway: true });
+  const hb = hemoglobin({ x: 362, y: 168, s: 1.25, seats: ['o2', 'o2', 'empty', 'empty'] });
+  const lens = magnifier({ from: { x: cell.at.cut[0], y: cell.at.cut[1], r: 13 }, to: { x: 362, y: 168, r: 74 }, body: hb.svg });
+  let b = cell.svg + lens.svg;
+  b += T(122, 300, 'red blood cell', 'sm b') + T(122, 320, 'no nucleus', 'xs muted');
+  b += T(362, 36, 'hemoglobin', 'sm b') + leader([362, 44], [hb.at.alpha[0] + 4, hb.at.alpha[1] - 12]);
+  b += T(362, 282, 'oxygen seat (heme)', 'sm b') + leader([362, 268], [hb.at.seat2[0] + 2, hb.at.seat2[1] - 2], { elbow: false });
+  b += T(362, 302, 'two full, two empty', 'xs');
+  fig(row, 'rbc-cutaway', 330, b, 'red cell cut away, hemoglobin enlarged');
+}
+/* D. streams */
+{
+  const row = section('stream', 'rbcStream in a capillary: lung (deoxygenated in, oxygenated out), phase 0, 0.33, 0.66 and 1', 'Each cell travels the whole path once per unit of phase, so phase 1 draws the same frame as phase 0; cells fade in and out at the ends.');
+  let b = '';
+  [0, 0.33, 0.66, 1].forEach((ph, k) => {
+    const y = 40 + k * 64, d = `M20 ${y} C140 ${y - 26} 330 ${y + 26} 460 ${y}`;
+    b += tube(d, { wall: 'capillary', lumen: 'plasma', w: 30, lumenW: 26, highlight: false }).svg;
+    b += rbcStream({ d, n: 7, phase: ph, ox: [0, 1], r: 9 }).svg;
+    b += T(472, y + 26, `phase ${ph}`, 'xs muted', 'end');
+  });
+  fig(row, 'rbc-stream', 290, b, 'red cells crossing a lung capillary at four phases');
+}
+/* E. hemoglobin, labelled */
+{
+  const row = section('hb-labels', 'hemoglobin at s 2.9 with its parts named', 'Two alpha (lighter) and two beta (deeper) globins, alphas on one diagonal; four hemes with iron; O2 bound bent, CO straight; T state with salt-bridge ticks and 2,3-BPG in the central cavity.');
+  const S = 2.9, X = 150, Y = 200, seats = ['empty', 'co', 'empty', 'o2'];
+  const h = hemoglobin({ x: X, y: Y, s: S, r: 0, bpg: 1, seats });
+  const g = hbGeometry(0), M = ([x, y]) => [X + x * S, Y + y * S], hm = g.hemes[3], tg = [-hm.out[1], hm.out[0]];
+  // targets on the right half of the molecule, so every leader is short and none crosses another
+  const items = [
+    { text: 'carbon monoxide', sub: 'bound straight', at: M(g.ligand('co', 1).atoms[1][1]) },
+    { text: 'beta globin', at: M([g.subunits[1].c[0] + 6, g.subunits[1].c[1] + 4]) },
+    { text: '2,3-BPG', sub: 'T state only', at: M([g.cavity.c[0] + 3.5, g.cavity.c[1] + 1.5]) },
+    { text: 'alpha globin', at: M([g.subunits[3].c[0] + 3, g.subunits[3].c[1] - 6]) },
+    { text: 'heme with iron', at: M([hm.c[0] - tg[0] * 4.6, hm.c[1] - tg[1] * 4.6]) },
+    { text: 'oxygen', sub: 'bound bent', at: M(g.ligand('o2', 3).atoms[1][1]) },
+  ];
+  fig(row, 'hb-labelled', 400, h.svg + labelled(items, 290, { top: 40, bottom: 380 }), 'hemoglobin tetramer, T state, parts named');
+}
+/* F. T to R */
+{
+  const row = section('hb-tr', 'hemoglobin T to R: r 0, 0.25, 0.5, 0.75, 1 (s 1.05); seats filling with r', 'The dimers turn about 15 degrees against each other, the betas close the central cavity, the irons drop into the heme plane, the salt bridges break.');
+  let b = '';
+  [0, 0.25, 0.5, 0.75, 1].forEach((r, i) => { b += hemoglobin({ x: 52 + i * 94, y: 56, s: 1.05, r, seats: [0, 1, 2, 3].map(k => k < Math.round(r * 4) ? 'o2' : 'empty') }); b += T(52 + i * 94, 118, `r ${r}`, 'xs muted'); });
+  b += hemoglobin({ x: 110, y: 200, s: 1.3, r: 0, bpg: 1 }) + T(110, 268, 'T, with BPG', 'xs');
+  b += hemoglobin({ x: 370, y: 200, s: 1.3, r: 1, seats: ['o2', 'o2', 'o2', 'o2'] }) + T(370, 268, 'R, four O2', 'xs');
+  b += hemoglobin({ x: 240, y: 200, s: 1.3, r: 0.5, seats: ['co', 'co', 'o2', 'o2'] }) + T(240, 268, 'two CO, two O2', 'xs');
+  fig(row, 'hb-tr', 284, b, 'hemoglobin from tense to relaxed');
+}
+/* G. rows */
+{
+  const row = section('hb-rows', 'rows at the lesson\'s sizes (32 and 30 units), with missing molecules', 'The O2 lesson\'s seat rows: six molecules filling one at a time, carbon monoxide on half the seats, two molecules missing (dashed outline).');
+  const rowOf = (y, list, size) => list.map((seats, m) => seats === 'missing' ? hemoglobin({ x: 230 + m * 40, y, s: size / 80, missing: true }) : hemoglobin({ x: 230 + m * 40, y, s: size / 80, seats, r: seats.filter(x => x === 'o2').length / 4 })).join('');
+  const F = n => [0, 1, 2, 3].map(i => i < n ? 'o2' : 'empty');
+  let b = T(16, 34, 'leaving the lungs', 'xs b', 'start') + rowOf(28, [F(4), F(4), F(4), F(4), F(4), F(3)], 32);
+  b += T(16, 82, 'leaving the tissues', 'xs b', 'start') + rowOf(76, [F(4), F(4), F(4), F(3), F(0), F(0)], 32);
+  b += T(16, 130, 'carbon monoxide', 'xs b', 'start') + rowOf(124, [['co', 'co', 'o2', 'o2'], ['co', 'co', 'o2', 'o2'], ['co', 'co', 'o2', 'o2'], ['co', 'co', 'o2', 'empty'], ['co', 'co', 'empty', 'empty'], ['co', 'co', 'empty', 'empty']], 30);
+  b += T(16, 178, 'anemia', 'xs b', 'start') + rowOf(172, [F(4), F(4), F(4), 'missing', 'missing', 'missing'], 30);
+  b += T(16, 226, 'symbol, 14 units', 'xs b', 'start') + Array.from({ length: 10 }, (_, m) => hemoglobin({ x: 230 + m * 22, y: 220, s: 14 / 80 })).join('');
+  fig(row, 'hb-rows', 246, b, 'rows of hemoglobin at row and symbol size');
+}
+/* H. a row inside red cells (leaving the lungs vs leaving the tissues) */
+{
+  const row = section('hb-capsule', 'cells carrying rows: oxygenated and deoxygenated tint behind the molecules', 'A lesson can sit a row inside a faint edge-on cell of the matching colour (opacity .4 on the cell, set by the lesson).');
+  let b = '';
+  [[1, 'leaving the lungs', 4], [0.2, 'leaving the tissues', 3]].forEach(([ox, w, n], j) => {
+    const y = 60 + j * 110;
+    b += `<g opacity=".4">${rbc({ x: 300, y, r: 150, view: 'edge', ox })}</g>`;
+    for (let m = 0; m < 6; m++) b += hemoglobin({ x: 200 + m * 40, y, s: 0.4, seats: [0, 1, 2, 3].map(k => k < (m < n + 2 ? 4 : 0) ? 'o2' : 'empty') });
+    b += T(16, y + 6, w, 'xs b', 'start');
+  });
+  fig(row, 'hb-capsule', 230, b, 'rows of hemoglobin inside red cells');
+}
+</script>
+</body>
+</html>

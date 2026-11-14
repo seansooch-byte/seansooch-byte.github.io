@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg">
+<title>Heart primitives gallery (tools, not linked)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/lab/kit/kit.css">
+<style>
+  body{margin:0;padding:16px;background:#fff;font-family:'Space Grotesk',sans-serif;color:#171916}
+  h1{font-size:22px;margin:0 0 4px}
+  h2{font-size:18px;margin:24px 0 8px;border-top:1px solid #babeb3;padding-top:10px}
+  p.note{margin:0 0 8px;color:#53584d;font-size:14px;max-width:1100px}
+  .row{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
+  figure{margin:0}
+  figcaption{font-size:12px;color:#53584d;margin-top:3px;max-width:480px}
+  .visual{display:inline-block}
+  .lx-pic svg{display:block;width:100%;height:auto}
+</style>
+</head>
+<body>
+<h1>The Lab: heart primitives (lab/kit/art/heart.js)</h1>
+<p class="note">Every heart primitive at 480 px, at the phone width (375 px) and small, with its parameters swept. Not linked; tools/ is never shipped. ?only=&lt;section id&gt; shows one section.</p>
+<div id="out"></div>
+<script type="module">
+import { P, scopeArt, placeLabels, labelBudget } from '/lab/kit/art/core.js';
+import { leftHeart, heartSection, heartConduction, heartExterior, heartIcon, lvGeometry } from '/lab/kit/art/heart.js';
+import { Simulator, DEFAULTS } from '/lab/pressure-volume-loop/model.js';
+
+const only = new URLSearchParams(location.search).get('only');
+const out = document.getElementById('out');
+let n = 0;
+const section = (id, title, note) => {
+  if (only && !only.split(',').includes(id)) return null;
+  out.insertAdjacentHTML('beforeend', `<h2 id="${id}">${title}</h2>${note ? `<p class="note">${note}</p>` : ''}<div class="row"></div>`);
+  return out.lastElementChild;
+};
+// One figure: an SVG string scoped per picture, shown at each width. vb: an optional viewBox crop (a zoom).
+function fig(row, name, h, body, widths, label = name, vb = `0 0 480 ${h}`) {
+  if (!row) return;
+  for (const w of widths) {
+    row.insertAdjacentHTML('beforeend', `<figure data-cell="${name}-w${w}"><div class="visual"><div class="lx-pic" style="width:${w}px">${scopeArt(`<svg viewBox="${vb}" role="img" aria-label="${label}">${body}</svg>`)}</div></div><figcaption>${label}, ${w} px</figcaption></figure>`);
+    n++;
+  }
+}
+const COND = { base: {}, fluids: { Pla: 8 }, constrict: { Rs: 2 }, inotrope: { Ees: 5 }, venodil: { Pla: 2 }, beta: { HR: 56, Ees: 2.8 }, hfref: { Ees: 1.3, Pla: 9, HR: 85 } };
+const BEAT = Object.fromEntries(Object.entries(COND).map(([k, s]) => [k, new Simulator({ ...DEFAULTS, ...s }).runToSteady(300)]));
+const EDV = BEAT.base.EDV;
+
+/* ---------- A. the mitral apparatus, close up ---------- */
+{
+  const row = section('mitral', 'Left heart: the mitral apparatus close up (s 2.4, cropped)', 'Shut at end-diastole, shut at end-systole (squeeze 1), half open, open; normal, inotrope and failure. With the valve shut every chord is straight; the papillary muscles are cones whose bases blend into the wall; the posteromedial stands on the inferior wall beyond the septum.');
+  const cases = [['base ED shut', BEAT.base.EDV, { mitral: 0, squeeze: 0.3 }], ['base ES shut', BEAT.base.ESV, { mitral: 0, squeeze: 1 }], ['base mid open', (BEAT.base.EDV + BEAT.base.ESV) / 2, { mitral: 0.5 }], ['base ED open', BEAT.base.EDV, { mitral: 1 }],
+    ['inotrope ES', BEAT.inotrope.ESV, { mitral: 0, squeeze: 1 }], ['hfref ED shut', BEAT.hfref.EDV, { mitral: 0, squeeze: 0.2 }], ['hfref ES', BEAT.hfref.ESV, { mitral: 0, squeeze: 1 }]];
+  for (const [nm, V, st] of cases) {
+    const h = leftHeart({ x: 0, y: 0, s: 2.4, edv: EDV, key: `mz${nm.replace(/ /g, '')}` });
+    fig(row, `mitral-${nm.replace(/ /g, '-')}`, 560, h.still({ volume: V, ...st }).svg + `<text x="100" y="240" class="sm b">${nm}</text>`, [375], nm, '90 215 330 330');
+  }
+}
+
+/* ---------- C. the four-chamber section with its conduction overlay ---------- */
+{
+  const row = section('cond', 'heartSection with the conduction overlay, staged by t (s 1.5)', 'SA node, atrial wave, AV pause, His, bundle branches, Purkinje fibres, then the ventricles (septum first, base last). The outflow tract is ghosted so the septal crest shows.');
+  const ramp = (t, a, b) => Math.min(1, Math.max(0, (t - a) / (b - a)));
+  for (const t of [0, 0.15, 0.4, 0.52, 0.6, 0.75, 1]) {
+    const c = { sa: ramp(t, 0, 0.08) * (1 - ramp(t, 0.2, 0.3)), atria: ramp(t, 0.05, 0.3), av: ramp(t, 0.3, 0.38) * (1 - ramp(t, 0.45, 0.5)), his: ramp(t, 0.45, 0.5), bundles: ramp(t, 0.47, 0.55), purkinje: ramp(t, 0.53, 0.6), ventricles: ramp(t, 0.55, 0.8) };
+    fig(row, `cond-${t}`, 420, `${heartSection({ x: 60, y: 0, s: 1.5, key: `hc${t}`, conduction: c })}<text x="12" y="30" class="sm b">t ${t}</text>`, [480], `conduction t ${t}`);
+  }
+}
+
+/* ---------- zoom: the section's conducting system ---------- */
+{
+  const row = section('condzoom', 'Conduction overlay close up (s 3, cropped to the septum)', 'Where each structure sits: SA node at the SVC junction in the RA wall, AV node above the tricuspid septal hinge, His on the crest, the bundle branches on their own septal faces, Purkinje fibres under the free-wall endocardium.');
+  for (const t of [0, 1]) {
+    const c = t ? { sa: 1, atria: 1, av: 1, his: 1, bundles: 1, purkinje: 1, ventricles: 0 } : {};
+    fig(row, `condzoom-${t}`, 840, `${heartSection({ x: 0, y: 0, s: 3, key: `cz${t}`, conduction: c })}`, [600], `conduction zoom ${t}`, '90 220 600 600');
+  }
+}
+
+/* ---------- D. heartExterior ---------- */
+{
+  const row = section('ext', 'heartExterior: the heart from the front (s 1.6 at 480; beat, SA glow, activation)', 'Anterior view: RA on the viewer\'s left with the SVC and IVC, RV forming the front, LV the right border and the apex, left auricle beside the pulmonary trunk, which runs in front of the aortic root under the arch. Coronary arteries on their fat in the grooves.');
+  const cases = [['rest', {}], ['systole', { beat: 1 }], ['SA firing', { saGlow: 1, activation: { atria: 0.6 } }], ['ventricles', { activation: { atria: 1, ventricles: 0.7 }, beat: 0.5 }], ['no coronaries', { coronaries: false }]];
+  for (const [nm, o] of cases) fig(row, `ext-${nm.replace(/ /g, '-')}`, 380, `${heartExterior({ x: 80, y: 8, s: 1.6, key: `ex${nm.replace(/ /g, '')}`, ...o })}<text x="12" y="30" class="sm b">${nm}</text>`, [480], nm);
+  for (const [nm, o] of cases.slice(0, 3)) fig(row, `ext375-${nm.replace(/ /g, '-')}`, 380, `${heartExterior({ x: 80, y: 8, s: 1.6, key: `ey${nm.replace(/ /g, '')}`, ...o })}`, [375], `${nm} at 375`);
+  // a labelled frame: the label budget first, then the art in the rest
+  const h = heartExterior({ x: 8, y: 6, s: 1.5, key: 'exl', saGlow: 0.6 });
+  const labels = placeLabels([{ text: 'Aorta', at: h.at.aorta }, { text: 'Pulmonary trunk', at: h.at['pulmonary-trunk'] }, { text: 'SA node', at: h.at.sa }, { text: 'Left ventricle', at: h.at.lv }, { text: 'Right ventricle', at: h.at.rv }], { column: 318, top: 8, bottom: 352 });
+  fig(row, 'ext-labels', 360, `${h}${labels.map(l => l.leader + l.svg).join('')}`, [480, 375, 200], 'labelled');
+}
+/* ---------- E. heartIcon ---------- */
+{
+  const row = section('icon', 'heartIcon: 48 x 56 about its centre (rows of icons at s 1, 1.5, 2; beat 0 to 1)', 'For flow maps and rows: one part, no detail that drops out.');
+  const icons = [0.6, 1, 1.5, 2].map((s, i) => [0, 0.5, 1].map((b, j) => heartIcon({ x: 40 + i * 110, y: 50 + j * 80, s: s, beat: b, key: `ic${i}${j}` })).join('')).join('');
+  fig(row, 'icon-sweep', 300, icons + `<text x="12" y="290" class="xs muted">s 0.6, 1, 1.5, 2; beat 0, 0.5, 1</text>`, [480, 375], 'icons');
+  fig(row, 'icon-row', 120, [0, 1, 2, 3].map(i => heartIcon({ x: 40 + i * 120, y: 50, beat: i / 3 })).join('') + '<text x="12" y="112" class="xs muted">s 1 row</text>', [375, 200], 'row of icons');
+}
+/* ---------- F. heartConduction as a standalone overlay ---------- */
+{
+  const row = section('overlay', 'heartConduction over a section built once (s 1.5), stage values swept', 'The overlay takes the section\'s x, y, s and volume; each structure is its own part.');
+  for (const [nm, st] of [['idle', {}], ['SA and atria', { sa: 1, atria: 0.7 }], ['AV pause', { atria: 1, av: 1 }], ['His and bundles', { atria: 1, his: 1, bundles: 0.6 }], ['ventricles', { his: 1, bundles: 1, purkinje: 1, ventricles: 0.8 }]]) {
+    fig(row, `ov-${nm.replace(/ /g, '-')}`, 420, `${heartSection({ x: 60, y: 0, s: 1.5, key: `ovs${nm.replace(/ /g, '')}`, rvot: 'ghost' })}${heartConduction({ x: 60, y: 0, s: 1.5, stage: st, key: `ovc${nm.replace(/ /g, '')}` })}<text x="12" y="30" class="sm b">${nm}</text>`, [375], nm);
+  }
+}
+document.body.dataset.cells = n;
+document.body.dataset.ready = '1';
+</script>
+</body>
+</html>

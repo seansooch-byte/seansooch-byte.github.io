@@ -106,6 +106,12 @@ h2:focus-visible{outline:3px solid var(--blue);outline-offset:5px}
 .visual text.on-white{stroke:#fff}
 .visual text.in-cell{stroke:none;fill:#fff}
 .visual text.end{text-anchor:end}
+.visual text.teal{fill:#0b6b70}
+/* Art detail (lab/kit/art: classes ax-d2, ax-d3) follows the picture's rendered width, not its scale:
+   fine detail drops out of small pictures, with no script. */
+.lx-pic{container-type:inline-size}
+@container (max-width:300px){.ax-d2{display:none}}
+@container (max-width:200px){.ax-d3{display:none}}
 .ghost{opacity:.7}
 /* A term in the caption lights its part of the picture (data-part on both). */
 .caption dfn{font-style:normal;font-weight:700}

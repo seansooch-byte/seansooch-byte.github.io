@@ -6,55 +6,19 @@
   --mono:ui-monospace,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
 }
 
-/* ---------- The guided lesson's pictures: the ventricle over the loop ---------- */
+/* ---------- The guided lesson's pictures: the left heart over the loop ----------
+   The art (lab/kit/art) and the graph marks carry their own colours; text uses the kit's classes.
+   Only the readout's valve pills are styled here. */
 .lp{display:block;width:100%;height:auto}
-.visual .lp-t{font-family:var(--sans);font-size:17px;font-weight:500;fill:var(--ink);paint-order:stroke;stroke:var(--panel);stroke-width:5px;stroke-linejoin:round}
-.visual .lp-axis-label{font-size:18px;font-weight:700}
-.visual .lp-strong{font-weight:700;font-size:18px}
-.visual .lp-small{font-size:17px;fill:var(--soft)}
-.visual .lp-small.lp-strong{fill:var(--ink)}
-.visual .lp-phase{font-size:24px;font-weight:700}
-.visual .lp-note-t{font-size:18px}
-.visual .lp-pill-t{font-size:17px;font-weight:700;fill:var(--ink);stroke:none}
-.visual .lp-pill-t.open{fill:#1d6b33}
-.visual .lp-red{fill:var(--loop)}.visual .lp-blue{fill:var(--accent)}.visual .lp-on-red{fill:#fff;stroke:none}
-.lp-axes line{stroke:var(--ink);stroke-width:2}
-.lp-axis-head{fill:var(--ink)}
-.lp-loop{fill:none;stroke:var(--loop);stroke-width:4;stroke-linejoin:round;stroke-linecap:round}
-.lp-loop.lp-soft{stroke-width:3;opacity:.45}
-.lp-done{fill:none;stroke:var(--soft);stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round}
-.lp-ghost{fill:none;stroke:var(--ghost);stroke-width:3;stroke-dasharray:7 5;stroke-linejoin:round}
-.lp-dot{fill:var(--loop);stroke:#fff;stroke-width:3}
-.lp-edge{fill:none;stroke:var(--accent);stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
-.lp-spot{fill:none;stroke:var(--accent);stroke-width:3.5}
-.lp-spot-ink{stroke:var(--ea);stroke-width:1.5;stroke-dasharray:3 3}
-.lp-mark{fill:var(--loop)}
-.lp-way{fill:var(--loop);stroke:#fff;stroke-width:1.5;stroke-linejoin:round;paint-order:stroke}
-.lp-note line{stroke:var(--accent);stroke-width:3}.lp-note path{fill:var(--accent)}
-.lp-bar-normal{fill:none;stroke:var(--ghost);stroke-width:2;stroke-dasharray:5 3}
-.lp-bar-now,.lp-meter{fill:var(--loop)}
-.lp-meter-track{fill:#fff;stroke:#c9ccc2}
-.lp-guide{stroke:var(--ea);stroke-width:1.5;stroke-dasharray:4 4}
-.lp-arrow line{stroke:var(--ink);stroke-width:2.5}.lp-arrow path{fill:var(--ink)}
-.lp-arrow-red line{stroke:var(--loop)}.lp-arrow-red path{fill:var(--loop)}
-.lp-arrow-blue line{stroke:var(--accent);stroke-width:3}.lp-arrow-blue path{fill:var(--accent)}
-.lp-pill{fill:var(--white);stroke:var(--ink);stroke-width:1.5}
-.lp-pill.open{fill:#e3f1e6;stroke:#1d6b33}
-.ef-left{fill:#e1e3dc}.ef-out{fill:var(--loop)}.ef-frame{fill:none;stroke:var(--ink);stroke-width:1.5}
-.hv-chamber{fill:#f8e4e1;stroke:var(--ink);stroke-width:2;stroke-linejoin:round}
-.hv-aorta{fill:#e9aaa3}
-.hv-line{fill:none;stroke:var(--ink);stroke-width:2;stroke-linejoin:round}
-.hv-wall{fill:none;stroke-linejoin:round}
-.hv-base{stroke-width:6;stroke-linecap:round}
-.hv-leaf{fill:none;stroke:var(--ink);stroke-width:2.6;stroke-linecap:round}
-.hv-ref{fill:none;stroke:var(--ea);stroke-width:1.5;stroke-dasharray:4 3}
-.hv-flow path{fill:var(--ink)}
-.hv-flow .hv-dash{fill:none;stroke:var(--ink);stroke-width:3;stroke-dasharray:5 5}
-.hv-squeeze path{fill:var(--ink)}
-.hv-preload .hv-ref{stroke:var(--accent);stroke-width:2.5}
-.hv-contractility .hv-squeeze path{fill:var(--accent)}
-.hd-lead{stroke:var(--soft);stroke-width:1.2}
-.hd-dot{fill:var(--ink)}
+.lp-pill{fill:var(--card);stroke:var(--ink);stroke-width:1.5}
+.lp-pill.open{fill:var(--green-wash);stroke:var(--green)}
+.visual text.lp-pill-t{stroke:none}
+.visual text.lp-pill-t.open{fill:var(--green)}
+.visual text.lp-on-red{fill:var(--card);stroke:none}
+.visual text.lp-flat{stroke:none}
+/* A lit caption term dims the heart's other pieces in place with a colour-matrix filter (heart.js
+   light()), not with the kit's opacity, which would double up where parts overlap and show seams. */
+.visual.has-lit svg .ax-left-heart [data-part]{opacity:1}
 
 /* ---------- Explore freely and Clinical values: the live model's own tabs ---------- */
 .explore h2,.clinical h2{font-family:'Anton',Impact,'Arial Narrow',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.02em;font-size:24px;line-height:1.05;margin:0}

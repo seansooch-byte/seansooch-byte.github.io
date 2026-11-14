@@ -26,12 +26,21 @@ export const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<':
 const HEADS = { k: C.ink, b: C.blue, r: C.red, a: C.amber, g: C.green, p: C.purple, m: C.muted };
 const KEY = Object.fromEntries(Object.entries(HEADS).map(([k, c]) => [c, k]));
 let uid = 0;
+const ART_ID = /(?:id="|url\(#|href="#)ax-/, ART_IDS = /(id="|url\(#|href="#)ax-/g;
 export function svg(label, body, { h = 360, w = W } = {}) {
   const id = `lx${++uid}-`;
   // ah-: heads that grow with the line; fh-: heads of one fixed size (12 units) whatever the line's width.
   const defs = `<defs>${Object.entries(HEADS).map(([k, c]) => `<marker id="${id}ah-${k}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="${c}"/></marker>`
     + `<marker id="${id}fh-${k}" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="${c}"/></marker>`).join('')}</defs>`;
-  return `<svg viewBox="0 0 ${w} ${f(h)}" role="img" aria-label="${esc(label)}">${defs}${body.replace(/url\(#(ah|fh)-/g, (_, m) => `url(#${id}${m}-`)}</svg>`;
+  let inner = body.replace(/url\(#(ah|fh)-/g, (_, m) => `url(#${id}${m}-`), art = '';
+  // Art from /lab/kit/art/ uses ax- ids: they take this picture's prefix too, and the shared defs the body
+  // uses are added by art/core.js (it sets globalThis.LabArtDefs when a lesson loads it). A body without
+  // art ids comes out exactly as before.
+  if (ART_ID.test(inner)) {
+    if (typeof globalThis.LabArtDefs === 'function') art = globalThis.LabArtDefs(body, id);
+    inner = inner.replace(ART_IDS, `$1${id}ax-`);
+  }
+  return `<svg viewBox="0 0 ${w} ${f(h)}" role="img" aria-label="${esc(label)}">${defs}${art}${inner}</svg>`;
 }
 export const text = (x, y, s, cls = '', anchor = 'middle', extra = '') =>
   `<text x="${f(x)}" y="${f(y)}" text-anchor="${anchor}" class="${cls}" ${extra}>${s}</text>`;

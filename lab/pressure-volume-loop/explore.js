@@ -25,7 +25,7 @@ const BASE = { Pla: DEFAULTS.Pla, Rs: DEFAULTS.Rs, Ees: DEFAULTS.Ees, lam: DEFAU
 const PRESETS = [
   { id: 'baseline', label: 'Baseline', set: {},
     text: 'The reference ventricle: atrial pressure 4 mmHg, moderate resistance and contractility, 72 beats per minute, tuned towards the typical adult values in the Clinical values tab (which lists where it still differs). Every other scenario changes one setting from here, so you can compare against this loop.' },
-  { id: 'preload', label: '↑ Preload (Frank–Starling)', set: { Pla: 8 },
+  { id: 'preload', label: '↑ Preload (Frank-Starling)', set: { Pla: 8 },
     text: 'Atrial pressure doubles from 4 to 8 mmHg, so the ventricle fills further along its EDPVR before the mitral valve closes. The bigger end-diastolic volume ejects a bigger stroke volume, and the end-systolic corner slides up the same ESPVR line.' },
   { id: 'afterload', label: '↑ Afterload', set: { Rs: 2.4 },
     text: 'Arterial resistance doubles, so aortic pressure stays higher and the aortic valve opens later in the beat. The ventricle stops ejecting at a higher pressure and a larger end-systolic volume, so stroke volume falls and the Ea line steepens.' },
@@ -40,7 +40,7 @@ const INTRO = 'Each scenario changes one setting from baseline. Watch the loop m
 const EVENT_NAME = { MC: 'Mitral closes', AO: 'Aortic opens', AC: 'Aortic closes', MO: 'Mitral opens' };
 
 const $ = id => document.getElementById(id);
-const fmt = (x, d = 0) => Number.isFinite(x) ? x.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }) : '–';
+const fmt = (x, d = 0) => Number.isFinite(x) ? x.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }) : '-';
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const narrow = matchMedia('(max-width: 899px)');
 
@@ -284,7 +284,7 @@ function renderNumbers(b) {
     ['End-systolic pressure', `${fmt(b.ESP, 1)} mmHg`],
     ['Peak LV pressure', `${fmt(b.PlvMax, 1)} mmHg`],
     ['Aortic max / min', `${fmt(b.PaoSys, 1)} / ${fmt(b.PaoDia, 1)} mmHg`],
-    ['Arterial elastance Ea', b.Ea !== null ? `${fmt(b.Ea, 2)} mmHg/mL` : '– (no ejection)'],
+    ['Arterial elastance Ea', b.Ea !== null ? `${fmt(b.Ea, 2)} mmHg/mL` : '- (no ejection)'],
     ['Valve events (ms)', ['MC', 'AO', 'AC', 'MO'].map(ms).filter(Boolean).join(' · ')],
   ];
   $('beat-body').innerHTML = rows.map(([k, v]) => `<tr><th scope="row">${k}</th><td>${v}</td></tr>`).join('');
@@ -300,7 +300,7 @@ function renderNumbers(b) {
   ];
   $('check-body').innerHTML = checks.map(([k, a, v]) => `<tr><th scope="row">${k}${a ? `<br><small>${a}</small>` : ''}</th><td>${v}</td></tr>`).join('');
 
-  $('pv').setAttribute('aria-label', `Pressure–volume loop for beat ${b.no}. The loop runs counter-clockwise: filling along the bottom from ${fmt(b.ESV, 0)} to ${fmt(b.EDV, 0)} mL, isovolumic contraction up the right side, ejection across the top to an end-systolic point of ${fmt(b.ESV, 0)} mL at ${fmt(b.ESP, 0)} mmHg, then isovolumic relaxation down the left side. Stroke work ${fmt(b.SW, 0)} mmHg·mL. Full values are in the table below.`);
+  $('pv').setAttribute('aria-label', `Pressure-volume loop for beat ${b.no}. The loop runs counter-clockwise: filling along the bottom from ${fmt(b.ESV, 0)} to ${fmt(b.EDV, 0)} mL, isovolumic contraction up the right side, ejection across the top to an end-systolic point of ${fmt(b.ESV, 0)} mL at ${fmt(b.ESP, 0)} mmHg, then isovolumic relaxation down the left side. Stroke work ${fmt(b.SW, 0)} mmHg·mL. Full values are in the table below.`);
   const ev2 = k => ev[k] ? `${fmt(ev[k].t * 1000, 0)} ms` : 'not reached';
   $('wiggers').setAttribute('aria-label', `Wiggers diagram over one ${fmt(b.T, 2)} s cycle. LV pressure peaks at ${fmt(b.PlvMax, 0)} mmHg; aortic pressure swings between ${fmt(b.PaoSys, 0)} and ${fmt(b.PaoDia, 0)} mmHg; atrial pressure is fixed at ${fmt(b.Pla, 0)} mmHg; LV volume falls from ${fmt(b.EDV, 0)} to ${fmt(b.ESV, 0)} mL. Mitral closes at ${ev2('MC')}, aortic opens at ${ev2('AO')}, aortic closes at ${ev2('AC')}, mitral opens at ${ev2('MO')}.`);
 }
@@ -708,7 +708,7 @@ function buildClinical() {
     li.className = 'cv-row';
     li.dataset.cv = v.id;
     const hasRange = v.low !== null && v.high !== null;
-    const ref = hasRange ? `Typical ${fmt(v.low)}–${fmt(v.high)} ${v.unit}${v.typical !== null ? ` (mean ${fmt(v.typical)})` : ''}`
+    const ref = hasRange ? `Typical ${fmt(v.low)} to ${fmt(v.high)} ${v.unit}${v.typical !== null ? ` (mean ${fmt(v.typical)})` : ''}`
       : `Typical about ${fmt(v.typical)} ${v.unit}`;
     li.innerHTML =
       `<div class="cv-name"><b>${esc(v.label)}</b><span class="cv-ref">${esc(ref)}</span></div>` +
@@ -717,7 +717,7 @@ function buildClinical() {
         (v.typical !== null ? '<span class="cv-typ"></span>' : '') +
         '<span class="cv-base"></span><span class="cv-dot"></span>' +
         '<span class="cv-axis"><span class="cv-lo"></span><span class="cv-hi"></span></span></div>' +
-      `<div class="cv-now"><span class="cv-num">–</span><small>${esc(v.unit)}</small><span class="cv-flag"></span></div>` +
+      `<div class="cv-now"><span class="cv-num">-</span><small>${esc(v.unit)}</small><span class="cv-flag"></span></div>` +
       '<div class="cv-shift" hidden></div>' +
       `<p class="cv-cite">${esc(shortSource(v.source))}, ${esc(v.where)}.${v.note ? ` <span>${esc(v.note)}</span>` : ''}</p>`;
     list.append(li);
@@ -750,7 +750,7 @@ function buildClinical() {
     const x = modelValue(v.modelKey, baseBeat);
     if (x === null || (x >= v.low && x <= v.high)) return null;
     const d = decimals(v.unit);
-    return `${esc(v.label)}: model ${fmt(x, d + 1)} ${esc(v.unit)}, ${x < v.low ? 'below' : 'above'} the typical ${fmt(v.low)}–${fmt(v.high)} ${esc(v.unit)}${v.note ? ` (${esc(v.note)})` : ''}`;
+    return `${esc(v.label)}: model ${fmt(x, d + 1)} ${esc(v.unit)}, ${x < v.low ? 'below' : 'above'} the typical ${fmt(v.low)} to ${fmt(v.high)} ${esc(v.unit)}${v.note ? ` (${esc(v.note)})` : ''}`;
   }).filter(Boolean);
   $('cv-baseline').innerHTML = gaps.length
     ? `<b>Where the teaching model's baseline differs from the reference ranges.</b> ${gaps.join('; ')}.`
@@ -809,7 +809,7 @@ function renderClinical(b) {
     base.style.left = pct(bas ?? 0); base.hidden = bas === null;
     lo.textContent = '0'; hi.textContent = fmt(top);
     const d = decimals(v.unit);
-    if (cur === null) { num.textContent = '–'; flag.textContent = ''; dot.hidden = true; continue; }
+    if (cur === null) { num.textContent = '-'; flag.textContent = ''; dot.hidden = true; continue; }
     dot.hidden = false;
     dot.style.left = pct(cur);
     let where, out = false;

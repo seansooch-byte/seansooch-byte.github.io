@@ -192,6 +192,27 @@ for (const f of [...walk('lab'), ...labTools]) {
   if (s.includes(EM) || (f.endsWith('.json') && s.includes(JSON_EM))) bad(f, 'contains an em dash (use a comma, a colon or a spaced en dash)');
 }
 
+// The shared illustration library (art direction section 7, rule 13): every hex lives in core.js; art
+// modules are imported unversioned (two spellings make two module instances); fill() names fills only.
+// Nested data-part and id checks run on rendered output in tools/lab-art-test.mjs.
+if (exists('lab/kit/art')) {
+  for (const n of fs.readdirSync(root + 'lab/kit/art').filter(n => n.endsWith('.js'))) {
+    const s = read(`lab/kit/art/${n}`);
+    if (!['core.js', 'metrics.js'].includes(n) && /#[0-9a-fA-F]{6}\b|#[0-9a-fA-F]{3}\b/.test(s)) bad(`lab/kit/art/${n}`, 'has a hex colour: name a P entry from core.js');
+    if (/stroke[=:]\s*["'`]?\$?\{?\s*fill\(/.test(s)) bad(`lab/kit/art/${n}`, 'uses fill() on a stroke');
+  }
+  for (const f of walk('lab')) if (/art\/[\w-]+\.js\?v=/.test(read(f))) bad(f, 'imports a versioned art module: use /lab/kit/art/<name>.js');
+}
+// No en dash either (art direction section 7, rule 6: ranges are written "to"), in the library, the Lab's
+// tools and every lesson already redrawn on it (a lesson whose files import /lab/kit/art/); lessons not
+// yet ported keep FORMAT.md's spaced en dash until they are.
+const EN = String.fromCharCode(0x2013), JSON_EN = String.fromCharCode(92) + 'u2013';
+const ported = new Set([...lessons].filter(l => slugs.includes(l) && exists(`lab/${l}`) && fs.readdirSync(root + `lab/${l}`).some(n => n.endsWith('.js') && read(`lab/${l}/${n}`).includes('/lab/kit/art/'))));
+for (const f of [...walk('lab'), ...labTools]) {
+  const inLesson = f.split('/')[1], scoped = f.startsWith('lab/kit/art/') || f.startsWith('tools/') || ported.has(inLesson);
+  if (scoped && !f.endsWith('clinical-values.json') && (read(f).includes(EN) || (f.endsWith('.json') && read(f).includes(JSON_EN)))) bad(f, 'contains an en dash (the art direction bans them in redrawn lessons: use a hyphen, or "to" for a range)');
+}
+
 if (problems.length) {
   console.log(problems.join('\n'));
   console.log(`\n${problems.length} problem${problems.length === 1 ? '' : 's'} in ${slugs.length} lesson${slugs.length === 1 ? '' : 's'}.`);

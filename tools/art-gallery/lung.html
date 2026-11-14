@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg">
+<title>Art library gallery: lung.js (tools, not linked)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/lab/kit/kit.css">
+<style>
+  body{margin:0;padding:16px;background:#fff;font-family:'Space Grotesk',sans-serif;color:#171916}
+  h1{font-size:22px;margin:0 0 4px}
+  h2{font-size:18px;margin:24px 0 8px;border-top:1px solid #babeb3;padding-top:10px}
+  p.note{margin:0 0 8px;color:#53584d;font-size:14px;max-width:1100px}
+  .row{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
+  figure{margin:0}
+  figcaption{font-size:12px;color:#53584d;margin-top:3px;max-width:480px}
+  .visual{display:inline-block}
+  .lx-pic svg{display:block;width:100%;height:auto}
+</style>
+</head>
+<body>
+<h1>lung.js: alveolus, alveolarCapillary, lungsFrontal</h1>
+<p class="note">Every primitive at 480 px, at the phone width (375 px) and small (200 px), with its parameters swept. Not linked; tools/ is never shipped. Labels here only demonstrate leader targets (at points); lessons use their captions' words.</p>
+<div id="out"></div>
+<script type="module">
+import { P, scopeArt, placeLabels, artGhost } from '/lab/kit/art/core.js';
+import { alveolus, alveolarCapillary, lungsFrontal, o2Glyph, co2Glyph } from '/lab/kit/art/lung.js';
+
+const out = document.getElementById('out');
+const WIDTHS = [480, 375, 200];
+const ONLY = new URLSearchParams(location.search).get('only');
+const section = (title, note) => { out.insertAdjacentHTML('beforeend', `<h2>${title}</h2>${note ? `<p class="note">${note}</p>` : ''}<div class="row"></div>`); return out.lastElementChild; };
+function fig(row, name, h, body, widths = WIDTHS, label = name) {
+  if (ONLY && !ONLY.split(',').some(o => name.startsWith(o))) return;
+  if (ONLY) widths = widths.filter(w => w !== 200);
+  for (const w of widths) row.insertAdjacentHTML('beforeend', `<figure data-cell="${name}-w${w}"><div class="visual"><div class="lx-pic" style="width:${w}px">${scopeArt(`<svg viewBox="0 0 480 ${h}" role="img" aria-label="${label}">${body}</svg>`)}</div></div><figcaption>${label}, ${w} px</figcaption></figure>`);
+}
+const labels = (items, opt) => placeLabels(items, opt).map(l => l.leader + l.svg).join('');
+const t = (x, y, s, cls = 'xs muted', anchor = 'middle') => `<text x="${x}" y="${y}" text-anchor="${anchor}" class="${cls}">${s}</text>`;
+
+/* 1. the unit: sac, capillary with red cells, exchange, labels (the ventilation-perfusion step 2 and 3 layout) */
+{
+  const row = section('Alveolus with its capillary, labelled', 'r 84, duct 60, w 12, nine red cells, exchange at phase 0.3; the sac is drawn first, the capillary on it: the contact line is the barrier. Label column at x 336.');
+  const a = alveolus({ x: 160, y: 196, r: 84, duct: { len: 60 }, key: 'u2' });
+  const c = alveolarCapillary({ around: a, w: 12, cells: { n: 16, phase: 0.1 }, exchange: { phase: 0.3 } });
+  const L = labels([
+    { text: 'airway', at: a.at.duct }, { text: 'alveolus', sub: 'air sac', at: a.at.lumen },
+    { text: 'type II cell', at: a.at.type2 }, { text: 'capillary', at: c.at.capillary },
+    { text: 'thin wall', sub: 'air meets blood', at: c.at.contact },
+  ], { column: 336, side: 'right' });
+  fig(row, 'unit', 400, `${a}${c}${L}`);
+}
+
+/* 2. alveolus sweeps */
+{
+  const row = section('alveolus: r 84, 56, 30, 18', 'Lobed sac, septa, type I nuclei, type II cell; small sacs drop septa and nuclei.');
+  const body = [alveolus({ x: 100, y: 134, r: 84, duct: 30 }), alveolus({ x: 270, y: 134, r: 56, duct: 24 }), alveolus({ x: 380, y: 134, r: 30, duct: 14 }), alveolus({ x: 445, y: 134, r: 18, duct: 10 })].join('');
+  fig(row, 'alv-r', 250, body);
+}
+{
+  const row = section('alveolus: gas colour (stale, air, fresh, rich)', 'A lesson passes its model colour as gas; these four are only examples.');
+  const cols = ['#c9cdd2', P.space.air, '#cfe3f3', '#9cc3e8'];
+  fig(row, 'alv-gas', 140, cols.map((g, i) => alveolus({ x: 62 + i * 118, y: 76, r: 48, gas: g, duct: 16 })).join(''));
+}
+{
+  const row = section('alveolus: fluid 0, 0.35, 0.7, 1 (exudate with white cells)', 'Meniscus climbs the walls; fluid clipped to the air space.');
+  fig(row, 'alv-fluid', 140, [0, 0.35, 0.7, 1].map((fl, i) => alveolus({ x: 62 + i * 118, y: 76, r: 48, fluid: fl, fluidCells: 4, duct: 16, key: `fl${i}` })).join(''));
+}
+{
+  const row = section('alveolus: duct lumen 16, 9, 4 (the wall thickens inward; the outer wall stays)', '');
+  fig(row, 'alv-duct', 160, [16, 9, 4].map((lu, i) => alveolus({ x: 90 + i * 150, y: 96, r: 52, duct: { len: 46, w: 26, lumen: lu } })).join(''));
+}
+
+/* 3. capillary sweeps */
+{
+  const row = section('alveolarCapillary: w 14, 8, 3, 0 (model width; 0 is a collapsed, empty vessel)', 'Lumen runs venous to arterial along the flow, reaching arterial early (equil 0.45).');
+  fig(row, 'cap-w', 170, [14, 8, 3, 0].map((w, i) => { const a = alveolus({ x: 62 + i * 118, y: 100, r: 36, duct: 14 }); return `${a}${alveolarCapillary({ around: a, w, net: w > 6 })}`; }).join(''));
+}
+{
+  const row = section('alveolarCapillary: leaving oxygenation 1, 0.5, 0 (to)', 'A shunt leaves as venous as it came.');
+  fig(row, 'cap-to', 190, [1, 0.5, 0].map((to, i) => { const a = alveolus({ x: 90 + i * 150, y: 110, r: 46, duct: 18 }); return `${a}${alveolarCapillary({ around: a, w: 10, to })}`; }).join(''));
+}
+{
+  const row = section('alveolarCapillary: red cells at phase 0, 0.33, 0.66', 'Plasma lumen; cells warm from venous to arterial; squeezed in narrow lumens.');
+  fig(row, 'cap-cells', 190, [0, 0.33, 0.66].map((ph, i) => { const a = alveolus({ x: 90 + i * 150, y: 110, r: 46, duct: 18 }); return `${a}${alveolarCapillary({ around: a, w: 11, cells: { n: 8, phase: ph } })}`; }).join(''));
+}
+{
+  const row = section('alveolarCapillary: exchange at phase 0, 0.25, 0.5, 0.75', 'O2 (two spheres) into the blood along blue arrows, CO2 (three spheres) out along ink arrows.');
+  fig(row, 'cap-ex', 170, [0, 0.25, 0.5, 0.75].map((ph, i) => { const a = alveolus({ x: 62 + i * 118, y: 100, r: 40, duct: 14 }); return `${a}${alveolarCapillary({ around: a, w: 9, exchange: { phase: ph } })}`; }).join(''));
+}
+{
+  const row = section('glyphs: O2 and CO2', '');
+  fig(row, 'glyphs', 60, `${o2Glyph(60, 30)}${t(80, 36, 'oxygen', 'xs', 'start')}${co2Glyph(220, 30)}${t(244, 36, 'carbon dioxide', 'xs', 'start')}`, [480, 375]);
+}
+
+{
+  const row = section('Ghosts and placement: normal capillary (w 12) over a narrowed one (w 4); normal duct over a narrowed duct; rot 90 and flip', 'outline(state) of each primitive feeds core artGhost (panel underlay, muted dash, above the art).');
+  const a = alveolus({ x: 90, y: 112, r: 52, duct: { len: 40, w: 24, lumen: 5 } }), c = alveolarCapillary({ around: a, w: 4 });
+  const ghosts = artGhost(c.outline({ w: 12 })) + artGhost(a.outline({ duct: 14 }));
+  const b = alveolus({ x: 250, y: 112, r: 46, duct: 30, rot: 90 }), cb = alveolarCapillary({ around: b, w: 9, cells: { n: 10, phase: 0.2 } });
+  const d = alveolus({ x: 400, y: 112, r: 46, duct: 30, flip: true }), cd = alveolarCapillary({ around: d, w: 9, exchange: { phase: 0.4 } });
+  fig(row, 'ghost', 200, `${a}${c}${ghosts}${b}${cb}${d}${cd}`);
+}
+{
+  const row = section('Lungs: breathing ghost (normal outline at breathe 0 over breathe 1)', '');
+  const g = lungsFrontal({ x: 240, y: 14, s: 0.9, breathe: 1, key: 'gh' });
+  fig(row, 'lungs-ghost', 270, `${g}${artGhost(g.outline({ breathe: 0 }), { s: 1 })}`);
+}
+
+/* 4. lungs */
+{
+  const row = section('lungsFrontal, labelled', 'Anterior view; viewer\'s left is the patient\'s right. s 1 at (168, 22); label column at x 340.');
+  const g = lungsFrontal({ x: 168, y: 22, key: 'lab' });
+  const L = labels([
+    { text: 'trachea', at: g.at.trachea }, { text: 'left lung', sub: 'two lobes', at: g.at.lul },
+    { text: 'cardiac notch', at: g.at.notch }, { text: 'diaphragm', at: [g.at.diaphragm[0] + 200, g.at.diaphragm[1] + 18] },
+  ], { column: 340, side: 'right' });
+  fig(row, 'lungs-label', 300, `${g}${L}`);
+}
+{
+  const row = section('lungsFrontal: breathe 0, 0.5, 1 (s 0.5)', 'Inspiration: lungs about 6 % wider and 8 % longer below the hila, diaphragm lower; the trachea stays.');
+  fig(row, 'lungs-breathe', 150, [0, 0.5, 1].map((b, i) => lungsFrontal({ x: 85 + i * 155, y: 8, s: 0.5, breathe: b })).join(''));
+}
+{
+  const row = section('lungsFrontal: lobes rul, rml, rll, lul, lll (s 0.3)', '');
+  fig(row, 'lungs-lobes', 100, ['rul', 'rml', 'rll', 'lul', 'lll'].map((k, i) => lungsFrontal({ x: 50 + i * 95, y: 10, s: 0.3, lobes: [k], tree: false })).join(''));
+}
+{
+  const row = section('lungsFrontal: badge size (s 0.2, about 60 units) and with a heart placeholder under it', '');
+  const g = lungsFrontal({ x: 300, y: 10, s: 0.62 });
+  const [hx, hy] = g.at.heart;
+  const heart = `<ellipse cx="${hx}" cy="${hy}" rx="34" ry="28" fill="${P.myo.base}" stroke="${P.myo.line}" stroke-width="1.75"/>`;
+  fig(row, 'lungs-small', 180, `${lungsFrontal({ x: 60, y: 30, s: 0.2 })}${lungsFrontal({ x: 140, y: 20, s: 0.35, breathe: 1 })}${lungsFrontal({ x: 300, y: 10, s: 0.62, under: heart })}`);
+}
+// with ?only=, drop the sections that drew nothing
+if (ONLY) for (const row of [...document.querySelectorAll('.row')]) if (!row.children.length) { let e = row.previousElementSibling; while (e && e.tagName !== 'H2') { const q = e.previousElementSibling; e.remove(); e = q; } e?.remove(); row.remove(); }
+</script>
+</body>
+</html>

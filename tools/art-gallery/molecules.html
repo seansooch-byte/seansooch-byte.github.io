@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg">
+<title>Molecule primitives gallery (tools, not linked)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/lab/kit/kit.css">
+<style>
+  body{margin:0;padding:16px;background:#fff;font-family:'Space Grotesk',sans-serif;color:#171916}
+  h1{font-size:22px;margin:0 0 4px}
+  h2{font-size:18px;margin:24px 0 8px;border-top:1px solid #babeb3;padding-top:10px}
+  p.note{margin:0 0 8px;color:#53584d;font-size:14px;max-width:1100px}
+  .row{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
+  figure{margin:0}
+  figcaption{font-size:12px;color:#53584d;margin-top:3px;max-width:480px}
+  .visual{display:inline-block}
+  .lx-pic svg{display:block;width:100%;height:auto}
+</style>
+</head>
+<body>
+<h1>The Lab: molecule primitives (lab/kit/art/molecules.js)</h1>
+<p class="note">Ions, small molecules, transmitters, peptides, steroids and drug glyphs at 480 px, at the phone width (375 px) and small (200 px), with their parameters swept. Not linked; tools/ is never shipped. ?only=&lt;section id&gt;[,id] shows chosen sections; ?w=480,375 chooses widths.</p>
+<div id="out"></div>
+<script type="module">
+import { P, scopeArt } from '/lab/kit/art/core.js';
+import { ion, ionLabel, ION, o2, co2, co, water, glucose, atp, camp, acetylcholine, noradrenaline, adrenaline, histamine, peptide, steroid, drug, DRUG_FAMILIES } from '/lab/kit/art/molecules.js';
+
+const q = new URLSearchParams(location.search), only = q.get('only');
+if (only) document.querySelectorAll('h1, body > p.note').forEach(e => e.remove());
+const WIDTHS = (q.get('w') || '480,375,200').split(',').map(Number);
+const out = document.getElementById('out');
+const section = (id, title, note) => {
+  if (only && !only.split(',').includes(id)) return null;
+  out.insertAdjacentHTML('beforeend', `<h2 id="${id}">${title}</h2>${note ? `<p class="note">${note}</p>` : ''}<div class="row"></div>`);
+  return out.lastElementChild;
+};
+function fig(row, name, h, body, label = name, widths = WIDTHS) {
+  if (!row) return;
+  for (const w of widths) row.insertAdjacentHTML('beforeend', `<figure data-cell="${name}-w${w}"><div class="visual"><div class="lx-pic" style="width:${w}px">${scopeArt(`<svg viewBox="0 0 480 ${h}" role="img" aria-label="${label}">${body}</svg>`)}</div></div><figcaption>${label}, ${w} px</figcaption></figure>`);
+}
+const T = (x, y, s, cls = 'xs b', anchor = 'middle') => `<text x="${x}" y="${y}" text-anchor="${anchor}" class="${cls}">${s}</text>`;
+const KEYS = Object.keys(ION);
+
+/* A. ions large, with labels */
+{
+  const row = section('ions', 'ion: eight species at s 3, with ionLabel under each', 'One shape and one colour per species; the charge is a vector mark (white or ink, whichever reads on the fill). Labels: xs b in the species text class, charge as a vector superscript with the panel halo.');
+  let b = '';
+  KEYS.forEach((k, i) => {
+    const x = 60 + (i % 4) * 120, y = 70 + Math.floor(i / 4) * 150;
+    b += ion(k, { x, y, s: 3 }) + ionLabel(k, { x, y: y + 62, anchor: 'middle' });
+  });
+  fig(row, 'ions-large', 330, b, 'eight ions at three times native size with labels');
+}
+/* B. ions at native size, in rows as a lesson repeats them */
+{
+  const row = section('ions-row', 'ion at s 1 and s 1.4, in rows (the size a lesson scatters)', 'Native glyphs are 8.4 (H+) to 16 units across. At 375 px s 1 is the floor; the shape and colour carry identity; the label carries the charge legibly.');
+  let b = '';
+  KEYS.forEach((k, j) => {
+    const y = 26 + j * 46;
+    b += ionLabel(k, { x: 18, y: y + 6, cls: 'sm b' });
+    for (let i = 0; i < 9; i++) b += ion(k, { x: 110 + i * 22, y, s: 1, rot: k === 'k' || k === 'cl' ? i * 12 : 0 });
+    for (let i = 0; i < 6; i++) b += ion(k, { x: 320 + i * 27, y, s: 1.4 });
+  });
+  fig(row, 'ions-row', 380, b, 'ions in rows at native size and 1.4 times');
+}
+/* C. labels in every kit class */
+{
+  const row = section('labels', 'ionLabel in every kit class: xs, sm, default, lg', 'The charge superscript grows with the class; HCO3 and PO4 take a same-size subscript (a dy-shifted tspan, never a smaller font).');
+  let b = '';
+  // lay each class's labels in a row with measured widths
+  ['xs b', 'sm b', 'b', 'lg b'].forEach((cls, j) => {
+    let x = 14;
+    for (const k of KEYS) { const l = ionLabel(k, { x, y: 40 + j * 44, cls }); b += l; x = l.box[0] + l.box[2] + (cls === 'lg b' ? 10 : 14); }
+  });
+  fig(row, 'ion-labels', 200, b, 'ion labels with vector charges in four text sizes');
+}
+/* D. small molecules */
+{
+  const row = section('small', 'o2, co2, co, water, glucose at s 3 and s 1', 'Oxygen is always the same red, carbon the same grey; carbon spheres are larger (van der Waals 1.70 against 1.52 angstrom). Glucose: a Haworth pyranose ring with its ring oxygen.');
+  let b = '';
+  const items = [['O2', o2], ['CO2', co2], ['CO', co], ['water', water], ['glucose', glucose]];
+  items.forEach(([n, fn], i) => {
+    const x = 50 + i * 95;
+    b += fn({ x, y: 60, s: 3 }) + T(x, 120, n);
+    for (let j = 0; j < 3; j++) b += fn({ x: x - 24 + j * 24, y: 156, s: 1 });
+  });
+  fig(row, 'small', 180, b, 'oxygen, carbon dioxide, carbon monoxide, water and glucose');
+}
+/* E. ATP and cAMP */
+{
+  const row = section('atp', 'atp: phosphates 3, 2, 1; release swept 0, 0.5, 1; camp', 'Adenine (purine: six ring fused to five ring) on the ribose (ring oxygen dot), then the phosphates. release moves the terminal phosphate off (ATP to ADP plus phosphate). cAMP: one phosphate bonded back to the ribose 3 prime and 5 prime positions.');
+  let b = '';
+  [[3, 0, 'ATP'], [2, 0, 'ADP'], [1, 0, 'AMP']].forEach(([n, r, t], i) => { b += atp({ x: 100, y: 36 + i * 60, s: 2.2, phosphates: n }) + T(200, 44 + i * 60, t, 'sm b', 'start'); });
+  [0, 0.5, 1].forEach((r, i) => { b += atp({ x: 360, y: 36 + i * 60, s: 1.6, release: r }); });
+  b += T(360, 210, 'ATP release 0, 0.5, 1', 'xs muted');
+  b += camp({ x: 100, y: 250, s: 2.4 }) + T(190, 258, 'cAMP', 'sm b', 'start');
+  for (let i = 0; i < 5; i++) b += atp({ x: 290 + (i % 3) * 66, y: 238 + Math.floor(i / 3) * 26, s: 1 });
+  fig(row, 'atp', 290, b, 'ATP, ADP, AMP, hydrolysis sweep and cyclic AMP');
+}
+/* F. transmitters */
+{
+  const row = section('transmitters', 'acetylcholine split 0, 0.5, 1; noradrenaline; adrenaline; histamine', 'Acetylcholine: choline (with its positive charge) and acetate; split is acetylcholinesterase cutting the ester. Noradrenaline a bronze sphere, adrenaline with a white core.');
+  let b = '';
+  [0, 0.5, 1].forEach((k, i) => { b += acetylcholine({ x: 50 + i * 80, y: 50, s: 3, split: k }); });
+  b += T(130, 104, 'acetylcholine, split 0 to 1');
+  b += noradrenaline({ x: 320, y: 50, s: 3 }) + adrenaline({ x: 410, y: 50, s: 3 }) + T(320, 104, 'NA') + T(410, 104, 'adrenaline');
+  b += histamine({ x: 70, y: 160, s: 3 }) + T(70, 210, 'histamine');
+  for (let i = 0; i < 6; i++) { b += acetylcholine({ x: 170 + i * 26, y: 150, split: i / 5 }); b += noradrenaline({ x: 170 + i * 26, y: 180 }); b += adrenaline({ x: 340 + (i % 3) * 22, y: 150 + Math.floor(i / 3) * 30 }); }
+  fig(row, 'transmitters', 230, b, 'acetylcholine splitting, noradrenaline, adrenaline and histamine');
+}
+/* G. peptides */
+{
+  const row = section('peptides', 'peptide: count-accurate beads; ACE cleave swept', 'Angiotensin I 10 beads, angiotensin II 8; ACE cuts the last two (cleave at 8, gap 0, 0.5, 1). Vasopressin: 6-bead ring closed by the Cys1 to Cys6 disulfide (gold bar) plus a 3-bead tail. TRH 3. Insulin: two chains, two disulfides.');
+  let b = '';
+  b += peptide({ kind: 'angI', x: 120, y: 30, s: 1.8 }) + T(250, 36, 'angiotensin I', 'xs b', 'start');
+  b += peptide({ kind: 'angII', x: 102, y: 70, s: 1.8 }) + T(250, 76, 'angiotensin II', 'xs b', 'start');
+  [0, 0.5, 1].forEach((g, i) => { b += peptide({ n: 10, col: 'angiotensin', cleave: { at: 8, gap: g }, x: 120, y: 112 + i * 30, s: 1.5 }); });
+  b += T(250, 146, 'ACE cleave, gap 0 to 1', 'xs muted', 'start');
+  b += peptide({ kind: 'adh', x: 90, y: 250, s: 2.6 }) + T(90, 315, 'vasopressin');
+  b += peptide({ kind: 'trh', x: 230, y: 240, s: 2.6 }) + T(230, 275, 'TRH');
+  b += peptide({ kind: 'insulin', x: 380, y: 240, s: 2 }) + T(380, 290, 'insulin');
+  b += peptide({ kind: 'glucagon', x: 120, y: 350, s: 1.3 }) + T(120, 380, 'glucagon', 'xs b');
+  b += peptide({ kind: 'glp1', x: 280, y: 350, s: 1.3 }) + T(280, 380, 'GLP-1', 'xs b');
+  for (let i = 0; i < 3; i++) b += peptide({ kind: 'adh', x: 380 + (i - 1) * 32, y: 345, s: 1 });
+  fig(row, 'peptides', 400, b, 'peptides with exact bead counts and a cleavage sweep');
+}
+/* H. steroids */
+{
+  const row = section('steroids', 'steroid: cortisol, aldosterone, cholesterol (side chain and 3-OH), drug (hollow)', '6-6-6-5: three hexagons and a pentagon, each fused ring sharing an edge. Calcitriol is refused by the primitive (secosteroid).');
+  let b = '';
+  [['cortisol', 'cortisol'], ['aldosterone', 'aldosterone'], ['cholesterol', 'cholesterol'], ['drug', 'glucocorticoid drug']].forEach(([k, n], i) => {
+    const x = 120 + (i % 2) * 230, y = 50 + Math.floor(i / 2) * 120;
+    b += steroid({ kind: k, x, y, s: 2.6 }) + T(x, y + 54, n);
+  });
+  for (let i = 0; i < 4; i++) b += steroid({ kind: ['cortisol', 'aldosterone', 'cholesterol', 'drug'][i], x: 50 + i * 120, y: 290, s: 1 });
+  fig(row, 'steroids', 320, b, 'four steroid glyphs large and at native size');
+}
+/* I. drugs */
+{
+  const row = section('drugs', 'drug: every family at s 2 and s 1, with name tags', 'One colour for every drug; the shape says what it does: plug (reversible), selective plug (side pocket), acetyl flag (covalent), wedge, cap, ring, bulky, dumbbell, antacid hexagon, chain (heparin), clamp (proton pump inhibitor), stub (vinca), lock (taxane). Tags: sm b purple, 6 units off the glyph, never scaled.');
+  let b = '';
+  DRUG_FAMILIES.forEach((k, i) => {
+    const x = 34 + (i % 5) * 96, y = 36 + Math.floor(i / 5) * 76;
+    b += drug({ family: k, x, y, s: 2 }) + T(x, y + (k === 'chain' ? 36 : 40), k === 'hexagonAntacid' ? 'antacid' : k === 'selectivePlug' ? 'selective' : k, 'xs muted');
+    b += k === 'chain' ? drug({ family: k, x, y: y + 58, s: 1 }) : drug({ family: k, x: x + 50, y: y + 6, s: 1 });
+  });
+  b += drug({ family: 'acetyl', x: 40, y: 270, s: 1.6, name: 'aspirin', tag: 'right' });
+  b += drug({ family: 'plug', x: 250, y: 270, s: 1.6, name: 'ibuprofen', tag: 'left' });
+  b += drug({ family: 'chain', x: 320, y: 280, s: 1.4, name: 'heparin', tag: 'above' });
+  b += drug({ family: 'clamp', x: 430, y: 262, s: 1.6, name: 'PPI', tag: 'below' });
+  fig(row, 'drugs', 310, b, 'thirteen drug glyph families and name tags on four sides');
+}
+/* J. a lesson-like scene */
+{
+  const row = section('scene', 'In context: ions and molecules either side of a membrane band', 'A rough lesson composition at 480 x 260 to judge density and legibility at 375 px (the membrane is a placeholder band; cell.js owns membranes).');
+  let b = `<rect x="8" y="120" width="464" height="16" fill="${P.bilayerCore.base}" stroke="${P.bilayerCore.line}" stroke-width="1.4"/>`;
+  b += T(14, 30, 'outside the cell', 'xs muted', 'start') + T(14, 250, 'inside the cell', 'xs muted', 'start');
+  const pos = (i, y0) => [40 + (i * 53) % 330, y0 + ((i * 37) % 60)];
+  for (let i = 0; i < 9; i++) { const [x, y] = pos(i, 46); b += ion('na', { x, y }); }
+  for (let i = 0; i < 4; i++) { const [x, y] = pos(i + 3, 50); b += ion('ca', { x: x + 14, y: y + 6 }); }
+  for (let i = 0; i < 5; i++) { const [x, y] = pos(i + 5, 52); b += ion('cl', { x: x + 26, y: y - 4 }); }
+  for (let i = 0; i < 9; i++) { const [x, y] = pos(i, 150); b += ion('k', { x, y }); }
+  b += glucose({ x: 410, y: 100, s: 1.4 }) + atp({ x: 360, y: 210, s: 1.2 });
+  b += ionLabel('na', { x: 470, y: 40, anchor: 'end', cls: 'sm b' }) + ionLabel('ca', { x: 470, y: 64, anchor: 'end', cls: 'sm b' }) + ionLabel('cl', { x: 470, y: 88, anchor: 'end', cls: 'sm b' });
+  b += ionLabel('k', { x: 470, y: 176, anchor: 'end', cls: 'sm b' });
+  fig(row, 'scene', 260, b, 'ions either side of a membrane with labels');
+}
+</script>
+</body>
+</html>
