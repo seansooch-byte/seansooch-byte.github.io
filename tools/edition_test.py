@@ -114,6 +114,11 @@ class Base(unittest.TestCase):
         cls.home = cls.out['index.html']
         cls.doc = Doc(cls.home)
         cls.flat = squash(cls.home)
+        # The record of the site itself (its editions, its counts, its status, its index) is a page of its own, so the
+        # home page is the work.
+        cls.record = cls.out['record/index.html']
+        cls.rdoc = Doc(cls.record)
+        cls.rflat = squash(cls.record)
 
 
 class Record(Base):
@@ -197,11 +202,14 @@ class Census(Base):
                         self.assertIn(squash(html.escape(e['name'], quote=False)), self.flat)
 
     def test_every_address_is_asked(self):
-        probes = json.loads(self.doc.data['probes'])
-        self.assertEqual([p['id'] for p in probes], [w['id'] for w in self.rec['works']])
-        for p, w in zip(probes, self.rec['works']):
-            self.assertEqual(p['url'], w['url'])
-            self.assertEqual(bool(p.get('wake')), bool(w['wake']))
+        for d in (self.doc, self.rdoc):
+            probes = json.loads(d.data['probes'])
+            self.assertEqual([p['id'] for p in probes], [w['id'] for w in self.rec['works']])
+            for p, w in zip(probes, self.rec['works']):
+                self.assertEqual(p['url'], w['url'])
+                self.assertEqual(bool(p.get('wake')), bool(w['wake']))
+        for w in self.rec['works']:
+            self.assertIn(w['id'], self.rdoc.attr('data-state'), f"{w['id']}: a row in the record's status table")
         dots = self.doc.attr('data-dot')
         for w in self.rec['works']:
             self.assertGreaterEqual(dots.count(w['id']), 2, f"{w['id']}: a dot in the directory and one at the work")
@@ -292,21 +300,30 @@ class Census(Base):
                 for voice in ('tech', 'plain'):
                     self.assertIn(squash(build.inline(f[voice])), self.flat)
 
-    def test_every_volume_and_view_reaches_the_page(self):
-        hrefs = self.doc.attr('href')
+    def test_every_volume_and_view_reaches_the_record(self):
+        hrefs = self.rdoc.attr('href')
         for v in self.rec['volumes']:
             with self.subTest(vol=v['vol']):
-                self.assertIn(squash(v['vol']), self.flat)
+                self.assertIn(squash(v['vol']), self.rflat)
                 if v.get('name'):
-                    self.assertIn(squash(html.escape(v['name'], quote=False)), self.flat)
+                    self.assertIn(squash(html.escape(v['name'], quote=False)), self.rflat)
                 if v.get('href'):
                     self.assertIn(v['href'], hrefs)
                 for name in v.get('by', []):
-                    self.assertIn(squash(name), self.flat)
+                    self.assertIn(squash(name), self.rflat)
                 for view in v.get('views', []):
-                    self.assertIn(squash(view['name']), self.flat)
-                    self.assertIn(squash(view['by']), self.flat)
+                    self.assertIn(squash(view['name']), self.rflat)
+                    self.assertIn(squash(view['by']), self.rflat)
                     self.assertIn(v['href'] + view['path'], hrefs)
+
+    def test_the_home_page_is_the_work_and_the_record_page_is_the_site(self):
+        home, record = set(self.doc.attr('id')), set(self.rdoc.attr('id'))
+        for part in ('work', 'writing', 'guidance', 'films'):
+            self.assertIn(part, home)
+            self.assertNotIn(part, record)
+        for part in ('editions', 'record', 'about', 'index'):
+            self.assertIn(part, record)
+            self.assertNotIn(part, home, f'#{part} is still on the home page')
 
     def test_every_lesson_reaches_the_home_page_and_the_course_page(self):
         lab = Doc(self.out['lab/index.html'])
@@ -318,23 +335,26 @@ class Census(Base):
         self.assertTrue(self.site['lab']['apps'], 'the ledger was read')
 
     def test_the_index_lists_everything(self):
-        entries = {norm(t) for t in re.findall(r'<a class="ix"[^>]*>(.*?)</a>', self.home, flags=re.S)}
+        entries = {norm(t) for t in re.findall(r'<a class="ix"[^>]*>(.*?)</a>', self.record, flags=re.S)}
         want = [w['index'] for w in self.rec['works']] + [p['index'] for p in self.rec['papers']] + [f['index'] for f in self.rec['films']]
-        for name in want + [f"{a['title']} (lesson)" for a in self.site['lab']['apps']]:
+        for name in want:
             self.assertIn(name, entries)
-        printed = len(re.findall(r'<a class="ix"', self.home))
-        self.assertIn(f'<span data-ix-n>{printed}</span> entries', self.home, 'the index says how many entries it prints')
-        ids = set(self.doc.attr('id'))
+        for a in self.site['lab']['apps']:
+            self.assertNotIn(f"/lab/{a['slug']}/", self.record, 'a lesson is typed into the record page: a new lesson would leave it stale')
+        printed = len(re.findall(r'<a class="ix"', self.record))
+        self.assertIn(f'<span data-ix-n>{printed}</span> entries', self.record, 'the index says how many entries it prints')
+        ids = {'/': set(self.doc.attr('id')), '/record/': set(self.rdoc.attr('id'))}
+        printed = [html.unescape(h) for h in re.findall(r'<a class="ix" href="([^"]*)"', self.record)]
         for path, text in self.worn.items():
             if not path.endswith('.html'):
                 continue
             palette = json.loads(Doc(text).data['index-data'])
             self.assertGreaterEqual(len(palette), len(want), path)
-            for item in palette:
-                self.assertTrue(item['t'] and item['h'], item)
-                here = '#' if path == 'index.html' else '/#'
-                if item['h'].startswith(here):
-                    self.assertIn(item['h'][len(here):], ids, f"{path}: the index sends {item['t']} to an anchor that exists")
+            for h in [item['h'] for item in palette] + (printed if path == 'record/index.html' else []):
+                self.assertRegex(h, r'^/', f'{path}: {h} is addressed to whatever page the reader is on')
+                m = re.match(r'^(/|/record/)#([A-Za-z0-9_-]+)$', h)
+                if m:
+                    self.assertIn(m.group(2), ids[m.group(1)], f'{path}: the index sends a reader to {h}, which lands nowhere')
 
     def test_the_index_a_reader_searches_leaves_lessons_to_the_ledger(self):
         for path, text in self.worn.items():
@@ -368,17 +388,35 @@ class Census(Base):
 
 
 class Derived(Base):
-    def test_the_count_of_systems_is_counted(self):
-        n = sum(1 for w in self.rec['works'] if w['counted'])
-        self.assertIn(squash(f'{build.word(n).capitalize()} working systems'), self.flat)
-        self.assertIn(squash(f'{build.word(n).capitalize()} working apps'), self.flat)
+    def test_the_page_counts_the_work_one_way(self):
+        """How many works there are is printed in the lede, the directory, the filter and each world's heading. A work
+        is counted once, in its own world, everywhere: the lede once said fifteen (the works whose lines are counted)
+        beside a directory of twenty-three and a filter that counted a work in each world it is also shown in."""
+        n, counted = len(self.rec['works']), sum(1 for w in self.rec['works'] if w['counted'])
+        self.assertNotEqual(n, counted, 'CONTROL: some works are not in the line count, so the two numbers differ')
+        self.assertIn(squash(f'{build.word(n).capitalize()} live works'), self.flat)
+        self.assertIn(squash(f'{build.word(n).capitalize()} working projects'), self.flat)
+        self.assertIn(squash(f'in {build.word(counted)} of them'), self.flat, 'the line count says which works it counts')
+        self.assertNotRegex(self.flat, rf'(?i){build.word(counted)} (working|live) ', 'the count of works whose lines are counted is given as the count of works')
+        groups = re.findall(r'<div class="dir-g"><h3><a href="#world-([a-z]+)">[^<]*</a><span>(\d+)</span></h3>', self.home)
+        own = {x['slug']: sum(1 for w in self.rec['works'] if w['world'] == x['id']) for x in self.rec['worlds']}
+        self.assertEqual({slug: int(k) for slug, k in groups}, {s: k for s, k in own.items() if k})
+        self.assertEqual(sum(int(k) for _s, k in groups), n)
+        for world in self.rec['worlds']:
+            mine = own[world['slug']]
+            if mine:
+                note = norm(re.search(rf'<h3 id="world-{world["id"]}">.*?</header>', self.home, flags=re.S).group(0))
+                self.assertIn(f"{build.word(mine)} work", note.lower(), world['name'])
 
-    def test_chips_count_what_they_show(self):
-        chips = dict(re.findall(r'data-filter="([a-z]+)"[^>]*>[^<]*<span class="n">(\d+)</span>', self.home))
-        self.assertEqual(int(chips['all']), len(self.rec['works']))
+    def test_the_filter_shows_what_it_says_and_counts_only_the_whole(self):
+        chips = re.findall(r'<button class="btn" type="button" data-filter="([a-z]+)"[^>]*>(.*?)</button>', self.home, flags=re.S)
+        self.assertEqual([c for c, _l in chips], ['all'] + [x['id'] for x in self.rec['worlds']])
+        for world, label in chips:
+            counts = re.findall(r'<span class="n">(\d+)</span>', label)
+            self.assertEqual(counts, [str(len(self.rec['works']))] if world == 'all' else [],
+                             f'{world}: a world counted in the filter, where a work shown in two worlds counts twice')
         for world in self.rec['worlds']:
             shown = sum(1 for w in self.rec['works'] if world['id'] == w['world'] or world['id'] in w['also'])
-            self.assertEqual(int(chips[world['id']]), shown, world['name'])
             tagged = sum(1 for t, a in self.doc.els if t == 'article' and world['id'] in a.get('data-worlds', '').split())
             self.assertEqual(tagged, shown, f"{world['name']}: rows the filter would show")
 
@@ -427,13 +465,13 @@ class Derived(Base):
         rebuild this page: so it prints neither, and its lesson count sits where the browser can bring it up to date."""
         lab = self.site['lab']
         hooked = re.findall(r'<(?:span|dd) data-lab-n>(\d+)</(?:span|dd)>', self.home)
-        self.assertEqual(hooked, [str(lab['n_lessons'])] * 3, 'the Lab row, its outline and the record each print the lesson count, hooked')
+        self.assertEqual(hooked, [str(lab['n_lessons'])] * 2, 'the Lab row and its outline each print the lesson count, hooked')
+        self.assertNotIn('data-lab-n', self.record, 'the record page prints a lesson count: a lesson shipped tomorrow would leave it stale')
         plans = [json.loads(p.read_text(encoding='utf-8')) for p in sorted((ROOT / 'lab').glob('*/plan.json'))]
         questions = sum(len(p.get('quiz', [])) + len(p.get('checks', {})) for p in plans)
         outline = re.search(r'<div class="outline".*?</div>\s*</div>', self.home, flags=re.S).group(0)
         self.assertIn('data-lab-new', outline, 'CONTROL: the whole outline was found')
-        block = ' '.join(norm(part) for part in (re.search(r'<article class="work[^"]*" id="lab".*?</article>', self.home, flags=re.S).group(0), outline,
-                                                 re.search(r'<section class="sec" id="record".*?</section>', self.home, flags=re.S).group(0)))
+        block = ' '.join(norm(part) for part in (re.search(r'<article class="work[^"]*" id="lab".*?</article>', self.home, flags=re.S).group(0), outline))
         for said in ('to work through', 'practice questions', f' {questions} ', 'coming'):
             self.assertNotIn(said, block + ' ', f'the home page prints "{said.strip()}" of the Lab')
         self.assertNotRegex(block, r'about (an hour|\d+( and a half)? hours|\d+ min)|\b\d+ min\b', 'the home page prints how long the course or a lesson takes')
@@ -453,7 +491,7 @@ class Derived(Base):
         for name, n in counts.items():
             for near in (n - 1, n, n + 1):
                 self.assertNotRegex(prose, rf'\b{build.word(near)}\b', f'"{build.word(near)}" is typed into a sentence (the count of {name} is {n}); use a {{brace}}')
-        self.assertIn('{Systems}', text)
+        self.assertIn('{Works}', text)
 
 
 class Hygiene(Base):
@@ -482,22 +520,49 @@ class Hygiene(Base):
 
     def test_links_between_pages_land(self):
         ids = {path: set(Doc(text).attr('id')) for path, text in self.out.items() if path.endswith('.html')}
-        route = {'/': 'index.html', '/two-stories/': 'two-stories/index.html', '/lab/': 'lab/index.html'}
+        route = {'/': 'index.html', '/two-stories/': 'two-stories/index.html', '/lab/': 'lab/index.html', '/record/': 'record/index.html'}
         for path, text in self.out.items():
             if not path.endswith('.html'):
                 continue
             for href in Doc(text).attr('href'):
-                m = re.match(r'^(/|/two-stories/|/lab/)#([A-Za-z0-9_-]+)$', href)
+                m = re.match(r'^(/|/two-stories/|/lab/|/record/)#([A-Za-z0-9_-]+)$', href)
                 if m:
                     self.assertIn(m.group(2), ids[route[m.group(1)]], f'{path}: {href} lands nowhere')
 
     def test_legacy_anchors_still_land(self):
         ids = set(self.doc.attr('id'))
+        moved = self.moved()
         for a in LEGACY_ANCHORS:
-            self.assertIn(a, ids, f'#{a} is linked from lesson pages and old addresses')
+            self.assertTrue(a in ids or a in moved, f'#{a} is linked from lesson pages and old addresses')
         essay = set(Doc(self.out['two-stories/index.html']).attr('id'))
         for a in ('part1', 'table43', 'part2', 'sources'):
             self.assertIn(a, essay)
+
+    def moved(self):
+        m = re.search(r'<html [^>]*data-moved="([^"]*)"', self.home)
+        self.assertTrue(m, 'the home page names the anchors that moved to the record page')
+        return m.group(1).split()
+
+    def test_an_address_to_what_moved_is_sent_on_to_the_record(self):
+        """Every lesson's bar links /#editions, and Vol. 03 and earlier pages linked /#record, /#index and each volume.
+        The server never sees an anchor, so the home page names the ones it gave up and /v4/boot.js sends a reader on
+        before the first paint. Every anchor of the record page's own parts is named, and none the home page keeps."""
+        home, moved = set(self.doc.attr('id')), self.moved()
+        record = set(self.rdoc.attr('id'))
+        main = re.search(r'<main[^>]*>(.*)</main>', self.record, flags=re.S).group(1)
+        parts = set(re.findall(r'\sid="([^"]*)"', main)) - {'record-top'}
+        self.assertEqual(sorted(moved), sorted(parts - home), 'the anchors that moved are the record page\'s own, less any the home page keeps')
+        for a in ('editions', 'record', 'about', 'index', 'indexsec', 'ch1', 'ch2', 'appa') + tuple(build.vol_key(v) for v in self.rec['volumes'] if v['status'] != 'awaiting'):
+            self.assertIn(a, moved)
+            self.assertIn(a, record)
+        boot = (ROOT / 'v4' / 'boot.js').read_text(encoding='utf-8')
+        self.assertIn("getAttribute('data-moved')", boot)
+        self.assertIn("location.replace('/record/#'", boot)
+        for path, text in self.worn.items():
+            if path.endswith('.html'):
+                self.assertNotRegex(text, r'href="/#(editions|record|index|about)"', f'{path} still links an anchor that moved')
+                if path != 'record/index.html':
+                    self.assertNotRegex(text, r'href="#(editions|record|index|about)"', f'{path} links an anchor it does not have')
 
     def test_assets_are_asked_for_by_their_stamp(self):
         """Every reference to one of the edition's own assets carries the first ten hex of that file's MD5."""
@@ -848,7 +913,7 @@ class Tree(Base):
 
     def test_the_sitemap_lists_the_edition_and_nothing_retired(self):
         sm = self.out['sitemap.xml']
-        for path in ('/', '/two-stories/', '/lab/', '/notes/'):
+        for path in ('/', '/record/', '/two-stories/', '/lab/', '/notes/'):
             self.assertIn(f'<loc>https://seansooch.dev{path}</loc>', sm)
         for p in self.site['notes']['posts']:
             self.assertIn(f"<loc>https://seansooch.dev/notes/{p['date']}/</loc>", sm)
@@ -877,8 +942,9 @@ class Tree(Base):
         out = build.pages(bare)
         for path, text in out.items():
             self.assertNotIn('/plates/', text, path)
-        self.assertEqual(out['index.html'].count('plate-type'), len(self.rec['works']) + sum(1 for v in self.rec['volumes'] if v['status'] != 'awaiting') + sum(len(v.get('views', [])) for v in self.rec['volumes']),
-                         'every work, volume and view has its name set in type where its plate would be')
+        self.assertEqual(out['index.html'].count('plate-type'), len(self.rec['works']), 'every work has its name set in type where its plate would be')
+        self.assertEqual(out['record/index.html'].count('plate-type'), sum(1 for v in self.rec['volumes'] if v['status'] != 'awaiting') + sum(len(v.get('views', [])) for v in self.rec['volumes']),
+                         'every volume and view has its name set in type where its plate would be')
         self.assertNotIn('data-view=', out['index.html'], 'with nothing to set side by side, the switch is still offered')
         self.assertNotIn('og:image', out['index.html'])
 
@@ -1067,7 +1133,7 @@ class Ledger(Base):
         self.assertIn("exists('lab/lab.css')", check, 'the Lab\'s own check no longer names a lab/lab.css that comes back')
 
     def test_a_page_edited_by_hand_is_stale(self):
-        for page in ('index.html', 'two-stories/index.html', '404.html', 'lab/index.html'):
+        for page in ('index.html', 'record/index.html', 'two-stories/index.html', '404.html', 'lab/index.html'):
             with self.subTest(page=page):
                 tmp = self.tree()
                 text = (tmp / page).read_text(encoding='utf-8')
@@ -1429,7 +1495,7 @@ class Notes(Base):
         for path, text in self.out.items():
             if path.endswith('.html'):
                 self.assertIn('/notes/', Doc(text).attr('href', 'a'), f'{path} has no link to the notes')
-        self.assertIn('/notes/', [e['h'] for e in build.index_entries_for_other_pages(self.site)])
+        self.assertIn('/notes/', [e['h'] for e in build.index_entries(self.site)])
 
     def test_a_days_post_changes_only_the_notes_pages_and_the_sitemap(self):
         tmp = self.tree()

@@ -21,7 +21,7 @@ flowchart LR
     L["lab/: syllabus, ledger,<br>lessons, kit"]
     P["plates/: captures,<br>their manifest, the share card"]
     B["tools/build.py"]
-    E["index.html, two-stories/, lab/index.html,<br>404.html, sitemap.xml,<br>and Field Notes' pages under notes/"]
+    E["index.html (the work), record/ (the site),<br>two-stories/, lab/index.html, 404.html, sitemap.xml,<br>and Field Notes' pages under notes/"]
     V["v4/: site.css, lab.css,<br>boot.js, site.js"]
     R --> B
     L --> B
@@ -89,15 +89,18 @@ record it renders outlives it.
   `content/two-stories.json` is the paper, word for word. Neither is served. The record also names Field Notes
   (`notes`: its name, its writer, what it reads, its index words) and holds the four sentences its pages print
   (`text.notes_*`, which may ask for `{note_writer}`).
-- **Counts are computed, never typed.** A sentence in the record asks for one with braces (`{Systems}`, `{lines}`,
-  `{lessons}`); the builder fills it from the record and the Lab's ledger, so two pages cannot disagree. An unknown
-  brace stops the build. The counts that cannot be computed here (lines, files, questions) are recounted at each
+- **Counts are computed, never typed.** A sentence in the record asks for one with braces (`{Works}`, `{lines}`,
+  `{units}`); the builder fills it from the record and the Lab's ledger, so two pages cannot disagree. An unknown
+  brace stops the build. **The work is counted one way**: every work once, in its own world, in the lede, the directory
+  and each world's heading. `{systems}` is only the works whose lines are counted (`counted: true`), and a sentence
+  that uses it says so ("{lines} lines ... in {systems} of them"). The filter's world buttons carry no count, because
+  a work shown in a second world (`also`) would be counted twice there. The counts that cannot be computed here (lines, files, questions) are recounted at each
   edition and kept in `counts`, each with a sentence saying what it is a count of.
 - **Two tellings.** Every sentence that has a technical and a plain telling is in the page twice; the `data-voice`
   attribute on `<html>` shows one. Nothing is swapped by script, so the page reads the same with scripts off. A sentence
   with one telling lives in the record's `text` block; no sentence a reader sees is typed in the builder.
-- **`tools/build.py` writes the edition's five files**: `index.html`, `two-stories/index.html`, `lab/index.html`, `404.html`
-  and `sitemap.xml`, **and Field Notes' pages** (`notes/index.html`, `notes/index.json`, `notes/<day>/index.html`; see
+- **`tools/build.py` writes the edition's six files**: `index.html`, `record/index.html`, `two-stories/index.html`,
+  `lab/index.html`, `404.html` and `sitemap.xml`, **and Field Notes' pages** (`notes/index.html`, `notes/index.json`, `notes/<day>/index.html`; see
   Field Notes below). A second run changes nothing, on any Python from 3.9. `--lab` writes only the Lab page and the
   sitemap (what a lesson's own deploy changes). The sitemap's lines for sections built outside this repo are typed in
   the builder (`ELSEWHERE`).
@@ -127,6 +130,16 @@ record it renders outlives it.
   lessons, and the next full build catches it up, so it is a note. Anything else is stale and needs a full build: an
   edited record or sheet, a changed builder, a page edited by hand, a lesson the page lists that was renamed or
   withdrawn. The Lab's build can never pass any of those.
+- **The home page is the work; `/record/` is the site.** The home page holds the mast and its directory, Work,
+  Writing, the AMA guidance and Films. The record page holds what is about the site itself: Editions, Counted and
+  measured (with the status table), How it was made, and the printed Index. The bar names it as Record. The record page
+  reads nothing from the Lab's ledger (no lesson count, no lesson typed into its index; `v4/site.js` adds every lesson
+  to its printed index from the ledger), so a lesson's deploy never touches it. Anchors the home page gave up
+  (`#editions`, `#record`, `#index`, `#about`, each volume and view, `#appa`, `#ch1`, `#ch2`, `#indexsec`) are listed
+  in the home page's `<html data-moved>`, computed as the record page's anchors less the home page's: `v4/boot.js`
+  sends a fresh load of `/#editions` on to `/record/#editions` before the first paint, and `v4/site.js` does the same
+  when the hash changes on a home page already open. Every index entry, searched or printed, is addressed as a path
+  (`/#work`, `/record/#vol3`), so the same index works from every page.
 - **What the home page says of the Lab** is, for the same reason, only what stays true when a lesson is added: the
   lessons that have shipped, by unit, and how many (a number the reader's browser brings up to date). Hours, question
   counts, lesson numbers and lessons still to come are on the course page, which every lesson's deploy rebuilds. A
@@ -198,7 +211,7 @@ build record. `_redirects` sends every `/designs/...` address to the same path i
 | Path | What | Edit here? |
 |---|---|---|
 | `content/` | The record and the paper (see above) | Yes. Then run `tools/build.py` |
-| `index.html`, `two-stories/index.html`, `lab/index.html`, `404.html`, `sitemap.xml` | The edition's pages | No. Written by `tools/build.py` |
+| `index.html`, `record/index.html`, `two-stories/index.html`, `lab/index.html`, `404.html`, `sitemap.xml` | The edition's pages | No. Written by `tools/build.py` |
 | `notes/index.html`, `notes/index.json`, `notes/<day>/index.html` | Field Notes: the list of posts, the same list as data, and one page per post | No. Written by `tools/build.py` from `notes/posts/` |
 | `notes/posts/<day>.json`, `notes/desks.json`, `notes/FORMAT.md`, `notes/VOICE.md` | The posts as written, the desks they may name, the contract and the voice | Posts by the writer's pull request; never shipped (`export-ignore`) |
 | `notes/kit/notes.css`, `notes/kit/notes.js` | Field Notes' own design | Yes, by hand; then run the builder, which stamps them |
@@ -267,10 +280,11 @@ builder's, the course page's sheet lives outside `lab/`, and `tools/lab-check.mj
   `[data-lab-progress]` holding `.bar i` and `.state`; a `[data-lab-dot]` per lesson, with a `title`;
   `[data-lab-resume]`; `[data-lab-review]` holding `[data-lab-review-start]`, inside `#review`; and the `#lab-steps`
   table. `v4/lab.css` styles only what the course page adds to the edition's sheet.
-- **The ledger is an interface, and it is not trusted.** The home page's Lab outline and printed index are written at
-  build time, and `v4/site.js` then reads `/lab/apps.json` in the reader's browser and adds any lesson shipped since
-  (to the outline, to the printed index in its alphabetical place, and to each place the lesson count is printed), so a lesson the pipeline ships
-  shows on the home page without a rebuild. The index a reader searches (the "/" palette on every page) has no lesson
+- **The ledger is an interface, and it is not trusted.** The home page's Lab outline is written at build time, and
+  `v4/site.js` then reads `/lab/apps.json` in the reader's browser and adds any lesson shipped since (to the outline
+  and to each place the lesson count is printed), so a lesson the pipeline ships shows on the home page without a
+  rebuild. The printed index on `/record/` has no lesson typed into it: the same script adds every lesson there, in its
+  alphabetical place. The index a reader searches (the "/" palette on every page) has no lesson
   typed into it at all: it reads the same ledger the first time it opens, which is why a new lesson leaves the paper
   and the not-found page byte for byte as they were. Both the builder and the script take only a slug that is plain
   words, a date that is a real day, and a title as text, never as markup.
@@ -294,10 +308,12 @@ builder's, the course page's sheet lives outside `lab/`, and `tools/lab-check.mj
   `plan.json`, `clinical-values.json`, `style.css` (only its pictures' classes) and, where it has one, a model. Static
   files from this origin only, no third-party requests except Google Fonts, no data sent anywhere. Each opens with a
   top bar that names the site ("Sean Sooch", no edition number, so an edition never has to touch a lesson) and links
-  `/#work`, `/#writing`, `/#films`, `/#editions` and `/lab/`; its CSS is part of `kit.css`. The pipeline builds a new
-  lesson's bar from its own template (`templates/site-top-lesson.html`, outside this repo), which has to match. The
-  home page also keeps the older anchors (`#ch3`, `#ch4`, `#appa`, `#appb`) that a lesson built from an old template
-  would link.
+  `/#work`, `/#writing`, `/#films`, `/#editions` and `/lab/`; its CSS is part of `kit.css`. `/#editions` now lives at
+  `/record/#editions`, and the home page sends it on (see the edition above), so no lesson needs rebuilding; the
+  template should link `/record/#editions` the next time it is touched. The pipeline builds a new lesson's bar from
+  its own template (`templates/site-top-lesson.html`, outside this repo), which has to match. The home page also keeps
+  the older anchors (`#ch3`, `#ch4`, `#appb`) that a lesson built from an old template would link, and sends `#appa`
+  on with the rest of Editions.
 - **Caching.** `_headers` serves everything under `/lab/` with `Cache-Control: no-cache` (Pages' default for scripts and
   styles is four hours), because lesson pages ask for their files by plain names and are edited often. That holds on
   the `*.pages.dev` hosts; on seansooch.dev the Cloudflare zone's Browser Cache TTL (four hours, checked 2026-11-06)
