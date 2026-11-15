@@ -268,10 +268,11 @@ builder's, the course page's sheet lives outside `lab/`, and `tools/lab-check.mj
   `[data-lab-progress]` holding `.bar i` and `.state`; a `[data-lab-dot]` per lesson, with a `title`;
   `[data-lab-resume]`; `[data-lab-review]` holding `[data-lab-review-start]`, inside `#review`; and the `#lab-steps`
   table. `v4/lab.css` styles only what the course page adds to the edition's sheet.
-- **The ledger is an interface, and it is not trusted.** The home page's Lab outline and printed index are written at
-  build time, and `v4/site.js` then reads `/lab/apps.json` in the reader's browser and adds any lesson shipped since
-  (to the outline, to the printed index in its alphabetical place, and to each place the lesson count is printed), so a lesson the pipeline ships
-  shows on the home page without a rebuild. The index a reader searches (the "/" palette on every page) has no lesson
+- **The ledger is an interface, and it is not trusted.** The home page's Lab outline is written at build time, and
+  `v4/site.js` then reads `/lab/apps.json` in the reader's browser and adds any lesson shipped since (to the outline
+  and to each place the lesson count is printed), so a lesson the pipeline ships shows on the home page without a
+  rebuild. The printed index on `/record/` has no lesson typed into it: the same script adds every lesson there, in its
+  alphabetical place. The index a reader searches (the "/" palette on every page) has no lesson
   typed into it at all: it reads the same ledger the first time it opens, which is why a new lesson leaves the paper
   and the not-found page byte for byte as they were. Both the builder and the script take only a slug that is plain
   words, a date that is a real day, and a title as text, never as markup.
@@ -279,10 +280,14 @@ builder's, the course page's sheet lives outside `lab/`, and `tools/lab-check.mj
   picture each, the last stage "What changes it" with one step per drug class or disease state, a prediction before each
   of those changes plays, a quiz of 6 to 10 questions tied to the goals and to the steps that teach them, a summary
   (takeaways, the reader's score on each goal, every term the lesson defines, the next lesson; it prints on its own), a
-  Clinical values tab and an Explore freely tab. **One lesson does not yet**: `adh-water-balance`, shipped by the
-  pipeline on 2026-11-07, is not in the syllabus and not on the kit (its own `js/` and `data/` folders, and its own
-  copy of the top bar's CSS). `tools/lab-check.mjs` reports it until it is placed in a unit and rebuilt on the kit;
-  the course page lists it as lesson 22, under "Added since the units were set".
+  Clinical values tab and an Explore freely tab. **Three shipped lessons are placed and not yet on the kit.**
+  `adh-water-balance` (2026-11-07) and `calcium-pth-vitamin-d` (2026-11-11) are lessons 22 and 23, in
+  `water-and-calcium`. `spirometry-lung-volumes` (2026-11-14) is lesson 24, in `lung-volumes`, after that unit
+  and before the unshipped batch: it is the lung-volumes lesson, and appending it to `breath-and-blood` would
+  split that unit or renumber lessons 1 to 23. The ADH lesson has its own `js/` and `data/` folders and its own
+  copy of the top bar's CSS; the calcium and spirometry pages are shells of their own. `tools/lab-check.mjs`
+  reports a lesson until it is rebuilt on the kit. A shipped lesson the syllabus has not placed is still listed
+  after the units, under "Added since the units were set"; with these three placed, that section is empty.
 - **The kit** (`lab/kit/`) runs all of that, so a lesson holds only its words, pictures, model and reference tabs:
   `kit.js` (tabs, steps, the step rail, the picture player, predictions, quiz, summary, glossary, terms that light parts
   of a picture), `kit.css` (the lessons' own design system, including the shared vocabulary of the Clinical values and
@@ -295,10 +300,12 @@ builder's, the course page's sheet lives outside `lab/`, and `tools/lab-check.mj
   `plan.json`, `clinical-values.json`, `style.css` (only its pictures' classes) and, where it has one, a model. Static
   files from this origin only, no third-party requests except Google Fonts, no data sent anywhere. Each opens with a
   top bar that names the site ("Sean Sooch", no edition number, so an edition never has to touch a lesson) and links
-  `/#work`, `/#writing`, `/#films`, `/#editions` and `/lab/`; its CSS is part of `kit.css`. The pipeline builds a new
-  lesson's bar from its own template (`templates/site-top-lesson.html`, outside this repo), which has to match. The
-  home page also keeps the older anchors (`#ch3`, `#ch4`, `#appa`, `#appb`) that a lesson built from an old template
-  would link.
+  `/#work`, `/#writing`, `/#films`, `/#editions` and `/lab/`; its CSS is part of `kit.css`. `/#editions` now lives at
+  `/record/#editions`, and the home page sends it on (see the edition above), so no lesson needs rebuilding; the
+  template should link `/record/#editions` the next time it is touched. The pipeline builds a new lesson's bar from
+  its own template (`templates/site-top-lesson.html`, outside this repo), which has to match. The home page also keeps
+  the older anchors (`#ch3`, `#ch4`, `#appb`) that a lesson built from an old template would link, and sends `#appa`
+  on with the rest of Editions.
 - **Caching.** `_headers` serves everything under `/lab/` with `Cache-Control: no-cache` (Pages' default for scripts and
   styles is four hours), because lesson pages ask for their files by plain names and are edited often. That holds on
   the `*.pages.dev` hosts; on seansooch.dev the Cloudflare zone's Browser Cache TTL (four hours, checked 2026-11-06)
