@@ -1,0 +1,172 @@
+{
+  "disclaimer": "Typical adult reference ranges; labs vary; not for clinical decisions.",
+  "about": "Every reference number and every arrow rests on a verbatim excerpt from an open source, quoted with its section. A direction the excerpts do not state is left out of a state's shifts and shown as not stated. Units are kept exactly as each source writes them. The teaching model's starting point is in modelBaseline: illustrative choices, not reference values.",
+  "modelBaseline": {
+    "about": "Where the illustrative teaching model starts. Each figure is chosen to sit inside its cited range, or on its cited typical value. Total serum osmolality is set above effective osmolality (tonicity) because it also counts particles that cross cell membranes freely, such as urea; the model spreads that difference evenly through all body water. These are model settings, not reference values.",
+    "sosm": 292, "tonicity": 287, "na": 141, "bcop": 25, "icfShare": 60, "plasmaShare": 20
+  },
+  "links": {
+    "openstax": [
+      { "label": "OpenStax A&P 2e, 3.1 The Cell Membrane", "url": "https://openstax.org/books/anatomy-and-physiology-2e/pages/3-1-the-cell-membrane" },
+      { "label": "OpenStax A&P 2e, 20.3 Capillary Exchange", "url": "https://openstax.org/books/anatomy-and-physiology-2e/pages/20-3-capillary-exchange" },
+      { "label": "OpenStax A&P 2e, 26.1 Body Fluids and Fluid Compartments", "url": "https://openstax.org/books/anatomy-and-physiology-2e/pages/26-1-body-fluids-and-fluid-compartments" },
+      { "label": "OpenStax A&P 2e, 26.3 Electrolyte Balance", "url": "https://openstax.org/books/anatomy-and-physiology-2e/pages/26-3-electrolyte-balance" }
+    ],
+    "sp-osmolality": [{ "label": "NCBI Bookshelf NBK567764", "url": "https://www.ncbi.nlm.nih.gov/books/NBK567764/" }],
+    "sp-hyponatremia": [{ "label": "NCBI Bookshelf NBK470386", "url": "https://www.ncbi.nlm.nih.gov/books/NBK470386/" }],
+    "sp-osmosis": [{ "label": "NCBI Bookshelf NBK557609", "url": "https://www.ncbi.nlm.nih.gov/books/NBK557609/" }],
+    "sp-crystalloid": [{ "label": "NCBI Bookshelf NBK500033", "url": "https://www.ncbi.nlm.nih.gov/books/NBK500033/" }],
+    "sp-colloid": [{ "label": "NCBI Bookshelf NBK541067", "url": "https://www.ncbi.nlm.nih.gov/books/NBK541067/" }]
+  },
+  "sources": {
+    "openstax": "Betts JG, Young KA, Wise JA, et al. Anatomy and Physiology 2e. Houston (TX): OpenStax, Rice University; 2022. Sections 3.1 (The Cell Membrane), 20.3 (Capillary Exchange), 26.1 (Body Fluids and Fluid Compartments) and 26.3 (Electrolyte Balance).",
+    "sp-osmolality": "Najem O, Shah MM, Zubair M, De Jesus O. Serum Osmolality. In: StatPearls. Treasure Island (FL): StatPearls Publishing; 2024. NCBI Bookshelf NBK567764.",
+    "sp-hyponatremia": "Rout P, Afzal M. Hyponatremia. In: StatPearls. Treasure Island (FL): StatPearls Publishing; 2026. NCBI Bookshelf NBK470386.",
+    "sp-osmosis": "Lopez MJ, Hall CA. Physiology, Osmosis. In: StatPearls. Treasure Island (FL): StatPearls Publishing; 2023. NCBI Bookshelf NBK557609.",
+    "sp-crystalloid": "Rout P, Patel P, Davis D. Crystalloid Solutions in Intravenous Fluid Therapy. In: StatPearls. Treasure Island (FL): StatPearls Publishing; 2025. NCBI Bookshelf NBK500033.",
+    "sp-colloid": "Darwish A, Lui F. Physiology, Colloid Osmotic Pressure. In: StatPearls. Treasure Island (FL): StatPearls Publishing; 2023. NCBI Bookshelf NBK541067."
+  },
+  "values": [
+    {
+      "id": "sosm", "label": "Serum osmolality", "unit": "mOsm/kg",
+      "low": 275, "high": 295, "typical": null, "display": "275–295", "decimals": 0,
+      "source": "sp-osmolality", "where": "StatPearls NBK567764, Serum Osmolality, Introduction",
+      "excerpt": "The normal serum osmolality ranges from 275 to 295 mOsm/kg.",
+      "modelKey": "sosm",
+      "note": "All dissolved particles, including those that cross cell membranes freely."
+    },
+    {
+      "id": "tonicity", "label": "Tonicity (effective osmolality)", "unit": "mOsm/kg",
+      "low": 285, "high": 295, "typical": null, "display": "285–295", "decimals": 0,
+      "source": "sp-hyponatremia", "where": "StatPearls NBK470386, Hyponatremia, Introduction",
+      "excerpt": "The reference range for tonicity is 285 to 295 mOsm/kg.",
+      "modelKey": "tonicity",
+      "note": "Counts only particles that cannot cross the cell membrane; the source excludes urea, which crosses freely. This is the number that decides whether water enters or leaves cells."
+    },
+    {
+      "id": "na", "label": "Plasma sodium", "unit": "mM",
+      "low": 136, "high": 146, "typical": null, "display": "136.00–146.00", "decimals": 1,
+      "source": "openstax", "where": "Section 26.3 Electrolyte Balance, Table 26.1 Electrolyte and Ion Reference Values (Sodium, Plasma)",
+      "excerpt": "136.00–146.00 (mM)",
+      "modelKey": "na",
+      "note": "Sodium is the main particle outside cells, so it carries most of the fluid's tonicity."
+    },
+    {
+      "id": "bcop", "label": "Blood colloid osmotic pressure", "unit": "mm Hg",
+      "low": null, "high": null, "typical": 25, "display": "about 25", "decimals": 1,
+      "source": "openstax", "where": "Section 20.3 Capillary Exchange, Interaction of Hydrostatic and Osmotic Pressures",
+      "excerpt": "the BCOP remains fairly constant at about 25 mm Hg throughout the length of the capillary",
+      "modelKey": "bcop",
+      "note": "The pull of plasma proteins that holds water inside the vessels. The source gives one typical value, not a range."
+    },
+    {
+      "id": "icfShare", "label": "Fluid inside cells, share of total body water", "unit": "percent of total body water",
+      "low": null, "high": null, "typical": 60, "display": "about 60", "decimals": 1,
+      "source": "openstax", "where": "Section 26.1 Body Fluids and Fluid Compartments, Intracellular Fluid",
+      "excerpt": "The ICF makes up about 60 percent of the total water in the human body",
+      "modelKey": "icfShare",
+      "note": "Sources round this differently: the same section calls the fluid outside cells one-third, and StatPearls NBK470386 gives two-thirds inside cells. Only the OpenStax figure is used here."
+    },
+    {
+      "id": "plasmaShare", "label": "Plasma, share of the fluid outside cells", "unit": "percent of extracellular fluid",
+      "low": null, "high": null, "typical": 20, "display": "about 20", "decimals": 1,
+      "source": "openstax", "where": "Section 26.1 Body Fluids and Fluid Compartments, Extracellular Fluid",
+      "excerpt": "Approximately 20 percent of the ECF is found in plasma.",
+      "modelKey": "plasmaShare",
+      "note": "The rest of the fluid outside cells lies between cells, in the interstitial fluid."
+    }
+  ],
+  "states": [
+    {
+      "id": "baseline", "label": "No fluid given", "kind": "physiologic",
+      "summary": "The body's cells sit in fluid that matches them, so no water moves into or out of cells overall.",
+      "shifts": { "sosm": "none", "tonicity": "none", "na": "none", "bcop": "none", "icfShare": "none", "plasmaShare": "none" },
+      "source": "openstax", "where": "Section 3.1 The Cell Membrane, Passive Transport",
+      "evidence": [
+        { "source": "openstax", "where": "Section 3.1 The Cell Membrane, Passive Transport",
+          "excerpt": "A critical aspect of homeostasis in living things is to create an internal environment in which all of the body’s cells are in an isotonic solution." }
+      ],
+      "model": { "fluid": "isotonic", "amount": 0 }
+    },
+    {
+      "id": "isotonic", "label": "Isotonic crystalloid", "kind": "drug",
+      "summary": "Water with small salts at the body's own concentration: it adds fluid outside cells without pulling water into or out of them.",
+      "shifts": { "tonicity": "none" },
+      "source": "openstax", "where": "Section 3.1 The Cell Membrane, Passive Transport",
+      "evidence": [
+        { "source": "sp-crystalloid", "where": "StatPearls NBK500033, Crystalloid Solutions in Intravenous Fluid Therapy, Continuing Education Activity",
+          "excerpt": "Crystalloids consist of water and small electrolytes, while colloids contain larger molecules such as starches or proteins." },
+        { "source": "openstax", "where": "Section 3.1 The Cell Membrane, Passive Transport",
+          "excerpt": "When cells and their extracellular environments are isotonic, the concentration of water molecules is the same outside and inside the cells, and the cells maintain their normal shape (and function)." }
+      ],
+      "unstatedNote": "The quoted passage is about the particles that cannot cross cells, so it supports unchanged tonicity and cell size only. It gives no direction for total serum osmolality, which also counts freely crossing particles such as urea (the teaching model dilutes those slightly), nor for sodium, protein pull or how the fluid divides between compartments.",
+      "model": { "fluid": "isotonic", "amount": 50 }
+    },
+    {
+      "id": "hypotonic", "label": "Hypotonic fluid", "kind": "drug",
+      "summary": "Fewer solute particles than the body's fluid: it dilutes the fluid outside cells, so water moves into cells and they swell.",
+      "shifts": { "sosm": "down", "tonicity": "down", "na": "down" },
+      "source": "openstax", "where": "Sections 3.1 (Passive Transport) and 26.3 (Sodium)",
+      "evidence": [
+        { "source": "openstax", "where": "Section 3.1 The Cell Membrane, Passive Transport",
+          "excerpt": "Cells in a hypotonic solution will take on too much water and swell, with the risk of eventually bursting." },
+        { "source": "openstax", "where": "Section 26.3 Electrolyte Balance, Sodium",
+          "excerpt": "Hyponatremia is a lower-than-normal concentration of sodium, usually associated with excess water accumulation in the body, which dilutes the sodium." },
+        { "source": "openstax", "where": "Section 26.3 Electrolyte Balance, Sodium",
+          "excerpt": "At the cellular level, hyponatremia results in increased entry of water into cells by osmosis, because the concentration of solutes within the cell exceeds the concentration of solutes in the now-diluted ECF." }
+      ],
+      "unstatedNote": "A hypotonic fluid brings more water than solute, which is the dilution these excerpts describe. They give no direction for protein pull or compartment shares.",
+      "model": { "fluid": "hypotonic", "amount": 50 }
+    },
+    {
+      "id": "hypertonic", "label": "Hypertonic fluid", "kind": "drug",
+      "summary": "More solute particles than the body's fluid: it concentrates the fluid outside cells, so water leaves cells and they shrink.",
+      "shifts": { "sosm": "up", "tonicity": "up", "icfShare": "down" },
+      "source": "sp-osmolality", "where": "StatPearls NBK567764, Serum Osmolality, Introduction; OpenStax Section 3.1",
+      "evidence": [
+        { "source": "sp-osmolality", "where": "StatPearls NBK567764, Serum Osmolality, Introduction",
+          "excerpt": "For example, if a cell is in a relatively hyperosmolar solution, fluid will move toward the highly concentrated compartment to reach homeostasis. As a result, the cell will shrink." },
+        { "source": "openstax", "where": "Section 3.1 The Cell Membrane, Passive Transport",
+          "excerpt": "Cells in a hypertonic solution will shrivel as water leaves the cell via osmosis." }
+      ],
+      "unstatedNote": "Water leaving shrinking cells lowers the share of body water inside cells. The excerpts do not name the solute, so no direction is given for sodium.",
+      "model": { "fluid": "hypertonic", "amount": 50 }
+    },
+    {
+      "id": "colloid", "label": "Colloid", "kind": "drug",
+      "summary": "Large molecules that mostly stay behind an intact vessel wall hold much of the fluid inside the vessels, so plasma gains the most.",
+      "shifts": { "plasmaShare": "up" },
+      "source": "sp-colloid", "where": "StatPearls NBK541067, Physiology, Colloid Osmotic Pressure, Introduction",
+      "evidence": [
+        { "source": "sp-crystalloid", "where": "StatPearls NBK500033, Crystalloid Solutions in Intravenous Fluid Therapy, Continuing Education Activity",
+          "excerpt": "Crystalloids consist of water and small electrolytes, while colloids contain larger molecules such as starches or proteins." },
+        { "source": "sp-colloid", "where": "StatPearls NBK541067, Physiology, Colloid Osmotic Pressure, Introduction",
+          "excerpt": "Proteins, by contrast, are mostly restricted to the plasma compartment, making them effective osmotic agents in the ability to draw water from the interstitial space (where protein concentration is low) to the plasma compartment (where protein concentration is high)." },
+        { "source": "sp-colloid", "where": "StatPearls NBK541067, Physiology, Colloid Osmotic Pressure, Introduction",
+          "excerpt": "Edema also occurs when there is capillary leakage due to impaired membrane integrity such as in burns or anaphylaxis." }
+      ],
+      "unstatedNote": "The direction holds for an intact vessel wall; the source says large molecules are mostly, not completely, held back, and a leaky wall lets fluid escape. The excerpts give no direction for the concentration of the fluid or for sodium.",
+      "model": { "fluid": "colloid", "amount": 50 }
+    },
+    {
+      "id": "freewater", "label": "Free water (a glucose solution once the sugar is taken up)", "kind": "drug",
+      "summary": "From a glucose-in-water solution made as concentrated as blood, cells take up and use the sugar, leaving water with nothing dissolved, which dilutes every compartment as it spreads.",
+      "shifts": { "sosm": "down", "tonicity": "down", "na": "down" },
+      "source": "openstax", "where": "Sections 3.1 (Passive Transport), 26.1 (Fluid Movement between Compartments) and 26.3 (Sodium); StatPearls NBK470386, Introduction",
+      "evidence": [
+        { "source": "openstax", "where": "Section 3.1 The Cell Membrane, Passive Transport",
+          "excerpt": "a specialized carrier protein called the glucose transporter will transfer glucose molecules into the cell to facilitate its inward diffusion." },
+        { "source": "openstax", "where": "Section 3.1 The Cell Membrane, Passive Transport",
+          "excerpt": "A common example of facilitated diffusion is the movement of glucose into the cell, where it is used to make ATP." },
+        { "source": "sp-hyponatremia", "where": "StatPearls NBK470386, Hyponatremia, Introduction",
+          "excerpt": "Tonicity can also be considered a measurement of effective osmoles and is calculated as follows: Tonicity = 2 x (Na) + (Glucose)/18, In normoglycemia, glucose can be excluded because its contribution to tonicity is minimal (5 to 10 mOsm/kg)." },
+        { "source": "openstax", "where": "Section 26.1 Body Fluids and Fluid Compartments, Fluid Movement between Compartments",
+          "excerpt": "When a dehydrated person drinks water and rehydrates, the water is redistributed by the same gradient, but in the opposite direction, replenishing water in all of the tissues." },
+        { "source": "openstax", "where": "Section 26.3 Electrolyte Balance, Sodium",
+          "excerpt": "Hyponatremia is a lower-than-normal concentration of sodium, usually associated with excess water accumulation in the body, which dilutes the sodium." }
+      ],
+      "unstatedNote": "How the excerpts fit together: glucose counts toward tonicity while it stays in the blood; cells move it inside and use it to make ATP; once blood glucose is back to normal its share of tonicity is minimal, so the water it arrived with is left with nothing that holds it outside cells. That water spreads like drunk water and dilutes sodium. None of these excerpts names an intravenous glucose product, and they give no direction for protein pull or compartment shares.",
+      "model": { "fluid": "glucose", "amount": 50, "uptake": 100 }
+    }
+  ]
+}
