@@ -695,5 +695,20 @@
         }
       }
     ]
+  },
+  {
+    "slug": "na-k-pump-digoxin",
+    "title": "The Na\u207a/K\u207a Pump (digoxin)",
+    "date": "2026-11-16",
+    "description": "The pump that keeps sodium outside the cell and potassium inside, and how digoxin slows that pump so the heart cell holds more calcium and squeezes harder.",
+    "category": "medicine",
+    "builder": {
+      "tool": "Claude Code",
+      "model": "claude-opus-5-5"
+    },
+    "reviewer": {
+      "tool": "OpenAI Codex",
+      "model": "gpt-6.1-sol"
+    }
   }
 ]
