@@ -35,6 +35,10 @@
 #     host that does not answer. A retired edition is deployed to its archive
 #     first; the redirects to it ship after. (Needs the network, as the audit
 #     and the deploy that follow do.)
+#   - Refuses a commit whose Lab fails tools/lab-check.mjs. Lessons 22 to 25 went
+#     live or merged off the syllabus or off the kit (2026-11-07 to -15) because
+#     the check ran nowhere a lesson had to pass. A lesson that predates this gate and
+#     still owes the format is listed in tools/lab-owed.json and is a note here.
 #   - Runs the builder with python3 -I, so only the builder itself and the
 #     standard library are run: a file a pull request leaves in tools/ is not.
 #   - Says so when HEAD is not the origin/main it last saw: a deploy cut from an
@@ -76,6 +80,18 @@ if [ -n "$stale" ]; then
   echo "$stale" >&2
   exit 1
 fi
+
+# Every lesson follows lab/FORMAT.md, or is on the owed list (which only shrinks; the pull request check holds that).
+if ! sh -c 'node -e 0 || exit 1' >/dev/null 2>&1; then
+  echo "refusing to stage: node does not run here, so the Lab cannot be checked (try PATH=/usr/local/bin:\$PATH)" >&2
+  exit 1
+fi
+if ! labs=$(node tools/lab-check.mjs 2>&1); then
+  echo "refusing to stage: the Lab fails tools/lab-check.mjs" >&2
+  echo "$labs" | sed 's/^/  /' >&2
+  exit 1
+fi
+echo "$labs" | grep '^owed:' | sed 's/^owed: */note:  owed /' || true
 
 # The edition's pages must be the builder's. Checked against the committed tree, which is the working
 # tree here (a dirty tree was refused above). The builder prints what is wrong and the command that fixes it.

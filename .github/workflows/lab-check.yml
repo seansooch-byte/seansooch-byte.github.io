@@ -1,0 +1,33 @@
+# The Lab's gate on every pull request that touches it (tools/lab-check.mjs; lab/FORMAT.md is the contract).
+# A lesson merges only when it is placed in lab/syllabus.json, built on the kit, and passes the check.
+# --base: the owed list (tools/lab-owed.json) may shrink in a pull request, never grow.
+name: lab-check
+on:
+  pull_request:
+    paths: ['lab/**', 'tools/lab-*', '.github/workflows/lab-check.yml']
+  push:
+    branches: [main]
+    paths: ['lab/**', 'tools/lab-*', '.github/workflows/lab-check.yml']
+permissions:
+  contents: read
+jobs:
+  lab-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          sparse-checkout: |
+            lab
+            tools
+            .github
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Lab format, ledger and owed list
+        # A pull request is held to its base branch; a push to main to the commit before it.
+        env:
+          BASE: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || github.event.before }}
+        run: node tools/lab-check.mjs --base "$BASE"
+      - name: The gate's own tests
+        run: node --test tools/lab-check-test.mjs

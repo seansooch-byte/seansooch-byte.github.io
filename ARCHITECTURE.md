@@ -41,7 +41,8 @@ flowchart LR
   T & FM & LD & EK & M -->|built output copied in| Repo
   Pipe["lab pipeline<br>(outside this repo)"] -->|"pull request per lesson: lab/ and the lab<br>lines of sitemap.xml, by build.py --lab"| Repo
   Repo -->|git push| GH["GitHub, private"]
-  Repo -->|"tools/stage.sh: runs build.py --check,<br>then git archive minus export-ignore"| Bundle["/tmp/seansooch-bundle"]
+  Repo -->|"tools/stage.sh: runs lab-check and build.py --check,<br>then git archive minus export-ignore"| Bundle["/tmp/seansooch-bundle"]
+  GH -->|"every pull request touching lab/:<br>tools/lab-check.mjs --base"| Gate["GitHub Actions<br>lab-check"]
   Bundle -->|tools/audit.sh| Check{"equal to live,<br>or only the intended diffs"}
   Check -->|"wrangler pages deploy<br>direct upload"| CF["Cloudflare Pages<br>project sean-sooch-portfolio"]
   CF --> Live["https://seansooch.dev"]
@@ -254,7 +255,9 @@ builder's, the course page's sheet lives outside `lab/`, and `tools/lab-check.mj
 - **The course** is `lab/syllabus.json`: `units` (id, title, summary) and `modules` in teaching order (slug, title,
   one-line description, the drug classes and disease states each lesson animates, its `unit`). A unit's modules sit
   together. Sean reorders or edits it by hand; never rename a shipped lesson's slug. The pipeline builds the first module
-  that is neither shipped (`lab/apps.json`) nor withdrawn (`lab/rejected.json`).
+  that is neither shipped (`lab/apps.json`) nor withdrawn (`lab/rejected.json`); when none is left, its pull request
+  adds the module it builds, with a proposed unit, and Sean places the lesson by merging (`lab/FORMAT.md`, "Where a
+  lesson comes from"). A lesson never ships unplaced.
 - **The course page** `/lab/` is one of the edition's pages. `tools/build.py` writes all of `lab/index.html` from the
   syllabus, the ledger and each lesson's `plan.json` and steps: the course's facts, a map of the units with a dot per
   lesson, every unit with its lessons (time, steps, questions, what each builds on, its goals), the mixed review, and a
@@ -318,7 +321,13 @@ builder's, the course page's sheet lives outside `lab/`, and `tools/lab-check.mj
   `node tools/lab-walk.mjs <served base> [slug ...]` walks every step of every lesson in installed Chrome at 1280 x 900
   and 375 x 553: one picture per step within its size, predictions holding the picture, no overlapping labels, no label
   under 12 px on the phone, no sideways scroll, a working quiz and summary, no console errors. It plants a defect first
-  to prove its own detectors can fail. Neither runs in CI; run both before a lab change ships.
+  to prove its own detectors can fail. `lab-check` is a gate (since 2026-11-16, after lessons 22 to 25 shipped off the
+  syllabus and off the kit): it runs on every pull request that touches the Lab (`.github/workflows/lab-check.yml`,
+  tests in `tools/lab-check-test.mjs`) and `tools/stage.sh` refuses a deploy it fails. It also fails a lesson folder
+  with no ledger entry and a ledger entry with no folder. Lessons that went live before the gate and do not follow
+  the format are listed with what each owes in `tools/lab-owed.json`; their problems print as notes, the list only
+  shrinks (a pull request that adds to it fails), and an owed lesson that passes must leave it. `lab-walk` needs a
+  browser and still runs by hand: run it before a lab change ships.
 - `lab/apps.json` is the ledger of shipped lessons (slug, title, date, description, builder, reviewer, and `revisions`:
   later rebuilds, each with its date, what changed, builder and reviewer). `lab/rejected.json` lists lessons Sean turned
   down and why. A withdrawn lesson is deleted from `lab/` and the ledger in the same pull request that records it there,

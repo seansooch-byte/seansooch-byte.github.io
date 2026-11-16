@@ -27,6 +27,29 @@ the quiz, the summary, the glossary, terms that light parts of a picture, and th
 (kept in their browser only). A lesson supplies only its words, its pictures, its model and its
 reference tabs.
 
+## Where a lesson comes from, and the gate it passes
+
+A lesson is a module of `lab/syllabus.json` before it is a page. Whoever builds it, by hand or the
+lab pipeline, it ships in one pull request that holds all of it:
+
+1. **Its module.** The next module that is neither shipped (`lab/apps.json`) nor withdrawn
+   (`lab/rejected.json`). When none is left, the pull request adds one: slug, title, a one-line
+   description, the drug classes and disease states it animates, and the `unit` it proposes, placed
+   with that unit's modules. Sean places a lesson by merging (or moving it in review); a lesson
+   never ships unplaced, to be placed later.
+2. **The lesson on the kit**, as this file describes, with its `plan.json`, built from a lesson
+   already on the kit (copy one, never an older template or a bootstrap's own copy).
+3. **Its ledger entry** in `lab/apps.json`, and the course page and sitemap rebuilt by
+   `node tools/lab-index.mjs`.
+
+`node tools/lab-check.mjs` is the gate. It runs on every pull request that touches the Lab
+(`.github/workflows/lab-check.yml`) and `tools/stage.sh` refuses to stage a deploy it fails, so a
+red check means the lesson is not done, whatever else passed. It fails a shipped lesson missing
+from the syllabus, off the kit or without a `plan.json`, a lesson folder with no ledger entry, and
+a ledger entry with no folder. Lessons that went live before the gate existed and still owe the
+format are listed, with what each owes, in `tools/lab-owed.json`. That list only shrinks: a pull
+request that adds to it fails, and a lesson rebuilt on the kit leaves it in the same pull request.
+
 ## Files
 
 | File | What it holds |

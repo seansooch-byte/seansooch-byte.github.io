@@ -1,0 +1,10 @@
+{
+  "adh-water-balance": {
+    "since": "2026-11-07",
+    "owes": "a rebuild on the kit with plan.json: it has its own js/ and data/ folders (placed in the syllabus 2026-11-14)"
+  },
+  "calcium-pth-vitamin-d": {
+    "since": "2026-11-11",
+    "owes": "a rebuild on the kit: its own app.js and data.js, and plan.json is an export of data.js (placed in the syllabus 2026-11-14)"
+  }
+}

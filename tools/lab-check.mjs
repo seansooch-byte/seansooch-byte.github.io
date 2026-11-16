@@ -1,10 +1,22 @@
 #!/usr/bin/env node
 // Check every Lab lesson against lab/FORMAT.md: the parts a script can check without a browser.
 // Never shipped (tools/ is export-ignore). Usage, from the repo root:
-//   node tools/lab-check.mjs            every lesson in lab/apps.json, plus the course files
-//   node tools/lab-check.mjs <slug>...  only these lessons
+//   node tools/lab-check.mjs                 every lesson in lab/apps.json, plus the course files
+//   node tools/lab-check.mjs <slug>...       only these lessons
+//   node tools/lab-check.mjs --base <ref>    everything, and refuse an owed list that grew since <ref>
 // Prints one line per problem and exits 1 if there are any.
+//
+// It is the gate in front of every Lab change: a pull request runs it (.github/workflows/lab-check.yml, with
+// --base) and tools/stage.sh refuses a deploy it fails. Expected behaviour (tests: tools/lab-check-test.mjs):
+//   - A shipped lesson must be placed in lab/syllabus.json and built on the kit. A lesson that is not is reported,
+//     and the rest of its problems are still listed, so one run names everything a pull request has to fix.
+//   - Every folder under lab/ but kit/ is a lesson in lab/apps.json, and every ledger entry has its folder.
+//   - tools/lab-owed.json names lessons that went live before this gate and do not yet follow the format, with
+//     what each owes. Their problems print as notes, not failures. The list only shrinks: an owed lesson that
+//     passes must leave it, and with --base a slug added to it since <ref> is a failure, so a new lesson can
+//     never ship by owing.
 import fs from 'node:fs';
+import { execFileSync } from 'node:child_process';
 
 const root = new URL('..', import.meta.url).pathname;
 const read = p => fs.readFileSync(root + p, 'utf8');
@@ -23,6 +35,29 @@ const syllabus = JSON.parse(read('lab/syllabus.json'));
 const mods = syllabus.modules || [];
 const units = syllabus.units || [];
 const index = Object.fromEntries(mods.map((m, i) => [m.slug, i]));
+const readOwed = text => { const o = JSON.parse(text); return o && typeof o === 'object' && !Array.isArray(o) ? o : {}; };
+const owed = exists('tools/lab-owed.json') ? readOwed(read('tools/lab-owed.json')) : {};
+
+const args = process.argv.slice(2);
+const at = args.indexOf('--base');
+const base = at < 0 ? null : args[at + 1];
+if (at >= 0 && !base) { console.log('lab-check: --base needs a git ref'); process.exit(2); }
+const only = at < 0 ? args : args.filter((_, i) => i !== at && i !== at + 1);
+
+/* ---------- The ledger and the folders ---------- */
+const ledger = new Set(apps.map(a => a.slug));
+for (const e of fs.readdirSync(root + 'lab', { withFileTypes: true })) {
+  if (e.isDirectory() && e.name !== 'kit' && !ledger.has(e.name)) bad(`lab/${e.name}`, 'is not in lab/apps.json: a lesson ships with its ledger entry, or the folder goes');
+}
+for (const slug of Object.keys(owed)) {
+  if (!ledger.has(slug)) bad('tools/lab-owed.json', `${slug} is not a shipped lesson: delete its entry`);
+  else if (!owed[slug]?.owes) bad('tools/lab-owed.json', `${slug} needs "owes": what it lacks, in a sentence`);
+}
+if (base) {
+  let before = {};
+  try { before = readOwed(execFileSync('git', ['show', `${base}:tools/lab-owed.json`], { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })); } catch { /* none at the base */ }
+  for (const slug of Object.keys(owed)) if (!(slug in before)) bad('tools/lab-owed.json', `adds ${slug}: the list only shrinks. A new lesson is placed in lab/syllabus.json and built on the kit before it ships`);
+}
 
 /* ---------- The course ---------- */
 const unitIds = new Set(units.map(u => u.id));
@@ -55,8 +90,8 @@ function checkLesson(slug) {
   const html = read(`${dir}/index.html`);
   const n = index[slug];
   const mod = mods[n];
-  if (mod === undefined) { bad(slug, 'not in lab/syllabus.json'); return; }
-  const unitNo = units.findIndex(u => u.id === mod.unit) + 1, unit = units[unitNo - 1];
+  // Not placed: say so and keep going, so one run lists everything the lesson still needs.
+  if (mod === undefined) bad(slug, 'not in lab/syllabus.json: a lesson is placed in a unit (its module added to the syllabus in the same pull request) before it ships');
 
   // Head and shell
   const need = [
@@ -69,9 +104,12 @@ function checkLesson(slug) {
     ['<header class="site-top">', 'the site top bar'],
   ];
   for (const [s, what] of need) if (!(s instanceof RegExp ? s.test(html) : html.includes(s))) bad(slug, `index.html lacks ${what}`);
-  const crumb = `<a href="/lab/">The Lab</a> / <a href="/lab/#${mod.unit}">Unit ${unitNo}: ${unit?.title}</a> / Lesson ${n + 1}</p>`;
-  if (!html.includes(crumb)) bad(slug, `the eyebrow should read: The Lab / Unit ${unitNo}: ${unit?.title} / Lesson ${n + 1}`);
-  if (!html.includes(`Lesson ${n + 1} of The Lab`)) bad(slug, `the footer should say Lesson ${n + 1} of The Lab`);
+  if (mod) {
+    const unitNo = units.findIndex(u => u.id === mod.unit) + 1, unit = units[unitNo - 1];
+    const crumb = `<a href="/lab/">The Lab</a> / <a href="/lab/#${mod.unit}">Unit ${unitNo}: ${unit?.title}</a> / Lesson ${n + 1}</p>`;
+    if (!html.includes(crumb)) bad(slug, `the eyebrow should read: The Lab / Unit ${unitNo}: ${unit?.title} / Lesson ${n + 1}`);
+    if (!html.includes(`Lesson ${n + 1} of The Lab`)) bad(slug, `the footer should say Lesson ${n + 1} of The Lab`);
+  }
   const tabs = [...html.matchAll(/<button type="button" role="tab" id="tab-([a-z]+)" aria-controls="([a-z]+)"/g)].map(m => [m[1], m[2]]);
   const want = ['lesson', 'quiz', 'summary', 'clinical', 'explore'];
   if (tabs.map(t => t[0]).join() !== want.join() || tabs.some(([a, b]) => a !== b)) bad(slug, `tabs must be ${want.join(', ')} (id tab-X controlling #X), found ${tabs.map(t => t[0]).join(', ') || 'none'}`);
@@ -128,7 +166,7 @@ function checkLesson(slug) {
     if (!Array.isArray(plan.prerequisites)) bad(p, 'prerequisites must be a list');
     else for (const q of plan.prerequisites) {
       if (index[q] === undefined) bad(p, `prerequisite ${q} is not in the syllabus`);
-      else if (index[q] >= n) bad(p, `prerequisite ${q} is not an earlier lesson`);
+      else if (mod && index[q] >= n) bad(p, `prerequisite ${q} is not an earlier lesson`);
     }
     const objs = plan.objectives || [];
     if (objs.length < 3 || objs.length > 5) bad(p, `${objs.length} goals; give 3 to 5`);
@@ -173,9 +211,17 @@ function checkLesson(slug) {
   if (dose) bad(slug, `index.html: looks like a dose: "${dose[0]}"`);
 }
 
-const only = process.argv.slice(2);
 const slugs = only.length ? only : apps.map(a => a.slug);
-for (const s of slugs) checkLesson(s);
+// An owed lesson's problems are notes; an owed lesson with none must leave the list.
+const notes = [];
+for (const s of slugs) {
+  const before = problems.length;
+  checkLesson(s);
+  if (!(s in owed)) continue;
+  const mine = problems.splice(before);
+  if (mine.length) notes.push(`${s}: owed since ${owed[s].since || '?'} (${owed[s].owes}); ${mine.length} problem${mine.length === 1 ? '' : 's'}, the first: ${mine[0].replace(/^[^:]+: /, '')}`);
+  else bad(s, 'is in tools/lab-owed.json but follows lab/FORMAT.md now: delete its entry');
+}
 // No em dash in any Lab file (lab/FORMAT.md, "Rules that bind every lesson"): every text file under
 // lab/ but the lessons this run leaves out, and the Lab's own tools. JSON can also hold one as an escape.
 const JSON_EM = String.fromCharCode(92) + 'u2014';
@@ -213,9 +259,11 @@ for (const f of [...walk('lab'), ...labTools]) {
   if (scoped && !f.endsWith('clinical-values.json') && (read(f).includes(EN) || (f.endsWith('.json') && read(f).includes(JSON_EN)))) bad(f, 'contains an en dash (the art direction bans them in redrawn lessons: use a hyphen, or "to" for a range)');
 }
 
+if (notes.length) console.log(notes.map(n => `owed:  ${n}`).join('\n') + '\n');
 if (problems.length) {
   console.log(problems.join('\n'));
   console.log(`\n${problems.length} problem${problems.length === 1 ? '' : 's'} in ${slugs.length} lesson${slugs.length === 1 ? '' : 's'}.`);
   process.exit(1);
 }
-console.log(`lab-check: ${slugs.length} lesson${slugs.length === 1 ? '' : 's'} follow${slugs.length === 1 ? "s" : ""} lab/FORMAT.md.`);
+const ok = slugs.length - notes.length;
+console.log(`lab-check: ${ok} lesson${ok === 1 ? ' follows' : 's follow'} lab/FORMAT.md${notes.length ? `; ${notes.length} owed (tools/lab-owed.json)` : ''}.`);
