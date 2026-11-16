@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Na⁺/K⁺ Pump (digoxin) · The Lab · Sean Sooch</title>
+<meta name="description" content="A guided visual lesson: how the Na⁺/K⁺ pump keeps sodium outside a cell and potassium inside, how a heart cell uses that sodium gradient to clear calcium, and how digoxin slows the pump so the heart squeezes harder, with low and high potassium and the extra beats of digoxin toxicity.">
+<link rel="canonical" href="https://seansooch.dev/lab/na-k-pump-digoxin/">
+<meta property="og:title" content="The Na⁺/K⁺ Pump (digoxin)">
+<meta property="og:description" content="Watch the pump carry three sodium out and two potassium in, then see digoxin jam it, calcium build up and the heart squeeze harder, one picture at a time.">
+<meta property="og:url" content="https://seansooch.dev/lab/na-k-pump-digoxin/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/lab/kit/kit.css">
+<link rel="stylesheet" href="style.css">
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the lesson</a>
+<header class="site-top">
+  <div class="site-top-in">
+    <a class="site-brand" href="/" aria-label="Sean Sooch, home">Sean Sooch</a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="site-nav-home" href="/#work">Work</a>
+      <a href="/#writing">Writing</a>
+      <a href="/#films">Films</a>
+      <a href="/#editions">Editions</a>
+      <a class="site-nav-lab" href="/lab/" aria-current="true">The Lab</a>
+    </nav>
+  </div>
+</header>
+<main id="main" data-slug="na-k-pump-digoxin">
+  <div class="intro">
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / <a href="/lab/#cells-membranes-signals">Unit 9: Cells, membranes and signals</a> / Lesson 26</p>
+    <h1>The Na⁺/K⁺ pump<br><span>and digoxin.</span></h1>
+    <p class="lede">A protein in every cell membrane spends energy to keep sodium outside and potassium inside. See how a heart cell uses that sodium gradient to clear calcium, then watch digoxin jam the pump so calcium builds up and the heart squeezes harder.</p>
+    <p class="note">Educational, not for clinical use</p>
+    <div class="lx-plan" data-lx-plan></div>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Lesson views">
+    <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-quiz" aria-controls="quiz" aria-selected="false" tabindex="-1">Quiz</button>
+    <button type="button" role="tab" id="tab-summary" aria-controls="summary" aria-selected="false" tabindex="-1">Summary</button>
+    <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
+    <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
+  </div>
+
+  <section id="lesson" role="tabpanel" aria-labelledby="tab-lesson">
+    <article data-step="1" data-step-title="A heart muscle cell and its membrane" data-kind="cell">
+      <p class="eyebrow">Two ions, two sides</p>
+      <h2 tabindex="-1">A heart muscle cell and its membrane</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Every heartbeat is made by heart muscle cells squeezing. Each cell is wrapped in a thin, oily skin, the <dfn data-part="membrane">cell membrane</dfn>. It separates the <dfn data-part="ecf">fluid outside the cell</dfn> from the watery <dfn data-part="cell">inside of the cell</dfn>. Charged particles called ions cannot pass through its oily middle on their own.</p>
+    </article>
+    <article data-step="2" data-step-title="Sodium outside, potassium inside" data-kind="ions" hidden>
+      <p class="eyebrow">Two ions, two sides</p>
+      <h2 tabindex="-1">Sodium outside, potassium inside</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Two ions matter most here. <dfn data-part="sodium">Sodium</dfn> (Na⁺) is crowded outside the cell and scarce inside. <dfn data-part="potassium">Potassium</dfn> (K⁺) is the reverse: crowded inside, scarce outside. In the pictures sodium is an amber circle and potassium a green triangle.</p>
+    </article>
+    <article data-step="3" data-step-title="Ions leak down their gradients" data-kind="leak" hidden>
+      <p class="eyebrow">Two ions, two sides</p>
+      <h2 tabindex="-1">Ions leak down their gradients</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A difference in crowding across the membrane is a <dfn data-part="gradient">concentration gradient</dfn>. Ions drift down it, from crowded to sparse, through <dfn data-part="channel">channels</dfn>: protein tunnels through the membrane. So sodium slowly leaks in and potassium slowly leaks out. Left alone, the leaks would even the two sides out.</p>
+    </article>
+    <article data-step="4" data-step-title="The Na⁺/K⁺ pump spends ATP" data-kind="pump" hidden>
+      <p class="eyebrow">The pump</p>
+      <h2 tabindex="-1">The Na⁺/K⁺ pump spends ATP</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The <dfn data-part="pump">Na⁺/K⁺ pump</dfn> is a protein in the membrane that undoes the leaks. It works against the gradients, so it needs energy: each cycle it splits one <dfn data-part="atp">ATP</dfn>, the cell's fuel molecule. Every cell has a great many of these pumps; the picture shows one.</p>
+    </article>
+    <article data-step="5" data-step-title="Three sodium out, two potassium in" data-kind="cycle" hidden>
+      <p class="eyebrow">The pump</p>
+      <h2 tabindex="-1">Three sodium out, two potassium in</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Each cycle the pump takes three sodium ions from inside, splits ATP, turns to face outside and lets them go. Then it picks up two potassium ions from outside and turns back to release them inside. <dfn data-part="cargo">Three sodium out, two potassium in</dfn>, many times every second.</p>
+    </article>
+    <article data-step="6" data-step-title="Pump and leaks hold the levels steady" data-kind="balance" hidden>
+      <p class="eyebrow">The pump</p>
+      <h2 tabindex="-1">Pump and leaks hold the levels steady</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Leaks and pump run at the same time. When the pump carries out as much sodium as leaks in, and brings in as much potassium as leaks out, the levels hold still: a <dfn data-part="steady">steady state</dfn>. Slow the pump, and sodium builds up inside until the leak and the slower pump match again.</p>
+    </article>
+    <article data-step="7" data-step-title="The sodium-calcium exchanger" data-kind="exchanger" hidden>
+      <p class="eyebrow">From sodium to calcium</p>
+      <h2 tabindex="-1">The sodium-calcium exchanger</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Heart cells use the sodium gradient to clear calcium. The <dfn data-part="exchanger">sodium-calcium exchanger</dfn> lets three sodium ions flow in, down their gradient, and uses that push to throw one <dfn data-part="calcium">calcium</dfn> ion out. It spends no ATP of its own: the steeper the sodium gradient, the harder it pushes calcium out.</p>
+    </article>
+    <article data-step="8" data-step-title="Calcium makes the cell squeeze" data-kind="squeeze" hidden>
+      <p class="eyebrow">From sodium to calcium</p>
+      <h2 tabindex="-1">Calcium makes the cell squeeze</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Each beat, a little calcium enters and sets off a flood from a store inside the cell, the <dfn data-part="store">sarcoplasmic reticulum</dfn>. Calcium lets the <dfn data-part="filaments">contractile filaments</dfn> slide over each other, and the cell shortens. Then calcium is pumped back into the store, and the exchanger sends the extra out. A fuller store means a harder squeeze.</p>
+    </article>
+    <article data-step="9" data-step-title="An electrical signal starts each squeeze" data-kind="beat" hidden>
+      <p class="eyebrow">From sodium to calcium</p>
+      <h2 tabindex="-1">An electrical signal starts each squeeze</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Between beats the inside of the cell sits negative: its <dfn data-part="rest">resting potential</dfn>. When the voltage is pushed up to a trigger level, the <dfn data-part="threshold">threshold</dfn>, the cell fires an <dfn data-part="ap">action potential</dfn>: a quick rise, a long plateau and a fall back to rest. Its plateau lets in the calcium that starts the squeeze (<a href="/lab/cardiac-action-potential/">Lesson 7</a>).</p>
+    </article>
+    <article data-step="10" data-step-title="The sodium gradient keeps calcium in check" data-kind="chain" hidden>
+      <p class="eyebrow">From sodium to calcium</p>
+      <h2 tabindex="-1">The sodium gradient keeps calcium in check</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Put it together. The pump keeps sodium low inside, so a steep <dfn data-part="gradient">sodium gradient</dfn> drives sodium in through the exchanger, and that push keeps calcium low between beats. The store holds a normal load, and each beat squeezes with normal strength. Change the pump, and the calcium follows.</p>
+    </article>
+    <article data-step="11" data-step-title="Digoxin jams the pump from outside" data-kind="digoxin" hidden>
+      <p class="eyebrow">Digoxin</p>
+      <h2 tabindex="-1">Digoxin jams the pump from outside</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn data-part="drug">Digoxin</dfn> is a cardiac glycoside, a medicine first taken from the foxglove plant. It fits into a pocket on the pump's outer face, the <dfn data-part="site">digoxin pocket</dfn>, and jams the pump there. Potassium binds the pump at its own sites nearby, and potassium on the pump makes digoxin bind less readily: the more potassium around, the less digoxin sticks.</p>
+    </article>
+    <article data-step="12" data-step-title="Cardiac glycosides: digoxin slows the pump" data-kind="glycoside" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Cardiac glycosides: digoxin slows the pump</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">In this model, digoxin jams about a third of the pumps. Sodium leaks in as before but is carried out more slowly, so it builds up inside. The sodium gradient is smaller, the exchanger pushes less calcium out, the store fills further and each beat squeezes harder. That is how digoxin helps a weak heart pump (<a href="/lab/frank-starling-cardiac-output/">Lesson 3</a>).</p>
+    </article>
+    <article data-step="13" data-step-title="Hypokalemia: digoxin binds more" data-kind="hypokalemia" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Hypokalemia: digoxin binds more</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn data-part="potassium">Hypokalemia</dfn> is a low potassium level in the blood, often from diuretics or vomiting. With less potassium on the pumps to hold it off, the same digoxin binds more readily: about half the pumps are jammed instead of a third. Sodium and calcium build up further, and the risk of digoxin toxicity rises even though the digoxin has not changed.</p>
+    </article>
+    <article data-step="14" data-step-title="Hyperkalemia: digoxin binds less" data-kind="hyperkalemia" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Hyperkalemia: digoxin binds less</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn data-part="potassium">Hyperkalemia</dfn> is a high potassium level in the blood. More potassium on the pumps makes digoxin bind less readily: about a fifth of the pumps are jammed instead of a third, and the squeeze gains less. In severe digoxin poisoning it also works the other way: so many pumps are jammed that potassium stays outside cells, and blood potassium rises.</p>
+    </article>
+    <article data-step="15" data-step-title="Too much digoxin: delayed afterdepolarizations" data-kind="dad" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Too much digoxin: delayed afterdepolarizations</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Too much digoxin jams more than half the pumps and overfills the store with calcium. Between beats the store spills some out, and the exchanger clears it by bringing three sodium in for each calcium: a net inward flow of charge. The voltage bumps up after the beat, a <dfn data-part="dad">delayed afterdepolarization</dfn>. A bump that reaches threshold fires an extra beat, which can set off dangerous rhythms.</p>
+    </article>
+
+    <div class="step-nav">
+      <button type="button" data-step-back disabled>← Back</button>
+      <span data-step-progress aria-live="polite">Step 1 of 15</span>
+      <button type="button" data-step-next>Next →</button>
+    </div>
+    <p class="hint">Start with Next, or use the arrow keys. Under a moving picture: pause, drag to any moment, or slow it down. Underlined terms light up their part of the picture. Ion counts, pump counts and the bars are illustrative, drawn from the lesson's teaching model.</p>
+  </section>
+
+  <section id="quiz" role="tabpanel" aria-labelledby="tab-quiz" hidden></section>
+
+  <section id="summary" role="tabpanel" aria-labelledby="tab-summary" hidden></section>
+
+  <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
+    <h2>Reference values, beside the model.</h2>
+    <p id="disclaimer" class="disclaimer">Loading reference values…</p>
+    <div class="cv-top">
+      <div id="clinical-visual" class="visual"></div>
+      <div class="cv-controls">
+        <div>
+          <label for="clinical-state">Show a drug or state</label>
+          <select id="clinical-state"><option value="baseline">Normal potassium and sodium</option></select>
+        </div>
+        <div>
+          <label for="clinical-k">Plasma potassium (model) <output id="clinical-k-label" for="clinical-k"></output></label>
+          <input id="clinical-k" type="range" min="2.5" max="7" step="0.1">
+        </div>
+        <div>
+          <button type="button" id="clinical-reset">Back to baseline</button>
+        </div>
+      </div>
+    </div>
+    <p id="state-summary" class="state-summary" aria-live="polite">Normal potassium and sodium.</p>
+    <details class="lx-fine">
+      <summary>The cited evidence for this state</summary>
+      <div id="state-evidence" class="model-note"></div>
+    </details>
+    <details class="lx-fine">
+      <summary>How to read these bars</summary>
+      <p>Grey-blue bands are the cited typical adult ranges. The blue line is the lesson's teaching model: it starts inside each cited range and moves when you choose a state here or change potassium or digoxin in Explore freely. Its numbers are illustrative, never patient values, and these references are not decision rules. Arrows appear only where a cited location states the direction. The low and high potassium states change potassium only and leave the digoxin setting as it is. Digoxin itself is not listed as a cited state: it changes the sodium and calcium inside heart cells, which no row here measures, so its effects show in the picture rather than in these rows, and the lesson's account of how it works is teaching, not a cited reference finding.</p>
+    </details>
+    <div id="value-rows"></div>
+    <h3>Sources</h3>
+    <ul id="sources"></ul>
+    <p id="load-error" class="load-error" hidden></p>
+  </section>
+
+  <section id="explore" role="tabpanel" aria-labelledby="tab-explore" hidden>
+    <h2>Set the digoxin and the potassium.</h2>
+    <p class="model-intro">An illustrative teaching model of one heart muscle cell. Choose how much digoxin is on board and the potassium in the blood, and see how many pumps are jammed, how far sodium and calcium build up inside and how hard each beat squeezes, drawn over dashed marks for a cell with no digoxin.</p>
+    <div class="explore-grid">
+      <div id="explore-visual" class="visual"></div>
+      <div class="controls">
+        <fieldset>
+          <legend>Digoxin</legend>
+          <label for="dig">Amount on board (model) <output id="dig-out" for="dig">none</output></label>
+          <input id="dig" type="range" min="0" max="3" step="0.25" value="0">
+        </fieldset>
+        <fieldset>
+          <legend>Blood</legend>
+          <label for="kout">Plasma potassium <output id="kout-out" for="kout"></output></label>
+          <input id="kout" type="range" min="2.5" max="7" step="0.1">
+        </fieldset>
+        <button type="button" id="reset">Reset to normal</button>
+      </div>
+    </div>
+    <p id="model-results" class="model-results" aria-live="polite"></p>
+    <details>
+      <summary>How this teaching model works</summary>
+      <p>Digoxin binds a pocket on the pump's outer face, and potassium bound to the pump makes that binding weaker. The share of pumps jammed is the digoxin amount times a binding strength that falls with the square of the potassium outside, over one plus that product: at the baseline potassium the lesson's usual amount jams a third. Potassium outside also switches the working pumps on, half-on at a low level, so a very low potassium slows them a little by itself.</p>
+      <p>Sodium inside builds up until the leak matches the slower pumps: it rises as the working share of pumps falls, by a power set in the lesson's data file. The calcium store follows the square of the sodium inside, because a smaller sodium gradient lets the exchanger clear less calcium; the squeeze follows the square root of the store. Every number the model uses, its illustrative parameters included, is in that one data file, marked as a teaching choice rather than a reference value.</p>
+      <p>When the store passes a spill point, calcium spills between beats and the exchanger's inward current bumps the voltage up after each beat. The resting potential moves with the potassium outside. If the resting potential plus the bump reaches the threshold, the model fires an extra beat.</p>
+      <p>The model leaves out the kidney, the nerves to the heart, how digoxin slows the AV node, and time: real digoxin levels build and fall over days. The digoxin amount has no unit: it is a model setting, never an amount to give anyone.</p>
+    </details>
+  </section>
+
+  <footer>Lesson 26 of The Lab · Added 2026-11-16 · <a href="/lab/">All lessons</a></footer>
+</main>
+</body>
+</html>

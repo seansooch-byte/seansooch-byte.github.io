@@ -1,0 +1,91 @@
+{
+  "disclaimer": "Typical adult reference ranges; labs vary; not for clinical decisions.",
+  "about": "Every reference number and every arrow rests on a cited location; where a short verbatim excerpt is given, it is quoted exactly (en dashes in quotations are written as JSON escapes). A state claims only what its cited location supports. Digoxin's own effects happen inside heart cells, which no row here measures, so digoxin is taught in the lesson and modelled in Explore freely, not listed as a cited state. The teaching model's starting point is in modelBaseline: illustrative choices, not reference values. This file holds no amount of any drug and no drug level.",
+  "modelBaseline": {
+    "about": "Where the illustrative teaching model starts. Potassium and sodium sit inside their cited ranges; the resting potential sits inside the cited ventricular range. The threshold is a round teaching number, not a cited value.",
+    "kOut": 4.2, "naOut": 142, "vRest": -88, "threshold": -70
+  },
+  "modelParams": {
+    "about": "The teaching model's own parameters: illustrative choices that shape the pictures, not reference values and not cited. Relative quantities are multiples of a cell with no digoxin at the baseline potassium.",
+    "digoxinBinding": { "value": 0.5, "unit": "none", "meaning": "binding strength of the lesson's usual digoxin amount at the baseline potassium; jams 0.5 / 1.5 = a third of the pumps" },
+    "potassiumHalfActivation": { "value": 1.5, "unit": "mM", "meaning": "potassium outside at which the working pumps are half switched on" },
+    "sodiumPower": { "value": 0.7, "unit": "none", "meaning": "sodium inside rises as the working share of pumps to the power of minus this" },
+    "sodiumInsideMax": { "value": 3, "unit": "times normal", "meaning": "cap on sodium inside" },
+    "storeMax": { "value": 6, "unit": "times normal", "meaning": "cap on the calcium store" },
+    "squeezeMax": { "value": 2, "unit": "times normal", "meaning": "cap on the squeeze" },
+    "calciumSpill": { "value": 1.8, "unit": "times normal", "meaning": "a store fuller than this spills calcium between beats" },
+    "afterdepolarizationGain": { "value": 28, "unit": "mV per unit of store above the spill point", "meaning": "size of the bump after a beat" },
+    "afterdepolarizationMax": { "value": 60, "unit": "mV", "meaning": "cap on the bump" },
+    "restingSlope": { "value": 58, "unit": "mV per tenfold change of potassium outside", "meaning": "how the model's resting potential follows potassium" },
+    "actionPotential": { "peak": 22, "notch": 8, "plateauEnd": -4, "unit": "mV", "meaning": "the drawn action potential's top, the dip after it, and the end of its plateau" },
+    "traceRange": { "low": -100, "high": 30, "unit": "mV", "meaning": "the voltage range the trace pictures draw" }
+  },
+  "sources": {
+    "openstax-ap-26.3": "OpenStax Anatomy and Physiology 2e, section 26.3 Electrolyte Balance. Betts JG, Young KA, Wise JA, Johnson E, Poe B, Kruse DH, Korol O, Johnson JE, Womble M, DeSaix P. Anatomy and Physiology 2e. Houston, Texas: OpenStax; 2022.",
+    "guyton13": "Hall JE. Guyton and Hall Textbook of Medical Physiology. 13th edition. Philadelphia: Elsevier; 2016."
+  },
+  "values": [
+    {
+      "id": "kOut", "label": "Plasma potassium", "unit": "mM (mmol/L)",
+      "low": 3.5, "high": 5.0, "typical": null, "display": "3.50 to 5.00", "decimals": 1,
+      "source": "openstax-ap-26.3",
+      "where": "Section 26.3 Electrolyte Balance, Table 26.1 Electrolyte and Ion Reference Values, plasma column",
+      "excerpt": "Potassium K + 3.50\u20135.00 (mM)",
+      "modelKey": "kOut",
+      "note": "In the lesson, potassium bound to the pump makes digoxin bind less readily, so this value changes how much digoxin binds."
+    },
+    {
+      "id": "naOut", "label": "Plasma sodium", "unit": "mM (mmol/L)",
+      "low": 136, "high": 146, "typical": null, "display": "136.00 to 146.00", "decimals": 0,
+      "source": "openstax-ap-26.3",
+      "where": "Section 26.3 Electrolyte Balance, Table 26.1 Electrolyte and Ion Reference Values, plasma column",
+      "excerpt": "Sodium Na + 136.00\u2013146.00 (mM)",
+      "modelKey": "naOut",
+      "note": "The sodium outside cells. In the lesson, digoxin changes the sodium inside heart cells, not this plasma value, so the model holds it still."
+    },
+    {
+      "id": "vRest", "label": "Ventricular muscle fiber, resting membrane potential", "unit": "mV",
+      "low": -90, "high": -85, "typical": null, "display": "-85 to -90", "decimals": 0,
+      "source": "guyton13",
+      "where": "Chapter 10, Rhythmical Excitation of the Heart: 'Mechanism of Sinus Nodal Rhythmicity', where the sinus nodal fiber is compared with the ventricular muscle fiber (-85 to -90 millivolts).",
+      "excerpt": null,
+      "modelKey": "vRest",
+      "note": "The model moves the resting potential with plasma potassium. The cited location gives the range only, not that direction, so no state here carries an arrow for it."
+    }
+  ],
+  "states": [
+    {
+      "id": "baseline", "label": "Normal potassium and sodium", "kind": "physiologic",
+      "summary": "Plasma potassium and sodium inside their reference ranges and a ventricular resting potential inside its range: the model's starting point.",
+      "shifts": { "kOut": "none", "naOut": "none", "vRest": "none" },
+      "source": "openstax-ap-26.3", "where": "Section 26.3 Electrolyte Balance, Table 26.1 (plasma potassium and sodium); Guyton and Hall 13th edition, Chapter 10 (ventricular resting potential)",
+      "evidence": [
+        { "source": "openstax-ap-26.3", "where": "Section 26.3, Table 26.1, plasma column", "text": "The reference ranges for plasma potassium and sodium; the model starts inside both." },
+        { "source": "guyton13", "where": "Chapter 10, 'Mechanism of Sinus Nodal Rhythmicity' (ventricular muscle fiber, -85 to -90 millivolts)", "text": "The resting potential range of a ventricular muscle fiber; the model starts inside it." }
+      ],
+      "model": { "dig": 0, "kOut": 4.2 }
+    },
+    {
+      "id": "hypokalemia", "label": "Hypokalemia (low plasma potassium)", "kind": "disease",
+      "summary": "Plasma potassium below its reference range.",
+      "shifts": { "kOut": "down" },
+      "source": "openstax-ap-26.3", "where": "Section 26.3 Electrolyte Balance, Table 26.1 (plasma potassium) and Potassium",
+      "evidence": [
+        { "source": "openstax-ap-26.3", "where": "Section 26.3, Table 26.1 and Potassium", "text": "Hypokalemia is a plasma potassium below the cited range: the down arrow is that definition (paraphrased)." }
+      ],
+      "unstatedNote": "This state claims only the definition. How a low potassium lets digoxin jam more pumps is the lesson's teaching (step 13), not a cited reference finding. No direction is given for sodium or the resting potential. Choosing this state changes potassium only; set digoxin in Explore freely.",
+      "model": { "kOut": 2.8 }
+    },
+    {
+      "id": "hyperkalemia", "label": "Hyperkalemia (high plasma potassium)", "kind": "disease",
+      "summary": "Plasma potassium above its reference range.",
+      "shifts": { "kOut": "up" },
+      "source": "openstax-ap-26.3", "where": "Section 26.3 Electrolyte Balance, Table 26.1 (plasma potassium) and Potassium",
+      "evidence": [
+        { "source": "openstax-ap-26.3", "where": "Section 26.3, Table 26.1 and Potassium", "text": "Hyperkalemia is a plasma potassium above the cited range: the up arrow is that definition (paraphrased)." }
+      ],
+      "unstatedNote": "This state claims only the definition. How a high potassium lets digoxin jam fewer pumps is the lesson's teaching (step 14), not a cited reference finding. No direction is given for sodium or the resting potential. Choosing this state changes potassium only; set digoxin in Explore freely.",
+      "model": { "kOut": 6 }
+    }
+  ]
+}

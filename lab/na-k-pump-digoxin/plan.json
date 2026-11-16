@@ -1,0 +1,193 @@
+{
+  "minutes": 25,
+  "prerequisites": ["frank-starling-cardiac-output", "cardiac-action-potential"],
+  "objectives": [
+    "Explain how the Na⁺/K⁺ pump spends ATP to move three sodium ions out and two potassium ions in, and why that keeps sodium low inside the cell.",
+    "Trace how the sodium gradient lets the sodium-calcium exchanger push calcium out of a heart cell, and how calcium sets the strength of each squeeze.",
+    "Explain how digoxin slows the pump and so makes the heart squeeze harder.",
+    "Predict how a low or a high blood potassium changes digoxin's effect, and explain why too much digoxin causes extra beats."
+  ],
+  "checks": {
+    "glycoside": {
+      "prompt": "Digoxin jams some of the pumps, while sodium keeps leaking in at the same rate. What happens inside the heart cell?",
+      "choices": [
+        "Sodium builds up, the exchanger pushes less calcium out, and the cell squeezes harder",
+        "Sodium falls, the exchanger pushes more calcium out, and the cell squeezes less",
+        "Potassium builds up inside, so the cell relaxes and squeezes less",
+        "Nothing changes, because the remaining pumps simply speed up to match"
+      ],
+      "answer": 0,
+      "why": "With fewer working pumps, sodium leaking in is cleared more slowly, so it builds up inside. The sodium gradient is smaller, so the exchanger pushes less calcium out. The store fills with more calcium and each beat squeezes harder."
+    },
+    "hypokalemia": {
+      "prompt": "Digoxin binds a pocket on the outside of the pump, and potassium bound to the pump makes digoxin bind less readily. The blood potassium falls, while the amount of digoxin stays the same. What happens?",
+      "choices": [
+        "More pumps are jammed, so digoxin's effect grows and toxicity becomes more likely",
+        "Fewer pumps are jammed, so digoxin works less well",
+        "Nothing: blood potassium has no bearing on digoxin",
+        "The pumps speed up to replace the lost potassium, cancelling the digoxin"
+      ],
+      "answer": 0,
+      "why": "With less potassium on the pumps to hold it off, digoxin binds more readily: in this model about half the pumps are jammed instead of a third. Sodium and calcium build up further, which is why a low potassium raises the risk of digoxin toxicity."
+    },
+    "hyperkalemia": {
+      "prompt": "Now the blood potassium is high, with the same amount of digoxin. More potassium is bound to the pumps. What happens?",
+      "choices": [
+        "Fewer pumps are jammed, so the squeeze gains less from digoxin",
+        "More pumps are jammed, so the squeeze grows stronger",
+        "Every pump is freed, so digoxin has no effect at all",
+        "Nothing: potassium has no bearing on digoxin binding"
+      ],
+      "answer": 0,
+      "why": "Potassium on the pumps makes digoxin bind less readily, so more potassium means fewer jammed pumps: in this model about a fifth of the pumps are jammed instead of a third. Less sodium and calcium build up, and the squeeze gains less."
+    },
+    "dad": {
+      "prompt": "Too much digoxin overfills the calcium store, and the store spills calcium between beats. The exchanger clears that calcium by bringing three sodium ions in for each calcium ion it sends out. What does that do to the voltage after a beat?",
+      "choices": [
+        "It bumps up, and a big enough bump reaches threshold and fires an extra beat",
+        "It falls further below rest, so the next beat cannot start",
+        "Nothing: the exchanger moves no electric charge",
+        "It holds the plateau high, so the beat simply lasts longer"
+      ],
+      "answer": 0,
+      "why": "Three positive sodium charges come in for every two that leave with one calcium ion, so the exchanger carries a net inward current. That pushes the voltage up after the beat: a delayed afterdepolarization. If it reaches threshold, the cell fires an extra beat."
+    }
+  },
+  "quiz": [
+    {
+      "id": "pump-ratio",
+      "objective": 1,
+      "step": "cycle",
+      "stem": "For each ATP it splits, what does the Na⁺/K⁺ pump move?",
+      "choices": [
+        "Three sodium ions out of the cell and two potassium ions in",
+        "Two sodium ions out of the cell and three potassium ions in",
+        "Three sodium ions into the cell and two potassium ions out",
+        "One sodium ion out of the cell for each potassium ion in"
+      ],
+      "answer": 0,
+      "why": "Each cycle carries three sodium out and two potassium in, both against their gradients, which is why it needs ATP. Swapping the directions describes the leaks, which run down the gradients."
+    },
+    {
+      "id": "pump-stops",
+      "objective": 1,
+      "step": "balance",
+      "stem": "A cell's pumps stop working for a while, but its leak channels stay open. What happens to the sodium inside the cell?",
+      "choices": [
+        "It slowly rises, because sodium keeps leaking in and nothing carries it out",
+        "It stays the same, because the leaks stop when the pump stops",
+        "It falls, because sodium leaks out of the cell",
+        "It rises at once to match the outside, because the membrane breaks down"
+      ],
+      "answer": 0,
+      "why": "The levels are steady only because the pump carries out what leaks in. Stop the pump and the leak carries on, so sodium builds up inside, slowly, toward the outside level."
+    },
+    {
+      "id": "exchanger-power",
+      "objective": 2,
+      "step": "exchanger",
+      "stem": "What powers the sodium-calcium exchanger as it pushes calcium out of a heart cell?",
+      "choices": [
+        "Sodium flowing into the cell, down its gradient",
+        "Splitting ATP, like the Na⁺/K⁺ pump",
+        "Potassium flowing out of the cell",
+        "Calcium flowing in from the store"
+      ],
+      "answer": 0,
+      "why": "The exchanger spends no ATP of its own. It lets three sodium ions run in, down the gradient the pump builds, and uses that push to throw one calcium ion out. So it depends on the pump indirectly."
+    },
+    {
+      "id": "calcium-squeeze",
+      "objective": 2,
+      "step": "squeeze",
+      "stem": "Why does more calcium in the store make a heart cell squeeze harder?",
+      "choices": [
+        "More calcium floods out each beat, so more contractile filaments slide over each other",
+        "Calcium makes the cell membrane stiffer",
+        "Calcium raises the heart rate, and faster beats are stronger",
+        "Calcium pulls water into the cell, so it swells and pushes harder"
+      ],
+      "answer": 0,
+      "why": "Calcium is the signal that lets the filaments slide. A fuller store releases more calcium each beat, so more filaments engage and the squeeze is stronger."
+    },
+    {
+      "id": "digoxin-order",
+      "objective": 3,
+      "step": "glycoside",
+      "stem": "Which order of events explains how digoxin makes the heart squeeze harder?",
+      "choices": [
+        "Pump slowed, sodium builds up inside, exchanger pushes less calcium out, store fills, stronger squeeze",
+        "Pump sped up, sodium falls inside, exchanger pushes more calcium in, stronger squeeze",
+        "Calcium channels opened directly, calcium floods in, stronger squeeze",
+        "Potassium builds up inside, the cell swells, stronger squeeze"
+      ],
+      "answer": 0,
+      "why": "Digoxin acts on the pump, not on calcium channels. The extra calcium is a knock-on effect: a smaller sodium gradient means the exchanger clears less calcium, so the store holds more."
+    },
+    {
+      "id": "digoxin-site",
+      "objective": 3,
+      "step": "digoxin",
+      "stem": "Where does digoxin act on the Na⁺/K⁺ pump?",
+      "choices": [
+        "In a pocket on its outer face, open to the fluid outside the cell",
+        "On its inner face, where ATP binds",
+        "Inside the nucleus, switching off the gene for the pump",
+        "On the sodium-calcium exchanger beside it, not on the pump"
+      ],
+      "answer": 0,
+      "why": "Digoxin reaches the pump from outside the cell and fits into a pocket on its outer face, jamming it. Potassium binds the pump at its own sites, and potassium on the pump makes digoxin bind less readily, which is why blood potassium changes how much digoxin binds."
+    },
+    {
+      "id": "diuretic-low-k",
+      "objective": 4,
+      "step": "hypokalemia",
+      "stem": "A patient taking digoxin starts a loop diuretic, and their blood potassium falls. The digoxin is unchanged. What is the concern?",
+      "choices": [
+        "Digoxin now binds more pumps, so toxicity becomes more likely",
+        "Digoxin now binds fewer pumps, so the heart weakens",
+        "Low potassium washes digoxin out of the body",
+        "There is no link between potassium and digoxin"
+      ],
+      "answer": 0,
+      "why": "With less potassium on the pumps, digoxin binds more readily, so the same digoxin jams more pumps. Sodium and calcium build up further, and extra beats become more likely. Thinking digoxin works less is the trap: that is the high-potassium case."
+    },
+    {
+      "id": "high-k",
+      "objective": 4,
+      "step": "hyperkalemia",
+      "stem": "With the same digoxin, how does a high blood potassium change the number of pumps it jams?",
+      "choices": [
+        "Fewer pumps are jammed, because potassium on the pump makes digoxin bind less readily",
+        "More pumps are jammed, because potassium helps digoxin bind",
+        "All pumps are jammed, because potassium stops the pump on its own",
+        "The same number, because potassium has no bearing on digoxin binding"
+      ],
+      "answer": 0,
+      "why": "Potassium binds the pump at its own sites, and that makes digoxin bind its pocket less readily. More potassium means fewer jammed pumps. In severe digoxin poisoning a high potassium can also be a result: so many pumps are jammed that potassium stays outside cells."
+    },
+    {
+      "id": "dad-extra-beat",
+      "objective": 4,
+      "step": "dad",
+      "stem": "In digoxin toxicity, what makes a delayed afterdepolarization?",
+      "choices": [
+        "Calcium spilling from an overfilled store, cleared by the exchanger, which brings net positive charge in",
+        "Sodium channels opening early, before the beat has finished",
+        "Potassium rushing into the cell after each beat",
+        "The pump speeding up and carrying extra sodium out"
+      ],
+      "answer": 0,
+      "why": "An overfilled store spills calcium between beats. The exchanger sends it out by bringing three sodium in per calcium out, a net inward current that bumps the voltage up after the beat. If the bump reaches threshold, an extra beat fires."
+    }
+  ],
+  "takeaways": [
+    "Sodium is crowded outside cells and potassium inside. Both leak down their gradients all the time, through channels.",
+    "The Na⁺/K⁺ pump splits one ATP to carry three sodium out and two potassium in, undoing the leaks and keeping sodium low inside.",
+    "In a heart cell, the sodium-calcium exchanger lets three sodium in to push one calcium out, so a steep sodium gradient keeps calcium low between beats.",
+    "Calcium released from the store each beat lets the filaments slide: more calcium in the store means a harder squeeze.",
+    "Digoxin jams the pump from a pocket on its outer face. Sodium builds up inside, the exchanger clears less calcium, and the heart squeezes harder.",
+    "Potassium on the pump makes digoxin bind less readily: a low blood potassium lets the same digoxin jam more pumps and raises the risk of toxicity; a high one lets it jam fewer.",
+    "Too much digoxin overloads the cell with calcium. Calcium spilling between beats makes delayed afterdepolarizations, and those that reach threshold fire extra beats."
+  ]
+}
