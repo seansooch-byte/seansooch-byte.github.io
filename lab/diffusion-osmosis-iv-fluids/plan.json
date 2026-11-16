@@ -1,0 +1,191 @@
+{
+  "minutes": 26,
+  "prerequisites": [],
+  "objectives": [
+    "Explain diffusion and osmosis: particles spread down a concentration gradient, and water crosses a membrane toward the side with more particles that cannot cross.",
+    "Tell osmolality apart from tonicity, and name an effective osmole and one that is not.",
+    "Name the body's three water compartments and what keeps sodium outside cells and proteins inside the vessels.",
+    "Predict what an isotonic, hypotonic or hypertonic crystalloid, a colloid and free water do to cell size and to plasma volume."
+  ],
+  "checks": {
+    "isotonic": {
+      "prompt": "An isotonic crystalloid has the same tonicity as the body's own fluid, and its sodium cannot enter cells. It is dripped into a vein. What happens to the cells, and where does most of its water end up?",
+      "choices": [
+        "Cells keep their size; most of the water ends up between cells, outside the vessels",
+        "Cells keep their size; nearly all of the water stays in the plasma",
+        "Cells swell, because they take in most of the water",
+        "Cells shrink, because the new sodium pulls water out of them"
+      ],
+      "answer": 0,
+      "why": "With no change in tonicity, no water crosses cell membranes overall. The sodium spreads through all the fluid outside cells and takes its water along, and the space between cells is much larger than the plasma, so the plasma keeps only a part."
+    },
+    "hypotonic": {
+      "prompt": "A hypotonic fluid carries less sodium than the body's own fluid. Once it mixes into the fluid outside cells, which way does water cross cell membranes?",
+      "choices": [
+        "Into cells, so they swell",
+        "Out of cells, so they shrink",
+        "Neither way, because the fluid is mostly water",
+        "Into the plasma only, so only the vessels fill"
+      ],
+      "answer": 0,
+      "why": "The fluid dilutes the outside of the cells, so the inside now has the higher tonicity. Water moves toward the higher tonicity, into the cells, and they swell; that is also why the vessels keep only a little of it."
+    },
+    "hypertonic": {
+      "prompt": "Hypertonic saline carries more sodium than the body's own fluid, and that sodium stays outside cells. What happens to the cells and to the plasma?",
+      "choices": [
+        "Cells shrink; the fluid outside cells, plasma included, gains more water than was dripped in",
+        "Cells swell; the plasma loses water",
+        "Cells shrink; the plasma loses water too",
+        "Nothing changes, because the amount given is small"
+      ],
+      "answer": 0,
+      "why": "The fluid outside cells becomes more concentrated, so water leaves the cells by osmosis. That water joins the fluid outside cells, so together the plasma and the space between cells gain more than the drip itself brought."
+    },
+    "colloid": {
+      "prompt": "A colloid carries large molecules that a healthy capillary wall holds in, and they pull water with them. Compared with the same amount of isotonic crystalloid, where does a colloid's water mostly stay?",
+      "choices": [
+        "In the plasma, inside the vessels",
+        "In the space between cells",
+        "Inside the cells",
+        "Spread evenly through all three"
+      ],
+      "answer": 0,
+      "why": "The large molecules cannot leave the vessels through a healthy wall, and their pull holds water with them. So more of a colloid stays in the plasma, where a crystalloid's sodium carries most of its water out between the cells."
+    },
+    "freewater": {
+      "prompt": "D5W is glucose in water, about as concentrated as blood in the bag. Cells then take up the glucose and use it. What is left, and what does it do to cells?",
+      "choices": [
+        "Free water: it spreads everywhere, mostly into cells, which swell a little",
+        "An isotonic fluid: cells keep their size",
+        "A hypertonic fluid: cells shrink",
+        "Nothing: the water is used up with the sugar"
+      ],
+      "answer": 0,
+      "why": "Once the glucose is taken up and used, nothing holds the water outside cells. It behaves like plain water: it dilutes every compartment, and since most body water is inside cells, most of it goes there and cells swell a little."
+    }
+  },
+  "quiz": [
+    {
+      "id": "osmosis-direction",
+      "objective": 1,
+      "step": "osmosis",
+      "stem": "A membrane that lets only water through separates plain water from salty water. Which way does water move?",
+      "choices": [
+        "Toward the salty side",
+        "Toward the plain water",
+        "Equally both ways, so nothing changes",
+        "Salt crosses to the plain side instead"
+      ],
+      "answer": 0,
+      "why": "Water moves toward the side with more particles that cannot cross: that is osmosis. The tempting answer, salt crossing, is what diffusion would do if the membrane let salt through; this one does not."
+    },
+    {
+      "id": "diffusion-stops",
+      "objective": 1,
+      "step": "diffusion",
+      "stem": "A drop of dye is placed in one corner of a still glass of water. When does it stop spreading?",
+      "choices": [
+        "When it is evenly mixed, so there is no gradient left",
+        "When it has spent its energy",
+        "When it reaches the opposite wall",
+        "Never: dye keeps moving toward the corners"
+      ],
+      "answer": 0,
+      "why": "Diffusion runs down a concentration gradient and needs no energy. The particles keep jiggling, but once the crowding is level, as many move one way as the other, so nothing changes overall."
+    },
+    {
+      "id": "urea-tonicity",
+      "objective": 2,
+      "step": "effective",
+      "stem": "A patient's blood urea rises a lot, raising their serum osmolality. Urea crosses cell membranes freely. What happens to the size of their cells?",
+      "choices": [
+        "Little or no change: urea spreads into cells and pulls no water",
+        "Cells shrink, because osmolality went up",
+        "Cells swell, because urea draws water in",
+        "Cells burst, because urea damages the membrane"
+      ],
+      "answer": 0,
+      "why": "Osmolality rises, but tonicity does not: urea is not an effective osmole, because it evens out across the membrane. Only particles held on one side, such as sodium, move water. Assuming any rise in osmolality shrinks cells is the trap."
+    },
+    {
+      "id": "effective-osmole",
+      "objective": 2,
+      "step": "effective",
+      "stem": "Which of these counts toward tonicity as well as toward osmolality?",
+      "choices": [
+        "Sodium, held outside cells",
+        "Urea, which crosses cell membranes freely",
+        "Water itself",
+        "Any particle, as long as it is dissolved"
+      ],
+      "answer": 0,
+      "why": "Tonicity counts only effective osmoles: particles that stay on one side of the cell membrane. Sodium is held outside (what leaks in is pumped back out). Urea counts toward osmolality but not tonicity."
+    },
+    {
+      "id": "compartments",
+      "objective": 3,
+      "step": "rooms",
+      "stem": "Which compartment holds most of the body's water?",
+      "choices": [
+        "Inside cells",
+        "The space between cells",
+        "Plasma",
+        "They hold about equal shares"
+      ],
+      "answer": 0,
+      "why": "Most body water is intracellular, inside cells. The rest is outside cells, and most of that is between cells; plasma is the smallest share. That is why free water mostly ends up inside cells."
+    },
+    {
+      "id": "protein-pull",
+      "objective": 3,
+      "step": "wall",
+      "stem": "What keeps plasma proteins, and the water they pull, inside the blood vessels?",
+      "choices": [
+        "They are too large to pass through the gaps in a healthy capillary wall",
+        "They are pumped back in, the way sodium is pumped out of cells",
+        "They are bound to red blood cells",
+        "The cell membrane of the vessel blocks all solutes"
+      ],
+      "answer": 0,
+      "why": "The capillary wall lets water and small solutes such as sodium through its gaps, but large proteins mostly cannot pass while the wall is healthy. Held inside, they pull water back in. The pump answer describes sodium at cell membranes, not proteins at the capillary wall."
+    },
+    {
+      "id": "hypotonic-brain",
+      "objective": 4,
+      "step": "hypotonic",
+      "stem": "A patient is given a lot of hypotonic fluid. Which cells are most at risk, and why?",
+      "choices": [
+        "Brain cells, which swell inside the closed skull",
+        "Red blood cells, which shrink",
+        "No cells, because hypotonic fluid stays in the vessels",
+        "Muscle cells, which lose water to the plasma"
+      ],
+      "answer": 0,
+      "why": "A hypotonic fluid lowers the tonicity outside cells, so water moves into them and they swell. Brain cells sit inside the rigid skull, so their swelling raises pressure there. The fluid does not all stay outside cells: its share of plain water moves into them."
+    },
+    {
+      "id": "fill-the-vessels",
+      "objective": 4,
+      "step": "colloid",
+      "stem": "For the same amount given, which fluid keeps the most of its water in the plasma, with a healthy capillary wall?",
+      "choices": [
+        "A colloid",
+        "An isotonic crystalloid",
+        "A hypotonic fluid",
+        "D5W, once its glucose is used"
+      ],
+      "answer": 0,
+      "why": "A colloid's large molecules stay in the vessels and hold its water there. An isotonic crystalloid spreads through all the fluid outside cells, most of it between cells; free water sends most of its water into cells, and a hypotonic fluid sends part of its water there."
+    }
+  ],
+  "takeaways": [
+    "Dissolved particles diffuse down a concentration gradient, from crowded to sparse, until the crowding is level, with no energy spent.",
+    "Osmosis is water crossing a membrane toward the side with more particles that cannot cross; the particles stay put and the water moves.",
+    "Osmolality counts every dissolved particle; tonicity counts only effective osmoles, such as sodium, that stay on one side. Urea raises osmolality but not tonicity, so it moves no water.",
+    "Body water sits in three compartments: inside cells (the most), between cells, and plasma (the least). Sodium stays outside cells; proteins stay inside healthy vessels.",
+    "An isotonic crystalloid leaves cells alone and spreads through all the fluid outside them, so the plasma keeps only a part of it.",
+    "A hypotonic fluid swells cells and a hypertonic fluid shrinks them; water always moves toward the higher tonicity.",
+    "A colloid holds more of its water in the plasma, as long as the capillary wall is healthy.",
+    "A glucose solution such as D5W becomes free water once its sugar is used: it dilutes every compartment, and most of it ends up inside cells."
+  ]
+}

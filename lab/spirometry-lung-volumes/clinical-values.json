@@ -4,38 +4,28 @@
     "openstax": "Betts JG et al. Anatomy and Physiology 2e. OpenStax, 2022. Chapter 22.3, The Process of Breathing.",
     "atsers2022": "Stanojevic S et al. ERS/ATS technical standard on interpretive strategies for routine lung function tests. European Respiratory Journal. 2022;60:2101499.",
     "sp-compliance": "Desai JP, Moustarah F. Pulmonary Compliance (Archived). StatPearls / NCBI Bookshelf. Updated September 12, 2022.",
-    "sp-pft": "Ponce MC, Sankari A, Sharma S. Pulmonary Function Tests. StatPearls / NCBI Bookshelf. Updated August 28, 2023.",
     "openstax-biology": "OpenStax. Biology for AP® Courses. Section 30.2, Gas Exchange across Respiratory Surfaces, Table 30.1."
   },
   "sourceDetails": [
     {
       "id": "openstax",
       "citation": "Betts JG et al. Anatomy and Physiology 2e. OpenStax, 2022. Chapter 22.3, The Process of Breathing.",
-      "url": "https://openstax.org/books/anatomy-and-physiology-2e/pages/22-3-the-process-of-breathing",
       "accessed": "2026-11-14"
     },
     {
       "id": "atsers2022",
       "citation": "Stanojevic S et al. ERS/ATS technical standard on interpretive strategies for routine lung function tests. European Respiratory Journal. 2022;60:2101499.",
-      "url": "https://lwfiles.mycourse.app/6438c06a5d76f37a1d904274-public/publicFiles/ATS%20ERS%20interpretative%20strategies%202022.pdf",
+      "url": "https://doi.org/10.1183/13993003.01499-2021",
       "accessed": "2026-11-14"
     },
     {
       "id": "sp-compliance",
       "citation": "Desai JP, Moustarah F. Pulmonary Compliance (Archived). StatPearls / NCBI Bookshelf. Updated September 12, 2022.",
-      "url": "https://www.ncbi.nlm.nih.gov/books/NBK538324/?report=printable",
-      "accessed": "2026-11-14"
-    },
-    {
-      "id": "sp-pft",
-      "citation": "Ponce MC, Sankari A, Sharma S. Pulmonary Function Tests. StatPearls / NCBI Bookshelf. Updated August 28, 2023.",
-      "url": "https://www.ncbi.nlm.nih.gov/sites/books/NBK482339/?report=printable",
       "accessed": "2026-11-14"
     },
     {
       "id": "openstax-biology",
       "citation": "OpenStax. Biology for AP® Courses. Section 30.2, Gas Exchange across Respiratory Surfaces, Table 30.1.",
-      "url": "https://openstax.org/books/biology-ap-courses/pages/30-2-gas-exchange-across-respiratory-surfaces",
       "accessed": "2026-11-14"
     }
   ],
@@ -112,7 +102,7 @@
       "location": "22.3, Respiratory Volumes and Capacities; Figure 22.18 (current web edition)",
       "where": "22.3, Respiratory Volumes and Capacities; Figure 22.18 (current web edition)",
       "excerpt": "which is between 4000 and 5000 milliliters.",
-      "note": "Approximate young adult, female–male; real reference values depend on age, sex and height.",
+      "note": "Approximate adult range; real reference values depend on age, sex and height.",
       "modelKey": null
     },
     {

@@ -4,16 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Diffusion, Osmosis and IV Fluids · The Lab · Sean Sooch</title>
-<meta name="description" content="A step-by-step picture lesson: how water and dissolved particles cross a membrane, and why the tonicity of an IV fluid decides whether a cell swells, shrinks or holds its size.">
+<meta name="description" content="A guided visual lesson: how particles spread and water follows them across a membrane, osmolality against tonicity, the body's three water compartments, and what an isotonic, hypotonic or hypertonic fluid, a colloid and free water do to cell size.">
 <link rel="canonical" href="https://seansooch.dev/lab/diffusion-osmosis-iv-fluids/">
-<meta property="og:title" content="Diffusion, Osmosis and IV Fluids · The Lab">
-<meta property="og:description" content="Watch water follow solute across a membrane, then see where an isotonic, hypotonic, hypertonic, colloid or glucose fluid ends up in the body.">
+<meta property="og:title" content="Diffusion, Osmosis and IV Fluids">
+<meta property="og:description" content="Watch water follow particles across a membrane, then see where an isotonic, hypotonic or hypertonic fluid, a colloid and free water end up in the body, one picture at a time.">
 <meta property="og:url" content="https://seansooch.dev/lab/diffusion-osmosis-iv-fluids/">
-<meta property="og:type" content="website">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap">
-<link rel="stylesheet" href="style.css">
-<script type="module" src="app.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/lab/kit/kit.css">
+<link rel="stylesheet" href="style.css?v=2">
+<script type="module" src="app.js?v=2"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to the lesson</a>
@@ -29,225 +29,216 @@
     </nav>
   </div>
 </header>
-
-<main id="main">
-  <header class="intro">
-    <p class="eyebrow"><a href="/lab/">All lessons</a> <span aria-hidden="true">/</span> Lesson 25 <span class="eyebrow-unit">Cells, membranes and signals</span></p>
-    <h1>Diffusion, osmosis <span class="h1-amp">and</span> IV&nbsp;fluids<span class="dot">.</span></h1>
-    <div class="intro-grid">
-      <p class="lede">How water and a dissolved substance cross a membrane, and why the make-up of a fluid dripped into a vein decides whether a cell swells, shrinks or holds its size.</p>
-      <div class="intro-side">
-        <p class="medical"><strong>Educational, not for clinical use.</strong> No treatment amounts appear anywhere in this lesson.</p>
-        <p class="related">Builds toward: <a href="/lab/adh-water-balance/">Lesson 22, ADH and Water Balance</a>. Related: <a href="/lab/nephron-diuretics/">Lesson 2, The Nephron and Diuretics</a> · <a href="/lab/pressure-volume-loop/">Lesson 1, The Pressure–Volume Loop</a> (fluids add filling).</p>
-      </div>
-    </div>
-  </header>
-
-  <div class="tabs" role="tablist" aria-label="Lesson sections">
-    <button type="button" role="tab" id="tab-lesson" aria-controls="panel-lesson" aria-selected="true">Lesson</button>
-    <button type="button" role="tab" id="tab-clinical" aria-controls="panel-clinical" aria-selected="false" tabindex="-1">Clinical values</button>
-    <button type="button" role="tab" id="tab-explore" aria-controls="panel-explore" aria-selected="false" tabindex="-1">Explore freely</button>
+<main id="main" data-slug="diffusion-osmosis-iv-fluids">
+  <div class="intro">
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / <a href="/lab/#cells-membranes-signals">Unit 9: Cells, membranes and signals</a> / Lesson 25</p>
+    <h1>Diffusion, osmosis<br><span>and IV fluids.</span></h1>
+    <p class="lede">Particles spread out, and water follows the ones that cannot cross a membrane. See why that decides whether a cell swells, shrinks or keeps its size, then follow five kinds of fluid dripped into a vein to where they end up.</p>
+    <p class="note">Educational, not for clinical use</p>
+    <div class="lx-plan" data-lx-plan></div>
   </div>
 
-  <div id="data-error" class="data-error" role="alert" hidden></div>
+  <div class="tabs" role="tablist" aria-label="Lesson views">
+    <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-quiz" aria-controls="quiz" aria-selected="false" tabindex="-1">Quiz</button>
+    <button type="button" role="tab" id="tab-summary" aria-controls="summary" aria-selected="false" tabindex="-1">Summary</button>
+    <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
+    <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
+  </div>
 
-  <section id="panel-lesson" class="panel" role="tabpanel" aria-labelledby="tab-lesson">
-    <div class="progress">
-      <p class="progress-text"><span data-step-progress aria-live="polite">Step 1 of 16</span> <span class="progress-part" id="progress-part">Building the idea</span></p>
-      <ol class="progress-bar" id="progress-bar" aria-hidden="true"></ol>
+  <section id="lesson" role="tabpanel" aria-labelledby="tab-lesson">
+    <article data-step="1" data-step-title="A cell is a tiny bag of water" data-kind="cell">
+      <p class="eyebrow">Particles and membranes</p>
+      <h2 tabindex="-1">A cell is a tiny bag of water</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Your body is built from cells. Each one holds watery <dfn data-part="icf">fluid inside the cell</dfn>, wrapped in a thin, oily skin, the <dfn data-part="membrane">cell membrane</dfn>. More water, the <dfn data-part="ecf">fluid outside the cell</dfn>, bathes every cell from the outside.</p>
+    </article>
+    <article data-step="2" data-step-title="Things dissolve in that water" data-kind="solute" hidden>
+      <p class="eyebrow">Particles and membranes</p>
+      <h2 tabindex="-1">Things dissolve in that water</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Salts, sugars and proteins are dissolved in the water on both sides. Anything dissolved is a <dfn data-part="sodium potassium">solute</dfn>. Outside cells the main solute particle is <dfn data-part="sodium">sodium</dfn>; inside cells it is <dfn data-part="potassium">potassium</dfn>. Water fills every gap between the particles.</p>
+    </article>
+    <article data-step="3" data-step-title="Diffusion: a crowd spreads out" data-kind="diffusion" hidden>
+      <p class="eyebrow">Particles and membranes</p>
+      <h2 tabindex="-1">Diffusion: a crowd spreads out</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Dissolved particles jiggle all the time, so a crowded patch spreads until it is evenly mixed, like sugar through tea. A difference in crowding from one place to another is a <dfn data-part="gradient">concentration gradient</dfn>. Drifting down it, from crowded to sparse, with no energy spent, is <dfn>diffusion</dfn>. It stops when the crowding is level.</p>
+    </article>
+    <article data-step="4" data-step-title="A membrane chooses what crosses" data-kind="membrane" hidden>
+      <p class="eyebrow">Particles and membranes</p>
+      <h2 tabindex="-1">A membrane chooses what crosses</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The cell membrane is <dfn data-part="membrane">semipermeable</dfn>: some things pass, others are held back. Water crosses easily, much of it through <dfn data-part="pore">water channels</dfn>. Sodium cannot cross freely: the little that leaks in is pumped straight back out, so it behaves as if held outside.</p>
+    </article>
+    <article data-step="5" data-step-title="Osmosis: water follows solute" data-kind="osmosis" hidden>
+      <p class="eyebrow">Particles and membranes</p>
+      <h2 tabindex="-1">Osmosis: water follows solute</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">When a solute cannot cross, water moves instead, toward the side with more of it. Water crossing a membrane toward the more crowded side is <dfn data-part="water-flow">osmosis</dfn>. The salt stays put; the salty side's level rises until the weight of its taller column pushes back as hard as osmosis pulls.</p>
+    </article>
+    <article data-step="6" data-step-title="Only particles that stay put move water" data-kind="effective" hidden>
+      <p class="eyebrow">Particles and membranes</p>
+      <h2 tabindex="-1">Only particles that stay put move water</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn>Osmolality</dfn> counts every dissolved particle in each kilogram of water. But <dfn data-part="urea">urea</dfn>, a waste product, crosses cell membranes freely, evens out and pulls no water. Particles held on one side, such as sodium, are <dfn data-part="sodium">effective osmoles</dfn>: they move water. Counting only them gives <dfn>tonicity</dfn>, which decides whether a cell swells or shrinks.</p>
+    </article>
+    <article data-step="7" data-step-title="Same tonicity on both sides: isotonic" data-kind="iso" hidden>
+      <p class="eyebrow">Particles and membranes</p>
+      <h2 tabindex="-1">Same tonicity on both sides: isotonic</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A fluid whose tonicity matches the inside of the cell is <dfn data-part="water-flow">isotonic</dfn>. Water still crosses all the time, but as much moves in as moves out, so the cell keeps its size. The dashed outline is its normal size.</p>
+    </article>
+    <article data-step="8" data-step-title="Fewer particles outside: hypotonic" data-kind="hypo" hidden>
+      <p class="eyebrow">Particles and membranes</p>
+      <h2 tabindex="-1">Fewer particles outside: hypotonic</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A <dfn>hypotonic</dfn> fluid has fewer effective particles than the inside of the cell. Water moves into the cell by osmosis, and the cell <dfn data-part="water-flow">swells</dfn>. Swell far enough and a cell can burst; brain cells, boxed in by the skull, are the ones that matter most.</p>
+    </article>
+    <article data-step="9" data-step-title="More particles outside: hypertonic" data-kind="hyper" hidden>
+      <p class="eyebrow">Particles and membranes</p>
+      <h2 tabindex="-1">More particles outside: hypertonic</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A <dfn>hypertonic</dfn> fluid has more effective particles than the inside of the cell. Water moves out of the cell by osmosis, and the cell <dfn data-part="water-flow">shrinks</dfn>. Water always moves toward the side with the higher tonicity.</p>
+    </article>
+    <article data-step="10" data-step-title="The body's three water compartments" data-kind="rooms" hidden>
+      <p class="eyebrow">Body water</p>
+      <h2 tabindex="-1">The body's three water compartments</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Body water sits in three compartments. Most is <dfn data-part="icf">intracellular fluid</dfn>, inside cells. The rest is outside cells: <dfn data-part="isf">interstitial fluid</dfn> in the spaces between cells, and <dfn data-part="plasma">plasma</dfn>, the liquid part of blood, inside the vessels. The bar shows their sizes; sodium fills the fluid outside cells, potassium the fluid inside.</p>
+    </article>
+    <article data-step="11" data-step-title="The capillary wall holds big molecules" data-kind="wall" hidden>
+      <p class="eyebrow">Body water</p>
+      <h2 tabindex="-1">The capillary wall holds big molecules</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The <dfn data-part="wall">capillary wall</dfn>, the thin wall of the smallest blood vessels, lets water and sodium through its gaps freely. Large molecules such as blood proteins, called <dfn data-part="protein">colloids</dfn>, mostly cannot pass while the wall is healthy. Held inside, they pull water back into the vessel: <dfn data-part="water-pull">colloid osmotic pressure</dfn>.</p>
+    </article>
+    <article data-step="12" data-step-title="Where a drip of fluid ends up" data-kind="routes" hidden>
+      <p class="eyebrow">Body water</p>
+      <h2 tabindex="-1">Where a drip of fluid ends up</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">An <dfn>intravenous (IV) fluid</dfn> is a liquid dripped straight into a vein. Where it ends up depends on what is dissolved in it: <dfn data-part="route-sodium">sodium</dfn> spreads through all the fluid outside cells, <dfn data-part="route-protein">protein</dfn> stays mostly in the vessels, and plain water with nothing holding it, <dfn data-part="route-water">free water</dfn>, goes everywhere, cells included.</p>
+    </article>
+    <article data-step="13" data-step-title="Isotonic crystalloid" data-kind="isotonic" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Isotonic crystalloid</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A <dfn>crystalloid</dfn> is water with small dissolved salts. An isotonic one, such as normal saline, or lactated Ringer's (a little below it), is close to the body's own tonicity, so almost no water is pulled into or out of cells. Its sodium spreads through all the fluid outside cells and takes the water with it: the space between cells gains most, the plasma only a part.</p>
+    </article>
+    <article data-step="14" data-step-title="Hypotonic fluid" data-kind="hypotonic" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Hypotonic fluid</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A hypotonic fluid, such as half-strength saline, carries less sodium than the body's own fluid. It dilutes the fluid outside cells, so some of its water moves into cells by osmosis and they swell; brain cells, boxed in by the skull, are most at risk. Only its share of plain water does that. The rest stays outside cells like an isotonic fluid, so the vessels keep less than they would of an isotonic fluid.</p>
+    </article>
+    <article data-step="15" data-step-title="Hypertonic fluid" data-kind="hypertonic" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Hypertonic fluid</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Hypertonic saline carries more sodium than the body's own fluid. It concentrates the fluid outside cells, so water moves out of cells by osmosis. Cells shrink, while the fluid outside them, plasma included, gains more water than was dripped in. That pull is why it is used to draw water out of a swollen brain.</p>
+    </article>
+    <article data-step="16" data-step-title="Colloid" data-kind="colloid" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Colloid</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A colloid fluid, such as albumin, carries large molecules that mostly stay behind a healthy capillary wall. Their pull holds much of its water inside the vessels, so the plasma fills more than with the same amount of crystalloid, and cells barely change. A leaky wall, as in burns or severe infection, lets the molecules out.</p>
+    </article>
+    <article data-step="17" data-step-title="Free water: a glucose solution once the sugar is used" data-kind="freewater" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Free water: a glucose solution once the sugar is used</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">D5W is <dfn data-part="glucose">glucose</dfn>, a sugar, in water. In the bag it is about as concentrated as blood, but cells take the sugar up and use it, leaving free water. That spreads into every compartment, most of it into cells, which swell a little. In a real body the dilution switches ADH off, so the kidney passes the extra water (<a href="/lab/adh-water-balance/">Lesson 22</a>).</p>
+    </article>
+
+    <div class="step-nav">
+      <button type="button" data-step-back disabled>← Back</button>
+      <span data-step-progress aria-live="polite">Step 1 of 17</span>
+      <button type="button" data-step-next>Next →</button>
     </div>
-
-    <div class="steps" id="steps">
-      <article class="step" data-step="1" data-step-title="A cell is a tiny bag of water" data-scene="cell-intro" data-part="core">
-        <h2 tabindex="-1">A cell is a tiny bag of water</h2>
-        <figure class="visual"><svg role="img" aria-label="A single round cell floating in fluid. Labels mark the inside of the cell, the outside, and the thin cell membrane between them."></svg></figure>
-        <p class="caption">Your body is built from cells. Each one is a tiny bag of watery fluid wrapped in a thin skin, the <dfn>cell membrane</dfn>: the boundary between inside and outside. More fluid bathes every cell from the outside.</p>
-      </article>
-
-      <article class="step" data-step="2" data-step-title="Things dissolve in that water" data-scene="cell-solute" data-part="core" hidden>
-        <h2 tabindex="-1">Things dissolve in that water</h2>
-        <figure class="visual"><svg role="img" aria-label="The same cell, now with small orange dots inside and outside it. Each dot is a dissolved particle; water fills all the space around them."></svg></figure>
-        <p class="caption">Salts, sugars and proteins are dissolved in the water inside and outside the cell. Anything dissolved is a <dfn>solute</dfn>. Each orange dot here is a solute particle; water fills every gap around them.</p>
-      </article>
-
-      <article class="step" data-step="3" data-step-title="Diffusion: a crowd spreads out" data-scene="diffusion" data-part="core" hidden>
-        <h2 tabindex="-1">Diffusion: a crowd spreads out</h2>
-        <figure class="visual"><svg role="img" aria-label="Animation: a crowded patch of particles at the left of a box spreads out until the particles are evenly mixed through the whole box."></svg></figure>
-        <p class="caption">Particles jiggle all the time, so a crowded patch spreads until it is evenly mixed, like sugar spreading through tea. This drift from crowded to sparse, with no energy spent, is <dfn>diffusion</dfn>. Press Replay to watch again.</p>
-      </article>
-
-      <article class="step" data-step="4" data-step-title="A membrane chooses what crosses" data-scene="membrane" data-part="core" hidden>
-        <h2 tabindex="-1">A membrane chooses what crosses</h2>
-        <figure class="visual"><svg role="img" aria-label="Animation: a wall with small gaps splits a box. Small blue water particles pass through the gaps both ways. A large orange salt particle bumps the wall and is turned back."></svg></figure>
-        <p class="caption">The cell membrane is <dfn>semipermeable</dfn>: some things pass, others are held back. Water crosses easily. Most solutes, such as salt particles, cannot cross on their own, so they stay on the side where they started.</p>
-      </article>
-
-      <article class="step" data-step="5" data-step-title="Osmosis: water follows solute" data-scene="osmosis" data-part="core" hidden>
-        <h2 tabindex="-1">Osmosis: water follows solute</h2>
-        <figure class="visual"><svg role="img" aria-label="Animation: a tank split by a membrane, plain water on the left and salty water on the right. Water crosses to the salty side, so the level on the right rises and the left falls, until the weight of the taller column pushes back as hard as osmosis pulls. A dashed line marks the starting level."></svg></figure>
-        <p class="caption">When solutes cannot cross, water moves instead, toward the side with more solute. This diffusion of water across a membrane is <dfn>osmosis</dfn>. The salty side’s level rises until the weight of its taller column pushes back as hard as osmosis pulls; the salt stays put.</p>
-      </article>
-
-      <article class="step" data-step="6" data-step-title="Same on both sides: isotonic" data-scene="cell-iso" data-part="core" hidden>
-        <h2 tabindex="-1">Same on both sides: isotonic</h2>
-        <figure class="visual"><svg role="img" aria-label="A cell in fluid with the same density of solute particles inside and outside. Paired arrows show water moving in and out equally. The cell stays exactly on the dashed outline of its normal size."></svg></figure>
-        <p class="caption"><dfn>Tonicity</dfn> compares the solutes that cannot cross a cell membrane outside the cell with those inside it. A fluid that matches the cell is <dfn>isotonic</dfn>: water moves in and out equally, so the cell holds its size.</p>
-      </article>
-
-      <article class="step" data-step="7" data-step-title="Fewer solutes outside: hypotonic" data-scene="cell-hypo" data-part="core" hidden>
-        <h2 tabindex="-1">Fewer solutes outside: hypotonic</h2>
-        <figure class="visual"><svg role="img" aria-label="Animation: a cell in fluid with fewer solute particles outside than inside. Arrows point inward as water enters, and the cell swells past the dashed outline of its normal size."></svg></figure>
-        <p class="caption">A <dfn>hypotonic</dfn> fluid has fewer solute particles than the inside of the cell. Water moves into the cell by osmosis, and the cell swells. Swell too far and a cell can burst. The dashed outline is its normal size.</p>
-      </article>
-
-      <article class="step" data-step="8" data-step-title="More solutes outside: hypertonic" data-scene="cell-hyper" data-part="core" hidden>
-        <h2 tabindex="-1">More solutes outside: hypertonic</h2>
-        <figure class="visual"><svg role="img" aria-label="Animation: a cell in fluid crowded with solute particles outside. Arrows point outward as water leaves, and the cell shrinks and wrinkles inside the dashed outline of its normal size."></svg></figure>
-        <p class="caption">A <dfn>hypertonic</dfn> fluid has more solute particles than the inside of the cell. Water moves out of the cell by osmosis, and the cell shrinks and wrinkles. The dashed outline is its normal size.</p>
-      </article>
-
-      <article class="step" data-step="9" data-step-title="The body's three water rooms" data-scene="rooms" data-part="core" hidden>
-        <h2 tabindex="-1">The body’s three water rooms</h2>
-        <figure class="visual"><svg role="img" aria-label="A bar across the top divides body water into three parts: inside cells is by far the largest, between cells is next, plasma is the smallest. Below, a picture shows a cell sitting in the fluid between cells, above a blood vessel filled with plasma."></svg></figure>
-        <p class="caption">Body water sits in three <dfn>compartments</dfn>. Most is inside cells. The rest is outside cells: in the gaps between cells, and in <dfn>plasma</dfn>, the liquid part of blood, inside the vessels. The bar shows their relative sizes.</p>
-      </article>
-
-      <article class="step" data-step="10" data-step-title="The vessel wall holds big molecules" data-scene="wall" data-part="core" hidden>
-        <h2 tabindex="-1">The vessel wall holds big molecules</h2>
-        <figure class="visual"><svg role="img" aria-label="Animation: a close-up of a blood vessel wall with gaps. Small salt particles slip through the gaps in both directions. Large purple protein molecules stay inside the vessel, and blue arrows show water being pulled back into it."></svg></figure>
-        <p class="caption">The wall of the smallest blood vessels lets water and salt pass freely. Very large molecules, such as blood proteins, mostly cannot pass while the wall is intact; these are <dfn>colloids</dfn>. Held in the vessel, they keep pulling water back in.</p>
-      </article>
-
-      <article class="step" data-step="11" data-step-title="Where a drip of fluid ends up" data-scene="routes" data-part="core" hidden>
-        <h2 tabindex="-1">Where a drip of fluid ends up</h2>
-        <figure class="visual"><svg role="img" aria-label="Fluid enters the blood vessel from a drip on the left. An orange arrow shows salt leaving the vessel for the space between cells, where it stays outside the cell, a purple arrow shows colloid mostly staying along the vessel, and a blue arrow shows plain water travelling on into the cell."></svg></figure>
-        <p class="caption">An <dfn>intravenous (IV) fluid</dfn> is a liquid dripped straight into a vein. Where it ends up depends on what is dissolved in it. Two things to watch from here on: the size of the cells, and how full the vessels are.</p>
-        <ul class="route-key">
-          <li><span class="swatch salt" aria-hidden="true"></span>Salt stays outside cells; an isotonic salt fluid keeps its water there too</li>
-          <li><span class="swatch prot" aria-hidden="true"></span>Colloid mostly stays in the vessel</li>
-          <li><span class="swatch blue" aria-hidden="true"></span>Plain water goes everywhere, cells included</li>
-        </ul>
-      </article>
-
-      <article class="step" data-step="12" data-step-title="Isotonic crystalloid" data-scene="fluid" data-fluid="isotonic" data-part="change" hidden>
-        <h2 tabindex="-1">Isotonic crystalloid</h2>
-        <figure class="visual"><svg role="img" aria-label="Animation over the normal picture, shown dashed: fluid enters the vessel and spreads into the space between cells, which grows, while the vessel fills only partly. The cell stays exactly its normal size."></svg></figure>
-        <p class="caption">A <dfn>crystalloid</dfn> is water with small dissolved salts. An isotonic one matches the body’s own fluid, so no water is pulled into or out of cells. It spreads through all the space outside cells, filling the vessels only partly.</p>
-        <p class="legend"><span class="key key-ghost">Dashed: normal</span><span class="key key-now">Solid: after an isotonic crystalloid</span></p>
-        <p class="result" data-result></p>
-      </article>
-
-      <article class="step" data-step="13" data-step-title="Hypotonic fluid" data-scene="fluid" data-fluid="hypotonic" data-part="change" hidden>
-        <h2 tabindex="-1">Hypotonic fluid</h2>
-        <figure class="visual"><svg role="img" aria-label="Animation over the normal picture, shown dashed: the fluid dilutes the space between cells, then arrows show water moving into the cell, which swells beyond its dashed outline. The vessel gains only a little."></svg></figure>
-        <p class="caption">A hypotonic fluid carries less salt than the body’s own fluid. It dilutes the fluid outside cells, so water moves into cells by osmosis and they swell. The vessels keep only a little of it.</p>
-        <p class="legend"><span class="key key-ghost">Dashed: normal</span><span class="key key-now">Solid: after a hypotonic fluid</span></p>
-        <p class="result" data-result></p>
-      </article>
-
-      <article class="step" data-step="14" data-step-title="Hypertonic fluid" data-scene="fluid" data-fluid="hypertonic" data-part="change" hidden>
-        <h2 tabindex="-1">Hypertonic fluid</h2>
-        <figure class="visual"><svg role="img" aria-label="Animation over the normal picture, shown dashed: the fluid crowds the space between cells with salt, then arrows show water leaving the cell, which shrinks inside its dashed outline while the space outside cells and the vessel grow."></svg></figure>
-        <p class="caption">A hypertonic fluid carries more salt than the body’s own fluid. It concentrates the fluid outside cells, so water moves out of cells by osmosis. Cells shrink while the space outside them, vessels included, grows.</p>
-        <p class="legend"><span class="key key-ghost">Dashed: normal</span><span class="key key-now">Solid: after a hypertonic fluid</span></p>
-        <p class="result" data-result></p>
-      </article>
-
-      <article class="step" data-step="15" data-step-title="Colloid" data-scene="fluid" data-fluid="colloid" data-part="change" hidden>
-        <h2 tabindex="-1">Colloid</h2>
-        <figure class="visual"><svg role="img" aria-label="Animation over the normal picture, shown dashed: extra large purple molecules arrive in the vessel, which swells well beyond its dashed outline. The space between cells and the cell itself stay their normal size."></svg></figure>
-        <p class="caption">A colloid fluid carries large molecules that mostly stay behind an intact vessel wall. They hold much of its water inside the vessels, so the vessels fill more than with a crystalloid, while the space between cells and the cells barely change.</p>
-        <p class="legend"><span class="key key-ghost">Dashed: normal</span><span class="key key-now">Solid: after a colloid</span></p>
-        <p class="result" data-result></p>
-      </article>
-
-      <article class="step" data-step="16" data-step-title="Free water and glucose solutions" data-scene="fluid" data-fluid="glucose" data-part="change" hidden>
-        <h2 tabindex="-1">Free water and glucose solutions</h2>
-        <figure class="visual"><svg role="img" aria-label="Animation in three stages over the normal picture, shown dashed: sugar particles arrive outside the cell, then move into the cell and are used up, then arrows show water moving into the cell, which swells a little while every compartment gains some water."></svg></figure>
-        <p class="caption"><dfn>Free water</dfn> is water with nothing dissolved. Shown here: <dfn>glucose</dfn>, a sugar, in water, made as concentrated as blood. Cells take up and use the sugar, leaving free water, which spreads into every compartment, mostly into cells. They swell a little.</p>
-        <p class="legend"><span class="key key-ghost">Dashed: normal</span><span class="key key-now">Solid: after a glucose solution, sugar taken up</span><span class="key key-sugar">Squares: sugar</span></p>
-        <p class="result" data-result></p>
-        <button type="button" class="link-button" data-go-explore>Try your own fluid in Explore freely →</button>
-      </article>
-    </div>
-
-    <div class="step-nav" role="group" aria-label="Step controls">
-      <button type="button" class="nav-btn" data-step-back aria-label="Back to the previous step">← Back</button>
-      <button type="button" class="nav-btn replay" id="replay">↻ Replay</button>
-      <button type="button" class="nav-btn primary" data-step-next>Next →</button>
-    </div>
-    <p class="hint">Tip: the ← and → keys move between steps.</p>
+    <p class="hint">Start with Next, or use the arrow keys. Under a moving picture: pause, drag to any moment, or slow it down. Underlined terms light up their part of the picture. Sizes and particle counts are illustrative, and the body pictures draw each change larger than life so it can be seen.</p>
   </section>
 
-  <section id="panel-clinical" class="panel" role="tabpanel" aria-labelledby="tab-clinical" hidden>
-    <div class="panel-head">
-      <div>
-        <p class="eyebrow">Reference desk</p>
-        <h2>Clinical values</h2>
+  <section id="quiz" role="tabpanel" aria-labelledby="tab-quiz" hidden></section>
+
+  <section id="summary" role="tabpanel" aria-labelledby="tab-summary" hidden></section>
+
+  <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
+    <h2>Reference values, beside the model.</h2>
+    <p id="disclaimer" class="disclaimer">Loading reference values…</p>
+    <div class="cv-top">
+      <div id="clinical-visual" class="visual"></div>
+      <div class="cv-controls">
+        <div>
+          <label for="clinical-state">Show a fluid or state</label>
+          <select id="clinical-state"><option value="baseline">No fluid given</option></select>
+        </div>
+        <div>
+          <label for="clinical-amount">Amount given (model) <output id="clinical-amount-label" for="clinical-amount">none</output></label>
+          <input id="clinical-amount" type="range" min="0" max="100" step="5" value="0">
+        </div>
+        <div>
+          <button type="button" id="clinical-reset">Back to baseline</button>
+        </div>
       </div>
-      <p class="medical"><strong>Educational, not for clinical use.</strong></p>
     </div>
-    <p class="disclaimer" id="cv-disclaimer"></p>
-    <p class="cv-intro">Grey bands are the cited typical adult references; a bar mark is a single cited typical value. The blue marker is the lesson’s teaching model. It starts at an illustrative point inside each cited range, or on the cited typical value (total osmolality starts a little above tonicity, because it also counts particles that cross cells freely), and moves when you change the fluid here or in Explore freely. Its numbers are illustrative, never patient values, and these references are not decision rules.</p>
-    <p class="cv-model" id="cv-model" aria-live="polite"></p>
-    <fieldset class="cv-states" id="cv-states">
-      <legend>Show the expected direction for</legend>
-    </fieldset>
-    <div class="cv-state-detail" id="cv-state-detail" aria-live="polite"></div>
-    <div class="cv-rows" id="cv-rows"></div>
+    <p id="state-summary" class="state-summary" aria-live="polite">No fluid given.</p>
+    <details class="lx-fine">
+      <summary>The cited evidence for this state</summary>
+      <div id="state-evidence" class="model-note"></div>
+    </details>
+    <details class="lx-fine">
+      <summary>How to read these bars</summary>
+      <p>Grey-blue bands are the cited typical adult ranges; a black tick is a single cited typical value. The blue line is the lesson's teaching model. It starts at an illustrative point inside each cited range, or on the cited value (total osmolality starts a little above tonicity, because it also counts particles such as urea that cross cells freely), and moves when you change the fluid here or in Explore freely. Its numbers are illustrative, never patient values, and these references are not decision rules. Arrows appear only where a quoted source states the direction.</p>
+    </details>
+    <div id="value-rows"></div>
     <h3>Sources</h3>
-    <ol class="sources" id="cv-sources"></ol>
+    <ul id="sources"></ul>
+    <p id="load-error" class="load-error" hidden></p>
   </section>
 
-  <section id="panel-explore" class="panel" role="tabpanel" aria-labelledby="tab-explore" hidden>
-    <div class="panel-head">
-      <div>
-        <p class="eyebrow">Free play</p>
-        <h2>Pick a fluid. Watch where it goes.</h2>
-      </div>
-      <p class="badge">Illustrative model, not patient values</p>
-    </div>
+  <section id="explore" role="tabpanel" aria-labelledby="tab-explore" hidden>
+    <h2>Pick a fluid. Watch where it goes.</h2>
+    <p class="model-intro">An illustrative teaching model of the body's three water compartments. Choose a fluid and how much of it, and see the cell, the space between cells and the plasma settle, drawn over a dashed outline of normal. The picture draws each change larger than life; the numbers under it are the model's own.</p>
     <div class="explore-grid">
-      <figure class="visual explore-visual">
-        <svg id="explore-svg" role="img" aria-describedby="explore-summary" aria-label="The three body water compartments after the chosen fluid, drawn over a dashed outline of normal"></svg>
-        <figcaption class="legend"><span class="key key-ghost">Dashed: normal</span><span class="key key-now">Solid: after the chosen fluid</span></figcaption>
-      </figure>
+      <div id="explore-visual" class="visual"></div>
       <div class="controls">
-        <label for="fluid">Fluid</label>
-        <select id="fluid">
-          <option value="isotonic">Isotonic crystalloid</option>
-          <option value="hypotonic">Hypotonic fluid</option>
-          <option value="hypertonic">Hypertonic fluid</option>
-          <option value="colloid">Colloid</option>
-          <option value="glucose">Glucose solution</option>
-          <option value="water">Free water</option>
-          <option value="custom">Custom salt strength</option>
-        </select>
-        <label for="amount">Amount given <output id="amount-out" for="amount"></output></label>
-        <input id="amount" type="range" min="0" max="100" step="5" value="0">
-        <label for="salt">Salt strength compared with the body’s fluid <output id="salt-out" for="salt"></output></label>
-        <input id="salt" type="range" min="0" max="300" step="25" value="100">
-        <label for="uptake">Sugar taken up by cells <output id="uptake-out" for="uptake"></output></label>
-        <input id="uptake" type="range" min="0" max="100" step="10" value="100" disabled>
-        <button type="button" class="nav-btn" id="explore-reset">Reset to normal</button>
-        <div class="readout" id="explore-summary" aria-live="polite"></div>
-        <div class="went" id="explore-went"></div>
+        <fieldset>
+          <legend>The fluid</legend>
+          <label for="fluid">Fluid</label>
+          <select id="fluid">
+            <option value="isotonic">Isotonic crystalloid</option>
+            <option value="hypotonic">Hypotonic fluid</option>
+            <option value="hypertonic">Hypertonic fluid</option>
+            <option value="colloid">Colloid</option>
+            <option value="glucose">Glucose solution</option>
+            <option value="water">Free water</option>
+            <option value="custom">Custom salt strength</option>
+          </select>
+          <label for="amount">Amount given <output id="amount-out" for="amount">none</output></label>
+          <input id="amount" type="range" min="0" max="100" step="5" value="0">
+        </fieldset>
+        <fieldset>
+          <legend>What is in it</legend>
+          <label for="salt">Salt strength <output id="salt-out" for="salt"></output></label>
+          <input id="salt" type="range" min="0" max="300" step="25" value="100">
+          <label for="uptake">Sugar taken up by cells <output id="uptake-out" for="uptake"></output></label>
+          <input id="uptake" type="range" min="0" max="100" step="10" value="100" disabled>
+        </fieldset>
+        <button type="button" id="reset">Reset to normal</button>
       </div>
     </div>
-    <details class="notes">
-      <summary>How the model works</summary>
-      <p>Body water is one unit split into three rooms: inside cells (I), between cells (B) and plasma (P). The split comes from the Clinical values file. Every room starts with one unit of concentration.</p>
-      <p>A fluid of volume V brings salt at strength s (relative to the body’s fluid), sugar at strength g and, for a colloid, large molecules. Salt stays outside cells. Sugar counts as a particle until a share u is taken up by cells and used.</p>
-      <p>Water moves until all rooms share one concentration: c = (particles inside + particles outside) ÷ (1 + V), where particles outside = (B + P) + V·s + V·g·(1 − u). Then inside = I ÷ c and outside = 1 + V − inside.</p>
-      <p>Outside cells, water splits between plasma and the space between cells in the normal proportion, except that a colloid’s own volume stays in plasma. That assumes an intact vessel wall holding all of it back; real large molecules are mostly, not completely, held back, and a leaky wall (as in burns) lets them escape. Protein pull is protein ÷ plasma volume; a colloid brings its own pull at plasma strength. Sodium is (B + P + V·s) ÷ outside volume.</p>
-      <p>Clinical markers start from the model baseline in the data file, chosen inside each cited range. Tonicity is its baseline × c. Total osmolality is tonicity plus the freely crossing particles, such as urea, spread through all body water: baseline difference ÷ (1 + V), so it can never fall below tonicity. The model leaves out the kidney, thirst, hormones, lymph flow and time, all of which correct these shifts in a real body. The pictures draw changes larger than life so they can be seen.</p>
+    <p id="model-results" class="model-results" aria-live="polite"></p>
+    <details>
+      <summary>How this teaching model works</summary>
+      <p>Body water is one whole split into three compartments: inside cells, between cells and plasma. The split comes from the Clinical values data file. Every compartment starts at the same concentration of particles that cannot cross a cell membrane.</p>
+      <p>A fluid brings salt at some strength compared with the body's own fluid, sugar, and, for a colloid, large molecules. Salt stays outside cells. Sugar counts as a particle until the share of it that cells take up is used. The salt slider sets a plain salt fluid; the colloid and the glucose solution come only as presets in the fluid list.</p>
+      <p>Water moves until every compartment shares one concentration: the particles inside cells plus those outside, divided by all the water. The water inside cells is then the particles inside divided by that concentration; the rest is outside.</p>
+      <p>Outside cells, water splits between plasma and the space between cells in the normal proportion, except that a colloid's own water stays in plasma. That assumes a healthy capillary wall holding all of it back; real large molecules are mostly, not completely, held back, and a leaky wall lets them escape. Protein pull is the plasma protein divided by plasma water. Sodium is the sodium outside cells divided by the water outside cells.</p>
+      <p>Tonicity is its baseline times the shared concentration. Total osmolality is tonicity plus the freely crossing particles, such as urea, spread through all body water, so it never falls below tonicity. The model leaves out the kidney, thirst, hormones such as ADH, lymph flow and time, all of which correct these shifts in a real body.</p>
     </details>
   </section>
 
-  <footer class="foot">
-    <p>Lesson 25 of The Lab · Added 2026-11-15 · <a href="/lab/">All lessons</a></p>
-    <p class="small">Original teaching illustrations. Clinical values are quoted from OpenStax Anatomy and Physiology 2e and StatPearls; see the Sources list in Clinical values.</p>
-  </footer>
+  <footer>Lesson 25 of The Lab · Added 2026-11-15 · <a href="/lab/">All lessons</a></footer>
 </main>
 </body>
 </html>

@@ -5,19 +5,6 @@
     "about": "Where the illustrative teaching model starts. Each figure is chosen to sit inside its cited range, or on its cited typical value. Total serum osmolality is set above effective osmolality (tonicity) because it also counts particles that cross cell membranes freely, such as urea; the model spreads that difference evenly through all body water. These are model settings, not reference values.",
     "sosm": 292, "tonicity": 287, "na": 141, "bcop": 25, "icfShare": 60, "plasmaShare": 20
   },
-  "links": {
-    "openstax": [
-      { "label": "OpenStax A&P 2e, 3.1 The Cell Membrane", "url": "https://openstax.org/books/anatomy-and-physiology-2e/pages/3-1-the-cell-membrane" },
-      { "label": "OpenStax A&P 2e, 20.3 Capillary Exchange", "url": "https://openstax.org/books/anatomy-and-physiology-2e/pages/20-3-capillary-exchange" },
-      { "label": "OpenStax A&P 2e, 26.1 Body Fluids and Fluid Compartments", "url": "https://openstax.org/books/anatomy-and-physiology-2e/pages/26-1-body-fluids-and-fluid-compartments" },
-      { "label": "OpenStax A&P 2e, 26.3 Electrolyte Balance", "url": "https://openstax.org/books/anatomy-and-physiology-2e/pages/26-3-electrolyte-balance" }
-    ],
-    "sp-osmolality": [{ "label": "NCBI Bookshelf NBK567764", "url": "https://www.ncbi.nlm.nih.gov/books/NBK567764/" }],
-    "sp-hyponatremia": [{ "label": "NCBI Bookshelf NBK470386", "url": "https://www.ncbi.nlm.nih.gov/books/NBK470386/" }],
-    "sp-osmosis": [{ "label": "NCBI Bookshelf NBK557609", "url": "https://www.ncbi.nlm.nih.gov/books/NBK557609/" }],
-    "sp-crystalloid": [{ "label": "NCBI Bookshelf NBK500033", "url": "https://www.ncbi.nlm.nih.gov/books/NBK500033/" }],
-    "sp-colloid": [{ "label": "NCBI Bookshelf NBK541067", "url": "https://www.ncbi.nlm.nih.gov/books/NBK541067/" }]
-  },
   "sources": {
     "openstax": "Betts JG, Young KA, Wise JA, et al. Anatomy and Physiology 2e. Houston (TX): OpenStax, Rice University; 2022. Sections 3.1 (The Cell Membrane), 20.3 (Capillary Exchange), 26.1 (Body Fluids and Fluid Compartments) and 26.3 (Electrolyte Balance).",
     "sp-osmolality": "Najem O, Shah MM, Zubair M, De Jesus O. Serum Osmolality. In: StatPearls. Treasure Island (FL): StatPearls Publishing; 2024. NCBI Bookshelf NBK567764.",

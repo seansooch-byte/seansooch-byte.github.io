@@ -651,7 +651,21 @@
     "reviewer": {
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
-    }
+    },
+    "revisions": [
+      {
+        "date": "2026-11-16",
+        "what": "Rebuilt on the lesson kit with plan.json and a shared model: a mouthpiece and nose clip on the spirometer, a cut chest wall with pleura, peak flow in fibrosis now just below normal, tidal volume shrinking in a stiff lung, Explore and Clinical values kept in step; independent clinical, format and teaching reviews.",
+        "builder": {
+          "tool": "Claude Code",
+          "model": "claude-opus-5-5"
+        },
+        "reviewer": {
+          "tool": "Claude Code",
+          "model": "claude-opus-5-5"
+        }
+      }
+    ]
   },
   {
     "slug": "diffusion-osmosis-iv-fluids",
@@ -666,6 +680,20 @@
     "reviewer": {
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
-    }
+    },
+    "revisions": [
+      {
+        "date": "2026-11-16",
+        "what": "Rebuilt on the lesson kit with plan.json (it had merged off the kit): 17 steps on the shared art library, a prediction before each fluid, an 8-question quiz tied to the goals, osmolality versus tonicity taught with urea, the hypotonic-fluid caption corrected (only its share of plain water enters cells), and textbook links removed; independent clinical, format and teaching reviews.",
+        "builder": {
+          "tool": "Claude Code",
+          "model": "claude-opus-5-5"
+        },
+        "reviewer": {
+          "tool": "Claude Code",
+          "model": "claude-opus-5-5"
+        }
+      }
+    ]
   }
 ]

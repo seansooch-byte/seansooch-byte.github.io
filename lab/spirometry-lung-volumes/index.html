@@ -1,13 +1,19 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Spirometry and Lung Volumes · The Lab · Sean Sooch</title>
-<meta name="description" content="Build a breath, read its curves, and discover how resistance and lung stretch shape spirometry. An interactive first-year physiology lesson.">
+<meta name="description" content="A guided visual lesson: the lung volumes and capacities, the spirogram and the flow-volume loop of a forced breath, and how asthma, emphysema, fibrosis, a bronchodilator and poor effort change them.">
 <link rel="canonical" href="https://seansooch.dev/lab/spirometry-lung-volumes/">
-<meta property="og:title" content="Spirometry and Lung Volumes"><meta property="og:description" content="Build a breath. Read the curves. Understand the pattern."><meta property="og:url" content="https://seansooch.dev/lab/spirometry-lung-volumes/">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"><script src="app.js" defer></script>
+<meta property="og:title" content="Spirometry and Lung Volumes">
+<meta property="og:description" content="Blow out a model breath and watch the spirogram, the flow-volume loop and the lung-volume bars redraw in asthma, emphysema, fibrosis, after a bronchodilator and with poor effort.">
+<meta property="og:url" content="https://seansooch.dev/lab/spirometry-lung-volumes/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/lab/kit/kit.css">
+<link rel="stylesheet" href="style.css?v=3">
+<script type="module" src="app.js?v=3"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to the lesson</a>
@@ -23,225 +29,212 @@
     </nav>
   </div>
 </header>
-<main id="main">
-<header class="intro">
-<div class="eyebrow">THE LAB / LESSON 24 <span>PHYSIOLOGY · ~20 MIN</span></div>
-<h1>Spirometry<br>and lung volumes<span class="title-dot">.</span></h1>
-<div class="intro-bottom"><p>Build a breath.<br>Read the curves. Understand the pattern.</p><div><p class="medical">Educational, not for clinical use.</p><p class="prereq">Start with basic pressure and volume, and Boyle’s law.<br>Related: <a href="/lab/ventilation-perfusion/">Ventilation–Perfusion</a> · <a href="/lab/autonomic-synapse/">Autonomic Synapse</a></p></div></div>
-<details class="goals"><summary>Four things you’ll leave knowing</summary><ol><li>Name the four lung volumes and four capacities, and explain why spirometry cannot measure residual air.</li><li>Read the air exhaled early and the total forced breath from two linked curves.</li><li>Explore how resistance and lung stretch affect illustrative curves; explain why a fraction alone cannot establish lung size.</li><li>Check effort and test quality before interpreting a forced breath.</li></ol></details>
-</header>
-<nav class="tabs" role="tablist" aria-label="Lesson sections">
-<button role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
-<button role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
-<button role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
-<button role="tab" id="tab-quiz" aria-controls="quiz" aria-selected="false" tabindex="-1">Quiz</button>
-<button role="tab" id="tab-summary" aria-controls="summary" aria-selected="false" tabindex="-1">Summary</button>
-</nav>
-<div id="data-error" role="alert" hidden></div>
-<section id="lesson" role="tabpanel" aria-labelledby="tab-lesson">
-<div class="lesson-top"><span class="eyebrow">PREDICT → PLAY → NOTICE</span><span data-step-progress aria-live="polite">Step 1 of 8</span></div>
-<div class="lesson-grid"><div id="lesson-visual" class="picture-panel"><div class="picture-heading"><span id="picture-state">Quiet breathing</span><span class="mini-label">ILLUSTRATIVE</span></div><div id="lesson-picture"></div><p id="lesson-picture-summary" class="sr-only" aria-live="polite"></p><div class="legend"><span class="ghost-key">Dashed: normal</span><span class="current-key">Solid: current breath</span></div></div><div class="instruction"><div id="steps"></div><div class="prediction"><p class="eyebrow">BEFORE YOU PLAY</p><p id="prediction-question"></p><div id="prediction-options"></div><p id="prediction-feedback" role="status">Choose a prediction to unlock the breath.</p></div><div class="player" aria-label="Shared lesson player"><div class="player-row"><button data-step-back aria-label="Previous step">← Back</button><button id="play" disabled>Play breath</button><button data-step-next>Next →</button></div><div class="player-secondary"><label>Speed <select id="speed"><option value="0.5">½×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label><button id="replay" disabled>Replay</button></div><label class="scrub-label" for="scrubber">Breath progress</label><input id="scrubber" type="range" min="0" max="100" value="0" disabled><p class="hint">Space: play / pause · Arrow keys: previous / next step</p></div></div></div>
-</section>
-<section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden><div class="section-heading"><div><p class="eyebrow">REFERENCE DESK</p><h2>Clinical values</h2></div><p class="medical">Educational, not for clinical use.</p></div><p id="clinical-disclaimer"></p><p>These are teaching references, not diagnostic rules. Clinical interpretation needs appropriate reference equations, test quality and the person’s history. Direction markers are qualitative; they are never patient measurements.</p><p>Blue lower markers follow your Explore settings and show current illustrative model values. Their scales are separate from the cited references above: volumes and compliance use multiples of the model baseline; FEV1/FVC uses the raw fraction, not a clinical z-score. Bronchodilator response has no live model marker.</p><fieldset id="clinical-states"><legend>Compare a pattern</legend></fieldset><div id="mechanism"></div><div id="clinical-rows"></div><h3>Sources</h3><div id="clinical-sources"></div></section>
-<section id="explore" role="tabpanel" aria-labelledby="tab-explore" hidden><div class="section-heading"><div><p class="eyebrow">YOUR BREATHING BENCH</p><h2>Change one thing. Watch all three.</h2></div><span class="badge">Model numbers are illustrative, not reference values.</span></div><div id="presets" class="presets" aria-label="Model presets"></div><div class="explore-grid"><div><div id="explore-picture" class="picture-panel"></div><p id="explore-picture-summary" class="results" aria-live="polite"></p></div><aside class="controls"><label for="resistance">Airway resistance <output id="r-out"></output></label><p>How strongly the airways oppose flow.</p><input id="resistance" type="range" min="0.5" max="4" step="0.1" value="1"><label for="compliance">Lung compliance <output id="c-out"></output></label><p>How easily the lung stretches. More stretch means less recoil here.</p><input id="compliance" type="range" min="0.4" max="2.5" step="0.1" value="1"><label for="effort">Effort</label><select id="effort"><option value="1">Maximal</option><option value="0.65">Submaximal</option></select><p id="effort-warning" role="status" hidden>Submaximal effort: this test is not acceptable. Low effort can mimic an abnormal pattern.</p><div id="model-stats" class="stats" aria-live="polite"></div><p id="bd-result"></p><details><summary>What the model assumes</summary><p>A single compartment empties exponentially. Normal emptying is tuned to an illustrative ratio of about 0.80. Compliance scales vital capacity; resistance slows emptying and can trap air. The opening flow rise is smoothed.</p><p>It does not model all airway mechanics, real patient variation, or diagnostic z-scores. Model volumes are illustrative; the clinical references are separate.</p><p>VC = 4800 × clamp(c, 0.4, 1.3)<sup>0.6</sup>. RV = 1200 × [1 + 0.6 × max(0,c−1)] + 400 × max(0,r−1.5)/2.5. τ = [−1/ln(0.2)] × r / max(1/c,0.3). FVC includes a resistance-dependent collapse term. V(t) = FVC × (1−e<sup>−t/τ</sup>).</p></details></aside></div></section>
-<section id="quiz" role="tabpanel" aria-labelledby="tab-quiz" hidden><p class="eyebrow">RETRIEVAL PRACTICE</p><div class="section-heading"><h2>Check your pattern recognition.</h2><p id="quiz-score" aria-live="polite"></p></div><p>Answer once, then read the explanation. Your score is saved on this device.</p><div id="quiz-items"></div><button id="quiz-reset">Try again</button></section>
-<section id="summary" role="tabpanel" aria-labelledby="tab-summary" hidden><div class="section-heading"><div><p class="eyebrow">TAKE IT WITH YOU</p><h2>A breath, in perspective.</h2></div><button id="print">Print summary</button></div><p class="medical">Educational, not for clinical use.</p><ul class="takeaways"><li>A spirometer sees moving air. Residual air stays inside, so residual volume and capacities containing it need another method.</li><li>Read the total forced breath and the part exhaled early together. Obstruction slows emptying; restriction reduces total lung capacity.</li><li>More compliance means easier stretch, not necessarily better emptying. Emphysema loses recoil; fibrosis makes inflation difficult.</li><li>A bronchodilator response measures a change. It can occur in asthma and COPD and is not a stand-alone diagnosis.</li></ul><h3>Normal reference pattern</h3><p>This table contains only the normal teaching baseline. Disease and treatment comparisons are withheld until their directions are fully sourced. The simulator explores resistance and lung stretch without assigning diagnoses.</p><div id="summary-table" class="table-scroll"></div><h3>Glossary</h3><dl id="glossary"></dl><h3>Full source list</h3><div id="summary-sources"></div><p class="small">OpenStax excerpts: access for free at <a href="https://openstax.org/books/anatomy-and-physiology-2e/pages/1-introduction">OpenStax Anatomy and Physiology 2e</a>. OpenStax text is licensed CC BY-NC-SA; StatPearls excerpts are attributed above. All diagrams are original teaching illustrations.</p></section>
-<footer>Lesson 24 of The Lab · Added 2026-11-14 · <a href="/lab/">All lessons ↗</a></footer>
+<main id="main" data-slug="spirometry-lung-volumes">
+  <div class="intro">
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / <a href="/lab/#lung-volumes">Unit 8: Lung volumes</a> / Lesson 24</p>
+    <h1>Spirometry and<br><span>lung volumes.</span></h1>
+    <p class="lede">Breathe into a model spirometer, name every volume it can and cannot see, then blow one breath out as hard as you can. Watch its curves redraw in asthma, emphysema and fibrosis, after a bronchodilator, and with a weak blow.</p>
+    <p class="note">Educational, not for clinical use</p>
+    <div class="lx-plan" data-lx-plan></div>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Lesson views">
+    <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-quiz" aria-controls="quiz" aria-selected="false" tabindex="-1">Quiz</button>
+    <button type="button" role="tab" id="tab-summary" aria-controls="summary" aria-selected="false" tabindex="-1">Summary</button>
+    <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
+    <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
+  </div>
+
+  <section id="lesson" role="tabpanel" aria-labelledby="tab-lesson">
+    <article data-step="1" data-step-title="A spirometer measures the air you breathe" data-kind="spirometer">
+      <p class="eyebrow">The volumes</p>
+      <h2 tabindex="-1">A spirometer measures the air you breathe</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A <dfn data-part="spirometer">spirometer</dfn> measures the air moving in and out through a mouthpiece, with the nose clipped shut. As the <dfn data-part="lungs">lungs</dfn> fill and empty, it draws a <dfn data-part="trace">spirogram</dfn>: the volume of air plotted against time.</p>
+    </article>
+    <article data-step="2" data-step-title="A quiet breath moves only a little air" data-kind="tidal" hidden>
+      <p class="eyebrow">The volumes</p>
+      <h2 tabindex="-1">A quiet breath moves only a little air</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">At rest, each breath moves the <dfn data-part="tv">tidal volume</dfn> (TV): the air that goes in and out with one quiet breath. The waves are small. Most of the air in the lungs stays there the whole time.</p>
+    </article>
+    <article data-step="3" data-step-title="Breathe all the way in, then all the way out" data-kind="reserves" hidden>
+      <p class="eyebrow">The volumes</p>
+      <h2 tabindex="-1">Breathe all the way in, then all the way out</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">After a quiet breath in, you can still breathe in more: the <dfn data-part="irv">inspiratory reserve volume</dfn> (IRV). After a quiet breath out, you can still push out more: the <dfn data-part="erv">expiratory reserve volume</dfn> (ERV).</p>
+    </article>
+    <article data-step="4" data-step-title="Some air never leaves" data-kind="residual" hidden>
+      <p class="eyebrow">The volumes</p>
+      <h2 tabindex="-1">Some air never leaves</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Even after the hardest breath out, the <dfn data-part="rv">residual volume</dfn> (RV) stays in and keeps the air sacs from collapsing. It never passes the mouthpiece, so a spirometer cannot see it. Measuring it takes another test: a sealed body box (body plethysmography) or a harmless test gas that mixes into the lung.</p>
+    </article>
+    <article data-step="5" data-step-title="Capacities add volumes together" data-kind="capacities" hidden>
+      <p class="eyebrow">The volumes</p>
+      <h2 tabindex="-1">Capacities add volumes together</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A capacity is two or more volumes added. <dfn data-part="ic">Inspiratory capacity</dfn> (IC) is TV plus IRV. <dfn data-part="frc">Functional residual capacity</dfn> (FRC) is ERV plus RV: the air left after a quiet breath out. <dfn data-part="vc">Vital capacity</dfn> (VC) is all the air you can move. <dfn data-part="tlc">Total lung capacity</dfn> (TLC) is VC plus RV.</p>
+    </article>
+    <article data-step="6" data-step-title="At FRC, the lung's pull and the chest's spring balance" data-kind="balance" hidden>
+      <p class="eyebrow">The volumes</p>
+      <h2 tabindex="-1">At FRC, the lung's pull and the chest's spring balance</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The lung is elastic: stretched, it pulls inward. That pull is its <dfn data-part="recoil">elastic recoil</dfn>. The <dfn data-part="chestwall">chest wall</dfn> springs outward. The <dfn data-part="pleura">pleura</dfn>, two thin layers sealed by a film of fluid, holds the lung against the wall, so the two move as one. At the end of a quiet breath out the two balance, and that point is FRC. A lung that pulls harder, or more weakly, moves the balance point.</p>
+    </article>
+    <article data-step="7" data-step-title="A forced breath out: FVC and FEV1" data-kind="forced" hidden>
+      <p class="eyebrow">Blow it out fast</p>
+      <h2 tabindex="-1">A forced breath out: FVC and FEV1</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Now breathe all the way in, then blow out as hard and as fast as you can until nothing is left. The total blown out is the <dfn data-part="fvc">forced vital capacity</dfn> (FVC). The part blown out in the first second is the <dfn data-part="fev1">forced expiratory volume in one second</dfn> (FEV1).</p>
+    </article>
+    <article data-step="8" data-step-title="The ratio: how much leaves in the first second" data-kind="ratio" hidden>
+      <p class="eyebrow">Blow it out fast</p>
+      <h2 tabindex="-1">The ratio: how much leaves in the first second</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Divide FEV1 by FVC to get the <dfn data-part="ratio">FEV1/FVC ratio</dfn>: the share of the breath that leaves in the first second. Healthy lungs blow most of it out in that second. Whether a ratio is low is judged against the <dfn>lower limit of normal</dfn>, which depends on the person's age, sex and height.</p>
+    </article>
+    <article data-step="9" data-step-title="The same breath, drawn as a loop" data-kind="loop" hidden>
+      <p class="eyebrow">Blow it out fast</p>
+      <h2 tabindex="-1">The same breath, drawn as a loop</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Plot <dfn>flow</dfn>, how fast air moves, against the volume blown out, and you get a <dfn data-part="loop">flow-volume loop</dfn>. Flow shoots up early to the <dfn data-part="peak">peak expiratory flow</dfn>, then falls in a nearly straight line as the lung empties. Breathing back in draws the lower half.</p>
+    </article>
+    <article data-step="10" data-step-title="Past the peak, pushing harder does not help" data-kind="downslope" hidden>
+      <p class="eyebrow">Blow it out fast</p>
+      <h2 tabindex="-1">Past the peak, pushing harder does not help</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A harder push gives a higher peak. But after the peak, the same squeeze that pushes air out also presses on the airways and narrows them, so flow stops rising with effort. The <dfn data-part="downslope">downslope</dfn> is set by the lung's recoil and the width of its airways, not by how hard you push.</p>
+    </article>
+    <article data-step="11" data-step-title="Two questions: slow to empty, or small?" data-kind="patterns" hidden>
+      <p class="eyebrow">Blow it out fast</p>
+      <h2 tabindex="-1">Two questions: slow to empty, or small?</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">An <dfn data-part="obstructive">obstructive pattern</dfn> means air is slow to get out: FEV1 falls more than FVC, so the ratio is low. A <dfn data-part="restrictive">restrictive pattern</dfn> means the lung is small: TLC is low, and FEV1 and FVC fall together, so the ratio is normal or high. Proving TLC is low needs the body box or gas test.</p>
+    </article>
+    <article data-step="12" data-step-title="Asthma: narrowed airways" data-kind="asthma" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Asthma: narrowed airways</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">In <dfn>asthma</dfn>, the airway muscle tightens and the airway lining swells and makes mucus, so the airways narrow. Air leaves slowly: FEV1 falls far more than FVC, and the ratio drops. The loop's peak falls and its downslope scoops inward. Air trapped behind narrow airways raises RV.</p>
+    </article>
+    <article data-step="13" data-step-title="Emphysema: a floppy lung that cannot recoil" data-kind="emphysema" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Emphysema: a floppy lung that cannot recoil</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">In <dfn>emphysema</dfn>, most often from smoking, the walls between air sacs are destroyed. The lung stretches easily but recoils weakly, and small airways that those walls held open collapse during the blow. Emptying is slow, the ratio falls and the loop scoops deeply. RV, FRC and TLC rise: the lung is overinflated.</p>
+    </article>
+    <article data-step="14" data-step-title="Fibrosis: a stiff, small lung" data-kind="fibrosis" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Fibrosis: a stiff, small lung</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">In pulmonary <dfn>fibrosis</dfn>, scar tissue stiffens the lung. It pulls inward harder and cannot fill as far, so every volume shrinks: TLC, VC, FRC and RV all fall. FEV1 and FVC fall together, and the strong recoil empties the lung quickly, so the ratio is normal or high. The loop is narrow.</p>
+    </article>
+    <article data-step="15" data-step-title="A bronchodilator reopens narrowed airways" data-kind="bronchodilator" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">A bronchodilator reopens narrowed airways</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A <dfn>bronchodilator</dfn>, such as an inhaled beta-2 agonist, relaxes airway muscle. The test is repeated after it. In this asthma, FEV1 and the peak rise and less air is trapped. A rise above the guideline's threshold is a significant response; it supports asthma, but on its own it neither proves asthma nor rules out COPD.</p>
+    </article>
+    <article data-step="16" data-step-title="Poor effort: the curves fall, the lung does not" data-kind="effort" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Poor effort: the curves fall, the lung does not</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A slow start, or a blow that stops early, gives a low, late, rounded peak and a short FVC. The lung has not changed: its volumes are the same. Because poor effort can look like disease, a test counts only when repeated good blows agree. Check the effort before reading the pattern.</p>
+    </article>
+
+    <div class="step-nav">
+      <button type="button" data-step-back disabled>← Back</button>
+      <span data-step-progress aria-live="polite">Step 1 of 16</span>
+      <button type="button" data-step-next>Next →</button>
+    </div>
+    <p class="hint">Start with Next, or use the arrow keys. Under a moving picture: pause, drag to any moment, or slow it down. Underlined terms light up their part of the picture. Curves and bar lengths come from an illustrative teaching model, not from a patient.</p>
+  </section>
+
+  <section id="quiz" role="tabpanel" aria-labelledby="tab-quiz" hidden></section>
+
+  <section id="summary" role="tabpanel" aria-labelledby="tab-summary" hidden></section>
+
+  <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
+    <h2>Reference values, beside the model.</h2>
+    <p id="disclaimer" class="disclaimer">Loading reference values…</p>
+    <div class="cv-top">
+      <div id="clinical-visual" class="visual"></div>
+      <div class="cv-controls">
+        <div>
+          <label for="clinical-state">Show the model in</label>
+          <select id="clinical-state">
+            <option value="normal">Normal teaching baseline</option>
+            <option value="asthma">Asthma</option>
+            <option value="emphysema">Emphysema</option>
+            <option value="fibrosis">Fibrosis</option>
+            <option value="bronchodilator">Asthma after a bronchodilator</option>
+            <option value="effort">Poor effort</option>
+            <option value="custom">Your own settings</option>
+          </select>
+        </div>
+        <div>
+          <button type="button" id="clinical-reset">Back to normal</button>
+        </div>
+      </div>
+    </div>
+    <p id="state-summary" class="state-summary" aria-live="polite">Normal teaching baseline.</p>
+    <details class="lx-fine">
+      <summary>How to read these bars</summary>
+      <p>Each bar shows the cited textbook range as a shaded band, or a single typical value as a black tick. The blue line is the illustrative teaching model with the setting you chose, not a patient measurement. The model's normal lung is built from the textbook tidal volume, residual volume and FRC, with the middle of the vital capacity range.</p>
+      <p>FEV1/FVC is reported against the lower limit of normal as a z-score, which needs reference equations for the person's age, sex and height; the model gives only a plain fraction, so that bar has no blue line. The bronchodilator threshold is a change, counted as a share of the person's predicted value, not of their own starting value.</p>
+    </details>
+    <div id="value-rows"></div>
+    <h3>Sources</h3>
+    <ul id="sources"></ul>
+    <p id="load-error" class="load-error" hidden></p>
+  </section>
+
+  <section id="explore" role="tabpanel" aria-labelledby="tab-explore" hidden>
+    <h2>Change one thing. Watch all three.</h2>
+    <p class="model-intro">An illustrative teaching model of one forced breath and the lung it comes from. Narrow the airways, make the lung floppier or stiffer, or weaken the blow, and watch the spirogram, the flow-volume loop and the lung-volume bars together. The dashed lines are normal.</p>
+    <div class="explore-grid">
+      <div id="explore-visual" class="visual"></div>
+      <div class="controls">
+        <fieldset>
+          <legend>Start from</legend>
+          <label for="preset">A pattern</label>
+          <select id="preset">
+            <option value="normal">Normal</option>
+            <option value="asthma">Asthma</option>
+            <option value="emphysema">Emphysema</option>
+            <option value="fibrosis">Fibrosis</option>
+            <option value="bronchodilator">Asthma after a bronchodilator</option>
+            <option value="effort">Poor effort</option>
+            <option value="custom">Your own settings</option>
+          </select>
+        </fieldset>
+        <fieldset>
+          <legend>The lung</legend>
+          <label for="r">Airway narrowing <output id="r-label" for="r">normal</output></label>
+          <input id="r" type="range" min="1" max="3.5" step="0.05" value="1">
+          <label for="c">Lung stretchiness <output id="c-label" for="c">normal</output></label>
+          <input id="c" type="range" min="0.4" max="2.5" step="0.05" value="1">
+        </fieldset>
+        <fieldset>
+          <legend>The blow</legend>
+          <label for="e">Effort <output id="e-label" for="e">full</output></label>
+          <input id="e" type="range" min="0.3" max="1" step="0.05" value="1">
+        </fieldset>
+        <button type="button" id="reset">Reset model</button>
+      </div>
+    </div>
+    <p id="model-results" class="model-results" aria-live="polite"></p>
+    <details>
+      <summary>How this teaching model works</summary>
+      <p>The normal lung takes its tidal volume, residual volume and FRC from the Clinical values data file, and its vital capacity from the middle of that file's range; TLC is VC plus RV. Stretchiness (compliance) below normal shrinks every volume, as in fibrosis (the push stays the same but drives a smaller lung, so the peak flow ends a little below normal); above normal it raises RV most, FRC less and TLC least, as in emphysema, so VC falls a little. Narrowed airways trap some air, raising RV and FRC.</p>
+      <p>The forced breath is stepped forward in time. Flow is the smaller of two limits: what the chest muscles can drive, which rises over the first fraction of a second and scales with effort, and what the lung can deliver at the volume left, which falls as the lung empties. That second limit is the downslope: it depends on recoil and airway width, not on effort. Its emptying time is a model setting, chosen so the normal model blows out most of its breath in the first second; narrowed airways and weak recoil lengthen it and bow the downslope inward, a stiff lung shortens it. A poor blow starts slowly and fades early.</p>
+      <p>The model leaves out the chest wall's own stiffness, airway collapse as a separate mechanism, gas trapping that changes from breath to breath, reference equations and z-scores. The sizes of every change are illustrative; only their directions are meant to teach.</p>
+    </details>
+  </section>
+
+  <footer>Lesson 24 of The Lab · Added 2026-11-14 · <a href="/lab/">All lessons</a></footer>
 </main>
-<script id="clinical-fallback" type="application/json">
-{
-  "disclaimer": "Typical adult reference ranges; labs vary; not for clinical decisions.",
-  "sources": {
-    "openstax": "Betts JG et al. Anatomy and Physiology 2e. OpenStax, 2022. Chapter 22.3, The Process of Breathing.",
-    "atsers2022": "Stanojevic S et al. ERS/ATS technical standard on interpretive strategies for routine lung function tests. European Respiratory Journal. 2022;60:2101499.",
-    "sp-compliance": "Desai JP, Moustarah F. Pulmonary Compliance (Archived). StatPearls / NCBI Bookshelf. Updated September 12, 2022.",
-    "sp-pft": "Ponce MC, Sankari A, Sharma S. Pulmonary Function Tests. StatPearls / NCBI Bookshelf. Updated August 28, 2023.",
-    "openstax-biology": "OpenStax. Biology for AP® Courses. Section 30.2, Gas Exchange across Respiratory Surfaces, Table 30.1."
-  },
-  "sourceDetails": [
-    {
-      "id": "openstax",
-      "citation": "Betts JG et al. Anatomy and Physiology 2e. OpenStax, 2022. Chapter 22.3, The Process of Breathing.",
-      "url": "https://openstax.org/books/anatomy-and-physiology-2e/pages/22-3-the-process-of-breathing",
-      "accessed": "2026-11-14"
-    },
-    {
-      "id": "atsers2022",
-      "citation": "Stanojevic S et al. ERS/ATS technical standard on interpretive strategies for routine lung function tests. European Respiratory Journal. 2022;60:2101499.",
-      "url": "https://lwfiles.mycourse.app/6438c06a5d76f37a1d904274-public/publicFiles/ATS%20ERS%20interpretative%20strategies%202022.pdf",
-      "accessed": "2026-11-14"
-    },
-    {
-      "id": "sp-compliance",
-      "citation": "Desai JP, Moustarah F. Pulmonary Compliance (Archived). StatPearls / NCBI Bookshelf. Updated September 12, 2022.",
-      "url": "https://www.ncbi.nlm.nih.gov/books/NBK538324/?report=printable",
-      "accessed": "2026-11-14"
-    },
-    {
-      "id": "sp-pft",
-      "citation": "Ponce MC, Sankari A, Sharma S. Pulmonary Function Tests. StatPearls / NCBI Bookshelf. Updated August 28, 2023.",
-      "url": "https://www.ncbi.nlm.nih.gov/sites/books/NBK482339/?report=printable",
-      "accessed": "2026-11-14"
-    },
-    {
-      "id": "openstax-biology",
-      "citation": "OpenStax. Biology for AP® Courses. Section 30.2, Gas Exchange across Respiratory Surfaces, Table 30.1.",
-      "url": "https://openstax.org/books/biology-ap-courses/pages/30-2-gas-exchange-across-respiratory-surfaces",
-      "accessed": "2026-11-14"
-    }
-  ],
-  "values": [
-    {
-      "id": "tv",
-      "label": "Tidal volume",
-      "unit": "mL",
-      "low": null,
-      "high": null,
-      "typical": 500,
-      "display": "≈500",
-      "source": "openstax",
-      "location": "22.3, Respiratory Volumes and Capacities; Figure 22.18 (current web edition)",
-      "where": "22.3, Respiratory Volumes and Capacities; Figure 22.18 (current web edition)",
-      "excerpt": "Tidal volume (TV) is the amount of air that normally enters the lungs during quiet breathing, which is about 500 milliliters.",
-      "note": "A typical teaching value, not a universal reference.",
-      "modelKey": null
-    },
-    {
-      "id": "rv",
-      "label": "Residual volume",
-      "unit": "mL",
-      "low": null,
-      "high": null,
-      "typical": 1200,
-      "display": "≈1200",
-      "source": "openstax-biology",
-      "location": "Table 30.1, Lung Volumes and Capacities (Avg Adult Male)",
-      "where": "Table 30.1, Lung Volumes and Capacities (Avg Adult Male)",
-      "excerpt": "Air left in the lungs after a forced exhalation",
-      "note": "Table 30.1 lists 1.2 under Volume (liters): 1.2 L × 1000 = 1200 mL. Average adult male teaching value, not a universal reference range.",
-      "modelKey": null
-    },
-    {
-      "id": "frc",
-      "label": "Functional residual capacity",
-      "unit": "mL",
-      "low": null,
-      "high": null,
-      "typical": 2400,
-      "display": "≈2400",
-      "source": "openstax-biology",
-      "location": "Table 30.1, Lung Volumes and Capacities (Avg Adult Male)",
-      "where": "Table 30.1, Lung Volumes and Capacities (Avg Adult Male)",
-      "excerpt": "Volume of air remaining after a normal exhalation",
-      "note": "Table 30.1 lists 2.4 under Volume (liters): 2.4 L × 1000 = 2400 mL. Average adult male teaching value, not a universal reference range.",
-      "modelKey": null
-    },
-    {
-      "id": "tlc",
-      "label": "Total lung capacity",
-      "unit": "mL",
-      "low": 4200,
-      "high": 6000,
-      "typical": null,
-      "display": "4200–6000",
-      "source": "openstax",
-      "location": "22.3, Respiratory Volumes and Capacities; Figure 22.18 (current web edition)",
-      "where": "22.3, Respiratory Volumes and Capacities; Figure 22.18 (current web edition)",
-      "excerpt": "about 6000 mL air for males, and about 4200 mL for females.",
-      "note": "Approximate young adult, female–male; real reference values depend on age, sex and height.",
-      "modelKey": null
-    },
-    {
-      "id": "vc",
-      "label": "Vital capacity",
-      "unit": "mL",
-      "low": 4000,
-      "high": 5000,
-      "typical": null,
-      "display": "4000–5000",
-      "source": "openstax",
-      "location": "22.3, Respiratory Volumes and Capacities; Figure 22.18 (current web edition)",
-      "where": "22.3, Respiratory Volumes and Capacities; Figure 22.18 (current web edition)",
-      "excerpt": "which is between 4000 and 5000 milliliters.",
-      "note": "Approximate young adult, female–male; real reference values depend on age, sex and height.",
-      "modelKey": null
-    },
-    {
-      "id": "compliance",
-      "label": "Lung compliance",
-      "unit": "mL/cmH₂O",
-      "low": null,
-      "high": null,
-      "typical": 200,
-      "display": "≈200",
-      "source": "sp-compliance",
-      "location": "Definition/Introduction",
-      "where": "Definition/Introduction",
-      "excerpt": "Normally, the total compliance of both lungs in an adult is approximately 200 mL/cm H₂O.",
-      "note": "Combined compliance of both lungs. The source is archived; this is a physiology teaching value.",
-      "modelKey": null
-    },
-    {
-      "id": "fev1fvc",
-      "label": "FEV1/FVC",
-      "unit": "z-score",
-      "low": -1.645,
-      "high": null,
-      "typical": null,
-      "display": "Normal at or above LLN",
-      "source": "atsers2022",
-      "location": "Limits of normal; Interpretation of spirometry",
-      "where": "Limits of normal; Interpretation of spirometry",
-      "excerpt": "5th percentile (corresponding to a z score of -1.645)",
-      "note": "LLN = lower limit of normal, z = −1.645. A z-score describes distance from predicted in standard deviations. Interpret with history and test quality; this is not a diagnosis.",
-      "modelKey": null
-    },
-    {
-      "id": "bdr",
-      "label": "Bronchodilator response",
-      "unit": "% of predicted",
-      "low": 10,
-      "high": null,
-      "typical": null,
-      "display": "Positive response: >10% of predicted",
-      "source": "atsers2022",
-      "location": "Bronchodilator responsiveness testing, Box 1: Determination of a bronchodilator response; accepted manuscript PDF page 12",
-      "where": "Bronchodilator responsiveness testing, Box 1: Determination of a bronchodilator response; accepted manuscript PDF page 12",
-      "excerpt": "A change of >10% is considered a significant BDR response.",
-      "note": "Change in FEV1 or FVC divided by its predicted value; not percent change from baseline. Response alone does not diagnose asthma or exclude COPD. This is a decision threshold, not a typical normal response; no baseline response is assigned. Verbatim wording from Box 1 of the accepted manuscript of this standard.",
-      "modelKey": null,
-      "threshold": 10,
-      "thresholdOperator": ">",
-      "referenceKind": "threshold"
-    }
-  ],
-  "states": [
-    {
-      "id": "normal",
-      "label": "Normal",
-      "kind": "disease",
-      "mechanism": "Reference pattern: air moves freely and lung stretch is balanced.",
-      "summary": "Reference pattern: air moves freely and lung stretch is balanced.",
-      "source": "openstax",
-      "location": "22.3, Respiratory Volumes and Capacities; Figure 22.18 (current web edition)",
-      "where": "22.3, Respiratory Volumes and Capacities; Figure 22.18 (current web edition)",
-      "excerpt": "Respiratory capacity is the combination of two or more selected volumes",
-      "shifts": {
-        "tv": "none",
-        "rv": "none",
-        "frc": "none",
-        "tlc": "none",
-        "vc": "none",
-        "compliance": "none",
-        "fev1fvc": "none",
-        "bdr": "none"
-      },
-      "evidence": {
-        "all": "Reference teaching pattern; none denotes baseline, not a measured patient."
-      }
-    }
-  ],
-  "evidencePolicy": "strict"
-}
-</script>
-</body></html>
+</body>
+</html>

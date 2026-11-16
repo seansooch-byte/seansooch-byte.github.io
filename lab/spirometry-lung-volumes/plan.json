@@ -1,134 +1,219 @@
 {
-  "minutes": 20,
+  "minutes": 26,
   "prerequisites": [],
   "objectives": [
-    "Name the four lung volumes and four capacities, and explain why spirometry cannot measure residual air.",
-    "Read the air exhaled early and the total forced breath from two linked curves.",
-    "Explain how resistance and lung stretch affect illustrative curves, and why a fraction alone cannot establish lung size.",
-    "Check effort and test quality before interpreting a forced breath."
+    "Name the four lung volumes and four capacities, and explain why a spirometer cannot measure RV, FRC or TLC.",
+    "Read FEV1, FVC and the FEV1/FVC ratio off a spirogram, and the peak and downslope off a flow-volume loop.",
+    "Tell an obstructive pattern (asthma, emphysema) from a restrictive one (fibrosis) on the curves and the volume bars.",
+    "Predict how a bronchodilator and poor effort change the curves, and why poor effort can look like disease."
   ],
-  "checks": {},
+  "checks": {
+    "asthma": {
+      "prompt": "In asthma the airways narrow, so air meets more resistance on its way out. The lung itself is its usual size. What happens to FEV1 and to the FEV1/FVC ratio?",
+      "choices": [
+        "FEV1 falls a lot, more than FVC, so the ratio falls",
+        "FEV1 and FVC fall together, so the ratio stays normal",
+        "FEV1 rises, because the lung holds more air",
+        "Nothing changes until the lung itself shrinks"
+      ],
+      "answer": 0,
+      "why": "Narrow airways slow the air down, so less of it gets out in the first second. Given time, most of the breath still leaves, so FVC falls far less than FEV1 and the ratio drops: the obstructive pattern."
+    },
+    "emphysema": {
+      "prompt": "Emphysema destroys the walls between air sacs. The lung stretches easily but recoils weakly, so the chest wall's outward spring wins at a bigger size. What happens to the lung volumes?",
+      "choices": [
+        "RV, FRC and TLC all rise: the lung is overinflated",
+        "Every volume falls, as in a stiff lung",
+        "Only the tidal volume rises",
+        "The volumes stay normal; only the flows change"
+      ],
+      "answer": 0,
+      "why": "With weak recoil, the balance with the chest wall sits at a bigger volume, so FRC and TLC rise. Small airways collapse during the blow and trap air behind them, so RV rises most of all."
+    },
+    "fibrosis": {
+      "prompt": "Scar tissue makes the lung stiff, so it recoils hard and cannot fill as far. The airways are open. What happens to the FEV1/FVC ratio?",
+      "choices": [
+        "It stays normal or rises: FEV1 and FVC fall together",
+        "It falls, as it does in asthma",
+        "It drops close to zero",
+        "It cannot be measured in a stiff lung"
+      ],
+      "answer": 0,
+      "why": "A stiff lung is small, so both FEV1 and FVC fall. Its strong recoil empties it fast through open airways, so the share out in the first second stays normal or rises. That is why the ratio alone cannot show restriction: TLC has to be measured."
+    },
+    "bronchodilator": {
+      "prompt": "This person has asthma. An inhaled bronchodilator relaxes the tightened airway muscle, and the test is repeated. Which part of the forced breath improves most?",
+      "choices": [
+        "FEV1 and the peak: air gets out faster",
+        "TLC: the lung grows larger",
+        "RV rises as the airways open",
+        "Nothing: the forced breath is the same as before"
+      ],
+      "answer": 0,
+      "why": "Wider airways let air out faster, so FEV1 and the peak rise and less air stays trapped. The lung's size does not change. A large enough rise in FEV1 or FVC is a significant bronchodilator response."
+    },
+    "effort": {
+      "prompt": "A healthy lung, but the person starts the blow slowly and stops early. What happens to the curves and to the lung volumes?",
+      "choices": [
+        "The curves fall; the lung volumes stay the same",
+        "The curves and the lung volumes both fall",
+        "The curves stay normal; TLC falls",
+        "The curves rise, because the blow lasts longer"
+      ],
+      "answer": 0,
+      "why": "A weak start lowers the peak and a short blow cuts FVC, so the curves can look like disease. But the lung is unchanged, so RV, FRC and TLC are the same. The test is coached and repeated."
+    }
+  },
   "quiz": [
     {
-      "id": "after-strongest",
+      "id": "rv-hidden",
       "objective": 1,
-      "step": "volumes",
-      "stem": "Which air remains in the lungs after the strongest possible exhalation?",
+      "step": "residual",
+      "stem": "Why can a spirometer not measure residual volume?",
       "choices": [
-        "Residual volume",
-        "Tidal volume",
-        "Inspiratory reserve volume",
-        "Expiratory reserve volume"
+        "Residual air never leaves the lungs, so it never passes the mouthpiece",
+        "Residual air leaves too fast for the spirometer to record",
+        "Residual volume is only present during a forced breath",
+        "The spirometer only records air breathed in"
       ],
       "answer": 0,
-      "why": "Residual volume stays inside even after a maximal breath out. Expiratory reserve is the extra air that can be pushed out after a quiet breath out, so it does leave."
+      "why": "A spirometer sees only air that moves through it. Residual air stays in even after the hardest breath out, so RV, and FRC and TLC which contain it, need a body box or a gas test."
     },
     {
-      "id": "vital-parts",
+      "id": "vc-parts",
       "objective": 1,
       "step": "capacities",
-      "stem": "Which combination of volumes makes vital capacity?",
+      "stem": "Which volumes add up to vital capacity?",
       "choices": [
-        "Inspiratory reserve, tidal and expiratory reserve volumes",
-        "Tidal, expiratory reserve and residual volumes",
-        "Inspiratory reserve and residual volumes only",
-        "All four volumes, including residual"
+        "IRV, TV and ERV",
+        "TV, ERV and RV",
+        "IRV and RV only",
+        "All four volumes, including RV"
       ],
       "answer": 0,
-      "why": "Vital capacity is all the movable air: both reserves plus tidal air. Adding residual air as well gives total lung capacity, the tempting wrong answer."
+      "why": "Vital capacity is all the air you can move: both reserves plus the tidal breath. Adding RV as well gives total lung capacity, the tempting wrong answer."
     },
     {
-      "id": "hidden-air",
+      "id": "frc-balance",
       "objective": 1,
-      "step": "hidden",
-      "stem": "Why can spirometry alone not measure total lung capacity or functional residual capacity?",
+      "step": "balance",
+      "stem": "What sets the volume of air left in the lungs at the end of a quiet breath out (FRC)?",
       "choices": [
-        "Both include residual air, which never passes through the mouthpiece",
-        "Both need a stronger breath than most people can give",
-        "Both depend on the speed of emptying, which spirometry cannot time",
-        "Both are defined by the first second of a forced breath"
+        "The balance between the lung's inward recoil and the chest wall's outward spring",
+        "The strongest breath out a person can make",
+        "How much air the airways can hold",
+        "The size of the last tidal breath"
       ],
       "answer": 0,
-      "why": "A spirometer sees only air that moves through it. Residual air stays inside, so another method, such as body plethysmography or gas dilution, is needed. Blowing harder does not release it."
+      "why": "At FRC no muscle is working: the lung pulls in and the chest wall springs out, equally. A lung with weak recoil (emphysema) settles bigger; a stiff one (fibrosis) settles smaller."
     },
     {
-      "id": "early-part",
+      "id": "ratio-meaning",
       "objective": 2,
-      "step": "forced",
-      "stem": "On a forced breath, what does the early exhaled volume (FEV1) measure?",
+      "step": "ratio",
+      "stem": "What does the FEV1/FVC ratio tell you?",
       "choices": [
-        "The air blown out in the first second",
-        "The air left inside after the breath",
-        "All the air in the lung",
-        "The air moved in a quiet breath"
+        "The share of the forced breath that leaves in the first second",
+        "How much air is left in the lungs after the blow",
+        "The total size of the lungs",
+        "How fast air flows in when breathing in"
       ],
       "answer": 0,
-      "why": "FEV1 is the early part of the total forced breath. The total forced breath is FVC; the ratio of the two is the fraction that leaves early."
+      "why": "The ratio is about speed of emptying, not size. A small lung can have a normal ratio, which is why a low TLC, not the ratio, shows restriction."
     },
     {
-      "id": "loop-axis",
+      "id": "downslope",
       "objective": 2,
-      "step": "linked",
-      "stem": "What is on the horizontal axis of a flow-volume loop, and which limb shows breathing out?",
+      "step": "downslope",
+      "stem": "Blowing harder raises the peak of a flow-volume loop, but not its downslope. Why?",
       "choices": [
-        "Volume exhaled; the upper limb shows breathing out",
-        "Time; the upper limb shows breathing out",
-        "Volume exhaled; the lower limb shows breathing out",
-        "Pressure; the lower limb shows breathing out"
+        "The squeeze that pushes air out also narrows the airways, so flow is set by recoil and airway width",
+        "The lungs run out of air before the peak",
+        "Effort only acts during breathing in",
+        "The spirometer cannot record flows above the peak"
       ],
       "answer": 0,
-      "why": "The loop trades the time axis for exhaled volume, and outward flow draws the upper limb while the volume-time curve rises. The lower limb is breathing in."
+      "why": "Past the peak, more chest pressure also presses on the airways, so flow stops rising with effort. That makes the downslope a fair picture of the lung and its airways, and poor effort shows mainly in the peak and the length of the blow."
     },
     {
-      "id": "pattern-meaning",
+      "id": "obstructive",
       "objective": 3,
-      "step": "forced",
-      "stem": "A forced breath shows slow early emptying and a low early fraction. Which pattern does this suggest, and what would confirm a restrictive pattern instead?",
+      "step": "asthma",
+      "stem": "A test shows a low FEV1/FVC ratio, a scooped downslope, a normal TLC and a slightly raised RV. Which fits best?",
       "choices": [
-        "Obstructive; a measured low total lung capacity defines restrictive",
-        "Restrictive; a low early fraction defines restrictive",
-        "Obstructive; a response to airway opening defines restrictive",
-        "Restrictive; a high early fraction alone defines restrictive"
+        "An obstructive pattern, as in asthma",
+        "A restrictive pattern, as in fibrosis",
+        "Poor effort with a healthy lung",
+        "A normal test"
       ],
       "answer": 0,
-      "why": "A low fraction suggests air has difficulty getting out, an obstructive pattern. A reduced measured total capacity is what defines a restrictive pattern, so the fraction alone cannot settle it."
+      "why": "A low ratio means slow emptying: obstruction. Narrow airways trap a little air, so RV rises, while TLC stays normal. Fibrosis would lower TLC with a normal or high ratio."
     },
     {
-      "id": "fraction-size",
+      "id": "emphysema-volumes",
       "objective": 3,
-      "step": "forced",
-      "stem": "A person's early exhaled volume and total forced breath are both smaller than predicted, but their fraction looks preserved. What can be said?",
+      "step": "emphysema",
+      "stem": "Why are TLC, FRC and RV all high in emphysema?",
       "choices": [
-        "The fraction describes speed of emptying, so it cannot show that lung size is normal",
-        "The preserved fraction proves total lung capacity is normal",
-        "The preserved fraction proves the airways are blocked",
-        "The smaller volumes prove residual air is missing"
+        "The lung recoils weakly, so it settles bigger, and collapsing small airways trap air",
+        "Scar tissue makes the lung stiffer",
+        "The airway muscle tightens and swells",
+        "The chest wall becomes weaker than the lung"
       ],
       "answer": 0,
-      "why": "Both volumes can fall while their ratio stays similar. A fraction describes how fast air leaves, not how large the lung is, so size must be read alongside it."
+      "why": "Destroyed air-sac walls mean weak recoil, so the balance with the chest wall sits at a bigger volume, and small airways that lost their support collapse during the blow, trapping air. Tightened, swollen airways describe asthma."
     },
     {
-      "id": "effort-first",
+      "id": "restriction-proof",
+      "objective": 3,
+      "step": "patterns",
+      "stem": "A person with pulmonary fibrosis has a low FVC and a normal FEV1/FVC ratio. Which measurement confirms a restrictive pattern?",
+      "choices": [
+        "A low TLC, measured with a body box or a gas test",
+        "A low FEV1/FVC ratio",
+        "A rise in FEV1 after a bronchodilator",
+        "A high peak expiratory flow"
+      ],
+      "answer": 0,
+      "why": "A low FVC can come from a small lung, trapped air or a short blow. Only a measured low TLC shows the lung is small. A spirometer cannot measure TLC, because TLC contains RV."
+    },
+    {
+      "id": "bd-response",
       "objective": 4,
-      "step": "linked",
-      "stem": "A forced breath gives unusually low volumes and flows. What should come before naming a pattern?",
+      "step": "bronchodilator",
+      "stem": "After a bronchodilator, a person's FEV1 rises by more than the guideline's threshold for a significant response. What does this show?",
       "choices": [
-        "Check the quality of the effort and compare repeated acceptable breaths",
-        "Name the most likely disease straight away",
-        "Treat the lowest value as the true one",
-        "Ignore the curve and rely on the fraction"
+        "Airway narrowing that eases with treatment: it supports asthma but does not prove it alone",
+        "The person definitely has asthma and not COPD",
+        "The person has a restrictive lung disease",
+        "The first test was done with poor effort"
       ],
       "answer": 0,
-      "why": "A forced test needs a deep breath in, a strong start and continued exhalation. Low effort can mimic an abnormal pattern, so quality comes first."
+      "why": "A significant response shows narrowing that reverses. It fits asthma, but people with COPD can respond too and some with asthma do not, so the result is read alongside the whole picture."
+    },
+    {
+      "id": "effort-check",
+      "objective": 4,
+      "step": "effort",
+      "stem": "A test shows a low FVC and a low, late, rounded peak, and the person's blows do not agree with each other. What is the best next step?",
+      "choices": [
+        "Coach the person and repeat until good blows agree",
+        "Report a restrictive pattern",
+        "Report an obstructive pattern",
+        "Give a bronchodilator and use the better curve"
+      ],
+      "answer": 0,
+      "why": "A rounded, late peak and blows that disagree point to poor effort, which can look like disease. Effort and repeatability are checked before any pattern is named."
     }
   ],
   "takeaways": [
-    "A spirometer sees only moving air. Residual air stays inside, so residual volume and the capacities that contain it (functional residual capacity and total lung capacity) need another method.",
-    "Vital capacity is all the movable air: tidal volume plus both reserve volumes. Total lung capacity adds residual volume.",
-    "Read the total forced breath and the part exhaled early together. Their ratio is the fraction of the breath that leaves early.",
-    "The early fraction describes speed of emptying, not lung size. Obstruction slows emptying, while restriction is defined by a reduced measured total lung capacity.",
-    "More compliance means easier stretch, not necessarily better emptying. Resistance slows emptying, and the lesson's model curves are illustrative, not patient values.",
-    "Check effort and test quality before interpreting any forced breath: low effort can imitate disease.",
-    "A bronchodilator response measures a change. It is not a stand-alone diagnosis."
+    "A spirometer sees only the air that moves: TV, IRV, ERV and the capacities built from them. RV, and FRC and TLC which contain it, need a body box or a gas test.",
+    "FRC is where the lung's inward recoil balances the chest wall's outward spring; weak recoil (emphysema) settles bigger, a stiff lung (fibrosis) smaller.",
+    "A forced blow gives FVC (all of it) and FEV1 (the first second). FEV1/FVC is the share out in the first second, judged against the person's lower limit of normal.",
+    "On the flow-volume loop, effort sets the peak, but the downslope is set by the lung's recoil and airways.",
+    "Obstruction (asthma, emphysema): FEV1 falls more than FVC, the ratio is low and the loop scoops; trapped air raises RV, and emphysema raises FRC and TLC too.",
+    "Restriction (fibrosis): every volume falls, FEV1 and FVC fall together, and the ratio is normal or high. Only a low TLC proves it.",
+    "A bronchodilator can raise FEV1 when narrowing reverses; a significant response supports asthma but does not diagnose it alone.",
+    "Poor effort lowers the curves without changing the lung: check that repeated good blows agree before naming any pattern."
   ]
 }
