@@ -141,7 +141,7 @@
   }
  },
  "text": {
-  "colophon": "Designed and built by {designer} in {issued}, for {name}, who specified and built everything it describes. The page has no colour of its own: every colour on it belongs to the work. Nothing on it is a mockup.",
+  "colophon": "Designed and built by {designer} in {issued}, for {name}, who specified and built everything it describes. The page has no color of its own: every color on it belongs to the work. Nothing on it is a mockup.",
   "films": "Rendered from code, captured from live sites. Sound on.",
   "editions": "One redesign per model class. Nothing is deleted.",
   "record": "What is counted, beside what your browser just measured.",
@@ -1635,7 +1635,7 @@
   {
    "vol": "Vol. 04",
    "name": "Side by Side",
-   "design": "a neutral room: each work beside its own earlier edition, no colour but the work's",
+   "design": "a neutral room: each work beside its own earlier edition, no color but the work's",
    "by": [
     "Claude Fable 5.2"
    ],
