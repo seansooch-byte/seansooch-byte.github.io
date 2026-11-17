@@ -1,0 +1,179 @@
+{
+  "minutes": 24,
+  "prerequisites": ["cardiac-action-potential", "na-k-pump-digoxin"],
+  "objectives": [
+    "Explain why a resting cell is negative inside: potassium leaks out down its gradient until the pull of the negative inside balances the push of crowding.",
+    "Tell apart the potassium balance point, the resting potential and the threshold, and name the channels open at rest.",
+    "Predict which way hyperkalemia and hypokalemia move the resting potential and the gap to threshold.",
+    "Explain why a membrane that stays depolarized becomes harder, not easier, to fire, through sodium-channel inactivation."
+  ],
+  "checks": {
+    "diffusion": {
+      "prompt": "Potassium leak channels open in a membrane with potassium crowded inside and negative proteins that cannot leave. As potassium leaks out, what happens to the voltage inside?",
+      "choices": [
+        "It turns negative, then holds where the pull of the negative inside balances the push of crowding",
+        "It turns positive, because potassium carries a positive charge",
+        "It keeps falling until all the potassium has left the cell",
+        "It stays at zero, because only one kind of ion moves"
+      ],
+      "answer": 0,
+      "why": "Each potassium that leaves takes a positive charge out and leaves a negative protein behind, so the inside turns negative. That negative inside pulls potassium back, and the voltage holds where the pull equals the push: the potassium diffusion potential. Very few ions need to move to get there."
+    },
+    "hyperkalemia": {
+      "prompt": "In hyperkalemia there is more potassium outside cells, so potassium is less crowded inside by comparison. What happens to the resting potential?",
+      "choices": [
+        "It becomes less negative, closer to threshold",
+        "It becomes more negative, further from threshold",
+        "It does not change, because the potassium inside is the same",
+        "It turns positive, above threshold"
+      ],
+      "answer": 0,
+      "why": "A smaller crowding difference pushes potassium out less hard, so a smaller negative pull is enough to balance it. The resting potential rises toward zero, so the gap to threshold shrinks; the picture shows by how much in this model."
+    },
+    "hypokalemia": {
+      "prompt": "In hypokalemia there is less potassium outside cells, so potassium is even more crowded inside by comparison. What happens to the resting potential and the gap to threshold?",
+      "choices": [
+        "More negative, so the gap to threshold grows",
+        "Less negative, so the gap to threshold shrinks",
+        "No change, because sodium sets the resting potential",
+        "More negative, so the gap to threshold shrinks"
+      ],
+      "answer": 0,
+      "why": "A bigger crowding difference pushes potassium out harder, and it takes a stronger negative pull to balance it. The resting potential falls further below a threshold that has not moved, so the gap grows and a bigger nudge is needed to fire."
+    },
+    "inactivation": {
+      "prompt": "Severe hyperkalemia holds the membrane partly depolarized. Sodium channels inactivate when depolarized and reset only at a negative resting voltage. What happens to the cell's ability to fire?",
+      "choices": [
+        "Many channels stay inactivated, so the upstroke is weaker and the cell is harder to fire",
+        "Every channel stays ready, so the cell fires more and more easily",
+        "The channels open and stay open, so sodium floods in without stopping",
+        "Nothing changes, because sodium channels do not respond to voltage"
+      ],
+      "answer": 0,
+      "why": "At a resting voltage that never gets negative enough, inactivated channels cannot reset. With about half of them out of action here, fewer open at threshold, so the upstroke is weaker and slower and the cell is harder to fire, even though its rest sits nearer threshold."
+    }
+  },
+  "quiz": [
+    {
+      "id": "why-negative",
+      "objective": 1,
+      "step": "diffusion",
+      "stem": "Why is the inside of a resting cell negative?",
+      "choices": [
+        "Potassium leaks out down its gradient, leaving behind negative proteins that cannot follow",
+        "Sodium leaks in, carrying negative charge with it",
+        "The pump moves negative ions into the cell one by one",
+        "Chloride is made inside the cell and cannot leave"
+      ],
+      "answer": 0,
+      "why": "Open potassium leak channels let potassium drift out, taking positive charge away while the large negative proteins stay. Sodium is positive, so sodium leaking in would make the inside less negative, not more; the pump adds only a few millivolts."
+    },
+    {
+      "id": "balance-point",
+      "objective": 1,
+      "step": "forces",
+      "stem": "At potassium's balance point (its equilibrium potential), what is true of potassium at an open channel?",
+      "choices": [
+        "The push of crowding out equals the pull of the negative inside, so as many ions go in as out",
+        "No potassium crosses at all, because the channel closes",
+        "Potassium is equally crowded inside and outside",
+        "The pull of the negative inside is stronger, so potassium keeps flowing in"
+      ],
+      "answer": 0,
+      "why": "The crowding difference is still there; it is balanced by the voltage. Ions keep crossing both ways, but the two flows are equal, so nothing changes overall. The channel stays open throughout."
+    },
+    {
+      "id": "open-at-rest",
+      "objective": 2,
+      "step": "channels",
+      "stem": "Why does the resting potential sit close to potassium's balance point rather than sodium's?",
+      "choices": [
+        "At rest the membrane lets potassium through far more easily than sodium",
+        "There is more sodium than potassium in the body",
+        "Sodium cannot carry an electric charge",
+        "Potassium channels open only during an action potential"
+      ],
+      "answer": 0,
+      "why": "Potassium leak channels are open at rest and sodium channels are almost all shut, so potassium dominates. The small sodium leak lifts the resting potential only a few millivolts above potassium's balance point."
+    },
+    {
+      "id": "threshold-gap",
+      "objective": 2,
+      "step": "gap",
+      "stem": "A cell rests some way below its threshold. What does the gap between its resting potential and its threshold mean?",
+      "choices": [
+        "It is the nudge of depolarization the cell needs before it fires",
+        "It is the size of the action potential",
+        "It is the voltage the pump adds at rest",
+        "It is the difference between the potassium and sodium balance points"
+      ],
+      "answer": 0,
+      "why": "The gap to threshold is how far a nudge must lift the voltage before sodium channels open in a rush. A smaller gap makes a cell easier to fire; a bigger one makes it harder."
+    },
+    {
+      "id": "kidney-failure",
+      "objective": 3,
+      "step": "hyperkalemia",
+      "stem": "A patient whose kidneys have failed has a high blood potassium. Which way does their heart muscle cells' resting potential move?",
+      "choices": [
+        "Less negative, closer to threshold",
+        "More negative, further from threshold",
+        "It stays the same, because potassium inside does not change",
+        "It flips positive, so the cells cannot rest"
+      ],
+      "answer": 0,
+      "why": "More potassium outside means less crowding difference, a weaker push out, and a less negative balance. The tempting answer, no change, forgets that the outside concentration sets the ratio just as much as the inside one."
+    },
+    {
+      "id": "diuretic-weakness",
+      "objective": 3,
+      "step": "hypokalemia",
+      "stem": "A patient taking a loop diuretic develops a low blood potassium and feels their muscles weak. Which change in the muscle membrane best explains it?",
+      "choices": [
+        "The resting potential is more negative, so a bigger nudge is needed to reach threshold",
+        "The resting potential is less negative, so the cells fire all the time",
+        "Sodium channels stay inactivated because the membrane is depolarized",
+        "The threshold moves to a more positive voltage"
+      ],
+      "answer": 0,
+      "why": "Less potassium outside widens the crowding difference, so the resting potential falls further below threshold and the gap grows. Inactivated sodium channels belong to the opposite problem, a membrane held depolarized as in severe hyperkalemia."
+    },
+    {
+      "id": "severe-high-k",
+      "objective": 4,
+      "step": "inactivation",
+      "stem": "Mild hyperkalemia brings the resting potential nearer threshold. Why can severe hyperkalemia make heart cells harder, not easier, to fire?",
+      "choices": [
+        "The membrane stays depolarized, so many sodium channels stay inactivated and cannot open",
+        "Potassium blocks sodium channels from the outside",
+        "The threshold falls to a more negative voltage",
+        "The pump stops, so the cell runs out of energy"
+      ],
+      "answer": 0,
+      "why": "Sodium channels reset only at a negative resting voltage. Held partly depolarized, many stay inactivated; with fewer ready to open, the upstroke is weaker and slower and conduction slows, which can cause dangerous rhythms."
+    },
+    {
+      "id": "reset",
+      "objective": 4,
+      "step": "gates",
+      "stem": "What lets an inactivated sodium channel become ready to open again?",
+      "choices": [
+        "The voltage returning to a negative resting level",
+        "More depolarization, up to the next threshold",
+        "Sodium leaving the channel through the pump",
+        "Potassium binding to the channel's outer side"
+      ],
+      "answer": 0,
+      "why": "The inactivation gate swings open again only when the membrane returns to, or near, its negative resting level. That is why a membrane held depolarized keeps its sodium channels out of action."
+    }
+  ],
+  "takeaways": [
+    "Potassium is crowded inside cells and sodium outside, kept that way by the sodium-potassium pump.",
+    "At rest the membrane is open mostly to potassium: potassium leaks out, leaves negative proteins behind, and the inside turns negative.",
+    "The voltage holds where the pull of the negative inside balances the push of crowding: a potassium diffusion potential. A small sodium leak lifts the resting potential a few millivolts above it.",
+    "The gap between the resting potential and threshold is the nudge a cell needs to fire.",
+    "Hyperkalemia makes the resting potential less negative, closer to threshold; hypokalemia makes it more negative, further from threshold.",
+    "Sodium channels inactivate when depolarized and reset only at a negative rest, so a membrane held depolarized, as in severe hyperkalemia, becomes harder to fire and conducts slowly.",
+    "A blood potassium test reads the potassium outside cells, the small amount whose changes move the resting potential."
+  ]
+}

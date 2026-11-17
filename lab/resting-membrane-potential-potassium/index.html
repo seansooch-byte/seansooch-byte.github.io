@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resting Membrane Potential and Potassium · The Lab · Sean Sooch</title>
+<meta name="description" content="A guided visual lesson: why a resting cell is negative inside, how potassium leaking out sets that voltage, and how high or low blood potassium moves it toward or away from the threshold where the cell fires.">
+<link rel="canonical" href="https://seansooch.dev/lab/resting-membrane-potential-potassium/">
+<meta property="og:title" content="Resting Membrane Potential and Potassium">
+<meta property="og:description" content="Watch potassium leak out of a cell and leave the inside negative, then see hyperkalemia and hypokalemia move the resting voltage toward or away from threshold, one picture at a time.">
+<meta property="og:url" content="https://seansooch.dev/lab/resting-membrane-potential-potassium/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/lab/kit/kit.css">
+<link rel="stylesheet" href="style.css">
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the lesson</a>
+<header class="site-top">
+  <div class="site-top-in">
+    <a class="site-brand" href="/" aria-label="Sean Sooch, home">Sean Sooch</a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="site-nav-home" href="/#work">Work</a>
+      <a href="/#writing">Writing</a>
+      <a href="/#films">Films</a>
+      <a href="/#editions">Editions</a>
+      <a class="site-nav-lab" href="/lab/" aria-current="true">The Lab</a>
+    </nav>
+  </div>
+</header>
+<main id="main" data-slug="resting-membrane-potential-potassium">
+  <div class="intro">
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / <a href="/lab/#cells-membranes-signals">Unit 9: Cells, membranes and signals</a> / Lesson 27</p>
+    <h1>Resting potential<br><span>and potassium.</span></h1>
+    <p class="lede">A resting cell is negative inside because potassium leaks out of it. See why that voltage settles where it does, then watch high and low blood potassium move it toward or away from the point where the cell fires.</p>
+    <p class="note">Educational, not for clinical use</p>
+    <div class="lx-plan" data-lx-plan></div>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Lesson views">
+    <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-quiz" aria-controls="quiz" aria-selected="false" tabindex="-1">Quiz</button>
+    <button type="button" role="tab" id="tab-summary" aria-controls="summary" aria-selected="false" tabindex="-1">Summary</button>
+    <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
+    <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
+  </div>
+
+  <section id="lesson" role="tabpanel" aria-labelledby="tab-lesson">
+    <article data-step="1" data-step-title="Ions carry charge" data-kind="ions">
+      <p class="eyebrow">Ions and charge</p>
+      <h2 tabindex="-1">Ions carry charge</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Salts dissolve in body water as <dfn>ions</dfn>: particles that carry an electric charge. <dfn data-part="potassium">Potassium</dfn> and <dfn data-part="sodium">sodium</dfn> each carry one positive charge, and <dfn data-part="chloride">chloride</dfn> one negative charge. Inside cells, large <dfn data-part="protein">proteins</dfn> carry negative charges too, and they are too big to leave through the thin, oily <dfn data-part="membrane">cell membrane</dfn> that wraps every cell.</p>
+    </article>
+    <article data-step="2" data-step-title="The pump keeps potassium inside" data-kind="gradient" hidden>
+      <p class="eyebrow">Ions and charge</p>
+      <h2 tabindex="-1">The pump keeps potassium inside</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The <dfn data-part="pump">sodium-potassium pump</dfn> spends energy to carry sodium out of the cell and potassium in (<a href="/lab/na-k-pump-digoxin/">Lesson 26</a>). It keeps potassium about <span data-v="kRatio"></span> times more crowded inside than outside, and sodium about <span data-v="naRatio"></span> times more crowded outside. A difference in crowding across a membrane is a <dfn data-part="gradient">concentration gradient</dfn>: ions drift down it, from crowded to sparse, wherever a door lets them through.</p>
+    </article>
+    <article data-step="3" data-step-title="A resting cell is negative inside" data-kind="voltage" hidden>
+      <p class="eyebrow">Ions and charge</p>
+      <h2 tabindex="-1">A resting cell is negative inside</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">When a thin layer of extra negative charge lines the inside face of the membrane and extra positive charge the outside face, there is a voltage across it: the <dfn data-part="meter">membrane potential</dfn>, measured in millivolts (mV), inside compared with outside. In a resting nerve or muscle cell the inside sits at about <span data-v="vRest"></span> mV in this lesson's model: the <dfn data-part="rest">resting potential</dfn>.</p>
+    </article>
+    <article data-step="4" data-step-title="Doors for ions" data-kind="channels" hidden>
+      <p class="eyebrow">Ions and charge</p>
+      <h2 tabindex="-1">Doors for ions</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Ions cross the oily membrane only with the help of proteins set in it, such as the pump in step 2. The quickest are <dfn data-part="k-door na-door">ion channels</dfn>: protein doors that let particular ions through. At rest, many <dfn data-part="k-door">potassium leak channels</dfn> stay open, while the <dfn data-part="na-door">sodium channels</dfn> stay almost all shut. So a resting membrane lets potassium through about <span data-v="leakInv"></span> times more easily than sodium.</p>
+    </article>
+    <article data-step="5" data-step-title="A push and a pull" data-kind="forces" hidden>
+      <p class="eyebrow">Ions and charge</p>
+      <h2 tabindex="-1">A push and a pull</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Two things act on an ion at an open channel. Its gradient pushes it from crowded to sparse: the <dfn data-part="push">chemical push</dfn>. And opposite charges attract, so a negative inside pulls positive ions toward it: the <dfn data-part="pull">electrical pull</dfn>. The ion moves the way the stronger of the two sends it. Where they are equal, as many ions go in as come out.</p>
+    </article>
+    <article data-step="6" data-step-title="Threshold: the point where a cell fires" data-kind="threshold" hidden>
+      <p class="eyebrow">Firing a signal</p>
+      <h2 tabindex="-1">Threshold: the point where a cell fires</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Nerve and muscle cells signal by firing. A rise of the voltage toward zero is <dfn>depolarization</dfn>. A small one fades away. One that reaches a trigger level, the <dfn data-part="threshold">threshold</dfn>, about <span data-v="threshold"></span> mV here, opens sodium channels in a rush: sodium floods in and the voltage shoots up, an <dfn data-part="ap">action potential</dfn> (<a href="/lab/cardiac-action-potential/">Lesson 7</a>). Then potassium carries the voltage back down to rest.</p>
+    </article>
+    <article data-step="7" data-step-title="The gap to threshold" data-kind="gap" hidden>
+      <p class="eyebrow">Firing a signal</p>
+      <h2 tabindex="-1">The gap to threshold</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">How far the resting potential sits below threshold, about <span data-v="gap"></span> mV here, is the nudge a cell needs to fire. A smaller <dfn data-part="gap">gap to threshold</dfn> makes a cell easier to fire, more <dfn>excitable</dfn>; a bigger gap makes it harder. Anything that moves the resting potential moves this gap.</p>
+    </article>
+    <article data-step="8" data-step-title="Sodium channels: ready, open, inactivated" data-kind="gates" hidden>
+      <p class="eyebrow">Firing a signal</p>
+      <h2 tabindex="-1">Sodium channels: ready, open, inactivated</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A sodium channel has two gates. At rest it is closed but <dfn data-part="ready">ready</dfn>. Depolarized to threshold, it opens for a moment, then its <dfn data-part="inactivation-gate">inactivation gate</dfn> swings shut and plugs it. An inactivated channel cannot open again until the voltage returns to a negative resting level, which resets it to ready. The more negative the rest, the more channels stand ready.</p>
+    </article>
+    <article data-step="9" data-step-title="Blood potassium is the potassium outside cells" data-kind="bloodk" hidden>
+      <p class="eyebrow">Potassium in the blood</p>
+      <h2 tabindex="-1">Blood potassium is the potassium outside cells</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The fluid around cells trades freely with <dfn data-part="plasma">blood plasma</dfn>, so a blood test for potassium reads the potassium outside cells. Almost all of the body's potassium is inside cells, so the outside amount is small, and a small shift changes it a lot. Too much potassium in the blood is <dfn>hyperkalemia</dfn>; too little is <dfn>hypokalemia</dfn>.</p>
+    </article>
+    <article data-step="10" data-step-title="Resting potential as a potassium diffusion potential" data-kind="diffusion" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Resting potential as a potassium diffusion potential</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Open potassium leak channels and potassium drifts out, down its gradient, carrying positive charge; the negative proteins stay behind. The inside turns negative and pulls potassium back. Within moments the pull matches the push and the voltage holds: a <dfn data-part="kbal">potassium diffusion potential</dfn>, about <span data-v="eK"></span> mV here. A slight sodium leak, partly offset by the pump, then lifts the true resting potential a few millivolts, to about <span data-v="vRest"></span> mV.</p>
+    </article>
+    <article data-step="11" data-step-title="Hyperkalemia: a less negative rest" data-kind="hyperkalemia" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Hyperkalemia: a less negative rest</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">In hyperkalemia more potassium sits outside, so it is less crowded inside by comparison. The push out weakens, and a smaller negative pull balances it: the resting potential becomes less negative, about <span data-v="hyperRest"></span> mV here instead of <span data-v="vRest"></span>, and the gap to threshold shrinks from <span data-v="gap"></span> to <span data-v="hyperGap"></span> mV. At first a smaller nudge fires the cell.</p>
+    </article>
+    <article data-step="12" data-step-title="Hypokalemia: a more negative rest" data-kind="hypokalemia" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Hypokalemia: a more negative rest</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">In hypokalemia less potassium sits outside, so the inside is even more crowded by comparison. The push out strengthens, and it takes a stronger negative pull to balance it: the resting potential becomes more negative, about <span data-v="hypoRest"></span> mV here, and the gap to threshold grows from <span data-v="gap"></span> to <span data-v="hypoGap"></span> mV. A bigger nudge is needed to fire, so nerves and muscles respond less, and muscles can feel weak.</p>
+    </article>
+    <article data-step="13" data-step-title="Sodium-channel inactivation when the membrane stays depolarized" data-kind="inactivation" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Sodium-channel inactivation when the membrane stays depolarized</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Severe hyperkalemia holds the membrane partly depolarized, about <span data-v="severeRest"></span> mV here, so it never returns to a fully negative rest. Sodium channels that inactivate cannot reset, and about half stay plugged. With fewer ready, the <dfn data-part="upstroke">upstroke</dfn>, the action potential's quick rise, is weaker and slower: the cell becomes harder, not easier, to fire, and signals spread slowly. In the heart this can cause dangerous rhythms.</p>
+    </article>
+
+    <div class="step-nav">
+      <button type="button" data-step-back disabled>← Back</button>
+      <span data-step-progress aria-live="polite">Step 1 of 13</span>
+      <button type="button" data-step-next>Next →</button>
+    </div>
+    <p class="hint">Start with Next, or use the arrow keys. Under a moving picture: pause, drag to any moment, or slow it down. Underlined terms light up their part of the picture. Voltages come from the lesson's teaching model; ion counts in the pictures are illustrative, far fewer than in a real cell.</p>
+  </section>
+
+  <section id="quiz" role="tabpanel" aria-labelledby="tab-quiz" hidden></section>
+
+  <section id="summary" role="tabpanel" aria-labelledby="tab-summary" hidden></section>
+
+  <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
+    <h2>Reference values, beside the model.</h2>
+    <p id="disclaimer" class="disclaimer">Loading reference values…</p>
+    <div class="cv-top">
+      <div id="clinical-visual" class="visual"></div>
+      <div class="cv-controls">
+        <div>
+          <label for="clinical-state">Show a state</label>
+          <select id="clinical-state"><option value="baseline">Normal plasma potassium</option></select>
+        </div>
+        <div>
+          <label for="clinical-k">Plasma potassium (model) <output id="clinical-k-label" for="clinical-k"></output></label>
+          <input id="clinical-k" type="range" min="1.5" max="10" step="0.1" value="4.2">
+        </div>
+        <div>
+          <button type="button" id="clinical-reset">Back to baseline</button>
+        </div>
+      </div>
+    </div>
+    <p id="state-summary" class="state-summary" aria-live="polite"></p>
+    <details class="lx-fine">
+      <summary>The cited evidence for this state</summary>
+      <div id="state-evidence" class="model-note"></div>
+    </details>
+    <details class="lx-fine">
+      <summary>How to read these bars</summary>
+      <p>Grey-blue bands are the cited typical adult ranges; a black tick is a single cited typical value. The blue line is the lesson's teaching model, which starts with plasma potassium inside its range and computes the resting potential and potassium's balance point from it. It moves when you change potassium here or in Explore freely. Its numbers are illustrative, never patient values, and these references are not decision rules. Arrows appear only where a cited location states the direction.</p>
+    </details>
+    <div id="value-rows"></div>
+    <h3>Sources</h3>
+    <ul id="sources"></ul>
+    <p id="load-error" class="load-error" hidden></p>
+  </section>
+
+  <section id="explore" role="tabpanel" aria-labelledby="tab-explore" hidden>
+    <h2>Change the potassium. Watch the resting potential.</h2>
+    <p class="model-intro">An illustrative teaching model of a resting membrane. Set the potassium outside the cell and how leaky the membrane is to sodium, and see the resting potential, its gap to threshold and the sodium channels standing ready, drawn over a dashed marker of normal.</p>
+    <div class="explore-grid">
+      <div id="explore-visual" class="visual"></div>
+      <div class="controls">
+        <fieldset>
+          <legend>Potassium outside</legend>
+          <label for="preset">A state</label>
+          <select id="preset">
+            <option value="baseline">Normal</option>
+            <option value="hypokalemia">Hypokalemia</option>
+            <option value="hyperkalemia">Hyperkalemia</option>
+            <option value="severe">Severe hyperkalemia</option>
+            <option value="custom">Custom</option>
+          </select>
+          <label for="kout">Plasma potassium <output id="kout-out" for="kout"></output></label>
+          <input id="kout" type="range" min="1.5" max="10" step="0.1" value="4.2">
+        </fieldset>
+        <fieldset>
+          <legend>The membrane</legend>
+          <label for="leak">Sodium leak, compared with potassium <output id="leak-out" for="leak"></output></label>
+          <input id="leak" type="range" min="0" max="10" step="0.5" value="1">
+        </fieldset>
+        <button type="button" id="reset">Reset to normal</button>
+      </div>
+    </div>
+    <p id="model-results" class="model-results" aria-live="polite"></p>
+    <details>
+      <summary>How this teaching model works</summary>
+      <p>Potassium is held at a fixed level inside the cell, and sodium at fixed levels inside and outside; only the potassium outside, which a blood test reads, and the sodium leak change here. The settings follow Guyton and Hall's worked example of the resting potential and live in the Clinical values data file.</p>
+      <p>Each ion's balance point comes from how crowded it is inside compared with outside: every tenfold difference is worth <span data-v="slope"></span> mV at body temperature. The resting potential is a weighted mix of the two ions, weighted by how easily each crosses the resting membrane (potassium about <span data-v="leakInv"></span> times more easily than sodium at the start), plus the pump's own few millivolts.</p>
+      <p>Sodium channels stand ready at a negative rest. The share still ready falls along a smooth teaching curve as the resting voltage rises, half of them gone at about <span data-v="naHalf"></span> mV; the real curve differs between cells. All of these are the model's illustrative settings from the data file, not reference values.</p>
+      <p>The model leaves out how hormones, insulin and acid-base changes move potassium between cells and blood, how the kidney clears it, and the fall in potassium permeability that very low potassium causes in some cells, which can make their rest less negative instead.</p>
+    </details>
+  </section>
+
+  <footer>Lesson 27 of The Lab · Added 2026-11-17 · <a href="/lab/">All lessons</a></footer>
+</main>
+</body>
+</html>
