@@ -712,6 +712,42 @@
    "editions_note": "Edition 1, Record Section, was replaced the day it shipped, and Edition 2, Glossy, the day the site became a newspaper; neither was kept."
   },
   {
+   "id": "campus",
+   "world": "mac",
+   "also": [
+    "hum"
+   ],
+   "tier": "major",
+   "kind": "system",
+   "counted": false,
+   "name": "Open Campus",
+   "sub": "Every major",
+   "url": "https://campus.seansooch.dev/",
+   "host": "campus.seansooch.dev",
+   "wake": false,
+   "note": "under construction",
+   "tech": "A free, open source university for every major degree, written as data. Each course maps by code to an outside exam or curriculum standard, every item records who wrote it and who checked it, and each new Claude release re-checks the whole library. Accounting is the first program, College Algebra the first course; pre-medicine links to AdmissionsAcademy.",
+   "plain": "A free university anyone can use, for the majors most students study. Every course is tied to a real outside exam, and each answer is checked by a second reviewer. It is just starting: Accounting comes first.",
+   "stats": [
+    [
+     "Every",
+     "major"
+    ],
+    [
+     "1st",
+     "Accounting"
+    ],
+    [
+     "Free",
+     "and open"
+    ]
+   ],
+   "go": "Visit",
+   "index": "Open Campus",
+   "kw": "open campus university free open source education college majors degree accounting cpa clep courses curriculum",
+   "editions": []
+  },
+  {
    "id": "forge",
    "world": "mac",
    "also": [],
