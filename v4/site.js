@@ -30,6 +30,21 @@
   var store = function (k, v) { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { /* not kept */ } };
   var read = function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } };
 
+  function syncEditionLinks() {
+    $$('a[data-edition]').forEach(function (link) {
+      var path = location.pathname.replace(/index\.html$/, '');
+      var home = path === '/' || path === '/astra/';
+      var next = link.dataset.edition;
+      var destination = new URL(home ? (next === 'astra' ? '/astra/' : '/') : location.pathname, location.origin);
+      if (destination.pathname !== '/astra/') destination.searchParams.set('view', next);
+      var shared = (root.dataset.notebookAnchors || '').split(' ');
+      if (!home || next === 'fable' || shared.includes(location.hash.slice(1))) destination.hash = location.hash;
+      link.href = destination.href;
+    });
+  }
+  syncEditionLinks();
+  addEventListener('hashchange', syncEditionLinks);
+
   /* ---------- telling and theme ---------- */
   function drawVoice() {
     var plain = root.getAttribute('data-voice') === 'plain';
@@ -158,6 +173,7 @@
     try { id = decodeURIComponent(location.hash.slice(1)); } catch (e) { /* not an address this page made */ }
     if (id && moved.indexOf(id) > -1) { location.replace('/record/#' + id); return; }
     var target = id && doc.getElementById(id);
+    if (target && target.matches('details[data-entry]')) target.open = true;
     if (!target || !work || !work.contains(target)) return;
     if (!target.offsetParent && work.getAttribute('data-filter') !== 'all') { filter('all'); target.scrollIntoView(); }
   }

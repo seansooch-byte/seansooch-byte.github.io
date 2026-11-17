@@ -11,6 +11,8 @@ lab pipeline needs `python3` too, because `node tools/lab-index.mjs` runs the bu
 and `playwright-core`, which they look for in `~/aa-main/node_modules` (set `PLAYWRIGHT_FROM` to another
 `node_modules` folder to look elsewhere); the captures also need `cwebp` on the PATH. None of it ships.
 
+The Astra homepage has its own renderer and route at `/astra/`. Its register, reading list and screening room are built from the edition record. The cover is a locally held illustration. The notebook stylesheet also supplies a reading layout on the shared essay, course and record pages when Astra is selected. An explicit view link takes precedence over the saved preference.
+
 ## How it ships
 
 ```mermaid
@@ -27,6 +29,8 @@ flowchart LR
     P -->|"the manifest: which plates<br>exist, their size and day"| B
     V -->|"a stamp of each file's bytes"| B
     B --> E
+    B --> A["/astra/: illustrated Field Notes and project register"]
+    A --> |shares search, voice and appearance controls| V
   end
   R -->|"which addresses<br>to capture"| Cap["tools/plates.mjs<br>installed Chrome"]
   Cap -->|"every work, kept edition<br>and volume, 1440 by 900"| P

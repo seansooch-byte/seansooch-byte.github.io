@@ -403,6 +403,7 @@ def head(site, title, description, path, kind='website', more='', moved=()):
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="{FONTS.replace('&', '&amp;')}">
 <link rel="stylesheet" href="/v4/site.css?v={stamp(root, '/v4/site.css')}">
+<link rel="stylesheet" href="/astra/notebook.css?v={stamp(root, '/astra/notebook.css')}">
 <script src="/v4/boot.js?v={stamp(root, '/v4/boot.js')}"></script>
 <script src="/v4/site.js?v={stamp(root, '/v4/site.js')}" defer></script>{more}'''
 
@@ -423,6 +424,7 @@ def bar(site, here=None, voices=False):
     </div>
   </div>
 </header>
+<nav class="edition-choice" aria-label="Design view"><a href="/astra/" data-edition="astra">Astra view ↗</a><a href="?view=fable" data-edition="fable">Fable view ↗</a></nav>
 {posted(site)}'''
 
 
@@ -1017,6 +1019,56 @@ def record_parts(site):
   {index_section(site, index_entries(site))}'''
 
 
+def render_notebook(site):
+    r = site['record']
+    groups = []
+    tabs = []
+    for world in r['worlds']:
+        entries = [w for w in r['works'] if w['world'] == world['id']]
+        section = 'world-' + world['slug']
+        tabs.append(f'<a href="#{section}">{esc(world["name"])}</a>')
+        rows = []
+        for w in entries:
+            capture = plate_img(site, w['id'], w['name'] + plate_note(w, '. '), '(max-width:700px) 85vw, 30vw') or ''
+            archives = ''.join(f'<a href="{esc(e["url"])}">{esc(edition_label(e))}</a> ' for e in w['editions'][:-1] if e.get('url'))
+            rows.append(f'''<details class="entry" id="{w['id']}" data-entry="{w['id']}">
+              <summary><span>{breakable(w['name'])}</span><small>{esc(w.get('sub') or world['name'])}</small></summary>
+              <div class="entry-body"><div>{capture}</div><div>{said(site, w)}
+              <p><a class="ink-link" href="{esc(w['url'])}">{esc(w['go'])} ↗</a></p>
+              {f'<p>Archive · {archives}</p>' if archives else ''}</div></div></details>''')
+        groups.append(f'<section class="shelf" id="{section}"><h3>{esc(world["name"])} <small>({len(entries)})</small></h3><div>{"".join(rows)}</div></section>')
+    papers = ''.join(f'''<article id="{p['id']}"><small>{esc(p['when'])}</small>
+      <h3><a href="{esc(p['href'])}">{esc(p['name'])}</a></h3>{said(site,p)}
+      <p>{' · '.join(f'<a href="{esc(l["href"])}">{esc(l["label"])}</a>' for l in p['links'])}</p></article>''' for p in r['papers'])
+    movies = ''.join(f'''<a class="reel" id="{f['id']}" href="{esc(f['src'])}"><img src="{esc(f['poster'])}" width="1280" height="720" alt="" loading="lazy"><span>{esc(f['name'])}</span><small>{esc(f['length'])}</small></a>''' if f['poster'] else
+                     f'<a class="reel" id="{f["id"]}" href="{esc(f["src"])}"><span>{esc(f["name"])}</span><small>{esc(f["length"])}</small></a>' for f in r['films'])
+    home = f'''{head(site, 'Field Notes · Sean Sooch / Astra', 'An illustrated field notebook of medicine, military service and software by Sean Sooch.', '/astra/')}
+</head><body class="notebook"><a class="skip" href="#work">Skip to projects</a>
+<header class="folio-bar"><a class="folio-name" href="/astra/"><i aria-hidden="true">✳</i> Sean Sooch</a>
+<nav aria-label="Notebook"><a href="#work">Projects</a><a href="#writing">Writing</a><a href="#films">Films</a><a href="/record/?view=astra">Record</a></nav>
+<button class="link js-only" type="button" data-theme-flip="usa">USA</button><a class="view-return" data-edition="fable" href="/?view=fable">Fable view ↗</a></header>
+{posted(site)}
+<aside class="when-posted"><p>{esc(r['theme']['note'])}</p><p>{esc(r['theme']['notice'])}</p></aside>
+<main id="top">
+<section class="jacket"><div class="jacket-copy"><p class="imprint">Vol. 04 <span></span> The Astra edition</p>
+<h1>Field<br><em>Notes.</em></h1><p class="byline">By {esc(r['site']['name'])}</p>
+<p class="deck">Projects from a medical student and military officer working with frontier AI.</p>
+<a class="turn-page" href="#work">Browse the projects <span>↓</span></a></div>
+<figure class="frontispiece"><img src="/astra/heart.webp" width="1024" height="1024" alt="An engraved anatomical heart branching into copper circuit traces in front of a vermilion sun">
+<figcaption><span>Fig. 1</span> Anatomy of a machine</figcaption></figure></section>
+<section class="register" id="work"><header class="chapter-title"><h2>Project register</h2><small>{len(r['works'])} projects</small></header>
+<nav class="shelf-tabs" aria-label="Project subjects">{' '.join(tabs)}</nav>{''.join(groups)}</section>
+<section class="reading" id="writing"><header class="chapter-title"><h2>Reading desk</h2><small>Writing</small></header><div>{papers}</div></section>
+<section class="cinema" id="films"><header class="chapter-title"><h2>Screening room</h2><small>Films</small></header><div>{movies}</div></section>
+</main><footer class="folio-foot"><div><b>Field Notes.</b><p>Sean Sooch · Design by OpenAI Astra</p></div>
+<nav aria-label="Notebook tools"><a href="/lab/?view=astra">The Lab</a><a href="/record/?view=astra">Site record</a>
+<button type="button" class="link js-only" data-palette-open>Search index</button><button type="button" class="link js-only" data-voice-toggle>Plain language</button>
+<button type="button" class="link js-only" data-theme-set="auto">Device appearance</button><button type="button" class="link js-only" data-theme-set="usa">USA appearance</button></nav></footer>
+{palette(site,index_entries(site))}
+</body></html>'''
+    return home
+
+
 def render_home(site):
     r = site['record']
     description = re.sub(r'\*\*', '', fill(site, r['prose']['lede']['tech']))
@@ -1029,7 +1081,9 @@ def render_home(site):
   {films(site)}'''
     # Anchors an older page or a lesson's bar may still ask of the home page, now on the record page.
     moved = sorted(set(anchors(record_parts(site))) - set(anchors(main)))
-    return f'''{head(site, r['site']['title'], description, '/', moved=moved)}
+    notebook_ids = ['top', 'work', 'writing', 'films'] + [item['id'] for collection in ('works', 'papers', 'films') for item in r[collection]] + ['world-' + world['slug'] for world in r['worlds']]
+    first = head(site, r['site']['title'], description, '/', moved=moved).replace('<html ', f'<html data-notebook-anchors="{" ".join(notebook_ids)}" ', 1)
+    return f'''{first}
 <script type="application/ld+json" id="ld">{ld}</script>
 </head>
 <body>
@@ -1329,7 +1383,7 @@ def render_sitemap(site):
     home += [e.get('date') for w in r['works'] for e in w.get('editions', [])]
     lessons = [(a['slug'], max([a['date']] + [v.get('date') for v in a.get('revisions') or [] if isinstance(v, dict) and real_day(v.get('date'))]))
                for a in lab['apps']]
-    rows = [('/', max(d for d in home if real_day(d))), ('/record/', max(ed['issued'], ed['counted'])), ('/two-stories/', ed['issued'])] + [(p, None) for p in ELSEWHERE]
+    rows = [('/', max(d for d in home if real_day(d))), ('/record/', max(ed['issued'], ed['counted'])), ('/two-stories/', ed['issued'])] + [('/astra/', None)] + [(p, None) for p in ELSEWHERE]
     rows += [('/lab/', max((d for _, d in lessons), default=None))] + [(f'/lab/{s}/', d) for s, d in lessons]
     body = '\n'.join(f'  <url><loc>{ORIGIN}{p}</loc>' + (f'<lastmod>{d}</lastmod>' if d else '') + '</url>' for p, d in rows)
     return f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{body}\n</urlset>\n'
@@ -1340,6 +1394,7 @@ def render_sitemap(site):
 def pages(site):
     out = {
         'index.html': render_home(site),
+        'astra/index.html': render_notebook(site),
         'record/index.html': render_record(site),
         'two-stories/index.html': render_essay(site),
         'lab/index.html': render_lab(site),

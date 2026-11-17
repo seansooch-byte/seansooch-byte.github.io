@@ -118,6 +118,18 @@ class Base(unittest.TestCase):
         cls.rflat = squash(cls.record)
 
 
+class Astra(Base):
+    def test_notebook_is_a_separate_document_with_the_full_register(self):
+        page = self.out['astra/index.html']
+        d = Doc(page)
+        self.assertEqual(set(d.attr('data-entry')), {w['id'] for w in self.rec['works']})
+        for item in self.rec['papers'] + self.rec['films']:
+            self.assertIn(item['id'], d.attr('id'))
+        self.assertIn('href="/astra/"', self.home)
+        self.assertNotIn('class="mast pair"', page)
+        self.assertNotIn('class="topbar"', page)
+
+
 class Record(Base):
     def test_works_are_whole(self):
         ids = [w['id'] for w in self.rec['works']]
@@ -606,7 +618,7 @@ class Hygiene(Base):
         for path, text in self.out.items():
             if not path.endswith('.html'):
                 continue
-            known = site_css + scripts + (lab_css if path == 'lab/index.html' else '')
+            known = site_css + (ROOT / "astra" / "notebook.css").read_text() + scripts + (lab_css if path == 'lab/index.html' else '')
             for cls in sorted({c for a in Doc(text).attr('class') for c in a.split()}):
                 self.assertRegex(known, r'\.' + re.escape(cls) + r'(?![\w-])', f'{path}: nothing styles or reads the class "{cls}"')
 

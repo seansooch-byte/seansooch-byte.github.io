@@ -9,6 +9,20 @@
 //     is sent on to the same anchor on the record page before anything is drawn.
 (function () {
   var d = document.documentElement;
+  var choice = new URLSearchParams(location.search).get('view');
+  var notebook = location.pathname === '/astra/' || location.pathname === '/astra/index.html';
+  var selected = notebook ? 'astra' : choice;
+  try {
+    if (selected === 'astra' || selected === 'fable') localStorage.setItem('edition-view', selected);
+    else selected = localStorage.getItem('edition-view');
+  } catch (e) { /* Explicit links work without storage. */ }
+  if (selected === 'astra') d.dataset.edition = 'astra';
+  // Historical home fragments still land on the document that owns them.
+  var shared = (d.dataset.notebookAnchors || '').split(' ');
+  if ((location.pathname === '/' || location.pathname === '/index.html') && selected === 'astra' && (!location.hash || shared.includes(location.hash.slice(1)))) {
+    location.replace('/astra/' + location.hash);
+    return;
+  }
   var moved = d.getAttribute('data-moved'), at = location.hash.slice(1);
   if (moved && at && (' ' + moved + ' ').indexOf(' ' + at + ' ') > -1) { location.replace('/record/#' + at); return; }
   d.classList.add('js');
