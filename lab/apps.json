@@ -710,5 +710,20 @@
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
     }
+  },
+  {
+    "slug": "resting-membrane-potential-potassium",
+    "title": "Resting Membrane Potential and Potassium",
+    "date": "2026-11-17",
+    "description": "Why a resting cell is negative inside, and how the potassium outside the cell moves that voltage toward or away from the point where it fires.",
+    "category": "medicine",
+    "builder": {
+      "tool": "Claude Code",
+      "model": "claude-opus-5-5"
+    },
+    "reviewer": {
+      "tool": "OpenAI Codex",
+      "model": "gpt-6.1-sol"
+    }
   }
 ]

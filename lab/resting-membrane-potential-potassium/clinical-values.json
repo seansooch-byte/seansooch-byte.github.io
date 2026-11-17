@@ -1,0 +1,112 @@
+{
+  "disclaimer": "Typical adult reference ranges; labs vary; not for clinical decisions.",
+  "about": "Every reference number and every arrow rests on a cited location; where a short verbatim excerpt is given, it is quoted exactly (en dashes in quotations are written as JSON escapes). Where no excerpt is given, the location is described and the claim is paraphrased. A state claims only what its cited location supports. The teaching model's starting point and settings are in modelBaseline and modelParams: illustrative choices, not reference values.",
+  "modelBaseline": {
+    "about": "Where the illustrative teaching model starts. Plasma potassium sits inside its cited range (the same starting value as Lesson 26), and the resting potential the model computes from it sits inside the cited ventricular range. The threshold is a round teaching number shared with Lesson 26, not a cited value.",
+    "kOut": 4.2, "threshold": -70
+  },
+  "modelParams": {
+    "about": "The teaching model's own settings: illustrative, not reference values and not shown as ranges. The concentrations inside and outside, the 100 to 1 leak ratio, the 61 mV slope and the pump's few millivolts follow the worked example of how the resting potential arises in Guyton and Hall, 13th edition, Chapter 5 ('Origin of the Normal Resting Membrane Potential'). The sodium-channel curve is a teaching shape, not a measured one.",
+    "kIn": { "value": 140, "unit": "mM", "meaning": "potassium inside the cell" },
+    "naIn": { "value": 14, "unit": "mM", "meaning": "sodium inside the cell" },
+    "naOut": { "value": 142, "unit": "mM", "meaning": "sodium outside the cell" },
+    "leakRatio": { "value": 0.01, "unit": "none", "meaning": "how easily sodium crosses the resting membrane compared with potassium (1 in 100)" },
+    "slope": { "value": 61, "unit": "mV per tenfold ratio", "meaning": "body-temperature slope relating a concentration ratio to a balance voltage" },
+    "pumpShift": { "value": -4, "unit": "mV", "meaning": "the pump's own small contribution, from moving three sodium out for every two potassium in" },
+    "naHalf": { "value": -76, "unit": "mV", "meaning": "resting voltage at which half the sodium channels are inactivated (teaching shape)" },
+    "naSlope": { "value": 4, "unit": "mV", "meaning": "how sharply sodium-channel readiness falls as the resting voltage rises (teaching shape)" },
+    "spikePeak": { "value": 30, "unit": "mV", "meaning": "the drawn action potential's top with every sodium channel ready" },
+    "undershoot": { "value": 6, "unit": "mV", "meaning": "how far the drawn action potential dips below rest before settling back (teaching shape)" }
+  },
+  "sources": {
+    "openstax-ap-26.3": "OpenStax Anatomy and Physiology 2e, section 26.3 Electrolyte Balance. Betts JG, Young KA, Wise JA, Johnson E, Poe B, Kruse DH, Korol O, Johnson JE, Womble M, DeSaix P. Anatomy and Physiology 2e. Houston, Texas: OpenStax; 2022.",
+    "guyton13": "Hall JE. Guyton and Hall Textbook of Medical Physiology. 13th edition. Philadelphia: Elsevier; 2016."
+  },
+  "values": [
+    {
+      "id": "kOut", "label": "Plasma potassium", "unit": "mM (mmol/L)",
+      "low": 3.5, "high": 5.0, "typical": null, "display": "3.50 to 5.00", "decimals": 1,
+      "source": "openstax-ap-26.3",
+      "where": "Section 26.3 Electrolyte Balance, Table 26.1 Electrolyte and Ion Reference Values, plasma column",
+      "excerpt": "Potassium K + 3.50\u20135.00 (mM)",
+      "modelKey": "kOut",
+      "note": "The potassium outside cells: the one the lesson changes."
+    },
+    {
+      "id": "vRestV", "label": "Ventricular muscle fiber, resting membrane potential", "unit": "mV",
+      "low": -90, "high": -85, "typical": null, "display": "-85 to -90", "decimals": 0,
+      "source": "guyton13",
+      "where": "Chapter 10, Rhythmical Excitation of the Heart: 'Mechanism of Sinus Nodal Rhythmicity', where the sinus nodal fiber is compared with the ventricular muscle fiber (-85 to -90 millivolts).",
+      "excerpt": null,
+      "modelKey": "vRest",
+      "note": "The same reference Lessons 7 and 26 use. The model's resting potential moves with plasma potassium."
+    },
+    {
+      "id": "vRestN", "label": "Large nerve fiber, resting membrane potential", "unit": "mV",
+      "low": null, "high": null, "typical": -90, "display": "about -90", "decimals": 0,
+      "source": "guyton13",
+      "where": "Chapter 5, Membrane Potentials and Action Potentials: 'Resting Membrane Potential of Nerves' (about -90 millivolts in large nerve fibers not transmitting signals).",
+      "excerpt": null,
+      "modelKey": "vRest",
+      "note": "The source gives one typical value, not a range, so the bar shows a tick."
+    },
+    {
+      "id": "eK", "label": "Potassium equilibrium (Nernst) potential", "unit": "mV",
+      "low": null, "high": null, "typical": -94, "display": "about -94", "decimals": 0,
+      "source": "guyton13",
+      "where": "Chapter 5: 'Origin of the Normal Resting Membrane Potential', contribution of the potassium diffusion potential (Nernst potential for potassium about -94 millivolts, with potassium about 35 times more concentrated inside than outside).",
+      "excerpt": null,
+      "modelKey": "eK",
+      "note": "The textbook's example puts a little less potassium outside than the model's starting value, so the model's balance point sits about a millivolt above it."
+    }
+  ],
+  "states": [
+    {
+      "id": "baseline", "label": "Normal plasma potassium", "kind": "physiologic",
+      "summary": "Plasma potassium inside its reference range; the resting potential the model computes from it sits inside the cited ventricular range.",
+      "shifts": { "kOut": "none", "vRestV": "none", "vRestN": "none", "eK": "none" },
+      "source": "openstax-ap-26.3", "where": "Section 26.3 Electrolyte Balance, Table 26.1 (plasma potassium); Guyton and Hall 13th edition, Chapters 5 and 10 (resting potentials)",
+      "evidence": [
+        { "source": "openstax-ap-26.3", "where": "Section 26.3, Table 26.1, plasma column", "text": "The reference range for plasma potassium; the model starts inside it." },
+        { "source": "guyton13", "where": "Chapter 10, 'Mechanism of Sinus Nodal Rhythmicity' (ventricular muscle fiber, -85 to -90 millivolts)", "text": "The resting potential range of a ventricular muscle fiber; the model's resting potential starts inside it." }
+      ],
+      "model": { "kOut": 4.2 }
+    },
+    {
+      "id": "hypokalemia", "label": "Hypokalemia (low plasma potassium)", "kind": "disease",
+      "summary": "Plasma potassium below its reference range: potassium is even more crowded inside by comparison, so neurons are hyperpolarized (more negative at rest) and respond less to stimuli.",
+      "shifts": { "kOut": "down", "vRestN": "down" },
+      "source": "openstax-ap-26.3", "where": "Section 26.3 Electrolyte Balance, Table 26.1 (plasma potassium) and Potassium",
+      "evidence": [
+        { "source": "openstax-ap-26.3", "where": "Section 26.3, Table 26.1 and Potassium", "text": "Hypokalemia is a plasma potassium below the cited range: the down arrow on potassium is that definition (paraphrased)." },
+        { "source": "openstax-ap-26.3", "where": "Section 26.3 Electrolyte Balance, Potassium", "text": "Less potassium in the fluid outside cells hyperpolarizes the membranes of neurons, so they respond less to stimuli (paraphrased). Hyperpolarized means more negative at rest: the down arrow on the nerve fiber's resting potential." }
+      ],
+      "unstatedNote": "The cited passage describes neurons only, so no arrow is given for the ventricular muscle fiber's resting potential, though the model moves it the same way. No direction is stated for the potassium balance point either. Real cells in severe hypokalemia can also lose some potassium permeability, which the model leaves out.",
+      "model": { "kOut": 2.8 }
+    },
+    {
+      "id": "hyperkalemia", "label": "Hyperkalemia (high plasma potassium)", "kind": "disease",
+      "summary": "Plasma potassium above its reference range: potassium is less crowded inside by comparison, so the resting potential is less negative.",
+      "shifts": { "kOut": "up", "vRestV": "up" },
+      "source": "guyton13", "where": "Chapter 9, Cardiac Muscle: 'Effect of Potassium and Calcium Ions on Heart Function'; OpenStax Section 26.3, Table 26.1",
+      "evidence": [
+        { "source": "openstax-ap-26.3", "where": "Section 26.3, Table 26.1 and Potassium", "text": "Hyperkalemia is a plasma potassium above the cited range: the up arrow on potassium is that definition (paraphrased)." },
+        { "source": "guyton13", "where": "Chapter 9, 'Effect of Potassium and Calcium Ions on Heart Function'", "text": "Excess potassium in the extracellular fluid lowers the resting membrane potential of cardiac muscle fibers, and the action potential weakens with it (paraphrased). 'Lowers' means smaller in size: the voltage moves up, toward zero, which is the up arrow here." }
+      ],
+      "unstatedNote": "The arrow is given for the ventricular resting potential, the fiber the cited passage describes. No direction is stated for the nerve value or the potassium balance point, though the model moves both.",
+      "model": { "kOut": 6 }
+    },
+    {
+      "id": "severe", "label": "Severe hyperkalemia (membrane stays depolarized)", "kind": "disease",
+      "summary": "A large rise in plasma potassium holds the resting potential well above normal, so many sodium channels stay inactivated and the cell becomes harder to fire.",
+      "shifts": { "kOut": "up", "vRestV": "up" },
+      "source": "guyton13", "where": "Chapter 9, 'Effect of Potassium and Calcium Ions on Heart Function'; Chapter 5, 'Inactivation of the Sodium Channel'",
+      "evidence": [
+        { "source": "guyton13", "where": "Chapter 9, 'Effect of Potassium and Calcium Ions on Heart Function'", "text": "Excess extracellular potassium lowers the resting membrane potential of cardiac muscle fibers and weakens the action potential; large excesses can make the heart weak and its rhythm abnormal (paraphrased)." },
+        { "source": "guyton13", "where": "Chapter 5, 'Activation and Inactivation of the Voltage-Gated Sodium Channel'", "text": "Once the inactivation gate has closed, the channel does not reopen until the membrane potential returns to or near its original resting level (paraphrased)." }
+      ],
+      "unstatedNote": "How many sodium channels stay inactivated at a given resting voltage is the model's teaching curve, not a cited value.",
+      "model": { "kOut": 7.8 }
+    }
+  ]
+}
