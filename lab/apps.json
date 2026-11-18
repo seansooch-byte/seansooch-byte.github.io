@@ -725,5 +725,20 @@
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-sol"
     }
+  },
+  {
+    "slug": "nerve-action-potential-local-anesthetics",
+    "title": "Nerve Action Potential and Local Anesthetics",
+    "date": "2026-11-18",
+    "description": "The sodium rush that carries an impulse along a nerve, and how a local anesthetic binds the sodium channel and stops the impulse.",
+    "category": "medicine",
+    "builder": {
+      "tool": "Claude Code",
+      "model": "claude-opus-5-5"
+    },
+    "reviewer": {
+      "tool": "OpenAI Codex",
+      "model": "gpt-6.1-terra"
+    }
   }
 ]

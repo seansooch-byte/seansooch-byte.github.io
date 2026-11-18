@@ -1,0 +1,81 @@
+{
+  "disclaimer": "Typical adult reference ranges; labs vary; not for clinical decisions.",
+  "about": "Every number and every arrow here rests on a verbatim excerpt from OpenStax Anatomy and Physiology 2e, section 12.4, quoted with its subsection. The source gives single typical values, not ranges, so each bar shows a tick. A direction the excerpts do not state is left out of a state's shifts and shown as not stated. Local anesthetics are taught in the lesson and in Explore freely only: this section does not describe them, so no drug state is listed here.",
+  "modelBaseline": {
+    "about": "Where the illustrative teaching model starts: on the cited typical values for the resting potential, the threshold and the peak. The undershoot below rest (in mV) is a teaching shape for the drawings, not a cited value.",
+    "rest": -70, "threshold": -55, "peak": 30, "undershoot": 10
+  },
+  "sources": {
+    "openstax": "Betts JG, Young KA, Wise JA, Johnson E, Poe B, Kruse DH, Korol O, Johnson JE, Womble M, DeSaix P. Anatomy and Physiology 2e. Houston, Texas: OpenStax, Rice University; 2022. Section 12.4 The Action Potential, https://openstax.org/books/anatomy-and-physiology-2e/pages/12-4-the-action-potential. Access for free at https://openstax.org/books/anatomy-and-physiology-2e/pages/1-introduction. License: Creative Commons Attribution-NonCommercial-ShareAlike 4.0 (CC BY-NC-SA 4.0), https://creativecommons.org/licenses/by-nc-sa/4.0/. Excerpts are quoted unchanged."
+  },
+  "values": [
+    {
+      "id": "rest", "label": "Resting membrane potential", "unit": "mV",
+      "low": null, "high": null, "typical": -70, "display": "-70", "decimals": 0,
+      "source": "openstax", "where": "Section 12.4 The Action Potential, subsection The Membrane Potential",
+      "excerpt": "With the ions distributed across the membrane at these concentrations, the difference in charge is measured at -70 mV, the value described as the resting membrane potential. The exact value measured for the resting membrane potential varies between cells, but -70 mV is most commonly used as this value.",
+      "modelKey": "rest",
+      "note": "Inside compared with outside. The source gives one commonly used value and says it varies between cells, so the bar shows a tick, not a range."
+    },
+    {
+      "id": "threshold", "label": "Threshold", "unit": "mV",
+      "low": null, "high": null, "typical": -55, "display": "-55", "decimals": 0,
+      "source": "openstax", "where": "Section 12.4 The Action Potential, subsection The Action Potential",
+      "excerpt": "The channels that start depolarizing the membrane because of a stimulus help the cell to depolarize from -70 mV to -55 mV. Once the membrane reaches that voltage, the voltage-gated Na+ channels open. This is what is known as the threshold.",
+      "modelKey": "threshold",
+      "note": "The voltage a stimulus must reach for an action potential to fire."
+    },
+    {
+      "id": "peak", "label": "Action potential peak", "unit": "mV",
+      "low": null, "high": null, "typical": 30, "display": "+30", "decimals": 0,
+      "source": "openstax", "where": "Section 12.4 The Action Potential, subsection The Action Potential",
+      "excerpt": "All action potentials peak at the same voltage (+30 mV), so one action potential is not bigger than another.",
+      "modelKey": "peak",
+      "note": "Read where the impulse arrives, at the far end of the model's nerve. When no action potential fires there, there is no peak to show, and the row says so rather than printing a lower voltage."
+    }
+  ],
+  "states": [
+    {
+      "id": "baseline", "label": "A stimulus that reaches threshold", "kind": "physiologic",
+      "summary": "A stimulus lifts the membrane to threshold, so an action potential fires and runs its full course to its peak.",
+      "shifts": { "peak": "none" },
+      "source": "openstax", "where": "Section 12.4 The Action Potential, subsection The Action Potential",
+      "evidence": [
+        { "source": "openstax", "where": "Section 12.4, subsection The Action Potential",
+          "excerpt": "If depolarization reaches -55 mV, then the action potential continues and runs all the way to +30 mV, at which K+ causes repolarization, including the hyperpolarizing overshoot." },
+        { "source": "openstax", "where": "Section 12.4, subsection The Action Potential",
+          "excerpt": "Also, those changes are the same for every action potential, which means that once the threshold is reached, the exact same thing happens." }
+      ],
+      "unstatedNote": "The excerpts state that every action potential runs the same course to the same peak, so the peak keeps its value. They give no direction for the resting potential or the threshold, so neither row shows an arrow.",
+      "model": { "stim": 60 }
+    },
+    {
+      "id": "subthreshold", "label": "A stimulus too weak to reach threshold", "kind": "physiologic",
+      "summary": "The stimulus does not lift the membrane to threshold, so no action potential fires.",
+      "shifts": {},
+      "source": "openstax", "where": "Section 12.4 The Action Potential, subsection The Action Potential",
+      "evidence": [
+        { "source": "openstax", "where": "Section 12.4, subsection The Action Potential",
+          "excerpt": "Any depolarization that does not change the membrane potential to -55 mV or higher will not reach threshold and thus will not result in an action potential." },
+        { "source": "openstax", "where": "Section 12.4, subsection The Action Potential",
+          "excerpt": "If the threshold is not reached, then no action potential occurs." }
+      ],
+      "unstatedNote": "No action potential fires, so there is no peak, and no arrow compares one: an action potential is all or none, so a peak is never set against a voltage below threshold. The excerpts give no direction for the resting potential or the threshold.",
+      "model": { "stim": 30 }
+    },
+    {
+      "id": "strong", "label": "A stronger stimulus, well past threshold", "kind": "physiologic",
+      "summary": "A stimulus far stronger than needed still fires an action potential with the same peak.",
+      "shifts": { "peak": "none" },
+      "source": "openstax", "where": "Section 12.4 The Action Potential, subsection The Action Potential",
+      "evidence": [
+        { "source": "openstax", "where": "Section 12.4, subsection The Action Potential",
+          "excerpt": "A stronger stimulus, which might depolarize the membrane well past threshold, will not make a “bigger” action potential." },
+        { "source": "openstax", "where": "Section 12.4, subsection The Action Potential",
+          "excerpt": "All action potentials peak at the same voltage (+30 mV), so one action potential is not bigger than another." }
+      ],
+      "unstatedNote": "The same subsection adds that stronger stimuli fire action potentials more often; the teaching model draws one impulse at a time and leaves that out. No direction is stated for the resting potential or the threshold.",
+      "model": { "stim": 100 }
+    }
+  ]
+}

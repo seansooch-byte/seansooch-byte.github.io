@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nerve Action Potential and Local Anesthetics · The Lab · Sean Sooch</title>
+<meta name="description" content="A guided visual lesson: why a resting nerve fiber is negative inside, how voltage-gated sodium channels fire an all-or-none action potential that travels along the axon, and how a local anesthetic gets inside, plugs the sodium channel and stops the impulse, with use-dependent block, acidic tissue and ester and amide families.">
+<link rel="canonical" href="https://seansooch.dev/lab/nerve-action-potential-local-anesthetics/">
+<meta property="og:title" content="Nerve Action Potential and Local Anesthetics">
+<meta property="og:description" content="Watch the sodium rush that carries an impulse along a nerve, then see a local anesthetic plug the sodium channel from inside and stop it, one picture at a time.">
+<meta property="og:url" content="https://seansooch.dev/lab/nerve-action-potential-local-anesthetics/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/lab/kit/kit.css">
+<link rel="stylesheet" href="style.css">
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the lesson</a>
+<header class="site-top">
+  <div class="site-top-in">
+    <a class="site-brand" href="/" aria-label="Sean Sooch, home">Sean Sooch</a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="site-nav-home" href="/#work">Work</a>
+      <a href="/#writing">Writing</a>
+      <a href="/#films">Films</a>
+      <a href="/#editions">Editions</a>
+      <a class="site-nav-lab" href="/lab/" aria-current="true">The Lab</a>
+    </nav>
+  </div>
+</header>
+<main id="main" data-slug="nerve-action-potential-local-anesthetics">
+  <div class="intro">
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / <a href="/lab/#cells-membranes-signals">Unit 9: Cells, membranes and signals</a> / Lesson 28</p>
+    <h1>Nerve action potential<br><span>and local anesthetics.</span></h1>
+    <p class="lede">A nerve impulse is a rush of sodium through voltage-gated channels, passed from one patch of membrane to the next. Watch it fire and travel, then see a local anesthetic slip inside the nerve, plug those channels and stop the impulse before it reaches the brain.</p>
+    <p class="note">Educational, not for clinical use</p>
+    <div class="lx-plan" data-lx-plan></div>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Lesson views">
+    <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-quiz" aria-controls="quiz" aria-selected="false" tabindex="-1">Quiz</button>
+    <button type="button" role="tab" id="tab-summary" aria-controls="summary" aria-selected="false" tabindex="-1">Summary</button>
+    <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
+    <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
+  </div>
+
+  <section id="lesson" role="tabpanel" aria-labelledby="tab-lesson">
+    <article data-step="1" data-step-title="A nerve cell sends signals down its axon" data-kind="neuron">
+      <p class="eyebrow">The resting nerve</p>
+      <h2 tabindex="-1">A nerve cell sends signals down its axon</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A nerve cell, or <dfn data-part="neuron">neuron</dfn>, carries messages. Its <dfn data-part="soma">cell body</dfn> holds the nucleus. From it runs the <dfn data-part="axon">axon</dfn>, a long, thin cable; one can stretch from a fingertip toward the spinal cord. A message travels along the axon as an electrical <dfn data-part="impulse">impulse</dfn>, and this lesson follows one from start to finish.</p>
+    </article>
+    <article data-step="2" data-step-title="At rest, the inside is negative" data-kind="rest" hidden>
+      <p class="eyebrow">The resting nerve</p>
+      <h2 tabindex="-1">At rest, the inside is negative</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Up close, the axon is wrapped in a thin, oily membrane. A slight excess of negative charge lines its inside face, and of positive charge its outside face. That gives a voltage across it, the <dfn data-part="meter">membrane potential</dfn>, measured in millivolts (mV), inside compared with outside. At rest it sits near <span data-v="rest"></span> mV: the <dfn data-part="charges">resting potential</dfn>.</p>
+    </article>
+    <article data-step="3" data-step-title="Sodium waits outside" data-kind="sodium" hidden>
+      <p class="eyebrow">The resting nerve</p>
+      <h2 tabindex="-1">Sodium waits outside</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn data-part="sodium">Sodium</dfn> is an ion, a particle with a positive charge, and it is far more crowded outside the axon than inside. Two things urge it in: crowding, the <dfn data-part="push">concentration gradient</dfn>, pushes it from crowded to sparse, and the negative inside pulls on its positive charge, the <dfn data-part="pull">electrical pull</dfn>. But the membrane keeps it out until a door for sodium opens.</p>
+    </article>
+    <article data-step="4" data-step-title="The sodium channel has two gates" data-kind="gates" hidden>
+      <p class="eyebrow">The resting nerve</p>
+      <h2 tabindex="-1">The sodium channel has two gates</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">That door is the <dfn data-part="channel">voltage-gated sodium channel</dfn>, a protein that opens when the voltage changes. It has two gates. At rest its <dfn data-part="activation-gate">activation gate</dfn> is shut and the channel is ready. When the inside turns less negative, that gate opens and sodium pours in. A moment later the <dfn data-part="inactivation-gate">inactivation gate</dfn> swings shut under it: the channel is inactivated until the voltage returns toward rest.</p>
+    </article>
+    <article data-step="5" data-step-title="Threshold: the point of no return" data-kind="threshold" hidden>
+      <p class="eyebrow">The action potential</p>
+      <h2 tabindex="-1">Threshold: the point of no return</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A stimulus, such as a touch on the skin, lets a little sodium in and makes the inside less negative: <dfn data-part="depol">depolarization</dfn>. A small nudge fades away. But at <span data-v="threshold"></span> mV, the <dfn data-part="threshold">threshold</dfn>, enough voltage-gated sodium channels open that the inrush feeds itself: each channel that opens lets in sodium that opens more, and the voltage shoots up.</p>
+    </article>
+    <article data-step="6" data-step-title="The sodium rush" data-kind="upstroke" hidden>
+      <p class="eyebrow">The action potential</p>
+      <h2 tabindex="-1">The sodium rush</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Past threshold, sodium channels open together and sodium rushes in. The inside swings positive, up to about <span data-v="peak"></span> mV. This brief spike in voltage is the <dfn data-part="trace">action potential</dfn>, the nerve impulse itself. Its quick rise, the <dfn data-part="rise">upstroke</dfn>, is carried by sodium coming in through the open channels.</p>
+    </article>
+    <article data-step="7" data-step-title="Back down: inactivation and potassium" data-kind="repolarize" hidden>
+      <p class="eyebrow">The action potential</p>
+      <h2 tabindex="-1">Back down: inactivation and potassium</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">At the peak, the inactivation gates shut, so no more sodium enters. Voltage-gated <dfn data-part="kchannel">potassium channels</dfn> open, and potassium, more crowded inside, flows out, taking positive charge with it. The voltage falls back toward rest, <dfn data-part="fall">repolarization</dfn>, and briefly dips below it, <dfn data-part="under">hyperpolarization</dfn>, because the potassium channels are slow to close.</p>
+    </article>
+    <article data-step="8" data-step-title="All or none" data-kind="allornone" hidden>
+      <p class="eyebrow">The action potential</p>
+      <h2 tabindex="-1">All or none</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">An action potential fires fully or not at all: it is <dfn data-part="peaks">all or none</dfn>. A stimulus too weak to reach threshold fires nothing. Any stimulus that reaches threshold fires one that peaks at the same voltage, however strong the stimulus. A stronger stimulus never makes a bigger action potential; it can only fire them more often.</p>
+    </article>
+    <article data-step="9" data-step-title="Refractory period: absolute, then relative" data-kind="refractory" hidden>
+      <p class="eyebrow">The action potential</p>
+      <h2 tabindex="-1">Refractory period: absolute, then relative</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Just after firing, the fiber cannot fire as usual: the <dfn data-part="refractory">refractory period</dfn>. First comes the <dfn data-part="absolute">absolute refractory period</dfn>: the inactivation gates are shut, so no stimulus, however strong, starts another action potential. Then comes the <dfn data-part="relative">relative refractory period</dfn>: the gates have reset, but potassium is still flowing out, so only a stronger stimulus than usual can start one.</p>
+    </article>
+    <article data-step="10" data-step-title="The impulse travels along the axon" data-kind="travel" hidden>
+      <p class="eyebrow">The action potential</p>
+      <h2 tabindex="-1">The impulse travels along the axon</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Sodium entering one patch of membrane spreads along the inside and lifts the next patch to threshold, so it fires too, and so on down the axon: <dfn data-part="firing">propagation</dfn>. The patch that just fired is <dfn data-part="behind">refractory</dfn>, so the impulse cannot turn back. Every patch fires the same full action potential, so the impulse arrives at the far end as strong as it started.</p>
+    </article>
+    <article data-step="11" data-step-title="Where a local anesthetic works" data-kind="numb" hidden>
+      <p class="eyebrow">How the drug gets in</p>
+      <h2 tabindex="-1">Where a local anesthetic works</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A <dfn data-part="drug">local anesthetic</dfn> is a drug injected near a nerve, as a dentist does, to numb one area while the person stays awake. Pain starts as impulses in nerve fibers from the skin, which travel to the spinal cord and brain. Stop them on the way, and the brain never hears about the pain. Here the drug has just been injected and impulses still pass.</p>
+    </article>
+    <article data-step="12" data-step-title="Uncharged to get in, charged to block" data-kind="forms" hidden>
+      <p class="eyebrow">How the drug gets in</p>
+      <h2 tabindex="-1">Uncharged to get in, charged to block</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The drug trades a <dfn data-part="hydrogen">hydrogen ion</dfn> (the particle that makes a fluid acidic) back and forth, so it comes in two forms. Its <dfn data-part="uncharged">uncharged form</dfn> dissolves through the oily membrane; its <dfn data-part="charged">charged form</dfn>, holding a hydrogen ion, cannot cross. Inside, uncharged drug picks one up, and the charged form enters the sodium channel from the inside and plugs it at its <dfn data-part="site">binding site</dfn>.</p>
+    </article>
+    <article data-step="13" data-step-title="Voltage-gated sodium channel block" data-kind="block" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Voltage-gated sodium channel block</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Plugged channels cannot let sodium in. Here about seven in ten channels along the drug's stretch are blocked. Too little sodium enters there for the spreading charge to lift the next patch to threshold, so the impulse stops. Beyond it no action potential fires at all: the far end stays at rest and the brain gets no pain signal. In this model, impulses fail once more than half the channels are blocked.</p>
+    </article>
+    <article data-step="14" data-step-title="Use-dependent block of open and inactivated channels" data-kind="usedep" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Use-dependent block of open and inactivated channels</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The drug reaches its site most easily while the channel is open or inactivated, not while it is ready and shut. So block builds with use. A slowly firing fiber stays lightly blocked and its impulses pass. A fast-firing one, as pain fibers often are, gains block with every impulse: here the first two get through, then the block passes this model's cutoff of half the channels and the rest fail.</p>
+    </article>
+    <article data-step="15" data-step-title="Acidic tissue" data-kind="acidic" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Acidic tissue</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Infected or inflamed tissue is acidic: it holds extra hydrogen ions. More of the drug picks one up and stays charged outside the nerve, where the charged form cannot cross. Less drug gets inside, so far fewer channels are blocked, here about two in ten instead of seven, and the impulse gets through. That is why a local anesthetic often numbs an infected area poorly.</p>
+    </article>
+    <article data-step="16" data-step-title="Amide and ester local anesthetics" data-kind="families" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Amide and ester local anesthetics</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Local anesthetics come in two chemical families, named for the link in the middle of the molecule. <dfn data-part="ester">Esters</dfn> and <dfn data-part="amide">amides</dfn> plug the sodium channel the same way; they differ in how the body clears them once they wash into the blood. Typically, plasma enzymes called esterases break down esters, while the liver mainly breaks down amides. Articaine is the exception: an amide with an ester group, largely broken down in plasma.</p>
+    </article>
+
+    <div class="step-nav">
+      <button type="button" data-step-back disabled>← Back</button>
+      <span data-step-progress aria-live="polite">Step 1 of 16</span>
+      <button type="button" data-step-next>Next →</button>
+    </div>
+    <p class="hint">Start with Next, or use the arrow keys. Under a moving picture: pause, drag to any moment, or slow it down. Underlined terms light up their part of the picture. Voltages come from the cited typical values; channel counts, timings and the drug's behavior are an illustrative teaching model.</p>
+  </section>
+
+  <section id="quiz" role="tabpanel" aria-labelledby="tab-quiz" hidden></section>
+
+  <section id="summary" role="tabpanel" aria-labelledby="tab-summary" hidden></section>
+
+  <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
+    <h2>Reference values, beside the model.</h2>
+    <p id="disclaimer" class="disclaimer">Loading reference values…</p>
+    <div class="cv-top">
+      <div id="clinical-visual" class="visual"></div>
+      <div class="cv-controls">
+        <div>
+          <label for="clinical-state">Show a state</label>
+          <select id="clinical-state"><option value="baseline">A stimulus that reaches threshold</option></select>
+        </div>
+        <div>
+          <label for="clinical-stim">Stimulus strength (model) <output id="clinical-stim-label" for="clinical-stim"></output></label>
+          <input id="clinical-stim" type="range" min="0" max="100" step="5" value="60">
+        </div>
+        <div>
+          <button type="button" id="clinical-reset">Back to baseline</button>
+        </div>
+      </div>
+    </div>
+    <p id="state-summary" class="state-summary" aria-live="polite"></p>
+    <details class="lx-fine">
+      <summary>The cited evidence for this state</summary>
+      <div id="state-evidence" class="model-note"></div>
+    </details>
+    <details class="lx-fine">
+      <summary>How to read these bars</summary>
+      <p>The source gives one typical value for each, not a range, so a black tick marks the cited value. The blue line is the lesson's teaching model, read where the impulse arrives at the far end of its nerve. It starts on each cited value. The resting potential and threshold stay put; the peak shows only when an action potential fires there. When none fires (a stimulus below threshold here, or a local anesthetic in Explore freely), the peak row says so instead of printing a voltage, because an action potential is all or none. Arrows appear only where a quoted excerpt states the direction. Local anesthetics are taught in the lesson and in Explore freely; the cited section does not describe them, so they are not listed here.</p>
+    </details>
+    <div id="value-rows"></div>
+    <h3>Sources</h3>
+    <ul id="sources"></ul>
+    <p id="load-error" class="load-error" hidden></p>
+  </section>
+
+  <section id="explore" role="tabpanel" aria-labelledby="tab-explore" hidden>
+    <h2>Inject a little or a lot. See if the impulse gets through.</h2>
+    <p class="model-intro">An illustrative teaching model of one pain fiber with a local anesthetic around a stretch of it. Set the stimulus, the amount of drug, how fast the fiber fires and how acidic the tissue is, and see how many sodium channels are blocked, how far the impulse gets and what arrives at the far end, drawn over a dashed outline of normal.</p>
+    <div class="explore-grid">
+      <div id="explore-visual" class="visual"></div>
+      <div class="controls">
+        <fieldset>
+          <legend>The impulse</legend>
+          <label for="stim">Stimulus strength <output id="stim-out" for="stim"></output></label>
+          <input id="stim" type="range" min="0" max="100" step="5" value="60">
+          <label for="rate">How fast the fiber fires <output id="rate-out" for="rate"></output></label>
+          <input id="rate" type="range" min="0" max="100" step="5" value="20">
+        </fieldset>
+        <fieldset>
+          <legend>The local anesthetic</legend>
+          <label for="amount">Amount of drug (model) <output id="amount-out" for="amount"></output></label>
+          <input id="amount" type="range" min="0" max="100" step="5" value="0">
+          <label for="acid">Tissue acidity <output id="acid-out" for="acid"></output></label>
+          <input id="acid" type="range" min="0" max="100" step="10" value="0">
+          <label for="family">Family</label>
+          <select id="family">
+            <option value="amide">Amide</option>
+            <option value="ester">Ester</option>
+            <option value="articaine">Articaine (an amide with an ester group)</option>
+          </select>
+        </fieldset>
+        <button type="button" id="reset">Reset to normal</button>
+      </div>
+    </div>
+    <p id="model-results" class="model-results" aria-live="polite"></p>
+    <details>
+      <summary>How this teaching model works</summary>
+      <p>The resting potential, the threshold and the peak are the cited typical values from the Clinical values data file. The stimulus lifts the first patch of membrane part of the way to threshold, or to it and beyond; at or above threshold an action potential fires, and it always peaks at the same voltage.</p>
+      <p>Each patch that fires lets sodium in, and that charge spreading inside lifts the next patch by a fixed amount when every sodium channel is free. Along the drug's stretch, that lift shrinks with the share of channels still free, so once more than half are blocked the next patch never reaches threshold and the impulse stops there.</p>
+      <p>Outside the nerve, a share of the drug is uncharged; only that share crosses the membrane. Acid outside keeps more of it charged, so less gets in. Inside, the drug plugs channels, and faster firing lets it bind more (use-dependent block). The family changes only where the body breaks the drug down, not how it blocks.</p>
+      <p>Every number but the three voltages is an illustrative teaching choice, not a measured value or an amount anyone could be given. The model leaves out myelin, how a partly blocked patch fires a smaller and slower rise, how long the drug lasts, and the drug's effects elsewhere in the body.</p>
+    </details>
+  </section>
+
+  <footer>Lesson 28 of The Lab · Added 2026-11-18 · <a href="/lab/">All lessons</a></footer>
+</main>
+</body>
+</html>
