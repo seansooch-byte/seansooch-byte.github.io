@@ -1,0 +1,4 @@
+/* Lesson 28: only what this lesson's own tabs need. Everything else is /lab/kit/kit.css. */
+#state-evidence p{margin:6px 0}
+#state-evidence span{color:var(--muted)}
+#sources li{margin:4px 0}

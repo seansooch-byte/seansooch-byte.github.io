@@ -1,0 +1,208 @@
+{
+  "minutes": 28,
+  "prerequisites": ["resting-membrane-potential-potassium"],
+  "objectives": [
+    "Explain why a resting nerve fiber is negative inside and why sodium rushes in when its voltage-gated sodium channels open.",
+    "Trace an action potential from threshold through the sodium rush, repolarization and the absolute and relative refractory periods, and explain why it is all or none.",
+    "Explain how a local anesthetic gets inside the nerve, plugs the sodium channel and stops the impulse where the drug is.",
+    "Predict how fast firing, acidic tissue and the drug's family (ester or amide) change a local anesthetic's block or how the body breaks it down."
+  ],
+  "checks": {
+    "block": {
+      "prompt": "A local anesthetic plugs most of the sodium channels along one stretch of a nerve, from the inside. An impulse arrives from the skin side. What happens to it?",
+      "choices": [
+        "It stops in the blocked stretch: too little sodium enters there to bring the next patch to threshold, so no action potential fires beyond it",
+        "It gets through, but every action potential beyond the drug is smaller",
+        "It gets through unchanged, because the drug acts only on potassium channels",
+        "The nerve fires nonstop, because plugged channels cannot inactivate"
+      ],
+      "answer": 0,
+      "why": "Each patch of membrane fires the next by letting sodium in and spreading that charge forward. With most channels plugged, the spreading charge no longer reaches threshold, so the next patch never fires. Action potentials are all or none: beyond the block none fires at all, rather than a smaller one."
+    },
+    "usedep": {
+      "prompt": "A local anesthetic reaches its binding site most easily while sodium channels are open or inactivated, not while they are ready and shut. One pain fiber fires fast; another fires slowly. Which is blocked more?",
+      "choices": [
+        "The fast-firing fiber: each impulse opens its channels, so the block builds and later impulses fail",
+        "The slow-firing fiber, because its shut channels hold on to the drug",
+        "Both the same, because the same amount of drug surrounds them",
+        "Neither, because the drug binds only to ready channels"
+      ],
+      "answer": 0,
+      "why": "Every impulse opens and then inactivates the channels, which is when the drug gets to its site most easily. A fiber firing fast gives the drug that chance again and again, so block builds impulse by impulse until it passes the point where impulses fail. A slowly firing fiber stays lightly blocked."
+    },
+    "acidic": {
+      "prompt": "Infected tissue is acidic: it holds extra hydrogen ions. More of a local anesthetic picks one up and stays in its charged form outside the nerve, and the charged form cannot cross the membrane. What happens to the block?",
+      "choices": [
+        "It is weaker: less drug gets inside to the channels, so impulses get through",
+        "It is stronger, because the charged form is the one that blocks",
+        "No change, because the same amount of drug was injected",
+        "The nerve stops firing even before the drug arrives"
+      ],
+      "answer": 0,
+      "why": "The charged form does the blocking, but only from inside the nerve, and only the uncharged form can cross the membrane to get there. With more of the drug held charged outside, less crosses, fewer channels are plugged and impulses get through: the anesthetic works poorly."
+    },
+    "families": {
+      "prompt": "Ester and amide local anesthetics block the sodium channel the same way. Typically, enzymes in the blood plasma called esterases break down esters, while the liver breaks down most amides. Where is a typical amide mostly broken down?",
+      "choices": [
+        "Mainly in the liver",
+        "In the blood plasma, by esterases",
+        "Inside the nerve, by the sodium channel",
+        "Nowhere: it leaves the body unchanged"
+      ],
+      "answer": 0,
+      "why": "The family decides how the body clears the drug, not how it blocks. Typically plasma esterases split esters and the liver mainly breaks down amides. The rule is typical, not absolute: articaine is an amide that also carries an ester group, and it is largely broken down in plasma."
+    }
+  },
+  "quiz": [
+    {
+      "id": "rest-negative",
+      "objective": 1,
+      "step": "rest",
+      "stem": "A nerve fiber is at rest. Compared with the fluid outside it, the inside of the fiber is:",
+      "choices": [
+        "Negative",
+        "Positive",
+        "Exactly zero, because the charges cancel",
+        "Positive, because sodium is crowded outside"
+      ],
+      "answer": 0,
+      "why": "A thin layer of extra negative charge lines the inside face of the membrane, so the resting potential is negative, inside compared with outside. Sodium being crowded outside does not make the inside positive at rest: the membrane keeps sodium out until its channels open."
+    },
+    {
+      "id": "sodium-rush",
+      "objective": 1,
+      "step": "sodium",
+      "stem": "Voltage-gated sodium channels open. Why does sodium rush into the fiber rather than out?",
+      "choices": [
+        "It is far more crowded outside, and the negative inside pulls on its positive charge",
+        "The sodium/potassium pump drives it in through the channel",
+        "It is more crowded inside, so it spreads outward first and then returns",
+        "Potassium leaving pushes it in"
+      ],
+      "answer": 0,
+      "why": "Two forces point the same way: the concentration gradient pushes sodium from crowded (outside) to sparse (inside), and the electrical pull of the negative inside draws its positive charge in. The pump moves sodium out, the other way, and is not what drives the rush."
+    },
+    {
+      "id": "all-or-none",
+      "objective": 2,
+      "step": "allornone",
+      "stem": "One stimulus just reaches threshold; another drives the fiber far past it. How do their action potentials compare?",
+      "choices": [
+        "They peak at the same voltage: an action potential is all or none",
+        "The stronger stimulus gives a higher peak",
+        "Only the stronger stimulus fires one",
+        "The weaker one fires a smaller action potential"
+      ],
+      "answer": 0,
+      "why": "Once threshold is reached, the sodium rush runs its full course, so every action potential peaks at the same voltage. A stronger stimulus can fire action potentials more often, but never a bigger one; a stimulus below threshold fires none."
+    },
+    {
+      "id": "absolute-refractory",
+      "objective": 2,
+      "step": "refractory",
+      "stem": "Just after an action potential peaks, a second stimulus arrives, even stronger than the first. What happens?",
+      "choices": [
+        "Nothing: in the absolute refractory period the inactivation gates are shut, so no action potential can start",
+        "A second action potential starts, because the stimulus is stronger",
+        "A smaller second action potential starts on top of the first",
+        "The first action potential climbs higher"
+      ],
+      "answer": 0,
+      "why": "During the absolute refractory period the sodium channels are inactivated and cannot open, whatever the stimulus. A stronger stimulus works only later, in the relative refractory period, once the gates have reset while potassium is still flowing out."
+    },
+    {
+      "id": "repolarize",
+      "objective": 2,
+      "step": "repolarize",
+      "stem": "What brings the voltage back down after the peak of an action potential?",
+      "choices": [
+        "Sodium channels inactivate and potassium channels open, so potassium flows out",
+        "Sodium flows back out through the same channels",
+        "The sodium/potassium pump empties the sodium out at once",
+        "The membrane potential decays by itself, with no channels involved"
+      ],
+      "answer": 0,
+      "why": "At the peak the inactivation gates stop sodium entering, and voltage-gated potassium channels open. Potassium leaves, taking positive charge with it, so the voltage falls and briefly dips below rest. The pump restores the ion gradients over time; it does not repolarize each action potential."
+    },
+    {
+      "id": "forms",
+      "objective": 3,
+      "step": "forms",
+      "stem": "Which form of a local anesthetic crosses the nerve membrane, and which one blocks the sodium channel?",
+      "choices": [
+        "The uncharged form crosses; inside, the charged form plugs the channel from the inside",
+        "The charged form crosses and plugs the channel from the outside",
+        "Neither crosses: both plug the channel from the outside",
+        "The uncharged form plugs the channel from the outside; the charged form crosses"
+      ],
+      "answer": 0,
+      "why": "Only the uncharged form can dissolve through the oily membrane. Inside, it picks up a hydrogen ion, and the charged form enters the channel from the inside and plugs it. That is why the drug must get inside the nerve to work."
+    },
+    {
+      "id": "dentist",
+      "objective": 3,
+      "step": "block",
+      "stem": "A dentist numbs a tooth with a local anesthetic. Why do pain signals from the tooth no longer reach the brain?",
+      "choices": [
+        "Impulses stop where the drug blocks the nerve's sodium channels, so no action potential fires beyond it",
+        "The drug acts on the brain so it stops feeling pain",
+        "The drug makes the nerve's resting voltage positive",
+        "The drug stops potassium leaving, so the nerve stays at its peak"
+      ],
+      "answer": 0,
+      "why": "The drug works locally, on the nerve fibers where it is injected. With most of their sodium channels plugged, the spreading charge cannot bring the next patch to threshold, so impulses die there. The brain is not drugged; it simply receives no signal."
+    },
+    {
+      "id": "fast-pain",
+      "objective": 4,
+      "step": "usedep",
+      "stem": "Why does a local anesthetic block a fiber that is firing many impulses more than a fiber at rest?",
+      "choices": [
+        "The drug reaches its site most easily in open and inactivated channels, and fast firing keeps putting channels in those states",
+        "Fast-firing fibers have no inactivation gates",
+        "Fast firing makes the fiber's resting voltage more negative",
+        "A resting fiber pumps the drug back out"
+      ],
+      "answer": 0,
+      "why": "This is use-dependent block: each impulse opens and inactivates the channels, giving the drug its easiest way in, so block builds with every impulse. A resting fiber's channels stay ready and shut, so it is blocked less."
+    },
+    {
+      "id": "abscess",
+      "objective": 4,
+      "step": "acidic",
+      "stem": "A local anesthetic is injected into an infected, inflamed area and numbs it poorly. Why?",
+      "choices": [
+        "The acidic tissue keeps more of the drug charged outside the nerve, so less crosses in to block the channels",
+        "Acid turns all of the drug uncharged, and the uncharged form cannot block",
+        "Infection widens the sodium channels so the drug cannot plug them",
+        "The drug crosses faster and is washed away before it acts"
+      ],
+      "answer": 0,
+      "why": "Extra hydrogen ions in acidic tissue keep more of the drug in its charged form outside the nerve, and the charged form cannot cross the membrane. Less drug reaches the inside, fewer channels are plugged and impulses get through."
+    },
+    {
+      "id": "articaine",
+      "objective": 4,
+      "step": "families",
+      "stem": "Articaine is an amide local anesthetic that also carries an ester group. Where is most of it broken down?",
+      "choices": [
+        "Largely in the blood plasma, as a typical ester is",
+        "Only in the liver, as every amide is",
+        "Inside the nerve, by the sodium channel it blocks",
+        "Nowhere: it leaves the body unchanged"
+      ],
+      "answer": 0,
+      "why": "Typically esters are split by plasma esterases and amides are broken down mainly in the liver, but that is a rule of thumb. Articaine's ester group lets plasma enzymes break most of it down, so it is the usual exception among the amides."
+    }
+  ],
+  "takeaways": [
+    "At rest a nerve fiber's inside is negative. Sodium is far more crowded outside, so both its gradient and the negative inside pull it in once a channel opens.",
+    "At threshold, voltage-gated sodium channels open and sodium rushes in, so the voltage shoots up. Then their inactivation gates shut, potassium channels open, potassium leaves and the voltage falls, briefly dipping below rest.",
+    "An action potential is all or none: below threshold none fires; past threshold every one peaks at the same voltage, however strong the stimulus.",
+    "In the absolute refractory period no stimulus can start another action potential, because the inactivation gates are shut. In the relative refractory period that follows, only a stronger stimulus than usual can.",
+    "An impulse travels because sodium entering one patch spreads inside and brings the next patch to threshold; the refractory patch behind it keeps it moving one way.",
+    "A local anesthetic crosses the membrane in its uncharged form, becomes charged inside and plugs the sodium channel from within. Once enough channels are blocked that the spreading charge can no longer lift the next patch to threshold, the impulse stops where the drug is (in this lesson's model, that happens past half the channels).",
+    "Block builds in fibers that fire fast (use-dependent block) and is weaker in acidic tissue, where more of the drug stays charged outside the nerve.",
+    "Ester and amide anesthetics block alike. Typically plasma esterases break down esters and the liver mainly breaks down amides; articaine, an amide with an ester group that is largely broken down in plasma, is the exception."
+  ]
+}
