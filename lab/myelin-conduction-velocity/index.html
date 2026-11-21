@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Myelin and Conduction Velocity (MS, GBS) · The Lab · Sean Sooch</title>
+<meta name="description" content="A guided visual lesson: how an impulse spreads along a nerve fiber, how myelin and the nodes of Ranvier let it jump from node to node, and how losing myelin in multiple sclerosis or Guillain-Barre syndrome slows or blocks it.">
+<link rel="canonical" href="https://seansooch.dev/lab/myelin-conduction-velocity/">
+<meta property="og:title" content="Myelin and Conduction Velocity (MS, GBS)">
+<meta property="og:description" content="Watch an impulse jump from node to node along a myelinated nerve fiber, then see it slow and finally stop when myelin is lost in the brain and spinal cord or in a peripheral nerve, one picture at a time.">
+<meta property="og:url" content="https://seansooch.dev/lab/myelin-conduction-velocity/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/lab/kit/kit.css">
+<link rel="stylesheet" href="style.css">
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the lesson</a>
+<header class="site-top">
+  <div class="site-top-in">
+    <a class="site-brand" href="/" aria-label="Sean Sooch, home">Sean Sooch</a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="site-nav-home" href="/#work">Work</a>
+      <a href="/#writing">Writing</a>
+      <a href="/#films">Films</a>
+      <a href="/#editions">Editions</a>
+      <a class="site-nav-lab" href="/lab/" aria-current="true">The Lab</a>
+    </nav>
+  </div>
+</header>
+<main id="main" data-slug="myelin-conduction-velocity">
+  <div class="intro">
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / <a href="/lab/#cells-membranes-signals">Unit 9: Cells, membranes and signals</a> / Lesson 29</p>
+    <h1>Myelin and<br><span>conduction velocity.</span></h1>
+    <p class="lede">An impulse creeps along a bare nerve fiber but jumps from gap to gap along one wrapped in myelin. See why the wrapping makes it fast, then watch it slow and finally stop when myelin is lost in the brain and spinal cord, as in multiple sclerosis, or in a peripheral nerve, as in Guillain-Barre syndrome.</p>
+    <p class="note">Educational, not for clinical use</p>
+    <div class="lx-plan" data-lx-plan></div>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Lesson views">
+    <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-quiz" aria-controls="quiz" aria-selected="false" tabindex="-1">Quiz</button>
+    <button type="button" role="tab" id="tab-summary" aria-controls="summary" aria-selected="false" tabindex="-1">Summary</button>
+    <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
+    <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
+  </div>
+
+  <section id="lesson" role="tabpanel" aria-labelledby="tab-lesson">
+    <article data-step="1" data-step-title="A nerve fiber carries impulses" data-kind="neuron">
+      <p class="eyebrow">How an impulse travels</p>
+      <h2 tabindex="-1">A nerve fiber carries impulses</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A <dfn data-part="neuron">neuron</dfn> is a nerve cell. From its cell body runs the <dfn data-part="axon">axon</dfn>, a long, thin cable, also called a nerve fiber. A message travels along it as an <dfn data-part="impulse">impulse</dfn>, the brief electrical spike called an action potential (<a href="/lab/nerve-action-potential-local-anesthetics/">Lesson 28</a>). This lesson asks how fast the impulse travels, and what slows or stops it.</p>
+    </article>
+    <article data-step="2" data-step-title="Charge spreads ahead, and fades" data-kind="spread" hidden>
+      <p class="eyebrow">How an impulse travels</p>
+      <h2 tabindex="-1">Charge spreads ahead, and fades</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Where the impulse is, sodium rushes into the axon. Its positive charge spreads along the inside, ahead of the impulse: the <dfn data-part="spread">spreading charge</dfn>. The curve shows how far it lifts the membrane above its resting voltage. On the way, some charge seeps out through the membrane, a <dfn data-part="leak">leak</dfn>, so the farther it spreads, the weaker it gets.</p>
+    </article>
+    <article data-step="3" data-step-title="The next patch fires only at threshold" data-kind="threshold" hidden>
+      <p class="eyebrow">How an impulse travels</p>
+      <h2 tabindex="-1">The next patch fires only at threshold</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A patch of membrane fires its own action potential only if the spreading charge lifts it to <dfn data-part="threshold">threshold</dfn>, the voltage at which its sodium channels open together (<a href="/lab/nerve-action-potential-local-anesthetics/">Lesson 28</a>). Close to the impulse the charge is strong enough. A little farther on it has faded below threshold, so the patches there cannot fire yet.</p>
+    </article>
+    <article data-step="4" data-step-title="A bare axon fires patch by patch" data-kind="bare" hidden>
+      <p class="eyebrow">How an impulse travels</p>
+      <h2 tabindex="-1">A bare axon fires patch by patch</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">On a bare axon, with no wrapping, the charge fades within a short distance, so it can only lift the patch right next to the one firing. That patch fires, lifts the next, and so on: <dfn data-part="wave">continuous conduction</dfn>. Every patch along the whole axon has to fire in turn, and each firing takes time, so the impulse creeps along slowly.</p>
+    </article>
+    <article data-step="5" data-step-title="Speed: length over time" data-kind="velocity" hidden>
+      <p class="eyebrow">How an impulse travels</p>
+      <h2 tabindex="-1">Speed: length over time</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn data-part="clock">Conduction velocity</dfn> is how fast the impulse travels: the length of the fiber divided by the time the impulse takes to cover it. Here a timing bar grows from the moment the impulse starts until it reaches the <dfn data-part="end">far end</dfn>. For the same length, a longer bar means a slower velocity. Bars like this compare fibers from here on.</p>
+    </article>
+    <article data-step="6" data-step-title="Myelin wraps the axon" data-kind="myelin" hidden>
+      <p class="eyebrow">Myelin</p>
+      <h2 tabindex="-1">Myelin wraps the axon</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Many axons are wrapped in <dfn data-part="myelin">myelin</dfn>: cell membrane, rich in fat, wound round the axon in many tight layers, like tape round a wire. The wrapping is the <dfn data-part="sheath">myelin sheath</dfn>; the lens shows its layers in a cut end. Fat carries charge poorly, so the sheath works as insulation, keeping charge in.</p>
+    </article>
+    <article data-step="7" data-step-title="Two kinds of cells make myelin" data-kind="makers" hidden>
+      <p class="eyebrow">Myelin</p>
+      <h2 tabindex="-1">Two kinds of cells make myelin</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">In the brain and spinal cord, the <dfn data-part="cns">central nervous system</dfn>, myelin comes from the <dfn data-part="oligo">oligodendrocyte</dfn>: one cell reaches out with several arms, each wrapping a stretch of an axon. In the nerves running out to the body, the <dfn data-part="pns">peripheral nervous system</dfn>, each myelin-making <dfn data-part="schwann">Schwann cell</dfn> wraps one stretch of one axon.</p>
+    </article>
+    <article data-step="8" data-step-title="Gaps in the sheath: nodes of Ranvier" data-kind="nodes" hidden>
+      <p class="eyebrow">Myelin</p>
+      <h2 tabindex="-1">Gaps in the sheath: nodes of Ranvier</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The sheath comes in segments, with a short bare gap between them: a <dfn data-part="node">node of Ranvier</dfn>. The covered stretch between two nodes is an <dfn data-part="internode">internode</dfn>. The axon's voltage-gated <dfn data-part="channels">sodium channels</dfn> are packed into the nodes, so on a myelinated axon the nodes are the places an action potential can fire.</p>
+    </article>
+    <article data-step="9" data-step-title="Myelin keeps the charge in" data-kind="insulate" hidden>
+      <p class="eyebrow">Myelin</p>
+      <h2 tabindex="-1">Myelin keeps the charge in</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Under the sheath, very little charge leaks out, so the spreading charge stays strong over a much longer distance. It reaches the next node, a whole internode away, still well above threshold, so that node fires. The dashed curve is the bare axon from step 2: there the charge falls below threshold long before it gets that far.</p>
+    </article>
+    <article data-step="10" data-step-title="Central and peripheral nerves" data-kind="map" hidden>
+      <p class="eyebrow">Where myelin can fail</p>
+      <h2 tabindex="-1">Central and peripheral nerves</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The brain and spinal cord form the central nervous system. Inside them, myelinated axons run packed together in the <dfn data-part="white">white matter</dfn>, pale because of myelin's fat. <dfn data-part="nerves">Peripheral nerves</dfn> leave the spinal cord and run to the muscles and skin of the body; Schwann cells myelinate some of their axons, while others stay bare. A disease can strike myelin in one system and spare the other.</p>
+    </article>
+    <article data-step="11" data-step-title="Losing myelin" data-kind="demyelination" hidden>
+      <p class="eyebrow">Where myelin can fail</p>
+      <h2 tabindex="-1">Losing myelin</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn data-part="lost">Demyelination</dfn> is the loss of myelin from an axon that had it. Its causes vary: some are genetic, some infections, and some an attack on the sheath by the body's own immune system. Where the sheath is thin or gone, charge leaks out again, much as on a bare axon, so less of it reaches the next node. The dashed outlines show the sheath that was there.</p>
+    </article>
+    <article data-step="12" data-step-title="Saltatory conduction" data-kind="saltatory" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Saltatory conduction</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">With myelin, the charge from one node stays strong enough to lift the next node to threshold, so only the nodes fire. The impulse seems to jump from node to node: <dfn data-part="jump">saltatory conduction</dfn>, from the Latin for "to leap". Charge travels fast under the sheath and far fewer firings are needed, so the impulse reaches the far end much sooner than on the bare axon, dashed.</p>
+    </article>
+    <article data-step="13" data-step-title="Multiple sclerosis (central myelin lost)" data-kind="ms" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Multiple sclerosis (central myelin lost)</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">In <dfn>multiple sclerosis</dfn> (MS), the immune system destroys myelin in the brain and spinal cord, leaving scarred patches, <dfn data-part="plaque">plaques</dfn> (sclerosis means hardening). Here a plaque has stripped about half the myelin from three internodes. Charge leaks there, so each node in the plaque takes longer to reach threshold. The impulse still gets through as a full action potential, but later.</p>
+    </article>
+    <article data-step="14" data-step-title="Guillain-Barre syndrome (peripheral myelin lost)" data-kind="gbs" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Guillain-Barre syndrome (peripheral myelin lost)</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">In <dfn>Guillain-Barre syndrome</dfn>, often after an infection, the immune system attacks peripheral nerves. In its demyelinating form, shown here, it strips their Schwann cell myelin; other forms injure the axon itself. Here half the myelin is gone along five internodes of a nerve to the leg. The impulse slows through that whole stretch, so signals arrive late. Weakness and tingling follow, often rising from the legs.</p>
+    </article>
+    <article data-step="15" data-step-title="Conduction block and slowed velocity" data-kind="block" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Conduction block and slowed velocity</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">One patch loses more and more of its myelin. At first the impulse only slows: the charge reaching the next node is weaker, but still lifts it to threshold. In this model, once more than three quarters of the myelin is lost, the charge falls short of threshold and the next node never fires: <dfn data-part="block">conduction block</dfn>. No action potential reaches the far end, so there is no peak; it stays at its resting voltage.</p>
+    </article>
+
+    <div class="step-nav">
+      <button type="button" data-step-back disabled>← Back</button>
+      <span data-step-progress aria-live="polite">Step 1 of 15</span>
+      <button type="button" data-step-next>Next →</button>
+    </div>
+    <p class="hint">Start with Next, or use the arrow keys. Under a moving picture: pause, drag to any moment, or slow it down. Underlined terms light up their part of the picture. Lengths, times and the charge reaching each node are the teaching model's own, illustrative numbers, and the fiber is drawn far shorter than a real one.</p>
+  </section>
+
+  <section id="quiz" role="tabpanel" aria-labelledby="tab-quiz" hidden></section>
+
+  <section id="summary" role="tabpanel" aria-labelledby="tab-summary" hidden></section>
+
+  <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
+    <h2>Reference values, beside the model.</h2>
+    <p id="disclaimer" class="disclaimer">Loading reference values…</p>
+    <div class="cv-top">
+      <div id="clinical-visual" class="visual"></div>
+      <div class="cv-controls">
+        <div>
+          <label for="clinical-state">Show a state</label>
+          <select id="clinical-state"><option value="healthy">Healthy myelinated fiber</option></select>
+        </div>
+        <div>
+          <label for="clinical-loss">Myelin lost in the patch (model) <output id="clinical-loss-label" for="clinical-loss">0%</output></label>
+          <input id="clinical-loss" type="range" min="0" max="100" step="5" value="0">
+        </div>
+        <div>
+          <button type="button" id="clinical-reset">Back to a healthy fiber</button>
+        </div>
+      </div>
+    </div>
+    <p id="state-summary" class="state-summary" aria-live="polite">Healthy myelinated fiber.</p>
+    <details class="lx-fine">
+      <summary>The cited evidence for this state</summary>
+      <div id="state-evidence" class="model-note"></div>
+    </details>
+    <details class="lx-fine">
+      <summary>How to read these bars</summary>
+      <p>Each bar shows a black tick at the single typical value the source gives; it gives no ranges. The blue line is the lesson's teaching model, read at the last node of its fiber: its resting voltage, the threshold its nodes use, and the peak of the action potential that arrives there. When the impulse is blocked, no action potential arrives, so the peak row says there is no peak instead of printing a voltage. The source gives no typical conduction velocity, so speed is not shown here: Explore freely prints it as a share of the model's own healthy fiber. Arrows appear only where a quoted excerpt supports the direction.</p>
+    </details>
+    <div id="value-rows"></div>
+    <h3>Sources</h3>
+    <ul id="sources"></ul>
+    <p id="cv-attribution" class="attribution"></p>
+    <p id="load-error" class="load-error" hidden></p>
+  </section>
+
+  <section id="explore" role="tabpanel" aria-labelledby="tab-explore" hidden>
+    <h2>Strip the myelin. Time the impulse.</h2>
+    <p class="model-intro">An illustrative teaching model of one nerve fiber, eight internodes long. Choose a fiber, take myelin away from a patch of it, and see how long the impulse takes to reach the far end, drawn over a dashed outline of a healthy fiber. Times and speeds are compared only with the model's own healthy fiber.</p>
+    <div class="explore-grid">
+      <div id="explore-visual" class="visual"></div>
+      <div class="controls">
+        <fieldset>
+          <legend>The fiber</legend>
+          <label for="preset">Start from</label>
+          <select id="preset">
+            <option value="healthy">Healthy myelinated fiber</option>
+            <option value="ms">Multiple sclerosis plaque</option>
+            <option value="gbs">Guillain-Barre syndrome</option>
+            <option value="block">Conduction block</option>
+            <option value="bare">Bare axon (no myelin)</option>
+            <option value="custom">Custom</option>
+          </select>
+          <label for="fiber">Wrapping</label>
+          <select id="fiber">
+            <option value="myelin">Myelinated</option>
+            <option value="bare">Bare axon</option>
+          </select>
+        </fieldset>
+        <fieldset>
+          <legend>The damaged patch</legend>
+          <label for="loss">Myelin lost in the patch <output id="loss-out" for="loss">0%</output></label>
+          <input id="loss" type="range" min="0" max="100" step="5" value="0">
+          <label for="len">Length of the patch <output id="len-out" for="len">3 internodes</output></label>
+          <input id="len" type="range" min="1" max="6" step="1" value="3">
+        </fieldset>
+        <button type="button" id="reset">Reset to a healthy fiber</button>
+      </div>
+    </div>
+    <p id="model-results" class="model-results" aria-live="polite"></p>
+    <details>
+      <summary>How this teaching model works</summary>
+      <p>The fiber has eight internodes between nine nodes. An action potential at one node sends charge spreading to the next. Under healthy myelin that charge lifts the next node 60 mV above rest, an illustrative figure. In the damaged patch the lift shrinks in step with the share of myelin lost: half the myelin lost, half the lift.</p>
+      <p>The next node fires if the lift reaches threshold. The resting and threshold voltages come from the Clinical values data file, so the gap between them sets how much lift is needed. With that gap, a patch can lose up to 75% of its myelin and still pass the impulse; more than 75% blocks it at the first node of the patch.</p>
+      <p>Each node takes a short fixed time to fire, plus a time to reach threshold that grows as the lift shrinks: a weaker lift takes longer. A bare axon has no sheath and fires patch by patch, so it covers the same length far more slowly. Every node that fires fires the same full action potential. The model leaves out axon width, temperature, how real demyelinated axons can regrow channels or myelin, and the many fibers of a whole nerve.</p>
+    </details>
+  </section>
+
+  <p class="attribution">The Clinical values tab quotes Anatomy and Physiology 2e by OpenStax (Betts JG, Young KA, Wise JA, et al., Rice University, 2022), licensed <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>. Access for free at <a href="https://openstax.org/books/anatomy-and-physiology-2e/pages/1-introduction">https://openstax.org/books/anatomy-and-physiology-2e/pages/1-introduction</a>. This lesson page is licensed <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>.</p>
+
+  <footer>Lesson 29 of The Lab · Added 2026-11-21 · <a href="/lab/">All lessons</a></footer>
+</main>
+</body>
+</html>

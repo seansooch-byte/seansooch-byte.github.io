@@ -1,0 +1,192 @@
+{
+  "minutes": 25,
+  "prerequisites": ["resting-membrane-potential-potassium", "nerve-action-potential-local-anesthetics"],
+  "objectives": [
+    "Explain how an impulse travels along a bare axon: charge spreading from one patch lifts the next to threshold, and fades as it leaks out.",
+    "Explain how myelin and the nodes of Ranvier make saltatory conduction faster than conduction along a bare axon.",
+    "Name the cells that make myelin in the central and peripheral nervous systems, and tell multiple sclerosis apart from Guillain-Barre syndrome by where myelin is lost.",
+    "Predict when losing myelin only slows an impulse and when it blocks it, and what the far end of the fiber then shows."
+  ],
+  "checks": {
+    "saltatory": {
+      "prompt": "Myelin now wraps the axon, leaving short bare nodes where the sodium channels sit. Under the sheath little charge leaks, so it reaches the next node still above threshold. Compared with the bare axon, how does the impulse travel?",
+      "choices": [
+        "Only the nodes fire, and the impulse reaches the far end much sooner",
+        "Every patch still fires in turn, so it arrives at the same time",
+        "It arrives sooner but weaker, because fewer places fire",
+        "It slows down, because the sheath keeps sodium out"
+      ],
+      "answer": 0,
+      "why": "The charge from one node stays strong enough to lift the next node to threshold, so the patches under the sheath never need to fire. The impulse jumps from node to node, and each node still fires a full action potential, so it arrives sooner and just as strong."
+    },
+    "ms": {
+      "prompt": "In the spinal cord, a plaque strips about half the myelin from three internodes. Charge leaks out there, but still lifts each node in the plaque to threshold. What happens to the impulse?",
+      "choices": [
+        "It gets through as a full action potential, but arrives later",
+        "It stops at the plaque and never reaches the far end",
+        "It arrives on time, but with a smaller peak",
+        "It speeds up across the plaque, because there is less myelin to cross"
+      ],
+      "answer": 0,
+      "why": "A weaker lift takes longer to bring each node in the plaque to threshold, so the impulse slows there. Every node that reaches threshold fires the same full action potential, so the impulse that arrives is full size, only late."
+    },
+    "gbs": {
+      "prompt": "An immune attack strips about half the myelin along five internodes of a nerve to the leg. Each node there is still lifted to threshold, but more slowly. Which way does conduction velocity in that nerve go?",
+      "choices": [
+        "Down: the impulse takes longer to reach the muscle",
+        "Up: with less myelin there is less for the impulse to cross",
+        "No change: myelin only matters in the brain and spinal cord"
+      ],
+      "answer": 0,
+      "why": "In peripheral nerves, Schwann cells myelinate many of the axons, and that myelin matters just as much. With charge leaking along the whole stretch, every node there takes longer to reach threshold, so the impulse takes longer to cover the same length: the velocity falls."
+    },
+    "block": {
+      "prompt": "A patch loses more and more of its myelin, so the charge reaching the next node keeps getting weaker. What happens once that charge can no longer lift the next node to threshold?",
+      "choices": [
+        "That node never fires, so no action potential reaches the far end",
+        "That node fires a smaller action potential, which arrives weaker",
+        "The impulse arrives very late, but still full size",
+        "The far end fires on its own a little later"
+      ],
+      "answer": 0,
+      "why": "An action potential is all or none: a node that is not lifted to threshold does not fire at all. With no action potential beyond the patch, nothing travels on, so the far end shows no peak and stays at its resting voltage. That is conduction block."
+    }
+  },
+  "quiz": [
+    {
+      "id": "charge-fades",
+      "objective": 1,
+      "step": "spread",
+      "stem": "Charge from an action potential spreads along the inside of a bare axon. Why does it get weaker the farther it goes?",
+      "choices": [
+        "Some of it leaks out through the membrane along the way",
+        "It is pumped back out by the sodium-potassium pump at once",
+        "It turns into potassium as it travels",
+        "It does not get weaker: it stays full strength to the end"
+      ],
+      "answer": 0,
+      "why": "The membrane is not a perfect insulator, so charge seeps out as it spreads, and the lift it gives falls off with distance. That is why a bare axon must keep firing patch after patch. The pump works far too slowly to drain an impulse's charge."
+    },
+    {
+      "id": "next-patch",
+      "objective": 1,
+      "step": "threshold",
+      "stem": "What decides whether the next patch of membrane fires an action potential of its own?",
+      "choices": [
+        "Whether the spreading charge lifts it to threshold",
+        "Whether the patch behind it fired a large enough action potential",
+        "Whether potassium channels are open in that patch",
+        "Whether the patch is close to the cell body"
+      ],
+      "answer": 0,
+      "why": "A patch fires only when it is lifted to threshold, where its sodium channels open together. Every action potential is the same size, so it is how much of the spreading charge reaches the patch, not how big the last action potential was, that decides it."
+    },
+    {
+      "id": "where-channels",
+      "objective": 2,
+      "step": "nodes",
+      "stem": "On a myelinated axon, where are the voltage-gated sodium channels packed?",
+      "choices": [
+        "At the nodes of Ranvier, the short gaps between sheath segments",
+        "Evenly under the whole sheath",
+        "Only in the cell body",
+        "In the myelin itself"
+      ],
+      "answer": 0,
+      "why": "The nodes are the bare gaps between segments of the sheath, and the sodium channels crowd there. That is why the nodes are the only places an action potential fires on a myelinated axon. The sheath is wrapped cell membrane rich in fat, not the axon's own firing membrane."
+    },
+    {
+      "id": "why-faster",
+      "objective": 2,
+      "step": "saltatory",
+      "stem": "Why does an impulse travel faster along a myelinated axon than along a bare one?",
+      "choices": [
+        "Charge spreads under the sheath with little leak, so only the nodes need to fire",
+        "Myelin fires its own action potentials, which add to the axon's",
+        "Each action potential at a node is bigger, so it pushes harder",
+        "The axon under myelin has more sodium channels than a bare axon"
+      ],
+      "answer": 0,
+      "why": "Myelin insulates, so the charge from one node still lifts the next node, a whole internode away, to threshold. Firing takes time, and far fewer firings are needed, so the impulse jumps from node to node: saltatory conduction. The action potentials are the same size; they do not push harder."
+    },
+    {
+      "id": "who-makes-it",
+      "objective": 3,
+      "step": "makers",
+      "stem": "Which cell makes the myelin in the brain and spinal cord?",
+      "choices": [
+        "The oligodendrocyte, which wraps stretches of several axons",
+        "The Schwann cell, which wraps one stretch of one axon",
+        "The neuron itself, from its own cell body",
+        "The red blood cell"
+      ],
+      "answer": 0,
+      "why": "In the central nervous system, one oligodendrocyte reaches out with several arms, each wrapping a stretch of an axon. Schwann cells make myelin in the peripheral nervous system, one stretch of one axon each. That is why a disease can strike one kind of myelin and spare the other."
+    },
+    {
+      "id": "ms-where",
+      "objective": 3,
+      "step": "ms",
+      "stem": "In multiple sclerosis, where is myelin lost?",
+      "choices": [
+        "In the brain and spinal cord, leaving scarred patches called plaques",
+        "In the peripheral nerves to the arms and legs only",
+        "Inside the axon, where the myelin is stored",
+        "In the muscles, where the nerves end"
+      ],
+      "answer": 0,
+      "why": "Multiple sclerosis is an immune attack on the myelin of the central nervous system, made by oligodendrocytes. It leaves plaques of scar in the white matter of the brain and spinal cord. The myelin of peripheral nerves, made by Schwann cells, is the territory of diseases such as Guillain-Barre syndrome."
+    },
+    {
+      "id": "slow-limbs",
+      "objective": 3,
+      "step": "gbs",
+      "stem": "A week after a stomach infection, a patient has weakness and tingling rising from the legs. Nerve tests show slowed conduction in the nerves of the arms and legs; the brain and spinal cord look normal. Where has myelin most likely been lost?",
+      "choices": [
+        "In peripheral nerves, from the myelin that Schwann cells make",
+        "In the brain and spinal cord, from the myelin that oligodendrocytes make",
+        "From the sodium channels at the nodes, not from the myelin",
+        "From the muscle fibers the nerves supply"
+      ],
+      "answer": 0,
+      "why": "Slowed conduction in the limb nerves with a normal brain and spinal cord points to peripheral myelin. Guillain-Barre syndrome after an infection is one cause of this picture, though not the only disease that strips peripheral myelin, and some forms of it damage the axon itself rather than the myelin. Multiple sclerosis strikes central myelin instead."
+    },
+    {
+      "id": "block-boundary",
+      "objective": 4,
+      "step": "block",
+      "stem": "In this lesson's model, a patch of three internodes loses myelin. How much must it lose before the impulse is blocked rather than only slowed?",
+      "choices": [
+        "More than three quarters of its myelin",
+        "Any amount at all",
+        "About half of its myelin",
+        "It never blocks: losing myelin only slows the impulse"
+      ],
+      "answer": 0,
+      "why": "In the model, up to three quarters lost still lifts the next node to threshold, so the impulse only slows. Past that, the charge falls short of threshold and the impulse stops. At about half lost, as in the multiple sclerosis step, the impulse is slowed but gets through."
+    },
+    {
+      "id": "far-end",
+      "objective": 4,
+      "step": "block",
+      "stem": "An impulse is blocked partway along a fiber. What does a recording at the far end of the fiber show?",
+      "choices": [
+        "No action potential, so no peak: the membrane stays at its resting voltage",
+        "A smaller action potential with a lower peak",
+        "A full action potential, only later",
+        "A peak equal to the threshold voltage"
+      ],
+      "answer": 0,
+      "why": "Beyond the block no node is lifted to threshold, and an action potential is all or none, so nothing fires there at all. There is no peak to read, not a smaller one; the far end simply stays at rest. A late but full action potential is what slowed conduction, not block, gives."
+    }
+  ],
+  "takeaways": [
+    "An impulse travels because charge spreading from one patch of membrane lifts the next patch to threshold; that charge leaks out and fades as it spreads.",
+    "On a bare axon the charge fades so fast that every patch must fire in turn, so the impulse is slow.",
+    "Myelin is cell membrane rich in fat, wrapped many times around the axon. It insulates, so charge spreads far under it with little leak.",
+    "The sodium channels crowd into the nodes of Ranvier, the gaps in the sheath, so on a myelinated axon only the nodes fire and the impulse jumps from node to node: saltatory conduction, much faster.",
+    "Oligodendrocytes myelinate the brain and spinal cord; Schwann cells myelinate axons in the peripheral nerves, though some peripheral axons stay bare.",
+    "Multiple sclerosis strips central myelin, leaving plaques in the brain and spinal cord; Guillain-Barre syndrome, in its demyelinating form, strips peripheral myelin. Both slow impulses through the damaged stretch.",
+    "A little myelin lost slows an impulse but it arrives full size. Lose enough and the charge falls short of threshold: the impulse is blocked, and the far end shows no peak at all, staying at rest."
+  ]
+}

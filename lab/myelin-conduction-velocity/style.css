@@ -1,0 +1,4 @@
+/* Lesson 29: only what this lesson's own pictures and tabs need. Everything else is /lab/kit/kit.css. */
+#state-evidence p{margin:6px 0}
+#state-evidence span{color:var(--muted)}
+.attribution{max-width:820px;font-size:13px;color:var(--muted);overflow-wrap:anywhere}
