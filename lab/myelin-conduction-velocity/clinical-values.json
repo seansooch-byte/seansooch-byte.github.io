@@ -1,0 +1,108 @@
+{
+  "disclaimer": "Typical adult reference ranges; labs vary; not for clinical decisions.",
+  "about": "Every reference number and every arrow rests on a short verbatim excerpt from OpenStax Anatomy and Physiology 2e, quoted with its section; minus signs are written as hyphens. The source gives single typical values, not ranges, so each bar shows a tick. It gives no typical conduction velocity, so none is shown: the speeds in the lesson and in Explore freely are the teaching model's own, compared only with its own healthy fiber. A direction the excerpts do not state is left out of a state's shifts and shown as not stated.",
+  "sources": {
+    "openstax": "Betts JG, Young KA, Wise JA, Johnson E, Poe B, Kruse DH, Korol O, Johnson JE, Womble M, DeSaix P. Anatomy and Physiology 2e. Houston, Texas: OpenStax, Rice University; 2022. Sections 12.2 (Nervous Tissue) and 12.4 (The Action Potential). Access for free at https://openstax.org/books/anatomy-and-physiology-2e/pages/1-introduction. License: Creative Commons Attribution-NonCommercial-ShareAlike 4.0 (CC BY-NC-SA 4.0), https://creativecommons.org/licenses/by-nc-sa/4.0/. Excerpts are quoted unchanged."
+  },
+  "attribution": {
+    "source": "openstax",
+    "text": "The excerpts in this tab are quoted, unchanged, from Anatomy and Physiology 2e by J. Gordon Betts, Kelly A. Young, James A. Wise, Eddie Johnson, Brandon Poe, Dean H. Kruse, Oksana Korol, Jody E. Johnson, Mark Womble and Peter DeSaix, OpenStax, Rice University (2022), sections 12.2 and 12.4, licensed CC BY-NC-SA 4.0.",
+    "access": "Access for free at https://openstax.org/books/anatomy-and-physiology-2e/pages/1-introduction",
+    "accessUrl": "https://openstax.org/books/anatomy-and-physiology-2e/pages/1-introduction",
+    "license": "This lesson page is licensed CC BY-NC-SA 4.0.",
+    "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+  },
+  "values": [
+    {
+      "id": "rest", "label": "Resting membrane potential, at the far end of the fiber", "unit": "mV",
+      "low": null, "high": null, "typical": -70, "display": "-70", "decimals": 0,
+      "source": "openstax", "where": "Section 12.4 The Action Potential, Electrically Active Cell Membranes",
+      "excerpt": "The exact value measured for the resting membrane potential varies between cells, but -70 mV is most commonly used as this value.",
+      "modelKey": "rest",
+      "note": "The voltage the far end sits at between impulses, and the whole time if the impulse is blocked before it. The source gives one commonly used value and says it varies between cells, so the bar shows a tick, not a range."
+    },
+    {
+      "id": "threshold", "label": "Threshold", "unit": "mV",
+      "low": null, "high": null, "typical": -55, "display": "-55", "decimals": 0,
+      "source": "openstax", "where": "Section 12.4 The Action Potential, The Action Potential",
+      "excerpt": "Any depolarization that does not change the membrane potential to -55 mV or higher will not reach threshold and thus will not result in an action potential.",
+      "modelKey": "threshold",
+      "note": "Compared with the threshold the teaching model's nodes use. Whether the charge arriving at a node reaches it is shown in the picture and in Explore freely, not on this bar."
+    },
+    {
+      "id": "peak", "label": "Action potential peak, at the far end of the fiber", "unit": "mV",
+      "low": null, "high": null, "typical": 30, "display": "+30", "decimals": 0,
+      "source": "openstax", "where": "Section 12.4 The Action Potential, The Action Potential",
+      "excerpt": "All action potentials peak at the same voltage (+30 mV), so one action potential is not bigger than another.",
+      "modelKey": "peak",
+      "note": "The model reads the last node of its fiber. If the impulse arrives, that node fires a full action potential, however late. If the impulse is blocked, no action potential reaches it, so there is no peak to read and the row says so rather than printing a voltage."
+    }
+  ],
+  "states": [
+    {
+      "id": "healthy", "label": "Healthy myelinated fiber (saltatory conduction)", "kind": "physiologic",
+      "summary": "Myelin keeps the spreading charge in, so it reaches each node still above threshold and the impulse jumps from node to node to the far end.",
+      "shifts": { "rest": "none", "peak": "none" },
+      "source": "openstax", "where": "Section 12.4 The Action Potential, The Action Potential; Propagation of the Action Potential",
+      "evidence": [
+        { "source": "openstax", "where": "Section 12.4 The Action Potential, The Action Potential",
+          "excerpt": "Resting membrane potential describes the steady state of the cell, which is a dynamic process that is balanced by ion leakage and ion pumping. Without any outside influence, it will not change." },
+        { "source": "openstax", "where": "Section 12.4 The Action Potential, Propagation of the Action Potential",
+          "excerpt": "The distance between nodes is the optimal distance to keep the membrane still depolarized above threshold at the next node." },
+        { "source": "openstax", "where": "Section 12.4 The Action Potential, Propagation of the Action Potential",
+          "excerpt": "Saltatory conduction is faster because the action potential basically jumps from one node to the next (saltare = “to leap”), and the new influx of Na + renews the depolarized membrane." },
+        { "source": "openstax", "where": "Section 12.4 The Action Potential, The Action Potential",
+          "excerpt": "All action potentials peak at the same voltage (+30 mV), so one action potential is not bigger than another." }
+      ],
+      "unstatedNote": "This is the starting point the other states are compared with. The excerpts give no direction for the threshold, so that row shows no arrow.",
+      "model": "healthy"
+    },
+    {
+      "id": "ms", "label": "Multiple sclerosis (central myelin lost)", "kind": "disease",
+      "summary": "The immune system destroys myelin in the brain and spinal cord, leaving scarred plaques, so signals through them slow; an action potential that still gets through is a full one.",
+      "shifts": { "peak": "none" },
+      "source": "openstax", "where": "Section 12.2 Nervous Tissue, Disorders of the Nervous Tissue; Section 12.4 The Action Potential, The Action Potential",
+      "evidence": [
+        { "source": "openstax", "where": "Section 12.2 Nervous Tissue, Disorders of the Nervous Tissue",
+          "excerpt": "Though the causes are varied, the results are largely similar. The myelin insulation of axons is compromised, making electrical signaling slower." },
+        { "source": "openstax", "where": "Section 12.2 Nervous Tissue, Disorders of the Nervous Tissue",
+          "excerpt": "This causes inflammation and the destruction of the myelin in the central nervous system." },
+        { "source": "openstax", "where": "Section 12.4 The Action Potential, The Action Potential",
+          "excerpt": "Also, those changes are the same for every action potential, which means that once the threshold is reached, the exact same thing happens." }
+      ],
+      "unstatedNote": "Slower signaling changes when an action potential arrives, not its size: every node that still reaches threshold fires the same full action potential, so the peak at the far end keeps its value. This is one fiber; a whole nerve's combined signal can still shrink when its fibers slow unevenly, which this tab does not show. The excerpts give no direction for the resting potential or the threshold in this disease, so those rows show no arrow.",
+      "model": "ms"
+    },
+    {
+      "id": "gbs", "label": "Guillain-Barre syndrome (peripheral myelin lost)", "kind": "disease",
+      "summary": "An autoimmune reaction strips myelin in peripheral nerves, so signals to and from the limbs slow; an action potential that still gets through is a full one.",
+      "shifts": { "peak": "none" },
+      "source": "openstax", "where": "Section 12.2 Nervous Tissue, Disorders of the Nervous Tissue; Section 12.4 The Action Potential, The Action Potential",
+      "evidence": [
+        { "source": "openstax", "where": "Section 12.2 Nervous Tissue, Disorders of the Nervous Tissue",
+          "excerpt": "Guillain-Barré (pronounced gee-YAN bah-RAY) syndrome is an example of a demyelinating disease of the peripheral nervous system. It is also the result of an autoimmune reaction, but the inflammation is in peripheral nerves." },
+        { "source": "openstax", "where": "Section 12.2 Nervous Tissue, Disorders of the Nervous Tissue",
+          "excerpt": "Though the causes are varied, the results are largely similar. The myelin insulation of axons is compromised, making electrical signaling slower." },
+        { "source": "openstax", "where": "Section 12.4 The Action Potential, The Action Potential",
+          "excerpt": "Also, those changes are the same for every action potential, which means that once the threshold is reached, the exact same thing happens." }
+      ],
+      "unstatedNote": "As in multiple sclerosis, slower signaling changes when an action potential arrives, not its size, so the peak at the far end keeps its value. This is the demyelinating form; other forms of the syndrome injure the axon itself, and other diseases strip peripheral myelin too. The excerpts give no direction for the resting potential or the threshold in this disease, so those rows show no arrow.",
+      "model": "gbs"
+    },
+    {
+      "id": "block", "label": "Conduction block (charge at the next node falls short of threshold)", "kind": "disease",
+      "summary": "So much charge leaks out where myelin is gone that the next node is never lifted to threshold, so no action potential fires there and none reaches the far end.",
+      "shifts": {},
+      "absent": { "peak": "No action potential reaches the far end, so there is no peak to read" },
+      "source": "openstax", "where": "Section 12.4 The Action Potential, Propagation of the Action Potential; The Action Potential",
+      "evidence": [
+        { "source": "openstax", "where": "Section 12.4 The Action Potential, Propagation of the Action Potential",
+          "excerpt": "As Na + spreads along the inside of the membrane of the axon segment, the charge starts to dissipate. If the node were any farther down the axon, that depolarization would have fallen off too much for voltage-gated Na + channels to be activated at the next node of Ranvier." },
+        { "source": "openstax", "where": "Section 12.4 The Action Potential, The Action Potential",
+          "excerpt": "If the threshold is not reached, then no action potential occurs." }
+      ],
+      "unstatedNote": "With no action potential beyond the block, the far end never fires, so there is no peak to compare with the cited one. In the teaching model the far end simply stays at rest between impulses; the excerpts give no direction for the resting potential or the threshold in this state, so those rows show no arrow. That myelin loss is what makes the charge fall off is this lesson's model, not a quoted statement.",
+      "model": "block"
+    }
+  ]
+}
