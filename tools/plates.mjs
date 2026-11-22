@@ -48,7 +48,7 @@ const today = new Date().toISOString().slice(0, 10);
 const targets = [];
 const at = u => (u.startsWith('/') ? base + u : u);   // a path is one of this edition's own pages
 for (const w of record.works) {
-  if (w.plate !== false) targets.push({ name: w.id, url: at(w.plate_url || w.url), wake: w.wake, scroll: w.plate_scroll, note: w.plate_note });
+  if (w.plate !== false) targets.push({ name: w.id, url: at(w.plate_url || w.url), wake: w.wake, scroll: w.plate_scroll, click: w.plate_click, note: w.plate_note });
   for (const e of w.editions || []) if (!e.current && e.url) targets.push({ name: `${w.id}-e${e.n}`, url: e.url, note: w.plate_note });
 }
 for (const v of record.volumes) {

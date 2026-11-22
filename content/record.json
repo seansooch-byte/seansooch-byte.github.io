@@ -860,9 +860,8 @@
    "url": "https://edge-7yj.pages.dev/",
    "host": "edge-7yj.pages.dev",
    "wake": false,
-   "note": "data last harvested 6 Sep 2026",
-   "tech": "Draft intelligence terminal for a 12-team half-PPR league: an 862-player board valued on a weighted seven-source composite and read against the Sleeper room's market price, weekly projections priced as points above replacement, Monte Carlo pick-path simulation in a worker, an in-season wire of injuries and market movers, and read-only replay of a live Sleeper draft room. Static PWA with CI-gated deploys and a test suite that also runs against production.",
-   "plain": "A fantasy football draft assistant that blends seven rankings and markets into one value per player, flags bargains, simulates what happens before your next pick, and can follow a live Sleeper draft as it happens. Every update is tested end to end before it ships.",
+   "tech": "Fantasy football terminal for a 12-team half-PPR league, draft and season: an 862-player board valued on a weighted seven-source composite and read against the Sleeper room's market price, weekly projections priced as points above replacement, Monte Carlo pick-path simulation in a worker, an in-season wire of injuries and market movers, a league sync that reads a Sleeper or public ESPN league's rosters, lineups and matchup from keyless public APIs, and read-only replay of a live Sleeper draft room. Static PWA with a twice-daily harvest, CI-gated deploys and a test suite that also runs against production.",
+   "plain": "A fantasy football assistant that blends seven rankings and markets into one value per player, flags bargains, and simulates what happens before your next pick. In season it reads your Sleeper or public ESPN league and shows this week's lineup beside your opponent's. Every update is tested end to end before it ships.",
    "stats": [
     [
      "862",
@@ -873,7 +872,7 @@
      "sources"
     ],
     [
-     "21,761",
+     "22,560",
      "lines of tests"
     ]
    ],
@@ -886,9 +885,18 @@
      "name": null,
      "by": null,
      "date": "2026-08-04",
+     "url": "https://edge-v1-a16.pages.dev"
+    },
+    {
+     "n": 2,
+     "name": "Card Back",
+     "by": "Claude Fable 5.2",
+     "date": "2026-11-22",
      "current": true
     }
-   ]
+   ],
+   "plate_click": "#introClose",
+   "plate_scroll": "#search"
   },
   {
    "id": "ncaat",

@@ -941,7 +941,7 @@ class Tree(Base):
         want = {'/': home, '/record/': max(ed['issued'], ed['counted']), '/two-stories/': ed['issued'], '/lab/': max(lessons.values())}
         want |= {f'/lab/{s}/': d for s, d in lessons.items()}
         self.assertEqual({p: d for p, d in got.items() if d}, want)
-        self.assertEqual(home, '2026-11-14', 'the home page is dated by the newest edition of a work it shows')
+        self.assertEqual(home, '2026-11-22', 'the home page is dated by the newest edition of a work it shows')
         self.assertEqual(sm.count('<changefreq>'), 0, 'Google ignores changefreq and priority; lastmod is the signal')
         self.assertEqual(sm.count('<priority>'), 0)
 
