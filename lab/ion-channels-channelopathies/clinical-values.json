@@ -1,0 +1,89 @@
+{
+  "disclaimer": "Typical adult reference ranges; labs vary; not for clinical decisions.",
+  "about": "Every reference number and every arrow names its source and the place in it. The two heart values and the potassium-blockade state repeat, word for word, citations Lesson 7 (The Cardiac Action Potential) uses, so the two lessons agree. Only values whose direction the cited passages state for every state are shown. No airway value (such as sweat chloride) and no passage on the inherited long QT syndromes themselves could be checked against an accessible source for this lesson, so cystic fibrosis, the CFTR modulators and the late sodium leak are modelled in Explore freely only. The model’s starting point is in modelBaseline: illustrative settings, not reference values.",
+  "modelBaseline": {
+    "about": "Where the illustrative teaching model starts and how its outputs are turned into units. The model’s normal Q-T interval is set on the cited typical value, and its normal refractory period inside the cited range; both scale with the model’s own action potential. These are model settings, not reference values.",
+    "qt": 0.35,
+    "vRefractory": 0.275
+  },
+  "sources": {
+    "guyton13": "Hall JE. Guyton and Hall Textbook of Medical Physiology. 13th edition. Philadelphia: Elsevier; 2016.",
+    "jcs2020": "Ono K, Iwasaki YK, Akao M, et al. JCS/JHRS 2020 Guideline on Pharmacotherapy of Cardiac Arrhythmias. Journal of Arrhythmia. 2022;38(6):833."
+  },
+  "values": [
+    {
+      "id": "qt",
+      "label": "Q-T interval (electrocardiogram)",
+      "unit": "s",
+      "low": null,
+      "high": null,
+      "typical": 0.35,
+      "decimals": 2,
+      "scale": [
+        0.2,
+        0.7
+      ],
+      "source": "guyton13",
+      "where": "Chapter 11, The Normal Electrocardiogram: 'Q-T Interval' (from the beginning of the Q wave to the end of the T wave; ordinarily about 0.35 second).",
+      "modelKey": "qt",
+      "note": "The source gives a single approximate value, not a range. The model scales it with the length of its ventricular action potential."
+    },
+    {
+      "id": "vRefractory",
+      "label": "Ventricular refractory period",
+      "unit": "s",
+      "low": 0.25,
+      "high": 0.3,
+      "typical": null,
+      "decimals": 2,
+      "scale": [
+        0.1,
+        0.5
+      ],
+      "source": "guyton13",
+      "where": "Chapter 9: 'Refractory Period of Cardiac Muscle' (the normal refractory period of the ventricle is 0.25 to 0.30 second).",
+      "modelKey": "vRefractory",
+      "note": "The model takes the refractory period to end when the voltage has fallen most of the way back to rest (below -60 mV in the model), as Lesson 7 does."
+    }
+  ],
+  "states": [
+    {
+      "id": "baseline",
+      "label": "Healthy heart muscle cell",
+      "kind": "physiologic",
+      "summary": "The heart muscle cell’s potassium and sodium channels work as they should, so both values sit at their cited normal.",
+      "shifts": {
+        "qt": "none",
+        "vRefractory": "none"
+      },
+      "source": "guyton13",
+      "where": "Chapter 9: 'Action Potentials in Cardiac Muscle' (at the end of the plateau, potassium permeability rises rapidly and the loss of potassium returns the membrane to its resting level).",
+      "model": {
+        "gK": 100,
+        "late": 0
+      }
+    },
+    {
+      "id": "kblock",
+      "label": "Repolarizing potassium current reduced (potassium channel blockade, the current lost in long QT types 1 and 2)",
+      "kind": "drug",
+      "summary": "Blocking potassium channels removes the outward potassium current that ends the plateau, so the Q-T interval and the refractory period lengthen. Congenital long QT types 1 and 2 lose the same current through a faulty channel gene; the teaching model shows both as half the current.",
+      "shifts": {
+        "qt": "up",
+        "vRefractory": "up"
+      },
+      "source": "jcs2020",
+      "where": "Section 2.2.1 Vaughan Williams Classification: \"APD prolongation by class III drugs is caused by K+ channel blockade\". Table 61, Causes of Acquired Long QT Syndrome: \"Class III (sotalol, nifekalant, amiodarone, etc.)\" (Q-T interval up). Figure 3D (mechanism of reentry): \"Drugs that prolong refractory period, such as class III drugs\" (refractory period up).",
+      "mechanismSource": "guyton13",
+      "mechanismWhere": "Chapter 9: 'Action Potentials in Cardiac Muscle' (at the end of the plateau, potassium permeability rises rapidly and the loss of potassium returns the membrane to its resting level), the process these drugs slow.",
+      "modelNote": "The cited passages describe drugs that block the channel, not the inherited fault; the arrows are those of the lost current. The model halves the potassium current, which lengthens its Q-T interval and its refractory period.",
+      "model": {
+        "gK": 50,
+        "late": 0
+      }
+    }
+  ],
+  "sourceDois": {
+    "jcs2020": "10.1002/joa3.12714"
+  }
+}

@@ -1,0 +1,6 @@
+/* Lesson 30: only what this lesson's own pictures and tabs need. Everything else is /lab/kit/kit.css. */
+#explore-visual svg + .readout, #clinical-visual svg + .readout{margin-bottom:14px}
+#state-evidence p{margin:6px 0}
+#state-evidence span{color:var(--muted)}
+#explore input[type=range]{min-height:32px}
+#explore select,#clinical select{min-height:44px}
