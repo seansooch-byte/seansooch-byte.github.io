@@ -1553,17 +1553,17 @@
    "kw": "films video agent google meet"
   },
   {
-   "id": "skubal-hype-reel",
-   "name": "Skubal hype reel",
-   "title": "Skubal hype reel",
-   "tech": "A broadcast-style hype reel for Tarik Skubal built from React components and frame math over real photographs.",
-   "plain": "A TV-style highlight intro for Tigers pitcher Tarik Skubal, with the type and motion drawn by code over real photographs.",
-   "length": "0:17",
-   "made_with": "Remotion",
-   "src": "/videos/skubal-hype.mp4",
-   "poster": "/videos/skubal-poster.jpg",
-   "index": "Skubal hype reel (film)",
-   "kw": "films video remotion tigers"
+   "id": "skubal-farewell",
+   "name": "Thank you, 29",
+   "title": "Thank you, 29: a farewell to Tarik Skubal",
+   "tech": "A farewell to Tarik Skubal cut from MLB broadcast footage of his Tigers years, 2020 to 2026: it opens on the post that reported his signing with the Mets, runs on the real broadcast calls and his own words, and is scored with an original instrumental.",
+   "plain": "A goodbye and a thank you to Tigers ace Tarik Skubal: his years in Detroit in about two minutes, told by the broadcasters and by him. The game footage is MLB's.",
+   "length": "2:15",
+   "made_with": "ffmpeg",
+   "src": "/videos/skubal-farewell.mp4",
+   "poster": "/videos/skubal-farewell-poster.jpg",
+   "index": "Thank you, 29: Skubal farewell (film)",
+   "kw": "films video tigers skubal farewell tribute baseball"
   }
  ],
  "volumes": [
