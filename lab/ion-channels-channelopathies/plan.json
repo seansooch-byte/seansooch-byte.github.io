@@ -1,0 +1,197 @@
+{
+  "minutes": 26,
+  "prerequisites": [
+    "cardiac-action-potential",
+    "nerve-action-potential-local-anesthetics"
+  ],
+  "objectives": [
+    "Explain how an ion channel works: a protein pore with a selectivity filter and a gate, through which ions flow down their electrochemical gradient as a current.",
+    "Name what opens a channel's gate (a change in voltage, a ligand, or ATP binding in CFTR) and tell inactivation apart from closing.",
+    "Trace how chloride leaving through CFTR keeps the airway liquid deep and the mucus moving, and predict what CFTR failure and CFTR modulators do.",
+    "Predict how losing a repolarizing potassium current, or a sodium channel that fails to inactivate, lengthens the heart's action potential and the QT interval."
+  ],
+  "checks": {
+    "cf": {
+      "prompt": "In cystic fibrosis, few CFTR channels reach the airway side of the cells, and those that do barely open. Chloride leaving is what draws sodium and water into the airway liquid. What happens to that liquid and to the mucus on it?",
+      "choices": [
+        "The liquid thins, the cilia lie flat and the thick mucus stops moving",
+        "The liquid deepens and the mucus washes away faster",
+        "Nothing changes, because sodium still crosses on its own",
+        "The cells swell and burst, flooding the airway"
+      ],
+      "answer": 0,
+      "why": "With almost no chloride leaving, no sodium follows it and no water follows the salt. The liquid layer thins to a fraction of its depth, the cilia have no room to beat, and the mucus sits on them, dehydrated and sticky."
+    },
+    "modulators": {
+      "prompt": "A corrector helps the misfolded CFTR protein fold so more channels reach the membrane; a potentiator holds their gates open for longer. What do the two together do to the airway of a person with cystic fibrosis whose fault they suit?",
+      "choices": [
+        "Bring back part of the chloride flow: the liquid deepens and the mucus moves again",
+        "Bring chloride flow back to exactly normal at once",
+        "Block chloride flow further, to dry up the mucus",
+        "Open sodium channels instead, which take over from CFTR"
+      ],
+      "answer": 0,
+      "why": "More channels in the membrane, each open for longer, means more chloride flows out, so sodium and water follow again. The rescue is partial: in this model it restores about 60 percent of the chloride flow, enough for the cilia to beat again."
+    },
+    "lqt": {
+      "prompt": "A child inherits a faulty gene for one of the potassium channels that repolarize heart muscle, so only half the usual potassium current flows out during the plateau. What happens to the action potential?",
+      "choices": [
+        "It lasts longer: the voltage falls back to rest later, so the QT lengthens",
+        "It ends sooner, because less potassium is lost",
+        "It rises higher but lasts the same time",
+        "It never starts, because potassium carries the upswing"
+      ],
+      "answer": 0,
+      "why": "Outward potassium is what pulls the voltage down at the end of the plateau. With less of it, the inward calcium current holds the voltage up for longer, so repolarization comes later and the whole action potential, and the QT interval, lengthen."
+    },
+    "latena": {
+      "prompt": "In some heart sodium channels the inactivation gate fails to stay shut, so a small sodium current keeps leaking in all through the plateau. The potassium channels are normal. What happens to the action potential?",
+      "choices": [
+        "It lasts longer, because the extra inward current holds the voltage up against the potassium",
+        "It ends sooner, because the sodium channels are used up",
+        "It is unchanged, because the potassium channels are normal",
+        "The cell stays at rest, because sodium cannot get in"
+      ],
+      "answer": 0,
+      "why": "The plateau ends when outward current wins. A leak of positive sodium inward adds to the side holding the voltage up, so outward potassium takes longer to win: repolarization comes later and the QT lengthens, with every potassium channel working."
+    }
+  },
+  "quiz": [
+    {
+      "id": "filter-picks",
+      "objective": 1,
+      "step": "filter",
+      "stem": "A potassium channel lets potassium through but turns sodium away, even though a sodium ion is smaller. Which part of the channel does that?",
+      "choices": [
+        "The selectivity filter, the narrow part of the pore shaped to fit potassium",
+        "The gate, which opens only for potassium",
+        "The membrane around the channel, which repels sodium",
+        "A pump inside the pore that spends energy to sort the ions"
+      ],
+      "answer": 0,
+      "why": "Choosing the ion is the selectivity filter's job: it is lined so that only potassium fits comfortably. The gate decides when the pore is open, not which ion passes; and a channel spends no energy, which is what sets it apart from a pump."
+    },
+    {
+      "id": "downhill",
+      "objective": 1,
+      "step": "downhill",
+      "stem": "A potassium channel opens in a resting cell: potassium is crowded inside and scarce outside, and the inside is negative, which pulls on positive potassium. Which way does potassium flow, and what does it cost the cell?",
+      "choices": [
+        "Out of the cell, down its electrochemical gradient, with no energy spent by the channel",
+        "Into the cell, uphill, using energy from ATP",
+        "Out of the cell, using energy from ATP",
+        "Into the cell, because the negative inside always wins"
+      ],
+      "answer": 0,
+      "why": "An open pore lets an ion flow down its electrochemical gradient: the push of crowding and the pull of charge added together, which can point opposite ways. For potassium in a resting cell the outward push of crowding is stronger than the negative inside’s pull back, so the net flow is out. Moving an ion against that gradient needs a pump that spends ATP; a channel never does."
+    },
+    {
+      "id": "what-opens",
+      "objective": 2,
+      "step": "triggers",
+      "stem": "Acetylcholine released by a nerve binds a channel on a muscle and opens it. What kind of channel is that?",
+      "choices": [
+        "Ligand-gated: a messenger binding opens the gate",
+        "Voltage-gated: a change in voltage opens the gate",
+        "A pump: it moves ions against their gradient",
+        "A leak channel: it is open all the time"
+      ],
+      "answer": 0,
+      "why": "A ligand is a molecule that binds a protein; a channel opened by one is ligand-gated. A voltage-gated channel instead carries charged sensors that move when the voltage across the membrane changes."
+    },
+    {
+      "id": "inactivation",
+      "objective": 2,
+      "step": "inactivation",
+      "stem": "Just after a fast sodium channel opens, sodium stops flowing although the voltage is still high. Why?",
+      "choices": [
+        "Its inactivation gate swings into the pore and plugs it",
+        "The selectivity filter starts letting potassium through instead",
+        "The sodium outside the cell has run out",
+        "The activation gate shuts at once because the voltage is high"
+      ],
+      "answer": 0,
+      "why": "The fast sodium channel has two gates. A rise in voltage opens the activation gate; within about a thousandth of a second a second gate, the inactivation gate, plugs the pore from inside, so the sodium surge is brief. Plenty of sodium is still outside."
+    },
+    {
+      "id": "water-follows",
+      "objective": 3,
+      "step": "water",
+      "stem": "Why does water move into the airway liquid when chloride leaves the cells through CFTR?",
+      "choices": [
+        "Sodium follows the chloride, and the extra salt draws water after it by osmosis",
+        "CFTR is a water channel as well as a chloride channel",
+        "Chloride pushes the cilia, which pump water up from the cells",
+        "Mucus pulls water out of the cells by itself"
+      ],
+      "answer": 0,
+      "why": "Negative chloride leaving draws positive sodium after it, between the cells. Water then follows that salt by osmosis, toward the side with more dissolved particles. CFTR itself passes chloride, not water."
+    },
+    {
+      "id": "cf-child",
+      "objective": 3,
+      "step": "cf",
+      "stem": "A child has salty-tasting skin, a lasting cough and lung infections that keep coming back. A sweat test shows high chloride. What has gone wrong in the child's airways?",
+      "choices": [
+        "CFTR fails, so too little chloride, and with it water, reaches the airway liquid and the mucus stays put",
+        "CFTR lets too much chloride out, so the airway floods",
+        "The cilia are missing, so CFTR cannot open",
+        "The airway cells cannot make mucus at all"
+      ],
+      "answer": 0,
+      "why": "This is cystic fibrosis. Without working CFTR, chloride stays in the cells, water does not follow, the liquid layer thins and the mucus becomes thick and stuck, so germs are not cleared. In the sweat duct the same channel takes chloride back in, which is why sweat is salty."
+    },
+    {
+      "id": "potentiator",
+      "objective": 3,
+      "step": "modulators",
+      "stem": "A person's CFTR channels reach the membrane normally, but their gates barely open. Which kind of CFTR modulator suits this fault best?",
+      "choices": [
+        "A potentiator, which holds the gate open for longer",
+        "A corrector, which helps the protein fold and reach the membrane",
+        "A drug that blocks the sodium that follows chloride",
+        "A drug that thins mucus by breaking it apart"
+      ],
+      "answer": 0,
+      "why": "The channels are already in place; the fault is the gate, so a potentiator, which helps it open, is the fit. A corrector is for a protein that misfolds and never reaches the membrane; mucus-thinning treatments help but do not act on CFTR."
+    },
+    {
+      "id": "lqt-potassium",
+      "objective": 4,
+      "step": "lqt",
+      "stem": "In congenital long QT, a faulty gene leaves fewer working repolarizing potassium channels in heart muscle. Which part of the action potential changes most?",
+      "choices": [
+        "The plateau and the fall back to rest come later, so it lasts longer",
+        "The upswing becomes slower",
+        "The resting voltage becomes positive",
+        "The action potential becomes shorter"
+      ],
+      "answer": 0,
+      "why": "These channels work at the end of the plateau: their outward potassium current brings the voltage down. With less of it, the plateau stretches and repolarization comes later. The upswing is carried by sodium and is not changed."
+    },
+    {
+      "id": "two-routes",
+      "objective": 4,
+      "step": "latena",
+      "stem": "Two inherited faults both lengthen the QT interval. One weakens a potassium channel. What does the other most likely do?",
+      "choices": [
+        "Leaves sodium channels unable to stay inactivated, so sodium keeps leaking in",
+        "Makes potassium channels open sooner",
+        "Makes the sodium channels inactivate faster",
+        "Adds extra potassium channels to the membrane"
+      ],
+      "answer": 0,
+      "why": "The plateau lasts until outward current beats inward current. Less potassium out or more sodium in both delay that moment. A sodium channel that fails to inactivate adds the inward leak; the other choices would all shorten the action potential or leave it alone."
+    }
+  ],
+  "takeaways": [
+    "An ion channel is a protein with a water-filled pore through the membrane, which oily on its own keeps charged ions out.",
+    "A selectivity filter decides which ion passes; a gate decides when. Open, ions flow down their electrochemical gradient (crowding and charge added together, which can oppose each other) as a current, with no energy spent.",
+    "Gates answer to triggers: a change in voltage, a ligand binding, or, for CFTR, phosphate tags and ATP binding. The fast sodium channel also has an inactivation gate that plugs it within a moment of opening.",
+    "In the airway, chloride leaves through CFTR, sodium follows it and water follows the salt, keeping the liquid deep enough for cilia to sweep the mucus.",
+    "In cystic fibrosis, CFTR fails: chloride cannot leave, the liquid thins, mucus sticks and infections follow; sweat is saltier because the same channel takes chloride back in the sweat duct.",
+    "CFTR modulators act on the protein itself: correctors help more channels reach the membrane and potentiators hold their gates open, bringing back part of the chloride flow.",
+    "A heart muscle cell's plateau lasts until outward potassium current beats inward current; the action potential's length shows on the ECG as the QT interval.",
+    "Congenital long QT lengthens the action potential in two ways: a faulty potassium channel (less current out) or a sodium channel that fails to inactivate (more current in)."
+  ]
+}

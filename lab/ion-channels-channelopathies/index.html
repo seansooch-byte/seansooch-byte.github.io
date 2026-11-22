@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ion Channels and Channelopathies (CFTR, congenital long QT) · The Lab · Sean Sooch</title>
+<meta name="description" content="A guided visual lesson: an ion channel as a gated pore, then two broken pores. Chloride that cannot leave the airway in cystic fibrosis, what CFTR modulators bring back, and a heart muscle cell that cannot finish repolarizing in congenital long QT.">
+<link rel="canonical" href="https://seansooch.dev/lab/ion-channels-channelopathies/">
+<meta property="og:title" content="Ion Channels and Channelopathies (CFTR, congenital long QT)">
+<meta property="og:description" content="See how a channel's filter and gate decide which ions cross and when, then watch two broken channels: CFTR in cystic fibrosis and the potassium and sodium channels of congenital long QT.">
+<meta property="og:url" content="https://seansooch.dev/lab/ion-channels-channelopathies/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/lab/kit/kit.css">
+<link rel="stylesheet" href="style.css">
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the lesson</a>
+<header class="site-top">
+  <div class="site-top-in">
+    <a class="site-brand" href="/" aria-label="Sean Sooch, home">Sean Sooch</a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="site-nav-home" href="/#work">Work</a>
+      <a href="/#writing">Writing</a>
+      <a href="/#films">Films</a>
+      <a href="/#editions">Editions</a>
+      <a class="site-nav-lab" href="/lab/" aria-current="true">The Lab</a>
+    </nav>
+  </div>
+</header>
+<main id="main" data-slug="ion-channels-channelopathies">
+  <div class="intro">
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / <a href="/lab/#cells-membranes-signals">Unit 9: Cells, membranes and signals</a> / Lesson 30</p>
+    <h1>Ion channels<br><span>and channelopathies.</span></h1>
+    <p class="lede">A channel is a gated pore through the cell membrane. Build one, filter and gate, then follow two broken pores: chloride that cannot leave the airway in cystic fibrosis, and a heart muscle cell that cannot finish repolarizing in congenital long QT.</p>
+    <p class="note">Educational, not for clinical use</p>
+    <div class="lx-plan" data-lx-plan></div>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Lesson views">
+    <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-quiz" aria-controls="quiz" aria-selected="false" tabindex="-1">Quiz</button>
+    <button type="button" role="tab" id="tab-summary" aria-controls="summary" aria-selected="false" tabindex="-1">Summary</button>
+    <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
+    <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
+  </div>
+
+  <section id="lesson" role="tabpanel" aria-labelledby="tab-lesson">
+    <article data-step="1" data-step-title="The membrane keeps ions apart" data-kind="membrane">
+      <p class="eyebrow">A gated pore</p>
+      <h2 tabindex="-1">The membrane keeps ions apart</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Every cell is wrapped in a thin, oily skin, the <dfn data-part="membrane">cell membrane</dfn>. Salts dissolve in body water as <dfn data-part="ions">ions</dfn>, tiny particles that carry an electric charge: sodium and chloride crowd outside the cell, potassium inside. Charged particles cannot pass through the oily middle of the membrane, so on their own they bounce back and stay where they are.</p>
+    </article>
+    <article data-step="2" data-step-title="A channel is a tunnel through it" data-kind="pore" hidden>
+      <p class="eyebrow">A gated pore</p>
+      <h2 tabindex="-1">A channel is a tunnel through it</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">An <dfn data-part="channel">ion channel</dfn> is a protein that spans the membrane, with a narrow, water-filled tunnel down its middle, the <dfn data-part="pore">pore</dfn>. Ions slip through the pore one after another, millions every second, far faster than a pump could carry them.</p>
+    </article>
+    <article data-step="3" data-step-title="Each channel picks its ion" data-kind="filter" hidden>
+      <p class="eyebrow">A gated pore</p>
+      <h2 tabindex="-1">Each channel picks its ion</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Near its outer mouth the pore narrows to a <dfn data-part="filter">selectivity filter</dfn>, lined so that only one kind of ion fits comfortably. A potassium channel lets <dfn data-part="potassium">potassium</dfn> through but turns <dfn data-part="sodium">sodium</dfn> away, though sodium is smaller. A chloride channel passes chloride. Each channel is named for the ion it passes.</p>
+    </article>
+    <article data-step="4" data-step-title="A gate opens and shuts the pore" data-kind="gate" hidden>
+      <p class="eyebrow">A gated pore</p>
+      <h2 tabindex="-1">A gate opens and shuts the pore</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Most channels are not open all the time. A <dfn data-part="gate">gate</dfn>, a part of the protein that twists or swings, shuts the pore or opens it. Shut, nothing passes; open, ions stream through. A channel flicks between the two, and what counts is how much of the time it spends open.</p>
+    </article>
+    <article data-step="5" data-step-title="Open, ions run downhill" data-kind="downhill" hidden>
+      <p class="eyebrow">A gated pore</p>
+      <h2 tabindex="-1">Open, ions run downhill</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Two forces move an ion through an open pore: crowding pushes it from crowded to scarce, and charge pulls it toward the opposite charge. They can pull opposite ways; together they make its <dfn>electrochemical gradient</dfn>, and the ion flows down it, spending no energy. For potassium in a resting cell, crowding wins, so it flows out. That flow of charge is an electrical <dfn data-part="current">current</dfn>: more channels open, bigger current.</p>
+    </article>
+    <article data-step="6" data-step-title="What opens the gate" data-kind="triggers" hidden>
+      <p class="eyebrow">A gated pore</p>
+      <h2 tabindex="-1">What opens the gate</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Channels answer to different triggers. A <dfn data-part="vg">voltage-gated</dfn> channel carries charged sensors that move when the voltage across the membrane changes, pulling its gate open. A <dfn data-part="lg">ligand-gated</dfn> channel opens when a messenger molecule, its ligand, binds to it, as acetylcholine does on a muscle (<a href="/lab/neuromuscular-junction/">Lesson 8</a>).</p>
+    </article>
+    <article data-step="7" data-step-title="A second gate: inactivation" data-kind="inactivation" hidden>
+      <p class="eyebrow">A gated pore</p>
+      <h2 tabindex="-1">A second gate: inactivation</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The fast sodium channel of nerve and heart muscle has two gates (<a href="/lab/nerve-action-potential-local-anesthetics/">Lesson 28</a>). A rise in voltage opens it and sodium pours in. Within about a thousandth of a second a second gate, the <dfn data-part="inactivation-gate">inactivation gate</dfn>, swings into the pore from inside and plugs it. This <dfn>inactivation</dfn> keeps each sodium surge brief.</p>
+    </article>
+    <article data-step="8" data-step-title="The airway is lined by a thin wet film" data-kind="airway" hidden>
+      <p class="eyebrow">Chloride and the airway</p>
+      <h2 tabindex="-1">The airway is lined by a thin wet film</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The airways are lined by cells topped with <dfn data-part="cilia">cilia</dfn>, tiny hairs that beat together. They stand in a thin, watery film, the <dfn data-part="asl">airway surface liquid</dfn>. On it floats a layer of sticky <dfn data-part="mucus">mucus</dfn> that traps dust and germs. The beating cilia sweep the mucus up and out of the lungs, to be swallowed or coughed up.</p>
+    </article>
+    <article data-step="9" data-step-title="CFTR: the airway's chloride channel" data-kind="cftr" hidden>
+      <p class="eyebrow">Chloride and the airway</p>
+      <h2 tabindex="-1">CFTR: the airway's chloride channel</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn data-part="cftr">CFTR</dfn> is a chloride channel on the airway face of these cells. Its gate opens when the cell tags it with phosphate and two molecules of <dfn data-part="atp">ATP</dfn>, the cell's energy carrier, bind its two inner domains and pull them together. Carriers on the cell's far side load it with <dfn data-part="chloride">chloride</dfn>, so when CFTR opens, chloride flows out.</p>
+    </article>
+    <article data-step="10" data-step-title="Chloride out, water follows" data-kind="water" hidden>
+      <p class="eyebrow">Chloride and the airway</p>
+      <h2 tabindex="-1">Chloride out, water follows</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Chloride leaving carries negative charge into the airway liquid, and positive <dfn data-part="sodium">sodium</dfn> follows it, slipping between the cells. That salt pulls <dfn data-part="water">water</dfn> after it by osmosis, water moving toward more dissolved particles (Lesson 25). So the liquid stays deep enough for the cilia to beat freely, and the mucus thin enough to move.</p>
+    </article>
+    <article data-step="11" data-step-title="A heart muscle cell's action potential" data-kind="heartap" hidden>
+      <p class="eyebrow">Potassium and the heartbeat</p>
+      <h2 tabindex="-1">A heart muscle cell's action potential</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">In a heart muscle cell each beat is one <dfn data-part="trace">action potential</dfn> (<a href="/lab/cardiac-action-potential/">Lesson 7</a>): sodium channels open and the voltage leaps up; calcium channels hold it high in a long <dfn data-part="plateau">plateau</dfn> while the cell squeezes; then potassium channels bring it back down to rest. That fall back is <dfn data-part="phase3">repolarization</dfn>.</p>
+    </article>
+    <article data-step="12" data-step-title="Potassium channels end the beat" data-kind="repolarize" hidden>
+      <p class="eyebrow">Potassium and the heartbeat</p>
+      <h2 tabindex="-1">Potassium channels end the beat</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Repolarization is the work of potassium channels that open slowly during the plateau. Potassium flowing out of the cell through them, the <dfn data-part="ik">repolarizing potassium current</dfn>, takes positive charge away, so the voltage falls. In the ventricles two channels carry most of it, named for their genes: KCNQ1 and KCNH2.</p>
+    </article>
+    <article data-step="13" data-step-title="In against out sets the length" data-kind="balance" hidden>
+      <p class="eyebrow">Potassium and the heartbeat</p>
+      <h2 tabindex="-1">In against out sets the length</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Through the plateau two currents pull against each other: <dfn data-part="inward">calcium flowing in</dfn> holds the voltage up; <dfn data-part="ik">potassium flowing out</dfn> pulls it down. As calcium channels close and potassium channels open, outward wins and the voltage falls. Weaken the outward current, or add inward current, and the plateau lasts longer. On an ECG the action potential's length shows as the <dfn data-part="qt">QT interval</dfn>.</p>
+    </article>
+    <article data-step="14" data-step-title="CFTR failure: cystic fibrosis" data-kind="cf" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">CFTR failure: cystic fibrosis</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">In cystic fibrosis both copies of the CFTR gene are faulty. In the commonest fault the protein misfolds and the cell destroys it; others leave a gate that barely opens. Here chloride flow falls to almost nothing, so sodium and water stop following. The liquid thins to a third, the cilia lie flat and thick mucus stays put: infections follow. Sweat is saltier, the basis of the sweat test.</p>
+    </article>
+    <article data-step="15" data-step-title="CFTR modulators" data-kind="modulators" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">CFTR modulators</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption"><dfn data-part="drug">CFTR modulators</dfn> are drugs that act on the faulty protein itself. A corrector helps it fold, so more channels reach the membrane; a potentiator holds their gates open longer. Together, for the faults they suit, they bring back part of the chloride flow, here about 60 percent of normal: the liquid deepens, the cilia beat again and the mucus moves, about half as fast as normal.</p>
+    </article>
+    <article data-step="16" data-step-title="Congenital long QT: a potassium channel fails" data-kind="lqt" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Congenital long QT: a potassium channel fails</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">In congenital long QT types 1 and 2, a child inherits a faulty KCNQ1 or KCNH2 gene. Here half the repolarizing potassium current is lost. Inward current wins for longer, so the voltage falls later: the action potential lasts about 60 percent longer and the QT interval lengthens. A long QT raises the risk of a dangerous fast heart rhythm, often set off by exercise, a sudden noise or strong emotion.</p>
+    </article>
+    <article data-step="17" data-step-title="A sodium channel that fails to inactivate" data-kind="latena" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">A sodium channel that fails to inactivate</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">In congenital long QT type 3 the faulty gene, SCN5A, makes the heart's sodium channel. In a few channels the inactivation gate fails to stay shut, so a small <dfn data-part="late">late sodium current</dfn> keeps leaking in all through the plateau. That extra inward current holds the voltage up against the potassium: here the action potential lasts about 40 percent longer. The QT lengthens by the opposite route: more in, not less out.</p>
+    </article>
+
+    <div class="step-nav">
+      <button type="button" data-step-back disabled>← Back</button>
+      <span data-step-progress aria-live="polite">Step 1 of 17</span>
+      <button type="button" data-step-next>Next →</button>
+    </div>
+    <p class="hint">Start with Next, or use the arrow keys. Under a moving picture: pause, drag to any moment, or slow it down. Underlined terms light up their part of the picture. Ion counts, depths and voltages are illustrative; the action potentials come from a small teaching model of one heart muscle cell.</p>
+  </section>
+
+  <section id="quiz" role="tabpanel" aria-labelledby="tab-quiz" hidden></section>
+
+  <section id="summary" role="tabpanel" aria-labelledby="tab-summary" hidden></section>
+
+  <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
+    <h2>Reference values, beside the model.</h2>
+    <p id="disclaimer" class="disclaimer">Loading reference values…</p>
+    <div class="cv-top">
+      <div id="clinical-visual" class="visual"></div>
+      <div class="cv-controls">
+        <div>
+          <label for="clinical-state">Show a heart muscle cell state</label>
+          <select id="clinical-state"><option value="baseline">Healthy heart muscle cell</option></select>
+        </div>
+        <div>
+          <button type="button" id="clinical-reset">Back to baseline</button>
+        </div>
+      </div>
+    </div>
+    <p id="state-summary" class="state-summary" aria-live="polite">Healthy heart muscle cell.</p>
+    <p class="model-note">This tab shows the heart values only. No airway reference value, such as sweat chloride, and no passage on the inherited long QT syndromes themselves could be checked against an accessible source for this lesson. So the tab shows the lost potassium current through a cited source on potassium channel blockade, and cystic fibrosis, the CFTR modulators and the late sodium leak are modelled in Explore freely instead.</p>
+    <details class="lx-fine">
+      <summary>Where this state's arrows come from</summary>
+      <div id="state-evidence" class="model-note"></div>
+    </details>
+    <details class="lx-fine">
+      <summary>How to read these bars</summary>
+      <p>Grey-blue bands are the cited typical adult ranges; a black tick is a single cited typical value. The blue line is the lesson's teaching model. It starts inside each cited range, or on the cited value, and moves when you choose a state here or change the channels in Explore freely. Its numbers are illustrative, never patient values, and these references are not decision rules. Arrows appear only where the cited source states the direction.</p>
+    </details>
+    <div id="value-rows"></div>
+    <h3>Sources</h3>
+    <ul id="sources"></ul>
+    <p id="load-error" class="load-error" hidden></p>
+  </section>
+
+  <section id="explore" role="tabpanel" aria-labelledby="tab-explore" hidden>
+    <h2>Break a channel. Watch what follows.</h2>
+    <p class="model-intro">Two illustrative teaching models. Above, the airway: how many CFTR channels reach the membrane and how well their gates open set the chloride flow, and with it the liquid, the cilia and the mucus. Below, one heart muscle cell: the potassium channels' function and a late sodium leak set how long its action potential lasts, drawn over a dashed trace of normal.</p>
+    <div class="explore-grid">
+      <div id="explore-visual" class="visual"></div>
+      <div class="controls">
+        <fieldset>
+          <legend>The airway</legend>
+          <label for="airway-preset">Start from</label>
+          <select id="airway-preset">
+            <option value="normal">Healthy CFTR</option>
+            <option value="cf">Cystic fibrosis</option>
+            <option value="modulators">Cystic fibrosis with modulators</option>
+            <option value="custom">Custom</option>
+          </select>
+          <label for="surface">CFTR reaching the membrane <output id="surface-out" for="surface"></output></label>
+          <input id="surface" type="range" min="0" max="100" step="5" value="100">
+          <label for="gating">How well each gate opens <output id="gating-out" for="gating"></output></label>
+          <input id="gating" type="range" min="0" max="100" step="2" value="100">
+        </fieldset>
+        <fieldset>
+          <legend>The heart muscle cell</legend>
+          <label for="heart-preset">Start from</label>
+          <select id="heart-preset">
+            <option value="normal">Healthy channels</option>
+            <option value="lqtk">Long QT: potassium current lost</option>
+            <option value="lqtna">Long QT: late sodium leak</option>
+            <option value="custom">Custom</option>
+          </select>
+          <label for="gK">Repolarizing potassium channels working <output id="gK-out" for="gK"></output></label>
+          <input id="gK" type="range" min="20" max="150" step="5" value="100">
+          <label for="late">Late sodium leak <output id="late-out" for="late"></output></label>
+          <input id="late" type="range" min="0" max="30" step="1" value="0">
+        </fieldset>
+        <button type="button" id="reset">Reset to normal</button>
+      </div>
+    </div>
+    <p id="model-results" class="model-results" aria-live="polite"></p>
+    <details>
+      <summary>How these teaching models work</summary>
+      <p>The airway: chloride flow is the share of CFTR channels that reach the membrane times how well each gate opens, both as a share of normal. The liquid's depth runs from about a third of normal with no flow to normal with full flow, because sodium and water follow the chloride. Cilia beat only when the liquid is deeper than about half its normal depth, and mucus clearance follows the cilia.</p>
+      <p>The heart muscle cell: after its upswing, the voltage moves against the sum of four currents: calcium flowing in, which fades over the plateau; the repolarizing potassium current, which switches on slowly and is scaled by the potassium slider; the inward rectifier that holds the cell at rest; and, with the second slider, a late sodium current from channels that fail to inactivate. The action potential ends when the voltage is 90 percent of the way back to rest. The model's Q-T interval and refractory period are its own times scaled to the cited references (the refractory period ends when the voltage is most of the way back to rest), so they are illustrative.</p>
+      <p>The models leave out much: the many CFTR faults and the drugs suited to each, the kidney and heart-rate effects on the QT, and the rhythms a long QT can set off, which are a later lesson's subject.</p>
+    </details>
+  </section>
+
+  <footer>Lesson 30 of The Lab · Added 2026-11-22 · <a href="/lab/">All lessons</a></footer>
+</main>
+</body>
+</html>

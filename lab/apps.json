@@ -755,5 +755,20 @@
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-terra"
     }
+  },
+  {
+    "slug": "ion-channels-channelopathies",
+    "title": "Ion Channels and Channelopathies (CFTR, congenital long QT)",
+    "date": "2026-11-22",
+    "description": "A channel as a gated pore, told through two broken pores: chloride that cannot leave the airway, and a heart muscle cell that cannot finish repolarizing.",
+    "category": "medicine",
+    "builder": {
+      "tool": "Claude Code",
+      "model": "claude-opus-5-5"
+    },
+    "reviewer": {
+      "tool": "OpenAI Codex",
+      "model": "gpt-6.1-terra"
+    }
   }
 ]
