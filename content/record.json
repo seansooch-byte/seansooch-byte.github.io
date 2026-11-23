@@ -14,7 +14,7 @@
   "name": "Side by Side",
   "by": "Claude Fable 5.2",
   "issued": "2026-11-09",
-  "counted": "2026-11-10",
+  "counted": "2026-11-23",
   "faces": "Roboto Serif, by Greg Gazdowicz of Commercial Type, and Mona Sans, by GitHub"
  },
  "theme": {
@@ -551,11 +551,11 @@
    "host": "differential-c57.pages.dev",
    "wake": false,
    "note": null,
-   "tech": "The AI frontier as a 3D wavefront over 13 benchmarks, on one clock you can run back to March 2023: 65 models, 10 sectors in a weighted index with its method published, verified ARC-AGI cells, 10 capability events, a capability-against-control ledger, and a gated-tier toggle for what the labs hold back. Updated October 2026.",
-   "plain": "A dashboard tracking how close AI is to human-level ability across 10 skill areas, following 65 models, with a record of the moments that actually moved the frontier. A toggle shows what the labs keep back from public release.",
+   "tech": "What is claimed about AI set against what is measured. An index of general intelligence drawn as the ring of a black hole, and 15 benchmarks as streaks of light falling toward a perfect score, on one clock you can run back to March 2023: 75 models, 10 sectors in a computed index with its method published, 17 events each with how far it has been checked, a capability-against-control ledger, a gated-tier toggle for what the labs hold back, and a full-screen Frontier Clock built by GPT-6.2 Sol. Updated November 2026.",
+   "plain": "A tracker of how close AI is to human-level ability. It sets what people claim against what public tests actually show, follows 75 models across 15 tests, leaves three lanes dark for abilities nobody tests, and keeps a record of the moments that moved the frontier, each marked with how far it has been checked.",
    "stats": [
     [
-     "65",
+     "75",
      "models"
     ],
     [
@@ -563,7 +563,7 @@
      "sectors"
     ],
     [
-     "10",
+     "17",
      "events"
     ]
    ],
@@ -597,6 +597,13 @@
      "name": "Blueshift",
      "by": "Claude Opus 5.5",
      "date": "2026-10-06",
+     "url": "https://agi-tracker-v4.pages.dev"
+    },
+    {
+     "n": 5,
+     "name": "Event Horizon",
+     "by": "Claude Fable 5.2",
+     "date": "2026-11-23",
      "current": true
     }
    ],
@@ -1663,9 +1670,9 @@
   }
  ],
  "counts": {
-  "lines": 176913,
-  "files": 487,
-  "test_lines": 33333,
+  "lines": 179404,
+  "files": 504,
+  "test_lines": 34459,
   "questions": 12972,
   "banks": 7,
   "subjects": 8,

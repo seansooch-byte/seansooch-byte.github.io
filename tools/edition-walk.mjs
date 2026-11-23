@@ -10,7 +10,7 @@
 //   - the home page asks every address and each dot settles; the tally says how many of how many;
 //   - a world chip shows that world's works and no others, and a link to a hidden work shows everything again;
 //   - "Side by side" gives each work's caption half to its earlier edition's plate, which loads; the way back
-//     restores the caption; a work with two kept editions switches between them; the switch counts the works
+//     restores the caption; a work with several kept editions switches between them; the switch counts the works
 //     it can move; and a plate that needs a note (made-up patients) still carries it with the caption gone;
 //   - "Plain language" swaps both tellings, survives a reload, and switches back;
 //   - "Ask them all again" asks again; "Set beside" moves one row and hands the focus to the way back;
@@ -189,10 +189,12 @@ for (const size of [SIZES[0], SIZES[1]]) {
     const tops = await page.evaluate(() => [document.querySelector('#step2 .plate-fig .plate'), document.querySelector('#step2 .prior-ed:not([hidden]) .plate')].map(e => Math.round(e.getBoundingClientRect().top)));
     ok(Math.abs(tops[0] - tops[1]) <= 2, where, `the two plates do not sit level (${tops.join(' and ')})`);
   }
-  const eds = page.locator('#agi [data-prior-ed]');
-  if (ok(await eds.count() === 2, where, 'the tracker does not offer its two kept editions')) {
+  // The tracker is the work with several kept editions. The count used to be pinned at two; it grows each time an
+  // edition is retired, so it is read off the page: one switch per kept plate, at least two, and the last is the oldest.
+  const eds = page.locator('#agi [data-prior-ed]'), kept = await page.locator('#agi .prior-ed').count();
+  if (ok(kept >= 2 && await eds.count() === kept, where, `the tracker offers ${await eds.count()} switches for its ${kept} kept editions`)) {
     await page.locator('#agi').scrollIntoViewIfNeeded();
-    await eds.nth(1).click();
+    await eds.last().click();
     ok(await page.evaluate(() => [...document.querySelectorAll('#agi .prior-ed')].filter(f => !f.hidden).length === 1 && document.querySelector('#agi [data-prior-ed][aria-pressed=true]').textContent.includes('Edition 2')), where, 'picking the older kept edition did not show it alone');
   }
   await page.locator('#step2 [data-beside-back]').click();

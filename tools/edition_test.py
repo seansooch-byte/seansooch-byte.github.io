@@ -941,7 +941,12 @@ class Tree(Base):
         want = {'/': home, '/record/': max(ed['issued'], ed['counted']), '/two-stories/': ed['issued'], '/lab/': max(lessons.values())}
         want |= {f'/lab/{s}/': d for s, d in lessons.items()}
         self.assertEqual({p: d for p, d in got.items() if d}, want)
-        self.assertEqual(home, '2026-11-22', 'the home page is dated by the newest edition of a work it shows')
+        # The claim is that a work's new edition moves the home page's date. It used to be pinned to one day's
+        # record ('2026-11-22'), which failed the next time any work shipped an edition. Checked against what the
+        # builder wrote instead (not against `home`, which this test worked out itself): the page is never dated
+        # before the newest edition of a work it shows. It holds on a day the volume's own dates are newer too.
+        newest = max(e['date'] for w in r['works'] for e in w.get('editions', []))
+        self.assertGreaterEqual(got['/'], newest, 'the home page is dated before the newest edition of a work it shows')
         self.assertEqual(sm.count('<changefreq>'), 0, 'Google ignores changefreq and priority; lastmod is the signal')
         self.assertEqual(sm.count('<priority>'), 0)
 
