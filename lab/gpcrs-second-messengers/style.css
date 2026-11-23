@@ -1,0 +1,7 @@
+/* Lesson 31: only what this lesson's own pictures and tabs need. Everything else is /lab/kit/kit.css. */
+#state-evidence p{margin:6px 0}
+#state-evidence span{color:var(--muted)}
+/* larger touch targets for this lesson's own controls */
+#explore input[type=range]{min-height:44px}
+#clinical select,#clinical button,#explore button{min-height:44px}
+#clinical summary,#explore summary{min-height:44px;display:flex;align-items:center}

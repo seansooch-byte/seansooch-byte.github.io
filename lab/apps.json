@@ -770,5 +770,20 @@
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-terra"
     }
+  },
+  {
+    "slug": "gpcrs-second-messengers",
+    "title": "GPCRs and Second Messengers (cholera and pertussis toxin)",
+    "date": "2026-11-23",
+    "description": "How a receptor on the cell surface turns a signal into a second messenger inside, and how cholera toxin and pertussis toxin lock a G protein on or off.",
+    "category": "medicine",
+    "builder": {
+      "tool": "Claude Code",
+      "model": "claude-opus-5-5"
+    },
+    "reviewer": {
+      "tool": "OpenAI Codex",
+      "model": "gpt-6.1-terra"
+    }
   }
 ]
