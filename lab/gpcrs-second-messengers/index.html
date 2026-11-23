@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GPCRs and Second Messengers · The Lab · Sean Sooch</title>
+<meta name="description" content="A guided visual lesson: how a hormone at a G protein-coupled receptor switches a G protein on, how the G protein makes a second messenger such as cyclic AMP, IP3 or calcium inside the cell, and how cholera toxin and pertussis toxin lock a G protein on or off.">
+<link rel="canonical" href="https://seansooch.dev/lab/gpcrs-second-messengers/">
+<meta property="og:title" content="GPCRs and Second Messengers">
+<meta property="og:description" content="Watch a hormone outside a cell switch on a G protein inside it, see Gs, Gi and Gq change cyclic AMP and calcium, then see cholera toxin lock Gs on and pertussis toxin lock Gi off, one picture at a time.">
+<meta property="og:url" content="https://seansooch.dev/lab/gpcrs-second-messengers/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/lab/kit/kit.css">
+<link rel="stylesheet" href="style.css">
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the lesson</a>
+<header class="site-top">
+  <div class="site-top-in">
+    <a class="site-brand" href="/" aria-label="Sean Sooch, home">Sean Sooch</a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="site-nav-home" href="/#work">Work</a>
+      <a href="/#writing">Writing</a>
+      <a href="/#films">Films</a>
+      <a href="/#editions">Editions</a>
+      <a class="site-nav-lab" href="/lab/" aria-current="true">The Lab</a>
+    </nav>
+  </div>
+</header>
+<main id="main" data-slug="gpcrs-second-messengers">
+  <div class="intro">
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / <a href="/lab/#cells-membranes-signals">Unit 9: Cells, membranes and signals</a> / Lesson 31</p>
+    <h1>GPCRs and<br><span>second messengers.</span></h1>
+    <p class="lede">A hormone that never enters a cell can still change what happens inside it. Follow the message from a receptor in the membrane, through a G protein switch, to a crowd of messengers inside, then see cholera toxin jam the switch on and pertussis toxin jam it off.</p>
+    <p class="note">Educational, not for clinical use</p>
+    <div class="lx-plan" data-lx-plan></div>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Lesson views">
+    <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-quiz" aria-controls="quiz" aria-selected="false" tabindex="-1">Quiz</button>
+    <button type="button" role="tab" id="tab-summary" aria-controls="summary" aria-selected="false" tabindex="-1">Summary</button>
+    <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
+    <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
+  </div>
+
+  <section id="lesson" role="tabpanel" aria-labelledby="tab-lesson">
+    <article data-step="1" data-step-title="A message that cannot get in" data-kind="outside">
+      <p class="eyebrow">A signal at the surface</p>
+      <h2 tabindex="-1">A message that cannot get in</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Cells talk with chemical signals. A <dfn data-part="signal">hormone</dfn> is a signal carried in the blood, such as adrenaline. Many hormones cannot cross the <dfn data-part="membrane">cell membrane</dfn>, the thin, oily skin around every cell. They stay outside, so the hormone is called the <dfn data-part="signal">first messenger</dfn>: something else must carry its message inside.</p>
+    </article>
+    <article data-step="2" data-step-title="A receptor threads through the membrane" data-kind="receptor" hidden>
+      <p class="eyebrow">A signal at the surface</p>
+      <h2 tabindex="-1">A receptor threads through the membrane</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A <dfn data-part="receptor">receptor</dfn> is a protein that one signal fits, like a key in a lock. This kind crosses the membrane seven times, with a <dfn data-part="pocket">binding pocket</dfn> open to the outside and loops hanging inside the cell. It is called a G protein-coupled receptor, or GPCR, after the partner it works through, met two steps on.</p>
+    </article>
+    <article data-step="3" data-step-title="The hormone fits, and the receptor changes shape" data-kind="binding" hidden>
+      <p class="eyebrow">A signal at the surface</p>
+      <h2 tabindex="-1">The hormone fits, and the receptor changes shape</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The molecule that settles into a receptor's pocket is its <dfn data-part="ligand">ligand</dfn>; here, the hormone. Binding shifts the receptor's seven coils, and the inside end of one of them swings outward. Nothing has entered the cell: only the receptor's shape has changed, and that new shape is the message.</p>
+    </article>
+    <article data-step="4" data-step-title="A G protein waits underneath" data-kind="gprotein" hidden>
+      <p class="eyebrow">A signal at the surface</p>
+      <h2 tabindex="-1">A G protein waits underneath</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Just under the receptor, tethered to the inside of the membrane, sits a <dfn data-part="gprotein">G protein</dfn>, built of three parts called alpha, beta and gamma. Alpha can hold a small molecule called <dfn data-part="gdp">GDP</dfn>, and a G protein whose alpha holds GDP is switched off. With no hormone bound, almost every G protein sits like this; only an occasional one switches on by chance.</p>
+    </article>
+    <article data-step="5" data-step-title="Swapping GDP for GTP switches it on" data-kind="switch" hidden>
+      <p class="eyebrow">A signal at the surface</p>
+      <h2 tabindex="-1">Swapping GDP for GTP switches it on</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The reshaped receptor makes alpha let go of its GDP and pick up <dfn data-part="gtp">GTP</dfn>, a close cousin that carries one more phosphate group (a small cluster of phosphorus and oxygen atoms). Holding GTP, alpha is switched on: it leaves beta and gamma and slides along the inside of the membrane to its target. One bound receptor can switch on several G proteins in turn.</p>
+    </article>
+    <article data-step="6" data-step-title="The G protein switches itself off" data-kind="timer" hidden>
+      <p class="eyebrow">A signal at the surface</p>
+      <h2 tabindex="-1">The G protein switches itself off</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Alpha carries its own timer. It slowly splits its GTP back to GDP, cutting off the extra phosphate. Holding GDP again, it is switched off and rejoins <dfn data-part="gprotein">beta and gamma</dfn> under the receptor. So once the hormone has gone, the signal stops by itself, with nothing else needed.</p>
+    </article>
+    <article data-step="7" data-step-title="Adenylyl cyclase makes cyclic AMP" data-kind="cyclase" hidden>
+      <p class="eyebrow">Second messengers</p>
+      <h2 tabindex="-1">Adenylyl cyclase makes cyclic AMP</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">An enzyme is a protein that speeds up one chemical reaction. Switched-on alpha of a stimulating G protein works an enzyme in the membrane, <dfn data-part="cyclase">adenylyl cyclase</dfn>. It turns ATP, the cell's energy molecule, into <dfn data-part="camp">cyclic AMP</dfn>. Made inside the cell, cyclic AMP carries the hormone's message on: it is a <dfn data-part="camp">second messenger</dfn>.</p>
+    </article>
+    <article data-step="8" data-step-title="One signal, many messengers" data-kind="amplify" hidden>
+      <p class="eyebrow">Second messengers</p>
+      <h2 tabindex="-1">One signal, many messengers</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Each step multiplies the one before. One bound receptor switches on several G proteins. Each switched-on alpha keeps its cyclase working, and each cyclase makes cyclic AMP over and over. So one hormone molecule outside becomes a <dfn data-part="many">crowd of messengers</dfn> inside. That is why a tiny amount of hormone in the blood is enough.</p>
+    </article>
+    <article data-step="9" data-step-title="Cyclic AMP switches on protein kinase A" data-kind="pka" hidden>
+      <p class="eyebrow">Second messengers</p>
+      <h2 tabindex="-1">Cyclic AMP switches on protein kinase A</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A kinase is an enzyme that sticks a phosphate group onto other proteins, which switches them on or off. Cyclic AMP's main target is <dfn data-part="pka">protein kinase A</dfn>, held idle by two braking parts. Cyclic AMP binds the brakes, the two working parts are freed, and they <dfn data-part="phospho">add phosphates</dfn> to the cell's own proteins: a channel, a pump, an enzyme.</p>
+    </article>
+    <article data-step="10" data-step-title="Phosphodiesterase clears cyclic AMP" data-kind="pde" hidden>
+      <p class="eyebrow">Second messengers</p>
+      <h2 tabindex="-1">Phosphodiesterase clears cyclic AMP</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The messenger is cleared all the time. An enzyme called <dfn data-part="pde">phosphodiesterase</dfn> opens cyclic AMP's ring, leaving plain AMP, which carries no message. So the level of cyclic AMP is a balance: how fast the cyclase makes it against how fast phosphodiesterase clears it. Make more, or clear less, and the level rises.</p>
+    </article>
+    <article data-step="11" data-step-title="Three kinds of G protein" data-kind="families" hidden>
+      <p class="eyebrow">Second messengers</p>
+      <h2 tabindex="-1">Three kinds of G protein</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">G proteins come in families, named for what their alpha does. <dfn data-part="gs">Gs</dfn> (s for stimulating) switches adenylyl cyclase on, so cyclic AMP rises. <dfn data-part="gi">Gi</dfn> (i for inhibiting) brakes it, so cyclic AMP falls. <dfn data-part="gq">Gq</dfn> works phospholipase C, an enzyme that cuts a fat of the membrane, and ends in a rise of calcium. This lesson shows each receptor with its main family; some receptors can work with more than one.</p>
+    </article>
+    <article data-step="12" data-step-title="Phospholipase C splits a membrane lipid" data-kind="plc" hidden>
+      <p class="eyebrow">Second messengers</p>
+      <h2 tabindex="-1">Phospholipase C splits a membrane lipid</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Switched-on Gq alpha works <dfn data-part="plc">phospholipase C</dfn>, which cuts one particular fat of the membrane in two. One half, <dfn data-part="dag">DAG</dfn>, stays in the membrane. The other half, <dfn data-part="ip3">IP3</dfn>, is small, dissolves in the cell's fluid and drifts away: a second messenger of its own.</p>
+    </article>
+    <article data-step="13" data-step-title="IP3 opens the calcium store" data-kind="store" hidden>
+      <p class="eyebrow">Second messengers</p>
+      <h2 tabindex="-1">IP3 opens the calcium store</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A cell keeps calcium very low in its fluid and stores it in the <dfn data-part="er">endoplasmic reticulum</dfn>, a network of membrane sacs. IP3 binds channels in that membrane and opens them, so <dfn data-part="calcium">calcium</dfn> floods out into the cell's fluid. Calcium then does the work: it makes muscle cells contract and gland cells release what they hold.</p>
+    </article>
+    <article data-step="14" data-step-title="Gs: more cyclic AMP" data-kind="gs" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Gs: more cyclic AMP</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Adrenaline at a beta-1 receptor on a heart pacemaker cell switches on Gs. Alpha drives adenylyl cyclase, and cyclic AMP rises to more than four times its resting level. Through protein kinase A and the pacemaker's channels, the cell fires sooner after each beat, so the heart speeds up (<a href="/lab/autonomic-synapse/">Lesson 6</a>). The same Gs path raises cyclic AMP in many other cells.</p>
+    </article>
+    <article data-step="15" data-step-title="Gi: less cyclic AMP" data-kind="gi" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Gi: less cyclic AMP</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Acetylcholine from the vagus nerve, at an M2 receptor on the same pacemaker cell, switches on Gi. Its alpha brakes adenylyl cyclase, and cyclic AMP falls to less than half its resting level; Gi's beta and gamma also open potassium channels. The pacemaker fires later after each beat, so the heart slows (<a href="/lab/cardiac-action-potential/">Lesson 7</a>).</p>
+    </article>
+    <article data-step="16" data-step-title="Gq: IP3 and a rise in cell calcium" data-kind="gq" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Gq: IP3 and a rise in cell calcium</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Noradrenaline at an alpha-1 receptor on the smooth muscle of a blood vessel switches on Gq. Phospholipase C makes IP3, IP3 opens the calcium store, and calcium in the cell's fluid rises to several times its resting level. The muscle cell contracts, so the vessel narrows. Cyclic AMP does not change: this family works a different enzyme.</p>
+    </article>
+    <article data-step="17" data-step-title="Cholera toxin: Gs locked on" data-kind="cholera" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Cholera toxin: Gs locked on</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Cholera toxin, made by the bacterium that causes cholera, enters gut lining cells and tags Gs alpha so it can no longer split its GTP. Gs stays on with no hormone at all, and cyclic AMP climbs to almost six times normal and stays there. Protein kinase A opens the CFTR chloride channel (<a href="/lab/ion-channels-channelopathies/">Lesson 30</a>); chloride, sodium and water pour into the gut: watery diarrhea.</p>
+    </article>
+    <article data-step="18" data-step-title="Pertussis toxin: Gi locked off" data-kind="pertussis" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Pertussis toxin: Gi locked off</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Pertussis toxin, from the bacterium that causes whooping cough, tags Gi alpha so a receptor can no longer make it swap GDP for GTP. Acetylcholine still binds its M2 receptor, but Gi stays off. In a healthy cell the same signal cuts cyclic AMP to less than half; here it stays at about its resting level. The brake is gone, rather than the accelerator stuck.</p>
+    </article>
+
+    <div class="step-nav">
+      <button type="button" data-step-back disabled>← Back</button>
+      <span data-step-progress aria-live="polite">Step 1 of 18</span>
+      <button type="button" data-step-next>Next →</button>
+    </div>
+    <p class="hint">Start with Next, or use the arrow keys. Under a moving picture: pause, drag to any moment, or slow it down. Underlined terms light up their part of the picture. Molecule counts and levels are illustrative, from the lesson's teaching model.</p>
+  </section>
+
+  <section id="quiz" role="tabpanel" aria-labelledby="tab-quiz" hidden></section>
+
+  <section id="summary" role="tabpanel" aria-labelledby="tab-summary" hidden></section>
+
+  <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
+    <h2>Reference values, beside the model.</h2>
+    <p id="disclaimer" class="disclaimer">Loading reference values…</p>
+    <div class="cv-top">
+      <div id="clinical-visual" class="visual"></div>
+      <div class="cv-controls">
+        <div>
+          <label for="clinical-state">Show a cited state</label>
+          <select id="clinical-state"><option value="rest">At rest, no nerve signal</option></select>
+        </div>
+        <div>
+          <button type="button" id="clinical-reset">Back to rest</button>
+        </div>
+      </div>
+    </div>
+    <p id="state-summary" class="state-summary" aria-live="polite">At rest, no nerve signal.</p>
+    <details class="lx-fine">
+      <summary>What the sources say about this state</summary>
+      <div id="state-evidence" class="model-note"></div>
+    </details>
+    <details class="lx-fine">
+      <summary>How to read these bars</summary>
+      <p>A grey-blue band is the cited typical adult range; a black tick is a single cited typical value. The blue line is the lesson's teaching model, read as a heart pacemaker cell: its rate rises with the cell's cyclic AMP. It starts at an illustrative resting rate inside the cited range and moves when you choose a state here or change the signals in Explore freely. The rate uses the receptor signals only, because neither toxin is taken to reach the heart. Its numbers are illustrative, never patient values. Arrows appear only where the cited location states a direction.</p>
+    </details>
+    <p id="cv-about" class="model-note"></p>
+    <div id="value-rows"></div>
+    <h3>Sources</h3>
+    <ul id="sources"></ul>
+    <p id="load-error" class="load-error" hidden></p>
+  </section>
+
+  <section id="explore" role="tabpanel" aria-labelledby="tab-explore" hidden>
+    <h2>Send signals. Add a toxin.</h2>
+    <p class="model-intro">An illustrative teaching model of one cell with all three kinds of receptor. Set how much hormone reaches each one and add either toxin, and watch each G protein's alpha move off its receptor and the two second messengers, cyclic AMP (cAMP) and calcium, change, drawn over a dashed outline of the resting cell.</p>
+    <div class="explore-grid">
+      <div id="explore-visual" class="visual"></div>
+      <div class="controls">
+        <fieldset>
+          <legend>Hormone at each receptor</legend>
+          <label for="sig-gs">Gs receptor (adrenaline at beta-1) <output id="sig-gs-out" for="sig-gs"></output></label>
+          <input id="sig-gs" type="range" min="0" max="100" step="5" value="0">
+          <label for="sig-gi">Gi receptor (acetylcholine at M2) <output id="sig-gi-out" for="sig-gi"></output></label>
+          <input id="sig-gi" type="range" min="0" max="100" step="5" value="0">
+          <label for="sig-gq">Gq receptor (noradrenaline at alpha-1) <output id="sig-gq-out" for="sig-gq"></output></label>
+          <input id="sig-gq" type="range" min="0" max="100" step="5" value="0">
+        </fieldset>
+        <fieldset>
+          <legend>Toxins</legend>
+          <label for="tox-ctx">Cholera toxin: share of Gs tagged <output id="tox-ctx-out" for="tox-ctx"></output></label>
+          <input id="tox-ctx" type="range" min="0" max="100" step="10" value="0">
+          <label for="tox-ptx">Pertussis toxin: share of Gi tagged <output id="tox-ptx-out" for="tox-ptx"></output></label>
+          <input id="tox-ptx" type="range" min="0" max="100" step="10" value="0">
+        </fieldset>
+        <button type="button" id="reset">Reset to rest</button>
+      </div>
+    </div>
+    <p id="model-results" class="model-results" aria-live="polite"></p>
+    <details>
+      <summary>How this teaching model works</summary>
+      <p>Each G protein's alpha is either off, holding GDP, or on, holding GTP. It is switched on at a small resting rate plus a rate that grows with the hormone at its receptor, and it switches itself off at a steady rate by splitting GTP. The share of alpha that is on settles where switching on balances switching off.</p>
+      <p>Each toxin slider sets the share of its target that is tagged, and the model treats the tagged and untagged G proteins as two separate groups. Tagged Gs cannot split its GTP, so once it picks up GTP it stays on, hormone or not: the model counts all of it as on. Tagged Gi cannot swap GDP for GTP, so it stays off whatever reaches its receptor. The untagged rest switch on and off as normal, and the share of each family that is on is the two groups added together.</p>
+      <p>Adenylyl cyclase runs at a resting rate, faster with Gs on and slower with Gi on. Phosphodiesterase clears cyclic AMP at a steady rate, so cyclic AMP is proportional to the cyclase's rate. Phospholipase C runs faster with Gq on; IP3 follows it, and calcium in the cell's fluid rises twice as steeply as IP3. Every level is shown relative to the resting cell.</p>
+      <p>Read as a gut lining cell, cyclic AMP sets how far the CFTR chloride channel is opened, so the model's chloride secretion follows it. Read as a heart pacemaker cell, the rate rises with the fourth root of cyclic AMP from the receptor signals alone. The model leaves out receptors wearing out with long use, the cell making more phosphodiesterase, and everything outside the cell.</p>
+    </details>
+  </section>
+
+  <footer>Lesson 31 of The Lab · Added 2026-11-23 · <a href="/lab/">All lessons</a></footer>
+</main>
+</body>
+</html>

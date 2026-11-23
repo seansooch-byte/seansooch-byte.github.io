@@ -1,0 +1,55 @@
+{
+  "disclaimer": "Typical adult reference ranges; labs vary; not for clinical decisions.",
+  "about": "Second messengers such as cyclic AMP, IP3 and calcium inside a cell are not measured in a routine blood test, so the bars here are the heart's rate, the place where this lesson's Gs and Gi examples show up in a patient. The heart-rate marker reads the lesson's teaching model as a sinus node pacemaker cell, using the receptor signals only. Each state below states only what its cited location supports: the heart's rate at rest, with sympathetic stimulation and with vagal stimulation. The receptor, G protein and second-messenger steps between nerve and rate are the lesson's teaching, not drawn from these locations. Gq, cholera toxin and pertussis toxin are not listed as states, because this file holds no cited location for them; the lesson teaches them and Explore freely models them.",
+  "modelBaseline": {
+    "about": "Where the illustrative teaching model starts: a resting pacemaker rate chosen inside the cited sinus node range. A model setting, not a reference value.",
+    "hr": 75
+  },
+  "sources": {
+    "guyton13": "Hall JE. Guyton and Hall Textbook of Medical Physiology. 13th edition. Philadelphia: Elsevier; 2016."
+  },
+  "values": [
+    {
+      "id": "sanRate", "label": "Sinus node, rhythmical discharge rate", "unit": "per min",
+      "low": 70, "high": 80, "typical": null, "display": "70 to 80", "decimals": 0,
+      "source": "guyton13",
+      "where": "Chapter 10, Rhythmical Excitation of the Heart: 'Sinus Node as the Pacemaker of the Heart' (the normal rate of the sinus node is 70 to 80 times per minute, against 40 to 60 for the A-V nodal fibers and 15 to 40 for the Purkinje fibers).",
+      "modelKey": "hr",
+      "note": "The heart's own pacemaker. In this lesson it is the example cell for the Gs and Gi paths."
+    },
+    {
+      "id": "hr", "label": "Heart rate", "unit": "beats/min",
+      "low": null, "high": null, "typical": 72, "display": "72", "decimals": 0,
+      "source": "guyton13",
+      "where": "Chapter 9, Cardiac Muscle; The Heart as a Pump and Function of the Heart Valves: 'Cardiac Cycle' (duration of the cycle at a normal heart rate of 72 beats/min).",
+      "modelKey": "hr",
+      "note": "A single typical value; the source gives no range here, so a tick is shown instead of a band."
+    }
+  ],
+  "states": [
+    {
+      "id": "rest", "label": "At rest, no nerve signal (resting cell in the model)", "kind": "physiologic",
+      "summary": "The sinus node fires at its normal rate.",
+      "shifts": { "sanRate": "none", "hr": "none" },
+      "source": "guyton13", "where": "Chapter 10, Rhythmical Excitation of the Heart: 'Sinus Node as the Pacemaker of the Heart' (the normal rate of the sinus node is 70 to 80 times per minute).",
+      "context": "In the teaching model no hormone is bound: most G proteins hold GDP and are off, with about one in eleven of each kind switched on by chance, and the cell's messengers sit at their resting levels.",
+      "model": "rest"
+    },
+    {
+      "id": "gs", "label": "Sympathetic stimulation of the heart (the lesson's Gs example)", "kind": "physiologic",
+      "summary": "Sympathetic stimulation makes the sinus node fire more often, so the heart's rate rises.",
+      "shifts": { "sanRate": "up", "hr": "up" },
+      "source": "guyton13", "where": "Chapter 10, 'Control of Heart Rhythmicity and Impulse Conduction by the Cardiac Nerves': 'Mechanism of the Sympathetic Effect'.",
+      "context": "The cited location gives the rate's direction. The path the lesson draws between nerve and rate, beta-1 receptors, Gs and a rise in cyclic AMP, is the lesson's teaching and is not drawn from this location. The model applies a full Gs signal.",
+      "model": "gs"
+    },
+    {
+      "id": "gi", "label": "Vagal stimulation of the heart (the lesson's Gi example)", "kind": "physiologic",
+      "summary": "Vagal stimulation makes the sinus node fire less often, so the heart's rate falls.",
+      "shifts": { "sanRate": "down", "hr": "down" },
+      "source": "guyton13", "where": "Chapter 10, 'Control of Heart Rhythmicity and Impulse Conduction by the Cardiac Nerves': 'Mechanism of the Vagal Effects'.",
+      "context": "The cited location gives the rate's direction. The path the lesson draws between nerve and rate, M2 receptors, Gi and a fall in cyclic AMP, is the lesson's teaching and is not drawn from this location. The model applies a full Gi signal.",
+      "model": "gi"
+    }
+  ]
+}

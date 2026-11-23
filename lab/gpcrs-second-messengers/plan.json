@@ -1,0 +1,191 @@
+{
+  "minutes": 27,
+  "prerequisites": ["autonomic-synapse", "ion-channels-channelopathies"],
+  "objectives": [
+    "Trace a signal from a hormone outside the cell, through its receptor and a G protein, to a second messenger inside the cell.",
+    "Explain how a G protein is switched on, by swapping GDP for GTP, and how it switches itself off by splitting that GTP.",
+    "Tell Gs, Gi and Gq apart by the enzyme each one acts on and the second messenger that changes.",
+    "Predict what cholera toxin and pertussis toxin do to cyclic AMP, and explain why cholera causes watery diarrhea."
+  ],
+  "checks": {
+    "gs": {
+      "prompt": "Adrenaline binds a beta-1 receptor on a heart pacemaker cell. That receptor is coupled to Gs, which switches adenylyl cyclase on. What happens to cyclic AMP in the cell?",
+      "choices": [
+        "It rises to several times its resting level",
+        "It falls below its resting level",
+        "It stays the same, because adrenaline never enters the cell",
+        "It is replaced by a rise in calcium from the store"
+      ],
+      "answer": 0,
+      "why": "Switched-on Gs alpha drives adenylyl cyclase harder, so ATP is turned into cyclic AMP faster than phosphodiesterase clears it. In this model cyclic AMP rises to more than four times its resting level, and the pacemaker cell fires faster."
+    },
+    "gi": {
+      "prompt": "Acetylcholine from the vagus nerve binds an M2 receptor on the same pacemaker cell. M2 is coupled to Gi, which brakes adenylyl cyclase. What happens to cyclic AMP?",
+      "choices": [
+        "It falls below its resting level",
+        "It rises, because any G protein switches the cyclase on",
+        "It stays the same, because Gi acts only on calcium",
+        "It drops to zero and the cell stops working"
+      ],
+      "answer": 0,
+      "why": "Gi alpha slows adenylyl cyclase, so less cyclic AMP is made while phosphodiesterase keeps clearing it. In this model it falls to less than half its resting level, and the heart slows. It does not reach zero: the cyclase is braked, not destroyed."
+    },
+    "gq": {
+      "prompt": "Noradrenaline binds an alpha-1 receptor on a smooth muscle cell in a blood vessel wall. Alpha-1 is coupled to Gq, which switches on phospholipase C. What rises inside the cell?",
+      "choices": [
+        "IP3, and then calcium released from the cell's store",
+        "Cyclic AMP, made by adenylyl cyclase",
+        "GDP, because the G protein stays switched off",
+        "Sodium, let in through the receptor itself"
+      ],
+      "answer": 0,
+      "why": "Phospholipase C splits a membrane lipid into DAG, which stays in the membrane, and IP3, which drifts to the endoplasmic reticulum and opens its calcium channels. Calcium in the cell rises to several times its resting level and the muscle cell contracts. The receptor is not a channel: nothing passes through it."
+    },
+    "cholera": {
+      "prompt": "Cholera toxin enters a gut lining cell and changes Gs alpha so that it can no longer split its GTP. No hormone is bound. What happens to cyclic AMP?",
+      "choices": [
+        "It rises and stays high, because Gs can never switch off",
+        "It rises briefly, then returns to normal as the GTP is split",
+        "It falls, because the toxin blocks the receptor",
+        "Nothing changes without a hormone at the receptor"
+      ],
+      "answer": 0,
+      "why": "A G protein switches itself off by splitting GTP. Without that timer, any Gs alpha that picks up GTP stays on for good, hormone or not, and keeps the cyclase running. In this model cyclic AMP climbs to almost six times normal and stays there."
+    },
+    "pertussis": {
+      "prompt": "Pertussis toxin changes Gi alpha so that a receptor can no longer swap its GDP for GTP. Acetylcholine then reaches an M2 receptor. Compared with a healthy cell given the same signal, what happens to cyclic AMP?",
+      "choices": [
+        "It stays near its resting level instead of falling",
+        "It falls even further than in the healthy cell",
+        "It rises far above normal, as with cholera toxin",
+        "It falls just as it would in the healthy cell"
+      ],
+      "answer": 0,
+      "why": "The receptor still binds acetylcholine, but Gi stays locked off with GDP, so the brake on adenylyl cyclase is never applied. A healthy cell's cyclic AMP would fall to less than half; with the toxin it stays at about its resting level, a little above it, because even resting Gi braked the cyclase slightly."
+    }
+  },
+  "quiz": [
+    {
+      "id": "first-second-messenger",
+      "objective": 1,
+      "step": "cyclase",
+      "stem": "Adrenaline cannot cross the cell membrane, yet it changes what happens inside a heart cell. What carries its message inside?",
+      "choices": [
+        "Cyclic AMP, a second messenger made inside the cell",
+        "Adrenaline itself, carried in by the receptor",
+        "The receptor, which breaks off and moves to the nucleus",
+        "GDP, released into the cell by the G protein"
+      ],
+      "answer": 0,
+      "why": "The hormone is the first messenger and stays outside. Its receptor and Gs switch on adenylyl cyclase, which makes cyclic AMP inside the cell: the second messenger. The receptor stays in the membrane and never carries the hormone in."
+    },
+    {
+      "id": "order-of-events",
+      "objective": 1,
+      "step": "switch",
+      "stem": "Which order is right for a Gs signal?",
+      "choices": [
+        "Hormone binds receptor, G protein swaps GDP for GTP, alpha switches on adenylyl cyclase, cyclic AMP rises",
+        "G protein swaps GDP for GTP, hormone binds receptor, cyclic AMP rises, alpha switches on adenylyl cyclase",
+        "Hormone binds adenylyl cyclase, cyclic AMP binds the receptor, the G protein switches off",
+        "Cyclic AMP binds the receptor, the hormone is made inside the cell, the G protein carries it out"
+      ],
+      "answer": 0,
+      "why": "The bound receptor changes shape and makes its G protein let go of GDP and take up GTP. The switched-on alpha then works the enzyme, and the enzyme makes the second messenger. Each step needs the one before it."
+    },
+    {
+      "id": "gtp-timer",
+      "objective": 2,
+      "step": "timer",
+      "stem": "A hormone leaves its receptor. What turns the G protein's alpha subunit off again?",
+      "choices": [
+        "Alpha splits its own GTP to GDP and rejoins beta and gamma",
+        "Phosphodiesterase breaks the alpha subunit down",
+        "The receptor pulls the GTP back out",
+        "Nothing: alpha stays on until the cell makes a new one"
+      ],
+      "answer": 0,
+      "why": "Alpha carries a built-in timer: it splits GTP to GDP, and with GDP it falls back onto beta and gamma, switched off. Phosphodiesterase clears cyclic AMP, the messenger, not the G protein. If alpha could not split GTP, it would stay on, which is what cholera toxin does to Gs."
+    },
+    {
+      "id": "gdp-off",
+      "objective": 2,
+      "step": "gprotein",
+      "stem": "A G protein sitting under a receptor with no hormone bound holds which molecule, and is it on or off?",
+      "choices": [
+        "GDP, and it is off",
+        "GTP, and it is on",
+        "GDP, and it is on",
+        "Cyclic AMP, and it is off"
+      ],
+      "answer": 0,
+      "why": "At rest alpha holds GDP and sits with beta and gamma: switched off. A bound receptor makes it swap GDP for GTP, and GTP-holding alpha is the switched-on form."
+    },
+    {
+      "id": "gi-vagus",
+      "objective": 3,
+      "step": "gi",
+      "stem": "The vagus nerve slows the heart through M2 receptors coupled to Gi. What does Gi do to the second messenger in the pacemaker cell?",
+      "choices": [
+        "Lowers cyclic AMP by braking adenylyl cyclase",
+        "Raises cyclic AMP by switching adenylyl cyclase on",
+        "Raises calcium by opening the endoplasmic reticulum's store",
+        "Splits a membrane lipid into IP3 and DAG"
+      ],
+      "answer": 0,
+      "why": "Gi works the same enzyme as Gs, adenylyl cyclase, but in the opposite direction: it brakes it, so cyclic AMP falls and the pacemaker fires more slowly. Splitting the lipid and releasing stored calcium is the Gq path."
+    },
+    {
+      "id": "gq-calcium",
+      "objective": 3,
+      "step": "store",
+      "stem": "Which second messenger opens the calcium store inside a cell?",
+      "choices": [
+        "IP3, made by phospholipase C after Gq switches it on",
+        "Cyclic AMP, made by adenylyl cyclase after Gs switches it on",
+        "DAG, which leaves the membrane and swims to the store",
+        "GTP, released from the G protein"
+      ],
+      "answer": 0,
+      "why": "Gq switches on phospholipase C, which splits a membrane lipid into IP3 and DAG. IP3 is small and dissolves in the cell's fluid, so it reaches the endoplasmic reticulum and opens its calcium channels. DAG stays in the membrane."
+    },
+    {
+      "id": "cholera-diarrhea",
+      "objective": 4,
+      "step": "cholera",
+      "stem": "Why does cholera cause large amounts of watery diarrhea?",
+      "choices": [
+        "Gs stays locked on in gut lining cells, cyclic AMP stays high, and chloride channels pour chloride, sodium and water into the gut",
+        "The toxin blocks Gi, so the gut stops absorbing any food",
+        "The toxin bursts the gut lining cells, which spill their water",
+        "The toxin blocks the receptor for adrenaline on the gut, so the gut moves too fast"
+      ],
+      "answer": 0,
+      "why": "Cholera toxin stops Gs alpha splitting its GTP, so the cyclase never stops and cyclic AMP stays high. Through protein kinase A, that opens the CFTR chloride channel; chloride flows into the gut, sodium follows, and water follows the salt. The cells are not destroyed; they are switched on and stuck."
+    },
+    {
+      "id": "pertussis-brake",
+      "objective": 4,
+      "step": "pertussis",
+      "stem": "Cholera toxin and pertussis toxin both leave cyclic AMP higher than it should be. How do they differ?",
+      "choices": [
+        "Cholera toxin locks Gs on; pertussis toxin locks Gi off, so the brake on the cyclase is lost",
+        "Cholera toxin locks Gi off; pertussis toxin locks Gs on",
+        "Both lock Gq on, so calcium rises",
+        "Cholera toxin blocks phosphodiesterase; pertussis toxin blocks the receptor"
+      ],
+      "answer": 0,
+      "why": "Cholera toxin presses the accelerator for good: Gs cannot switch itself off. Pertussis toxin cuts the brake: Gi can no longer be switched on, so signals that should lower cyclic AMP do nothing. Cholera's rise is large; pertussis toxin's effect shows as cyclic AMP failing to fall."
+    }
+  ],
+  "takeaways": [
+    "A hormone that cannot cross the membrane is the first messenger; a G protein-coupled receptor, which crosses the membrane seven times, passes its message inside.",
+    "A G protein is off while it holds GDP and on while it holds GTP. A bound receptor makes it swap; the alpha subunit then splits its own GTP and switches itself off.",
+    "The switched-on alpha works an enzyme, and the enzyme makes a second messenger in large numbers, so one hormone molecule is amplified many times over.",
+    "Gs switches adenylyl cyclase on, so cyclic AMP rises and protein kinase A goes to work; phosphodiesterase clears cyclic AMP again.",
+    "Gi brakes adenylyl cyclase, so cyclic AMP falls: that is how the vagus slows the heart while adrenaline, through Gs, speeds it up.",
+    "Gq switches on phospholipase C, which splits a membrane lipid into DAG and IP3; IP3 opens the calcium store, and calcium in the cell rises.",
+    "Cholera toxin stops Gs alpha splitting its GTP, so Gs is locked on, cyclic AMP stays high and gut cells pour chloride, salt and water into the gut.",
+    "Pertussis toxin stops Gi swapping GDP for GTP, so Gi is locked off and signals that should lower cyclic AMP have no effect."
+  ]
+}
