@@ -1,0 +1,40 @@
+{
+  "disclaimer": "Typical adult reference ranges; labs vary; not for clinical decisions.",
+  "about": "A drug's effect curve is not a blood test, so the bars here are the heart's rate, the same place Lesson 31 shows its receptor signals in a patient. The teaching model reads the curve's effect as the sinus node's response to an agonist at its beta-1 receptors: with no agonist added it sits at its starting rate (modelBaseline, a model setting, not a cited state), and the curve's top effect adds an illustrative rise. The one cited state, sympathetic stimulation, states only what its location supports: the heart's rate rises. Its transmitter, noradrenaline, is the body's own full agonist at these receptors. Partial agonists, competitive and noncompetitive antagonists and spare receptors are not listed as states, because this file holds no cited location for their effect on heart rate; the lesson teaches them and the teaching model applies them from Explore freely.",
+  "modelBaseline": {
+    "about": "Where the illustrative teaching model starts, with no agonist added: a pacemaker rate chosen inside the cited sinus node range (sanRate), and the rise the model adds at the curve's top effect. Model settings, not reference values.",
+    "hr": 75,
+    "hrRise": 60
+  },
+  "sources": {
+    "guyton13": "Hall JE. Guyton and Hall Textbook of Medical Physiology. 13th edition. Philadelphia: Elsevier; 2016."
+  },
+  "values": [
+    {
+      "id": "sanRate", "label": "Sinus node, rhythmical discharge rate", "unit": "per min",
+      "low": 70, "high": 80, "typical": null, "display": "70 to 80", "decimals": 0,
+      "source": "guyton13",
+      "where": "Chapter 10, Rhythmical Excitation of the Heart: 'Sinus Node as the Pacemaker of the Heart' (the normal rate of the sinus node is 70 to 80 times per minute, against 40 to 60 for the A-V nodal fibers and 15 to 40 for the Purkinje fibers).",
+      "modelKey": "hr",
+      "note": "The heart's own pacemaker, the example tissue whose response the teaching model reads."
+    },
+    {
+      "id": "hr", "label": "Heart rate", "unit": "beats/min",
+      "low": null, "high": null, "typical": 72, "display": "72", "decimals": 0,
+      "source": "guyton13",
+      "where": "Chapter 9, Cardiac Muscle; The Heart as a Pump and Function of the Heart Valves: 'Cardiac Cycle' (duration of the cycle at a normal heart rate of 72 beats/min).",
+      "modelKey": "hr",
+      "note": "A single typical value; the source gives no range here, so a tick is shown instead of a band."
+    }
+  ],
+  "states": [
+    {
+      "id": "fullAgonist", "label": "Sympathetic stimulation of the heart (a full agonist at beta-1 receptors)", "kind": "physiologic",
+      "summary": "Sympathetic stimulation makes the sinus node fire more often, so the heart's rate rises.",
+      "shifts": { "sanRate": "up", "hr": "up" },
+      "source": "guyton13", "where": "Chapter 10, 'Control of Heart Rhythmicity and Impulse Conduction by the Cardiac Nerves': 'Mechanism of the Sympathetic Effect'.",
+      "context": "The cited location gives the rate's direction. Reading noradrenaline as a full agonist on the lesson's curve is the lesson's teaching and is not drawn from this location. The model applies a concentration high in the curve's steep middle.",
+      "model": { "agonist": "full", "conc": 1 }
+    }
+  ]
+}

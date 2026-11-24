@@ -1,0 +1,206 @@
+{
+  "minutes": 24,
+  "prerequisites": ["gpcrs-second-messengers"],
+  "objectives": [
+    "Explain how filling more of a receptor population gives a larger effect, up to a ceiling.",
+    "Read a log dose-response curve: find its ceiling (efficacy) and its EC50 (potency), and tell potency apart from efficacy.",
+    "Tell a full agonist, a partial agonist and an antagonist apart by how far each switches a receptor on.",
+    "Predict how a competitive and a noncompetitive antagonist each move the curve.",
+    "Explain spare receptors: why a tissue can reach its top effect with only some of its receptors filled."
+  ],
+  "checks": {
+    "full": {
+      "prompt": "A second full agonist binds the receptor ten times more tightly than the normal one, and it still switches each receptor fully on. How does its curve compare with the normal one?",
+      "choices": [
+        "It slides left, with the same ceiling",
+        "It stays in the same place, with a higher ceiling",
+        "It slides left, with a higher ceiling",
+        "It slides right, with the same ceiling"
+      ],
+      "answer": 0,
+      "why": "Binding more tightly fills the receptors at a lower concentration, so the whole curve moves left and the EC50 falls: it is more potent. Every full agonist switches the receptors fully on, so the ceiling, its efficacy, is the same."
+    },
+    "partial": {
+      "prompt": "This partial agonist binds as readily as the normal agonist, but switches each receptor it holds only partly on. What happens to the curve?",
+      "choices": [
+        "The ceiling falls to about half; the EC50 stays put",
+        "The curve slides right; the ceiling holds",
+        "Nothing: filling the receptors is all that matters",
+        "The curve slides left and the ceiling rises"
+      ],
+      "answer": 0,
+      "why": "It fills receptors at the same concentrations, so the curve keeps its place left to right. But with every receptor filled, each is only partly on, so the effect stops at a lower ceiling: lower efficacy."
+    },
+    "competitive": {
+      "prompt": "A competitive antagonist takes turns with the agonist at the same binding site, and extra agonist can win those turns back. What happens to the curve?",
+      "choices": [
+        "It slides right; the ceiling holds",
+        "The ceiling falls; the EC50 stays put",
+        "It slides left; the ceiling holds",
+        "It goes flat: no dose gives any effect"
+      ],
+      "answer": 0,
+      "why": "With the antagonist taking some of the turns, more agonist is needed for each level of effect, so the curve moves right. Enough agonist still fills nearly every receptor, so the same ceiling is reached."
+    },
+    "noncompetitive": {
+      "prompt": "A noncompetitive antagonist takes some receptors out of action in a way extra agonist cannot undo. The receptors left respond normally. What happens to the curve?",
+      "choices": [
+        "The ceiling falls; the EC50 stays put",
+        "It slides right; the ceiling holds",
+        "It slides left; the ceiling holds",
+        "Nothing, once enough agonist is given"
+      ],
+      "answer": 0,
+      "why": "Receptors out of action cannot be won back by more agonist, so the top effect falls. The receptors that are left fill at the same concentrations as before, so the curve's middle stays in the same place."
+    },
+    "spare": {
+      "prompt": "A tissue has ten times as many receptors as the normal one, because each receptor's signal is multiplied inside the cell. Only a share of them must be on for the top effect. What happens to the curve?",
+      "choices": [
+        "It slides left; the ceiling stays the same",
+        "The ceiling rises ten times higher",
+        "It slides right; the ceiling stays the same",
+        "Nothing changes"
+      ],
+      "answer": 0,
+      "why": "The tissue reaches its top effect with only a fraction of its receptors filled, and filling a fraction takes far less drug, so the curve moves left. The ceiling is the most the tissue can do, so it does not rise."
+    }
+  },
+  "quiz": [
+    {
+      "id": "occupancy-effect",
+      "objective": 1,
+      "step": "occupancy",
+      "stem": "In a tissue where every filled receptor adds the same push, an agonist fills 3 of every 10 receptors. About how large is the effect?",
+      "choices": [
+        "About 30% of the top effect",
+        "The full top effect, because the drug is an agonist",
+        "About 3% of the top effect",
+        "No effect until every receptor is filled"
+      ],
+      "answer": 0,
+      "why": "When each filled receptor adds the same push, the effect grows with occupancy, the share of receptors filled. Thinking an agonist gives all or nothing is the trap: the effect is graded."
+    },
+    {
+      "id": "log-scale",
+      "objective": 1,
+      "step": "logscale",
+      "stem": "Why are dose-response curves usually drawn with concentration on a log scale?",
+      "choices": [
+        "It spreads a range from tiny to thousands of times larger evenly, so the curve becomes an S with a readable middle",
+        "It makes the effect larger",
+        "It turns the curve into a straight line all the way up",
+        "It removes the ceiling from the curve"
+      ],
+      "answer": 0,
+      "why": "On a log scale each equal step means ten times more drug, so low doses are no longer squeezed into one corner. The curve itself is unchanged; only the axis is stretched, and the ceiling is still there."
+    },
+    {
+      "id": "potency-efficacy",
+      "objective": 2,
+      "step": "full",
+      "stem": "Drug X and drug Y reach the same top effect, but drug X's EC50 is ten times lower. Which is true?",
+      "choices": [
+        "X is more potent; both have the same efficacy",
+        "X has greater efficacy; both are equally potent",
+        "X is both more potent and more effective",
+        "Y is more potent, because it needs more drug"
+      ],
+      "answer": 0,
+      "why": "Potency is where the curve sits left to right, read from the EC50; efficacy is how high it reaches. Same ceiling means same efficacy. Calling the more potent drug the stronger one confuses the two."
+    },
+    {
+      "id": "ec50",
+      "objective": 2,
+      "step": "ec50",
+      "stem": "On a dose-response curve, what is the EC50?",
+      "choices": [
+        "The concentration that gives half of that drug's own top effect",
+        "The highest effect the drug can give",
+        "The concentration that fills every receptor",
+        "Half of the most a patient can take"
+      ],
+      "answer": 0,
+      "why": "The EC50 is read at half of the drug's own ceiling, in the steep middle of the S. A lower EC50 means a more potent drug. The top effect itself is the ceiling, a separate measure."
+    },
+    {
+      "id": "partial-alone",
+      "objective": 3,
+      "step": "partial",
+      "stem": "A partial agonist is given at a concentration that fills nearly every receptor. Compared with a full agonist that fills them all, its effect is:",
+      "choices": [
+        "Lower, however much more is given",
+        "The same, because every receptor is filled",
+        "Higher, because it stays bound longer",
+        "Zero, because it blocks the receptor"
+      ],
+      "answer": 0,
+      "why": "A partial agonist switches each receptor it holds only partly on, so even with every receptor filled its effect stops at a lower ceiling. It is not an antagonist: alone, it does give an effect."
+    },
+    {
+      "id": "partial-with-full",
+      "objective": 3,
+      "step": "partial",
+      "stem": "A patient has a strong effect from a full agonist. A partial agonist that binds the same receptor is then given in a large amount. What happens to the effect?",
+      "choices": [
+        "It falls toward the partial agonist's lower ceiling",
+        "It rises above the full agonist's ceiling",
+        "It stays the same, because both are agonists",
+        "It falls to zero, as with an antagonist"
+      ],
+      "answer": 0,
+      "why": "The partial agonist takes over receptors the full agonist was switching fully on and switches them only partly on, so the effect drops toward its own ceiling. It does not fall to zero, because the partial agonist still switches receptors partly on."
+    },
+    {
+      "id": "competitive",
+      "objective": 4,
+      "step": "competitive",
+      "stem": "With a competitive antagonist present, a much larger amount of agonist is given. What happens?",
+      "choices": [
+        "The full top effect is reached, at a higher concentration than before",
+        "The effect can never reach the old ceiling",
+        "The agonist's curve moves left",
+        "The antagonist becomes an agonist"
+      ],
+      "answer": 0,
+      "why": "The agonist and the antagonist take turns at the same site, so enough agonist wins nearly all the turns back. The curve slides right and the ceiling holds. A ceiling that cannot be reached is the mark of a noncompetitive antagonist."
+    },
+    {
+      "id": "noncompetitive",
+      "objective": 4,
+      "step": "noncompetitive",
+      "stem": "With a new drug present, an agonist's curve keeps its EC50, but its top effect falls and extra agonist cannot bring it back. What kind of drug was added?",
+      "choices": [
+        "A noncompetitive antagonist",
+        "A competitive antagonist",
+        "A more potent full agonist",
+        "More receptors, as spare receptors"
+      ],
+      "answer": 0,
+      "why": "A noncompetitive antagonist puts receptors out of action in a way more agonist cannot undo, so the ceiling falls; the receptors left fill as before. A competitive antagonist would slide the curve right and keep the ceiling."
+    },
+    {
+      "id": "spare",
+      "objective": 5,
+      "step": "spare",
+      "stem": "In a tissue with spare receptors, how does an agonist's EC50 compare with the concentration that fills half the receptors?",
+      "choices": [
+        "It is lower: half the top effect comes with far fewer than half the receptors filled",
+        "It is the same: the effect always follows the share filled",
+        "It is higher: spare receptors must fill first",
+        "It is undefined, because spare receptors give no effect"
+      ],
+      "answer": 0,
+      "why": "Each receptor's signal is multiplied inside the cell, so the tissue reaches half its top effect, here with about 1 receptor in 20 filled. The effect curve sits left of the curve of receptors filled."
+    }
+  ],
+  "takeaways": [
+    "Most drugs act by binding a receptor; the share of receptors a drug fills, its occupancy, rises with its concentration and levels off as the receptors run out.",
+    "A dose-response curve plots effect against concentration; on a log scale it becomes an S, with a flat start, a steep middle and a flat top.",
+    "The ceiling (maximal effect) measures efficacy: how big an effect a drug can produce. The EC50, the concentration for half that ceiling, measures potency: lower is more potent.",
+    "Potency and efficacy are separate: a more potent full agonist slides the curve left but reaches the same ceiling.",
+    "A full agonist switches receptors fully on; a partial agonist only partly, however tightly it binds, so its ceiling is lower and it can pull down the effect of a full agonist; an antagonist switches nothing on and stops or reduces an agonist's effect.",
+    "A competitive antagonist shares the agonist's site, so enough agonist overcomes it: the curve slides right and the ceiling holds.",
+    "A noncompetitive antagonist takes receptors out of action in a way agonist cannot undo. In a tissue without spare receptors, as drawn here, the ceiling falls and the EC50 stays put; with spare receptors it first slides the curve right, and the ceiling falls only once the spares are used up.",
+    "Spare receptors let a tissue reach its top effect with only some receptors filled, so its curve sits left of the curve of receptors filled."
+  ]
+}
