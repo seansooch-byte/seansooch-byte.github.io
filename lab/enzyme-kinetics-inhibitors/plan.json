@@ -1,0 +1,208 @@
+{
+  "minutes": 25,
+  "prerequisites": ["arachidonic-acid-nsaids", "pharmacokinetics", "dose-response-curve"],
+  "objectives": [
+    "Explain how an enzyme binds its substrate at the active site, turns it into product and comes out unchanged.",
+    "Explain why reaction speed rises with substrate and then levels off at a maximum speed once the enzymes are saturated.",
+    "Read the maximum speed and the Km from a curve of speed against substrate, and predict how more or less enzyme moves them.",
+    "Tell a competitive, a noncompetitive and an irreversible inhibitor apart by how each moves the ceiling and the Km, and by what can undo it.",
+    "Predict how a positive and a negative allosteric modulator move the S-shaped curve of a cooperative allosteric enzyme, like the one in this lesson."
+  ],
+  "checks": {
+    "competitive": {
+      "prompt": "A competitive inhibitor looks like the substrate and takes turns with it in the active site. Extra substrate can win those turns back. What happens to the curve?",
+      "choices": [
+        "It slides right: the same ceiling, but more substrate is needed for half speed",
+        "The ceiling falls, and the half-speed mark stays put",
+        "It slides left: less substrate is needed for half speed",
+        "It goes flat: no amount of substrate gives any speed"
+      ],
+      "answer": 0,
+      "why": "With the inhibitor taking some of the turns, each level of speed needs more substrate, so the Km rises and the curve moves right. Enough substrate wins nearly every turn back, so the same ceiling is reached."
+    },
+    "noncompetitive": {
+      "prompt": "A noncompetitive inhibitor binds a second site, away from the active site, and switches off each enzyme it holds, with or without substrate inside. What happens to the curve?",
+      "choices": [
+        "The ceiling falls; the half-speed mark, the Km, stays put",
+        "It slides right; the ceiling holds",
+        "Nothing, once enough substrate is added",
+        "The ceiling rises, because the enzyme holds two molecules"
+      ],
+      "answer": 0,
+      "why": "Substrate cannot push an inhibitor off a different site, so the switched-off enzymes stay off and the top speed falls. The enzymes left free work as before, so they reach half of the new, lower ceiling at the same substrate level: the Km is unchanged."
+    },
+    "irreversible": {
+      "prompt": "An irreversible inhibitor bonds to the enzyme for good, and keeps catching more enzyme molecules as time passes. What happens to the curve, and what brings the speed back?",
+      "choices": [
+        "The ceiling falls further and further; only newly made enzyme restores it",
+        "It slides right, and extra substrate restores the ceiling",
+        "The ceiling falls, and it comes back as soon as the drug leaves the blood",
+        "Nothing changes, because the enzyme is never used up"
+      ],
+      "answer": 0,
+      "why": "Each enzyme molecule it bonds is out of action for good, so there are fewer working enzymes and a lower ceiling; the ones left work normally, so the Km holds. The drug leaving does not free them: the cell has to make new enzyme."
+    },
+    "modulators": {
+      "prompt": "An allosteric modulator binds the control site of an allosteric enzyme with an S-shaped curve, like the one drawn here, and changes how readily its active sites grip substrate. A negative modulator makes them grip less readily. What happens to the S-shaped curve?",
+      "choices": [
+        "It slides right: more substrate is needed for half speed; a positive modulator slides it left",
+        "It slides left: less substrate is needed for half speed",
+        "It turns into the plain bend, with no S",
+        "The ceiling doubles"
+      ],
+      "answer": 0,
+      "why": "Gripping less readily means more substrate is needed to fill the active sites, so the half-speed point moves right. A positive modulator does the opposite and slides the S left. The ceiling, when every site is busy, is the same in this lesson's model."
+    }
+  },
+  "quiz": [
+    {
+      "id": "enzyme-unchanged",
+      "objective": 1,
+      "step": "cycle",
+      "stem": "An enzyme has just turned one substrate molecule into product. What happens to the enzyme?",
+      "choices": [
+        "It lets the product go, unchanged, and can take another substrate",
+        "It is used up along with the substrate",
+        "It becomes part of the product",
+        "It must be rebuilt by the cell before it can work again"
+      ],
+      "answer": 0,
+      "why": "An enzyme speeds a reaction without being used up: it binds, changes the substrate, lets the product go and is free again. Thinking it is spent like a fuel is the trap; one enzyme turns over many substrate molecules."
+    },
+    {
+      "id": "active-site-fit",
+      "objective": 1,
+      "step": "site",
+      "stem": "Why does an enzyme work on its own substrate and not on most other molecules?",
+      "choices": [
+        "Its active site is shaped to fit that substrate",
+        "It is attracted to any molecule of the right size",
+        "The substrate is always the most plentiful molecule nearby",
+        "Each enzyme makes its own substrate first"
+      ],
+      "answer": 0,
+      "why": "The active site is a pocket whose shape and chemistry fit one substrate, as a key fits a lock. Size alone is not enough: a molecule must match the pocket to bind."
+    },
+    {
+      "id": "saturation",
+      "objective": 2,
+      "step": "curve",
+      "stem": "Substrate is already high and the speed has leveled off. What happens if substrate is doubled again?",
+      "choices": [
+        "Speed barely changes, because nearly every enzyme is already busy",
+        "Speed doubles",
+        "Speed halves, because the enzymes are crowded",
+        "The maximum speed rises to match"
+      ],
+      "answer": 0,
+      "why": "On the flat part of the curve the enzymes are saturated: nearly every one is busy, so extra substrate has almost nothing to bind. Expecting speed to keep growing with substrate is the trap; that only holds on the steep start."
+    },
+    {
+      "id": "busy-enzymes",
+      "objective": 2,
+      "step": "busy",
+      "stem": "With very little substrate, why is the reaction slow?",
+      "choices": [
+        "Most enzymes sit empty, waiting for a substrate to arrive",
+        "The enzymes are switched off until substrate rises",
+        "The enzymes work more slowly when they are not crowded",
+        "There is not enough enzyme to make any product"
+      ],
+      "answer": 0,
+      "why": "Each enzyme works at the same pace once it holds a substrate, but with little substrate most of them are empty at any moment. Adding substrate keeps more of them busy, so speed rises."
+    },
+    {
+      "id": "read-km",
+      "objective": 3,
+      "step": "km",
+      "stem": "Enzyme A reaches half of its maximum speed at a lower substrate level than enzyme B. Which is true?",
+      "choices": [
+        "A has the lower Km: it needs less substrate to reach half speed",
+        "A has the higher Km: it needs less substrate to reach half speed",
+        "A has the higher maximum speed",
+        "A is saturated at every substrate level"
+      ],
+      "answer": 0,
+      "why": "The Km is the substrate level that gives half the maximum speed, so the lower it is, the less substrate the enzyme needs. In this lesson's simple model that reads as a readier grip on the substrate, but in real enzymes the Km also depends on how fast the bound substrate is changed, so it is not a pure measure of binding. It says nothing about the ceiling, a separate measure."
+    },
+    {
+      "id": "more-enzyme",
+      "objective": 3,
+      "step": "amount",
+      "stem": "A cell makes twice as much of an enzyme. How does the curve change?",
+      "choices": [
+        "The ceiling doubles; the Km stays the same",
+        "The Km halves; the ceiling stays the same",
+        "Both the ceiling and the Km double",
+        "Nothing: speed depends only on substrate"
+      ],
+      "answer": 0,
+      "why": "Twice the enzyme makes twice the product once all of it is busy, so the ceiling doubles. Each molecule works as before, so half speed comes at the same substrate level."
+    },
+    {
+      "id": "competitive-overcome",
+      "objective": 4,
+      "step": "competitive",
+      "stem": "A patient takes a statin, a competitive inhibitor of the enzyme that makes cholesterol. In a test tube, a large excess of that enzyme's substrate is then added. What happens to the enzyme's speed?",
+      "choices": [
+        "It climbs back toward the normal ceiling",
+        "It stays at a lower ceiling, however much substrate is added",
+        "It falls to zero",
+        "It rises above the normal ceiling"
+      ],
+      "answer": 0,
+      "why": "A competitive inhibitor takes turns with the substrate in the same site, so enough substrate wins nearly all the turns back and the ceiling is reached, at a higher substrate level. A ceiling that cannot be reached is the mark of a noncompetitive or irreversible inhibitor."
+    },
+    {
+      "id": "name-noncompetitive",
+      "objective": 4,
+      "step": "noncompetitive",
+      "stem": "A new drug lowers an enzyme's maximum speed but leaves its Km unchanged, and the effect wears off as soon as the drug is washed away. What is it?",
+      "choices": [
+        "A noncompetitive inhibitor",
+        "A competitive inhibitor",
+        "A positive allosteric modulator",
+        "An irreversible inhibitor"
+      ],
+      "answer": 0,
+      "why": "A lower ceiling with the same Km means fewer enzymes working, which fits both a noncompetitive and an irreversible inhibitor. Wearing off on washing means it lets go, so it is reversible: noncompetitive. An irreversible one stays bonded until new enzyme is made."
+    },
+    {
+      "id": "aspirin-lasts",
+      "objective": 4,
+      "step": "irreversible",
+      "stem": "Aspirin bonds to the COX enzyme of platelets for good, and platelets cannot make new enzyme. Why does its effect on platelets outlast the aspirin in the blood?",
+      "choices": [
+        "Each bonded COX stays off, and only new platelets bring working enzyme back",
+        "Aspirin lets go slowly, over many days",
+        "COX's substrate builds up and outcompetes it later",
+        "It raises the Km of COX, which takes days to settle"
+      ],
+      "answer": 0,
+      "why": "An irreversible inhibitor removes enzyme molecules for good, so speed returns only with new enzyme. Platelets have no nucleus to make more COX, so the effect lasts until they are replaced (Lesson 18)."
+    },
+    {
+      "id": "atp-modulator",
+      "objective": 5,
+      "step": "modulators",
+      "stem": "When energy is plentiful, ATP binds the allosteric site of an enzyme in sugar breakdown as a negative modulator. How does that enzyme's S-shaped curve move?",
+      "choices": [
+        "It slides right: more substrate is needed for half speed, so sugar breakdown slows",
+        "It slides left: sugar breakdown speeds up",
+        "It turns into the plain bend",
+        "Its ceiling rises"
+      ],
+      "answer": 0,
+      "why": "A negative modulator makes the active sites grip substrate less readily, so the curve moves right and, at the same substrate level, the enzyme runs slower. A positive modulator would slide it left."
+    }
+  ],
+  "takeaways": [
+    "An enzyme is a protein that speeds up one reaction: its substrate fits the active site, is turned into product, and the enzyme comes out unchanged, ready for the next.",
+    "Reaction speed rises with substrate because more enzymes are busy at once; it levels off at the maximum speed, the ceiling, when nearly all of them are busy (saturated).",
+    "The Km is the substrate level that gives half the maximum speed: a low Km means half speed with little substrate. In this lesson's simple model that reads as a readier grip on the substrate; in real enzymes the Km also depends on how fast the bound substrate is changed. More enzyme raises the ceiling and leaves the Km alone.",
+    "A competitive inhibitor takes turns with the substrate in the active site: the ceiling holds, but more substrate is needed, so the Km rises and the curve slides right.",
+    "A noncompetitive inhibitor binds a second site and switches enzymes off: the ceiling falls, the Km stays, and extra substrate cannot undo it.",
+    "An irreversible inhibitor bonds for good, as aspirin does to COX and nerve agents to acetylcholinesterase: the ceiling falls and stays down until new enzyme is made.",
+    "An allosteric enzyme has a control site, the allosteric site. Many, like the one in this lesson, are built of parts that help each other and so have an S-shaped curve, though not every allosteric enzyme does. A positive modulator slides that S left; a negative modulator, such as ATP on an enzyme of sugar breakdown, slides it right."
+  ]
+}
