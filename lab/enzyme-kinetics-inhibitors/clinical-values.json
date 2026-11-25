@@ -1,0 +1,70 @@
+{
+  "disclaimer": "Typical adult reference ranges; labs vary; not for clinical decisions.",
+  "about": "An enzyme's speed curve is not a blood test, so this tab reads the lesson's enzyme as a liver enzyme (cytochrome P450) that breaks down a drug, as in Lesson 17. The two rows are the sourced rules for how much of a drug is gone after a number of its half-lives. The states quote what the source says an inhibitor or an inducer does: drug plasma concentration rises, or the targeted drug's activity falls. The source does not give the share eliminated after a fixed number of half-lives under either state, so no cited arrow is shown on these rows for them. What the markers do under a state is the teaching model's prediction only, under the assumptions in modelAssumptions.",
+  "modelAssumptions": [
+    "The drug's level at the enzyme is far below the enzyme's Km. This is an assumption of the teaching model, not a property of every drug: in that low range speed rises in step with substrate, so the enzyme's clearing power follows its ceiling divided by its Km.",
+    "This one enzyme does all of the drug's clearance; real drugs are often cleared by several enzymes and by the kidneys too.",
+    "Elimination is first order (a fixed share is removed per unit time), as the half-life rules assume.",
+    "The volume of distribution does not change, so clearance alone sets the half-life (the source's Equation 3: t1/2 = 0.693 x Vd / CL).",
+    "How strongly each state changes the enzyme is the lesson's illustrative setting, not a cited amount."
+  ],
+  "modelBaseline": {
+    "about": "Where the illustrative teaching model starts: the drug's level at the liver enzyme, in multiples of the enzyme's normal Km. Chosen low to match the first assumption above. A model setting, not a reference value.",
+    "substrate": 0.1
+  },
+  "sources": {
+    "statpearls-half-life": "Hallare J, Gerriets V. Elimination Half-Life of Drugs. In: StatPearls [Internet]. Treasure Island (FL): StatPearls Publishing; 2025 Jan-. Last update May 3, 2025. NCBI Bookshelf ID NBK554498. https://www.ncbi.nlm.nih.gov/books/NBK554498/",
+    "statpearls-elimination": "Garza AZ, Park SB, Kocz R. Drug Elimination. In: StatPearls [Internet]. Treasure Island (FL): StatPearls Publishing; 2023 Jan-. Last update July 4, 2023. NCBI Bookshelf ID NBK547662. https://www.ncbi.nlm.nih.gov/books/NBK547662/"
+  },
+  "values": [
+    {
+      "id": "half1", "label": "Drug removed after one half-life", "unit": "%",
+      "low": null, "high": null, "typical": 50, "display": "50", "decimals": 0, "scale": [0, 100],
+      "after": { "halfLives": 1 },
+      "source": "statpearls-half-life",
+      "where": "Elimination Half-Life of Drugs, Definition/Introduction: “Although different drugs have varying half-lives, they all share a common principle – after one half-life, 50% of the initial drug amount is removed from the body.”",
+      "modelKey": "removedAfter",
+      "note": "The source gives a single value, not a range. The model marker shows how much of its drug is gone once the drug's usual (normal-enzyme) half-life has passed."
+    },
+    {
+      "id": "ninety", "label": "Drug eliminated after about 3.3 half-lives", "unit": "%",
+      "low": null, "high": null, "typical": 90, "display": "90", "decimals": 0, "scale": [0, 100],
+      "after": { "halfLives": 3.3 },
+      "source": "statpearls-half-life",
+      "where": "Elimination Half-Life of Drugs, Definition/Introduction: “For example, 90% of a given drug undergoes elimination after approximately 3.3 half-lives.”",
+      "modelKey": "removedAfter",
+      "note": "The source gives a single value, not a range. The model marker is read after this many usual half-lives (the after field of this row)."
+    }
+  ],
+  "states": [
+    {
+      "id": "baseline", "label": "Normal liver enzymes", "kind": "physiologic",
+      "summary": "With its usual enzyme activity the body clears the drug at its usual rate, so half is gone after one half-life and about 90% after 3.3.",
+      "shifts": { "half1": "none", "ninety": "none" },
+      "source": "statpearls-half-life",
+      "where": "Elimination Half-Life of Drugs, Definition/Introduction: “Although different drugs have varying half-lives, they all share a common principle – after one half-life, 50% of the initial drug amount is removed from the body.” and “For example, 90% of a given drug undergoes elimination after approximately 3.3 half-lives.”",
+      "context": "These are the rows' own cited values, so the model starts on them.",
+      "model": {}
+    },
+    {
+      "id": "inhibitor", "label": "Enzyme inhibitors (for example diltiazem, erythromycin or grapefruit on CYP3A4)", "kind": "drug",
+      "summary": "A drug or food that inhibits a liver cytochrome P450 enzyme raises the plasma concentration of other drugs that enzyme handles, which can lead to toxicity.",
+      "shifts": {},
+      "modelPrediction": { "half1": "down", "ninety": "down" },
+      "source": "statpearls-elimination",
+      "where": "Drug Elimination, Issues of Concern: “Conversely, CYP inhibition will result in increased drug plasma concentration, potentially leading to toxicity.” and “The CYP3A4 is induced by phenytoin, phenobarbital, and St. John's wort, while diltiazem, erythromycin, and grapefruit inhibit it.”",
+      "context": "Cited: the rise in plasma concentration. Not cited: any change in the share eliminated after a fixed number of half-lives, so these rows show no cited arrow. Under the model's assumptions, a slower enzyme clears less, so less of the drug is gone after its usual half-life; that is the model's prediction. The source does not say which kind of inhibition each named inhibitor uses; the model applies the lesson's competitive setting (Km three times normal).",
+      "model": { "comp": 2 }
+    },
+    {
+      "id": "inducer", "label": "Enzyme inducers (for example phenytoin, phenobarbital or St. John's wort on CYP3A4)", "kind": "drug",
+      "summary": "A drug or herb that induces (switches up) a liver cytochrome P450 enzyme lowers the activity of other drugs that enzyme handles.",
+      "shifts": {},
+      "modelPrediction": { "half1": "up", "ninety": "up" },
+      "source": "statpearls-elimination",
+      "where": "Drug Elimination, Issues of Concern: “The increase in metabolic activity with CYP induction results in a diminished activity of drugs targeted by that particular isoform.” and “The CYP3A4 is induced by phenytoin, phenobarbital, and St. John's wort, while diltiazem, erythromycin, and grapefruit inhibit it.”",
+      "context": "Cited: more metabolic activity and less activity of the targeted drugs. Not cited: any change in the share eliminated after a fixed number of half-lives, so these rows show no cited arrow. Under the model's assumptions, more enzyme clears more, so more of the drug is gone after its usual half-life; that is the model's prediction. The model applies induction as twice the enzyme, the lesson's step 7.",
+      "model": { "enzyme": 2 }
+    }
+  ]
+}

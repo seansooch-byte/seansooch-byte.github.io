@@ -800,5 +800,20 @@
       "tool": "OpenAI Codex",
       "model": "gpt-6.1-terra"
     }
+  },
+  {
+    "slug": "enzyme-kinetics-inhibitors",
+    "title": "Enzyme Kinetics and Inhibitors",
+    "date": "2026-11-25",
+    "description": "How an enzyme's speed rises with its substrate and then levels off, and how a competitive inhibitor and a noncompetitive inhibitor bend that curve differently.",
+    "category": "medicine",
+    "builder": {
+      "tool": "Claude Code",
+      "model": "claude-opus-5-5"
+    },
+    "reviewer": {
+      "tool": "OpenAI Codex",
+      "model": "gpt-6.1-terra"
+    }
   }
 ]

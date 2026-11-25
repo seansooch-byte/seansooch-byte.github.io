@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Enzyme Kinetics and Inhibitors · The Lab · Sean Sooch</title>
+<meta name="description" content="A guided visual lesson: how an enzyme's speed rises with its substrate and then levels off, what the maximum speed and the Km mean, and how competitive, noncompetitive and irreversible inhibitors and allosteric modulators each bend that curve.">
+<link rel="canonical" href="https://seansooch.dev/lab/enzyme-kinetics-inhibitors/">
+<meta property="og:title" content="Enzyme Kinetics and Inhibitors">
+<meta property="og:description" content="Watch enzymes fill up with substrate until their speed levels off, then see a competitive inhibitor slide the curve right and a noncompetitive inhibitor lower its ceiling, one picture at a time.">
+<meta property="og:url" content="https://seansooch.dev/lab/enzyme-kinetics-inhibitors/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/lab/kit/kit.css">
+<link rel="stylesheet" href="style.css">
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the lesson</a>
+<header class="site-top">
+  <div class="site-top-in">
+    <a class="site-brand" href="/" aria-label="Sean Sooch, home">Sean Sooch</a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="site-nav-home" href="/#work">Work</a>
+      <a href="/#writing">Writing</a>
+      <a href="/#films">Films</a>
+      <a href="/#editions">Editions</a>
+      <a class="site-nav-lab" href="/lab/" aria-current="true">The Lab</a>
+    </nav>
+  </div>
+</header>
+<main id="main" data-slug="enzyme-kinetics-inhibitors">
+  <div class="intro">
+    <p class="eyebrow"><a href="/lab/">The Lab</a> / <a href="/lab/#cells-membranes-signals">Unit 9: Cells, membranes and signals</a> / Lesson 33</p>
+    <h1>Enzyme kinetics<br><span>and inhibitors.</span></h1>
+    <p class="lede">An enzyme works faster as its substrate rises, until every enzyme is busy and the speed levels off. See why, then watch four kinds of drug bend that curve: one slides it right, two lower its ceiling, and one turns a dial on it.</p>
+    <p class="note">Educational, not for clinical use</p>
+    <div class="lx-plan" data-lx-plan></div>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Lesson views">
+    <button type="button" role="tab" id="tab-lesson" aria-controls="lesson" aria-selected="true">Lesson</button>
+    <button type="button" role="tab" id="tab-quiz" aria-controls="quiz" aria-selected="false" tabindex="-1">Quiz</button>
+    <button type="button" role="tab" id="tab-summary" aria-controls="summary" aria-selected="false" tabindex="-1">Summary</button>
+    <button type="button" role="tab" id="tab-clinical" aria-controls="clinical" aria-selected="false" tabindex="-1">Clinical values</button>
+    <button type="button" role="tab" id="tab-explore" aria-controls="explore" aria-selected="false" tabindex="-1">Explore freely</button>
+  </div>
+
+  <section id="lesson" role="tabpanel" aria-labelledby="tab-lesson">
+    <article data-step="1" data-step-title="An enzyme speeds up one reaction" data-kind="enzyme">
+      <p class="eyebrow">One enzyme at work</p>
+      <h2 tabindex="-1">An enzyme speeds up one reaction</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">An <dfn data-part="enzyme">enzyme</dfn> is a protein that makes one chemical reaction run much faster, without being used up itself. The molecule it works on is its <dfn data-part="substrate">substrate</dfn>; what comes out is the <dfn data-part="product">product</dfn>. Acetylcholinesterase, for example, splits the nerve signal acetylcholine in two (<a href="/lab/neuromuscular-junction/">Lesson 8</a>).</p>
+    </article>
+    <article data-step="2" data-step-title="The substrate fits the active site" data-kind="site" hidden>
+      <p class="eyebrow">One enzyme at work</p>
+      <h2 tabindex="-1">The substrate fits the active site</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The substrate binds in a pocket on the enzyme, the <dfn data-part="active-site">active site</dfn>, whose shape fits it as a lock fits its key. Molecules of the wrong shape do not fit, so each enzyme works on its own substrate and little else.</p>
+    </article>
+    <article data-step="3" data-step-title="Bind, change, let go, repeat" data-kind="cycle" hidden>
+      <p class="eyebrow">One enzyme at work</p>
+      <h2 tabindex="-1">Bind, change, let go, repeat</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Once bound, the substrate is changed into <dfn data-part="product">product</dfn>, here split in two, and the product lets go. The enzyme comes out exactly as it went in, ready for the next substrate. It can hold only one at a time, so each enzyme has a top pace it cannot beat.</p>
+    </article>
+    <article data-step="4" data-step-title="More substrate keeps more enzymes busy" data-kind="busy" hidden>
+      <p class="eyebrow">The speed curve</p>
+      <h2 tabindex="-1">More substrate keeps more enzymes busy</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The <dfn data-part="speed">reaction speed</dfn> is how much product all the enzymes make each second. With little substrate, most enzymes sit empty, waiting. Add substrate and more of them are busy at any moment, so speed rises: here from 1 busy enzyme in 8 to 7 in 8.</p>
+    </article>
+    <article data-step="5" data-step-title="Speed rises, then levels off" data-kind="curve" hidden>
+      <p class="eyebrow">The speed curve</p>
+      <h2 tabindex="-1">Speed rises, then levels off</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Plot speed against substrate. It climbs steeply at first, then bends and flattens: nearly every enzyme is busy, and the enzymes are <dfn>saturated</dfn>. The level the curve approaches is the <dfn data-part="vmax">maximum speed</dfn>, its ceiling. More substrate cannot push past it, because there are no free enzymes left to use it.</p>
+    </article>
+    <article data-step="6" data-step-title="The halfway mark: the Km" data-kind="km" hidden>
+      <p class="eyebrow">The speed curve</p>
+      <h2 tabindex="-1">The halfway mark: the Km</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">The substrate level that gives half the maximum speed is the enzyme's <dfn data-part="km">Km</dfn> (the Michaelis constant). A low Km reaches half speed with little substrate; a high Km needs more. In this lesson's simple model a low Km means a readier grip on the substrate, but in real enzymes the Km also depends on how fast the bound substrate is changed, so it is not a pure measure of binding.</p>
+    </article>
+    <article data-step="7" data-step-title="More enzyme raises the ceiling" data-kind="amount" hidden>
+      <p class="eyebrow">The speed curve</p>
+      <h2 tabindex="-1">More enzyme raises the ceiling</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">Twice as many enzyme molecules make twice the product once they are all busy, so the <dfn data-part="vmax">ceiling</dfn> doubles. Each one works just as before, so half speed comes at the same substrate level: the <dfn data-part="km">Km</dfn> does not move. Fewer working enzymes do the opposite: a lower ceiling, the same Km.</p>
+    </article>
+    <article data-step="8" data-step-title="An inhibitor slows an enzyme" data-kind="inhibitor" hidden>
+      <p class="eyebrow">Slowing it down</p>
+      <h2 tabindex="-1">An inhibitor slows an enzyme</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">An <dfn data-part="drug">inhibitor</dfn> is a molecule, often a drug, that slows an enzyme. Some sit in the active site; others bind a <dfn data-part="second-site">second site</dfn> elsewhere on the enzyme. Most are <dfn>reversible</dfn>: they bind and let go again. An <dfn>irreversible</dfn> inhibitor forms a lasting chemical bond, so that enzyme molecule never works again.</p>
+    </article>
+    <article data-step="9" data-step-title="Some enzymes have a control site" data-kind="allosteric" hidden>
+      <p class="eyebrow">Slowing it down</p>
+      <h2 tabindex="-1">Some enzymes have a control site</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">An <dfn data-part="allosteric">allosteric enzyme</dfn> has an <dfn data-part="control-site">allosteric site</dfn>, a control site away from the active site, where the cell can turn it up or down. Many, like the one drawn here, are built from linked parts, each with an active site, and substrate in one part helps the others grip theirs. That gives an S-shaped curve instead of a plain bend; not every allosteric enzyme has one.</p>
+    </article>
+    <article data-step="10" data-step-title="Competitive inhibitor" data-kind="competitive" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Competitive inhibitor</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A <dfn data-part="drug">competitive inhibitor</dfn> looks like the substrate and takes turns with it in the active site. Extra substrate wins the turns back, so the ceiling is the same. But here half speed now needs three times the substrate: the Km rises and the curve slides right. Statins slow the liver's cholesterol-making enzyme this way.</p>
+    </article>
+    <article data-step="11" data-step-title="Noncompetitive inhibitor" data-kind="noncompetitive" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Noncompetitive inhibitor</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">A <dfn data-part="drug">noncompetitive inhibitor</dfn> binds the second site, whether or not substrate is in the active site, and switches off each enzyme it holds. Substrate cannot push it off, so the ceiling falls, here to half. The enzymes left free work normally, so half of the new ceiling comes at the same substrate level: the Km stays put.</p>
+    </article>
+    <article data-step="12" data-step-title="Irreversible inhibitor" data-kind="irreversible" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Irreversible inhibitor</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">An <dfn data-part="drug">irreversible inhibitor</dfn> bonds to its enzyme for good. As it catches more molecules, the ceiling keeps falling, here to a quarter; the Km of those left is unchanged. Only newly made enzyme brings speed back. Aspirin does this to COX (<a href="/lab/arachidonic-acid-nsaids/">Lesson 18</a>), and organophosphate nerve agents to acetylcholinesterase.</p>
+    </article>
+    <article data-step="13" data-step-title="Allosteric modulators" data-kind="modulators" hidden>
+      <p class="eyebrow">What changes it</p>
+      <h2 tabindex="-1">Allosteric modulators</h2>
+      <div class="visual" data-visual></div>
+      <p class="caption">An <dfn data-part="modulator">allosteric modulator</dfn> binds the allosteric site and changes how readily the active sites grip substrate. A positive one slides this enzyme's S-curve left, here halving the substrate needed for half speed; a negative one slides it right, doubling it. The cell uses this as a dial: plentiful ATP slows an enzyme of sugar breakdown.</p>
+    </article>
+
+    <div class="step-nav">
+      <button type="button" data-step-back disabled>← Back</button>
+      <span data-step-progress aria-live="polite">Step 1 of 13</span>
+      <button type="button" data-step-next>Next →</button>
+    </div>
+    <p class="hint">Start with Next, or use the arrow keys. Under a moving picture: pause, drag to any moment, or slow it down. Underlined terms light up their part of the picture. The speeds and substrate levels are illustrative: substrate is counted in multiples of the normal Km, speed as a share of the normal maximum.</p>
+  </section>
+
+  <section id="quiz" role="tabpanel" aria-labelledby="tab-quiz" hidden></section>
+
+  <section id="summary" role="tabpanel" aria-labelledby="tab-summary" hidden></section>
+
+  <section id="clinical" role="tabpanel" aria-labelledby="tab-clinical" hidden>
+    <h2>Reference values, beside the model.</h2>
+    <p id="disclaimer" class="disclaimer">Loading reference values…</p>
+    <div class="cv-top">
+      <div id="clinical-visual" class="visual"></div>
+      <div class="cv-controls">
+        <div>
+          <label for="clinical-state">Show a cited state</label>
+          <select id="clinical-state"><option value="baseline">Normal liver enzymes</option></select>
+        </div>
+        <div>
+          <label for="clinical-model">Or set the model's enzyme (illustrative only)</label>
+          <select id="clinical-model">
+            <option value="none">Normal enzyme</option>
+            <option value="competitive">Competitive inhibitor: Km three times normal</option>
+            <option value="noncompetitive">Noncompetitive inhibitor: ceiling halved</option>
+            <option value="irreversible">Irreversible inhibitor: three quarters bonded</option>
+            <option value="more">Twice the enzyme</option>
+            <option value="custom" disabled>Other settings from Explore freely</option>
+          </select>
+        </div>
+        <div>
+          <button type="button" id="clinical-reset">Back to baseline</button>
+        </div>
+      </div>
+    </div>
+    <p id="state-summary" class="state-summary" aria-live="polite">Normal liver enzymes.</p>
+    <details class="lx-fine">
+      <summary>What the source says for this state, and what is the model's</summary>
+      <div id="state-evidence" class="model-note"></div>
+    </details>
+    <details class="lx-fine">
+      <summary>How to read these bars</summary>
+      <p>An enzyme's speed curve is not a blood test, so this tab reads the lesson's enzyme as a liver enzyme that breaks down a drug (<a href="/lab/pharmacokinetics/">Lesson 17</a>). The rows are the cited rules for how much of a drug is gone after a given number of its half-lives. The source gives one value for each, so each bar shows a black tick, not a band.</p>
+      <p>The blue line is the teaching model. It starts on each cited value and moves when you choose a state or set the enzyme here, or in Explore freely. The states quote what the source says (an inhibitor raises a drug's plasma concentration; an inducer lowers its activity). The source does not give these rows' values under either state, so the rows show no cited arrow: the direction shown is labelled as the model's prediction, and it holds only under the model's assumptions:</p>
+      <ul id="model-assumptions"></ul>
+      <p>Model numbers are never patient values.</p>
+    </details>
+    <div id="value-rows"></div>
+    <h3>Sources</h3>
+    <ul id="sources"></ul>
+    <p id="load-error" class="load-error" hidden></p>
+  </section>
+
+  <section id="explore" role="tabpanel" aria-labelledby="tab-explore" hidden>
+    <h2>Bend the curve yourself.</h2>
+    <p class="model-intro">An illustrative teaching model of one enzyme. Set the substrate level, the amount of enzyme and any inhibitor, and see the speed curve move over a dashed outline of normal. The dot is the speed at the substrate level you chose.</p>
+    <div class="explore-grid">
+      <div id="explore-visual" class="visual"></div>
+      <div class="controls">
+        <fieldset>
+          <legend>The enzyme</legend>
+          <label for="kind">Kind of enzyme</label>
+          <select id="kind">
+            <option value="plain">Plain enzyme (the bend)</option>
+            <option value="allosteric">Allosteric enzyme with an S-shaped curve</option>
+          </select>
+          <label for="substrate">Substrate level <output id="substrate-out" for="substrate"></output></label>
+          <input id="substrate" type="range" min="0" max="10" step="0.1" value="1">
+          <label for="enzyme">Amount of enzyme <output id="enzyme-out" for="enzyme"></output></label>
+          <input id="enzyme" type="range" min="25" max="200" step="25" value="100">
+          <label for="plot">Graph</label>
+          <select id="plot">
+            <option value="speed">Speed against substrate</option>
+            <option value="double">Double-reciprocal (Lineweaver-Burk)</option>
+          </select>
+        </fieldset>
+        <fieldset>
+          <legend>What acts on it</legend>
+          <label for="comp">Competitive inhibitor <output id="comp-out" for="comp"></output></label>
+          <input id="comp" type="range" min="0" max="8" step="1" value="0">
+          <label for="nonc">Noncompetitive inhibitor <output id="nonc-out" for="nonc"></output></label>
+          <input id="nonc" type="range" min="0" max="4" step="1" value="0">
+          <label for="lost">Irreversible inhibitor <output id="lost-out" for="lost"></output></label>
+          <input id="lost" type="range" min="0" max="90" step="5" value="0">
+          <label for="mod">Allosteric modulator <output id="mod-out" for="mod"></output></label>
+          <select id="mod" disabled>
+            <option value="1">None</option>
+            <option value="0.5">Positive (an activator)</option>
+            <option value="2">Negative (a brake)</option>
+          </select>
+        </fieldset>
+        <button type="button" id="reset">Reset to normal</button>
+      </div>
+    </div>
+    <p id="model-results" class="model-results" aria-live="polite"></p>
+    <details>
+      <summary>How this teaching model works</summary>
+      <p>Substrate is counted in multiples of the plain enzyme's own Km, the level that gives half speed; speed is a percent of the normal maximum speed. A plain enzyme follows the Michaelis-Menten curve: speed equals the ceiling times substrate, divided by Km plus substrate. The allosteric enzyme here is a cooperative one: it follows an S-shaped curve with a Hill coefficient of 2.5, a measure of how strongly its parts help each other. Not every allosteric enzyme is cooperative; one that is not keeps the plain bend, and its modulators still shift it.</p>
+      <p>More enzyme multiplies the ceiling. A competitive inhibitor multiplies the Km by one plus its strength and leaves the ceiling. A noncompetitive inhibitor divides the ceiling by one plus its strength and leaves the Km. An irreversible inhibitor removes its share of the enzyme from the ceiling for good. An allosteric modulator halves (positive) or doubles (negative) the allosteric enzyme's half-speed level.</p>
+      <p>The double-reciprocal graph plots one over speed against one over substrate. A plain enzyme gives a straight line: it crosses the vertical axis at one over the ceiling and the horizontal axis at minus one over the Km. A competitive inhibitor steepens the line around the same vertical crossing; a noncompetitive or irreversible one raises it around the same horizontal crossing. An allosteric enzyme's line is curved. Real enzymes have more steps, inhibitors that do both, and substrate that runs out over time; the model leaves these out.</p>
+    </details>
+  </section>
+
+  <footer>Lesson 33 of The Lab · Added 2026-11-25 · <a href="/lab/">All lessons</a></footer>
+</main>
+</body>
+</html>
